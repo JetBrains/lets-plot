@@ -96,8 +96,8 @@ abstract class AbstractDensity2dStat(
 //        this.kernel = DensityStatUtil.kernel(kernel)
 //    }
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -117,9 +117,9 @@ abstract class AbstractDensity2dStat(
         const val DEF_BIN_COUNT = 10
         const val DEF_BIN_WIDTH = 0.0
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
         )
         private const val MAX_N = 999
     }

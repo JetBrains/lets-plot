@@ -42,12 +42,12 @@ class Bin2dStat(
     private val binOptionsX = BinStatUtil.BinOptions(binCountX, binWidthX)
     private val binOptionsY = BinStatUtil.BinOptions(binCountY, binWidthY)
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }
 
@@ -167,10 +167,10 @@ class Bin2dStat(
         val DEF_BINWIDTH: Double? = null
         const val DEF_DROP = true
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y,
-            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to Stats.COUNT
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.FILL to Stats.COUNT
         )
 
         private fun adjustRangeInitial(r: DoubleSpan): DoubleSpan {

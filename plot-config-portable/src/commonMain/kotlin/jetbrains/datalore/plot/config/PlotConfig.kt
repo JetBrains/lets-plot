@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil
-import jetbrains.datalore.plot.builder.scale.MapperProvider
-import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
+import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Plot.CAPTION
@@ -36,9 +36,9 @@ abstract class PlotConfig(
     val facets: PlotFacets
 
     protected val scaleConfigs: List<ScaleConfig<*>>
-    protected val mapperProviderByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MapperProvider<*>>
-    protected val scaleProviderByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleProvider>
-    protected val transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>
+    protected val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
+    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider>
+    protected val transformByAes: Map<Aes<*>, Transform>
 
     protected var sharedData: DataFrame
         private set

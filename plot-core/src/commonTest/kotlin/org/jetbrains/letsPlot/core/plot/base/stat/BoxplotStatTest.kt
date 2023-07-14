@@ -33,7 +33,7 @@ class BoxplotStatTest {
         val stat = Stats.boxplot()
         val statDf = stat.apply(df, statContext(df))
 
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
                 val variable = stat.getDefaultMapping(aes)
                 assertTrue(statDf.has(variable), "Has var " + variable.name)

@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.tooltip.TooltipLine
-import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 
 class TooltipConfig(
     opts: Map<String, Any>,

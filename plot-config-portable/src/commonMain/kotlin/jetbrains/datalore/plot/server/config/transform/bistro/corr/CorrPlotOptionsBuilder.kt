@@ -72,8 +72,8 @@ class CorrPlotOptionsBuilder private constructor(
         tiles = LayerParams(),
         points = LayerParams(),
         labels = LayerParams(),
-        colorScaleOptions = scaleGradient(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, DEF_LOW_COLOR, DEF_MID_COLOR, DEF_HIGH_COLOR),
-        fillScaleOptions = scaleGradient(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, DEF_LOW_COLOR, DEF_MID_COLOR, DEF_HIGH_COLOR)
+        colorScaleOptions = scaleGradient(Aes.COLOR, DEF_LOW_COLOR, DEF_MID_COLOR, DEF_HIGH_COLOR),
+        fillScaleOptions = scaleGradient(Aes.FILL, DEF_LOW_COLOR, DEF_MID_COLOR, DEF_HIGH_COLOR)
     )
 
     internal class LayerParams {
@@ -155,14 +155,14 @@ class CorrPlotOptionsBuilder private constructor(
     }
 
     fun brewerPalette(palette: String): CorrPlotOptionsBuilder {
-        colorScaleOptions = scaleBrewer(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, palette)
-        fillScaleOptions = scaleBrewer(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, palette)
+        colorScaleOptions = scaleBrewer(Aes.COLOR, palette)
+        fillScaleOptions = scaleBrewer(Aes.FILL, palette)
         return this
     }
 
     fun gradientPalette(low: String, mid: String, high: String): CorrPlotOptionsBuilder {
-        colorScaleOptions = scaleGradient(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, low, mid, high)
-        fillScaleOptions = scaleGradient(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, low, mid, high)
+        colorScaleOptions = scaleGradient(Aes.COLOR, low, mid, high)
+        fillScaleOptions = scaleGradient(Aes.FILL, low, mid, high)
         return this
     }
 
@@ -246,9 +246,9 @@ class CorrPlotOptionsBuilder private constructor(
                         threshold
                     )
                     mappings = mapOf(
-                        org.jetbrains.letsPlot.core.plot.base.Aes.X to CorrVar.X,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.Y to CorrVar.Y,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.FILL to CorrVar.CORR,
+                        Aes.X to CorrVar.X,
+                        Aes.Y to CorrVar.Y,
+                        Aes.FILL to CorrVar.CORR,
                     )
                     size = 0.0
                     width = 1.002
@@ -269,12 +269,12 @@ class CorrPlotOptionsBuilder private constructor(
                         threshold
                     )
                     mappings = mapOf(
-                        org.jetbrains.letsPlot.core.plot.base.Aes.X to CorrVar.X,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.Y to CorrVar.Y,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE to CorrVar.CORR_ABS,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to CorrVar.CORR,
+                        Aes.X to CorrVar.X,
+                        Aes.Y to CorrVar.Y,
+                        Aes.SIZE to CorrVar.CORR_ABS,
+                        Aes.COLOR to CorrVar.CORR,
                     )
-                    sizeUnit = org.jetbrains.letsPlot.core.plot.base.Aes.X
+                    sizeUnit = Aes.X
                 }
             )
         }
@@ -291,13 +291,13 @@ class CorrPlotOptionsBuilder private constructor(
                         threshold
                     )
                     mappings = mapOf(
-                        org.jetbrains.letsPlot.core.plot.base.Aes.X to CorrVar.X,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.Y to CorrVar.Y,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.LABEL to CorrVar.CORR,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE to CorrVar.CORR_ABS,
-                        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to CorrVar.CORR
+                        Aes.X to CorrVar.X,
+                        Aes.Y to CorrVar.Y,
+                        Aes.LABEL to CorrVar.CORR,
+                        Aes.SIZE to CorrVar.CORR_ABS,
+                        Aes.COLOR to CorrVar.CORR
                     )
-                    sizeUnit = org.jetbrains.letsPlot.core.plot.base.Aes.X
+                    sizeUnit = Aes.X
                     size = if (labels.mapSize == true) null else 1.0
                     color = labels.color
                 }
@@ -331,20 +331,20 @@ class CorrPlotOptionsBuilder private constructor(
             }
             scaleOptions = listOf(
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                    aes = Aes.SIZE
                     mapperKind = MapperKind.IDENTITY
                     naValue = 0
                     guide = Option.Guide.NONE
                 },
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.X
+                    aes = Aes.X
                     isDiscrete = true
                     breaks = plotX
                     limits = plotX
                     expand = EXPAND
                 },
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                    aes = Aes.Y
                     isDiscrete = true
                     breaks = plotY
                     limits = if (flip) plotY.asReversed() else plotY
@@ -408,7 +408,7 @@ class CorrPlotOptionsBuilder private constructor(
             }
         }
 
-        private fun scaleGradient(aesthetic: org.jetbrains.letsPlot.core.plot.base.Aes<*>, low: String, mid: String, high: String): ScaleOptions {
+        private fun scaleGradient(aesthetic: Aes<*>, low: String, mid: String, high: String): ScaleOptions {
             return scale {
                 aes = aesthetic
                 name = LEGEND_NAME
@@ -422,7 +422,7 @@ class CorrPlotOptionsBuilder private constructor(
             }
         }
 
-        private fun scaleBrewer(aesthetic: org.jetbrains.letsPlot.core.plot.base.Aes<*>, paletteName: String): ScaleOptions {
+        private fun scaleBrewer(aesthetic: Aes<*>, paletteName: String): ScaleOptions {
             return scale {
                 aes = aesthetic
                 mapperKind = COLOR_BREWER

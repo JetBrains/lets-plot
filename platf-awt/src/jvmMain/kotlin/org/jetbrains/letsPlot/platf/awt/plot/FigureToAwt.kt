@@ -10,11 +10,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
-import jetbrains.datalore.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement

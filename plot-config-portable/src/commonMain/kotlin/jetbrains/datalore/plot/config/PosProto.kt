@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.pos.StackablePos
 import org.jetbrains.letsPlot.core.plot.base.pos.StackingMode
-import jetbrains.datalore.plot.builder.assemble.PosProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.config.Option.Pos
 
 @Suppress("MemberVisibilityCanBePrivate")

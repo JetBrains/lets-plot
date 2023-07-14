@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 object PointDimensionsUtil {
     fun dimensionSpan(
         p: DataPointAesthetics,
-        coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
-        sizeAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
+        coordAes: Aes<Double>,
+        sizeAes: Aes<Double>,
         resolution: Double
     ): DoubleSpan? {
 

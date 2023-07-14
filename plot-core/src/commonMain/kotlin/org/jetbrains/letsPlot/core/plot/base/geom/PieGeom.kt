@@ -44,7 +44,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.SLICE)
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
             .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
             .filterNotNullKeys()
             .forEach { (pieCenter, dataPoints) ->
@@ -340,14 +340,14 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             hjust: String? = null
         ): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
-                override operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T? {
+                override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
-                        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE -> textStyle.size / 2
-                        org.jetbrains.letsPlot.core.plot.base.Aes.FAMILY -> textStyle.family
-                        org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE -> textStyle.face.toString()
-                        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR -> color
-                        org.jetbrains.letsPlot.core.plot.base.Aes.HJUST -> hjust ?: "middle"
-                        org.jetbrains.letsPlot.core.plot.base.Aes.VJUST -> "center"
+                        Aes.SIZE -> textStyle.size / 2
+                        Aes.FAMILY -> textStyle.family
+                        Aes.FONTFACE -> textStyle.face.toString()
+                        Aes.COLOR -> color
+                        Aes.HJUST -> hjust ?: "middle"
+                        Aes.VJUST -> "center"
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")
@@ -489,9 +489,9 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun dimensionSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): DoubleSpan? {
+    private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
         val loc = p[coordAes]
-        val size = p[org.jetbrains.letsPlot.core.plot.base.Aes.SIZE]
+        val size = p[Aes.SIZE]
         return if (SeriesUtil.allFinite(loc, size)) {
             loc!!
             val expand = size!! / 2.0
@@ -504,12 +504,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
         if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
         if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }

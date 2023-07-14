@@ -54,7 +54,7 @@ class DiscreteScaleForContinuousVarTest {
         assertEquals(1, plotConfigClientSide.layerConfigs.size.toLong())
 
 //        val scale = plotConfigClientSide.scaleMap[Aes.FILL]
-        val mapper = plotConfigClientSide.mappersByAesNP.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)
+        val mapper = plotConfigClientSide.mappersByAesNP.getValue(Aes.FILL)
 
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)

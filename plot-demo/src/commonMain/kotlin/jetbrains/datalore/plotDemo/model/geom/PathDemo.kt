@@ -82,15 +82,15 @@ open class PathDemo : SimpleDemoBase() {
 
     private fun createGeomLayer(aes: Aesthetics): GroupComponent {
         val groupComponent = GroupComponent()
-        val domainX = aes.range(org.jetbrains.letsPlot.core.plot.base.Aes.X)!!
-        val domainY = aes.range(org.jetbrains.letsPlot.core.plot.base.Aes.Y)!!
+        val domainX = aes.range(Aes.X)!!
+        val domainY = aes.range(Aes.Y)!!
         val coord = Coords.DemoAndTest.create(
             DoubleSpan(domainX.lowerEnd - 20, domainX.upperEnd + 20),
             DoubleSpan(domainY.lowerEnd - 20, domainY.upperEnd + 20),
             demoInnerSize
         )
 
-        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+        val layer = org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer(
             aes,
             PathGeom(),
             PositionAdjustments.identity(),

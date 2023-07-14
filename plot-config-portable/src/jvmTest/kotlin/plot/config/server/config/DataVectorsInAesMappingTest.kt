@@ -35,7 +35,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
+            .haveBinding(Aes.X, "x")
             .haveDataVector("x", inputVector)
     }
 
@@ -60,7 +60,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x1")
+            .haveBinding(Aes.X, "x1")
             .haveDataVector("x1", inputVector)
     }
 
@@ -81,7 +81,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
+            .haveBinding(Aes.X, "x")
             .haveDataVector("x", inputVector)
     }
 
@@ -106,7 +106,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x1")
+            .haveBinding(Aes.X, "x1")
             .haveDataVector("x1", inputVector)
     }
 
@@ -129,7 +129,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
+            .haveBinding(Aes.X, "x")
             .haveDataVector("x", expectedVector)
     }
 }

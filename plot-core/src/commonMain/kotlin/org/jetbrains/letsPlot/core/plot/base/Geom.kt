@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory
-    val wontRender: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> get() = emptyList()
-    fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = false
+    val wontRender: List<Aes<*>> get() = emptyList()
+    fun rangeIncludesZero(aes: Aes<*>): Boolean = false
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
 }

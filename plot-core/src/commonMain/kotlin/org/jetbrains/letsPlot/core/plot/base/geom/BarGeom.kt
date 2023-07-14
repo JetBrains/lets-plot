@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 open class BarGeom : GeomBase() {
 
-    override fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = (aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -57,7 +57,7 @@ open class BarGeom : GeomBase() {
                 val width = p.width()
                 if (SeriesUtil.allFinite(x, y, width)) {
                     x!!; y!!
-                    val w = width!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    val w = width!! * ctx.getResolution(Aes.X)
                     val rect = if (isHintRect) {
                         val origin = DoubleVector(x - w / 2, y)
                         val dimension = DoubleVector(w, 0.0)

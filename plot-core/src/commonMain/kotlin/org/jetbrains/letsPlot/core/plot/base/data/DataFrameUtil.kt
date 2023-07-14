@@ -14,11 +14,11 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import kotlin.jvm.JvmOverloads
 
 object DataFrameUtil {
-    fun transformVarFor(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable {
+    fun transformVarFor(aes: Aes<*>): DataFrame.Variable {
         return TransformVar.forAes(aes)
     }
 
-    fun applyTransform(data: DataFrame, variable: DataFrame.Variable, aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, transform: Transform): DataFrame {
+    fun applyTransform(data: DataFrame, variable: DataFrame.Variable, aes: Aes<*>, transform: Transform): DataFrame {
         val transformVar = transformVarFor(aes)
         return applyTransform(data, variable, transformVar, transform)
     }

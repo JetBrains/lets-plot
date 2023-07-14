@@ -43,12 +43,12 @@ class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
 
     private val myBinOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.Z)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.Z)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.Z)) {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y, Aes.Z)) {
             return withEmptyStatValues()
         }
 
@@ -64,9 +64,9 @@ class ContourStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
     companion object {
         const val DEF_BIN_COUNT = 10
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
         )
     }
 }

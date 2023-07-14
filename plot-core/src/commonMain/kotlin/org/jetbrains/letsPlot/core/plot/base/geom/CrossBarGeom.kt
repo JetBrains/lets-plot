@@ -35,7 +35,7 @@ class CrossBarGeom : GeomBase() {
         )
         CrossBarHelper.buildMidlines(root, aesthetics, ctx, geomHelper, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
-            listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN),
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             { HintColorUtil.colorWithAlpha(it) }
@@ -54,27 +54,27 @@ class CrossBarGeom : GeomBase() {
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val rect = if (!isHintRect &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.X) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+                    p.defined(Aes.X) &&
+                    p.defined(Aes.YMIN) &&
+                    p.defined(Aes.YMAX) &&
+                    p.defined(Aes.WIDTH)
                 ) {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
-                    val width = p.width()!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
 
                     val origin = DoubleVector(x - width / 2, ymin)
                     val dimensions = DoubleVector(width, ymax - ymin)
                     DoubleRectangle(origin, dimensions)
                 } else if (isHintRect &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.X) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+                    p.defined(Aes.X) &&
+                    p.defined(Aes.MIDDLE) &&
+                    p.defined(Aes.WIDTH)
                 ) {
                     val x = p.x()!!
                     val middle = p.middle()!!
-                    val width = p.width()!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
 
                     val origin = DoubleVector(x - width / 2, middle)
                     val dimensions = DoubleVector(width, 0.0)

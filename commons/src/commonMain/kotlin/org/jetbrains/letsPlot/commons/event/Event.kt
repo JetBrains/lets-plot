@@ -10,7 +10,7 @@ open class Event {
     private var eventContext: EventContext? = null
         set(eventContext) {
             if (this.eventContext != null) {
-                throw kotlin.IllegalStateException("Already set " + this.eventContext!!)
+                throw IllegalStateException("Already set " + this.eventContext!!)
             }
             if (isConsumed) {
                 throw IllegalStateException("Can't set a context to the consumed event")

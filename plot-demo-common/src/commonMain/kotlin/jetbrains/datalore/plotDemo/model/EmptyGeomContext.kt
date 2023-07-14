@@ -12,8 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 /**
  * Used in demos only.

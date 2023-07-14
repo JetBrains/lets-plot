@@ -43,11 +43,11 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(),
             success = true
             onItemAdd(index, element)
             if (myListeners != null) {
-                val event = org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+                val event = CollectionItemEvent(
                     null,
                     element,
                     index,
-                    org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD
+                    CollectionItemEvent.EventType.ADD
                 )
                 myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
                     override fun call(l: CollectionListener<in ItemT>) {
@@ -78,11 +78,11 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(),
             success = true
             onItemSet(index, old, element)
             if (myListeners != null) {
-                val event = org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+                val event = CollectionItemEvent(
                     old,
                     element,
                     index,
-                    org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.SET
+                    CollectionItemEvent.EventType.SET
                 )
                 myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
                     override fun call(l: CollectionListener<in ItemT>) {
@@ -117,11 +117,11 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(),
             success = true
             onItemRemove(index, item)
             if (myListeners != null) {
-                val event = org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+                val event = CollectionItemEvent(
                     item,
                     null,
                     index,
-                    org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                    CollectionItemEvent.EventType.REMOVE
                 )
                 myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
                     override fun call(l: CollectionListener<in ItemT>) {
@@ -160,18 +160,18 @@ abstract class AbstractObservableList<ItemT> : AbstractMutableList<ItemT>(),
         return myListeners!!.add(l)
     }
 
-    override fun addHandler(handler: EventHandler<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>>): Registration {
+    override fun addHandler(handler: EventHandler<CollectionItemEvent<out ItemT>>): Registration {
         val listener = object :
             CollectionListener<ItemT> {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }
 
-            override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }
         }

@@ -67,7 +67,7 @@ class ViewportHelper(
     }
 
     override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
-        return org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
+        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
     }
 
     internal fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {

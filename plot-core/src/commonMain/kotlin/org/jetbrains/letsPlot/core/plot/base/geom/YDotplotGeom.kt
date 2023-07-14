@@ -33,7 +33,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
     ) {
         val pointsWithBinWidth = GeomUtil.withDefined(
             aesthetics.dataPoints(),
-            org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y
+            Aes.BINWIDTH, Aes.X, Aes.Y
         )
         if (!pointsWithBinWidth.any()) return
 
@@ -49,7 +49,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
                 true -> abs(p0.x - p1.x)
             }
         }
-        GeomUtil.withDefined(pointsWithBinWidth, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE)
+        GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointGroup) ->
                 dataPointGroup
@@ -161,11 +161,11 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
         LEFT, RIGHT, CENTER, CENTERWHOLE
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
         return PointDimensionsUtil.dimensionSpan(
             p,
             coordAes,
-            sizeAes = org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH,
+            sizeAes = Aes.BINWIDTH,
             resolution
         )
     }

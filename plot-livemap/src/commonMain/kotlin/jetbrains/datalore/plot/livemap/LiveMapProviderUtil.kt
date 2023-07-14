@@ -20,9 +20,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
-import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN

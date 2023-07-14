@@ -7,12 +7,12 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSizeHelper
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
-import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
-import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
-import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
-import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayout
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.COL_WIDTHS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.FIT_CELL_ASPECT_RATIO
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.HSPACE

@@ -16,7 +16,7 @@ interface GeomContext {
     val annotations: Annotations?
 
     // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
-    fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double
+    fun getResolution(aes: Aes<Double>): Double
 
     /**
      * @return  A rectangle which origin and size are computed basing on
@@ -26,7 +26,7 @@ interface GeomContext {
 
     fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext
 
-    fun isMappedAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
+    fun isMappedAes(aes: Aes<*>): Boolean
 
     fun estimateTextSize(
         text: String,

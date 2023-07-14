@@ -30,7 +30,7 @@ open class PosTest {
             val p = aes.dataPointAt(i)
             if (!SeriesUtil.allFinite(p.x(), p.y())) continue
             val translatedPoint = pos.translate(DoubleVector(p.x()!!, p.y()!!), p,
-                org.jetbrains.letsPlot.core.plot.base.BogusContext
+                BogusContext
             )
             assertEquals(
                 expectedYOffsets[i],

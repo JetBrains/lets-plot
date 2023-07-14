@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.BarGeom
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.pos.StackablePos
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -105,8 +105,8 @@ open class BarDemo : SimpleDemoBase() {
 
     private fun createGeomLayer(aes: Aesthetics, pos: PositionAdjustment): GroupComponent {
         val groupComponent = GroupComponent()
-        val domainX = aes.range(org.jetbrains.letsPlot.core.plot.base.Aes.X)!!
-        val domainY = aes.range(org.jetbrains.letsPlot.core.plot.base.Aes.Y)!!
+        val domainX = aes.range(Aes.X)!!
+        val domainY = aes.range(Aes.Y)!!
         val coord = Coords.DemoAndTest.create(
             DoubleSpan(domainX.lowerEnd - 50, domainX.upperEnd + 50),
             DoubleSpan(domainY.lowerEnd - 50, domainY.upperEnd + 50),

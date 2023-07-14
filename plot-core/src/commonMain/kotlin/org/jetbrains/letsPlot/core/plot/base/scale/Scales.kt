@@ -48,7 +48,7 @@ object Scales {
             return DiscreteScale(name, transform)
         }
 
-        fun continuousDomain(name: String, aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Scale {
+        fun continuousDomain(name: String, aes: Aes<*>): Scale {
             return ContinuousScale(
                 name,
                 aes.isNumeric

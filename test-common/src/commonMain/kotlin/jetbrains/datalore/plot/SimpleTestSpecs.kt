@@ -19,8 +19,8 @@ object SimpleTestSpecs {
         return mutableMapOf(
             Layer.GEOM to GeomName.POINT,
             PlotBase.MAPPING to mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to List(50) { 1.0 },
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to List(50) { 1.0 }
+                Aes.X.name to List(50) { 1.0 },
+                Aes.Y.name to List(50) { 1.0 }
             )
         )
     }

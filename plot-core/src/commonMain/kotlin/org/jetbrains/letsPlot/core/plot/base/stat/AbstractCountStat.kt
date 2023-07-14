@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 
 abstract class AbstractCountStat(
-    defaultMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>,
+    defaultMappings: Map<Aes<*>, DataFrame.Variable>,
     private val count2d: Boolean
 ) : BaseStat(defaultMappings) {
 

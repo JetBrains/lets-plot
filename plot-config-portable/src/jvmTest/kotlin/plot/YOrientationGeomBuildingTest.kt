@@ -14,9 +14,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
-import jetbrains.datalore.plot.builder.DemoAndTest
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.coord.CoordProviders
+import org.jetbrains.letsPlot.core.plot.builder.DemoAndTest
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.TestUtil
 import org.junit.Test
 import kotlin.math.round
@@ -39,7 +39,7 @@ class YOrientationGeomBuildingTest {
 
         // Just check that this invariant still holds.
         assertEquals(
-            GeomMeta.renders(GeomKind.BOX_PLOT, org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, org.jetbrains.letsPlot.core.plot.base.Aes.FILL).toSet(),
+            GeomMeta.renders(GeomKind.BOX_PLOT, Aes.COLOR, Aes.FILL).toSet(),
             geomLayerStub.renderedAes().toSet()
         )
 
@@ -95,8 +95,8 @@ class YOrientationGeomBuildingTest {
                 {
                     'kind': 'plot',
                     'mapping': {
-                        '${org.jetbrains.letsPlot.core.plot.base.Aes.X.afterOrientation(yOrientation).name}': 'cond',
-                        '${org.jetbrains.letsPlot.core.plot.base.Aes.Y.afterOrientation(yOrientation).name}': 'rating'
+                        '${Aes.X.afterOrientation(yOrientation).name}': 'cond',
+                        '${Aes.Y.afterOrientation(yOrientation).name}': 'rating'
                     },    
                     'layers': [
                         {
@@ -150,19 +150,19 @@ class YOrientationGeomBuildingTest {
 
             // aesthetics
 
-            fun toList(aesthetics: Aesthetics, aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): List<Double> {
+            fun toList(aesthetics: Aesthetics, aes: Aes<Double>): List<Double> {
                 return aesthetics.numericValues(aes).filterNotNull()
                     .map {
                         round(it * 10000) / 10000.0
                     }
             }
 
-            assertEquals(ExpectedAes.X, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.X), message = "X")
-            assertEquals(ExpectedAes.LOWER, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.LOWER), message = "LOWER")
-            assertEquals(ExpectedAes.MIDDLE, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE), message = "MIDDLE")
-            assertEquals(ExpectedAes.UPPER, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.UPPER), message = "UPPER")
-            assertEquals(ExpectedAes.YMIN, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN), message = "YMIN")
-            assertEquals(ExpectedAes.YMAX, toList(aesthetics, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX), message = "YMAX")
+            assertEquals(ExpectedAes.X, toList(aesthetics, Aes.X), message = "X")
+            assertEquals(ExpectedAes.LOWER, toList(aesthetics, Aes.LOWER), message = "LOWER")
+            assertEquals(ExpectedAes.MIDDLE, toList(aesthetics, Aes.MIDDLE), message = "MIDDLE")
+            assertEquals(ExpectedAes.UPPER, toList(aesthetics, Aes.UPPER), message = "UPPER")
+            assertEquals(ExpectedAes.YMIN, toList(aesthetics, Aes.YMIN), message = "YMIN")
+            assertEquals(ExpectedAes.YMAX, toList(aesthetics, Aes.YMAX), message = "YMAX")
         }
     }
 }

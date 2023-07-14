@@ -14,38 +14,38 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 open class AestheticsDefaults(geomTheme: GeomTheme) {
 
     private val myDefaults = TypedKeyHashMap().apply {
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
             @Suppress("UNCHECKED_CAST")
-            put(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>, AesInitValue[aes])
+            put(aes as Aes<Any>, AesInitValue[aes])
         }
         // defaults from geom theme:
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, geomTheme.color())
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, geomTheme.fill())
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA, geomTheme.alpha())
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, geomTheme.size())
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.LINEWIDTH, geomTheme.lineWidth())
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.STROKE, geomTheme.lineWidth())
+        put(Aes.COLOR, geomTheme.color())
+        put(Aes.FILL, geomTheme.fill())
+        put(Aes.ALPHA, geomTheme.alpha())
+        put(Aes.SIZE, geomTheme.size())
+        put(Aes.LINEWIDTH, geomTheme.lineWidth())
+        put(Aes.STROKE, geomTheme.lineWidth())
     }
     private val myDefaultsInLegend = TypedKeyHashMap().apply {
-        put(org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA, 1.0)
+        put(Aes.ALPHA, 1.0)
     }
 
-    private fun <T> update(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
         return this
     }
 
-    private fun <T> updateInLegend(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaultsInLegend.put(aes, defaultValue)
         return this
     }
 
-    fun <T> defaultValue(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
+    fun <T> defaultValue(aes: Aes<T>): T {
         return myDefaults[aes]
     }
 
-    fun <T> defaultValueInLegend(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
+    fun <T> defaultValueInLegend(aes: Aes<T>): T {
         return if (myDefaultsInLegend.containsKey(aes)) {
             myDefaultsInLegend[aes]
         } else {
@@ -56,28 +56,28 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
     companion object {
         private fun point(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, 5.0)
+                .updateInLegend(Aes.SIZE, 5.0)
         }
 
         private fun bar(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .update(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, 0.9)
+                .update(Aes.WIDTH, 0.9)
         }
 
         private fun dotplot(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, 5.0)
+                .updateInLegend(Aes.SIZE, 5.0)
         }
 
         private fun errorBar(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .update(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, 0.45)
-                .update(org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT, 0.45)
+                .update(Aes.WIDTH, 0.45)
+                .update(Aes.HEIGHT, 0.45)
         }
 
         private fun crossBar(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .update(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, 0.9)
+                .update(Aes.WIDTH, 0.9)
         }
 
         private fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
@@ -86,19 +86,19 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
 
         private fun text(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
         private fun pie(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, 1.0)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, Color.TRANSPARENT)
-                .updateInLegend(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, Color.TRANSPARENT)
+                .updateInLegend(Aes.SIZE, 1.0)
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
         private fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {
             return point(geomTheme)
-                .update(org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE, NamedShape.STICK_CIRCLE)
+                .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
         }
 
         private fun base(geomTheme: GeomTheme): AestheticsDefaults {

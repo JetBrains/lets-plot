@@ -33,12 +33,12 @@ open class BinStat(
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X)) {
+        if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
 
@@ -75,9 +75,9 @@ open class BinStat(
     companion object {
         const val DEF_BIN_COUNT = 30
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.COUNT
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.COUNT
         )
     }
 }

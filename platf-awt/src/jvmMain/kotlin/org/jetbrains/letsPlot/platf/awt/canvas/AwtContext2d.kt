@@ -241,7 +241,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
     }
 
-    override fun setFont(f: org.jetbrains.letsPlot.core.canvas.Font) {
+    override fun setFont(f: Font) {
         state.font = f.toAwtFont()
         graphics.font = state.font
     }
@@ -356,7 +356,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             return AwtColor(red, green, blue, alpha)
         }
 
-        private fun org.jetbrains.letsPlot.core.canvas.Font.toAwtFont(): AwtFont {
+        private fun Font.toAwtFont(): AwtFont {
             val weight = when (fontWeight) {
                 FontWeight.NORMAL -> AwtFont.PLAIN
                 FontWeight.BOLD -> AwtFont.BOLD

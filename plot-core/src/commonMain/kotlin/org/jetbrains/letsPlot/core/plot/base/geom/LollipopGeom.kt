@@ -34,9 +34,9 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LollipopLegendKeyElementFactory(fatten)
 
-    override fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean {
         // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it
-        return aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y
+        return aes == Aes.Y
                 && slope == 0.0
                 && intercept == 0.0
                 && direction != Direction.ALONG_AXIS
@@ -54,7 +54,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LOLLIPOP, ctx)
 
         val lollipops = mutableListOf<Lollipop>()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
@@ -91,22 +91,22 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     override fun widthSpan(
         p: DataPointAesthetics,
-        coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
+        coordAes: Aes<Double>,
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == org.jetbrains.letsPlot.core.plot.base.Aes.Y
+        val flip = coordAes == Aes.Y
         val head = xyVec(p, flip) ?: return null
         return DoubleSpan(getBase(head).x, head.x)
     }
 
     override fun heightSpan(
         p: DataPointAesthetics,
-        coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
+        coordAes: Aes<Double>,
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == org.jetbrains.letsPlot.core.plot.base.Aes.X
+        val flip = coordAes == Aes.X
         val head = xyVec(p, flip) ?: return null
         return DoubleSpan(getBase(head).y, head.y)
     }

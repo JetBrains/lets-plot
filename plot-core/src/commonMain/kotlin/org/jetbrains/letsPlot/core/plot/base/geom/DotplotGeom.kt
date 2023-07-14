@@ -36,8 +36,8 @@ open class DotplotGeom : GeomBase(), WithWidth {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = FilledCircleLegendKeyElementFactory()
 
-    override fun preferableNullDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan {
-        return if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
+        return if (aes == Aes.Y)
             when (stackDir) {
                 Stackdir.UP -> DoubleSpan(0.0, 1.0)
                 Stackdir.DOWN -> DoubleSpan(-1.0, 0.0)
@@ -57,7 +57,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
     ) {
         val pointsWithBinWidth = GeomUtil.withDefined(
             aesthetics.dataPoints(),
-            org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y
+            Aes.BINWIDTH, Aes.X, Aes.Y
         )
         if (!pointsWithBinWidth.any()) return
 
@@ -74,7 +74,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             }
         }
 
-        GeomUtil.withDefined(pointsWithBinWidth, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE)
+        GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointStack) ->
                 buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
@@ -222,11 +222,11 @@ open class DotplotGeom : GeomBase(), WithWidth {
         UP, DOWN, CENTER, CENTERWHOLE
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
         return PointDimensionsUtil.dimensionSpan(
             p,
             coordAes,
-            sizeAes = org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH,
+            sizeAes = Aes.BINWIDTH,
             resolution
         )
     }

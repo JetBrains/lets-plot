@@ -15,7 +15,7 @@ class ObservableHashSetTest {
     private var set: ObservableSet<String?> = ObservableHashSet()
 
     @Suppress("UNCHECKED_CAST")
-    private val listener = Mockito.mock(org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter::class.java) as CollectionListener<in String?>
+    private val listener = Mockito.mock(CollectionAdapter::class.java) as CollectionListener<in String?>
 
     @BeforeTest
     fun init() {
@@ -26,11 +26,11 @@ class ObservableHashSetTest {
     fun add() {
         set.add("x")
         Mockito.verify(listener).onItemAdded(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 null,
                 "x",
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD
+                CollectionItemEvent.EventType.ADD
             )
         )
     }
@@ -41,11 +41,11 @@ class ObservableHashSetTest {
         Mockito.reset(listener)
         set.remove("x")
         Mockito.verify(listener).onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 "x",
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
     }
@@ -56,11 +56,11 @@ class ObservableHashSetTest {
         Mockito.reset(listener)
         set.clear()
         Mockito.verify(listener).onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 "x",
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
     }
@@ -69,22 +69,22 @@ class ObservableHashSetTest {
     fun nullValue() {
         set.add(null)
         Mockito.verify(listener).onItemAdded(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<String>(
+            CollectionItemEvent<String>(
                 null,
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD
+                CollectionItemEvent.EventType.ADD
             )
         )
         assertEquals(1, set.size)
         Mockito.reset(listener)
         set.remove(null)
         Mockito.verify(listener).onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<String>(
+            CollectionItemEvent<String>(
                 null,
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
         assertTrue(set.isEmpty())
@@ -99,11 +99,11 @@ class ObservableHashSetTest {
         val toRemove = i.next()
         i.remove()
         Mockito.verify(listener).onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 toRemove,
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
         assertEquals(1, set.size)
@@ -175,11 +175,11 @@ class ObservableHashSetTest {
             listener,
             Mockito.never()
         ).onItemAdded(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 "x",
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
     }
@@ -206,11 +206,11 @@ class ObservableHashSetTest {
             listener,
             Mockito.never()
         ).onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 "x",
                 null,
                 -1,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
     }

@@ -40,7 +40,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT)
+        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.HEIGHT)
         if (!definedDataPoints.any()) return
         definedDataPoints
             .sortedByDescending(DataPointAesthetics::y)
@@ -73,12 +73,12 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
         val targetCollectorHelper = TargetCollectorHelper(GeomKind.AREA_RIDGES, ctx)
 
-        quantilesHelper.splitByQuantiles(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.X).forEach { points ->
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(
                 points,
                 boundTransform,
@@ -106,19 +106,19 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
     ): List<SvgLineElement> {
         val toLocationBoundStart = toLocationBound(ctx)
         val toLocationBoundEnd = { p: DataPointAesthetics -> DoubleVector(p.x()!!, p.y()!!) }
-        return quantilesHelper.getQuantileLineElements(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.X, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!!
-            val y = p.y()!! + ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.Y) * scale * p.height()!!
+            val y = p.y()!! + ctx.getResolution(Aes.Y) * scale * p.height()!!
             return DoubleVector(x, y)
         }
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
-        val sizeAes = org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+        val sizeAes = Aes.HEIGHT
         val scaledResolution = resolution * this.scale
 
         val loc = p[coordAes]

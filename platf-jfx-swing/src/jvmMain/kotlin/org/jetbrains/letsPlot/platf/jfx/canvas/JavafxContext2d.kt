@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.*
 
-typealias JfxFont = javafx.scene.text.Font
+typealias JfxFont = Font
 typealias JfxFontWeight = javafx.scene.text.FontWeight
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
@@ -179,13 +179,13 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
 
     private fun org.jetbrains.letsPlot.core.canvas.Font.toJavaFxFont(): JfxFont {
         val weight: JfxFontWeight = when (fontWeight) {
-            org.jetbrains.letsPlot.core.canvas.FontWeight.NORMAL -> JfxFontWeight.NORMAL
-            org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD -> JfxFontWeight.BOLD
+            FontWeight.NORMAL -> JfxFontWeight.NORMAL
+            FontWeight.BOLD -> JfxFontWeight.BOLD
         }
 
         val posture: FontPosture = when (fontStyle) {
-            org.jetbrains.letsPlot.core.canvas.FontStyle.NORMAL -> FontPosture.REGULAR
-            org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC -> FontPosture.ITALIC
+            FontStyle.NORMAL -> FontPosture.REGULAR
+            FontStyle.ITALIC -> FontPosture.ITALIC
         }
 
         // In Javafx FontPosture will not work, for fonts without italics

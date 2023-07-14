@@ -34,7 +34,7 @@ class LineRangeGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LINE_RANGE, ctx)
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
             val ymin = p.ymin()!!
             val ymax = p.ymax()!!
@@ -48,7 +48,7 @@ class LineRangeGeom : GeomBase() {
         }
 
         BarTooltipHelper.collectRectangleTargets(
-            listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN),
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper),
             { HintColorUtil.colorWithAlpha(it) },
@@ -61,9 +61,9 @@ class LineRangeGeom : GeomBase() {
 
         private fun clientRectByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                if (p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.X) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)
+                if (p.defined(Aes.X) &&
+                    p.defined(Aes.YMIN) &&
+                    p.defined(Aes.YMAX)
                 ) {
                     val x = p.x()!!
                     val ymin = p.ymin()!!

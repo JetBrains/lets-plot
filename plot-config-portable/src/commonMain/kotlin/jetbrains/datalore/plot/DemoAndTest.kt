@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.PlotSvgComponent
-import jetbrains.datalore.plot.builder.presentation.Defaults
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil

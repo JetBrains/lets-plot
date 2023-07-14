@@ -53,10 +53,10 @@ class ArrowSpec
         return object : DataPointAestheticsDelegate(p) {
             private val filled = (type == Type.CLOSED)
 
-            override operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T? {
+            override operator fun <T> get(aes: Aes<T>): T? {
                 val value: Any? = when (aes) {
-                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL -> if (filled) super.get(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR) else Color.TRANSPARENT
-                    org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE -> if (filled) {
+                    Aes.FILL -> if (filled) super.get(Aes.COLOR) else Color.TRANSPARENT
+                    Aes.LINETYPE -> if (filled) {
                         NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
                     } else {
                         super.get(aes)

@@ -39,7 +39,7 @@ class VLineGeom : GeomBase() {
         val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.V_LINE, ctx)
 
         val lines = ArrayList<SvgLineElement>()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.XINTERCEPT)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.XINTERCEPT)) {
             val intercept = p.interceptX()!!
             if (viewPort.xRange().contains(intercept)) {
                 // line

@@ -56,8 +56,8 @@ open class TileGeom : GeomBase() {
                 val h = p.height()
 
                 if (SeriesUtil.allFinite(x, y, w, h)) {
-                    val width = w!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-                    val height = h!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+                    val width = w!! * ctx.getResolution(Aes.X)
+                    val height = h!! * ctx.getResolution(Aes.Y)
 
                     val origin = DoubleVector(x!! - width / 2, y!! - height / 2)
                     val dimensions = DoubleVector(width, height)

@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.SegmentGeom
-import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import jetbrains.livemap.api.*
@@ -48,7 +48,7 @@ object LayerConverter {
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
-            val positiveScalingLimit = when (org.jetbrains.letsPlot.core.plot.base.Aes.SIZE in layer.mappedAes) {
+            val positiveScalingLimit = when (Aes.SIZE in layer.mappedAes) {
                 true -> aesScalingLimit
                 false -> constScalingLimit
             }

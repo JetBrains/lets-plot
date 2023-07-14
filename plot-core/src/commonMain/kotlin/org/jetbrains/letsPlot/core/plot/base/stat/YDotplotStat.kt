@@ -21,12 +21,12 @@ class YDotplotStat(
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
@@ -89,11 +89,11 @@ class YDotplotStat(
     }
 
     companion object {
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y,
-            org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE to Stats.COUNT,
-            org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH to Stats.BIN_WIDTH
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.STACKSIZE to Stats.COUNT,
+            Aes.BINWIDTH to Stats.BIN_WIDTH
         )
     }
 }

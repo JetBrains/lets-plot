@@ -9,16 +9,16 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAd
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
 
-open class ChildList<ParentT, ChildT : org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
+open class ChildList<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
     ObservableArrayList<ChildT>() {
 
     init {
-        addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ChildT>() {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ChildT>) {
+        addListener(object : CollectionAdapter<ChildT>() {
+            override fun onItemAdded(event: CollectionItemEvent<out ChildT>) {
                 event.newItem!!.parent().flush()
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ChildT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ChildT>) {
                 val item = event.oldItem
                 item!!.parent().set(null)
                 item.setPositionData(null)
@@ -37,11 +37,11 @@ open class ChildList<ParentT, ChildT : org.jetbrains.letsPlot.commons.intern.obs
     override fun beforeItemAdded(index: Int, item: ChildT) {
         item.parent().set(myParent)
         item.setPositionData(object :
-            org.jetbrains.letsPlot.commons.intern.observable.children.PositionData<ChildT> {
-            override fun get(): org.jetbrains.letsPlot.commons.intern.observable.children.Position<ChildT> {
+            PositionData<ChildT> {
+            override fun get(): Position<ChildT> {
                 @Suppress("NAME_SHADOWING")
                 val index = indexOf(item)
-                return object : org.jetbrains.letsPlot.commons.intern.observable.children.Position<ChildT> {
+                return object : Position<ChildT> {
 
                     override val role: Any
                         get() = this@ChildList

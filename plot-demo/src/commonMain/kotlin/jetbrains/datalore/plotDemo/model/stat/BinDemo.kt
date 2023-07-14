@@ -25,7 +25,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -83,8 +83,8 @@ open class BinDemo : SimpleDemoBase() {
                 .build()
 
             // transform must happen before stat
-            data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
-            data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
+            data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+            data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
 
             // stat uses transform vars
             val binCount = 10

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.builder.assemble.facet.FacetScales
+import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg

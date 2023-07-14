@@ -9,15 +9,15 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.MarginalLayerUtil
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
-import jetbrains.datalore.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteraction
-import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 
 object PlotConfigClientSideUtil {

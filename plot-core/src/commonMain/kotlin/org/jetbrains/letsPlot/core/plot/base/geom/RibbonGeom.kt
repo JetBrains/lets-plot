@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 class RibbonGeom : GeomBase() {
 
     private fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)
+        val data = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)
         return GeomUtil.ordered_X(data)
     }
 
@@ -75,8 +75,8 @@ class RibbonGeom : GeomBase() {
                 )
 
             val hintsCollection = HintsCollection(p, helper)
-                .addHint(hint.create(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX))
-                .addHint(hint.create(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN))
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.YMIN))
 
             ctx.targetCollector.addPoint(
                 p.index(),

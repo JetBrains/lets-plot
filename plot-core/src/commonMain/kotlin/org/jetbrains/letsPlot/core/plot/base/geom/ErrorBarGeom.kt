@@ -28,12 +28,12 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
 
-    override val wontRender: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    override val wontRender: List<Aes<*>>
         get() {
             return if (isVertical) {
-                listOf(org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT)
+                listOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
             } else {
-                listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+                listOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
             }
         }
 
@@ -47,10 +47,10 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        val xAes = if (isVertical) org.jetbrains.letsPlot.core.plot.base.Aes.X else org.jetbrains.letsPlot.core.plot.base.Aes.Y
-        val minAes = if (isVertical) org.jetbrains.letsPlot.core.plot.base.Aes.YMIN else org.jetbrains.letsPlot.core.plot.base.Aes.XMIN
-        val maxAes = if (isVertical) org.jetbrains.letsPlot.core.plot.base.Aes.YMAX else org.jetbrains.letsPlot.core.plot.base.Aes.XMAX
-        val widthAes = if (isVertical) org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH else org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT
+        val xAes = if (isVertical) Aes.X else Aes.Y
+        val minAes = if (isVertical) Aes.YMIN else Aes.XMIN
+        val maxAes = if (isVertical) Aes.YMAX else Aes.XMAX
+        val widthAes = if (isVertical) Aes.WIDTH else Aes.HEIGHT
 
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), xAes, minAes, maxAes, widthAes)
 
@@ -108,7 +108,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             }
         }!!
 
-        val aes = if (isVerticalGeom) org.jetbrains.letsPlot.core.plot.base.Aes.X else org.jetbrains.letsPlot.core.plot.base.Aes.Y
+        val aes = if (isVerticalGeom) Aes.X else Aes.Y
         val hint = HintConfigFactory()
             .defaultObjectRadius(objectRadius)
             .defaultCoord(p[aes]!!)
@@ -120,8 +120,8 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
                 }
             )
 
-        val minAes = if (isVerticalGeom) org.jetbrains.letsPlot.core.plot.base.Aes.YMIN else org.jetbrains.letsPlot.core.plot.base.Aes.XMIN
-        val maxAes = if (isVerticalGeom) org.jetbrains.letsPlot.core.plot.base.Aes.YMAX else org.jetbrains.letsPlot.core.plot.base.Aes.XMAX
+        val minAes = if (isVerticalGeom) Aes.YMIN else Aes.XMIN
+        val maxAes = if (isVerticalGeom) Aes.YMAX else Aes.XMAX
         val hints = HintsCollection(p, geomHelper)
             .addHint(hint.create(minAes))
             .addHint(hint.create(maxAes))

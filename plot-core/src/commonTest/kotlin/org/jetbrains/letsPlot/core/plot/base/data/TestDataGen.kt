@@ -13,9 +13,9 @@ fun generateData(rowCount: Int, varNames: Collection<String>): DataFrame {
     val builder = DataFrame.Builder()
     for (variable in variables) {
         builder.put(variable,
-            org.jetbrains.letsPlot.core.plot.base.data.toSerie(
+            toSerie(
                 variable.name,
-                org.jetbrains.letsPlot.core.plot.base.data.indices(rowCount)
+                indices(rowCount)
             )
         )
     }

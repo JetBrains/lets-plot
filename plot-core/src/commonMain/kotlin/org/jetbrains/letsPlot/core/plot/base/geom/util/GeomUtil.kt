@@ -112,33 +112,33 @@ object GeomUtil {
         return ordering.sortedCopy(dataPoints)
     }
 
-    fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Iterable<DataPointAesthetics> {
+    fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: Aes<*>): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> p.defined(aes) }
     }
 
     fun withDefined(
         dataPoints: Iterable<DataPointAesthetics>,
-        aes0: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes1: org.jetbrains.letsPlot.core.plot.base.Aes<*>
+        aes0: Aes<*>,
+        aes1: Aes<*>
     ): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) }
     }
 
     fun withDefined(
         dataPoints: Iterable<DataPointAesthetics>,
-        aes0: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes1: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes2: org.jetbrains.letsPlot.core.plot.base.Aes<*>
+        aes0: Aes<*>,
+        aes1: Aes<*>,
+        aes2: Aes<*>
     ): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
     }
 
     fun withDefined(
         dataPoints: Iterable<DataPointAesthetics>,
-        aes0: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes1: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes2: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        aes3: org.jetbrains.letsPlot.core.plot.base.Aes<*>
+        aes0: Aes<*>,
+        aes1: Aes<*>,
+        aes2: Aes<*>,
+        aes3: Aes<*>
     ): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }

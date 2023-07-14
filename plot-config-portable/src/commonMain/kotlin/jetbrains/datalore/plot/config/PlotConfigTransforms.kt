@@ -7,33 +7,33 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.scale.ContinuousOnlyMapperProvider
-import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
-import jetbrains.datalore.plot.builder.scale.MapperProvider
-import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.scale.ContinuousOnlyMapperProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.DiscreteOnlyMapperProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.PlotConfigUtil.createPlotAesBindingSetup
 
 internal object PlotConfigTransforms {
     internal fun createTransforms(
         layerConfigs: List<LayerConfig>,
-        scaleProviderByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleProvider>,
-        mapperProviderByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MapperProvider<*>>,
+        scaleProviderByAes: Map<Aes<*>, ScaleProvider>,
+        mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
         excludeStatVariables: Boolean
-    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform> {
+    ): Map<Aes<*>, Transform> {
         // X,Y scale - always.
-        check(scaleProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        check(scaleProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
-        check(mapperProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        check(mapperProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        check(scaleProviderByAes.containsKey(Aes.X))
+        check(scaleProviderByAes.containsKey(Aes.Y))
+        check(mapperProviderByAes.containsKey(Aes.X))
+        check(mapperProviderByAes.containsKey(Aes.Y))
 
         val setup = createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         // All aes used in bindings and x/y aes.
         // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
-        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
-        val xAesSet = aesSet.filter { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(it) }.toSet()
-        val yAesSet = aesSet.filter { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(it) }.toSet()
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val xAesSet = aesSet.filter { Aes.isPositionalX(it) }.toSet()
+        val yAesSet = aesSet.filter { Aes.isPositionalY(it) }.toSet()
 
         val dataByVarBinding = setup.dataByVarBinding
         val variablesByMappedAes = setup.variablesByMappedAes
@@ -41,7 +41,7 @@ internal object PlotConfigTransforms {
         // Compute domains for all aes with discrete input.
 
         // Extract "discrete" aes set.
-        val discreteAesSet: MutableSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = HashSet()
+        val discreteAesSet: MutableSet<Aes<*>> = HashSet()
         for (aes in aesSet) {
             val scaleProvider = scaleProviderByAes.getValue(aes)
             if (scaleProvider.discreteDomain) {
@@ -76,7 +76,7 @@ internal object PlotConfigTransforms {
         val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
             it.aes in discreteAesSet
         }
-        val discreteDomainByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, LinkedHashSet<Any>>()
+        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
         for ((varBinding, data) in discreteDataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
@@ -85,13 +85,13 @@ internal object PlotConfigTransforms {
         }
 
         // create discrete transforms.
-        val discreteTransformByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DiscreteTransform>()
+        val discreteTransformByAes = HashMap<Aes<*>, DiscreteTransform>()
         for (aes in discreteAesSet) {
             val scaleProvider = scaleProviderByAes.getValue(aes)
             val scaleBreaks = scaleProvider.breaks ?: emptyList()
             val domainValues = if (discreteDomainByAes.containsKey(aes)) {
                 discreteDomainByAes.getValue(aes)
-            } else if (aes in setOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+            } else if (aes in setOf(Aes.X, Aes.Y)) {
                 // Aes x/y are always in the list, thus it's possible there is no data associated with x/y aes.
                 emptySet()
             } else {
@@ -119,10 +119,10 @@ internal object PlotConfigTransforms {
         }
 
         // Create continuous transforms.
-        val continuousTransformByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ContinuousTransform>()
+        val continuousTransformByAes = HashMap<Aes<*>, ContinuousTransform>()
         val continuousAesSet = aesSet - discreteAesSet
         for (aes in continuousAesSet) {
-            if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) && !(aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+            if (Aes.isPositionalXY(aes) && !(aes == Aes.X || aes == Aes.Y)) {
                 // Exclude all 'positional' aes except X, Y.
                 continue
             }
@@ -136,21 +136,21 @@ internal object PlotConfigTransforms {
         }
 
         // All 'positional' aes must use the same transform.
-        fun joinDiscreteTransforms(axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): Transform {
+        fun joinDiscreteTransforms(axisAes: List<Aes<*>>): Transform {
             return DiscreteTransform.join(axisAes.map { discreteTransformByAes.getValue(it) })
         }
 
         val xAxisTransform = when (discreteX) {
             true -> joinDiscreteTransforms(xAesSet.toList())
-            false -> continuousTransformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+            false -> continuousTransformByAes.getValue(Aes.X)
         }
         val yAxisTransform = when (discreteY) {
             true -> joinDiscreteTransforms(yAesSet.toList())
-            false -> continuousTransformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+            false -> continuousTransformByAes.getValue(Aes.Y)
         }
 
         // Replace all 'positional' transforms with the 'axis' transform.
-        val transformByPositionalAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform> =
+        val transformByPositionalAes: Map<Aes<*>, Transform> =
             xAesSet.associateWith { xAxisTransform } +
                     yAesSet.associateWith { yAxisTransform }
 

@@ -13,10 +13,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true) : TypedKey<T> {
 
     val isColor: Boolean
-        get() = org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isColor(this)
+        get() = isColor(this)
 
     init {
-        org.jetbrains.letsPlot.core.plot.base.Aes.Companion.values.add(this)
+        values.add(this)
     }
 
     override fun toString(): String {
@@ -24,222 +24,222 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
     }
 
     companion object {
-        private val values = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
+        private val values = ArrayList<Aes<*>>()
 
-        val X: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("x")
-        val Y: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("y")
-        val Z: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("z")
+        val X: Aes<Double> = Aes("x")
+        val Y: Aes<Double> = Aes("y")
+        val Z: Aes<Double> = Aes("z")
 
-        val COLOR: org.jetbrains.letsPlot.core.plot.base.Aes<Color> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("color", false)
-        val FILL: org.jetbrains.letsPlot.core.plot.base.Aes<Color> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("fill", false)
-        val PAINT_A: org.jetbrains.letsPlot.core.plot.base.Aes<Color> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("paint_a", false)
-        val PAINT_B: org.jetbrains.letsPlot.core.plot.base.Aes<Color> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("paint_b", false)
-        val PAINT_C: org.jetbrains.letsPlot.core.plot.base.Aes<Color> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("paint_c", false)
-        val ALPHA: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("alpha")
-        val SHAPE: org.jetbrains.letsPlot.core.plot.base.Aes<PointShape> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("shape", false)
-        val LINETYPE: org.jetbrains.letsPlot.core.plot.base.Aes<LineType> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("linetype", false)
+        val COLOR: Aes<Color> =
+            Aes("color", false)
+        val FILL: Aes<Color> =
+            Aes("fill", false)
+        val PAINT_A: Aes<Color> =
+            Aes("paint_a", false)
+        val PAINT_B: Aes<Color> =
+            Aes("paint_b", false)
+        val PAINT_C: Aes<Color> =
+            Aes("paint_c", false)
+        val ALPHA: Aes<Double> =
+            Aes("alpha")
+        val SHAPE: Aes<PointShape> =
+            Aes("shape", false)
+        val LINETYPE: Aes<LineType> =
+            Aes("linetype", false)
 
-        val SIZE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("size")
-        val STROKE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("stroke")
-        val LINEWIDTH: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("linewidth")
-        val STACKSIZE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("stacksize")
-        val WIDTH: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("width")
-        val HEIGHT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("height")
-        val BINWIDTH: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("binwidth")
-        val VIOLINWIDTH: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("violinwidth")
-        val WEIGHT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("weight")
-        val INTERCEPT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("intercept")
-        val SLOPE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("slope")
-        val XINTERCEPT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("xintercept")
-        val YINTERCEPT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("yintercept")
-        val LOWER: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("lower")
-        val MIDDLE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("middle")
-        val UPPER: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("upper")
-        val SAMPLE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("sample")
-        val QUANTILE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("quantile")
+        val SIZE: Aes<Double> = Aes("size")
+        val STROKE: Aes<Double> =
+            Aes("stroke")
+        val LINEWIDTH: Aes<Double> =
+            Aes("linewidth")
+        val STACKSIZE: Aes<Double> =
+            Aes("stacksize")
+        val WIDTH: Aes<Double> =
+            Aes("width")
+        val HEIGHT: Aes<Double> =
+            Aes("height")
+        val BINWIDTH: Aes<Double> =
+            Aes("binwidth")
+        val VIOLINWIDTH: Aes<Double> =
+            Aes("violinwidth")
+        val WEIGHT: Aes<Double> =
+            Aes("weight")
+        val INTERCEPT: Aes<Double> =
+            Aes("intercept")
+        val SLOPE: Aes<Double> =
+            Aes("slope")
+        val XINTERCEPT: Aes<Double> =
+            Aes("xintercept")
+        val YINTERCEPT: Aes<Double> =
+            Aes("yintercept")
+        val LOWER: Aes<Double> =
+            Aes("lower")
+        val MIDDLE: Aes<Double> =
+            Aes("middle")
+        val UPPER: Aes<Double> =
+            Aes("upper")
+        val SAMPLE: Aes<Double> =
+            Aes("sample")
+        val QUANTILE: Aes<Double> =
+            Aes("quantile")
 
-        val XMIN: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("xmin")
-        val XMAX: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("xmax")
-        val YMIN: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("ymin")
-        val YMAX: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("ymax")
-        val XEND: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("xend")
-        val YEND: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("yend")
+        val XMIN: Aes<Double> = Aes("xmin")
+        val XMAX: Aes<Double> = Aes("xmax")
+        val YMIN: Aes<Double> = Aes("ymin")
+        val YMAX: Aes<Double> = Aes("ymax")
+        val XEND: Aes<Double> = Aes("xend")
+        val YEND: Aes<Double> = Aes("yend")
 
-        val MAP_ID: org.jetbrains.letsPlot.core.plot.base.Aes<Any> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("map_id", false)
-        val FRAME: org.jetbrains.letsPlot.core.plot.base.Aes<String> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("frame", false)
+        val MAP_ID: Aes<Any> =
+            Aes("map_id", false)
+        val FRAME: Aes<String> =
+            Aes("frame", false)
 
-        val SPEED: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("speed")
-        val FLOW: org.jetbrains.letsPlot.core.plot.base.Aes<Double> = org.jetbrains.letsPlot.core.plot.base.Aes("flow")
+        val SPEED: Aes<Double> =
+            Aes("speed")
+        val FLOW: Aes<Double> = Aes("flow")
 
-        val LABEL: org.jetbrains.letsPlot.core.plot.base.Aes<Any> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("label", false)
-        val FAMILY: org.jetbrains.letsPlot.core.plot.base.Aes<String> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("family", false)
-        val FONTFACE: org.jetbrains.letsPlot.core.plot.base.Aes<String> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("fontface", false)
-        val LINEHEIGHT: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("lineheight")
+        val LABEL: Aes<Any> =
+            Aes("label", false)
+        val FAMILY: Aes<String> =
+            Aes("family", false)
+        val FONTFACE: Aes<String> =
+            Aes("fontface", false)
+        val LINEHEIGHT: Aes<Double> =
+            Aes("lineheight")
 
         // text horizontal justification (numbers [0..1] or predefined strings = new Aes<>(); not positional)
-        val HJUST = org.jetbrains.letsPlot.core.plot.base.Aes<Any>("hjust", false)
+        val HJUST = Aes<Any>("hjust", false)
 
         // text vertical justification (numbers [0..1] or predefined strings, not positional)
-        val VJUST = org.jetbrains.letsPlot.core.plot.base.Aes<Any>("vjust", false)
+        val VJUST = Aes<Any>("vjust", false)
 
-        val ANGLE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("angle")
+        val ANGLE: Aes<Double> =
+            Aes("angle")
 
         // pie geom - defines size of sector
-        val SLICE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("slice")
+        val SLICE: Aes<Double> =
+            Aes("slice")
         // pie geom - to explode sector from center point, detaching it from the main pie
-        val EXPLODE: org.jetbrains.letsPlot.core.plot.base.Aes<Double> =
-            org.jetbrains.letsPlot.core.plot.base.Aes("explode")
+        val EXPLODE: Aes<Double> =
+            Aes("explode")
 
-        fun numeric(unfiltered: Iterable<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>> {
+        fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
             @Suppress("UNCHECKED_CAST")
-            return unfiltered.filter { aes -> aes.isNumeric } as List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>>
+            return unfiltered.filter { aes -> aes.isNumeric } as List<Aes<Double>>
         }
 
-        fun isPositional(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalXY(aes) ||
+        fun isPositional(aes: Aes<*>): Boolean {
+            return Companion.isPositionalXY(aes) ||
                     // SLOPE must be positional or
                     // `geom_abline(slope=number)` will not work.
                     // it should draw the same line as:
                     // `geom_abline(slope=number, intersept=0)`
                     // See: PlotUtil.createLayerAesthetics()
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
+                    aes == SLOPE
         }
 
-        fun isPositionalXY(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalX(aes) ||
-                    org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalY(aes)
+        fun isPositionalXY(aes: Aes<*>): Boolean {
+            return Companion.isPositionalX(aes) ||
+                    Companion.isPositionalY(aes)
         }
 
-        fun isPositionalX(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
+        fun isPositionalX(aes: Aes<*>): Boolean {
+            return aes == X ||
+                    aes == Companion.XINTERCEPT ||
+                    aes == Companion.XMIN ||
+                    aes == Companion.XMAX ||
+                    aes == Companion.XEND
         }
 
-        fun isPositionalY(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMIN ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMAX ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LOWER ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
+        fun isPositionalY(aes: Aes<*>): Boolean {
+            return aes == Y ||
+                    aes == Companion.YMIN ||
+                    aes == Companion.YMAX ||
+                    aes == INTERCEPT ||
+                    aes == Companion.YINTERCEPT ||
+                    aes == LOWER ||
+                    aes == MIDDLE ||
+                    aes == UPPER ||
+                    aes == SAMPLE ||
+                    aes == Companion.YEND
         }
 
-        fun toAxisAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, isYOrientation: Boolean): org.jetbrains.letsPlot.core.plot.base.Aes<*> {
+        fun toAxisAes(aes: Aes<*>, isYOrientation: Boolean): Aes<*> {
             // Aes like `LOWER` (boxplot) are mapped on either X or Y-axis depending on the geom orientation.
             return when {
-                aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y -> aes
-                org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalX(aes) -> if (isYOrientation) org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y else org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
-                org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalY(aes) -> if (isYOrientation) org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X else org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
+                aes == X || aes == Y -> aes
+                Companion.isPositionalX(aes) -> if (isYOrientation) Y else X
+                Companion.isPositionalY(aes) -> if (isYOrientation) X else Y
                 else -> throw IllegalArgumentException("Expected a positional aes by was $aes")
             }
         }
 
-        fun isColor(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
+        fun isColor(aes: Aes<*>): Boolean {
+            return aes == COLOR ||
+                    aes == FILL ||
+                    aes == PAINT_A ||
+                    aes == PAINT_B ||
+                    aes == PAINT_C
         }
 
-        fun affectingScaleX(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalX(aes)
+        fun affectingScaleX(aes: Aes<*>): Boolean {
+            return Companion.isPositionalX(aes)
         }
 
-        fun affectingScaleY(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositionalY(aes) &&
+        fun affectingScaleY(aes: Aes<*>): Boolean {
+            return Companion.isPositionalY(aes) &&
                     // "INTERCEPT" is "positional Y" because it must use the same 'mapper' as other "positional Y"-s,
                     // but its range of values is not taken in account when computing the Y-mapper.
-                    aes != org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+                    aes != INTERCEPT
         }
 
-        fun affectingScaleX(unfiltered: Iterable<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>> {
-            val numeric = org.jetbrains.letsPlot.core.plot.base.Aes.Companion.numeric(unfiltered)
-            return numeric.filter { org.jetbrains.letsPlot.core.plot.base.Aes.Companion.affectingScaleX(it) }
+        fun affectingScaleX(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
+            val numeric = numeric(unfiltered)
+            return numeric.filter { affectingScaleX(it) }
         }
 
-        fun affectingScaleY(unfiltered: Iterable<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>> {
-            val numeric = org.jetbrains.letsPlot.core.plot.base.Aes.Companion.numeric(unfiltered)
-            return numeric.filter { org.jetbrains.letsPlot.core.plot.base.Aes.Companion.affectingScaleY(it) }
+        fun affectingScaleY(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
+            val numeric = numeric(unfiltered)
+            return numeric.filter { affectingScaleY(it) }
         }
 
-        fun noGuideNeeded(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            return aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE ||
-                    aes == org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE ||
-                    org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositional(aes)
+        fun noGuideNeeded(aes: Aes<*>): Boolean {
+            return aes == MAP_ID ||
+                    aes == FRAME ||
+                    aes == SPEED ||
+                    aes == FLOW ||
+                    aes == LABEL ||
+                    aes == SLOPE ||
+                    aes == STACKSIZE ||
+                    aes == WIDTH ||
+                    aes == HEIGHT ||
+                    aes == BINWIDTH ||
+                    aes == VIOLINWIDTH ||
+                    aes == QUANTILE ||
+                    aes == HJUST ||
+                    aes == VJUST ||
+                    aes == ANGLE ||
+                    aes == FAMILY ||
+                    aes == FONTFACE ||
+                    aes == LINEHEIGHT ||
+                    aes == SLICE ||
+                    aes == EXPLODE ||
+                    isPositional(aes)
         }
 
-        fun values(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.values
+        fun values(): List<Aes<*>> {
+            return values
         }
 
-        fun allPositional(): List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>> {
+        fun allPositional(): List<Aes<Double>> {
             @Suppress("UNCHECKED_CAST")
-            return org.jetbrains.letsPlot.core.plot.base.Aes.Companion.values.filter {
-                org.jetbrains.letsPlot.core.plot.base.Aes.Companion.isPositional(
+            return values.filter {
+                isPositional(
                     it
                 )
-            } as List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>>
+            } as List<Aes<Double>>
         }
     }
 }

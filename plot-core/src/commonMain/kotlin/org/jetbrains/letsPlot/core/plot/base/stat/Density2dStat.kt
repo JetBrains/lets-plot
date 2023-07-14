@@ -38,7 +38,7 @@ class Density2dStat constructor(
 ) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.X, Aes.Y)) {
             return withEmptyStatValues()
         }
 

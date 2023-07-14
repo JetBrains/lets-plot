@@ -13,21 +13,21 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 interface PlotContext {
     val layers: List<Layer>
 
-    fun hasScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
-    fun getScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Scale
-    fun overallTransformedDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan
+    fun hasScale(aes: Aes<*>): Boolean
+    fun getScale(aes: Aes<*>): Scale
+    fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
 
-    fun getTooltipFormatter(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String
+    fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String
 
     interface Layer {
         val isLegendDisabled: Boolean
         val aestheticsDefaults: AestheticsDefaults
         val legendKeyElementFactory: LegendKeyElementFactory
-        val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
-        val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
-        fun renderedAes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
-        fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
-        fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
-        fun <T> getConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T
+        val colorByAes: Aes<Color>
+        val fillByAes: Aes<Color>
+        fun renderedAes(): List<Aes<*>>
+        fun hasBinding(aes: Aes<*>): Boolean
+        fun hasConstant(aes: Aes<*>): Boolean
+        fun <T> getConstant(aes: Aes<T>): T
     }
 }

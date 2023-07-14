@@ -20,12 +20,12 @@ class SummaryStat(
     private val upperQuantile: Double
 ) : BaseStat(DEF_MAPPING) {
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
@@ -90,11 +90,11 @@ class SummaryStat(
     companion object {
         val DEF_QUANTILES = Triple(0.25, 0.5, 0.75)
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to Stats.Y_MIN,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to Stats.Y_MAX
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.YMIN to Stats.Y_MIN,
+            Aes.YMAX to Stats.Y_MAX
         )
     }
 }

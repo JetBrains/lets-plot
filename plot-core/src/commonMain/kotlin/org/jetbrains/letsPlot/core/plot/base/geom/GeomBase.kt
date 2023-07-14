@@ -33,7 +33,7 @@ abstract class GeomBase : Geom {
         buildIntern(root, aesthetics, pos, coord, ctx)
     }
 
-    open fun preferableNullDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan {
+    open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
         return DoubleSpan(-0.5, 0.5)
     }
 
@@ -73,8 +73,8 @@ abstract class GeomBase : Geom {
         fun layerAesBounds(aesthetics: Aesthetics): DoubleRectangle {
             // ToDo: flip?
             return DoubleRectangle(
-                aesthetics.range(org.jetbrains.letsPlot.core.plot.base.Aes.X)!!,
-                aesthetics.range(org.jetbrains.letsPlot.core.plot.base.Aes.Y)!!
+                aesthetics.range(Aes.X)!!,
+                aesthetics.range(Aes.Y)!!
             )
         }
 

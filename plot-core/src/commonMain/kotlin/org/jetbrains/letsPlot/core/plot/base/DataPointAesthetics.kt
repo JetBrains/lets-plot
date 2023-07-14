@@ -14,30 +14,30 @@ abstract class DataPointAesthetics {
 
     abstract fun group(): Int?
 
-    abstract operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T?
+    abstract operator fun <T> get(aes: Aes<T>): T?
 
-    abstract val colorAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
+    abstract val colorAes: Aes<Color>
 
-    abstract val fillAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
+    abstract val fillAes: Aes<Color>
 
     fun x(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        return get(Aes.X)
     }
 
     fun y(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        return get(Aes.Y)
     }
 
     fun z(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.Z)
+        return get(Aes.Z)
     }
 
     fun ymin(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN)
+        return get(Aes.YMIN)
     }
 
     fun ymax(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)
+        return get(Aes.YMAX)
     }
 
     fun color(): Color? {
@@ -49,162 +49,162 @@ abstract class DataPointAesthetics {
     }
 
     fun alpha(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA)
+        return get(Aes.ALPHA)
     }
 
     fun shape(): PointShape? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE)
+        return get(Aes.SHAPE)
     }
 
     fun lineType(): LineType {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE)
+        return getNotNull(Aes.LINETYPE)
     }
 
     fun size(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SIZE)
+        return get(Aes.SIZE)
     }
 
     fun stroke(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.STROKE)
+        return get(Aes.STROKE)
     }
 
     fun linewidth(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.LINEWIDTH)
+        return get(Aes.LINEWIDTH)
     }
 
     fun stacksize(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE)
+        return get(Aes.STACKSIZE)
     }
 
     fun width(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+        return get(Aes.WIDTH)
     }
 
     fun height(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT)
+        return get(Aes.HEIGHT)
     }
 
     fun binwidth(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH)
+        return get(Aes.BINWIDTH)
     }
 
     fun violinwidth(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.VIOLINWIDTH)
+        return get(Aes.VIOLINWIDTH)
     }
 
     fun weight(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+        return get(Aes.WEIGHT)
     }
 
     fun intercept(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.INTERCEPT)
+        return get(Aes.INTERCEPT)
     }
 
     fun slope(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SLOPE)
+        return get(Aes.SLOPE)
     }
 
     fun interceptX(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.XINTERCEPT)
+        return get(Aes.XINTERCEPT)
     }
 
     fun interceptY(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.YINTERCEPT)
+        return get(Aes.YINTERCEPT)
     }
 
     fun lower(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.LOWER)
+        return get(Aes.LOWER)
     }
 
     fun middle(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE)
+        return get(Aes.MIDDLE)
     }
 
     fun upper(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.UPPER)
+        return get(Aes.UPPER)
     }
 
     fun sample(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SAMPLE)
+        return get(Aes.SAMPLE)
     }
 
     fun quantile(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE)
+        return get(Aes.QUANTILE)
     }
 
     fun mapId(): Any {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.MAP_ID)
+        return getNotNull(Aes.MAP_ID)
     }
 
     fun frame(): String {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.FRAME)
+        return getNotNull(Aes.FRAME)
     }
 
     fun speed(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SPEED)
+        return get(Aes.SPEED)
     }
 
     fun flow(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.FLOW)
+        return get(Aes.FLOW)
     }
 
     fun xmin(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN)
+        return get(Aes.XMIN)
     }
 
     fun xmax(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.XMAX)
+        return get(Aes.XMAX)
     }
 
     fun xend(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.XEND)
+        return get(Aes.XEND)
     }
 
     fun yend(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.YEND)
+        return get(Aes.YEND)
     }
 
     fun label(): Any? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL)
+        return get(Aes.LABEL)
     }
 
     fun family(): String {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.FAMILY)
+        return getNotNull(Aes.FAMILY)
     }
 
     fun fontface(): String {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE)
+        return getNotNull(Aes.FONTFACE)
     }
 
     fun lineheight(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.LINEHEIGHT)
+        return get(Aes.LINEHEIGHT)
     }
 
     fun hjust(): Any {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.HJUST)
+        return getNotNull(Aes.HJUST)
     }
 
     fun vjust(): Any {
-        return getNotNull(org.jetbrains.letsPlot.core.plot.base.Aes.VJUST)
+        return getNotNull(Aes.VJUST)
     }
 
     fun angle(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.ANGLE)
+        return get(Aes.ANGLE)
     }
 
     fun slice(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.SLICE)
+        return get(Aes.SLICE)
     }
 
     fun explode(): Double? {
-        return get(org.jetbrains.letsPlot.core.plot.base.Aes.EXPLODE)
+        return get(Aes.EXPLODE)
     }
 
-    fun numeric(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double? {
+    fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }
 
-    fun defined(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    fun defined(aes: Aes<*>): Boolean {
         if (aes.isNumeric) {
             val number = get(aes)
             return number != null && (number as Double).isFinite()
@@ -212,7 +212,7 @@ abstract class DataPointAesthetics {
         return true
     }
 
-    private fun <T> getNotNull(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
+    private fun <T> getNotNull(aes: Aes<T>): T {
         return get(aes) ?: throw IllegalStateException("No value for aesthetic $aes at index ${index()}")
     }
 }

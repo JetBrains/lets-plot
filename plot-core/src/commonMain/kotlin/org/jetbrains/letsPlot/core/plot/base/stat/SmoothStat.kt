@@ -51,17 +51,17 @@ class SmoothStat constructor(
     private val samplingSeed: Long
 ) : BaseStat(DEF_MAPPING) {
 
-    override fun hasDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
-                aes == org.jetbrains.letsPlot.core.plot.base.Aes.YMIN && displayConfidenceInterval ||
-                aes == org.jetbrains.letsPlot.core.plot.base.Aes.YMAX && displayConfidenceInterval
+                aes == Aes.YMIN && displayConfidenceInterval ||
+                aes == Aes.YMAX && displayConfidenceInterval
     }
 
-    override fun getDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable {
-        if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.YMIN) {
+    override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
+        if (aes == Aes.YMIN) {
             return Stats.Y_MIN
         }
-        return if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.YMAX) {
+        return if (aes == Aes.YMAX) {
             Stats.Y_MAX
         } else super.getDefaultMapping(aes)
     }
@@ -75,9 +75,9 @@ class SmoothStat constructor(
     }
 
     companion object {
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
         )  // also conditional Y_MIN / Y_MAX
         const val DEF_EVAL_POINT_COUNT = 80
         val DEF_SMOOTHING_METHOD = Method.LM
@@ -90,8 +90,8 @@ class SmoothStat constructor(
     }
 
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y)
     }
 
     private fun needSampling(rowCount: Int): Boolean {
@@ -114,7 +114,7 @@ class SmoothStat constructor(
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 

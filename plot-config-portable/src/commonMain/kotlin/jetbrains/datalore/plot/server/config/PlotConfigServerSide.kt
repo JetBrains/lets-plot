@@ -9,12 +9,12 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.data.DataProcessing
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
-import jetbrains.datalore.plot.builder.data.YOrientationUtil
-import jetbrains.datalore.plot.builder.tooltip.data.DataFrameField
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
+import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
+import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
@@ -260,7 +260,7 @@ open class PlotConfigServerSide(
             layerDataMeta: Map<String, Any>,
             stat: Stat,
             varBindings: List<VarBinding>,
-            transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
+            transformByAes: Map<Aes<*>, Transform>,
             orderOptions: List<OrderOption>,
             yOrientation: Boolean,
         ): Map<String, Any> {
@@ -271,7 +271,7 @@ open class PlotConfigServerSide(
 
             @Suppress("UNCHECKED_CAST")
             val discreteTransformByAes = transformByAes
-                .filterValues { it is DiscreteTransform } as Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DiscreteTransform>
+                .filterValues { it is DiscreteTransform } as Map<Aes<*>, DiscreteTransform>
 
             val statDefaultMappings = stat.getDefaultVariableMappings(yOrientation)
             val explicitMappings = varBindings

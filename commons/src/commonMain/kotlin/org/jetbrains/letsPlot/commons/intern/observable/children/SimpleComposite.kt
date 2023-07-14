@@ -10,9 +10,9 @@ import kotlin.js.JsName
 
 open class SimpleComposite<ParentT, SiblingT> {
     private val myParent = DelayedValueProperty<ParentT>()
-    private var myPositionData: org.jetbrains.letsPlot.commons.intern.observable.children.PositionData<out SiblingT>? = null
+    private var myPositionData: PositionData<out SiblingT>? = null
 
-    val position: org.jetbrains.letsPlot.commons.intern.observable.children.Position<out SiblingT>
+    val position: Position<out SiblingT>
         get() {
             if (myPositionData == null) {
                 throw IllegalStateException()
@@ -30,7 +30,7 @@ open class SimpleComposite<ParentT, SiblingT> {
         return myParent
     }
 
-    fun setPositionData(positionData: org.jetbrains.letsPlot.commons.intern.observable.children.PositionData<out SiblingT>?) {
+    fun setPositionData(positionData: PositionData<out SiblingT>?) {
         myPositionData = positionData
     }
 }

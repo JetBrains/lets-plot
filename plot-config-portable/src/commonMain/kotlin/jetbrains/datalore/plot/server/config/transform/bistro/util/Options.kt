@@ -13,8 +13,8 @@ import kotlin.reflect.KProperty
 abstract class Options(
     val properties: MutableMap<String, Any?> = mutableMapOf()
 ) {
-    inline operator fun <reified T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
-    operator fun <T> set(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
+    inline operator fun <reified T> get(aes: Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
+    operator fun <T> set(aes: Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
 }
 
 inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
@@ -37,4 +37,4 @@ inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, T
 //      at BackendSpecTransformUtil.processTransformIntern2_0
 //      at BackendSpecTransformUtil.processTransformIntern_0
 //      at BackendSpecTransformUtil.processTransform_2wxo1b$
-inline fun <reified TValue> map(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): ReadWriteProperty<Options, TValue?> = map(aes.name.lowercase())
+inline fun <reified TValue> map(aes: Aes<*>): ReadWriteProperty<Options, TValue?> = map(aes.name.lowercase())

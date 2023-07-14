@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
 
@@ -589,24 +589,24 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        private val AES_BY_OPTION = HashMap<String, org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
+        private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
-            org.jetbrains.letsPlot.core.plot.base.Aes.values().forEach { aes ->
+            Aes.values().forEach { aes ->
                 AES_BY_OPTION[toOption(aes)] = aes
             }
             // aliases
-            AES_BY_OPTION["colour"] = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
-            AES_BY_OPTION["col"] = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
+            AES_BY_OPTION["colour"] = Aes.COLOR
+            AES_BY_OPTION["col"] = Aes.COLOR
         }
 
-        fun toAes(option: String): org.jetbrains.letsPlot.core.plot.base.Aes<*> {
+        fun toAes(option: String): Aes<*> {
             require(AES_BY_OPTION.containsKey(option)) { "Not an aesthetic: '$option'" }
             return AES_BY_OPTION[option]!!
         }
 
-        fun toOption(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): String {
+        fun toOption(aes: Aes<*>): String {
             return aes.name.lowercase()
         }
     }
@@ -650,7 +650,7 @@ object Option {
         const val FLAVOR = "flavor"
 
         // All other options were moved to
-        // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
+        // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
 
         // view element
         const val ELEMENT_BLANK = ELEMENT_BLANK_SHORTHAND

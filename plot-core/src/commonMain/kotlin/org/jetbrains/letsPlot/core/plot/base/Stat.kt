@@ -12,14 +12,14 @@ interface Stat {
 
     fun normalize(dataAfterStat: DataFrame): DataFrame
 
-    fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    fun consumes(): List<Aes<*>>
 
-    fun hasDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
+    fun hasDefaultMapping(aes: Aes<*>): Boolean
 
-    fun getDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable
+    fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable
 
-    fun getDefaultVariableMappings(yOrientation: Boolean): Map<DataFrame.Variable, org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return org.jetbrains.letsPlot.core.plot.base.Aes.values()
+    fun getDefaultVariableMappings(yOrientation: Boolean): Map<DataFrame.Variable, Aes<*>> {
+        return Aes.values()
             .filter { hasDefaultMapping(it) }
             .associateBy { getDefaultMapping(it) }
             .mapValues { (_, aes) ->

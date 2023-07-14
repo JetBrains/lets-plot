@@ -11,11 +11,11 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
+import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
+import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils

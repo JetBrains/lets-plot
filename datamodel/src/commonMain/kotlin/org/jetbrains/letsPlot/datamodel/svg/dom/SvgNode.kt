@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 
 
-abstract class SvgNode : org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<SvgNode?, SvgNode>() {
+abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
     private var myContainer: SvgNodeContainer? = null
 
     private var myChildren: SvgChildList? = null
@@ -75,7 +75,7 @@ abstract class SvgNode : org.jetbrains.letsPlot.commons.intern.observable.childr
 
     private inner class SvgChildList internal constructor(parent: SvgNode) :
 
-            org.jetbrains.letsPlot.commons.intern.observable.children.ChildList<SvgNode, SvgNode>(parent) {
+            ChildList<SvgNode, SvgNode>(parent) {
 
         override fun beforeItemAdded(index: Int, item: SvgNode) {
             if (isAttached()) {

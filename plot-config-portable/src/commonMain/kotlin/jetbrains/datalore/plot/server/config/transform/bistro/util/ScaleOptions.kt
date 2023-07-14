@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.config.Option
 
 class ScaleOptions : Options() {
     var name: String? by map(Option.Scale.NAME)
-    var aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>? by map(Option.Scale.AES)
+    var aes: Aes<*>? by map(Option.Scale.AES)
     var mapperKind: String? by map(Option.Scale.SCALE_MAPPER_KIND)
     var palette: String? by map(Option.Scale.PALETTE)
     var naValue: Any? by map(Option.Scale.NA_VALUE)

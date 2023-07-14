@@ -7,9 +7,9 @@ package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.presentation.Defaults
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString

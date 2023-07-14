@@ -16,13 +16,13 @@ class GGBunchTest {
     fun testBackendTransform() {
         val geom0 = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
-            Option.PlotBase.MAPPING to mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to List(50) { 1.0 }),
+            Option.PlotBase.MAPPING to mapOf(Aes.X.name to List(50) { 1.0 }),
             "bins" to 1
         )
 
         val geom1 = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
-            Option.PlotBase.MAPPING to mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to List(100) { 1.0 }),
+            Option.PlotBase.MAPPING to mapOf(Aes.X.name to List(100) { 1.0 }),
             "bins" to 1
         )
 
@@ -34,13 +34,13 @@ class GGBunchTest {
         // Expected
         val geom0Exp = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
-            Option.PlotBase.MAPPING to mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x"),
+            Option.PlotBase.MAPPING to mapOf(Aes.X.name to "x"),
             Option.PlotBase.DATA to mapOf("..count.." to listOf(50.0), "x" to listOf(1.0)),
             "bins" to 1
         )
         val geom1Exp = mapOf(
             Option.Layer.GEOM to Option.GeomName.HISTOGRAM,
-            Option.PlotBase.MAPPING to mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x"),
+            Option.PlotBase.MAPPING to mapOf(Aes.X.name to "x"),
             Option.PlotBase.DATA to mapOf("..count.." to listOf(100.0), "x" to listOf(1.0)),
             "bins" to 1
         )

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ANNOTATION

@@ -7,9 +7,9 @@ package jetbrains.datalore.vis.demoUtils
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
-import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import org.jetbrains.letsPlot.platf.batik.plot.util.BatikMapperComponent
 import org.jetbrains.letsPlot.platf.awt.plot.component.PlotComponentProvider

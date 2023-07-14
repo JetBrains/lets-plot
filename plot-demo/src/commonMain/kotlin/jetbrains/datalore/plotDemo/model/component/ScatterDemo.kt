@@ -26,11 +26,11 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.AxisUtil
-import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
-import jetbrains.datalore.plot.builder.guide.AxisComponent
-import jetbrains.datalore.plot.builder.guide.Orientation
+import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesRClassic
+import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
@@ -89,8 +89,8 @@ open class ScatterDemo : SimpleDemoBase() {
         val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
 
@@ -154,7 +154,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer(
                     aes,
                     PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
                 )
@@ -256,7 +256,7 @@ open class ScatterDemo : SimpleDemoBase() {
 //                .labels(labels)
 //                .build()
 
-            val scaleColor = Scales.DemoAndTest.continuousDomain("C", org.jetbrains.letsPlot.core.plot.base.Aes.COLOR).with()
+            val scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR).with()
 //                .mapper(mapperColor)
                 .breaks(breaks)
                 .labels(labels)
@@ -266,9 +266,9 @@ open class ScatterDemo : SimpleDemoBase() {
         }
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
-        data = DataFrameUtil.applyTransform(data, varC, org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, scaleColor.transform)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varC, Aes.COLOR, scaleColor.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
@@ -339,7 +339,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer(
                     aes,
                     PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
                 )
@@ -397,8 +397,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
@@ -464,7 +464,7 @@ open class ScatterDemo : SimpleDemoBase() {
 
             val pos = PositionAdjustments.identity()
             val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer(
                     aes,
                     PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
                 )

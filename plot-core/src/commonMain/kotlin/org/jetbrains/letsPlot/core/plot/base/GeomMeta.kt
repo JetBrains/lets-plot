@@ -14,9 +14,9 @@ import kotlin.native.concurrent.ThreadLocal
 //      -   `renderedAesByGeom` map
 @ThreadLocal
 object GeomMeta {
-    private val renderedAesByGeom = HashMap<GeomKind, List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>>()
+    private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
 
-    private fun renders(geomKind: GeomKind): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun renders(geomKind: GeomKind): List<Aes<*>> {
         if (!renderedAesByGeom.containsKey(geomKind)) {
             renderedAesByGeom[geomKind] =
                 renderedAesList(geomKind)
@@ -26,169 +26,169 @@ object GeomMeta {
 
     fun renders(
         geomKind: GeomKind,
-        actualColorAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
-        actualFillAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
-        exclude: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = emptyList()
-    ): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+        actualColorAes: Aes<Color>,
+        actualFillAes: Aes<Color>,
+        exclude: List<Aes<*>> = emptyList()
+    ): List<Aes<*>> {
         return (renders(geomKind) - exclude).map {
             when (it) {
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR -> actualColorAes
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL -> actualFillAes
+                Aes.COLOR -> actualColorAes
+                Aes.FILL -> actualFillAes
                 else -> it
             }
         }
     }
 
     private val POINT = listOf(
-        org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.STROKE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-        org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-        org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.MAP_ID
+        Aes.X, Aes.Y,
+        Aes.SIZE,
+        Aes.STROKE,
+        Aes.COLOR,
+        Aes.FILL,
+        Aes.ALPHA,
+        Aes.SHAPE,
+        Aes.MAP_ID
     )
 
     private val PATH = listOf(
-        org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-        org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-        org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SPEED,
-        org.jetbrains.letsPlot.core.plot.base.Aes.FLOW
+        Aes.X, Aes.Y,
+        Aes.SIZE, // path width
+        Aes.LINETYPE,
+        Aes.COLOR,
+        Aes.ALPHA,
+        Aes.SPEED,
+        Aes.FLOW
     )
 
     private val POLYGON = listOf(
-        org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-        org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-        org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-        org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-        org.jetbrains.letsPlot.core.plot.base.Aes.MAP_ID
+        Aes.X, Aes.Y,
+        Aes.SIZE, // path width
+        Aes.LINETYPE,
+        Aes.COLOR,
+        Aes.FILL,
+        Aes.ALPHA,
+        Aes.MAP_ID
     )
 
     private val AREA = listOf(
-        org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-        org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-        org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-        org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+        Aes.X, Aes.Y,
+        Aes.QUANTILE,
+        Aes.SIZE,
+        Aes.LINETYPE,
+        Aes.COLOR,
+        Aes.FILL,
+        Aes.ALPHA
     )
 
 
-    private fun renderedAesList(geomKind: GeomKind): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun renderedAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.POINT -> POINT
             GeomKind.PATH -> PATH
             GeomKind.LINE -> PATH
 
             GeomKind.SMOOTH -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
+                Aes.X, Aes.Y,
+                Aes.YMIN, Aes.YMAX,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.BAR -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.X,
+                Aes.Y,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.WIDTH,
+                Aes.SIZE
             )
 
             GeomKind.HISTOGRAM -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
+                Aes.X, Aes.Y,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
                 //Aes.WEIGHT,    // ToDo: this is actually handled by 'stat' (bin,count)
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.WIDTH,
+                Aes.SIZE
             )
 
             GeomKind.DOT_PLOT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE
+                Aes.X,
+                Aes.BINWIDTH,
+                Aes.STACKSIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.STROKE
             )
 
             GeomKind.TILE,
             GeomKind.BIN_2D -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.X, Aes.Y,
+                Aes.WIDTH,
+                Aes.HEIGHT,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE
             )
 
             GeomKind.ERROR_BAR -> listOf(
                 // vertical representation
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
+                Aes.X,
+                Aes.YMIN, Aes.YMAX,
+                Aes.WIDTH,
 
                 // horizontal
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT,
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
+                Aes.HEIGHT,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.LINETYPE,
+                Aes.SIZE
             )
 
             GeomKind.CROSS_BAR -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
+                Aes.X,
+                Aes.YMIN, Aes.YMAX, Aes.MIDDLE,
+                Aes.WIDTH,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE
             )
 
             GeomKind.LINE_RANGE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.X,
+                Aes.YMIN, Aes.YMAX,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.LINETYPE,
+                Aes.SIZE
             )
 
             GeomKind.POINT_RANGE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINEWIDTH
+                Aes.X, Aes.Y,
+                Aes.YMIN, Aes.YMAX,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.LINEWIDTH
             )
 
             GeomKind.CONTOUR -> PATH
@@ -196,103 +196,103 @@ object GeomMeta {
             GeomKind.POLYGON -> POLYGON
             GeomKind.MAP -> listOf(
                 // auto-wired to 'x' or 'long' and to 'y' or 'lat'
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.X, Aes.Y,
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.AB_LINE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.INTERCEPT, org.jetbrains.letsPlot.core.plot.base.Aes.SLOPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.INTERCEPT, Aes.SLOPE,
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
             )
 
             GeomKind.H_LINE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.YINTERCEPT,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.YINTERCEPT,
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
             )
 
             GeomKind.V_LINE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.XINTERCEPT,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // path width
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.XINTERCEPT,
+                Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
             )
 
             GeomKind.BOX_PLOT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.LOWER,
-                org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.UPPER,
+                Aes.LOWER,
+                Aes.MIDDLE,
+                Aes.UPPER,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN,
+                Aes.X,
+                Aes.YMAX,
+                Aes.YMIN,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE, // line width
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SHAPE,
+                Aes.SIZE, // line width
+                Aes.WIDTH
             )
 
             GeomKind.AREA_RIDGES -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT,
-                org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE,
+                Aes.X,
+                Aes.Y,
+                Aes.HEIGHT,
+                Aes.QUANTILE,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE
             )
 
             GeomKind.VIOLIN -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.VIOLINWIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE,
+                Aes.X,
+                Aes.Y,
+                Aes.VIOLINWIDTH,
+                Aes.QUANTILE,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE,
+                Aes.WIDTH
             )
 
             GeomKind.Y_DOT_PLOT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE,
+                Aes.X,
+                Aes.Y,
+                Aes.BINWIDTH,
+                Aes.STACKSIZE,
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.STROKE
             )
 
             GeomKind.RIBBON -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.X,
+                Aes.YMIN, Aes.YMAX,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.AREA -> AREA
@@ -301,128 +301,128 @@ object GeomMeta {
             GeomKind.DENSITY2DF -> POLYGON
             GeomKind.JITTER -> POINT
             GeomKind.Q_Q -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SAMPLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE
             )
 
             GeomKind.Q_Q_2 -> POINT
             GeomKind.Q_Q_LINE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SAMPLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
             )
 
             GeomKind.Q_Q_2_LINE -> PATH
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH
             GeomKind.RECT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.XMIN, Aes.XMAX,
+                Aes.YMIN, Aes.YMAX,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.SEGMENT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.XEND, org.jetbrains.letsPlot.core.plot.base.Aes.YEND,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SPEED,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FLOW
+                Aes.X, Aes.Y,
+                Aes.XEND, Aes.YEND,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.SPEED,
+                Aes.FLOW
             )
 
             GeomKind.TEXT -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LABEL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FAMILY,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.HJUST,
-                org.jetbrains.letsPlot.core.plot.base.Aes.VJUST,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ANGLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINEHEIGHT
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT
             )
 
             GeomKind.LABEL -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LABEL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FAMILY,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.HJUST,
-                org.jetbrains.letsPlot.core.plot.base.Aes.VJUST,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ANGLE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINEHEIGHT
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT
             )
 
             GeomKind.LIVE_MAP -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FRAME,
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.SIZE,
+                Aes.SHAPE,
+                Aes.FRAME,
+                Aes.X,
+                Aes.Y
             )
 
             GeomKind.RASTER -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, // not rendered but required for correct x aes range computation
-                org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT, // -- the same --
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA
+                Aes.X, Aes.Y,
+                Aes.WIDTH, // not rendered but required for correct x aes range computation
+                Aes.HEIGHT, // -- the same --
+                Aes.FILL,
+                Aes.ALPHA
             )
 
             GeomKind.IMAGE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.XMIN,
-                org.jetbrains.letsPlot.core.plot.base.Aes.XMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMIN,
-                org.jetbrains.letsPlot.core.plot.base.Aes.YMAX,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR  // not rendered but necessary for color legend to appear.
+                Aes.XMIN,
+                Aes.XMAX,
+                Aes.YMIN,
+                Aes.YMAX,
+                Aes.COLOR  // not rendered but necessary for color legend to appear.
             )
 
             GeomKind.PIE -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SLICE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.EXPLODE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE
+                Aes.X,
+                Aes.Y,
+                Aes.SLICE,
+                Aes.EXPLODE,
+                Aes.SIZE,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.STROKE
             )
 
             GeomKind.LOLLIPOP -> listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SIZE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.STROKE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINEWIDTH,
-                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
-                org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA,
-                org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
-                org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.LINEWIDTH,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE,
+                Aes.LINETYPE
             )
         }
     }

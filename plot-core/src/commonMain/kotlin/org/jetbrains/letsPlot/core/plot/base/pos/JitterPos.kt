@@ -24,8 +24,8 @@ internal class JitterPos(width: Double?, height: Double?) : PositionAdjustment {
     }
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        val x = (2 * Random.nextDouble() - 1) * myWidth * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-        val y = (2 * Random.nextDouble() - 1) * myHeight * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val x = (2 * Random.nextDouble() - 1) * myWidth * ctx.getResolution(Aes.X)
+        val y = (2 * Random.nextDouble() - 1) * myHeight * ctx.getResolution(Aes.Y)
         return v.add(DoubleVector(x, y))
     }
 

@@ -242,14 +242,14 @@ open class OptionsAccessor(
     }
 
     fun getColor(option: String): Color? {
-        return getValue(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, option)
+        return getValue(Aes.COLOR, option)
     }
 
     fun getShape(option: String): PointShape? {
-        return getValue(org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE, option)
+        return getValue(Aes.SHAPE, option)
     }
 
-    protected fun <T> getValue(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, option: String): T? {
+    protected fun <T> getValue(aes: Aes<T>, option: String): T? {
         val v = get(option) ?: return null
         return AesOptionConversion.apply(aes, v)
     }

@@ -11,23 +11,23 @@ import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats.EMPTY_STATS_DATAFRAME
 
-abstract class BaseStat(private val defaultMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>) : Stat {
+abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) : Stat {
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
         return dataAfterStat
     }
 
-    override fun hasDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return defaultMappings.containsKey(aes)
     }
 
-    override fun getDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable {
+    override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
         if (defaultMappings.containsKey(aes)) {
             return defaultMappings[aes]!!
         }
         throw IllegalArgumentException("Stat " + this::class.simpleName + " has no default mapping for aes: " + aes)
     }
 
-    protected fun hasRequiredValues(data: DataFrame, vararg aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    protected fun hasRequiredValues(data: DataFrame, vararg aes: Aes<*>): Boolean {
         for (requiredAes in aes) {
             val variable = TransformVar.forAes(requiredAes)
             if (data.hasNoOrEmpty(variable)) {

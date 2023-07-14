@@ -38,7 +38,7 @@ class BoxplotGeom : GeomBase() {
         )
         buildLines(root, aesthetics, ctx, geomHelper)
         BarTooltipHelper.collectRectangleTargets(
-            listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.UPPER, org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE, org.jetbrains.letsPlot.core.plot.base.Aes.LOWER, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN),
+            listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             { colorWithAlpha(it) },
@@ -55,15 +55,15 @@ class BoxplotGeom : GeomBase() {
         CrossBarHelper.buildMidlines(root, aesthetics, ctx, geomHelper, fattenMidline)
 
         val elementHelper = geomHelper.createSvgElementHelper()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
-            val halfWidth = p.width()?.let { it * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X) / 2 } ?: 0.0
+            val halfWidth = p.width()?.let { it * ctx.getResolution(Aes.X) / 2 } ?: 0.0
             val halfFenceWidth = halfWidth * whiskerWidth
 
             val lines = ArrayList<SvgLineElement>()
 
             // lower whisker
-            if (p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.LOWER) && p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN)) {
+            if (p.defined(Aes.LOWER) && p.defined(Aes.YMIN)) {
                 val hinge = p.lower()!!
                 val fence = p.ymin()!!
                 // whisker line
@@ -85,7 +85,7 @@ class BoxplotGeom : GeomBase() {
             }
 
             // upper whisker
-            if (p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.UPPER) && p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)) {
+            if (p.defined(Aes.UPPER) && p.defined(Aes.YMAX)) {
                 val hinge = p.upper()!!
                 val fence = p.ymax()!!
                 // whisker line
@@ -123,15 +123,15 @@ class BoxplotGeom : GeomBase() {
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                val clientRect = if (p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.X) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.LOWER) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.UPPER) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+                val clientRect = if (p.defined(Aes.X) &&
+                    p.defined(Aes.LOWER) &&
+                    p.defined(Aes.UPPER) &&
+                    p.defined(Aes.WIDTH)
                 ) {
                     val x = p.x()!!
                     val lower = p.lower()!!
                     val upper = p.upper()!!
-                    val width = p.width()!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
                     geomHelper.toClient(
                         DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower),
                         p

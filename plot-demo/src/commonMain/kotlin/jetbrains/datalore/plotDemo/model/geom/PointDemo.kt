@@ -52,7 +52,7 @@ open class PointDemo : SimpleDemoBase() {
             DoubleSpan(y.min() - 20, y.max() + 20),
             demoInnerSize
         )
-        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+        val layer = org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer(
             aes,
             PointGeom(),
             PositionAdjustments.identity(),

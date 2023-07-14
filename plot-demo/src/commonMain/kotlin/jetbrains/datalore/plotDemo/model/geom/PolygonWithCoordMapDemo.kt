@@ -17,9 +17,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.PolygonGeom
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
-import jetbrains.datalore.plot.builder.SvgLayerRenderer
-import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_X
 import jetbrains.datalore.plotDemo.data.KansasPolygon.KANSAS_Y

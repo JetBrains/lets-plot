@@ -7,12 +7,12 @@ package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
-import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
-import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgComponent
-import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
+import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
 internal class CompositeFigureBuildInfo(
     private val elements: List<FigureBuildInfo?>,

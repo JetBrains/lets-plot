@@ -18,10 +18,10 @@ class TransformLog10DataTest {
         val geomLayer = TestUtil.buildGeomLayer(
             geom = Option.GeomName.HISTOGRAM,
             data = mapOf("x" to List(n) { 0.0 }),
-            mapping = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x"),
+            mapping = mapOf(Aes.X.name to "x"),
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                    Option.Scale.AES to Aes.Y.name,
                     Option.Scale.CONTINUOUS_TRANSFORM to Option.TransformName.LOG10
                 )
             )

@@ -6,27 +6,27 @@
 package org.jetbrains.letsPlot.commons.intern.observable.collections
 
 open class CollectionAdapter<ItemT> :
-    org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener<ItemT> {
-    override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {}
+    CollectionListener<ItemT> {
+    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {}
 
-    override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+    override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
         onItemRemoved(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 event.oldItem,
                 null,
                 event.index,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                CollectionItemEvent.EventType.REMOVE
             )
         )
         onItemAdded(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 null,
                 event.newItem,
                 event.index,
-                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD
+                CollectionItemEvent.EventType.ADD
             )
         )
     }
 
-    override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {}
+    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {}
 }

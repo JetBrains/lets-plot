@@ -6,6 +6,6 @@
 package org.jetbrains.letsPlot.commons.intern.observable.children
 
 interface PositionData<ChildT> {
-    fun get(): org.jetbrains.letsPlot.commons.intern.observable.children.Position<ChildT>
+    fun get(): Position<ChildT>
     fun remove()
 }

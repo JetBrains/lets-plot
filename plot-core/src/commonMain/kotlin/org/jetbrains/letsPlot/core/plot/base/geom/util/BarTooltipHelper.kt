@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 object BarTooltipHelper {
     fun collectRectangleTargets(
-        hintAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>>,
+        hintAesList: List<Aes<Double>>,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
         coord: CoordinateSystem,

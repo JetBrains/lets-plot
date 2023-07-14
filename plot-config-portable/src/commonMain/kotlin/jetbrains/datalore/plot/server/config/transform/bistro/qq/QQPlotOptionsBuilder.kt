@@ -65,19 +65,19 @@ class QQPlotOptionsBuilder(
             )
             scaleOptions = listOf(
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.X
-                    name = scaleNames[org.jetbrains.letsPlot.core.plot.base.Aes.X]
+                    aes = Aes.X
+                    name = scaleNames[Aes.X]
                 },
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.Y
-                    name = scaleNames[org.jetbrains.letsPlot.core.plot.base.Aes.Y]
+                    aes = Aes.Y
+                    name = scaleNames[Aes.Y]
                 },
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
+                    aes = Aes.COLOR
                     isDiscrete = true
                 },
                 scale {
-                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.FILL
+                    aes = Aes.FILL
                     isDiscrete = true
                 },
             )
@@ -122,11 +122,11 @@ class QQPlotOptionsBuilder(
         x: String?,
         y: String?,
         distribution: String?
-    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String> {
+    ): Map<Aes<*>, String> {
         val distributionName: String = distribution ?: DEF_DISTRIBUTION
         return mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to if (sample != null) "\"$distributionName\" distribution quantiles" else "$x quantiles",
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to if (sample != null) "$sample quantiles" else "$y quantiles",
+            Aes.X to if (sample != null) "\"$distributionName\" distribution quantiles" else "$x quantiles",
+            Aes.Y to if (sample != null) "$sample quantiles" else "$y quantiles",
         )
     }
 

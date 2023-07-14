@@ -70,7 +70,7 @@ open class BaseStatTest {
         val df = dataFrame(emptyMap())
         val statDf = stat.apply(df, statContext(df))
 
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
                 checkStatVarValues(statDf, stat.getDefaultMapping(aes), emptyList())
             }

@@ -56,11 +56,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMIN
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Z
 
 abstract class AesVisitor<T> {
-    fun visit(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): T {
+    fun visit(aes: Aes<*>): T {
         return if (aes.isNumeric) {
             // Safe cast because all 'numeric' aesthetics are <Double>
             @Suppress("UNCHECKED_CAST")
-            visitNumeric(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Double>)
+            visitNumeric(aes as Aes<Double>)
         } else visitIntern(aes)
     }
 
@@ -70,11 +70,11 @@ abstract class AesVisitor<T> {
      * @param aes
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    protected fun visitNumeric(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): T {
+    protected fun visitNumeric(aes: Aes<Double>): T {
         return visitIntern(aes)
     }
 
-    private fun visitIntern(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): T {
+    private fun visitIntern(aes: Aes<*>): T {
         if (aes == X) {
             return x()
         }

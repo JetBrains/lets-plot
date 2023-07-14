@@ -14,8 +14,8 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
  */
 internal class Count2dStat : AbstractCountStat(DEF_MAPPING, count2d = true) {
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
@@ -33,10 +33,10 @@ internal class Count2dStat : AbstractCountStat(DEF_MAPPING, count2d = true) {
     }
 
     companion object {
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y,
-            org.jetbrains.letsPlot.core.plot.base.Aes.SLICE to Stats.COUNT
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.SLICE to Stats.COUNT
         )
     }
 }

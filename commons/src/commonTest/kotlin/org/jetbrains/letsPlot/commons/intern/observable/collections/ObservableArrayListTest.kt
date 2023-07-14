@@ -12,13 +12,13 @@ import kotlin.test.*
 
 class ObservableArrayListTest {
     private val list = ObservableArrayList<String>()
-    private val events = ArrayList<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out String>>()
-    private val listener = object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<String>() {
-        override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out String>) {
+    private val events = ArrayList<CollectionItemEvent<out String>>()
+    private val listener = object : CollectionAdapter<String>() {
+        override fun onItemAdded(event: CollectionItemEvent<out String>) {
             events.add(event)
         }
 
-        override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out String>) {
+        override fun onItemRemoved(event: CollectionItemEvent<out String>) {
             events.add(event)
         }
     }
@@ -126,7 +126,7 @@ class ObservableArrayListTest {
 
         val event = events[0]
         assertEquals(
-            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+            CollectionItemEvent(
                 oldItem,
                 newItem,
                 index,

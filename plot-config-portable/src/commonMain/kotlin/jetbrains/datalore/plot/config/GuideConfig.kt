@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.intern.function.Runnable
-import jetbrains.datalore.plot.builder.assemble.ColorBarOptions
-import jetbrains.datalore.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.plot.builder.assemble.LegendOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendOptions
 import jetbrains.datalore.plot.config.Option.Guide.COLOR_BAR
 import jetbrains.datalore.plot.config.Option.Guide.COLOR_BAR_GB
 import jetbrains.datalore.plot.config.Option.Guide.ColorBar.BIN_COUNT

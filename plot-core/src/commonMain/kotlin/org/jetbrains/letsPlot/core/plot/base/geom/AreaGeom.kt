@@ -18,7 +18,7 @@ open class AreaGeom : GeomBase() {
     var quantiles: List<Double> = DensityStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
 
-    override fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = (aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
     protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.ordered_X(aesthetics.dataPoints())
@@ -36,10 +36,10 @@ open class AreaGeom : GeomBase() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
-                quantilesHelper.splitByQuantiles(groupDataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.X).forEach { points ->
+                quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
                     val paths = helper.createBands(points, TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
                     // If you want to retain the side edges of area: comment out the following codes,
                     // and switch decorate method in LinesHelper.createBands
@@ -64,7 +64,7 @@ open class AreaGeom : GeomBase() {
     ): List<SvgLineElement> {
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p -> TO_LOCATION_X_Y(p)!! }
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p -> GeomUtil.TO_LOCATION_X_ZERO(p)!! }
-        return quantilesHelper.getQuantileLineElements(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.X, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     protected open fun tooltipsGeomKind() = GeomKind.AREA

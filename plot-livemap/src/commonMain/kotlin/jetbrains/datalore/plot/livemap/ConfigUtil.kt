@@ -128,12 +128,12 @@ object ConfigUtil {
         require(xCoords.size == yCoords.size) { "Longitude list count is not equal Latitude list count." }
 
         return BBOX_CALCULATOR.calculateBoundingBox(
-            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+            makeSegments(
                 xCoords::get,
                 xCoords::get,
                 xCoords.size
             ),
-            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+            makeSegments(
                 yCoords::get,
                 yCoords::get,
                 xCoords.size
@@ -152,12 +152,12 @@ object ConfigUtil {
         { "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal." }
 
         return BBOX_CALCULATOR.calculateBoundingBox(
-            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+            makeSegments(
                 minXCoords::get,
                 maxXCoords::get,
                 count
             ),
-            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(minYCoords::get, maxYCoords::get, count)
+            makeSegments(minYCoords::get, maxYCoords::get, count)
         )
     }
 

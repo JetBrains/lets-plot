@@ -658,8 +658,8 @@ class DropUnusedDataTest {
   ]
 }"""
         transformToClientPlotConfig(spec)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
 
     }
 

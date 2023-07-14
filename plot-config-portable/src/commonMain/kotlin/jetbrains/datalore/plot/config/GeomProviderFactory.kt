@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
-import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 
 internal object GeomProviderFactory {
     private val PROVIDER = HashMap<GeomKind, GeomProvider>()
@@ -95,8 +95,8 @@ internal object GeomProviderFactory {
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
                 // Horizontal or vertical
-                val isVertical = setOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-                val isHorizontal = setOf(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+                val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+                val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
                 require(!(isVertical && isHorizontal)) {
                     "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
                 }

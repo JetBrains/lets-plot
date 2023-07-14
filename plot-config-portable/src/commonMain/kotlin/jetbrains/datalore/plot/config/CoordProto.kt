@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.azimuthalEqualA
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.conicEqualArea
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
-import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.coord.CoordProviders
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Coord
 import jetbrains.datalore.plot.config.Option.Coord.RATIO
 import jetbrains.datalore.plot.config.Option.CoordName.CARTESIAN

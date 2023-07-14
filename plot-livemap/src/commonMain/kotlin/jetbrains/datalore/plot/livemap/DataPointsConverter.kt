@@ -38,7 +38,7 @@ internal class DataPointsConverter(
 
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
         val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.SLICE)
+        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {

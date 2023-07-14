@@ -22,7 +22,7 @@ val CSSStyleDeclaration.cssOverflowY: CssOverflow?
 
 fun CSSStyleDeclaration.setWidth(
     width: Int,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("width", width, unit)
 }
@@ -33,21 +33,21 @@ fun CSSStyleDeclaration.clearWidth(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setMinWidth(
     width: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("min-width", width, unit)
 }
 
 fun CSSStyleDeclaration.setMaxWidth(
     width: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("max-width", width, unit)
 }
 
 fun CSSStyleDeclaration.setHeight(
     height: Int,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("height", height, unit)
 }
@@ -58,14 +58,14 @@ fun CSSStyleDeclaration.clearHeight(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setMinHeight(
     height: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("min-height", height, unit)
 }
 
 fun CSSStyleDeclaration.setMaxHeight(
     height: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("max-height", height, unit)
 }
@@ -76,7 +76,7 @@ fun CSSStyleDeclaration.clearMaxHeight(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setMargin(
     margin: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     setMarginLeft(margin, unit)
     setMarginRight(margin, unit)
@@ -87,21 +87,21 @@ fun CSSStyleDeclaration.setMargin(
 
 fun CSSStyleDeclaration.setMarginLeft(
     margin: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("margin-left", margin, unit)
 }
 
 fun CSSStyleDeclaration.setMarginRight(
     margin: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("margin-right", margin, unit)
 }
 
 fun CSSStyleDeclaration.setMarginTop(
     margin: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("margin-top", margin, unit)
 }
@@ -112,7 +112,7 @@ fun CSSStyleDeclaration.clearMarginTop(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setMarginBottom(
     margin: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("margin-bottom", margin, unit)
 }
@@ -123,7 +123,7 @@ fun CSSStyleDeclaration.clearMarginBottom(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setPadding(
     padding: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     setPaddingLeft(padding, unit)
     setPaddingRight(padding, unit)
@@ -134,28 +134,28 @@ fun CSSStyleDeclaration.setPadding(
 
 fun CSSStyleDeclaration.setPaddingLeft(
     padding: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("padding-left", padding, unit)
 }
 
 fun CSSStyleDeclaration.setPaddingRight(
     padding: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("padding-right", padding, unit)
 }
 
 fun CSSStyleDeclaration.setPaddingTop(
     padding: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("padding-top", padding, unit)
 }
 
 fun CSSStyleDeclaration.setPaddingBottom(
     padding: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("padding-bottom", padding, unit)
 }
@@ -246,7 +246,7 @@ fun CSSStyleDeclaration.clearBorderBottomColor(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setTop(
     top: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("top", top, unit)
 }
@@ -257,7 +257,7 @@ fun CSSStyleDeclaration.clearTop(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setBottom(
     bottom: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("bottom", bottom, unit)
 }
@@ -268,7 +268,7 @@ fun CSSStyleDeclaration.clearBottom(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setRight(
     right: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("right", right, unit)
 }
@@ -279,7 +279,7 @@ fun CSSStyleDeclaration.clearRight(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setLeft(
     left: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("left", left, unit)
 }
@@ -354,7 +354,7 @@ fun CSSStyleDeclaration.setFontWeight(value: CssFontWeight): CSSStyleDeclaration
 
 fun CSSStyleDeclaration.setFontSize(
     value: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("font-size", value, unit)
 }
@@ -449,7 +449,7 @@ fun CSSStyleDeclaration.clearOutlineColor(): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setOutlineWidth(
     width: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("outline-width", width, unit)
 }
@@ -472,7 +472,7 @@ fun CSSStyleDeclaration.setStroke(stroke: String): CSSStyleDeclaration {
 
 fun CSSStyleDeclaration.setStrokeWidth(
     width: Double,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit = org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit.PX
+    unit: CssUnit = CssUnit.PX
 ): CSSStyleDeclaration {
     return doSetProperty("stroke-width", width, unit)
 }
@@ -531,14 +531,14 @@ private fun CSSStyleDeclaration.doSetProperty(
 private fun <ValueT> CSSStyleDeclaration.doSetProperty(
     name: String,
     value: ValueT,
-    unit: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnit
+    unit: CssUnit
 ): CSSStyleDeclaration {
     return doSetProperty(name, value.toString() + unit.stringRepresentation)
 }
 
 private fun CSSStyleDeclaration.doSetProperty(
     name: String,
-    value: org.jetbrains.letsPlot.platf.w3c.dom.css.CssUnitQualifier
+    value: CssUnitQualifier
 ): CSSStyleDeclaration {
     doSetProperty(name, value.stringQualifier)
     return this

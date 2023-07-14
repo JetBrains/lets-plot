@@ -42,7 +42,7 @@ class HLineGeom : GeomBase() {
 
         val lines = ArrayList<SvgLineElement>()
 
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.YINTERCEPT)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.YINTERCEPT)) {
             val intercept = p.interceptY()!!
             if (viewPort.yRange().contains(intercept)) {
                 // line

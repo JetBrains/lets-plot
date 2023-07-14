@@ -62,15 +62,15 @@ object TransformVar {
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
-    private val AES_BY_VAR: Map<DataFrame.Variable, org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    private val AES_BY_VAR: Map<DataFrame.Variable, Aes<*>>
 
     init {
-        VAR_BY_NAME = org.jetbrains.letsPlot.core.plot.base.Aes.values().associate { aes ->
+        VAR_BY_NAME = Aes.values().associate { aes ->
             val variable = VAR_BY_AES.visit(aes)
             variable.name to variable
         }
 
-        AES_BY_VAR = org.jetbrains.letsPlot.core.plot.base.Aes.values().associateBy { aes ->
+        AES_BY_VAR = Aes.values().associateBy { aes ->
             VAR_BY_AES.visit(aes)
         }
     }
@@ -84,11 +84,11 @@ object TransformVar {
         return VAR_BY_NAME[varName]!!
     }
 
-    fun forAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable {
+    fun forAes(aes: Aes<*>): DataFrame.Variable {
         return VAR_BY_AES.visit(aes)
     }
 
-    fun toAes(variable: DataFrame.Variable): org.jetbrains.letsPlot.core.plot.base.Aes<*> {
+    fun toAes(variable: DataFrame.Variable): Aes<*> {
         return AES_BY_VAR.getValue(variable)
     }
 

@@ -91,15 +91,15 @@ abstract class ListenersTestCase {
 
     protected fun createThrowingListener(): CollectionListener<Int> {
         return object : CollectionListener<Int> {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out Int>) {
+            override fun onItemAdded(event: CollectionItemEvent<out Int>) {
                 throw UnsupportedOperationException()
             }
 
-            override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out Int>) {
+            override fun onItemSet(event: CollectionItemEvent<out Int>) {
                 throw UnsupportedOperationException()
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out Int>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out Int>) {
                 throw UnsupportedOperationException()
             }
         }

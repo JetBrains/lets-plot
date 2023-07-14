@@ -36,8 +36,8 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
         }
 //        this.index.set(index)
 
-        myReg = myList.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ValueT?>() {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ValueT?>) {
+        myReg = myList.addListener(object : CollectionAdapter<ValueT?>() {
+            override fun onItemAdded(event: CollectionItemEvent<out ValueT?>) {
                 @Suppress("NAME_SHADOWING")
                 val index = this@ListItemProperty.index.get()
                 if (index != null) {
@@ -47,7 +47,7 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
                 }
             }
 
-            override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ValueT?>) {
+            override fun onItemSet(event: CollectionItemEvent<out ValueT?>) {
                 if (event.index == this@ListItemProperty.index.get()) {
                     val e = PropertyChangeEvent<ValueT?>(event.oldItem, event.newItem)
                     myHandlers.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<out ValueT?>>> {
@@ -58,7 +58,7 @@ class ListItemProperty<ValueT>(private val myList: ObservableList<ValueT?>, inde
                 }
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ValueT?>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ValueT?>) {
                 @Suppress("NAME_SHADOWING")
                 val index = this@ListItemProperty.index.get()
                 if (index != null) {

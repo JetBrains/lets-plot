@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
     private fun createScale(): Scale {
-        return Scales.DemoAndTest.continuousDomain("Test scale", org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        return Scales.DemoAndTest.continuousDomain("Test scale", Aes.X)
     }
 
     @Test

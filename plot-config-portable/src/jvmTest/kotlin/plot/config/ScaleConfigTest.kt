@@ -16,9 +16,9 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType.*
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape.STICK_SQUARE_TRIANGLE_UP
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.scale.MapperProvider
-import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
-import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.LineTypeMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import jetbrains.datalore.plot.parsePlotSpec
@@ -27,9 +27,9 @@ import kotlin.test.assertEquals
 
 class ScaleConfigTest {
 
-    private fun checkRGBMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, input: List<*>) {
+    private fun checkRGBMapping(aes: Aes<*>, input: List<*>) {
         @Suppress("UNCHECKED_CAST")
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>, Color.TRANSPARENT)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes as Aes<Any>, Color.TRANSPARENT)
         val expected = listOf(RED, GREEN, BLUE)
         checkMappingDiscrete(expected, input, mapperProvider)
     }
@@ -44,7 +44,7 @@ class ScaleConfigTest {
         }
     }
 
-    private fun checkIdentityMappingNumeric(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, input: List<Double>) {
+    private fun checkIdentityMappingNumeric(aes: Aes<Double>, input: List<Double>) {
         val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes, Double.NaN)
         checkMappingDiscrete(input, input, mapperProvider)
         checkIdentityMappingContinuous(input, mapperProvider)
@@ -77,7 +77,7 @@ class ScaleConfigTest {
             listOf(0xff0000.toDouble(), 0x00ff00.toDouble(), 0x0000ff.toDouble())
         )
 
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             if (aes.isColor) {
                 for (input in inputs) {
                     checkRGBMapping(aes, input)
@@ -90,7 +90,7 @@ class ScaleConfigTest {
     fun shapeIdentityMapper() {
         val input = listOf(14.0)
         val expected = listOf(STICK_SQUARE_TRIANGLE_UP)
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE, ShapeMapper.NA_VALUE)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(Aes.SHAPE, ShapeMapper.NA_VALUE)
         checkMappingDiscrete(expected, input, mapperProvider)
     }
 
@@ -99,24 +99,24 @@ class ScaleConfigTest {
         @Suppress("SpellCheckingInspection")
         val input = listOf(2.0, "longdash", 5.0, "twodash")
         val expected = listOf(DASHED, LONGDASH, LONGDASH, TWODASH)
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(org.jetbrains.letsPlot.core.plot.base.Aes.LINETYPE, LineTypeMapper.NA_VALUE)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(Aes.LINETYPE, LineTypeMapper.NA_VALUE)
         checkMappingDiscrete(expected, input, mapperProvider)
     }
 
     @Test
     fun numericIdentityMapper() {
         val input = listOf(2.0, 3.0, 5.0, 7.0, Double.NaN)
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             if (aes.isNumeric) {
                 @Suppress("UNCHECKED_CAST")
-                checkIdentityMappingNumeric(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Double>, input)
+                checkIdentityMappingNumeric(aes as Aes<Double>, input)
             }
         }
     }
 
     @Test
     fun colorBrewerMapperForDiscreteColorScale() {
-        fun checkDiscreteScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>) {
+        fun checkDiscreteScale(aes: Aes<Color>) {
 
             val scaleSpec = mapOf(
                 "discrete" to true,
@@ -137,7 +137,7 @@ class ScaleConfigTest {
         }
 
 //        checkDiscreteScale(Aes.FILL)
-        checkDiscreteScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR)
+        checkDiscreteScale(Aes.COLOR)
     }
 
     @Test
@@ -207,18 +207,18 @@ class ScaleConfigTest {
 
         // use variable name by default
         transformToClientPlotConfig(makePlotSpec())
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "color.v")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "color.v")
 
         // scale(name)
         transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam))
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "name from scale")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
 
         // as_discrete(label)
         transformToClientPlotConfig(makePlotSpec(asDiscreteParams = asDiscreteLabelParam))
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "label from as_discrete")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "label from as_discrete")
 
         // scale(name) is a higher priority than as_discrete(label)
         transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam, asDiscreteParams = asDiscreteLabelParam))
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "name from scale")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
     }
 }

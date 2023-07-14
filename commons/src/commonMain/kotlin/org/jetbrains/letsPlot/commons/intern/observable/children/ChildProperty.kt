@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.commons.intern.observable.children
 
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 
-class ChildProperty<ParentT, ChildT : org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
+class ChildProperty<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
     ValueProperty<ChildT?>(null) {
 
     override fun set(value: ChildT?) {
@@ -25,9 +25,9 @@ class ChildProperty<ParentT, ChildT : org.jetbrains.letsPlot.commons.intern.obse
         if (value != null) {
             value.parent().set(myParent)
             value.setPositionData(object :
-                org.jetbrains.letsPlot.commons.intern.observable.children.PositionData<ChildT> {
-                override fun get(): org.jetbrains.letsPlot.commons.intern.observable.children.Position<ChildT> {
-                    return object : org.jetbrains.letsPlot.commons.intern.observable.children.Position<ChildT> {
+                PositionData<ChildT> {
+                override fun get(): Position<ChildT> {
+                    return object : Position<ChildT> {
 
                         override val role: Any
                             get() = this@ChildProperty

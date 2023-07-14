@@ -21,7 +21,7 @@ internal abstract class BaseDodgePos(
     private fun isDodgingNeeded(aesthetics: Aesthetics): Boolean {
         // if for some Value there are more than just 1 group, then dodging is needed
         val groupBy = HashMap<Double, Int?>()
-        val aes = if (myIsHorizontalPos) org.jetbrains.letsPlot.core.plot.base.Aes.X else org.jetbrains.letsPlot.core.plot.base.Aes.Y
+        val aes = if (myIsHorizontalPos) Aes.X else Aes.Y
         for (i in 0 until aesthetics.dataPointCount()) {
             val p = aesthetics.dataPointAt(i)
             if (p.defined(aes)) {
@@ -49,7 +49,7 @@ internal abstract class BaseDodgePos(
             return v
         }
 
-        val aes = if (myIsHorizontalPos) org.jetbrains.letsPlot.core.plot.base.Aes.X else org.jetbrains.letsPlot.core.plot.base.Aes.Y
+        val aes = if (myIsHorizontalPos) Aes.X else Aes.Y
         val dataResolution = ctx.getResolution(aes)
         val size = mySize ?: if (myIsHorizontalPos) p.width() else p.height()
 

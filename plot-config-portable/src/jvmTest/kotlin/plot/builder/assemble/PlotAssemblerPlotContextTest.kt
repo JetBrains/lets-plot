@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 
 
 class PlotAssemblerPlotContextTest {
@@ -23,14 +24,14 @@ class PlotAssemblerPlotContextTest {
                 "coeff" to listOf(119, 289, 387, 491, 588, 694, 791, 888, 994, 0.191, 988, 994)
             ),
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "alphabet",
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "coeff"
+                Aes.X.name to "alphabet",
+                Aes.Y.name to "coeff"
             )
         )
 
         val ctx = TestingPlotContext.create(geomLayer)
-        assertEquals(DoubleSpan(0.0, 1.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.X)) // discrete
-        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.Y)) // continuous
+        assertEquals(DoubleSpan(0.0, 1.0), ctx.overallTransformedDomain(Aes.X)) // discrete
+        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(Aes.Y)) // continuous
     }
 
     @Test
@@ -42,15 +43,15 @@ class PlotAssemblerPlotContextTest {
                 "coeff" to listOf(119, 289, 387, 491, 588, 694, 791, 888, 994, 0.191, 988, 994)
             ),
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "coeff",
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "alphabet",
+                Aes.X.name to "coeff",
+                Aes.Y.name to "alphabet",
             ),
             orientationY = true
         )
 
         val ctx = TestingPlotContext.create(geomLayer)
-        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.X)) // continuous
-        assertEquals(DoubleSpan(0.0, 1.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.Y)) // discrete
+        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(Aes.X)) // continuous
+        assertEquals(DoubleSpan(0.0, 1.0), ctx.overallTransformedDomain(Aes.Y)) // discrete
     }
 
     @Test
@@ -75,13 +76,13 @@ class PlotAssemblerPlotContextTest {
                 )
             ),
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "vertical"
+                Aes.Y.name to "vertical"
             )
         )
 
         val ctx = TestingPlotContext.create(geomLayer)
-        assertEquals(DoubleSpan(-0.5, 0.5), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.X)) // 1.0 +-0.5
-        assertEquals(DoubleSpan(0.0191, 0.994), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.Y)) // continuous
+        assertEquals(DoubleSpan(-0.5, 0.5), ctx.overallTransformedDomain(Aes.X)) // 1.0 +-0.5
+        assertEquals(DoubleSpan(0.0191, 0.994), ctx.overallTransformedDomain(Aes.Y)) // continuous
     }
 
     @Test
@@ -106,14 +107,14 @@ class PlotAssemblerPlotContextTest {
                 )
             ),
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "horizontal"
+                Aes.X.name to "horizontal"
             ),
             orientationY = true
         )
 
         val ctx = TestingPlotContext.create(geomLayer)
-        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.X)) // continuous
-        assertEquals(DoubleSpan(-0.5, 0.5), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.Y)) // 1 +-0.5
+        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(Aes.X)) // continuous
+        assertEquals(DoubleSpan(-0.5, 0.5), ctx.overallTransformedDomain(Aes.Y)) // 1 +-0.5
     }
 
     @Test
@@ -128,7 +129,7 @@ class PlotAssemblerPlotContextTest {
             geom = "boxplot",
             data = data,
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "vertical"
+                Aes.Y.name to "vertical"
             )
         )
 
@@ -137,7 +138,7 @@ class PlotAssemblerPlotContextTest {
             geom = "boxplot",
             data = data,
             mapping = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "horizontal"
+                Aes.X.name to "horizontal"
             ),
             orientationY = true
         )
@@ -145,9 +146,9 @@ class PlotAssemblerPlotContextTest {
         val ctx = TestingPlotContext.create(listOf(geomLayerNorm, geomLayerY), geomLayerNorm.scaleMap)
 //        assertEquals(DoubleSpan(0.191, 994.0), ctx.overallTransformedDomain(Aes.X)) // continuous
         // x-span starts at 0.0 because 'normal' boxplot's X == 0.0
-        assertEquals(DoubleSpan(0.0, 994.0), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        assertEquals(DoubleSpan(0.0, 994.0), ctx.overallTransformedDomain(Aes.X))
         // y-span starts at 0.0 because 'y-oriented' boxplot's Y == 0.0
-        assertEquals(DoubleSpan(0.0, 0.994), ctx.overallTransformedDomain(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        assertEquals(DoubleSpan(0.0, 0.994), ctx.overallTransformedDomain(Aes.Y))
     }
 
 }

@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
 import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
 import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
 import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
@@ -114,37 +114,37 @@ class GeoConfigTest {
     @Test
     fun `geom_point(aes(color='kind'), gdf)`() {
         `aes(color='kind'), data=gdf`(geom = "point")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "kind")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "kind")
     }
 
     @Test
     fun `geom_rect(aes(color='kind'), gdf)`() {
         `aes(color='kind'), data=gdf`(geom = "rect")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, RECT_XMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, RECT_XMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, RECT_YMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, RECT_YMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "kind")
+            .assertBinding(Aes.XMIN, RECT_XMIN)
+            .assertBinding(Aes.XMAX, RECT_XMAX)
+            .assertBinding(Aes.YMIN, RECT_YMIN)
+            .assertBinding(Aes.YMAX, RECT_YMAX)
+            .assertBinding(Aes.COLOR, "kind")
     }
 
     @Test
     fun `geom_polygon(aes(color = 'kind'), gdf)`() {
         `aes(color='kind'), data=gdf`(geom = "polygon")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "kind")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "kind")
             .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
-            .assertAes(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, polygonSequence(Color(102, 194, 165)) + multiPolygonSequence(Color(252, 141, 98)))
+            .assertAes(Aes.COLOR, polygonSequence(Color(102, 194, 165)) + multiPolygonSequence(Color(252, 141, 98)))
     }
 
     @Test
     fun `geom_path(aes(color = 'kind'), gdf)`() {
         `aes(color='kind'), data=gdf`(geom = "path")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "kind")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "kind")
     }
 
     private fun `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom: String): GeomLayer {
@@ -168,17 +168,17 @@ class GeoConfigTest {
     @Test
     fun `geom_point(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
         `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "point")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "value")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "value")
     }
 
     @Test
     fun `geom_polygon(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
         `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "polygon")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "value")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "value")
             .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
 
     }
@@ -186,19 +186,19 @@ class GeoConfigTest {
     @Test
     fun `geom_path(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
         `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "path")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "value")
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
+            .assertBinding(Aes.COLOR, "value")
     }
 
     @Test
     fun `geom_rect(aes(color = 'value'), df, map = gdf, map_join=('fig', 'kind'))`() {
         `aes(color='value'), data=df, map=gdf, map_join=('fig', 'kind')`(geom = "rect")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, RECT_XMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, RECT_XMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, RECT_YMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, RECT_YMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, "value")
+            .assertBinding(Aes.XMIN, RECT_XMIN)
+            .assertBinding(Aes.XMAX, RECT_XMAX)
+            .assertBinding(Aes.YMIN, RECT_YMIN)
+            .assertBinding(Aes.YMAX, RECT_YMAX)
+            .assertBinding(Aes.COLOR, "value")
     }
 
     private fun `map=gdf`(geom: String): GeomLayer {
@@ -224,31 +224,31 @@ class GeoConfigTest {
     @Test
     fun `geom_point(map=gdf)`() {
         `map=gdf`(geom = "point")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_polygon(map=gdf)`() {
         `map=gdf`(geom = "polygon")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_path(map=gdf)`() {
         `map=gdf`(geom = "path")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, POINT_X)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.Y, POINT_Y)
+            .assertBinding(Aes.X, POINT_X)
+            .assertBinding(Aes.Y, POINT_Y)
     }
 
     @Test
     fun `geom_rect(map=gdf)`() {
         `map=gdf`(geom = "rect")
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, RECT_XMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, RECT_XMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, RECT_YMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, RECT_YMAX)
+            .assertBinding(Aes.XMIN, RECT_XMIN)
+            .assertBinding(Aes.XMAX, RECT_XMAX)
+            .assertBinding(Aes.YMIN, RECT_YMIN)
+            .assertBinding(Aes.YMAX, RECT_YMAX)
     }
 
     @Test
@@ -382,11 +382,11 @@ class GeoConfigTest {
             |}
         """.trimMargin()
         )
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, RECT_XMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, RECT_XMAX)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, RECT_YMIN)
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, RECT_YMAX)
-            .assertAes(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf(europe, europe, asia))
+            .assertBinding(Aes.XMIN, RECT_XMIN)
+            .assertBinding(Aes.XMAX, RECT_XMAX)
+            .assertBinding(Aes.YMIN, RECT_YMIN)
+            .assertBinding(Aes.YMAX, RECT_YMAX)
+            .assertAes(Aes.FILL, listOf(europe, europe, asia))
     }
 
     @Ignore
@@ -471,7 +471,7 @@ class GeoConfigTest {
             .assertValues("values", listOf(100.0, 500.0, 42.42))
             .assertValues("lon", listOf(1.0, 3.0, 5.0))
             .assertValues("lat", listOf(2.0, 4.0, 6.0))
-            .assertAes(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, listOf(Color(102, 194, 165), Color(252, 141, 98), Color(141, 160, 203)))
+            .assertAes(Aes.COLOR, listOf(Color(102, 194, 165), Color(252, 141, 98), Color(141, 160, 203)))
     }
 
     @Test
@@ -504,7 +504,7 @@ class GeoConfigTest {
             |}
             |""".trimMargin()
         )
-            .assertBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "price") // was not rebind to gdf
+            .assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
     // excluding LiveMap layer
@@ -682,7 +682,7 @@ class GeoConfigTest {
         //.assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
-    private fun GeomLayer.assertBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, variable: String): GeomLayer {
+    private fun GeomLayer.assertBinding(aes: Aes<*>, variable: String): GeomLayer {
         assertTrue(hasBinding(aes), "Binding for aes $aes was not found")
         assertEquals(variable, scaleMap.getValue(aes).name)
         return this
@@ -700,7 +700,7 @@ class GeoConfigTest {
         return this
     }
 
-    private fun GeomLayer.assertAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, expected: Collection<*>): GeomLayer {
+    private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
             .aesthetics.dataPoints().map { it.get(aes) }
         assertEquals(expected, actualGroups, "Aes values didn't match")

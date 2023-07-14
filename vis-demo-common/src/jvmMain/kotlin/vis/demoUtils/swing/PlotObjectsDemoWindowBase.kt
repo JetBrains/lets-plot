@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
-import jetbrains.datalore.plot.builder.PlotSvgComponent
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*

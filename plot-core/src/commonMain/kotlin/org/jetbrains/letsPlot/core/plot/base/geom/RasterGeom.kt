@@ -44,8 +44,8 @@ class RasterGeom : GeomBase() {
 
         // Find size of image (row x col)
         val boundsXY = layerAesBounds(aesthetics)
-        val stepX = ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-        val stepY = ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val stepX = ctx.getResolution(Aes.X)
+        val stepY = ctx.getResolution(Aes.Y)
         require(stepX > SeriesUtil.TINY) { "x-step is too small: $stepX" }
         require(stepY > SeriesUtil.TINY) { "y-step is too small: $stepY" }
         val width = (round(boundsXY.dimension.x / stepX) + 1)

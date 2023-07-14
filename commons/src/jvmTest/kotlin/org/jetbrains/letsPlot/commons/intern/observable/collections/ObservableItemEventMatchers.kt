@@ -15,10 +15,10 @@ import org.hamcrest.TypeSafeDiagnosingMatcher
 object ObservableItemEventMatchers {
     fun <T> event(
         oldItem: Matcher<in T>, newItem: Matcher<in T>,
-        index: Matcher<Int>, type: Matcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType>
-    ): Matcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>> {
-        return object : TypeSafeDiagnosingMatcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>>() {
-            override fun matchesSafely(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>, description: Description): Boolean {
+        index: Matcher<Int>, type: Matcher<CollectionItemEvent.EventType>
+    ): Matcher<CollectionItemEvent<out T>> {
+        return object : TypeSafeDiagnosingMatcher<CollectionItemEvent<out T>>() {
+            override fun matchesSafely(event: CollectionItemEvent<out T>, description: Description): Boolean {
                 if (!type.matches(event.type)) {
                     description.appendText("type was ").appendValue(event.type)
                     return false
@@ -47,17 +47,17 @@ object ObservableItemEventMatchers {
         }
     }
 
-    fun <T> addEvent(item: Matcher<in T>, index: Matcher<Int>): Matcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>> {
+    fun <T> addEvent(item: Matcher<in T>, index: Matcher<Int>): Matcher<CollectionItemEvent<out T>> {
         return event(nullValue(), item, index, equalTo(ADD))
     }
 
     fun <T> setEvent(
         oldItem: Matcher<in T>, newItem: Matcher<in T>, index: Matcher<Int>
-    ): Matcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>> {
+    ): Matcher<CollectionItemEvent<out T>> {
         return event(oldItem, newItem, index, equalTo(SET))
     }
 
-    fun <T> removeEvent(item: Matcher<in T>, index: Matcher<Int>): Matcher<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out T>> {
+    fun <T> removeEvent(item: Matcher<in T>, index: Matcher<Int>): Matcher<CollectionItemEvent<out T>> {
         return event(item, nullValue(), index, equalTo(REMOVE))
     }
 }

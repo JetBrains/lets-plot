@@ -41,7 +41,7 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.VIOLINWIDTH, org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
@@ -55,11 +55,11 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val leftBoundTransform = toLocationBound(negativeSign, ctx)
         val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
-        quantilesHelper.splitByQuantiles(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.Y).forEach { points ->
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
             root.appendNodes(paths)
 
@@ -87,7 +87,7 @@ class ViolinGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(positiveSign, ctx)(p).x, p.y()!!)
         }
-        return quantilesHelper.getQuantileLineElements(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.Y, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.Y, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(
@@ -95,7 +95,7 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
-            val x = p.x()!! + ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X) / 2 * sign * p.width()!! * p.violinwidth()!!
+            val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * sign * p.width()!! * p.violinwidth()!!
             val y = p.y()!!
             return DoubleVector(x, y)
         }

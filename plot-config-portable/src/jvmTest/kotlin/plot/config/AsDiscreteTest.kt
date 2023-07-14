@@ -82,7 +82,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -95,7 +95,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -108,7 +108,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -121,7 +121,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -134,7 +134,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -147,7 +147,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -160,7 +160,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -173,7 +173,7 @@ class AsDiscreteTest {
         )
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -207,7 +207,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -242,7 +242,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .hasVariable(Stats.GROUP)
             .assertVariable(varName = "g", isDiscrete = false)
     }
@@ -328,8 +328,8 @@ class AsDiscreteTest {
                 barMapping = case.barMapping
             )
                 .let(::transformToClientPlotConfig)
-                .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true) { case.toString() }
-                .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, isDiscrete = true) { case.toString() }
+                .assertScale(Aes.COLOR, isDiscrete = true) { case.toString() }
+                .assertScale(Aes.FILL, isDiscrete = true) { case.toString() }
                 .assertVariable("color.foo", isDiscrete = true) { case.toString() }
                 .assertVariable("fill.bar", isDiscrete = true) { case.toString() }
 
@@ -356,7 +356,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("d", isDiscrete = true)
     }
 
@@ -387,7 +387,7 @@ class AsDiscreteTest {
             |  ]
             |}""".trimMargin()
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.g", isDiscrete = true)
     }
 
@@ -421,8 +421,8 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, isDiscrete = true)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = false)
+            .assertScale(Aes.FILL, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable("fill.cyl", isDiscrete = true)
             .assertVariable("cyl", isDiscrete = false)
     }
@@ -457,7 +457,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.cyl", isDiscrete = true)
     }
 
@@ -475,7 +475,7 @@ class AsDiscreteTest {
             layerMapping = false,
             layerAnnotation = false
         ).let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable("color.cyl", isDiscrete = true) // no overriding in layer
     }
 
@@ -490,7 +490,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = true
         ).let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable("color.cyl", isDiscrete = true) // as_discrete in layer
     }
 
@@ -505,7 +505,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = true
         ).let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true) // as_discrete in layer
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in layer
             .assertVariable("color.cyl", isDiscrete = true) // as_discrete in layer
     }
 
@@ -520,7 +520,7 @@ class AsDiscreteTest {
             layerMapping = true,
             layerAnnotation = false
         ).let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true) // as_discrete in plot
+            .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
             .assertVariable("cyl", isDiscrete = false) // as is (numeric, overrided by layer)
     }
 
@@ -536,7 +536,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = false)
+            .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
     }
@@ -553,7 +553,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.cyl", isDiscrete = true)
             .assertValue("color.cyl", listOf(4.0, 5.0, 6.0))
     }
@@ -570,7 +570,7 @@ class AsDiscreteTest {
             layerAnnotation = true
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("color.cyl", isDiscrete = true)
             .assertValue("color.cyl", listOf(4.0, 5.0, 6.0))
     }
@@ -587,7 +587,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
     }
@@ -604,7 +604,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = true)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
@@ -621,7 +621,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         )
             .let(::transformToClientPlotConfig)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = false)
+            .assertScale(Aes.COLOR, isDiscrete = false)
             .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
@@ -659,7 +659,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "clndr")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
             .assertVariable("color.cyl", isDiscrete = true)
     }
 
@@ -707,7 +707,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "clndr")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
             .assertVariable("color.cyl", isDiscrete = true)
     }
 
@@ -753,7 +753,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
 
         transformToClientPlotConfig(spec)
-            .assertScale(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, isDiscrete = true, name = "ndr")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "ndr")
             .assertVariable("color.cyl", isDiscrete = true)
     }
 }

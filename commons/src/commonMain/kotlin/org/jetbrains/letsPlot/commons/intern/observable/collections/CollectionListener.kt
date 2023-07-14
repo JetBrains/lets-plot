@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.observable.collections
 
 interface CollectionListener<ItemT> {
-    fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>)
-    fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>)
-    fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>)
+    fun onItemAdded(event: CollectionItemEvent<out ItemT>)
+    fun onItemSet(event: CollectionItemEvent<out ItemT>)
+    fun onItemRemoved(event: CollectionItemEvent<out ItemT>)
 }

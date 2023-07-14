@@ -37,15 +37,15 @@ internal class TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT
         for (m in modifiableMappers) {
             myTarget.add(m.target)
         }
-        myCollectionRegistration = sourceList.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<MappedT>() {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out MappedT>) {
+        myCollectionRegistration = sourceList.addListener(object : CollectionAdapter<MappedT>() {
+            override fun onItemAdded(event: CollectionItemEvent<out MappedT>) {
                 val mapper = createMapper(event.newItem!!)
                 modifiableMappers.add(event.index, mapper)
                 myTarget.add(event.index, mapper.target)
                 processMapper(mapper)
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out MappedT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out MappedT>) {
                 modifiableMappers.removeAt(event.index)
                 myTarget.removeAt(event.index)
             }

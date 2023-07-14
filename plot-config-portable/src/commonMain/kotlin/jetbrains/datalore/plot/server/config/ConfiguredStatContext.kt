@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 internal class ConfiguredStatContext(
     private val dataFrames: List<DataFrame>,
-    private val transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
+    private val transformByAes: Map<Aes<*>, Transform>,
     private val mappedStatVariables: List<DataFrame.Variable>
 ) : StatContext {
 
@@ -28,18 +28,18 @@ internal class ConfiguredStatContext(
     }
 
     override fun overallXRange(): DoubleSpan? {
-        return overallRange(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        return overallRange(Aes.X)
     }
 
     override fun overallYRange(): DoubleSpan? {
-        return overallRange(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        return overallRange(Aes.Y)
     }
 
     override fun mappedStatVariables(): List<DataFrame.Variable> {
         return mappedStatVariables
     }
 
-    private fun overallRange(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan? {
+    private fun overallRange(aes: Aes<*>): DoubleSpan? {
         val transformVar = DataFrameUtil.transformVarFor(aes)
 
         val undefinedLimits = Pair(Double.NaN, Double.NaN)

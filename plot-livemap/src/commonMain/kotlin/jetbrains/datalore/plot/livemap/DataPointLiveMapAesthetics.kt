@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
-import jetbrains.datalore.plot.builder.scale.DefaultNaValue
+import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
@@ -107,7 +107,7 @@ internal class DataPointLiveMapAesthetics {
 
     val fontface
         get() = when (val fontface = myP.fontface()) {
-            AesInitValue[org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE] -> ""
+            AesInitValue[Aes.FONTFACE] -> ""
             else -> fontface
         }
 

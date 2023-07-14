@@ -7,11 +7,11 @@ package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.presentation.Defaults.ASPECT_RATIO
-import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
-import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import jetbrains.datalore.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.ASPECT_RATIO
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
 import jetbrains.datalore.plot.config.*
 import kotlin.math.ceil
 import kotlin.math.floor

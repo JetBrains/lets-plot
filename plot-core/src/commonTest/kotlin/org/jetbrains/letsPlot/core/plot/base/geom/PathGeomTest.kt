@@ -32,7 +32,7 @@ class PathGeomTest {
         )
     )
     private var linesHelper: LinesHelper = LinesHelper(PositionAdjustments.identity(), coordinateSystem,
-        org.jetbrains.letsPlot.core.plot.base.BogusContext
+        BogusContext
     )
 
     @Test

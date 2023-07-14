@@ -31,15 +31,15 @@ open class MappedAesthetics(
         return source.map { pointAestheticsMapper(it) }
     }
 
-    override fun range(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): DoubleSpan? {
+    override fun range(aes: Aes<Double>): DoubleSpan? {
         throw IllegalStateException("MappedAesthetics.range: not implemented $aes")
     }
 
-    override fun resolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, naValue: Double): Double {
+    override fun resolution(aes: Aes<Double>, naValue: Double): Double {
         throw IllegalStateException("MappedAesthetics.resolution: not implemented $aes")
     }
 
-    override fun numericValues(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Iterable<Double?> {
+    override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
         throw IllegalStateException("MappedAesthetics.numericValues: not implemented $aes")
     }
 

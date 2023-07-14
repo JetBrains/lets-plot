@@ -43,7 +43,7 @@ class PointRangeGeom : GeomBase() {
         helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT_RANGE, ctx)
 
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)) {
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
             val y = p.y()!!
             val ymin = p.ymin()!!
@@ -70,7 +70,7 @@ class PointRangeGeom : GeomBase() {
         }
 
         BarTooltipHelper.collectRectangleTargets(
-            listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN),
+            listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, fattenMidPoint),
             { HintColorUtil.colorWithAlpha(it) },
@@ -89,8 +89,8 @@ class PointRangeGeom : GeomBase() {
             fatten: Double
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                if (p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.X) &&
-                    p.defined(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+                if (p.defined(Aes.X) &&
+                    p.defined(Aes.Y)
                 ) {
                     val x = p.x()!!
                     val y = p.y()!!

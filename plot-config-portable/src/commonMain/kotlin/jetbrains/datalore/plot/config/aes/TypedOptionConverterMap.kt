@@ -57,7 +57,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Z
 
 internal class TypedOptionConverterMap {
 
-    private val myMap = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> Any?>()
+    private val myMap = HashMap<Aes<*>, (Any?) -> Any?>()
 
     init {
         this.put(X, DOUBLE_CVT)
@@ -116,17 +116,17 @@ internal class TypedOptionConverterMap {
         this.put(EXPLODE, DOUBLE_CVT)
     }
 
-    private fun <T> put(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, value: (Any?) -> T?) {
+    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {
         myMap[aes] = value
     }
 
-    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): (Any?) -> T? {
+    operator fun <T> get(aes: Aes<T>): (Any?) -> T? {
         // Safe cast because 'put' is private
         @Suppress("UNCHECKED_CAST")
         return myMap[aes] as (Any?) -> T?
     }
 
-    fun containsKey(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    fun containsKey(aes: Aes<*>): Boolean {
         return myMap.containsKey(aes)
     }
 

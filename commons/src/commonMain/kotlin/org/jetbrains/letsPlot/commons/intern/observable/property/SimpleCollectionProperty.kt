@@ -22,15 +22,15 @@ protected constructor(
     override fun doAddListeners() {
         myRegistration = collection.addListener(object :
             CollectionListener<ItemT> {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
 
-            override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 somethingChanged()
             }
         })

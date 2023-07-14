@@ -14,14 +14,14 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.composite.*
 
 internal open class TestComposite :
-        org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<TestComposite?, TestComposite>(),
+        SimpleComposite<TestComposite?, TestComposite>(),
     NavComposite<TestComposite>,
     HasVisibility,
     HasFocusability, HasBounds {
 
 
     private val myChildren =
-        org.jetbrains.letsPlot.commons.intern.observable.children.ChildList<TestComposite, TestComposite>(this)
+        ChildList<TestComposite, TestComposite>(this)
     private val myVisible = ValueProperty(true)
     private val myFocusable = ValueProperty(true)
     override var bounds = Rectangle(Vector.ZERO, Vector.ZERO)

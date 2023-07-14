@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 internal class FigureToPlainSvg(

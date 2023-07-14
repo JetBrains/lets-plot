@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
@@ -40,12 +40,12 @@ internal class ScaleConfigDiscreteScaleTest(
         val mapping = mapOf(
 //            Aes.X.name to "value",
 //            Aes.Y.name to "value",
-            org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name to "cat",
+            Aes.COLOR.name to "cat",
         )
 
         val scales = listOf(
             mapOf(
-                Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name,
+                Option.Scale.AES to Aes.COLOR.name,
                 Option.Scale.BREAKS to breaks,
                 Option.Scale.LABELS to labels,
                 Option.Scale.LIMITS to limits,
@@ -54,9 +54,9 @@ internal class ScaleConfigDiscreteScaleTest(
         )
 
         val geomLayer = TestUtil.buildPointLayer(data, mapping, scales = scales)
-        val scale = geomLayer.scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR)
+        val scale = geomLayer.scaleMap.getValue(Aes.COLOR)
         val scaleBreaks = scale.getScaleBreaks()
-        val scaleMapper = geomLayer.scaleMappersNP.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR)
+        val scaleMapper = geomLayer.scaleMappersNP.getValue(Aes.COLOR)
         val mappedBreaks = scaleBreaks.transformedValues.map { scaleMapper(it) }
 
         assertEquals(expectedLabels, scaleBreaks.labels)

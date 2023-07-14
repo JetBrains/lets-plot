@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
-import jetbrains.datalore.plot.builder.assemble.ColorBarAssembler
-import jetbrains.datalore.plot.builder.assemble.LegendAssembler
-import jetbrains.datalore.plot.builder.guide.ColorBarComponent
-import jetbrains.datalore.plot.builder.guide.LegendBreak
-import jetbrains.datalore.plot.builder.guide.LegendComponent
-import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarAssembler
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssembler
+import org.jetbrains.letsPlot.core.plot.builder.guide.ColorBarComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBreak
+import org.jetbrains.letsPlot.core.plot.builder.guide.LegendComponent
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color

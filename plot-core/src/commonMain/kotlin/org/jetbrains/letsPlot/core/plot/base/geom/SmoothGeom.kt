@@ -69,9 +69,9 @@ class SmoothGeom : GeomBase() {
                 )
 
             val hintsCollection = HintsCollection(p, helper)
-                .addHint(hint.create(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX))
-                .addHint(hint.create(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN))
-                .addHint(hint.create(org.jetbrains.letsPlot.core.plot.base.Aes.Y).color(p.color()!!))
+                .addHint(hint.create(Aes.YMAX))
+                .addHint(hint.create(Aes.YMIN))
+                .addHint(hint.create(Aes.Y).color(p.color()!!))
 
             val clientCoord = helper.toClient(pX, pY, p)!!
             ctx.targetCollector.addPoint(

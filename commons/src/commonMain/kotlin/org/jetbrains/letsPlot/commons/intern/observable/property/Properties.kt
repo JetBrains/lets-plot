@@ -523,13 +523,13 @@ object Properties {
         }
     }
 
-    private fun <ItemT> simpleAdapter(r: Runnable): org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT> {
-        return object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT>() {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+    private fun <ItemT> simpleAdapter(r: Runnable): CollectionAdapter<ItemT> {
+        return object : CollectionAdapter<ItemT>() {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 r.run()
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 r.run()
             }
         }
@@ -721,22 +721,22 @@ object Properties {
             }
 
             override fun addHandler(handler: EventHandler<PropertyChangeEvent<out ItemT?>>): Registration {
-                return coll.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+                return coll.addListener(object : CollectionAdapter<ItemT>() {
+                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                         if (coll.size != 1) {
                             throw IllegalStateException()
                         }
                         handler.onEvent(PropertyChangeEvent(null, event.newItem))
                     }
 
-                    override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+                    override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
                         if (event.index != 0) {
                             throw IllegalStateException()
                         }
                         handler.onEvent(PropertyChangeEvent(event.oldItem, event.newItem))
                     }
 
-                    override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                         if (!coll.isEmpty()) {
                             throw IllegalStateException()
                         }

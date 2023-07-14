@@ -29,12 +29,12 @@ class DensityRidgesStat(
         }
     }
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X)) {
+        if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
 
@@ -81,11 +81,11 @@ class DensityRidgesStat(
         const val DEF_TRIM = false
         val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.Y,
-            org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT to Stats.HEIGHT,
-            org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE to Stats.QUANTILE
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y,
+            Aes.HEIGHT to Stats.HEIGHT,
+            Aes.QUANTILE to Stats.QUANTILE
         )
     }
 }

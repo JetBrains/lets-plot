@@ -59,7 +59,7 @@ fun PlotConfigClientSide.assertVariable(
 }
 
 fun PlotConfigClientSide.assertScale(
-    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+    aes: Aes<*>,
     isDiscrete: Boolean,
     name: String? = null,
     msg: () -> String = { "" }
@@ -77,7 +77,7 @@ fun PlotConfigClientSide.hasVariable(variable: DataFrame.Variable): PlotConfigCl
 }
 
 fun PlotConfigClientSide.assertBinding(
-    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+    aes: Aes<*>,
     varName: String
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
@@ -90,7 +90,7 @@ fun PlotConfigClientSide.assertBinding(
 }
 
 fun PlotConfigClientSide.assertNoBinding(
-    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>
+    aes: Aes<*>
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
 

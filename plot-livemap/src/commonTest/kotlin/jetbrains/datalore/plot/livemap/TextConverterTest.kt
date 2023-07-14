@@ -39,7 +39,7 @@ class TextConverterTest {
 
     @Test
     fun whenFontFaceIsDefault_ShouldReturnEmptyString() {
-        aesData.builder().fontface(constant(AesInitValue[org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE]))
+        aesData.builder().fontface(constant(AesInitValue[Aes.FONTFACE]))
 
         matcher.fontface(eq(""))
 

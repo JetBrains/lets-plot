@@ -21,11 +21,11 @@ interface Aesthetics {
      *
      * @return The range of mapped data
      */
-    fun range(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): DoubleSpan?
+    fun range(aes: Aes<Double>): DoubleSpan?
 
-    fun resolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, naValue: Double): Double
+    fun resolution(aes: Aes<Double>, naValue: Double): Double
 
-    fun numericValues(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Iterable<Double?>
+    fun numericValues(aes: Aes<Double>): Iterable<Double?>
 
     fun groups(): Iterable<Int>
 }

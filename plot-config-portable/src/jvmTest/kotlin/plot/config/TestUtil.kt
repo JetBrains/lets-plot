@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.DemoAndTest
-import jetbrains.datalore.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS

@@ -111,7 +111,7 @@ class CompositesBetweenTest {
         assertBetween(f, i, listOf(g, c, k, l, r, s, t, m, h))
     }
 
-    @kotlin.test.Test
+    @Test
     fun upAndDown() {
         assertConsecutiveNodes(s, t, i, o, p, u, v, w, x, y)
     }

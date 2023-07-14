@@ -8,16 +8,16 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteraction
-import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteractionBuilder
-import jetbrains.datalore.plot.builder.tooltip.conf.GeomTooltipSetup
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomTooltipSetup
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 
 object GeomInteractionUtil {
     internal fun configGeomTargets(
         layerConfig: LayerConfig,
-        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+        scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
@@ -27,7 +27,7 @@ object GeomInteractionUtil {
 
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
-        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+        scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
@@ -44,20 +44,20 @@ object GeomInteractionUtil {
 
     private fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
-        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+        scaleMap: Map<Aes<*>, Scale>,
         tooltipSetup: GeomTooltipSetup,
         isLiveMap: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
 
-        val axisWithoutTooltip = HashSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
-        if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-        if (isLiveMap || !theme.verticalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val axisWithoutTooltip = HashSet<Aes<*>>()
+        if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.X)
+        if (isLiveMap || !theme.verticalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
         // Also: don't show the axis tooltip if the axis tick labels are hidden.
-        val axisWithNoLabels = HashSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
-        if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-        if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val axisWithNoLabels = HashSet<Aes<*>>()
+        if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
+        if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
 
         val yOrientation = layerConfig.isYOrientation
         val axisAesFromFunctionKind = tooltipSetup.axisAesFromFunctionKind
@@ -110,7 +110,7 @@ object GeomInteractionUtil {
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
         multilayerWithTooltips: Boolean,
-        definedAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        definedAesList: List<Aes<*>>,
     ): GeomTooltipSetup {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind,
@@ -146,7 +146,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
-        definedAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+        definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
@@ -178,12 +178,12 @@ object GeomInteractionUtil {
             )
 
             GeomKind.ERROR_BAR -> {
-                return if (definedAesList.containsAll(listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX))) {
+                return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
                     GeomTooltipSetup.xUnivariateFunction(
                         GeomTargetLocator.LookupStrategy.HOVER,
                         axisTooltipVisibilityFromConfig = true
                     )
-                } else if (definedAesList.containsAll(listOf(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX))) {
+                } else if (definedAesList.containsAll(listOf(Aes.XMIN, Aes.XMAX))) {
                      GeomTooltipSetup.yUnivariateFunction(
                         GeomTargetLocator.LookupStrategy.HOVER,
                         axisTooltipVisibilityFromConfig = true
@@ -248,25 +248,25 @@ object GeomInteractionUtil {
         }
     }
 
-    private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
-            GeomKind.DOT_PLOT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH)
-            GeomKind.Y_DOT_PLOT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH)
-            GeomKind.AREA -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE)
-            GeomKind.DENSITY -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE)
-            GeomKind.VIOLIN -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE)
-            GeomKind.AREA_RIDGES -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE)
-            GeomKind.BOX_PLOT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
-            GeomKind.RECT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.XMIN, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMAX)
-            GeomKind.SEGMENT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.XEND, org.jetbrains.letsPlot.core.plot.base.Aes.YEND)
+            GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.AREA -> listOf(Aes.QUANTILE)
+            GeomKind.DENSITY -> listOf(Aes.QUANTILE)
+            GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
+            GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
+            GeomKind.BOX_PLOT -> listOf(Aes.Y)
+            GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
+            GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
             GeomKind.ERROR_BAR -> {
                 // ToDo Need refactoring...
                 // Error bar supports a dual set of aesthetics (vertical and horizontal representation).
                 // Here the `layerConfig.renderedAes` (full aesthetic list) is used.
                 // So add unused axis aes to the hidden list
                 when (axisAes.singleOrNull()) {
-                    org.jetbrains.letsPlot.core.plot.base.Aes.X -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
-                    org.jetbrains.letsPlot.core.plot.base.Aes.Y -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    Aes.X -> listOf(Aes.Y)
+                    Aes.Y -> listOf(Aes.X)
                     else -> emptyList()
                 }
             }
@@ -280,20 +280,20 @@ object GeomInteractionUtil {
                 }
             }
 
-            GeomKind.PIE -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.EXPLODE)
+            GeomKind.PIE -> listOf(Aes.EXPLODE)
             else -> emptyList()
         }
     }
 
     private fun createAxisAesList(
         isAxisTooltipEnabled: Boolean,
-        axisAesFromFunctionKind: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        axisAesFromFunctionKind: List<Aes<*>>,
         geomKind: GeomKind,
-    ): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    ): List<Aes<*>> {
         return when {
             !isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.AREA_RIDGES ||
-                    geomKind == GeomKind.SMOOTH -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                    geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
 
             else -> axisAesFromFunctionKind
         }
@@ -301,11 +301,11 @@ object GeomInteractionUtil {
 
     private fun createTooltipAesList(
         layerConfig: LayerConfig,
-        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
-        layerRendersAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        hiddenAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
-    ): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+        scaleMap: Map<Aes<*>, Scale>,
+        layerRendersAes: List<Aes<*>>,
+        axisAes: List<Aes<*>>,
+        hiddenAesList: List<Aes<*>>
+    ): List<Aes<*>> {
 
         // remove axis mapping: if aes and axis are bound to the same data
         val aesListForTooltip = ArrayList(layerRendersAes - axisAes)
@@ -327,7 +327,7 @@ object GeomInteractionUtil {
         aesListForTooltip.removeAll { it in hiddenAesList }
 
         // remove duplicated mappings
-        val mappingsToShow = LinkedHashMap<DataFrame.Variable, org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
+        val mappingsToShow = LinkedHashMap<DataFrame.Variable, Aes<*>>()
         aesListForTooltip
             .forEach { aes ->
                 val variable = layerConfig.getVariableForAes(aes)!!
@@ -352,23 +352,23 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createSideTooltipAesList(geomKind: GeomKind): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun createSideTooltipAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.CROSS_BAR,
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
-            GeomKind.RIBBON -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN)
-            GeomKind.ERROR_BAR -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.XMAX, org.jetbrains.letsPlot.core.plot.base.Aes.XMIN)
-            GeomKind.BOX_PLOT -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.UPPER, org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE, org.jetbrains.letsPlot.core.plot.base.Aes.LOWER, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN)
-            GeomKind.SMOOTH -> listOf(org.jetbrains.letsPlot.core.plot.base.Aes.YMAX, org.jetbrains.letsPlot.core.plot.base.Aes.YMIN, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+            GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
+            GeomKind.ERROR_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
+            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
+            GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
         }
     }
 
-    private fun createConstantAesList(layerConfig: LayerConfig): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any> {
+    private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.H_LINE,
-            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(aes) }
+            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
 
             else -> emptyMap()
         }
@@ -407,7 +407,7 @@ object GeomInteractionUtil {
 
     // the number of factors starting from which tooltips can be displayed
     private const val MIN_FACTORS_TO_SHOW_TOOLTIPS = 5
-    private fun isTooltipForAesEnabled(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>): Boolean {
+    private fun isTooltipForAesEnabled(aes: Aes<*>, scaleMap: Map<Aes<*>, Scale>): Boolean {
         if (isVariableContinuous(scaleMap, aes)) {
             return true
         }
@@ -416,8 +416,8 @@ object GeomInteractionUtil {
     }
 }
 
-private fun <T> Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>.safeGet(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>) = if (containsKey(aes)) get(aes) else null
+private fun <T> Map<Aes<*>, Scale>.safeGet(aes: Aes<T>) = if (containsKey(aes)) get(aes) else null
 
-private fun isVariableContinuous(scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>, aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>) =
+private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
     scaleMap.safeGet(aes)?.isContinuousDomain ?: false
 

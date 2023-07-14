@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
-internal class TypedIndexFunctionMap(indexFunctionMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Int) -> Any?>) {
-    private var myMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Int) -> Any?> = indexFunctionMap
+internal class TypedIndexFunctionMap(indexFunctionMap: Map<Aes<*>, (Int) -> Any?>) {
+    private var myMap: Map<Aes<*>, (Int) -> Any?> = indexFunctionMap
 
-    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): (Int) -> T {
+    operator fun <T> get(aes: Aes<T>): (Int) -> T {
         // Safe cast if 'put' is used responsibly.
         @Suppress("UNCHECKED_CAST")
         return myMap[aes] as ((Int) -> T)

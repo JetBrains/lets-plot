@@ -21,11 +21,11 @@ open class DataPointAestheticsDelegate(
         return p.group()
     }
 
-    override fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T? {
+    override fun <T> get(aes: Aes<T>): T? {
         return p.get(aes)
     }
 
-    override val colorAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = p.colorAes
+    override val colorAes: Aes<Color> = p.colorAes
 
-    override val fillAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = p.fillAes
+    override val fillAes: Aes<Color> = p.fillAes
 }

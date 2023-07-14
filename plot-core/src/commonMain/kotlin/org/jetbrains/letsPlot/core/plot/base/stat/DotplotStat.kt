@@ -20,12 +20,12 @@ class DotplotStat(
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X)) {
+        if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
         val statX = ArrayList<Double>()
@@ -73,10 +73,10 @@ class DotplotStat(
     companion object {
         val DEF_METHOD = Method.DOTDENSITY
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.STACKSIZE to Stats.COUNT,
-            org.jetbrains.letsPlot.core.plot.base.Aes.BINWIDTH to Stats.BIN_WIDTH
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.STACKSIZE to Stats.COUNT,
+            Aes.BINWIDTH to Stats.BIN_WIDTH
         )
     }
 }

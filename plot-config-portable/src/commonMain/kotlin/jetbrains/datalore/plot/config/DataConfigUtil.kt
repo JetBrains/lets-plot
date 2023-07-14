@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 
 internal object DataConfigUtil {
 
@@ -63,12 +63,12 @@ internal object DataConfigUtil {
         combinedDiscreteMappings: Map<String, String>,
 
         consumedAesMappings: Map<*, *>,
-        explicitConstantAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        explicitConstantAes: List<Aes<*>>,
 
         isYOrientation: Boolean,
         clientSide: Boolean,
         isMapPlot: Boolean,
-    ): Pair<Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>, DataFrame> {
+    ): Pair<Map<Aes<*>, DataFrame.Variable>, DataFrame> {
 
         val isGeoConfigApplicable = GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
         val isDataGeoDF = GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA)
@@ -97,7 +97,7 @@ internal object DataConfigUtil {
             combinedData = appendAsDiscreteData(combinedData, combinedDiscreteMappings)
         }
 
-        var aesMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>
+        var aesMappings: Map<Aes<*>, DataFrame.Variable>
         if (clientSide && isGeoConfigApplicable) {
             val geoConfig = GeoConfig(
                 geomKind,

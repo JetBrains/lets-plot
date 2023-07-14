@@ -14,9 +14,9 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.scale.*
-import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
-import jetbrains.datalore.plot.builder.scale.provider.*
+import org.jetbrains.letsPlot.core.plot.builder.scale.*
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
@@ -63,7 +63,7 @@ import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
  * @param <T> - target aesthetic type of the configured scale
  */
 class ScaleConfig<T> constructor(
-    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>,
+    val aes: Aes<T>,
     options: Map<String, Any>
 ) : OptionsAccessor(options) {
 
@@ -89,7 +89,7 @@ class ScaleConfig<T> constructor(
             mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
         }
 
-        if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE) {
+        if (aes == Aes.SHAPE) {
             val solid = get(SHAPE_SOLID)
             // False - show only hollow shapes, otherwise - all (default)
             if (solid is Boolean && solid == false) {
@@ -97,20 +97,20 @@ class ScaleConfig<T> constructor(
                     ShapeMapper.hollowShapes(), ShapeMapper.NA_VALUE
                 )
             }
-        } else if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.ALPHA && has(RANGE)) {
+        } else if (aes == Aes.ALPHA && has(RANGE)) {
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.SIZE && has(RANGE)) {
+        } else if (aes == Aes.SIZE && has(RANGE)) {
             mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.LINEWIDTH && has(RANGE)) {
+        } else if (aes == Aes.LINEWIDTH && has(RANGE)) {
             mapperProvider = LinewidthMapperProvider(getRange(RANGE), (naValue as Double))
-        } else if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.STROKE && has(RANGE)) {
+        } else if (aes == Aes.STROKE && has(RANGE)) {
             mapperProvider = StrokeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
         val scaleMapperKind = getString(SCALE_MAPPER_KIND) ?: if (
             !has(OUTPUT_VALUES) &&
             enforceDiscreteDomain() &&
-            org.jetbrains.letsPlot.core.plot.base.Aes.isColor(aes)
+            Aes.isColor(aes)
         ) {
             // Default palette type for discrete colors
             COLOR_BREWER
@@ -233,7 +233,7 @@ class ScaleConfig<T> constructor(
             b.continuousTransform(transform)
         }
 
-        if (aes in listOf<org.jetbrains.letsPlot.core.plot.base.Aes<*>>(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y) && has(Option.Scale.POSITION)) {
+        if (aes in listOf<Aes<*>>(Aes.X, Aes.Y) && has(Option.Scale.POSITION)) {
             b.axisPosition = axisPosition(aes)
         }
 
@@ -279,7 +279,7 @@ class ScaleConfig<T> constructor(
         return GuideConfig.create(get(GUIDE)!!)
     }
 
-    private fun axisPosition(axis: org.jetbrains.letsPlot.core.plot.base.Aes<*>): AxisPosition {
+    private fun axisPosition(axis: Aes<*>): AxisPosition {
         val s = getStringSafe(Option.Scale.POSITION)
         return when (s.trim().lowercase()) {
             Option.Scale.POSITION_L -> AxisPosition.LEFT
@@ -287,7 +287,7 @@ class ScaleConfig<T> constructor(
             Option.Scale.POSITION_T -> AxisPosition.TOP
             Option.Scale.POSITION_B -> AxisPosition.BOTTOM
             Option.Scale.POSITION_BOTH -> {
-                if (axis == org.jetbrains.letsPlot.core.plot.base.Aes.X) AxisPosition.TB
+                if (axis == Aes.X) AxisPosition.TB
                 else AxisPosition.LR
             }
 
@@ -297,13 +297,13 @@ class ScaleConfig<T> constructor(
 
     companion object {
 
-        fun aesOrFail(options: Map<String, Any>): org.jetbrains.letsPlot.core.plot.base.Aes<*> {
+        fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
             require(accessor.has(AES)) { "Required parameter '$AES' is missing" }
             return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
-        fun <T> createIdentityMapperProvider(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, naValue: T): MapperProvider<T> {
+        fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {
             // There is an option value converter for every AES (which can be used as discrete identity mapper)
             val cvt = AesOptionConversion.getConverter(aes)
             val discreteMapperProvider =

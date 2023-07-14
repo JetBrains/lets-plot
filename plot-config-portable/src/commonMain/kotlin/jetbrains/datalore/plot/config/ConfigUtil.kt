@@ -157,14 +157,14 @@ object ConfigUtil {
     internal fun createAesMapping(
         data: DataFrame,
         mapping: Map<*, *>?,
-    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> {
+    ): Map<Aes<*>, DataFrame.Variable> {
         if (mapping == null) {
             return emptyMap()
         }
 
         val dfVariables = variables(data)
 
-        val result = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>()
+        val result = HashMap<Aes<*>, DataFrame.Variable>()
         val options = Option.Mapping.REAL_AES_OPTION_NAMES
         for (option in options) {
             val value = mapping[option]

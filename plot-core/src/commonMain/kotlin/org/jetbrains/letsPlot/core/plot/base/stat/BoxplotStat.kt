@@ -34,12 +34,12 @@ class BoxplotStat(
     private val computeWidth: Boolean       // ggplot: 'varWidth'
 ) : BaseStat(DEF_MAPPING) {
 
-    override fun hasDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
                 aes == WIDTH && computeWidth
     }
 
-    override fun getDefaultMapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable {
+    override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
         return if (aes == WIDTH) {
             Stats.WIDTH
         } else {
@@ -47,12 +47,12 @@ class BoxplotStat(
         }
     }
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
@@ -88,13 +88,13 @@ class BoxplotStat(
         const val DEF_WHISKER_IQR_RATIO = 1.5
         const val DEF_COMPUTE_WIDTH = false
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to Stats.Y_MIN,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to Stats.Y_MAX,
-            org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to Stats.LOWER,
-            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to Stats.MIDDLE,
-            org.jetbrains.letsPlot.core.plot.base.Aes.UPPER to Stats.UPPER
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.YMIN to Stats.Y_MIN,
+            Aes.YMAX to Stats.Y_MAX,
+            Aes.LOWER to Stats.LOWER,
+            Aes.MIDDLE to Stats.MIDDLE,
+            Aes.UPPER to Stats.UPPER
         )
 
         private fun buildStat(

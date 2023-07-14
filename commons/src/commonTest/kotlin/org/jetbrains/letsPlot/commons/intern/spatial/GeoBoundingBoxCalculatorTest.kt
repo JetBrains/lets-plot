@@ -23,7 +23,7 @@ class GeoBoundingBoxCalculatorTest {
     fun roundingErrorTest() {
         val pointRect = Rect.XYWH<World>(127.99999999999999, 127.99999999999997, 0.0, 0.0)
 
-        val rect = org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator(
+        val rect = GeoBoundingBoxCalculator(
             Rect.XYWH<World>(0.0, 0.0, 256.0, 256.0), true, false
         ).union(listOf(pointRect))
 

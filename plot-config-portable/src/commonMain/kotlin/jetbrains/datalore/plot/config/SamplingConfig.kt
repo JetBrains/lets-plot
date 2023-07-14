@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.builder.sampling.Sampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
 
 internal object SamplingConfig {
     fun create(sampling: Any): List<Sampling> {

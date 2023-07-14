@@ -118,11 +118,11 @@ object AesInitValue {
     /**
      * For test only (must br TRUE for any Aes)
      */
-    fun has(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    fun has(aes: Aes<*>): Boolean {
         return VALUE_MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
+    operator fun <T> get(aes: Aes<T>): T {
         return VALUE_MAP[aes]
     }
 

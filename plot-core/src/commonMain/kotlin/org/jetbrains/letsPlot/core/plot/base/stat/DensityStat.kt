@@ -34,12 +34,12 @@ class DensityStat(
         require(n <= MAX_N) { "The input n = $n > $MAX_N is too large!" }
     }
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.X, Aes.WEIGHT)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.X)) {
+        if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
 
@@ -139,10 +139,10 @@ class DensityStat(
 
         const val MAX_N = 1024
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.DENSITY,
-            org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE to Stats.QUANTILE
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.DENSITY,
+            Aes.QUANTILE to Stats.QUANTILE
         )
     }
 }

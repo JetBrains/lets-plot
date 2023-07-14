@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.scale.ScaleProvider
-import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper
 
 internal object PlotConfigScaleProviders {
 
@@ -16,9 +16,9 @@ internal object PlotConfigScaleProviders {
         layerConfigs: List<LayerConfig>,
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean
-    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleProvider> {
+    ): Map<Aes<*>, ScaleProvider> {
 
-        val scaleProviderByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleProvider>()
+        val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
         // Create 'configured' scale providers.
         for (scaleConfig in scaleConfigs) {
@@ -39,8 +39,8 @@ internal object PlotConfigScaleProviders {
 
         // Axis that don't have an explicit mapping but have a corresponding positional mapping to a datetime variable
         val dateTimeAxisAesByPositionalVarBinding = listOfNotNull(
-            if (dateTimeAesByVarBinding.any(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalX)) org.jetbrains.letsPlot.core.plot.base.Aes.X else null,
-            if (dateTimeAesByVarBinding.any(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalY)) org.jetbrains.letsPlot.core.plot.base.Aes.Y else null,
+            if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalX)) Aes.X else null,
+            if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalY)) Aes.Y else null,
         )
 
         (dateTimeAesByVarBinding + dateTimeAxisAesByPositionalVarBinding)
@@ -53,13 +53,13 @@ internal object PlotConfigScaleProviders {
 
         // All aes used in bindings and x/y aes.
         // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
-        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
 
         // Append all the rest scale providers.
         return aesSet.associateWith { aes ->
             val scaleAes = when {
-                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.X
-                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                Aes.isPositionalX(aes) -> Aes.X
+                Aes.isPositionalY(aes) -> Aes.Y
                 else -> aes
             }
 

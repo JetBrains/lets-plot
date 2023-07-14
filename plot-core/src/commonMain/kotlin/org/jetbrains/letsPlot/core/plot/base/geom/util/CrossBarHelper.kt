@@ -41,13 +41,13 @@ object CrossBarHelper {
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
-            org.jetbrains.letsPlot.core.plot.base.Aes.X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH,
-            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE
+            Aes.X,
+            Aes.WIDTH,
+            Aes.MIDDLE
         )) {
             val x = p.x()!!
             val middle = p.middle()!!
-            val width = p.width()!! * ctx.getResolution(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+            val width = p.width()!! * ctx.getResolution(Aes.X)
 
             val line = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),

@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import jetbrains.datalore.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
-import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 
 internal class PlotFigureBuildInfo constructor(
     private val plotAssembler: PlotAssembler,

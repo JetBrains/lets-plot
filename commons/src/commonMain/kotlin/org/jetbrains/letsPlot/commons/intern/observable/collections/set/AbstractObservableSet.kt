@@ -48,11 +48,11 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
                 myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
                     override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemAdded(
-                            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+                            CollectionItemEvent(
                                 null,
                                 item,
                                 -1,
-                                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD
+                                CollectionItemEvent.EventType.ADD
                             )
                         )
                     }
@@ -123,11 +123,11 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
                 myListeners!!.fire(object : ListenerCaller<CollectionListener<in ItemT>> {
                     override fun call(l: CollectionListener<in ItemT>) {
                         l.onItemRemoved(
-                            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
+                            CollectionItemEvent(
                                 item,
                                 null,
                                 -1,
-                                org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE
+                                CollectionItemEvent.EventType.REMOVE
                             )
                         )
                     }
@@ -151,13 +151,13 @@ abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), Obser
     protected open fun afterItemRemoved(item: ItemT?, success: Boolean) {}
 
 
-    override fun addHandler(handler: EventHandler<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>>): Registration {
-        return addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT>() {
-            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+    override fun addHandler(handler: EventHandler<CollectionItemEvent<out ItemT>>): Registration {
+        return addListener(object : CollectionAdapter<ItemT>() {
+            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }
 
-            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
+            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
                 handler.onEvent(event)
             }
         })

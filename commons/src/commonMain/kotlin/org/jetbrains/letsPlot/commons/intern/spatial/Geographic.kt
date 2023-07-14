@@ -27,7 +27,7 @@ const val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
 
 val EARTH_RECT = Rect.XYWH<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
 val BBOX_CALCULATOR =
-    org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
+    GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
 
 fun limitLon(lon: Double) = max(MIN_LONGITUDE, min(lon, MAX_LONGITUDE))
 fun limitLat(lat: Double) = max(MIN_LATITUDE, min(lat, MAX_LATITUDE))

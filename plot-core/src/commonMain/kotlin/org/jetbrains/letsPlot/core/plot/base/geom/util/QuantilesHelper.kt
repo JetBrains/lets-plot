@@ -16,11 +16,11 @@ open class QuantilesHelper(
     coord: CoordinateSystem,
     ctx: GeomContext,
     private val quantiles: List<Double>,
-    private val groupAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>? = null
+    private val groupAes: Aes<Double>? = null
 ) : GeomHelper(pos, coord, ctx) {
     internal fun splitByQuantiles(
         dataPoints: Iterable<DataPointAesthetics>,
-        axisAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>
+        axisAes: Aes<Double>
     ): List<List<DataPointAesthetics>> {
         if (dataPoints.none()) {
             return emptyList()
@@ -58,7 +58,7 @@ open class QuantilesHelper(
 
     internal fun getQuantileLineElements(
         dataPoints: Iterable<DataPointAesthetics>,
-        axisAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
+        axisAes: Aes<Double>,
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
     ): List<SvgLineElement> {
@@ -103,7 +103,7 @@ open class QuantilesHelper(
 
     private fun iterateThroughSortedDataPoints(
         dataPoints: Iterable<DataPointAesthetics>,
-        axisAes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
+        axisAes: Aes<Double>,
         action: (List<DataPointAesthetics>) -> Unit
     ) {
         dataPoints.groupBy { p ->

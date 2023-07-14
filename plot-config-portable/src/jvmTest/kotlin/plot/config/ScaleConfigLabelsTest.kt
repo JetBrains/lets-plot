@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
+import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.plot.config.Option.Scale.DATE_TIME
@@ -27,14 +27,14 @@ import kotlin.test.assertEquals
 class ScaleConfigLabelsTest {
 
     private val data = mapOf("value" to listOf(0, 1))
-    private val mappingXY = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "value", org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "value")
+    private val mappingXY = mapOf(Aes.X.name to "value", Aes.Y.name to "value")
     private val discreteData = mapOf("value" to listOf('a', 'b', 'c'))
 
     @Test
     fun `default scale`() {
         val scaleMap = getScaleMap(data, mappingXY, scales = emptyList())
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), xLabels)
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), yLabels)
@@ -47,17 +47,17 @@ class ScaleConfigLabelsTest {
             mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     FORMAT to ".2f"
                 ),
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                    Option.Scale.AES to Aes.Y.name,
                     FORMAT to ".3f"
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("-0.40", "-0.20", "0.00", "0.20", "0.40"), xLabels)
         assertEquals(listOf("-0.400", "-0.200", "0.000", "0.200", "0.400"), yLabels)
@@ -72,17 +72,17 @@ class ScaleConfigLabelsTest {
                 mappingXY,
                 scales = listOf(
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                        Option.Scale.AES to Aes.X.name,
                         CONTINUOUS_TRANSFORM to "log10"
                     ),
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                        Option.Scale.AES to Aes.Y.name,
                         CONTINUOUS_TRANSFORM to "log10"
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-            val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), xLabels)
             assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), yLabels)
@@ -93,19 +93,19 @@ class ScaleConfigLabelsTest {
                 mappingXY,
                 scales = listOf(
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                        Option.Scale.AES to Aes.X.name,
                         CONTINUOUS_TRANSFORM to "log10",
                         FORMAT to "x = {}"
                     ),
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                        Option.Scale.AES to Aes.Y.name,
                         CONTINUOUS_TRANSFORM to "log10",
                         FORMAT to "y = {.2f}"
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-            val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(
                 listOf(
@@ -127,19 +127,19 @@ class ScaleConfigLabelsTest {
                 mappingXY,
                 scales = listOf(
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                        Option.Scale.AES to Aes.X.name,
                         CONTINUOUS_TRANSFORM to "log10",
                         FORMAT to ".2f"
                     ),
                     mapOf(
-                        Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                        Option.Scale.AES to Aes.Y.name,
                         CONTINUOUS_TRANSFORM to "log10",
                         FORMAT to ".3f"
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-            val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(listOf("0.40", "0.63", "1.00", "1.58", "2.51"), xLabels)
             assertEquals(listOf("0.398", "0.631", "1.000", "1.585", "2.512"), yLabels)
@@ -153,14 +153,14 @@ class ScaleConfigLabelsTest {
             mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     BREAKS to listOf(-0.5, 0.5, 1.5),
                     LABELS to listOf("-0.5", "0.5", "1.5"),
                     FORMAT to ".2f"
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("-0.5", "0.5", "1.5"), xLabels)
     }
 
@@ -171,18 +171,18 @@ class ScaleConfigLabelsTest {
             mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     DISCRETE_DOMAIN to true,
                     FORMAT to "x = is {}"
                 ),
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                    Option.Scale.AES to Aes.Y.name,
                     DISCRETE_DOMAIN to true
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        val yLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("x = is a", "x = is b", "x = is c"), xLabels)
         assertEquals(listOf("a", "b", "c"), yLabels)
@@ -195,13 +195,13 @@ class ScaleConfigLabelsTest {
             mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     LIMITS to listOf('a', 'b'),
                     FORMAT to "is {}"
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("is a", "is b"), xLabels)
     }
 
@@ -212,14 +212,14 @@ class ScaleConfigLabelsTest {
             mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     LIMITS to listOf('a', 'b'),
                     Option.Scale.DISCRETE_DOMAIN_REVERSE to true,
                     FORMAT to "is {}"
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("is b", "is a"), xLabels)
     }
 
@@ -239,12 +239,12 @@ class ScaleConfigLabelsTest {
             mapping = mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     DATE_TIME to true,
                     FORMAT to "%m-%d-%Y %H:%M"
                 ),
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
+                    Option.Scale.AES to Aes.Y.name,
                     DATE_TIME to true,
                     FORMAT to "%B %Y"
                 )
@@ -252,14 +252,14 @@ class ScaleConfigLabelsTest {
         )
 
         val xLabels = getScaleLabels(
-            scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X),
+            scaleMap.getValue(Aes.X),
             targetCount = 1,
             closeRange = DoubleSpan(instant, instant)
         )
         assertEquals(listOf("01-01-2021 10:10"), xLabels)
 
         val yLabels = getScaleLabels(
-            scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y),
+            scaleMap.getValue(Aes.Y),
             targetCount = 1,
             closeRange = DoubleSpan(instant, instant)
         )
@@ -279,7 +279,7 @@ class ScaleConfigLabelsTest {
             mapping = mappingXY,
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.X.name,
+                    Option.Scale.AES to Aes.X.name,
                     DATE_TIME to true,
                     FORMAT to "%d-%m-%Y",
                     BREAKS to instants
@@ -288,7 +288,7 @@ class ScaleConfigLabelsTest {
         )
 
         val xLabels = getScaleLabels(
-            scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X),
+            scaleMap.getValue(Aes.X),
             targetCount = 1,
             closeRange = DoubleSpan(instants.first(), instants.last())
         )
@@ -302,20 +302,20 @@ class ScaleConfigLabelsTest {
     fun `set format for the non positional scale`() {
         val data = mapOf("value" to listOf(1, 2, 3), "c" to listOf("red", "green", "blue"))
         val mapping = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "value",
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "value",
-            org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name to "c",
+            Aes.X.name to "value",
+            Aes.Y.name to "value",
+            Aes.COLOR.name to "c",
         )
         val scales = listOf(
             mapOf(
-                Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name,
+                Option.Scale.AES to Aes.COLOR.name,
                 Option.Scale.SCALE_MAPPER_KIND to "identity",
                 FORMAT to "is {}"
             )
         )
         val scaleMap = getScaleMap(data, mapping, scales)
 
-        val labels = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR).getScaleBreaks().labels
+        val labels = scaleMap.getValue(Aes.COLOR).getScaleBreaks().labels
         assertEquals(listOf("is red", "is green", "is blue"), labels)
     }
 
@@ -324,11 +324,11 @@ class ScaleConfigLabelsTest {
         val serie = listOf("one", "two", "three")
         val data = mapOf("value" to serie)
         val mapping = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "value",
+            Aes.LABEL.name to "value",
         )
         val scaleMap = getScaleMap(data, mapping, emptyList(), Option.GeomName.TEXT)
 
-        val labels = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL).getScaleBreaks().labels
+        val labels = scaleMap.getValue(Aes.LABEL).getScaleBreaks().labels
         // identity expected
         assertEquals(serie, labels)
     }
@@ -338,13 +338,13 @@ class ScaleConfigLabelsTest {
         val serie = listOf(1.0, 2.0, 3.0)
         val data = mapOf("value" to serie)
         val mapping = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "value",
+            Aes.LABEL.name to "value",
         )
 
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, emptyList())
 
-        val labelTransform = geomLayer.scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL).transform
-        val labelMapper = geomLayer.scaleMappersNP.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL)
+        val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
+        val labelMapper = geomLayer.scaleMappersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
         val outputs = labelTransform.apply(inputs).map {
@@ -360,19 +360,19 @@ class ScaleConfigLabelsTest {
         val serie = listOf(1.0, 2.0, 3.0)
         val data = mapOf("value" to serie)
         val mapping = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "value",
+            Aes.LABEL.name to "value",
         )
         val scales = listOf(
             mapOf(
-                Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name,
+                Option.Scale.AES to Aes.LABEL.name,
                 FORMAT to "d"   // round to int.
             )
         )
 
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, scales)
 
-        val labelTransform = geomLayer.scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL).transform
-        val labelMapper = geomLayer.scaleMappersNP.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL)
+        val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
+        val labelMapper = geomLayer.scaleMappersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
         val outputs = labelTransform.apply(inputs).map {

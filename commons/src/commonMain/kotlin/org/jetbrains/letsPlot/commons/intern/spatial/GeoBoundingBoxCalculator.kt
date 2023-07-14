@@ -16,57 +16,57 @@ import kotlin.math.min
 // That's why we can't use ClosedRange class with lower <= upper invariant
 typealias Segment = Pair<Double, Double>
 
-val org.jetbrains.letsPlot.commons.intern.spatial.Segment.start get() = first
-val org.jetbrains.letsPlot.commons.intern.spatial.Segment.end get() = second
+val Segment.start get() = first
+val Segment.end get() = second
 
 class GeoBoundingBoxCalculator<TypeT>(
     private val myMapRect: Rect<TypeT>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
 ) {
-    fun calculateBoundingBox(xSegments: Sequence<org.jetbrains.letsPlot.commons.intern.spatial.Segment>, ySegments: Sequence<org.jetbrains.letsPlot.commons.intern.spatial.Segment>): Rect<TypeT> {
+    fun calculateBoundingBox(xSegments: Sequence<Segment>, ySegments: Sequence<Segment>): Rect<TypeT> {
         val xRange = calculateBoundingRange(xSegments, myMapRect.xRange(), myLoopX)
         val yRange = calculateBoundingRange(ySegments, myMapRect.yRange(), myLoopY)
         return Rect.XYWH(xRange.lowerEnd, yRange.lowerEnd, xRange.length(), yRange.length())
     }
 
     private fun calculateBoundingRange(
-        segments: Sequence<org.jetbrains.letsPlot.commons.intern.spatial.Segment>,
+        segments: Sequence<Segment>,
         mapRange: DoubleSpan,
         loop: Boolean
     ): DoubleSpan {
         return if (loop) {
-            org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange(
+            calculateLoopLimitRange(
                 segments,
                 mapRange
             )
         } else {
             DoubleSpan(
-                segments.map(org.jetbrains.letsPlot.commons.intern.spatial.Segment::start).minOrNull()!!,
-                segments.map(org.jetbrains.letsPlot.commons.intern.spatial.Segment::end).maxOrNull()!!
+                segments.map(Segment::start).minOrNull()!!,
+                segments.map(Segment::end).maxOrNull()!!
             )
         }
     }
 
     companion object {
-        internal fun calculateLoopLimitRange(segments: Sequence<org.jetbrains.letsPlot.commons.intern.spatial.Segment>, mapRange: DoubleSpan): DoubleSpan {
+        internal fun calculateLoopLimitRange(segments: Sequence<Segment>, mapRange: DoubleSpan): DoubleSpan {
             return segments
                 .map { splitSegment(it.start, it.end, mapRange.lowerEnd, mapRange.upperEnd) }
                 .flatten()
                 .run {
-                    org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator.Companion.findMaxGapBetweenRanges(
+                    findMaxGapBetweenRanges(
                         this,
                         mapRange.length()
                     )
                 }
                 .run {
-                    org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator.Companion.invertRange(
+                    invertRange(
                         this,
                         mapRange.length()
                     )
                 }
                 .run {
-                    org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator.Companion.normalizeCenter(
+                    normalizeCenter(
                         this,
                         mapRange
                     )
@@ -121,20 +121,20 @@ class GeoBoundingBoxCalculator<TypeT>(
     }
 }
 
-fun makeSegments(start: (Int) -> Double, end: (Int) -> Double, size: Int): Sequence<org.jetbrains.letsPlot.commons.intern.spatial.Segment> {
-    return (0 until size).asSequence().map { org.jetbrains.letsPlot.commons.intern.spatial.Segment(start(it), end(it)) }
+fun makeSegments(start: (Int) -> Double, end: (Int) -> Double, size: Int): Sequence<Segment> {
+    return (0 until size).asSequence().map { Segment(start(it), end(it)) }
 }
 
-fun <T> org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle>): Rect<T>? {
+fun <T> GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<GeoRectangle>): Rect<T>? {
     if (rectangles.isEmpty()) return null
 
     return calculateBoundingBox(
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+        makeSegments(
             { rectangles[it].startLongitude() },
             { rectangles[it].endLongitude() },
             rectangles.size
         ),
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+        makeSegments(
             { rectangles[it].minLatitude() },
             { rectangles[it].maxLatitude() },
             rectangles.size
@@ -142,26 +142,26 @@ fun <T> org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator<T
     )
 }
 
-fun <T> org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator<T>.pointsBBox(xyCoords: List<Double>): Rect<T> {
+fun <T> GeoBoundingBoxCalculator<T>.pointsBBox(xyCoords: List<Double>): Rect<T> {
     require(xyCoords.size % 2 == 0) { "Longitude-Latitude list is not even-numbered." }
     val x: (Int) -> Double = { index -> xyCoords[2 * index] }
     val y: (Int) -> Double = { index -> xyCoords[2 * index + 1] }
 
     val i = xyCoords.size / 2
     return calculateBoundingBox(
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(x, x, i),
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(y, y, i)
+        makeSegments(x, x, i),
+        makeSegments(y, y, i)
     )
 }
 
-fun <T> org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator<T>.union(rectangles: List<Rect<T>>): Rect<T> {
+fun <T> GeoBoundingBoxCalculator<T>.union(rectangles: List<Rect<T>>): Rect<T> {
     return calculateBoundingBox(
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+        makeSegments(
             { rectangles[it].left },
             { rectangles[it].right },
             rectangles.size
         ),
-        org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
+        makeSegments(
             { rectangles[it].top },
             { rectangles[it].bottom },
             rectangles.size

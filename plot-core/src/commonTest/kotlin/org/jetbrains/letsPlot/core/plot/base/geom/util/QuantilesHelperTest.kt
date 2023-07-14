@@ -112,8 +112,8 @@ class QuantilesHelperTest {
         val dataPoints = getDataPoints(xValues, quantileValues, colorHexValues = colorHexValues)
         val pos = PositionAdjustments.identity()
         val coord = getCoordinateSystem(xValues)
-        val quantilesHelper = QuantilesHelper(pos, coord, org.jetbrains.letsPlot.core.plot.base.BogusContext, emptyList())
-        quantilesHelper.splitByQuantiles(dataPoints, org.jetbrains.letsPlot.core.plot.base.Aes.X).forEachIndexed { i, points ->
+        val quantilesHelper = QuantilesHelper(pos, coord, BogusContext, emptyList())
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEachIndexed { i, points ->
             for (j in points.indices) {
                 assertEquals(expectedXValues[i][j], points[j].x(), "At $i-th bunch, $j-th point, x-values should be equal")
             }
@@ -129,10 +129,10 @@ class QuantilesHelperTest {
         val dataPoints = getDataPoints(xValues, quantileValues, groupValues)
         val pos = PositionAdjustments.identity()
         val coord = getCoordinateSystem(xValues)
-        val quantilesHelper = QuantilesHelper(pos, coord, org.jetbrains.letsPlot.core.plot.base.BogusContext, quantiles)
+        val quantilesHelper = QuantilesHelper(pos, coord, BogusContext, quantiles)
         val quantileLines = quantilesHelper.getQuantileLineElements(
             dataPoints,
-            org.jetbrains.letsPlot.core.plot.base.Aes.X,
+            Aes.X,
             { p -> DoubleVector(p.x()!!, 0.0) },
             { p -> DoubleVector(p.x()!!, 0.0) }
         )
@@ -153,7 +153,7 @@ class QuantilesHelperTest {
     ): Iterable<DataPointAesthetics> {
         val builder = AestheticsBuilder(xValues.size)
             .x(AestheticsBuilder.list(xValues))
-            .aes(org.jetbrains.letsPlot.core.plot.base.Aes.QUANTILE, AestheticsBuilder.list(quantileValues))
+            .aes(Aes.QUANTILE, AestheticsBuilder.list(quantileValues))
         if (groupValues != null) builder.group(AestheticsBuilder.list(groupValues))
         if (colorHexValues != null) builder.color(AestheticsBuilder.list(colorHexValues.map { Color.parseHex(it) }))
         return builder.build().dataPoints()

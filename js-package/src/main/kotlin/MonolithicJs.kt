@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
-import jetbrains.datalore.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap

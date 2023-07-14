@@ -47,7 +47,7 @@ object OptionsUtil {
             is Boolean -> v
             is Color -> v.toHexColor()
             is GeomKind -> Option.GeomName.fromGeomKind(v)
-            is org.jetbrains.letsPlot.core.plot.base.Aes<*> -> Option.Mapping.toOption(v)
+            is Aes<*> -> Option.Mapping.toOption(v)
             is Pair<*, *> -> listOf(v.first, v.second)
             is PointShape -> v.code
             is NamedLineType -> v.code

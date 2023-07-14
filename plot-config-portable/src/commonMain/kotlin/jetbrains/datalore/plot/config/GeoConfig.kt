@@ -38,7 +38,7 @@ class GeoConfig(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable>
 
     init {
         if (layerOptions.has(MAP_DATA_META, GDF) || layerOptions.has(DATA_META, GDF)) {
@@ -71,7 +71,7 @@ class GeoConfig(
             if (!isMapPlot && combinedMappings.keys
                     .mapNotNull { it as? String }
                     .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
-                    .any(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositional)
+                    .any(Aes.Companion::isPositional)
             ) {
                 return false
             }
@@ -104,7 +104,7 @@ class GeoReferenceProcessor(
     mappingOptions: Map<*, *>
 ) { 
     val processedDataFrame: DataFrame
-    val processedMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
+    val processedMappings: Map<Aes<*>, Variable>
 
     init {
         val data: DataFrame
@@ -165,7 +165,7 @@ class GeoReferenceProcessor(
             .put(idVar, mapids)
             .build()
 
-        processedMappings = createAesMapping(processedDataFrame, mappingOptions + mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.MAP_ID.name to GeoReference.Columns.ID))
+        processedMappings = createAesMapping(processedDataFrame, mappingOptions + mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
     }
 }
 
@@ -176,7 +176,7 @@ class GeoDataFrameProcessor(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable>
 
     init {
 
@@ -344,15 +344,15 @@ internal abstract class CoordinatesCollector(
     companion object {
 
         val POINT_COLUMNS = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to GeoConfig.POINT_X,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to GeoConfig.POINT_Y
+            Aes.X.name to GeoConfig.POINT_X,
+            Aes.Y.name to GeoConfig.POINT_Y
         )
 
         val RECT_MAPPINGS = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.XMIN.name to GeoConfig.RECT_XMIN,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN.name to GeoConfig.RECT_YMIN,
-            org.jetbrains.letsPlot.core.plot.base.Aes.XMAX.name to GeoConfig.RECT_XMAX,
-            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX.name to GeoConfig.RECT_YMAX
+            Aes.XMIN.name to GeoConfig.RECT_XMIN,
+            Aes.YMIN.name to GeoConfig.RECT_YMIN,
+            Aes.XMAX.name to GeoConfig.RECT_XMAX,
+            Aes.YMAX.name to GeoConfig.RECT_YMAX
         )
 
         internal fun Map<String, MutableList<Any>>.append(p: Vec<LonLat>) {

@@ -50,15 +50,15 @@ import kotlin.jvm.JvmOverloads
 
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {
 
-    private val myIndexFunctionMap: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Int) -> Any?>
+    private val myIndexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>
     private var myGroup = constant(0)
-    private val myConstantAes = HashSet(org.jetbrains.letsPlot.core.plot.base.Aes.values())  // initially contains all Aes;
-    private var myColorAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = COLOR
-    private var myFillAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = FILL
+    private val myConstantAes = HashSet(Aes.values())  // initially contains all Aes;
+    private var myColorAes: Aes<Color> = COLOR
+    private var myFillAes: Aes<Color> = FILL
 
     init {
         myIndexFunctionMap = HashMap()
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
             myIndexFunctionMap[aes] =
                 constant(
@@ -201,24 +201,24 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(EXPLODE, v)
     }
 
-    fun <T> constantAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, v: T?): AestheticsBuilder {
+    fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {
         myConstantAes.add(aes)
         myIndexFunctionMap[aes] = constant(v)
         return this
     }
 
-    fun <T> aes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, v: (Int) -> T?): AestheticsBuilder {
+    fun <T> aes(aes: Aes<T>, v: (Int) -> T?): AestheticsBuilder {
         myConstantAes.remove(aes)
         myIndexFunctionMap[aes] = v
         return this
     }
 
-    fun colorAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>): AestheticsBuilder {
+    fun colorAes(aes: Aes<Color>): AestheticsBuilder {
         myColorAes = aes
         return this
     }
 
-    fun fillAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>): AestheticsBuilder {
+    fun fillAes(aes: Aes<Color>): AestheticsBuilder {
         myFillAes = aes
         return this
     }
@@ -232,10 +232,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         private val myDataPointCount: Int = b.myDataPointCount
         private val myIndexFunctionMap = TypedIndexFunctionMap(b.myIndexFunctionMap)
         val group = b.myGroup
-        private val myConstantAes: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = HashSet(b.myConstantAes)
+        private val myConstantAes: Set<Aes<*>> = HashSet(b.myConstantAes)
 
-        private val myResolutionByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Double>()
-        private val myRangeByNumericAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<Double>, DoubleSpan?>()
+        private val myResolutionByAes = HashMap<Aes<*>, Double>()
+        private val myRangeByNumericAes = HashMap<Aes<Double>, DoubleSpan?>()
 
         val colorAes = b.myColorAes
         val fillAes = b.myFillAes
@@ -243,7 +243,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         override val isEmpty: Boolean
             get() = myDataPointCount == 0
 
-        fun <T> aes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): (Int) -> T {
+        fun <T> aes(aes: Aes<T>): (Int) -> T {
             return myIndexFunctionMap[aes]
         }
 
@@ -269,7 +269,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             }
         }
 
-        override fun range(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): DoubleSpan? {
+        override fun range(aes: Aes<Double>): DoubleSpan? {
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {
                     myDataPointCount <= 0 -> null
@@ -291,7 +291,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return myRangeByNumericAes[aes]
         }
 
-        override fun resolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, naValue: Double): Double {
+        override fun resolution(aes: Aes<Double>, naValue: Double): Double {
             if (!myResolutionByAes.containsKey(aes)) {
                 val resolution: Double =
                     when {
@@ -307,7 +307,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return myResolutionByAes[aes]!!
         }
 
-        override fun numericValues(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Iterable<Double?> {
+        override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
             require(aes.isNumeric) { "Numeric aes is expected: $aes" }
             return object : Iterable<Double> {
                 override fun iterator(): Iterator<Double> {
@@ -379,13 +379,13 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return myAesthetics.group(myIndex)
         }
 
-        override fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T? {
+        override fun <T> get(aes: Aes<T>): T? {
             return myAesthetics.aes(aes)(myIndex)
         }
 
-        override val colorAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = myAesthetics.colorAes
+        override val colorAes: Aes<Color> = myAesthetics.colorAes
 
-        override val fillAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = myAesthetics.fillAes
+        override val fillAes: Aes<Color> = myAesthetics.fillAes
     }
 
 

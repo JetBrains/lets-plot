@@ -98,9 +98,9 @@ object Stats {
         return VARS[varName]!!
     }
 
-    fun defaultMapping(stat: Stat): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> {
-        val map = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>()
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+    fun defaultMapping(stat: Stat): Map<Aes<*>, DataFrame.Variable> {
+        val map = HashMap<Aes<*>, DataFrame.Variable>()
+        for (aes in Aes.values()) {
             if (stat.hasDefaultMapping(aes)) {
                 val variable = stat.getDefaultMapping(aes)
                 map[aes] = variable
@@ -364,7 +364,7 @@ object Stats {
             return withEmptyStatValues()
         }
 
-        override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+        override fun consumes(): List<Aes<*>> {
             return emptyList()
         }
     }

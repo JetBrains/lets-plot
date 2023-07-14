@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
-import jetbrains.datalore.plot.builder.defaultTheme.ThemeFlavor
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues
-import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
+import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.getString

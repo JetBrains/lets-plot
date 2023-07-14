@@ -18,15 +18,15 @@ class YOrientationAesthetics(
     pointAestheticsMapper = ::flipDataPointOrientation
 ) {
 
-    override fun range(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): DoubleSpan? {
+    override fun range(aes: Aes<Double>): DoubleSpan? {
         return aesthetics.range(flipAes(aes))
     }
 
-    override fun resolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>, naValue: Double): Double {
+    override fun resolution(aes: Aes<Double>, naValue: Double): Double {
         return aesthetics.resolution(flipAes(aes), naValue)
     }
 
-    override fun numericValues(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Iterable<Double?> {
+    override fun numericValues(aes: Aes<Double>): Iterable<Double?> {
         return aesthetics.numericValues(flipAes(aes))
     }
 
@@ -37,7 +37,7 @@ class YOrientationAesthetics(
     }
 
     private class YOrientationDataPointAesthetics(p: DataPointAesthetics) : DataPointAestheticsDelegate(p) {
-        override fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T? {
+        override fun <T> get(aes: Aes<T>): T? {
             return super.get(
                 flipAes(aes)
             )

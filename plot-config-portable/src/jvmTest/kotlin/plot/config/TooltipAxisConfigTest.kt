@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
 import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD

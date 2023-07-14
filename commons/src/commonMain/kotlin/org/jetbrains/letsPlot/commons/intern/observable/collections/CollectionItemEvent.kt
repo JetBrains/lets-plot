@@ -11,20 +11,20 @@ class CollectionItemEvent<ItemT>(
     val oldItem: ItemT?,
     val newItem: ItemT?,
     val index: Int,
-    val type: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType
+    val type: EventType
 ) :
-    ListenerEvent<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener<ItemT>> {
+    ListenerEvent<CollectionListener<ItemT>> {
 
     init {
-        if (org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD == type && oldItem != null || org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.REMOVE == type && newItem != null) {
+        if (EventType.ADD == type && oldItem != null || EventType.REMOVE == type && newItem != null) {
             throw IllegalStateException()
         }
     }
 
-    override fun dispatch(l: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener<ItemT>) {
-        if (org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD == type) {
+    override fun dispatch(l: CollectionListener<ItemT>) {
+        if (EventType.ADD == type) {
             l.onItemAdded(this)
-        } else if (org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.SET == type) {
+        } else if (EventType.SET == type) {
             l.onItemSet(this)
         } else {
             l.onItemRemoved(this)
@@ -32,9 +32,9 @@ class CollectionItemEvent<ItemT>(
     }
 
     override fun toString(): String {
-        return if (org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.ADD == type) {
+        return if (EventType.ADD == type) {
             newItem.toString() + " added at " + index
-        } else if (org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.SET == type) {
+        } else if (EventType.SET == type) {
             oldItem.toString() + " replaced with " + newItem + " at " + index
         } else {
             oldItem.toString() + " removed at " + index
@@ -45,7 +45,7 @@ class CollectionItemEvent<ItemT>(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<*>
+        other as CollectionItemEvent<*>
 
         if (oldItem != other.oldItem) return false
         if (newItem != other.newItem) return false

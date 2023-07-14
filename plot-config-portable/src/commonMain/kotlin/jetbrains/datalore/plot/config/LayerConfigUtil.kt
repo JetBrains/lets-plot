@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 
@@ -43,8 +43,8 @@ internal object LayerConfigUtil {
         }
     }
 
-    fun initConstants(layerOptions: OptionsAccessor, consumedAesSet: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any> {
-        val result = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>()
+    fun initConstants(layerOptions: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
+        val result = HashMap<Aes<*>, Any>()
         Option.Mapping.REAL_AES_OPTION_NAMES
             .filter(layerOptions::has)
             .associateWith(Option.Mapping::toAes)
@@ -60,8 +60,8 @@ internal object LayerConfigUtil {
 
     fun createBindings(
         data: DataFrame,
-        mapping: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>?,
-        consumedAesSet: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        mapping: Map<Aes<*>, Variable>?,
+        consumedAesSet: Set<Aes<*>>,
         clientSide: Boolean
     ): List<VarBinding> {
 

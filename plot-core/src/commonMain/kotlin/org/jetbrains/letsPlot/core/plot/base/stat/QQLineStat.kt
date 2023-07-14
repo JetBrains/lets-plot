@@ -18,12 +18,12 @@ class QQLineStat(
     private val lineQuantiles: Pair<Double, Double>
 ) : BaseStat(DEF_MAPPING) {
 
-    override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
-        return listOf(org.jetbrains.letsPlot.core.plot.base.Aes.SAMPLE)
+    override fun consumes(): List<Aes<*>> {
+        return listOf(Aes.SAMPLE)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, org.jetbrains.letsPlot.core.plot.base.Aes.SAMPLE)) {
+        if (!hasRequiredValues(data, Aes.SAMPLE)) {
             return withEmptyStatValues()
         }
 
@@ -77,9 +77,9 @@ class QQLineStat(
     companion object {
         val DEF_LINE_QUANTILES = Pair(0.25, 0.75)
 
-        private val DEF_MAPPING: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to Stats.THEORETICAL,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Stats.SAMPLE
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.THEORETICAL,
+            Aes.Y to Stats.SAMPLE
         )
     }
 }

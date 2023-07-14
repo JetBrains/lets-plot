@@ -28,21 +28,21 @@ object TypedContinuousIdentityMappers {
         }
     }
 
-    private val MAP = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>()
+    private val MAP = HashMap<Aes<*>, ScaleMapper<*>>()
 
     init {
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.numeric(org.jetbrains.letsPlot.core.plot.base.Aes.values())) {
+        for (aes in Aes.numeric(Aes.values())) {
             MAP[aes] = Mappers.IDENTITY
         }
-        MAP[org.jetbrains.letsPlot.core.plot.base.Aes.COLOR] = COLOR
-        MAP[org.jetbrains.letsPlot.core.plot.base.Aes.FILL] = COLOR
+        MAP[Aes.COLOR] = COLOR
+        MAP[Aes.FILL] = COLOR
     }
 
-    fun contain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    fun contain(aes: Aes<*>): Boolean {
         return MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): ScaleMapper<T> {
+    operator fun <T> get(aes: Aes<T>): ScaleMapper<T> {
         require(contain(aes)) { "No continuous identity mapper found for aes " + aes.name }
         val mapper = MAP[aes]!!
         // Safe cast because MAP was initiated in type-safe manner

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
-import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 
 internal class FontFamilyRegistryConfig(private val plotOptions: OptionsAccessor) {
     fun createFontFamilyRegistry(): FontFamilyRegistry {
