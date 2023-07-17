@@ -19,7 +19,6 @@ import jetbrains.datalore.plot.config.Option.Geom
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Pos
-import org.jetbrains.letsPlot.commons.values.Color
 
 class GeomProto(val geomKind: GeomKind) {
 
