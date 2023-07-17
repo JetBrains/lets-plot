@@ -32,7 +32,6 @@ open class AreaGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val geomHelper = GeomHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 

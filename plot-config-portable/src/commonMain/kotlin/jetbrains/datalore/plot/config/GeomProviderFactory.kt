@@ -8,11 +8,11 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
-import org.jetbrains.letsPlot.commons.values.Color
 
 internal object GeomProviderFactory {
     private val PROVIDER = HashMap<GeomKind, GeomProvider>()
