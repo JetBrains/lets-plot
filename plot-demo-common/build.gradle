@@ -24,7 +24,7 @@ kotlin {
                 implementation project(':plot-base')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
-                implementation project(':plot-config')
+//                implementation project(':plot-config')
                 implementation project(':vis-demo-common')
             }
         }

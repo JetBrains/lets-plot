@@ -12,7 +12,7 @@ dependencies {
     implementation project(':plot-base')
     implementation project(':plot-builder')
     implementation project(':plot-config-portable')
-    implementation project(':plot-config')
+//    implementation project(':plot-config')
     implementation project(':gis')
     implementation project(':plot-livemap')
 //    implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
