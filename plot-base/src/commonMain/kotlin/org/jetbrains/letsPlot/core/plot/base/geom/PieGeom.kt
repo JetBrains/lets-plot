@@ -34,13 +34,9 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
     var spacerWidth: Double = 0.75
     var spacerColor: Color? = null
-    private var myStrokeSide: StrokeSide = StrokeSide.OUTER
+    var strokeSide: StrokeSide = StrokeSide.OUTER
 
-    fun setStrokeSide(side: String) {
-        myStrokeSide = StrokeSide.fromString(side)
-    }
-
-    private enum class StrokeSide {
+    enum class StrokeSide {
         OUTER, INNER, BOTH;
 
         val hasOuter: Boolean
@@ -48,19 +44,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         val hasInner: Boolean
             get() = this == INNER || this == BOTH
-
-        companion object {
-            fun fromString(str: String): StrokeSide {
-                return when (str) {
-                    "outer" -> OUTER
-                    "inner" -> INNER
-                    "both" -> BOTH
-                    else -> throw IllegalArgumentException(
-                        "Arc pie stroke side '$str' is not allowed, only accept 'outer', 'inner', 'both'"
-                    )
-                }
-            }
-        }
     }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -141,11 +124,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     private fun buildSvgArcs(sector: Sector): LinePath {
         return LinePath(
             SvgPathDataBuilder().apply {
-                if (myStrokeSide.hasOuter) {
+                if (strokeSide.hasOuter) {
                     moveTo(sector.outerArcStart(includeStroke = false))
                     svgOuterArc(sector)
                 }
-                if (myStrokeSide.hasInner) {
+                if (strokeSide.hasInner) {
                     moveTo(sector.innerArcEnd(includeStroke = false))
                     svgInnerArc(sector)
                 }
@@ -175,7 +158,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             }
         }
 
-        // not draw spacer lines for exploded sectors and their neighbors
+        // Do not draw spacer lines for exploded sectors and their neighbors
 
         val explodedSectors = pieSectors.mapIndexedNotNull { index, sector ->
             if (sector.position != sector.pieCenter) index else null
@@ -257,13 +240,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         // Add a hole if an inner stroke is needed
         val toHoleRadius: (Double) -> Double = if (holeSize == 0.0 &&
-            myStrokeSide.hasInner &&
+            strokeSide.hasInner &&
             dataPoints.any { it.color()!! != Color.TRANSPARENT } // has visible stroke
         ) {
             val hole = dataPoints.maxOf { it.stroke()!! } + spacerWidth
-            run {
-                { _: Double -> hole }
-            }
+            { _: Double -> hole }
         } else {
             { radius: Double -> radius * holeSize }
         }
@@ -301,7 +282,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         fun innerArcEnd(includeStroke: Boolean) = innerArcPoint(endAngle - fullCircleDrawingFix, includeStroke)
 
         fun outerArcPoint(angle: Double, includeStroke: Boolean): DoubleVector {
-            val r = when (includeStroke && myStrokeSide.hasOuter) {
+            val r = when (includeStroke && strokeSide.hasOuter) {
                 true -> radius + p.stroke()!! / 2
                 false -> radius
             }
@@ -309,7 +290,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
 
         fun innerArcPoint(angle: Double, includeStroke: Boolean): DoubleVector {
-            val r = when (includeStroke && myStrokeSide.hasInner && holeRadius > 0) {
+            val r = when (includeStroke && strokeSide.hasInner && holeRadius > 0) {
                 true -> holeRadius - p.stroke()!! / 2
                 false -> holeRadius
             }
