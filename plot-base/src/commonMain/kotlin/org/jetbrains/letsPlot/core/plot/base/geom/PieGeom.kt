@@ -32,9 +32,9 @@ import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
-    var spacerWidth: Double = 1.5
+    var spacerWidth: Double = 0.75
     var spacerColor: Color? = null
-    private var myStrokeSide: StrokeSide = StrokeSide.BOTH
+    private var myStrokeSide: StrokeSide = StrokeSide.OUTER
 
     fun setStrokeSide(side: String) {
         myStrokeSide = StrokeSide.fromString(side)
