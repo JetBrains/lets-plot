@@ -86,14 +86,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 )
                 if (spacerWidth > 0) {
                     root.appendNodes(
-                        // not draw spacer lines for exploded sectors
-                         pieSectors.mapNotNull {
-                             if (it.p.explode() == 0.0) {
-                                buildSvgSpacerLines(it, color = spacerColor ?: ctx.plotBackground)
-                            } else {
-                                null
-                             }
-                         }
+                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.plotBackground)
                     )
                 }
 
@@ -163,18 +156,49 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun buildSvgSpacerLines(sector: Sector, color: Color): LinePath {
-        return LinePath(
-            SvgPathDataBuilder().apply {
-                moveTo(sector.innerArcStart(includeStroke = true))
-                lineTo(sector.outerArcStart(includeStroke = true))
-
-                moveTo(sector.innerArcEnd(includeStroke = true))
-                lineTo(sector.outerArcEnd(includeStroke = true))
+    private fun buildSvgSpacerLines(pieSectors: List<Sector>, width: Double, color: Color?): List<LinePath> {
+        fun svgSpacerLines(sector: Sector, atStart: Boolean, atEnd: Boolean): LinePath {
+            return LinePath(
+                SvgPathDataBuilder().apply {
+                    if (atStart) {
+                        moveTo(sector.innerArcStart(includeStroke = true))
+                        lineTo(sector.outerArcStart(includeStroke = true))
+                    }
+                    if (atEnd) {
+                        moveTo(sector.innerArcEnd(includeStroke = true))
+                        lineTo(sector.outerArcEnd(includeStroke = true))
+                    }
+                }
+            ).apply {
+                width().set(width)
+                color().set(color)
             }
-        ).apply {
-            width().set(spacerWidth)
-            color().set(color)
+        }
+
+        // not draw spacer lines for exploded sectors and their neighbors
+
+        val explodedSectors = pieSectors.mapIndexedNotNull { index, sector ->
+            if (sector.position != sector.pieCenter) index else null
+        }
+
+        fun needAddAtStart(index: Int) = when (index) {
+            in explodedSectors -> false
+            0 -> pieSectors.lastIndex !in explodedSectors
+            else -> index - 1 !in explodedSectors
+        }
+
+        fun needAddAtEnd(index: Int) = when (index) {
+            in explodedSectors -> false
+            pieSectors.lastIndex -> 0 !in explodedSectors
+            else -> index + 1 !in explodedSectors
+        }
+
+        return pieSectors.mapIndexed { index, sector ->
+            svgSpacerLines(
+                sector,
+                atStart = needAddAtStart(index),
+                atEnd = needAddAtEnd(index)
+            )
         }
     }
 
