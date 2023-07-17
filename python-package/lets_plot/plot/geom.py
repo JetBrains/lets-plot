@@ -4,7 +4,7 @@
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
 
-from .core import FeatureSpec, LayerSpec
+from .core import FeatureSpec, LayerSpec, aes
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
@@ -24,7 +24,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
-           'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop']
+           'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
+           'geom_function']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -6396,6 +6397,75 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  orientation=orientation,
                  dir=dir, fatten=fatten, slope=slope, intercept=intercept,
                  color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=None, show_legend=None, tooltips=None,
+                  fun=None, xlim=None, n=None,
+                  color_by=None,
+                  **other_args):
+    fun_x_name, fun_y_name = 'x', 'y'
+
+    def linspace(start, stop, num):
+        if num == 1:
+            return [start]
+
+        step = (stop - start) / (num - 1)
+
+        return [start + step * i for i in range(num)]
+
+    def get_default_xrange():
+        default_xlim = [0.0, 1.0]
+        default_size = 512
+
+        start, stop = xlim if xlim is not None else default_xlim
+        size = n if n is not None else default_size
+
+        return linspace(start, stop, size)
+
+    def get_xrange():
+        if mapping is None or 'x' not in mapping.as_dict():
+            return get_default_xrange()
+
+        aes_x_value = mapping.as_dict()['x']
+
+        if isinstance(aes_x_value, str):
+            if data is None:
+                return get_default_xrange()
+            return data[aes_x_value]
+
+        if hasattr(aes_x_value, '__iter__'):
+            return aes_x_value
+
+        raise Exception("Unexpected type of the value that correspond to 'x' aesthetic: {0}".format(type(aes_x_value)))
+
+    def get_fun_data():
+        if fun is None:
+            return {fun_x_name: [], fun_y_name: []}
+
+        xs = get_xrange()
+        ys = [fun(x) for x in xs]
+
+        return {fun_x_name: xs, fun_y_name: ys}
+
+    def get_mapping():
+        mapping_dict = mapping.as_dict() if mapping is not None else {}
+        fun_mapping_dict = {'x': fun_x_name, 'y': fun_y_name}
+
+        return aes(**{**mapping_dict, **fun_mapping_dict})
+
+    fun_stat = stat if stat is not None else 'identity'
+    fun_geom = geom if geom is not None else 'line'
+
+    return _geom(fun_geom,
+                 mapping=get_mapping(),
+                 data=get_fun_data(),
+                 stat=fun_stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=None,
+                 tooltips=tooltips,
+                 color_by=color_by,
                  **other_args)
 
 
