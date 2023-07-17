@@ -1679,7 +1679,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     - x : x-axis coordinates.
     - ymin : lower bound for error bar.
-    - middle : position of median bar.
+    - y : position of median bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
@@ -1699,11 +1699,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         data = {
             'x': ['a', 'b', 'c', 'd'],
             'ymin': [5, 7, 3, 5],
-            'middle': [6.5, 9, 4.5, 7],
+            'y': [6.5, 9, 4.5, 7],
             'ymax': [8, 11, 6, 9],
         }
         ggplot(data, aes(x='x')) + \\
-            geom_crossbar(aes(ymin='ymin', middle='middle', ymax='ymax'))
+            geom_crossbar(aes(ymin='ymin', y='y', ymax='ymax'))
 
     |
 
@@ -1724,11 +1724,16 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         err_df = df.groupby('x').agg({'y': ['min', 'median', 'max']}).reset_index()
         err_df.columns = ['x', 'ymin', 'ymedian', 'ymax']
         ggplot() + \\
-            geom_crossbar(aes(x='x', ymin='ymin', middle='ymedian', ymax='ymax', fill='x'), \\
+            geom_crossbar(aes(x='x', ymin='ymin', y='ymedian', ymax='ymax', fill='x'), \\
                           data=err_df, width=.6, fatten=5) + \\
             geom_jitter(aes(x='x', y='y'), data=df, width=.3, shape=1, color='black', alpha=.5)
 
     """
+    if ('middle' in mapping.props()):
+        print("WARN: using 'middle' aesthetic parameter for crossbar was deprecated.\n"
+              "      Please, use `y` aesthetic instead.")
+        mapping.props()['y'] = mapping.props().pop('middle')
+
     return _geom('crossbar',
                  mapping=mapping,
                  data=data,

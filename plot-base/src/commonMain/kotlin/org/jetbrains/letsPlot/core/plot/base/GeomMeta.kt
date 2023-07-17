@@ -159,7 +159,7 @@ object GeomMeta {
 
             GeomKind.CROSS_BAR -> listOf(
                 Aes.X,
-                Aes.YMIN, Aes.YMAX, Aes.MIDDLE,
+                Aes.YMIN, Aes.YMAX, Aes.Y,
                 Aes.WIDTH,
 
                 Aes.ALPHA,

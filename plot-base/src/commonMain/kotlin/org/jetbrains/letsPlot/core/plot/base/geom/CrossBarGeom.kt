@@ -69,14 +69,14 @@ class CrossBarGeom : GeomBase() {
                     DoubleRectangle(origin, dimensions)
                 } else if (isHintRect &&
                     p.defined(Aes.X) &&
-                    p.defined(Aes.MIDDLE) &&
+                    p.defined(Aes.Y) &&
                     p.defined(Aes.WIDTH)
                 ) {
                     val x = p.x()!!
-                    val middle = p.middle()!!
+                    val y = p.y()!!
                     val width = p.width()!! * ctx.getResolution(Aes.X)
 
-                    val origin = DoubleVector(x - width / 2, middle)
+                    val origin = DoubleVector(x - width / 2, y)
                     val dimensions = DoubleVector(width, 0.0)
                     DoubleRectangle(origin, dimensions)
                 } else {

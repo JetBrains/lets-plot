@@ -42,16 +42,16 @@ object CrossBarHelper {
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
             Aes.X,
-            Aes.WIDTH,
-            Aes.MIDDLE
+            Aes.Y,
+            Aes.WIDTH
         )) {
             val x = p.x()!!
-            val middle = p.middle()!!
+            val y = p.y()!!
             val width = p.width()!! * ctx.getResolution(Aes.X)
 
             val line = elementHelper.createLine(
-                DoubleVector(x - width / 2, middle),
-                DoubleVector(x + width / 2, middle),
+                DoubleVector(x - width / 2, y),
+                DoubleVector(x + width / 2, y),
                 p
             )!!
 
