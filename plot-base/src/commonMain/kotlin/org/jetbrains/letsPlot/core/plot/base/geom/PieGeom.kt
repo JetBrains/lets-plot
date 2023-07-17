@@ -231,14 +231,14 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         var currentAngle = -PI / 2.0
         currentAngle -= angle(dataPoints.first())
 
-        // Make a hole size = 'stroke width' if initially hole=0.0 and need an inner stroke
+        // Add a hole if an inner stroke is needed
         val toHoleRadius: (Double) -> Double = if (holeSize == 0.0 &&
             myStrokeSide.hasInner &&
             dataPoints.any { it.color()!! != Color.TRANSPARENT } // has visible stroke
         ) {
-            val maxStroke = dataPoints.maxOf { it.stroke()!! }
+            val hole = dataPoints.maxOf { it.stroke()!! } + spacerWidth
             run {
-                { _: Double -> maxStroke }
+                { _: Double -> hole }
             }
         } else {
             { radius: Double -> radius * holeSize }
