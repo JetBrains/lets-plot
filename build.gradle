@@ -233,13 +233,14 @@ task publishKotlinApiDependenciesToMavenRepository {
 
 subprojects {
     // Configure Kotlin targets.
+    // List of modules used in Python native extension:
     if (name in [
             'commons',
+            'datamodel',
             'plot-base',
             'plot-builder',
             'plot-config-portable',
             'test-common',
-            'datamodel',
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
