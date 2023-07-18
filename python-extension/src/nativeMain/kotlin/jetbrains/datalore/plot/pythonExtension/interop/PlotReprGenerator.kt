@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.pythonExtension.pngj.RGBEncoderNative
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
-import org.jetbrains.letsPlot.datamodel.mapping.svg.util.UnsupportedRGBEncoder
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {

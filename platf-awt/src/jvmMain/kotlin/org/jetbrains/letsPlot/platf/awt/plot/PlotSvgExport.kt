@@ -7,8 +7,7 @@ package org.jetbrains.letsPlot.platf.awt.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExportPortable
-import org.jetbrains.letsPlot.platf.awt.util.RgbToDataUrl
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
+import org.jetbrains.letsPlot.platf.awt.util.RGBEncoderAwt
 
 object PlotSvgExport {
     /**
@@ -28,12 +27,5 @@ object PlotSvgExport {
             rgbEncoder = RGBEncoderAwt(),
             useCssPixelatedImageRendering
         )
-    }
-}
-
-// ToDo: This is AWT-based and will fail on Android.
-private class RGBEncoderAwt : SvgImageElementEx.RGBEncoder {
-    override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-        return RgbToDataUrl.png(width, height, argbValues)
     }
 }

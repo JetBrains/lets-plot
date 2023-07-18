@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.PlotSvgHelper.fetchPlotSizeFromSvg
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object PlotSvgExportPortable {
@@ -28,7 +28,7 @@ object PlotSvgExportPortable {
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector? = null,
-        rgbEncoder: SvgImageElementEx.RGBEncoder,
+        rgbEncoder: RGBEncoder,
         useCssPixelatedImageRendering: Boolean
     ): String {
         val svgToString = SvgToString(rgbEncoder, useCssPixelatedImageRendering)

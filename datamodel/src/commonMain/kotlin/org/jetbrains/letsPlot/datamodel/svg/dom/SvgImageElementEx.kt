@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
@@ -52,10 +53,6 @@ class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, pri
         )
         imageElement.href().set(hrefValue)
         return imageElement
-    }
-
-    interface RGBEncoder {
-        fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String
     }
 
     class Bitmap

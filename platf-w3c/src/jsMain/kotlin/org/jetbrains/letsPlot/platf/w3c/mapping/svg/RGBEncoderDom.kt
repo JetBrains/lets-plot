@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setAlphaAt
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setBlueAt
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.setGreenAt
@@ -15,8 +14,9 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ImageData
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 
-class RGBEncoderDom : SvgImageElementEx.RGBEncoder {
+class RGBEncoderDom : RGBEncoder {
 
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
         val canvas: HTMLCanvasElement? = document.createElement("canvas") as HTMLCanvasElement?

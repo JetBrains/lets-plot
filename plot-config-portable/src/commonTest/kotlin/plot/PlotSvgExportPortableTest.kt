@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
-import org.jetbrains.letsPlot.datamodel.mapping.svg.util.UnsupportedRGBEncoder
+import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import kotlin.test.*
 
 internal class PlotSvgExportPortableTest {
