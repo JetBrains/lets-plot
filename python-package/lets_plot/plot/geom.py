@@ -6529,27 +6529,21 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
         return linspace(start, stop, size)
 
-    def get_xrange():
-        if mapping is None or 'x' not in mapping.as_dict():
-            return get_default_xrange()
-
-        aes_x_value = mapping.as_dict()['x']
-
-        if isinstance(aes_x_value, str):
-            if data is None:
-                return get_default_xrange()
-            return data[aes_x_value]
-
-        if hasattr(aes_x_value, '__iter__'):
-            return aes_x_value
-
-        raise Exception("Unexpected type of the value that correspond to 'x' aesthetic: {0}".format(type(aes_x_value)))
-
     def get_fun_data():
         if fun is None:
             return {fun_x_name: [], fun_y_name: []}
 
-        xs = get_xrange()
+        aes_x_value = None
+        if mapping is not None and 'x' in mapping.as_dict():
+            aes_x_value = mapping.as_dict()['x']
+
+        if isinstance(aes_x_value, str) and data is not None:
+            xs = data[aes_x_value]
+        elif hasattr(aes_x_value, '__iter__'):
+            xs = aes_x_value
+        else:
+            xs = get_default_xrange()
+
         ys = [fun(x) for x in xs]
 
         return {fun_x_name: xs, fun_y_name: ys}
