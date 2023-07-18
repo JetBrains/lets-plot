@@ -294,17 +294,15 @@ internal object GeomProviderFactory {
                 layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
                 layerConfig.getDouble(Option.Geom.Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
                 layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)?.let { geom.spacerColor = it }
-                if (layerConfig.hasOwn(Option.Geom.Pie.STROKE_SIDE)) {
-                    geom.strokeSide = layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)!!.let {
-                        when (it.lowercase()) {
-                            "outer" -> PieGeom.StrokeSide.OUTER
-                            "inner" -> PieGeom.StrokeSide.INNER
-                            "both" -> PieGeom.StrokeSide.BOTH
-                            else -> throw IllegalArgumentException(
-                                "Unsupported value for side ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
-                                        "Use one of: 'outer', 'inner', 'both'"
-                            )
-                        }
+                layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)?.let {
+                    geom.strokeSide = when (it.lowercase()) {
+                        "outer" -> PieGeom.StrokeSide.OUTER
+                        "inner" -> PieGeom.StrokeSide.INNER
+                        "both" -> PieGeom.StrokeSide.BOTH
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for side ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
+                                    "Use one of: 'outer', 'inner', 'both'"
+                        )
                     }
                 }
                 geom

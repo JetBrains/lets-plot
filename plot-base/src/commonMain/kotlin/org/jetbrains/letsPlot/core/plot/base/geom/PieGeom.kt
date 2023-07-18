@@ -87,7 +87,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 xAxisRotation = 0.0,
                 largeArc = angle > PI,
                 sweep = true,
-                to = outerArcEnd(includeStroke = false)
+                to = outerArcEnd
             )
         }
     }
@@ -100,7 +100,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 xAxisRotation = 0.0,
                 largeArc = angle > PI,
                 sweep = false,
-                to = innerArcStart(includeStroke = false)
+                to = innerArcStart
             )
         }
     }
@@ -108,10 +108,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     private fun buildSvgSector(sector: Sector): LinePath {
         return LinePath(
             SvgPathDataBuilder().apply {
-                moveTo(sector.innerArcStart(includeStroke = false))
-                lineTo(sector.outerArcStart(includeStroke = false))
+                moveTo(sector.innerArcStart)
+                lineTo(sector.outerArcStart)
                 svgOuterArc(sector)
-                lineTo(sector.innerArcEnd(includeStroke = false))
+                lineTo(sector.innerArcEnd)
                 svgInnerArc(sector)
             }
         ).apply {
@@ -125,11 +125,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         return LinePath(
             SvgPathDataBuilder().apply {
                 if (strokeSide.hasOuter) {
-                    moveTo(sector.outerArcStart(includeStroke = false))
+                    moveTo(sector.outerArcStart)
                     svgOuterArc(sector)
                 }
                 if (strokeSide.hasInner) {
-                    moveTo(sector.innerArcEnd(includeStroke = false))
+                    moveTo(sector.innerArcEnd)
                     svgInnerArc(sector)
                 }
             }
@@ -144,12 +144,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             return LinePath(
                 SvgPathDataBuilder().apply {
                     if (atStart) {
-                        moveTo(sector.innerArcStart(includeStroke = true))
-                        lineTo(sector.outerArcStart(includeStroke = true))
+                        moveTo(sector.innerStrokeStartPoint)
+                        lineTo(sector.outerStrokeStartPoint)
                     }
                     if (atEnd) {
-                        moveTo(sector.innerArcEnd(includeStroke = true))
-                        lineTo(sector.outerArcEnd(includeStroke = true))
+                        moveTo(sector.innerStrokeEndPoint)
+                        lineTo(sector.outerStrokeEndPoint)
                     }
                 }
             ).apply {
@@ -188,18 +188,18 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     private fun buildHint(sector: Sector, targetCollector: GeomTargetCollector) {
         fun resampleArc(outerArc: Boolean): List<DoubleVector> {
             val arcPoint = when (outerArc) {
-                true -> { angle: Double -> sector.outerArcPoint(angle, includeStroke = true) }
-                false -> { angle: Double -> sector.innerArcPoint(angle, includeStroke = true ) }
+                true -> { angle: Double -> sector.outerArcPointWithStroke(angle) }
+                false -> { angle: Double -> sector.innerArcPointWithStroke(angle) }
             }
 
             val startPoint = when (outerArc) {
-                true -> sector.outerArcStart(includeStroke = true)
-                false -> sector.innerArcStart(includeStroke = true)
+                true -> sector.outerStrokeStartPoint
+                false -> sector.innerStrokeStartPoint
             }
 
             val endPoint = when (outerArc) {
-                true -> sector.outerArcEnd(includeStroke = true)
-                false -> sector.innerArcEnd(includeStroke = true)
+                true -> sector.outerStrokeEndPoint
+                false -> sector.innerStrokeEndPoint
             }
 
             val segmentLength = startPoint.subtract(endPoint).length()
@@ -238,24 +238,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         var currentAngle = -PI / 2.0
         currentAngle -= angle(dataPoints.first())
 
-        // Add a hole if an inner stroke is needed
-        val toHoleRadius: (Double) -> Double = if (holeSize == 0.0 &&
-            strokeSide.hasInner &&
-            dataPoints.any { it.color()!! != Color.TRANSPARENT } // has visible stroke
-        ) {
-            val hole = dataPoints.maxOf { it.stroke()!! } + spacerWidth
-            { _: Double -> hole }
-        } else {
-            { radius: Double -> radius * holeSize }
-        }
-
         return dataPoints.map { p ->
             Sector(
                 p = p,
                 pieCenter = pieCenter,
                 startAngle = currentAngle,
-                endAngle = currentAngle + angle(p),
-                toHoleRadius = toHoleRadius
+                endAngle = currentAngle + angle(p)
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
@@ -264,38 +252,51 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val pieCenter: DoubleVector,
         val p: DataPointAesthetics,
         val startAngle: Double,
-        val endAngle: Double,
-        toHoleRadius: (Double) -> Double
+        val endAngle: Double
     ) {
         val angle = endAngle - startAngle
+        private val hasVisibleStroke = p.stroke()!! > 0.0 && p.color() != Color.TRANSPARENT
         val radius: Double = AesScaling.pieDiameter(p) / 2
-        val holeRadius = toHoleRadius(radius)
+        val holeRadius = if (holeSize == 0.0 && strokeSide.hasInner && hasVisibleStroke) {
+            // Add a hole if an inner stroke is needed
+            p.stroke()!! + spacerWidth
+        } else {
+            radius * holeSize
+        }
         val direction = startAngle + angle / 2
         private val explode = p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 
-        fun outerArcStart(includeStroke: Boolean) = outerArcPoint(startAngle, includeStroke)
-        fun outerArcEnd(includeStroke: Boolean) = outerArcPoint(endAngle - fullCircleDrawingFix, includeStroke)
+        val outerArcStart = arcPoint(radius, startAngle)
+        val outerArcEnd = arcPoint(radius, endAngle - fullCircleDrawingFix)
 
-        fun innerArcStart(includeStroke: Boolean) = innerArcPoint(startAngle, includeStroke)
-        fun innerArcEnd(includeStroke: Boolean) = innerArcPoint(endAngle - fullCircleDrawingFix, includeStroke)
+        val innerArcStart = arcPoint(holeRadius, startAngle)
+        val innerArcEnd = arcPoint(holeRadius, endAngle - fullCircleDrawingFix)
 
-        fun outerArcPoint(angle: Double, includeStroke: Boolean): DoubleVector {
-            val r = when (includeStroke && strokeSide.hasOuter) {
+        private val hasOuterStroke = strokeSide.hasOuter && hasVisibleStroke
+        private val hasInnerStroke = strokeSide.hasInner && hasVisibleStroke && holeRadius > 0.0
+
+        val outerStrokeStartPoint = outerArcPointWithStroke(startAngle)
+        val outerStrokeEndPoint = outerArcPointWithStroke(endAngle - fullCircleDrawingFix)
+
+        val innerStrokeStartPoint = innerArcPointWithStroke(startAngle)
+        val innerStrokeEndPoint = innerArcPointWithStroke(endAngle - fullCircleDrawingFix)
+
+        fun outerArcPointWithStroke(angle: Double) = arcPoint(
+            radius = when (hasOuterStroke) {
                 true -> radius + p.stroke()!! / 2
                 false -> radius
-            }
-            return arcPoint(r, angle)
-        }
-
-        fun innerArcPoint(angle: Double, includeStroke: Boolean): DoubleVector {
-            val r = when (includeStroke && strokeSide.hasInner && holeRadius > 0) {
+            },
+            angle
+        )
+        fun innerArcPointWithStroke(angle: Double) = arcPoint(
+            radius = when (hasInnerStroke) {
                 true -> holeRadius - p.stroke()!! / 2
                 false -> holeRadius
-            }
-            return arcPoint(r, angle)
-        }
+            },
+            angle
+        )
 
         private fun arcPoint(radius: Double, angle: Double): DoubleVector {
             return position.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
@@ -350,10 +351,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         // split sectors into left and right...
         val leftSectors = sectors
-            .filter { it.outerArcStart(true).x < pieCenter.x || it.outerArcEnd(true).x < pieCenter.x || it.sectorCenter.x < pieCenter.x }
+            .filter { it.outerArcStart.x < pieCenter.x || it.outerArcEnd.x < pieCenter.x || it.sectorCenter.x < pieCenter.x }
             .ifEmpty { sectors }
         val rightSectors = sectors
-            .filter { it.outerArcStart(true).x > pieCenter.x || it.outerArcEnd(true).x > pieCenter.x || it.sectorCenter.x > pieCenter.x }
+            .filter { it.outerArcStart.x > pieCenter.x || it.outerArcEnd.x > pieCenter.x || it.sectorCenter.x > pieCenter.x }
             .ifEmpty { sectors }
 
         val expand = 20.0
