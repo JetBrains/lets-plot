@@ -6067,7 +6067,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
-             hole=None, fill_by=None,
+             hole=None,
+             stroke_side=None,
+             spacer_width=None, spacer_color=None,
+             fill_by=None,
              **other_args):
     """
     Draw pie chart.
@@ -6113,6 +6116,13 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
+    stroke_side : {'outer', 'inner', 'both'}, default='outer'
+        Define which arcs of pie sector should have a stroke.
+    spacer_width : float, default=0.75
+        Line width between sectors.
+        Spacers are not applied to exploded sectors and to sides of adjacent sectors.
+    spacer_color : str, default is transparent
+        Color for spacers between sectors.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args
@@ -6145,8 +6155,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
-    - stroke : width of slice borders.
-    - color : color of slice borders.
+    - stroke : width of inner and outer arcs of pie sector.
+    - color : color of inner and outer arcs of pie sector.
 
     |
 
@@ -6241,8 +6251,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     """
     if 'stroke_color' in other_args:
-        print("WARN: The parameter 'stroke_color' for pie is no longer supported. "
-              "Use 'color' for color of slice borders.")
+        print("WARN: The parameter 'stroke_color' for pie is no longer supported.")
         other_args.pop('stroke_color')
 
     return _geom('pie',
@@ -6255,7 +6264,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  tooltips=tooltips,
                  labels=labels,
                  map=map, map_join=map_join, use_crs=use_crs,
-                 hole=hole, fill_by=fill_by,
+                 hole=hole,
+                 stroke_side=stroke_side,
+                 spacer_width=spacer_width,
+                 spacer_color=spacer_color,
+                 fill_by=fill_by,
                  **other_args)
 
 
