@@ -10,7 +10,7 @@ plugins {
 
 kotlin {
     jvm()
-    js () {
+    js() {
         browser {}
         // browser {}
         // /\
@@ -38,8 +38,7 @@ kotlin {
             dependencies {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
-//                implementation project(':plot-config')
-//                implementation project(':plot-config-portable')
+                implementation project(':demo-and-test-shared')
             }
         }
         jvmMain {

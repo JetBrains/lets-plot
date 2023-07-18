@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.transform
 
-import jetbrains.datalore.base.assertion.assertDoesNotFail
+import demoAndTestShared.assertDoesNotFail
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

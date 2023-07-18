@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

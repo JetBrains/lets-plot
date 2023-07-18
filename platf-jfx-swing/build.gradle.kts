@@ -25,7 +25,7 @@ kotlin {
 
         commonTest {
             dependencies {
-                implementation(project(":test-common"))
+                implementation(project(":demo-and-test-shared"))
             }
         }
 

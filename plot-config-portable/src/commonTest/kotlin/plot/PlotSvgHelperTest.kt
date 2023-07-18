@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
-import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
+import demoAndTestShared.EXPECTED_BUNCH_SVG
+import demoAndTestShared.EXPECTED_SINGLE_PLOT_SVG
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

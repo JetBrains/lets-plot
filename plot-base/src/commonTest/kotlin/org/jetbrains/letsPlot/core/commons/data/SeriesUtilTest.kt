@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.core.commons.data
 
-import jetbrains.datalore.base.assertion.assertArrayEquals
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import demoAndTestShared.assertArrayEquals
 import kotlin.test.Test
 
 class SeriesUtilTest {

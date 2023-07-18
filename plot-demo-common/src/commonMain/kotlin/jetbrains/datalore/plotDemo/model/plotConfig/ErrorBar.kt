@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 // see: www.cookbook-r.com/Graphs/Plotting_means_and_error_bars_(ggplot2)
 @Suppress("DuplicatedCode")

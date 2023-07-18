@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals

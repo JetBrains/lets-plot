@@ -240,7 +240,7 @@ subprojects {
             'plot-base',
             'plot-builder',
             'plot-config-portable',
-            'test-common',
+            'demo-and-test-shared',
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 

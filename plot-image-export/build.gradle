@@ -61,7 +61,7 @@ kotlin {
                 implementation "org.mockito:mockito-core:$mockito_version"
                 implementation "org.assertj:assertj-core:$assertj_version"
 
-                implementation project(':test-common')
+                implementation project(':demo-and-test-shared')
             }
         }
     }

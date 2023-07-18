@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 class AxisPositionFixedBreaksRotated  {
     fun plotSpecList(): List<MutableMap<String, Any>> {

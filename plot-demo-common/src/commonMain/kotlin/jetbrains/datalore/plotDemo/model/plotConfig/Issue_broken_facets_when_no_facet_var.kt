@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 @Suppress("ClassName")
 class Issue_broken_facets_when_no_facet_var {

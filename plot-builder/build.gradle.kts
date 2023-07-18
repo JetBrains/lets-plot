@@ -29,10 +29,8 @@ kotlin {
         }
         commonTest {
             dependencies {
-//                implementation kotlin('test-common')
-//                implementation kotlin('test-annotations-common')
                 implementation(kotlin("test"))
-                implementation(project(":test-common"))
+                implementation(project(":demo-and-test-shared"))
             }
         }
         jvmMain {

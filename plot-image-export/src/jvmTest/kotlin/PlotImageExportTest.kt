@@ -4,6 +4,7 @@
  */
 package jetbrains.datalore.plot
 
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
 class PlotImageExportTest {

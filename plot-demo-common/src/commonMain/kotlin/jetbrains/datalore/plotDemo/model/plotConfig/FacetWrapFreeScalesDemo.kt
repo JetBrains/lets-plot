@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
 import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 
 class FacetWrapFreeScalesDemo {

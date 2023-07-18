@@ -32,12 +32,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-//                implementation(kotlin("test-common"))
-//                implementation(kotlin("test-annotations-common"))
-
-//                implementation("io.mockk:mockk-common:$mockkVersion")
-
-//                implementation( project(":test-common"))
             }
         }
 

@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.TestUtil.assertClientWontFail
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.backendSpecTransform
 import kotlin.test.Test
 import kotlin.test.assertEquals

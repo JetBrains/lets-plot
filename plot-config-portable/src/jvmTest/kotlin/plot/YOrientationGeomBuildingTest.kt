@@ -5,19 +5,20 @@
 
 package jetbrains.datalore.plot;
 
+import demoAndTestShared.parsePlotSpec
+import jetbrains.datalore.plot.config.TestUtil
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.DemoAndTest
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.config.TestUtil
 import org.junit.Test
 import kotlin.math.round
 import kotlin.random.Random

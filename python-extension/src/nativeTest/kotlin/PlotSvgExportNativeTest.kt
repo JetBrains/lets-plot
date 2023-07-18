@@ -5,7 +5,7 @@
 package jetbrains.datalore.plot.pythonExtension.pngj
 
 import jetbrains.datalore.plot.PlotSvgExportPortable
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

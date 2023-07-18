@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import jetbrains.datalore.base.assertion.assertEquals
-import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesInLimits
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleTestUtil.assertValuesNotInLimits
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms

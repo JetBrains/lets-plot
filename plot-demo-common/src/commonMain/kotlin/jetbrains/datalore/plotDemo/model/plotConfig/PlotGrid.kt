@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.config.Option.SubPlots.Grid.ROW_HEIGHTS
 import jetbrains.datalore.plot.config.Option.SubPlots.LAYOUT
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.SUBPLOTS_GRID
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 
 open class PlotGrid {

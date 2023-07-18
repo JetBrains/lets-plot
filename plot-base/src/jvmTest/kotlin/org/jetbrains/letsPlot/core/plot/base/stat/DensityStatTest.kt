@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.assertion.assertEquals
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame

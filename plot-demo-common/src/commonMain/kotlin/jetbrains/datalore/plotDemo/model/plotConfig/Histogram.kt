@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 /**
  * See 'Plotting distributions'

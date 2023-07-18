@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 /**
  * see: www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/

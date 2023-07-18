@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import kotlin.test.assertEquals
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 open class AxisPositionFlexBreaksRotated {
 

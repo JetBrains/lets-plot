@@ -47,6 +47,6 @@ include 'commons',
         'jvm-package:jvm-publish-jfx',
         'jvm-package:jvm-publish-batik',
         'jvm-package:jvm-publish-gis',
-        'test-common',
+        'demo-and-test-shared',
         'platf-batik',
         'platf-jfx-swing'

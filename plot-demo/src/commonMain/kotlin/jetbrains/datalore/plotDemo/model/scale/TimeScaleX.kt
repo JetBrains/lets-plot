@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MS
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 
 class TimeScaleX {

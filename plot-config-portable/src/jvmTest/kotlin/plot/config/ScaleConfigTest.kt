@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.LineTypeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

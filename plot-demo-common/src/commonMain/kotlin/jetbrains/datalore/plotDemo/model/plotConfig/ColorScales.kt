@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 open class ColorScales {
 

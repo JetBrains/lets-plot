@@ -8,7 +8,7 @@ package jetbrains.livemap.plotDemo
 import jetbrains.datalore.plot.config.asMaps
 import jetbrains.datalore.plot.config.asMutable
 import jetbrains.datalore.plot.config.getList
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 
 @Suppress("unused")

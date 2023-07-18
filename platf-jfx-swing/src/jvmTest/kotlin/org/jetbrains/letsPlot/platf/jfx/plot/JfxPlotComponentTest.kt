@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.platf.jfx.plot
 
 import org.jetbrains.letsPlot.commons.registration.Disposable
-import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
-import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
-import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
+import demoAndTestShared.SimpleTestSpecs.simpleBunch
+import demoAndTestShared.SimpleTestSpecs.simplePlot
+import demoAndTestShared.SimpleTestSpecs.simplePointLayer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
 import org.jetbrains.letsPlot.platf.jfx.util.runOnFxThread

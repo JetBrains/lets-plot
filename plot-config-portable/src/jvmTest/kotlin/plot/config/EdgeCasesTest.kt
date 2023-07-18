@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.assertion.assertDoesNotFail
+import demoAndTestShared.assertDoesNotFail
 import jetbrains.datalore.plot.DemoAndTest
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.GeomName.IMAGE
 import jetbrains.datalore.plot.config.Option.GeomName.LIVE_MAP
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
 

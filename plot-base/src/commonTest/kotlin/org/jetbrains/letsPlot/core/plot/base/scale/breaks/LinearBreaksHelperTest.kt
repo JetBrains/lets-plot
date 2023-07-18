@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import jetbrains.datalore.base.assertion.assertArrayEquals
+import demoAndTestShared.assertArrayEquals
 import kotlin.math.sign
 import kotlin.test.Test
 import kotlin.test.assertEquals

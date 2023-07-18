@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.config.Option.Facet
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 
 class MarginalLayersFacetsDemo {

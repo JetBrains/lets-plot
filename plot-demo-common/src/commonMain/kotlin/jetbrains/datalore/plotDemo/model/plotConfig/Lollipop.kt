@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 class Lollipop {
     fun plotSpecList(): List<MutableMap<String, Any>> {

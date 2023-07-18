@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

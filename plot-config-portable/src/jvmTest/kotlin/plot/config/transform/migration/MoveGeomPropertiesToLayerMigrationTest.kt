@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.transform.migration
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import kotlin.test.Test
 import kotlin.test.assertEquals

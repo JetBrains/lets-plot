@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.test.*
-import jetbrains.datalore.base.assertion.assertEquals as assertDoubleEquals
+import demoAndTestShared.assertEquals as assertDoubleEquals
 
 class OptionsAccessorTest {
 

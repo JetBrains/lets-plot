@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.DataMetaUtil
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

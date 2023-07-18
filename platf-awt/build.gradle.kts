@@ -26,6 +26,12 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(project(":demo-and-test-shared"))
+            }
+        }
+
         jvmTest {
             dependencies {
 //                implementation kotlin('test')

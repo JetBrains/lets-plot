@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 
 object ServerSideTestUtil {

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 
 class DateTimeAnnotation {

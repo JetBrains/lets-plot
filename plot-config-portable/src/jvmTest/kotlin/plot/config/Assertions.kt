@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

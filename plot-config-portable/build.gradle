@@ -29,7 +29,7 @@ kotlin {
                 implementation kotlin('test-common')
                 implementation kotlin('test-annotations-common')
 
-                implementation project(':test-common')
+                implementation project(':demo-and-test-shared')
             }
         }
         jvmMain {

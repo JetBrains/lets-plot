@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.COLUMN
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.DateTime.DATE_TIME
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.TYPE
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
 class DataMetaStoreFactorLevelsTest {

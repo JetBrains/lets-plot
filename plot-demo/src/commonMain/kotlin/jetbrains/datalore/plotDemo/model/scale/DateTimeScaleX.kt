@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone.Companion.UTC
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 
 class DateTimeScaleX {

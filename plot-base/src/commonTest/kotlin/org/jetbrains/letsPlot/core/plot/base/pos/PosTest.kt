@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.pos
 
-import jetbrains.datalore.base.assertion.assertEquals
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.BogusContext

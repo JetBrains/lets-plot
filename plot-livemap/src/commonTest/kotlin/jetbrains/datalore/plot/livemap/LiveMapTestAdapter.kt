@@ -5,20 +5,20 @@
 
 package jetbrains.datalore.plot.livemap
 
+import demoAndTestShared.parsePlotSpec
+import jetbrains.datalore.plot.MonolithicCommon
+import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
+import jetbrains.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.plot.MonolithicCommon
-import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
-import org.jetbrains.letsPlot.commons.event.MouseEventPeer
-import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
-import jetbrains.datalore.plot.parsePlotSpec
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.CanvasControlDelegate
-import jetbrains.livemap.config.LiveMapCanvasFigure
+import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
+import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 
 class LiveMapTestAdapter(
     plotSpec: String
@@ -46,7 +46,10 @@ class LiveMapTestAdapter(
                 return super.createAnimationTimer(eventHandler)
             }
 
-            override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+            override fun addEventHandler(
+                eventSpec: MouseEventSpec,
+                eventHandler: EventHandler<MouseEvent>
+            ): Registration {
                 return plotContainer.mouseEventPeer.addEventHandler(eventSpec, eventHandler)
             }
         }

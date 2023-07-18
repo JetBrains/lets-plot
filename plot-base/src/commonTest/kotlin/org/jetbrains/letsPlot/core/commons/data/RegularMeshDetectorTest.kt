@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.core.commons.data
 
-import jetbrains.datalore.base.assertion.assertEquals
-import org.jetbrains.letsPlot.core.commons.data.RegularMeshDetector
+import demoAndTestShared.assertEquals
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertFalse

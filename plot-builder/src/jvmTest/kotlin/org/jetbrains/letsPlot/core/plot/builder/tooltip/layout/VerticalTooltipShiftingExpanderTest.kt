@@ -354,7 +354,7 @@ class VerticalTooltipShiftingExpanderTest {
         }
 
         private fun assertDoubleEquals(expected: Double, actual: Double) {
-            jetbrains.datalore.base.assertion.assertEquals(expected, actual, 0.001)
+            demoAndTestShared.assertEquals(expected, actual, 0.001)
         }
 
     }

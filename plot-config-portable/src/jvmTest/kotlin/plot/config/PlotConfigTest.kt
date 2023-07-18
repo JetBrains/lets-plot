@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.plot.config.Option.Scale.NAME
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

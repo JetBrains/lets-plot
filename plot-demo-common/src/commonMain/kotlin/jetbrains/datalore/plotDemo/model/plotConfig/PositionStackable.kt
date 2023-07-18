@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 class PositionStackable {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -24,9 +24,11 @@ class PositionStackable {
         position: String,
         mapGroups: Boolean = false
     ): MutableMap<String, Any> {
-        val groupsData = "[${groups.joinToString(", ") { group ->
-            if (group::class.simpleName == "String") "\"${group}\"" else group.toString()
-        }}]"
+        val groupsData = "[${
+            groups.joinToString(", ") { group ->
+                if (group::class.simpleName == "String") "\"${group}\"" else group.toString()
+            }
+        }]"
         val mapping = if (mapGroups) "{'color': 'g', 'group': 'g'}" else "{'color': 'g'}"
         val spec = "{" +
                 "   'kind': 'plot'," +

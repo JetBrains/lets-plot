@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import jetbrains.datalore.base.assertion.assertEquals
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot
 
+import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 

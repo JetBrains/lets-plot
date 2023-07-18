@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import jetbrains.datalore.base.assertion.assertEquals
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.test.Test
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale.mapper
 
-import jetbrains.datalore.base.assertion.assertEquals
+import demoAndTestShared.assertEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors

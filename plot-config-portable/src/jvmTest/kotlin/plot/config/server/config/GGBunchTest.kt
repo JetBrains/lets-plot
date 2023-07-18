@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
+import demoAndTestShared.SimpleTestSpecs.simpleBunch
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.Option
 import org.junit.Test

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
-import jetbrains.datalore.plot.parsePlotSpec
 
 object SharedPieces {
 

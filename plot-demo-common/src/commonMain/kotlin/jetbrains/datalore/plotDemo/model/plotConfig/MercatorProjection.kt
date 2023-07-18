@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 
 open class MercatorProjection {
     fun plotSpecList(): List<MutableMap<String, Any>> {

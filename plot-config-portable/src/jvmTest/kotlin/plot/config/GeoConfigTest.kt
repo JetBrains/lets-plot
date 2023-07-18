@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMIN
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMIN
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createPlotAssembler
-import jetbrains.datalore.plot.parsePlotSpec
+import demoAndTestShared.parsePlotSpec
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
