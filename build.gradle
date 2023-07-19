@@ -74,11 +74,11 @@ allprojects {
 
     project.ext.jfx_platform = { -> //getJfxPlatform()
         OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
-        if ( os.isWindows() ) {
+        if (os.isWindows()) {
             return "win"
-        } else if ( os.isLinux() ) {
+        } else if (os.isLinux()) {
             return "linux"
-        } else if ( os.isMacOsX() ) {
+        } else if (os.isMacOsX()) {
             return "mac"
         } else {
             return "unknown"
@@ -128,17 +128,17 @@ allprojects {
 // Read build settings from commandline parameters (for build_release.py script):
 def readSettingsFromParameters() {
     def settings = [
-            build_python_extension:false,
-            enable_python_package:false,
-            python:[bin_path:"", include_path:""],
-            pypi:[test:[username:null, password:null],
-                    prod:[username:null, password:null]]
+            build_python_extension: false,
+            enable_python_package : false,
+            python                : [bin_path: "", include_path: ""],
+            pypi                  : [test: [username: null, password: null],
+                                     prod: [username: null, password: null]]
     ]
-    if (project.hasProperty("build_python_extension")){
+    if (project.hasProperty("build_python_extension")) {
         settings.build_python_extension = project.getProperty("build_python_extension")
         assert settings.build_python_extension != null
     }
-    if (project.hasProperty("enable_python_package")){
+    if (project.hasProperty("enable_python_package")) {
         settings.enable_python_package = project.getProperty("enable_python_package")
         assert settings.enable_python_package != null
     }
@@ -205,7 +205,7 @@ project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 // define Sonatype nexus repository manager settings:
 nexusPublishing {
     repositories {
-        maven{
+        maven {
             username = project.buildSettings?.sonatype?.username
             password = project.buildSettings?.sonatype?.password
             stagingProfileId = "11c25ff9a87b89"
@@ -240,18 +240,19 @@ subprojects {
             'plot-base',
             'plot-builder',
             'plot-config-portable',
+            'platf-native',
             'demo-and-test-shared',
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
-        kotlin{
+        kotlin {
             if (project.buildSettings.build_python_extension) {
                 if (currentOs.macOsX & project.pythonArch == "x86_64") {
                     macosX64()
                 } else if (currentOs.macOsX & project.pythonArch == "arm64") {
-                    if (project.hasProperty("build_release")){
+                    if (project.hasProperty("build_release")) {
                         macosX64()
                         macosArm64()
                     } else {
@@ -331,7 +332,7 @@ subprojects {
             // Add LICENSE file to the META-INF folder inside published JAR files
             jvmJar {
                 metaInf {
-                    from("$rootDir"){
+                    from("$rootDir") {
                         include "LICENSE"
                     }
                 }

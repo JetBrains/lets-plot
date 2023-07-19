@@ -45,13 +45,6 @@ kotlin {
     }
 
     sourceSets {
-        commonTest {
-            dependencies {
-//                implementation kotlin('test-common')
-//                implementation kotlin('test-annotations-common')
-                implementation project(':demo-and-test-shared')
-            }
-        }
         nativeMain {
             dependencies {
                 implementation kotlin('stdlib-common')
@@ -60,11 +53,12 @@ kotlin {
                 implementation project(':commons')
                 implementation project(':datamodel')
                 implementation project(':plot-config-portable')
+                implementation project(':platf-native')
             }
         }
-        nativeTest {
-            dependencies {
-            }
-        }
+//        nativeTest {
+//            dependencies {
+//            }
+//        }
     }
 }
