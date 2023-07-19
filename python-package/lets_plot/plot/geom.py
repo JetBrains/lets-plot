@@ -6205,6 +6205,19 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 4-6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20], 'explode': [0, 0, 0.2, 0, 0]}
+        ggplot(data) + geom_pie(aes(fill='name', weight='value', explode='explode'), \\
+                                size=15, hole=0.2, color='black', stroke=2, stroke_side='both', \\
+                                spacer_color='black', spacer_width=2)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 5-9
 
         from lets_plot import *
@@ -6212,7 +6225,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
-                                size=15, hole=0.2, color='white', stroke=1.0, \\
+                                size=15, hole=0.2, \\
                                 tooltips=layer_tooltips().format('@{..prop..}', '.0%') \\
                                                          .line('count|@{..count..} (@{..prop..})') \\
                                                          .line('total|@{..sum..}'))
@@ -6228,7 +6241,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
-                                size=15, hole=0.2, stroke=1.0, \\
+                                size=15, hole=0.2, \\
                                 labels=layer_labels(['..proppct..']).format('..proppct..', '{.1f}%'))
 
     |
