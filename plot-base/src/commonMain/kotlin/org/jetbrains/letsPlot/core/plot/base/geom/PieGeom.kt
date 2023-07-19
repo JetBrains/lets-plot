@@ -161,7 +161,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         // Do not draw spacer lines for exploded sectors and their neighbors
 
         val explodedSectors = pieSectors.mapIndexedNotNull { index, sector ->
-            if (sector.position != sector.pieCenter) index else null
+            index.takeIf { sector.position != sector.pieCenter }
         }
 
         fun needAddAtStart(index: Int) = when (index) {
