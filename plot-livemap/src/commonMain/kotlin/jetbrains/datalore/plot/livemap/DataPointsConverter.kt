@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -36,14 +37,21 @@ internal class DataPointsConverter(
     private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics)
     private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics)
 
+    data class PieOptions(
+        val spacerColor: Color?,
+        val spacerWidth: Double,
+        val holeSize: Double,
+        val strokeSide: PieGeom.StrokeSide
+    )
+
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
-        val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
+        val pieOptions = PieOptions(geom.spacerColor, geom.spacerWidth, geom.holeSize, geom.strokeSide)
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
-        return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
+        return MultiDataPointHelper.getPoints(definedDataPoints)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {
                     point = Vec(it.aes.x()!!, it.aes.y()!!)
-                    holeRatio = geom.holeSize
+                    setPieOptions(pieOptions)
                 }
             }
     }
@@ -333,14 +341,13 @@ internal class DataPointsConverter(
     ) {
         companion object {
             fun getPoints(
-                dataPoints: Iterable<DataPointAesthetics>,
-                colorGetter: (DataPointAesthetics) -> Color
+                dataPoints: Iterable<DataPointAesthetics>
             ): List<MultiDataPoint> {
                 val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
                 fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
                     val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
-                    return builders.getOrPut(coord) { MultiDataPointBuilder(p, colorGetter) }
+                    return builders.getOrPut(coord) { MultiDataPointBuilder(p) }
                 }
 
                 dataPoints.forEach { p -> fetchBuilder(p).add(p) }
@@ -349,8 +356,7 @@ internal class DataPointsConverter(
         }
 
         private class MultiDataPointBuilder(
-            private val myAes: DataPointAesthetics,
-            private val myColorGetter: (DataPointAesthetics) -> Color
+            private val myAes: DataPointAesthetics
         ) {
             private val myPoints = ArrayList<DataPointAesthetics>()
 
@@ -363,7 +369,9 @@ internal class DataPointsConverter(
                     aes = myAes,
                     indices = myPoints.map(DataPointAesthetics::index),
                     values = myPoints.map { it.slice()!! },
-                    colors = myPoints.map(myColorGetter),
+                    colorArray = myPoints.map { it.color() ?: Color.TRANSPARENT },
+                    fillArray = myPoints.map { it.fill() ?: DefaultNaValue[Aes.FILL] },
+                    strokeArray = myPoints.map { it.stroke() ?: 0.0 },
                     explodeValues = myPoints.map { it.explode() ?: 0.0 }
                 )
             }
@@ -373,7 +381,9 @@ internal class DataPointsConverter(
             val aes: DataPointAesthetics,
             val indices: List<Int>,
             val values: List<Double>,
-            val colors: List<Color>,
+            val colorArray: List<Color>,
+            val fillArray: List<Color>,
+            val strokeArray: List<Double>,
             val explodeValues: List<Double>
         )
     }

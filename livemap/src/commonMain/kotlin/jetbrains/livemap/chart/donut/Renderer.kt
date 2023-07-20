@@ -45,56 +45,76 @@ class Renderer : jetbrains.livemap.mapengine.Renderer {
             ctx.fill()
         }
 
-        fun strokeSector(sector: Sector) {
-            if (chartElement.strokeColor == null || chartElement.strokeWidth == 0.0) {
+        fun arcs(sector: Sector) {
+             if (sector.strokeWidth == 0.0) {
+                 return
+             }
+
+            ctx.apply {
+                setStrokeStyle(
+                    changeAlphaWithMin(
+                        sector.strokeColor,
+                        chartElement.scalingAlphaValue
+                    )
+                )
+                setLineWidth(sector.strokeWidth)
+
+                if (sector.drawInnerArc) {
+                    beginPath()
+                    arc(
+                        sector.sectorCenter.x, sector.sectorCenter.y,
+                        radius = max(0.0, sector.holeRadius),
+                        startAngle = sector.startAngle,
+                        endAngle = sector.endAngle
+                    )
+                    stroke()
+                }
+
+                if (sector.drawOuterArc) {
+                    beginPath()
+                    arc(
+                        sector.sectorCenter.x, sector.sectorCenter.y,
+                        radius = sector.radius,
+                        startAngle = sector.startAngle,
+                        endAngle = sector.endAngle
+                    )
+                    stroke()
+                }
+            }
+        }
+
+        fun spacers(sector: Sector) {
+            if (sector.spacerColor == null || sector.spacerWidth == 0.0) {
                 return
             }
             ctx.apply {
                 setStrokeStyle(
                     changeAlphaWithMin(
-                        chartElement.strokeColor!!,
+                        sector.spacerColor,
                         chartElement.scalingAlphaValue
                     )
                 )
-                setLineWidth(chartElement.strokeWidth)
+                setLineWidth(sector.spacerWidth)
 
-                // draw inner arc
-                beginPath()
-                arc(
-                    sector.sectorCenter.x, sector.sectorCenter.y,
-                    radius = max(0.0, sector.holeRadius),
-                    startAngle = sector.startAngle,
-                    endAngle = sector.endAngle
-                )
-                stroke()
-
-                // draw outer arc
-                beginPath()
-                arc(
-                    sector.sectorCenter.x, sector.sectorCenter.y,
-                    radius = sector.radius,
-                    startAngle = sector.startAngle,
-                    endAngle = sector.endAngle
-                )
-                stroke()
-
-                // sides
-                beginPath()
-                moveTo(sector.innerArcStart.x, sector.innerArcStart.y)
-                lineTo(sector.outerArcStart.x, sector.outerArcStart.y)
-                stroke()
-
-                beginPath()
-                moveTo(sector.innerArcEnd.x, sector.innerArcEnd.y)
-                lineTo(sector.outerArcEnd.x, sector.outerArcEnd.y)
-                stroke()
-
+                if (sector.drawSpacerAtStart) {
+                    beginPath()
+                    moveTo(sector.innerArcStart.x, sector.innerArcStart.y)
+                    lineTo(sector.outerArcStart.x, sector.outerArcStart.y)
+                    stroke()
+                }
+                if (sector.drawSpacerAtEnd) {
+                    beginPath()
+                    moveTo(sector.innerArcEnd.x, sector.innerArcEnd.y)
+                    lineTo(sector.outerArcEnd.x, sector.outerArcEnd.y)
+                    stroke()
+                }
             }
         }
 
         computeSectors(pieSpec, chartElement.scalingSizeFactor).forEach { sector ->
             fillSector(sector)
-            strokeSector(sector)
+            arcs(sector)
+            spacers(sector)
         }
     }
 }

@@ -53,7 +53,7 @@ class PieLocatorTest {
                     radius = r
                     indices = vals.indices.toList()
                     sliceValues = transformValues2Angles(vals)
-                    colors = vals.indices.map { Color.BLACK }
+                    fillColors = vals.indices.map { Color.BLACK }
                 }
             }
             .let(pies::add)

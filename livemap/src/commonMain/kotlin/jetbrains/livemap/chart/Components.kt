@@ -42,8 +42,13 @@ class PieSpecComponent : EcsComponent {
     var holeSize: Double = 0.0
     var indices: List<Int> = emptyList()
     var sliceValues: List<Double> = emptyList()
-    var colors: List<Color> = emptyList()
+    var fillColors: List<Color> = emptyList()
+    var strokeColors: List<Color> = emptyList()
+    var strokeWidths: List<Double> = emptyList()
     var explodeValues: List<Double>? = null
+    var spacerColor: Color? = null
+    var spacerWidth: Double = 0.0
+    var strokeSide: String? = null
 }
 
 class SearchResultComponent : EcsComponent {

@@ -17,9 +17,17 @@ internal class Sector(
     val index: Int,
     val radius: Double,
     val holeRadius: Double,
-    val fillColor: Color,
     val startAngle: Double,
     val endAngle: Double,
+    val fillColor: Color,
+    val strokeColor: Color,
+    val strokeWidth: Double,
+    val drawInnerArc: Boolean,
+    val drawOuterArc: Boolean,
+    val spacerColor: Color?,
+    val spacerWidth: Double,
+    val drawSpacerAtStart: Boolean,
+    val drawSpacerAtEnd: Boolean,
     explode: Double
 ) {
     private val angle = endAngle - startAngle
@@ -27,14 +35,23 @@ internal class Sector(
 
     val sectorCenter = DoubleVector(explode * cos(direction), explode * sin(direction))
 
+    val radiusWithStroke = when (drawOuterArc) {
+        true -> radius + strokeWidth / 2
+        false -> radius
+    }
+    val holeRadiusWithStroke = when (drawInnerArc) {
+        true -> holeRadius - strokeWidth / 2
+        false -> holeRadius
+    }
+
     val outerArcStart = outerArcPoint(startAngle)
     val outerArcEnd = outerArcPoint(endAngle)
 
     val innerArcStart = innerArcPoint(startAngle)
     val innerArcEnd = innerArcPoint(endAngle)
 
-    fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
-    fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
+    private fun outerArcPoint(angle: Double) = arcPoint(radiusWithStroke, angle)
+    private fun innerArcPoint(angle: Double) = arcPoint(holeRadiusWithStroke, angle)
 
     private fun arcPoint(radius: Double, angle: Double): DoubleVector {
         return sectorCenter.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
@@ -53,15 +70,55 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
     currentAngle -= angle(pieSpec.sliceValues.first())
 
     val radius = pieSpec.radius * scaleFactor
-    return pieSpec.sliceValues.indices.map { index ->
+
+    val pieIndices = pieSpec.sliceValues.indices
+    val explodedSectors = pieIndices.mapNotNull { index ->
+        val explode = pieSpec.explodeValues?.get(index)
+        index.takeIf { explode != null && explode != 0.0  }
+    }
+    fun needAddAtStart(index: Int) = when (index) {
+        in explodedSectors -> false
+        0 -> pieIndices.last !in explodedSectors
+        else -> index - 1 !in explodedSectors
+    }
+    fun needAddAtEnd(index: Int) = when (index) {
+        in explodedSectors -> false
+        pieIndices.last -> 0 !in explodedSectors
+        else -> index + 1 !in explodedSectors
+    }
+
+    val hasInnerArc = pieSpec.strokeSide in listOf("inner", "both")
+    val hasOuterArc = pieSpec.strokeSide in listOf("outer", "both")
+
+    return pieIndices.map { index ->
+        val strokeColor = pieSpec.strokeColors.getOrElse(index) { Color.TRANSPARENT }
+        val fillColor = pieSpec.fillColors.getOrElse(index) { Color.PACIFIC_BLUE }
+        val strokeWidth = pieSpec.strokeWidths.getOrElse(index) { 1.0 }
+
+        val hasVisibleStroke = strokeWidth > 0.0 && strokeColor != Color.TRANSPARENT
+        val holeRadius = if (pieSpec.holeSize == 0.0 && hasInnerArc && hasVisibleStroke) {
+            // Add a hole if an inner stroke is needed
+            strokeWidth + pieSpec.spacerWidth
+        } else {
+            radius * pieSpec.holeSize
+        }
+
         Sector(
             index = pieSpec.indices[index],
             radius = radius,
-            holeRadius = radius * pieSpec.holeSize,
-            fillColor = pieSpec.colors[index],
+            holeRadius =  holeRadius,
             startAngle = currentAngle,
             endAngle = currentAngle + angle(pieSpec.sliceValues[index]),
             explode = pieSpec.explodeValues?.get(index)?.let { radius * it } ?: 0.0,
+            fillColor = fillColor,
+            strokeColor = strokeColor,
+            strokeWidth = strokeWidth,
+            drawInnerArc = hasInnerArc && hasVisibleStroke,
+            drawOuterArc = hasOuterArc && hasVisibleStroke,
+            spacerColor = pieSpec.spacerColor,
+            spacerWidth = pieSpec.spacerWidth,
+            drawSpacerAtStart = needAddAtStart(index),
+            drawSpacerAtEnd = needAddAtEnd(index)
         ).also { sector -> currentAngle = sector.endAngle }
     }
 }

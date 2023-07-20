@@ -144,7 +144,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         coord(17.439340121654936, 64.22860968236267) // = "Sweden"
                         radius = 20.0
                         values = listOf(-2.0, 5.0, 1.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                        fillColors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
 
                     pie {
@@ -152,7 +152,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         coord(NEW_YORK)
                         radius = 20.0
                         values = listOf(3.0, 1.0, 2.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                        fillColors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }
 

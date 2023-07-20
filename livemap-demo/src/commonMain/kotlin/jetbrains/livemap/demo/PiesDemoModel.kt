@@ -24,20 +24,28 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         indices = listOf(0, 1, 2)
                         coord(Cities.FRISCO)
                         radius = 50.0
-                        values = listOf(-2.0, 5.0, 1.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                        strokeColor = Color.WHITE
-                        strokeWidth = 2.0
-                        holeSize = 0.4
+                        values = listOf(2.0, 5.0, 1.0)
+                        fillColors = listOf(Color.LIGHT_GREEN, Color.LIGHT_PINK, Color.LIGHT_BLUE)
+                        strokeColors = listOf(Color.DARK_GREEN, Color.PINK, Color.DARK_BLUE)
+                        strokeWidths = List(3) { 4.0 }
+                        strokeSide = "both"
+                        spacerWidth = 4.0
                     }
 
                     pie {
-                        indices = listOf(0, 1, 2)
+                        indices = listOf(0, 1, 2, 3)
                         coord(Cities.NEW_YORK)
                         radius = 50.0
-                        values = listOf(3.0, 1.0, 2.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                        explodes = listOf(.0, .2, .0)
+                        values = listOf(3.0, 1.0, 2.0, 4.0)
+                        fillColors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA, Color.DARK_BLUE)
+
+                        strokeColors = List(4) { Color.WHITE }
+                        strokeWidths = List(4) { 2.0 }
+
+                        spacerColor = Color.WHITE
+                        spacerWidth = 2.0
+
+                        explodes = listOf(.0, .2, .0, .0)
                     }
                 }
             }
