@@ -65,34 +65,35 @@ class Pie {
             "'formats': [{'field': '@{..prop..}', 'format': '.0%'}]"
         } else ""
         val ordering = if (useCountStat && withOrdering) {
-                ",   'data_meta': {" +
-                        "      'mapping_annotations': [" +
-                        "          {" +
-                        "               'aes': 'fill'," +
-                        "               'annotation': 'as_discrete'," +
-                        "               'parameters': {" +
-                        "                   'label':'name', 'order_by': '..count..', 'order': -1 " +
-                        "               }" +
-                        "          }" +
-                        "       ]" +
-                        "   }"
+            """, 'data_meta': {
+              'mapping_annotations': [
+                {
+                  'aes': 'fill',
+                  'annotation': 'as_discrete',
+                  'parameters': {
+                    'label':'name', 'order_by': '..count..', 'order': -1
+                  }
+                }
+              ]
+            }""".trimIndent()
         } else ""
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'ggsize': {'width': 400, 'height': 300}," +
-                "   'ggtitle': {'text' : 'stat=$stat ${if (withOrdering) "with ordering" else ""}; hole=$hole'}," +
-                "   'theme': { 'line': 'blank', 'axis': 'blank' }," +
-                "   'mapping': { $mapping }," +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom': 'pie', " +
-                "                  'stat': '$stat', " +
-                "                  'hole': $hole," +
-                "                  'tooltips': { $tooltipContent }" +
-                "               }" +
-                "             ]" +
-                "    $ordering" +
-                "}"
+        val spec = """
+        {
+          'kind': 'plot',
+          'ggsize': {'width': 400, 'height': 300},
+          'ggtitle': {'text' : 'stat=$stat ${if (withOrdering) "with ordering" else ""}; hole=$hole'},
+          'theme': { 'line': 'blank', 'axis': 'blank' },
+          'mapping': { $mapping },
+          'layers': [
+            {
+              'geom': 'pie',
+              'stat': '$stat',
+              'hole': $hole,
+              'tooltips': { $tooltipContent }
+            }
+          ]
+          $ordering
+        }""".trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = data
@@ -105,59 +106,61 @@ class Pie {
             "count" to listOf(1109, 696, 353, 192, 168, 86, 74, 65, 53),
             "explode" to listOf(0, 0, 0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.6),
         )
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'ggsize': {'width': 400, 'height': 300}," +
-                "   'theme': { 'axis':'blank', 'line':'blank' } ," +
-                "   'mapping': { 'slice' : 'count', 'fill': 'group_names', 'explode': 'explode' }," +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom': 'pie', " +
-                "                  'stat': 'identity', " +
-                "                  'size': 15, " +
-               // "                  'hole': 0.2," +
-                "                  'stroke': 1.0," +
-                "                  'color': 'black'," +
-              //  "                  'stroke_side': 'outer'," +
-                "                  'spacer_width': 1.0," +
-                "                  'spacer_color': 'black'" +
-                "               }" +
-                "             ]" +
-                "}"
+        val spec = """
+        {
+          'kind': 'plot',
+          'ggsize': {'width': 400, 'height': 300},
+          'theme': { 'axis':'blank', 'line':'blank' },
+          'mapping': { 'slice' : 'count', 'fill': 'group_names', 'explode': 'explode' },
+          'layers': [
+             {
+                'geom': 'pie', 
+                'stat': 'identity', 
+                'size': 15, 
+                'hole': 0.2,
+                'stroke': 1.0,
+                'color': 'black',
+                'stroke_side': 'both',
+                'spacer_width': 1.0,
+                'spacer_color': 'black'
+             }
+          ]
+        }""".trimIndent()
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = length
         return plotSpec
     }
 
     private fun withStrokeAndSpacerLines(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot', " +
-                "   'theme': { 'line': 'blank', 'axis': 'blank', 'flavor': 'solarized_light' }," +
-                "   'mapping': { " +
-                "       'fill': 'name'," +
-                "       'slice': 'value'," +
-                "       'color': 'color'," +
-                "       'stroke': 'stroke' " +
-                "    }," +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom': 'pie'," +
-                "                  'stat': 'identity'," +
-                "                  'size': 20," +
-                "                  'hole': 0.0," +
-                "                  'spacer_width': 2.0," +
-                "                  'stroke_side': 'both'" +
-                "               }" +
-                "             ]," +
-                "   'scales': [" +
-                "               {" +
-                "                  'aesthetic': 'color'," +
-                "                  'discrete': true," +
-                "                  'scale_mapper_kind': 'color_brewer', " +
-                "                  'palette': 'Dark2'" +
-                "               }" +
-                "           ]" +
-                "}"
+        val spec = """
+        {
+          'kind': 'plot', 
+          'theme': { 'line': 'blank', 'axis': 'blank', 'flavor': 'solarized_light' },
+          'mapping': { 
+            'fill': 'name',
+            'slice': 'value',
+            'color': 'color',
+            'stroke': 'stroke' 
+          },
+          'layers': [
+            {
+              'geom': 'pie',
+              'stat': 'identity',
+              'size': 20,
+              'hole': 0.0,
+              'spacer_width': 2.0,
+              'stroke_side': 'both'
+            }
+          ],
+          'scales': [
+            {
+              'aesthetic': 'color',
+              'discrete': true,
+              'scale_mapper_kind': 'color_brewer', 
+              'palette': 'Dark2'
+            }
+          ]
+        }""".trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] =  mapOf(

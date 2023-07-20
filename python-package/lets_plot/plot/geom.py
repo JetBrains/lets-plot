@@ -6121,8 +6121,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     spacer_width : float, default=0.75
         Line width between sectors.
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
-    spacer_color : str, default is transparent
-        Color for spacers between sectors.
+    spacer_color : str
+        Color for spacers between sectors. By default, the plot background color is used.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args

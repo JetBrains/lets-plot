@@ -300,8 +300,8 @@ internal object GeomProviderFactory {
                         "inner" -> PieGeom.StrokeSide.INNER
                         "both" -> PieGeom.StrokeSide.BOTH
                         else -> throw IllegalArgumentException(
-                            "Unsupported value for side ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
-                                    "Use one of: 'outer', 'inner', 'both'"
+                            "Unsupported value for ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
+                                    "Use one of: outer, inner, both."
                         )
                     }
                 }
