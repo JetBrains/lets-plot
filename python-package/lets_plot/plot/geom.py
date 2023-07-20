@@ -6535,9 +6535,6 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         return linspace(start, stop, size)
 
     def get_fun_data():
-        if fun is None:
-            return {fun_x_name: [], fun_y_name: []}
-
         aes_x_value = None
         if mapping is not None and 'x' in mapping.as_dict():
             aes_x_value = mapping.as_dict()['x']
@@ -6549,15 +6546,23 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         else:
             xs = get_default_xrange()
 
-        ys = [fun(x) for x in xs]
+        if fun is None:
+            ys = [None] * len(xs)
+        else:
+            ys = [fun(x) for x in xs]
 
-        return {fun_x_name: xs, fun_y_name: ys}
+        if data is None:
+            return {fun_x_name: xs, fun_y_name: ys}
+        else:
+            data[fun_y_name] = ys
+            return data
 
     def get_mapping():
         mapping_dict = mapping.as_dict() if mapping is not None else {}
-        fun_mapping_dict = {'x': fun_x_name, 'y': fun_y_name}
+        x_mapping_dict = {'x': fun_x_name}
+        y_mapping_dict = {'y': fun_y_name}
 
-        return aes(**{**mapping_dict, **fun_mapping_dict})
+        return aes(**{**x_mapping_dict, **mapping_dict, **y_mapping_dict})
 
     fun_stat = stat if stat is not None else 'identity'
     fun_geom = geom if geom is not None else 'line'
