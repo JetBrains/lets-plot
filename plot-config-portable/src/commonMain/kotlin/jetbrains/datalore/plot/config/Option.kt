@@ -290,6 +290,9 @@ object Option {
 
         object Pie {
             const val HOLE = "hole"
+            const val SPACER_WIDTH = "spacer_width"
+            const val SPACER_COLOR = "spacer_color"
+            const val STROKE_SIDE = "stroke_side"
         }
 
         object Lollipop {

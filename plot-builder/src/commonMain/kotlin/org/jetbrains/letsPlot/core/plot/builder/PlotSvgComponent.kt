@@ -195,6 +195,7 @@ class PlotSvgComponent constructor(
                 .createMarginalFrames(
                     tileLayoutInfo,
                     coordProvider,
+                    plotTheme.backgroundFill(),
                     DEBUG_DRAWING
                 )
 

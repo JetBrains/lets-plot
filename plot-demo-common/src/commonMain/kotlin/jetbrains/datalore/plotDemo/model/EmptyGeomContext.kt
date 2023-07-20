@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
+import org.jetbrains.letsPlot.commons.values.Color
 
 /**
  * Used in demos only.
@@ -22,6 +23,7 @@ class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
     override val annotations: Annotations? = null
+    override val plotBackground: Color = Color.WHITE
 
     override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")

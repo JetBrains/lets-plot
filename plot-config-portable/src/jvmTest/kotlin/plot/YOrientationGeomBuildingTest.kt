@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.DemoAndTest
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
+import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test
 import kotlin.math.round
 import kotlin.random.Random
@@ -59,7 +60,8 @@ class YOrientationGeomBuildingTest {
                 )
             },
             flippedAxis = false,
-            targetCollector = NullGeomTargetCollector()
+            targetCollector = NullGeomTargetCollector(),
+            plotBackground = Color.WHITE
         )
 
         // Do all checks inside the GeomStub.

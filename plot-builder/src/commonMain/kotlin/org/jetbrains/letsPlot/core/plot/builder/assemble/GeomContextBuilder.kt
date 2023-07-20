@@ -16,16 +16,19 @@ import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var flipped: Boolean = false
     private var aesthetics: Aesthetics? = null
-    private var aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>? = null
+    private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
     private var aesBounds: DoubleRectangle? = null
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotations: Annotations? = null
+    private var plotBackground: Color = Color.WHITE
 
     constructor()
 
@@ -36,6 +39,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
         annotations = ctx.annotations
+        plotBackground = ctx.plotBackground
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -48,7 +52,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun aestheticMappers(aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
+    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
         this.aestheticMappers = aestheticMappers
         return this
     }
@@ -73,6 +77,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun plotBackground(color: Color): ImmutableGeomContext.Builder {
+        this.plotBackground = color
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -86,10 +95,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
         override val annotations = b.annotations
+        override val plotBackground = b.plotBackground
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 
-        override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
+        override fun getResolution(aes: Aes<Double>): Double {
             var resolution = 0.0
             if (aesthetics != null) {
                 resolution = aesthetics.resolution(aes, 0.0)
@@ -101,7 +111,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return resolution
         }
 
-        override fun isMappedAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+        override fun isMappedAes(aes: Aes<*>): Boolean {
             return aestheticMappers?.containsKey(aes) ?: false
         }
 

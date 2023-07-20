@@ -32,6 +32,16 @@
 See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
 
 
+- `geom_pie()`:
+  - `stroke` and `color` aesthetics - the width and color of the pie sector arcs.
+  - `stroke_side` parameter - which arcs should have a stroke (inner, outer, both).
+  - `spacer_width` and `spacer_color` parameters - lines between sectors.
+
+  The `stroke_color` parameter is no longer supported.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/pie_stroke_and_spacer.ipynb).
+
+
 ### Changed
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
@@ -39,9 +49,6 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 - [BREAKING] `geom_pointrange()`: `size` aesthetic shouldn't affect line width [[#751](https://github.com/JetBrains/lets-plot/issues/751)]:
 
   `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
-
-- [BREAKING] `geom_pie()` no longer supports parameter `stroke_color`. Use the `color` aesthetic for color 
-  of slice borders.
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 

@@ -32,6 +32,19 @@ import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
+    var spacerWidth: Double = 0.75
+    var spacerColor: Color? = null
+    var strokeSide: StrokeSide = StrokeSide.OUTER
+
+    enum class StrokeSide {
+        OUTER, INNER, BOTH;
+
+        val hasOuter: Boolean
+            get() = this == OUTER || this == BOTH
+
+        val hasInner: Boolean
+            get() = this == INNER || this == BOTH
+    }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PieLegendKeyElementFactory()
@@ -49,11 +62,45 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             .filterNotNullKeys()
             .forEach { (pieCenter, dataPoints) ->
                 val pieSectors = computeSectors(pieCenter, dataPoints)
+
                 root.appendNodes(pieSectors.map(::buildSvgSector))
+                root.appendNodes(pieSectors.map(::buildSvgArcs))
+                if (spacerWidth > 0) {
+                    root.appendNodes(
+                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.plotBackground)
+                    )
+                }
+
                 pieSectors.forEach { buildHint(it, ctx.targetCollector) }
 
                 ctx.annotations?.let { buildAnnotations(root, pieCenter, pieSectors, ctx) }
             }
+    }
+
+    private fun SvgPathDataBuilder.svgOuterArc(sector: Sector) {
+        return with(sector) {
+            ellipticalArc(
+                rx = radius,
+                ry = radius,
+                xAxisRotation = 0.0,
+                largeArc = angle > PI,
+                sweep = true,
+                to = outerArcEnd
+            )
+        }
+    }
+
+    private fun SvgPathDataBuilder.svgInnerArc(sector: Sector) {
+        return with(sector) {
+            ellipticalArc(
+                rx = holeRadius,
+                ry = holeRadius,
+                xAxisRotation = 0.0,
+                largeArc = angle > PI,
+                sweep = false,
+                to = innerArcStart
+            )
+        }
     }
 
     private fun buildSvgSector(sector: Sector): LinePath {
@@ -61,48 +108,96 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             SvgPathDataBuilder().apply {
                 moveTo(sector.innerArcStart)
                 lineTo(sector.outerArcStart)
-                ellipticalArc(
-                    rx = sector.radius,
-                    ry = sector.radius,
-                    xAxisRotation = 0.0,
-                    largeArc = sector.angle > PI,
-                    sweep = true,
-                    to = sector.outerArcEnd
-                )
+                svgOuterArc(sector)
                 lineTo(sector.innerArcEnd)
-                ellipticalArc(
-                    rx = sector.holeRadius,
-                    ry = sector.holeRadius,
-                    xAxisRotation = 0.0,
-                    largeArc = sector.angle > PI,
-                    sweep = false,
-                    to = sector.innerArcStart
-                )
+                svgInnerArc(sector)
             }
         ).apply {
             val fill = sector.p.fill()!!
             val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
             fill().set(Colors.withOpacity(fill, fillAlpha))
-            width().set(sector.p.stroke()!!)
-            color().set(sector.p.color()!!)
+        }
+    }
+
+    private fun buildSvgArcs(sector: Sector): LinePath {
+        return LinePath(
+            SvgPathDataBuilder().apply {
+                if (strokeSide.hasOuter) {
+                    moveTo(sector.outerArcStart)
+                    svgOuterArc(sector)
+                }
+                if (strokeSide.hasInner) {
+                    moveTo(sector.innerArcEnd)
+                    svgInnerArc(sector)
+                }
+            }
+        ).apply {
+            width().set(sector.strokeWidth)
+            color().set(sector.p.color())
+        }
+    }
+
+    private fun buildSvgSpacerLines(pieSectors: List<Sector>, width: Double, color: Color?): List<LinePath> {
+        fun svgSpacerLines(sector: Sector, atStart: Boolean, atEnd: Boolean): LinePath {
+            return LinePath(
+                SvgPathDataBuilder().apply {
+                    if (atStart) {
+                        moveTo(sector.innerStrokeStartPoint)
+                        lineTo(sector.outerStrokeStartPoint)
+                    }
+                    if (atEnd) {
+                        moveTo(sector.innerStrokeEndPoint)
+                        lineTo(sector.outerStrokeEndPoint)
+                    }
+                }
+            ).apply {
+                width().set(width)
+                color().set(color)
+            }
+        }
+
+        // Do not draw spacer lines for exploded sectors and their neighbors
+
+        val explodedSectors = pieSectors.mapIndexedNotNull { index, sector ->
+            index.takeIf { sector.position != sector.pieCenter }
+        }
+
+        fun needAddAtStart(index: Int) = when (index) {
+            in explodedSectors -> false
+            0 -> pieSectors.lastIndex !in explodedSectors
+            else -> index - 1 !in explodedSectors
+        }
+
+        fun needAddAtEnd(index: Int) = when (index) {
+            in explodedSectors -> false
+            pieSectors.lastIndex -> 0 !in explodedSectors
+            else -> index + 1 !in explodedSectors
+        }
+
+        return pieSectors.mapIndexed { index, sector ->
+            svgSpacerLines(
+                sector,
+                atStart = needAddAtStart(index),
+                atEnd = needAddAtEnd(index)
+            )
         }
     }
 
     private fun buildHint(sector: Sector, targetCollector: GeomTargetCollector) {
         fun resampleArc(outerArc: Boolean): List<DoubleVector> {
             val arcPoint = when (outerArc) {
-                true -> sector::outerArcPoint
-                false -> sector::innerArcPoint
+                true -> { angle: Double -> sector.outerArcPointWithStroke(angle) }
+                false -> { angle: Double -> sector.innerArcPointWithStroke(angle) }
             }
 
             val startPoint = when (outerArc) {
-                true -> sector.outerArcStart
-                false -> sector.innerArcStart
+                true -> sector.outerStrokeStartPoint
+                false -> sector.innerStrokeStartPoint
             }
 
             val endPoint = when (outerArc) {
-                true -> sector.outerArcEnd
-                false -> sector.innerArcEnd
+                true -> sector.outerStrokeEndPoint
+                false -> sector.innerStrokeEndPoint
             }
 
             val segmentLength = startPoint.subtract(endPoint).length()
@@ -158,21 +253,46 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val endAngle: Double
     ) {
         val angle = endAngle - startAngle
+        val strokeWidth = p.stroke() ?: 0.0
+        private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT
         val radius: Double = AesScaling.pieDiameter(p) / 2
-        val holeRadius = radius * holeSize
+        val holeRadius = if (holeSize == 0.0 && strokeSide.hasInner && hasVisibleStroke) {
+            // Add a hole if an inner stroke is needed
+            strokeWidth + spacerWidth
+        } else {
+            radius * holeSize
+        }
         val direction = startAngle + angle / 2
-        private val explode =  p.explode()?.let { radius * it } ?: 0.0
+        private val explode = p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 
-        val outerArcStart = outerArcPoint(startAngle)
-        val outerArcEnd = outerArcPoint(endAngle - fullCircleDrawingFix)
+        val outerArcStart = arcPoint(radius, startAngle)
+        val outerArcEnd = arcPoint(radius, endAngle - fullCircleDrawingFix)
 
-        val innerArcStart = innerArcPoint(startAngle)
-        val innerArcEnd = innerArcPoint(endAngle - fullCircleDrawingFix)
+        val innerArcStart = arcPoint(holeRadius, startAngle)
+        val innerArcEnd = arcPoint(holeRadius, endAngle - fullCircleDrawingFix)
 
-        fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
-        fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
+        val outerStrokeStartPoint = outerArcPointWithStroke(startAngle)
+        val outerStrokeEndPoint = outerArcPointWithStroke(endAngle - fullCircleDrawingFix)
+
+        val innerStrokeStartPoint = innerArcPointWithStroke(startAngle)
+        val innerStrokeEndPoint = innerArcPointWithStroke(endAngle - fullCircleDrawingFix)
+
+        fun outerArcPointWithStroke(angle: Double) = arcPoint(
+            radius = when (strokeSide.hasOuter && hasVisibleStroke) {
+                true -> radius + strokeWidth / 2
+                false -> radius
+            },
+            angle = angle
+        )
+        fun innerArcPointWithStroke(angle: Double) = arcPoint(
+            radius = when (strokeSide.hasInner && hasVisibleStroke) {
+                true -> holeRadius - strokeWidth / 2
+                false -> holeRadius
+            },
+            angle = angle
+        )
 
         private fun arcPoint(radius: Double, angle: Double): DoubleVector {
             return position.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
@@ -180,9 +300,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         val sectorCenter: DoubleVector // center of the pie slice geometry
             get() {
-                val offset = 0.5 * (radius - holeRadius)
-                return position.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
-                    .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+                val offset = holeRadius + 0.5 * (radius - holeRadius)
+                return arcPoint(offset, direction)
             }
     }
 
@@ -195,10 +314,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         size.y / 2,
                         shapeSize(p) / 2
                     ).apply {
-                        val fill = p.fill()!!
+                        val fill = p.fill()
+                        val color = p.color()
                         fillColor().set(fill)
-                        strokeColor().set(if (fill == Color.TRANSPARENT) Color.BLACK else p.color()!!)
-                        strokeWidth().set(1.5)
+                        strokeColor().set(
+                            if (color == Color.TRANSPARENT && fill == Color.TRANSPARENT) Color.BLACK else color
+                        )
+                        strokeWidth().set(p.stroke())
                     }
                 )
             }
@@ -228,7 +350,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             .filter { it.outerArcStart.x < pieCenter.x || it.outerArcEnd.x < pieCenter.x || it.sectorCenter.x < pieCenter.x }
             .ifEmpty { sectors }
         val rightSectors = sectors
-            .filter { it.outerArcStart.x > pieCenter.x || it.outerArcEnd.x > pieCenter.x || it.sectorCenter.x > pieCenter.x  }
+            .filter { it.outerArcStart.x > pieCenter.x || it.outerArcEnd.x > pieCenter.x || it.sectorCenter.x > pieCenter.x }
             .ifEmpty { sectors }
 
         val expand = 20.0
@@ -294,7 +416,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         } else {
             val offset = sector.holeRadius + 0.8 * (sector.radius - sector.holeRadius)
             sector.position.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
-
+            // sector.arcPoint(offset, sector.direction)
         }
         val side = when {
             canBePlacedInside -> Side.INSIDE

@@ -292,6 +292,19 @@ internal object GeomProviderFactory {
             GeomKind.PIE -> GeomProvider.pie {
                 val geom = PieGeom()
                 layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
+                layerConfig.getDouble(Option.Geom.Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
+                layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)?.let { geom.spacerColor = it }
+                layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)?.let {
+                    geom.strokeSide = when (it.lowercase()) {
+                        "outer" -> PieGeom.StrokeSide.OUTER
+                        "inner" -> PieGeom.StrokeSide.INNER
+                        "both" -> PieGeom.StrokeSide.BOTH
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
+                                    "Use one of: outer, inner, both."
+                        )
+                    }
+                }
                 geom
             }
 
