@@ -5,26 +5,26 @@
 
 package jetbrains.datalore
 
+import jetbrains.datalore.plot.config.transformToClientPlotConfig
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
-import jetbrains.datalore.plot.config.GeomInteractionUtil
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Meta
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.SCALES
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.Option.Scale.AES
-import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
-import jetbrains.datalore.plot.config.theme.ThemeConfig
-import jetbrains.datalore.plot.config.transformToClientPlotConfig
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Meta
+import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
+import org.jetbrains.letsPlot.core.spec.Option.Scale.SCALE_MAPPER_KIND
+import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
+import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -43,7 +43,11 @@ class GeomInteractionBuilderCreationTest {
             org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to listOf(4.0)
         )
         val builder = histogramInteractionBuilder(mappedData)
-        val expectedAesList = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.FILL)
+        val expectedAesList = listOf(
+            org.jetbrains.letsPlot.core.plot.base.Aes.X,
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y,
+            org.jetbrains.letsPlot.core.plot.base.Aes.FILL
+        )
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
         assertAesList(expectedAesList, aesListForTooltip)
     }
@@ -54,7 +58,8 @@ class GeomInteractionBuilderCreationTest {
             val builder = histogramInteractionBuilder(mappedData)
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertNoTooltipForAes(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, aesListForTooltip)
-            val expectedAesList = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+            val expectedAesList =
+                listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
             assertAesList(expectedAesList, aesListForTooltip)
         }
 
@@ -88,7 +93,11 @@ class GeomInteractionBuilderCreationTest {
         val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
         assertNoTooltipForAes(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, aesListForTooltip)
         assertNoTooltipForAes(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, aesListForTooltip)
-        val expectedAesList = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.SIZE)
+        val expectedAesList = listOf(
+            org.jetbrains.letsPlot.core.plot.base.Aes.X,
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y,
+            org.jetbrains.letsPlot.core.plot.base.Aes.SIZE
+        )
         assertAesList(expectedAesList, aesListForTooltip)
     }
 
@@ -129,7 +138,13 @@ class GeomInteractionBuilderCreationTest {
             val builder = histogramInteractionBuilder(
                 mapOf(
                     org.jetbrains.letsPlot.core.plot.base.Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'),
-                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to listOf('a', 'b', 'c', 'd', 'e') // factors.size = 5 - enough to show in the tooltip
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to listOf(
+                        'a',
+                        'b',
+                        'c',
+                        'd',
+                        'e'
+                    ) // factors.size = 5 - enough to show in the tooltip
                 )
             )
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
@@ -139,7 +154,13 @@ class GeomInteractionBuilderCreationTest {
             val builder = histogramInteractionBuilder(
                 mapOf(
                     org.jetbrains.letsPlot.core.plot.base.Aes.X.name to listOf('a', 'b', 'c', 'd', 'e'),
-                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to listOf('a', 'b', 'a', 'b', 'c') // factors.size = 3 - not enough
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to listOf(
+                        'a',
+                        'b',
+                        'a',
+                        'b',
+                        'c'
+                    ) // factors.size = 3 - not enough
                 )
             )
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
@@ -182,7 +203,11 @@ class GeomInteractionBuilderCreationTest {
             val tooltipLines = builder.tooltipLines
             val aesListForTooltip = getAesListInTooltip(tooltipLines)
             assertAesList(
-                listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.COLOR),
+                listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.Y,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
+                ),
                 aesListForTooltip
             )
         }
@@ -283,7 +308,11 @@ class GeomInteractionBuilderCreationTest {
             val builder = createGeomInteractionBuilder(areaRidgePlotOpts(withFillMapping = true))
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertAesList(
-                listOf(org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, org.jetbrains.letsPlot.core.plot.base.Aes.X),
+                listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X
+                ),
                 aesListForTooltip
             )
         }
@@ -374,21 +403,30 @@ class GeomInteractionBuilderCreationTest {
         }
     }
 
-    private fun assertAesList(expectedList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>, actualList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>) {
+    private fun assertAesList(
+        expectedList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        actualList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    ) {
         assertEquals(expectedList.size, actualList.size)
         expectedList.forEach { aes ->
             assertTooltipForAes(aes, actualList)
         }
     }
 
-    private fun assertNoTooltipForAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>) {
+    private fun assertNoTooltipForAes(
+        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    ) {
         assertFalse(
             aes in aesListForTooltip,
             "Aes '${aes.name}' should not be in tooltips, actual list: $aesListForTooltip"
         )
     }
 
-    private fun assertTooltipForAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>) {
+    private fun assertTooltipForAes(
+        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    ) {
         assertTrue(aes in aesListForTooltip, "No tooltips for aes = '${aes.name}', actual list: $aesListForTooltip")
     }
 }

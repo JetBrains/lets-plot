@@ -5,27 +5,29 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
+import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
-import jetbrains.datalore.plot.config.Option.Layer.DISABLE_SPLITTING
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
-import jetbrains.datalore.plot.config.Option.LinesSpec.LINES
-import jetbrains.datalore.plot.config.Option.LinesSpec.TITLE
-import jetbrains.datalore.plot.config.Option.LinesSpec.VARIABLES
-import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
-import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT
-import jetbrains.datalore.plot.config.Option.Meta.KIND
-import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
-import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
-import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
-import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.DISABLE_SPLITTING
+import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.FORMATS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FIELD
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.LINES
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.TITLE
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.VARIABLES
+import org.jetbrains.letsPlot.core.spec.Option.Meta.KIND
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.PLOT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -520,7 +522,7 @@ class TooltipConfigTest {
                 )
             )
         )
-        val plotSpec = ServerSideTestUtil.backendSpecTransform(plotOpts.toMutableMap())
+        val plotSpec = BackendTestUtil.backendSpecTransform(plotOpts.toMutableMap())
 
         assertTrue(PlotConfig.isFailure(plotSpec))
         assertEquals(expectedMessage, PlotConfig.getErrorMessage(plotSpec))

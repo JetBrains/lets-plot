@@ -20,8 +20,9 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.LineTypeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
-import jetbrains.datalore.plot.config.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test

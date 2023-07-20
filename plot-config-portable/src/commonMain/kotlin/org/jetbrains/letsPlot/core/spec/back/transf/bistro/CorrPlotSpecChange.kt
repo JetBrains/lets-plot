@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transf.bistro
 
-import jetbrains.datalore.plot.config.*
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.transf.SpecChange
 import org.jetbrains.letsPlot.core.spec.transf.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transf.SpecSelector

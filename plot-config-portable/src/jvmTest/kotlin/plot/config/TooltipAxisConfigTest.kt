@@ -14,11 +14,11 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
-import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
-import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
-import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT
-import jetbrains.datalore.plot.config.Option.LinesSpec.LINES
-import jetbrains.datalore.plot.config.Option.Scale
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.FORMATS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FIELD
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.LINES
+import org.jetbrains.letsPlot.core.spec.Option.Scale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail

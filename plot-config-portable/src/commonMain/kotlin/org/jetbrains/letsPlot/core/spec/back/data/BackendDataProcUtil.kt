@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.data.StatInput
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
-import jetbrains.datalore.plot.config.LayerConfig
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 
 internal object BackendDataProcUtil {
     fun createGroupingContext(

@@ -5,10 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.config.Option.Plot.SCALES
-import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
-import jetbrains.datalore.plot.config.Option.Scale.NAME
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
+import org.jetbrains.letsPlot.core.spec.Option.Scale.CONTINUOUS_TRANSFORM
+import org.jetbrains.letsPlot.core.spec.Option.Scale.NAME
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.Test
 import kotlin.test.assertEquals

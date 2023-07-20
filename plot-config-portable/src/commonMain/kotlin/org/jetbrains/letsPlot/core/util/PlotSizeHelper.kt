@@ -12,7 +12,12 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.ASPECT_RAT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
-import jetbrains.datalore.plot.config.*
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.config.BunchConfig
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max

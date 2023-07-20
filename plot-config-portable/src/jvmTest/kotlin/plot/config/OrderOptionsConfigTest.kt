@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -317,7 +317,7 @@ class OrderOptionsConfigTest {
 
         private fun assertFailed(spec: String, expectedMessage: String) {
             parsePlotSpec(spec)
-                .let(ServerSideTestUtil::backendSpecTransform)
+                .let(BackendTestUtil::backendSpecTransform)
                 .let {
                     try {
                         PlotConfigFrontend.create(it) {}

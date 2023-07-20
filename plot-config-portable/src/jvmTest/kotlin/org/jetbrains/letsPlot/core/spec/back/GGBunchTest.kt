@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec.back
 
 import demoAndTestShared.SimpleTestSpecs.simpleBunch
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.config.Option
+import org.jetbrains.letsPlot.core.spec.Option
 import org.junit.Test
 import kotlin.test.assertEquals
 

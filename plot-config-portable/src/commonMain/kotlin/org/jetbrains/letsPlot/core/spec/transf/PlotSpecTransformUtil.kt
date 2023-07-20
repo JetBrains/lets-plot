@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.spec.transf
 
-import jetbrains.datalore.plot.config.Option.GGBunch
-import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import org.jetbrains.letsPlot.core.spec.Option.GGBunch
+import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Plot
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.transf.SpecSelector.Companion.from
 
 object PlotSpecTransformUtil {

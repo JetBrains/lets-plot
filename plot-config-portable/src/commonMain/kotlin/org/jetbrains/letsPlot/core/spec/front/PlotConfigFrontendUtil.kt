@@ -5,11 +5,12 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import jetbrains.datalore.plot.config.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -17,13 +18,18 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig
+import org.jetbrains.letsPlot.core.spec.config.GuideConfig
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
+import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 
 object PlotConfigFrontendUtil {
-    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions> {
-        val guideOptionsByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>()
+    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
+        val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
                 val guideOptions = scaleConfig.getGuideOptions().createGuideOptions()
@@ -33,8 +39,8 @@ object PlotConfigFrontendUtil {
         return guideOptionsByAes
     }
 
-    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions> {
-        val guideOptionsByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>()
+    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<Aes<*>, GuideOptions> {
+        val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
         for ((key, value) in guideOptionsList) {
             val aes = Option.Mapping.toAes(key)
             guideOptionsByAes[aes] = GuideConfig.create(value).createGuideOptions()
@@ -74,8 +80,8 @@ object PlotConfigFrontendUtil {
     private fun buildPlotLayers(
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
-        commonScaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
-        mappersByAesNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>, // all non-positional mappers
+        commonScaleMap: Map<Aes<*>, Scale>,
+        mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
         theme: Theme,
         fontRegistry: FontFamilyRegistry
     ): List<List<GeomLayer>> {
@@ -176,22 +182,22 @@ object PlotConfigFrontendUtil {
     private fun createScalesForStatPositionalBindings(
         layerVarBindings: List<VarBinding>,
         isYOrientation: Boolean,
-        commonScaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
-    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale> {
+        commonScaleMap: Map<Aes<*>, Scale>,
+    ): Map<Aes<*>, Scale> {
         val statPositionalBindings =
             layerVarBindings.filter { it.variable.isStat }
-                .filterNot { it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y }
-                .filter { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(it.aes) }
+                .filterNot { it.aes == Aes.X || it.aes == Aes.Y }
+                .filter { Aes.isPositionalXY(it.aes) }
 
-        return statPositionalBindings.map { binding ->
+        return statPositionalBindings.associate { binding ->
             val positionalAes = when (isYOrientation) {
-                true -> if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(binding.aes)) org.jetbrains.letsPlot.core.plot.base.Aes.Y else org.jetbrains.letsPlot.core.plot.base.Aes.X
-                false -> if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(binding.aes)) org.jetbrains.letsPlot.core.plot.base.Aes.X else org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                true -> if (Aes.isPositionalX(binding.aes)) Aes.Y else Aes.X
+                false -> if (Aes.isPositionalX(binding.aes)) Aes.X else Aes.Y
             }
             val scaleProto = commonScaleMap.getValue(positionalAes)
             val aesScale = scaleProto.with().name(binding.variable.label).build()
             binding.aes to aesScale
-        }.toMap()
+        }
     }
 
     private fun createLayerBuilder(
@@ -223,7 +229,7 @@ object PlotConfigFrontendUtil {
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {
             @Suppress("UNCHECKED_CAST", "MapGetWithNotNullAssertionOperator")
-            layerBuilder.addConstantAes(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>, constantAesMap[aes]!!)
+            layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
         if (layerConfig.hasExplicitGrouping()) {

@@ -9,9 +9,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
-import jetbrains.datalore.plot.config.Option.Geom
-import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Geom
+import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
 
 class LayerOptions : Options() {

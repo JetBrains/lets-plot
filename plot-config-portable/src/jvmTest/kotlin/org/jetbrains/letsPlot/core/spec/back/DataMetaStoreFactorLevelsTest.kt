@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.COLUMN
-import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.DateTime.DATE_TIME
-import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.TYPE
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.COLUMN
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.DateTime.DATE_TIME
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.TYPE
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
@@ -16,7 +16,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `simple facets`() {
         val plotSpecs = plotSpecs_No_Ordering_No_DateTime()
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaFacetLevels("chrom", listOf("chr1", "chr2", "chr4", "chr5"))
     }
@@ -24,7 +24,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `facets with as_discrete xy`() {
         val plotSpecs = plotSpecs_With_asDiscrete(listOf("x", "y"), order = true)
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesOrderOption("x")
@@ -36,7 +36,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `facets with as_discrete no order xy`() {
         val plotSpecs = plotSpecs_With_asDiscrete(listOf("x", "y"), order = false)
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesAsDiscrete("y")
@@ -49,7 +49,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `facets with as_discrete x`() {
         val plotSpecs = plotSpecs_With_asDiscrete(listOf("x"), order = true)
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesOrderOption("x")
@@ -59,7 +59,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `facets with as_discrete y`() {
         val plotSpecs = plotSpecs_With_asDiscrete(listOf("y"), order = true)
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaAesAsDiscrete("y")
             .hasDataMetaAesOrderOption("y")
@@ -69,7 +69,7 @@ class DataMetaStoreFactorLevelsTest {
     @Test
     fun `facets with date_time xy`() {
         val plotSpecs = plotSpecs_With_DateTime(listOf("chrom", "arm", "y"))
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaDateTime("chrom")
             .hasDataMetaDateTime("arm")
@@ -84,7 +84,7 @@ class DataMetaStoreFactorLevelsTest {
             aesList = listOf("x", "y"),             // as discrete
             order = false
         )
-        val layerConfigs = ServerSideTestUtil.createLayerConfigs(plotSpecs)
+        val layerConfigs = BackendTestUtil.createLayerConfigs(plotSpecs)
         SingleLayerAssert.assertThat(layerConfigs)
             .hasDataMetaDateTime("chrom")
             .hasDataMetaDateTime("arm")

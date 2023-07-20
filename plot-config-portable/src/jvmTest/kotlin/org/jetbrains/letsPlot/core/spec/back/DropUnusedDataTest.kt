@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
 import jetbrains.datalore.plot.config.TestUtil
 import jetbrains.datalore.plot.config.assertBinding
 import jetbrains.datalore.plot.config.transformToClientPlotConfig
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_X
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_Y
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -42,31 +42,39 @@ class DropUnusedDataTest {
         assertEquals(0, plotData.size)
     }
 
-    private fun checkSingleLayerData(opts: Map<String, Any>,
-                                     expectedVarCount: Int,
-                                     expectedVars: Map<String, Int>) {
+    private fun checkSingleLayerData(
+        opts: Map<String, Any>,
+        expectedVarCount: Int,
+        expectedVars: Map<String, Int>
+    ) {
         checkLayerData(0, opts, expectedVarCount, expectedVars, emptyList())
     }
 
-    private fun checkSingleLayerData(opts: Map<String, Any>,
-                                     expectedVarCount: Int,
-                                     expectedVars: Map<String, Int>,
-                                     unexpectedVars: Iterable<String>) {
+    private fun checkSingleLayerData(
+        opts: Map<String, Any>,
+        expectedVarCount: Int,
+        expectedVars: Map<String, Int>,
+        unexpectedVars: Iterable<String>
+    ) {
         checkLayerData(0, opts, expectedVarCount, expectedVars, unexpectedVars)
     }
 
-    private fun checkLayerData(layerIndex: Int, opts: Map<String, Any>,
-                               expectedVarCount: Int,
-                               expectedVars: Map<String, Int>,
-                               unexpectedVars: Iterable<String>) {
+    private fun checkLayerData(
+        layerIndex: Int, opts: Map<String, Any>,
+        expectedVarCount: Int,
+        expectedVars: Map<String, Int>,
+        unexpectedVars: Iterable<String>
+    ) {
         val data = TestUtil.getLayerData(opts, layerIndex)
         checkData(data, expectedVarCount, expectedVars, unexpectedVars)
     }
 
-    private fun checkData(data: Map<String, Any>,
-                          expectedVarCount: Int,
-                          expectedVars: Map<String, Int>,
-                          unexpectedVars: Iterable<String>) {
+    private fun checkData(
+        data: Map<String, Any>,
+        expectedVarCount: Int,
+        expectedVars: Map<String, Int>,
+        unexpectedVars: Iterable<String>
+    ) {
         assertNoTransformVars(data)
         assertEquals(expectedVarCount, data.size)
         for (`var` in expectedVars.keys) {
@@ -113,21 +121,22 @@ class DropUnusedDataTest {
                 "            }" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec, data)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, data)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = bins * 2 // two groups
         val droppedVars = listOf("..x..", "..density..", "..group..")
-        checkSingleLayerData(opts, 4,
-                mapOf(
-                        "x" to statSize,
-                        "group" to statSize,
-                        "facetX" to statSize,
-                        "..count.." to statSize,
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 4,
+            mapOf(
+                "x" to statSize,
+                "group" to statSize,
+                "facetX" to statSize,
+                "..count.." to statSize,
+            ),
+            droppedVars
         )
     }
 
@@ -154,7 +163,7 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
@@ -187,19 +196,20 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = 2
         val droppedVars = listOf("..group..")
-        checkSingleLayerData(opts, 2,
-                mapOf(
-                        "x" to statSize,
-                        "..count.." to statSize
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 2,
+            mapOf(
+                "x" to statSize,
+                "..count.." to statSize
+            ),
+            droppedVars
         )
     }
 
@@ -228,19 +238,20 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = 2
         val droppedVars = listOf("c", "..x..", "..group..")
-        checkSingleLayerData(opts, 2,
-                mapOf(
-                        "x" to statSize,
-                        "..count.." to statSize
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 2,
+            mapOf(
+                "x" to statSize,
+                "..count.." to statSize
+            ),
+            droppedVars
         )
     }
 
@@ -271,20 +282,21 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = 4
         val droppedVars = listOf("..x..", "..group..")
-        checkSingleLayerData(opts, 3,
-                mapOf(
-                        "x" to statSize,
-                        "c" to statSize,
-                        "..count.." to statSize
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 3,
+            mapOf(
+                "x" to statSize,
+                "c" to statSize,
+                "..count.." to statSize
+            ),
+            droppedVars
         )
     }
 
@@ -318,16 +330,17 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
-        checkSingleLayerData(opts, 3,
-                mapOf(
-                        "x" to 4,
-                        "y" to 4,
-                        "c" to 4
-                )
+        checkSingleLayerData(
+            opts, 3,
+            mapOf(
+                "x" to 4,
+                "y" to 4,
+                "c" to 4
+            )
         )
     }
 
@@ -353,20 +366,21 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val unknownSize = -1
         val droppedVars = listOf("z", "..level..")
-        checkSingleLayerData(opts, 3,
-                mapOf(
-                        "x" to unknownSize,
-                        "y" to unknownSize,
-                        "..group.." to unknownSize
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 3,
+            mapOf(
+                "x" to unknownSize,
+                "y" to unknownSize,
+                "..group.." to unknownSize
+            ),
+            droppedVars
         )
     }
 
@@ -395,21 +409,22 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val unknownSize = -1
         val droppedVars = listOf("z")
-        checkSingleLayerData(opts, 4,
-                mapOf(
-                        "x" to unknownSize,
-                        "y" to unknownSize,
-                        "..group.." to unknownSize,
-                        "..level.." to unknownSize
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 4,
+            mapOf(
+                "x" to unknownSize,
+                "y" to unknownSize,
+                "..group.." to unknownSize,
+                "..level.." to unknownSize
+            ),
+            droppedVars
         )
     }
 
@@ -437,7 +452,7 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
@@ -447,12 +462,13 @@ class DropUnusedDataTest {
 
         val statSize = 2
         val droppedVars = listOf("..x..", "..group..")
-        checkData(layerData, 2,
-                mapOf(
-                        "time" to statSize,
-                        "..count.." to statSize
-                ),
-                droppedVars
+        checkData(
+            layerData, 2,
+            mapOf(
+                "time" to statSize,
+                "..count.." to statSize
+            ),
+            droppedVars
         )
 
         assertEquals(listOf("Lunch", "Dinner"), layerData["time"])
@@ -488,20 +504,21 @@ class DropUnusedDataTest {
                 "           ]" +
                 "}"
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec, data)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, data)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = bins * 2 // two groups
         val droppedVars = listOf("..x..", "..count..", "..group..")
-        checkSingleLayerData(opts, 3,
-                mapOf(
-                        "x" to statSize,
-                        "group" to statSize,
-                        "..density.." to statSize,
-                ),
-                droppedVars
+        checkSingleLayerData(
+            opts, 3,
+            mapOf(
+                "x" to statSize,
+                "group" to statSize,
+                "..density.." to statSize,
+            ),
+            droppedVars
         )
     }
 
@@ -537,19 +554,20 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
         TestUtil.checkOptionsClientSide(opts, 2)
 
         // keep X, Y, Z in shared data
         val plotData = TestUtil.getPlotData(opts)
         val numPoints = 400
-        checkData(plotData, 3,
-                mapOf(
-                        "x" to numPoints,
-                        "y" to numPoints,
-                        "z" to numPoints
-                ),
-                emptyList()
+        checkData(
+            plotData, 3,
+            mapOf(
+                "x" to numPoints,
+                "y" to numPoints,
+                "z" to numPoints
+            ),
+            emptyList()
         )
 
         // points layer: no layer data (identity stat)
@@ -560,13 +578,14 @@ class DropUnusedDataTest {
         val contourData = TestUtil.getLayerData(opts, 1)
         val contourSizeUnknown = -1
         val contourDroppedVars = listOf("z", "..level..")
-        checkData(contourData, 3,
-                mapOf(
-                        "x" to contourSizeUnknown,
-                        "y" to contourSizeUnknown,
-                        "..group.." to contourSizeUnknown
-                ),
-                contourDroppedVars
+        checkData(
+            contourData, 3,
+            mapOf(
+                "x" to contourSizeUnknown,
+                "y" to contourSizeUnknown,
+                "..group.." to contourSizeUnknown
+            ),
+            contourDroppedVars
         )
     }
 
@@ -720,7 +739,7 @@ class DropUnusedDataTest {
                   ]
         }"""
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
@@ -743,13 +762,14 @@ class DropUnusedDataTest {
             ]
         }""".trimIndent()
 
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = 1
-        checkSingleLayerData(opts, 3,
+        checkSingleLayerData(
+            opts, 3,
             mapOf(
                 "x" to statSize,
                 "..count.." to statSize,
@@ -781,13 +801,14 @@ class DropUnusedDataTest {
               }
             ]
         }""".trimIndent()
-        val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
         assertEmptyPlotData(opts)
 
         val statSize = 1
-        checkSingleLayerData(opts, 3,
+        checkSingleLayerData(
+            opts, 3,
             mapOf(
                 "x" to statSize,
                 "..count.." to statSize,

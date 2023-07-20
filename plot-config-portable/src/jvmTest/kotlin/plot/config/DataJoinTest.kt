@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.config
 
+import org.assertj.core.api.AbstractAssert
+import org.assertj.core.api.Assertions
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
-import org.assertj.core.api.AbstractAssert
-import org.assertj.core.api.Assertions
-import org.junit.Ignore
+import org.jetbrains.letsPlot.core.spec.config.ConfigUtil
 import org.junit.Test
 
 fun variable(df: DataFrame, varName: String) = variables(df)[varName] ?: error("Variable $varName not found")
@@ -65,7 +65,8 @@ class DataJoinTest {
             .put(Variable("geometry"), listOf("anderson_geometry", "clay_geometry", "alameda_geometry"))
             .build()
 
-        val jointDataFrame = ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
+        val jointDataFrame =
+            ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
 
         assertThat(jointDataFrame)
             .hasSerieFrom(data, "Countries")
@@ -92,7 +93,10 @@ class DataJoinTest {
         val map = DataFrame.Builder()
             .put(Variable("request"), listOf("UA", "USA", "GER", "FR", "RU"))
             .put(Variable("found name"), listOf("Ukraine", "United States of America", "Germany", "France", "Russia"))
-            .put(Variable("geometry"), listOf("ua_geometry", "usa_geometry", "ger_geometry", "fr_geometry", "ru_geometry"))
+            .put(
+                Variable("geometry"),
+                listOf("ua_geometry", "usa_geometry", "ger_geometry", "fr_geometry", "ru_geometry")
+            )
             .build()
 
         val jointDataFrame = ConfigUtil.join(data, listOf("Countries"), map, listOf("request"))
@@ -101,8 +105,14 @@ class DataJoinTest {
             .hasSerie(variable(data, "Countries"), listOf("USA", "RU", "FR", null, null)) // nulls for UA and GER
             .hasSerie(variable(data, "Values"), listOf(0.0, 1.0, 2.0, null, null)) // nulls for UA and GER
             .hasSerie(variable(map, "request"), listOf("USA", "RU", "FR", "UA", "GER"))
-            .hasSerie(variable(map, "found name"), listOf("United States of America", "Russia", "France", "Ukraine",  "Germany"))
-            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "ru_geometry", "fr_geometry", "ua_geometry", "ger_geometry"))
+            .hasSerie(
+                variable(map, "found name"),
+                listOf("United States of America", "Russia", "France", "Ukraine", "Germany")
+            )
+            .hasSerie(
+                variable(map, "geometry"),
+                listOf("usa_geometry", "ru_geometry", "fr_geometry", "ua_geometry", "ger_geometry")
+            )
     }
 
 
@@ -206,11 +216,18 @@ class DataJoinTest {
             .put(Variable("request"), listOf("Carson", "Anderson", "Clay", "Adams", "Alameda"))
             .put(Variable("state"), listOf("NV", "TX", "AL", "CO", "CA"))
             .put(Variable("country"), listOf("USA", "USA", "USA", "USA", "USA"))
-            .put(Variable("found name"), listOf("Carson County", "Anderson County", "Clay County", "Adams County", "Alameda County"))
-            .put(Variable("geometry"), listOf("carson_geometry", "anderson_geometry", "clay_geometry", "adams_geometry", "alameda_geometry"))
+            .put(
+                Variable("found name"),
+                listOf("Carson County", "Anderson County", "Clay County", "Adams County", "Alameda County")
+            )
+            .put(
+                Variable("geometry"),
+                listOf("carson_geometry", "anderson_geometry", "clay_geometry", "adams_geometry", "alameda_geometry")
+            )
             .build()
 
-        val jointDataFrame = ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
+        val jointDataFrame =
+            ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
 
         assertThat(jointDataFrame)
             .hasSerie(variable(data, "Countries"), listOf("USA", "USA", "USA", null, null))
@@ -220,8 +237,14 @@ class DataJoinTest {
             .hasSerie(variable(map, "request"), listOf("Anderson", "Clay", "Alameda", "Carson", "Adams"))
             .hasSerie(variable(map, "state"), listOf("TX", "AL", "CA", "NV", "CO"))
             .hasSerie(variable(map, "country"), listOf("USA", "USA", "USA", "USA", "USA"))
-            .hasSerie(variable(map, "found name"), listOf("Anderson County", "Clay County", "Alameda County", "Carson County", "Adams County"))
-            .hasSerie(variable(map, "geometry"), listOf("anderson_geometry", "clay_geometry", "alameda_geometry", "carson_geometry", "adams_geometry"))
+            .hasSerie(
+                variable(map, "found name"),
+                listOf("Anderson County", "Clay County", "Alameda County", "Carson County", "Adams County")
+            )
+            .hasSerie(
+                variable(map, "geometry"),
+                listOf("anderson_geometry", "clay_geometry", "alameda_geometry", "carson_geometry", "adams_geometry")
+            )
     }
 
 
@@ -271,7 +294,8 @@ class DataJoinTest {
             .put(Variable("geometry"), listOf("anderson_geometry", "alameda_geometry"))
             .build()
 
-        val jointDataFrame = ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
+        val jointDataFrame =
+            ConfigUtil.join(data, listOf("Counties", "States", "Countries"), map, listOf("request", "state", "country"))
 
         // Should take variables from corresponding dataframes, not recreate them
         assertThat(jointDataFrame)
@@ -310,8 +334,14 @@ class DataJoinTest {
             .hasSerieFrom(data, "Category")
             .hasSerieFrom(data, "Value")
             .hasSerie(variable(map, "request"), listOf("USA", "USA", "RU", "RU", "FR", "FR"))
-            .hasSerie(variable(map, "found name"), listOf("United States of America", "United States of America", "Russia", "Russia", "France", "France"))
-            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "usa_geometry", "ru_geometry", "ru_geometry", "fr_geometry", "fr_geometry"))
+            .hasSerie(
+                variable(map, "found name"),
+                listOf("United States of America", "United States of America", "Russia", "Russia", "France", "France")
+            )
+            .hasSerie(
+                variable(map, "geometry"),
+                listOf("usa_geometry", "usa_geometry", "ru_geometry", "ru_geometry", "fr_geometry", "fr_geometry")
+            )
     }
 
     @Test
@@ -338,8 +368,30 @@ class DataJoinTest {
             .hasSerie(variable(data, "Category"), listOf("A", "B", "A", "B", "A", "B", null))
             .hasSerie(variable(data, "Value"), listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, null))
             .hasSerie(variable(map, "request"), listOf("USA", "USA", "RU", "RU", "FR", "FR", "GER"))
-            .hasSerie(variable(map, "found name"), listOf("United States of America", "United States of America", "Russia", "Russia", "France", "France", "Germany"))
-            .hasSerie(variable(map, "geometry"), listOf("usa_geometry", "usa_geometry", "ru_geometry", "ru_geometry", "fr_geometry", "fr_geometry", "ger_geometry"))
+            .hasSerie(
+                variable(map, "found name"),
+                listOf(
+                    "United States of America",
+                    "United States of America",
+                    "Russia",
+                    "Russia",
+                    "France",
+                    "France",
+                    "Germany"
+                )
+            )
+            .hasSerie(
+                variable(map, "geometry"),
+                listOf(
+                    "usa_geometry",
+                    "usa_geometry",
+                    "ru_geometry",
+                    "ru_geometry",
+                    "fr_geometry",
+                    "fr_geometry",
+                    "ger_geometry"
+                )
+            )
     }
 
 
@@ -365,36 +417,48 @@ class DataJoinTest {
         val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
 
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Country"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                null // GER
-            ))
-            .hasSerie(variable(data, "Category"), listOf(
-                "A", "B", // USA
-                "A", "B", // FR
-                null // GER
-            ))
-            .hasSerie(variable(data, "Value"), listOf(
-                0.0, 1.0, // USA
-                4.0, 5.0, // FR
-                null // GER
-            ))
-            .hasSerie(variable(map, "request"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                "GER"
-            ))
-            .hasSerie(variable(map, "found name"), listOf(
-                "United States of America", "United States of America",
-                "France", "France",
-                "Germany"
-            ))
-            .hasSerie(variable(map, "geometry"), listOf(
-                "usa_geometry", "usa_geometry",
-                "fr_geometry", "fr_geometry",
-                "ger_geometry"
-            ))
+            .hasSerie(
+                variable(data, "Country"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Category"), listOf(
+                    "A", "B", // USA
+                    "A", "B", // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Value"), listOf(
+                    0.0, 1.0, // USA
+                    4.0, 5.0, // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(map, "request"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    "GER"
+                )
+            )
+            .hasSerie(
+                variable(map, "found name"), listOf(
+                    "United States of America", "United States of America",
+                    "France", "France",
+                    "Germany"
+                )
+            )
+            .hasSerie(
+                variable(map, "geometry"), listOf(
+                    "usa_geometry", "usa_geometry",
+                    "fr_geometry", "fr_geometry",
+                    "ger_geometry"
+                )
+            )
     }
 
     @Test
@@ -419,36 +483,48 @@ class DataJoinTest {
         val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
 
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Country"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                null // GER
-            ))
-            .hasSerie(variable(data, "Category"), listOf(
-                "A", "B", // USA
-                "A", "B", // FR
-                null // GER
-            ))
-            .hasSerie(variable(data, "Value"), listOf(
-                0.0, 1.0, // USA
-                4.0, 5.0, // FR
-                null // GER
-            ))
-            .hasSerie(variable(map, "request"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                "GER"
-            ))
-            .hasSerie(variable(map, "found name"), listOf(
-                "United States of America", "United States of America",
-                "France", "France",
-                "Germany"
-            ))
-            .hasSerie(variable(map, "geometry"), listOf(
-                "usa_geometry", "usa_geometry",
-                "fr_geometry", "fr_geometry",
-                "ger_geometry"
-            ))
+            .hasSerie(
+                variable(data, "Country"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Category"), listOf(
+                    "A", "B", // USA
+                    "A", "B", // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Value"), listOf(
+                    0.0, 1.0, // USA
+                    4.0, 5.0, // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(map, "request"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    "GER"
+                )
+            )
+            .hasSerie(
+                variable(map, "found name"), listOf(
+                    "United States of America", "United States of America",
+                    "France", "France",
+                    "Germany"
+                )
+            )
+            .hasSerie(
+                variable(map, "geometry"), listOf(
+                    "usa_geometry", "usa_geometry",
+                    "fr_geometry", "fr_geometry",
+                    "ger_geometry"
+                )
+            )
     }
 
 
@@ -474,36 +550,48 @@ class DataJoinTest {
         val jointDataFrame = ConfigUtil.join(data, listOf("Country"), map, listOf("request"))
 
         assertThat(jointDataFrame)
-            .hasSerie(variable(data, "Country"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                null // GER
-            ))
-            .hasSerie(variable(data, "Category"), listOf(
-                "A", "B", // USA
-                "A", "B", // FR
-                null // GER
-            ))
-            .hasSerie(variable(data, "Value"), listOf(
-                0.0, 1.0, // USA
-                4.0, 5.0, // FR
-                null // GER
-            ))
-            .hasSerie(variable(map, "request"), listOf(
-                "USA", "USA",
-                "FR", "FR",
-                "GER"
-            ))
-            .hasSerie(variable(map, "found name"), listOf(
-                "United States of America", "United States of America",
-                "France", "France",
-                "Germany"
-            ))
-            .hasSerie(variable(map, "geometry"), listOf(
-                "usa_geometry", "usa_geometry",
-                "fr_geometry", "fr_geometry",
-                "ger_geometry"
-            ))
+            .hasSerie(
+                variable(data, "Country"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Category"), listOf(
+                    "A", "B", // USA
+                    "A", "B", // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(data, "Value"), listOf(
+                    0.0, 1.0, // USA
+                    4.0, 5.0, // FR
+                    null // GER
+                )
+            )
+            .hasSerie(
+                variable(map, "request"), listOf(
+                    "USA", "USA",
+                    "FR", "FR",
+                    "GER"
+                )
+            )
+            .hasSerie(
+                variable(map, "found name"), listOf(
+                    "United States of America", "United States of America",
+                    "France", "France",
+                    "Germany"
+                )
+            )
+            .hasSerie(
+                variable(map, "geometry"), listOf(
+                    "usa_geometry", "usa_geometry",
+                    "fr_geometry", "fr_geometry",
+                    "ger_geometry"
+                )
+            )
     }
 
 

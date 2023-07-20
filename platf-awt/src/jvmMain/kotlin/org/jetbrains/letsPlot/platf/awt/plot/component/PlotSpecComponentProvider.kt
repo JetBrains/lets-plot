@@ -6,13 +6,13 @@
 package org.jetbrains.letsPlot.platf.awt.plot.component
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.platf.awt.plot.MonolithicAwt
-import org.jetbrains.letsPlot.core.util.PlotSizeHelper
-import jetbrains.datalore.plot.config.CompositeFigureConfig
-import jetbrains.datalore.plot.config.FigKind
-import jetbrains.datalore.plot.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.util.PlotSizeHelper
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.platf.awt.plot.MonolithicAwt
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JScrollPane

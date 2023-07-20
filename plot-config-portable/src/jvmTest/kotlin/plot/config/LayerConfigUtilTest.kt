@@ -5,7 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.config.Option.GeomName
+import org.jetbrains.letsPlot.core.spec.GeomProto
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.GeomName
+import org.jetbrains.letsPlot.core.spec.config.LayerConfigUtil
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

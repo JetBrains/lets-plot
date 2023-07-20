@@ -15,12 +15,16 @@ import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
-import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
-import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
-import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
+import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
+import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
+import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
+import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.getString
 
 open class PlotConfigBackend(
     opts: Map<String, Any>
@@ -122,7 +126,8 @@ open class PlotConfigBackend(
         }
 
         return layerConfigs.mapIndexed { layerIndex, layerConfig ->
-            val mappedStatVariables = layerConfig.varBindings.map(VarBinding::variable).filter(DataFrame.Variable::isStat)
+            val mappedStatVariables =
+                layerConfig.varBindings.map(VarBinding::variable).filter(DataFrame.Variable::isStat)
             applyLayerStatistic(
                 layerConfig,
                 layerData = dataByLayer[layerIndex],

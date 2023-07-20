@@ -5,19 +5,21 @@
 
 package jetbrains.datalore.plot.config
 
+import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.DemoAndTest
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
-import jetbrains.datalore.plot.config.Option.Meta.KIND
-import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.SCALES
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.ORIENTATION
+import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.Meta.KIND
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.PLOT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.assertEquals

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transf.bistro.util
 
-import jetbrains.datalore.plot.config.Option
+import org.jetbrains.letsPlot.core.spec.Option
 
 
 class CoordOptions : Options() {

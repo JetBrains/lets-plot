@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.config.FontFamilyRegistryConfig
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

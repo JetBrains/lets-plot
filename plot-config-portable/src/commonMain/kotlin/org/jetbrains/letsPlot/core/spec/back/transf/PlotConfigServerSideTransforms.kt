@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transf
 
-import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Plot
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.transf.PlotSpecTransform
 import org.jetbrains.letsPlot.core.spec.transf.SpecSelector
 import org.jetbrains.letsPlot.core.spec.transf.migration.MoveGeomPropertiesToLayerMigration

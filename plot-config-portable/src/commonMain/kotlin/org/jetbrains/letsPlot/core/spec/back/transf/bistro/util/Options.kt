@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.back.transf.bistro.util
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.config.Option
+import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

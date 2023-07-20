@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import jetbrains.datalore.plot.config.FailureHandler
+import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.Color
 import java.awt.Dimension

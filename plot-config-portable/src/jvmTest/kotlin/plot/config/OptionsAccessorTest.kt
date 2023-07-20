@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import kotlin.test.*
 import demoAndTestShared.assertEquals as assertDoubleEquals
 

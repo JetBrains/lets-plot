@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config.aes
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

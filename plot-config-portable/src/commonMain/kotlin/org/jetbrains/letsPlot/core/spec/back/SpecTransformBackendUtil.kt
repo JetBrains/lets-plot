@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import jetbrains.datalore.plot.config.FailureHandler
-import jetbrains.datalore.plot.config.FigKind
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.SubPlots.Figure.BLANK
-import jetbrains.datalore.plot.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.FailureHandler
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
 import org.jetbrains.letsPlot.core.spec.back.transf.PlotConfigServerSideTransforms
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 
 
 object SpecTransformBackendUtil {

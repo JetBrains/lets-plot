@@ -5,17 +5,17 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.SubPlots.FIGURES
-import jetbrains.datalore.plot.config.Option.SubPlots.Figure.BLANK
-import jetbrains.datalore.plot.config.Option.SubPlots.Grid.COL_WIDTHS
-import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
-import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
-import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NROWS
-import jetbrains.datalore.plot.config.Option.SubPlots.Grid.ROW_HEIGHTS
-import jetbrains.datalore.plot.config.Option.SubPlots.LAYOUT
-import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
-import jetbrains.datalore.plot.config.Option.SubPlots.Layout.SUBPLOTS_GRID
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.FIGURES
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.COL_WIDTHS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.INNER_ALIGNMENT
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NCOLS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NROWS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.ROW_HEIGHTS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.LAYOUT
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.NAME
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.SUBPLOTS_GRID
 import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 

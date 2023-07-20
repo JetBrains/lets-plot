@@ -6,13 +6,13 @@
 package demoAndTestShared
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.Meta
-import jetbrains.datalore.plot.config.Option.Meta.Kind
-import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.GeomName
+import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Meta
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind
+import org.jetbrains.letsPlot.core.spec.Option.Plot
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
 object SimpleTestSpecs {
     fun simplePointLayer(): MutableMap<String, Any> {

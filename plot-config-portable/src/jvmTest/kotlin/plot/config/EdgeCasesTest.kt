@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.config
 
 import demoAndTestShared.assertDoesNotFail
 import jetbrains.datalore.plot.DemoAndTest
-import jetbrains.datalore.plot.config.Option.GeomName
-import jetbrains.datalore.plot.config.Option.GeomName.IMAGE
-import jetbrains.datalore.plot.config.Option.GeomName.LIVE_MAP
+import org.jetbrains.letsPlot.core.spec.Option.GeomName
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.IMAGE
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.LIVE_MAP
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 

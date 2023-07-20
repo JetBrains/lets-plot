@@ -5,14 +5,14 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.config.DataMetaUtil
-import jetbrains.datalore.plot.config.LayerConfig
-import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
+import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
+import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import kotlin.test.*
 
 class SingleLayerAssert private constructor(layers: List<LayerConfig>) :

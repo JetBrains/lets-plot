@@ -5,24 +5,25 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.FontFamilyRegistryConfig
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import jetbrains.datalore.plot.config.Option.Plot.COORD
-import jetbrains.datalore.plot.config.Option.Plot.GUIDES
-import jetbrains.datalore.plot.config.Option.Plot.THEME
-import jetbrains.datalore.plot.config.PlotConfigScaleMappers
-import jetbrains.datalore.plot.config.PlotConfigScales
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option.Plot.COORD
+import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
+import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
+import org.jetbrains.letsPlot.core.spec.config.CoordConfig
+import org.jetbrains.letsPlot.core.spec.config.FontFamilyRegistryConfig
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
-import jetbrains.datalore.plot.config.theme.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.transf.PlotSpecTransform
 import org.jetbrains.letsPlot.core.spec.transf.migration.MoveGeomPropertiesToLayerMigration
 

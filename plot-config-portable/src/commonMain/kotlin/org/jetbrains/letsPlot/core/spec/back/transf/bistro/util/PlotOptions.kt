@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transf.bistro.util
 
-import jetbrains.datalore.plot.config.Option.Meta
-import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Meta
+import org.jetbrains.letsPlot.core.spec.Option.Plot
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
 
 class PlotOptions : Options(

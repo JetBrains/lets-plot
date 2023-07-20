@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.Meta.KIND
-import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
-import jetbrains.datalore.plot.config.Option.Plot
-import jetbrains.datalore.plot.config.Option.PlotBase.DATA
-import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Meta.KIND
+import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.PLOT
+import org.jetbrains.letsPlot.core.spec.Option.Plot
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
@@ -26,7 +26,7 @@ class DataVectorsTransformTest(
 
     @Test
     fun transformed() {
-        val transformed = ServerSideTestUtil.backendSpecTransform(myInput)
+        val transformed = BackendTestUtil.backendSpecTransform(myInput)
         assertEquals(myExpected, transformed)
         if (myIdentityComparison) {
             // This only works for plot data located on the top level

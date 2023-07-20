@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.spec.Option
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

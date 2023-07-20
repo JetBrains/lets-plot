@@ -5,14 +5,14 @@
 
 package org.jetbrains.letsPlot.core.util
 
+import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.config.BunchConfig
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.PlotSvgHelper.fetchPlotSizeFromSvg
-import jetbrains.datalore.plot.config.BunchConfig
-import jetbrains.datalore.plot.config.FigKind
-import jetbrains.datalore.plot.config.PlotConfig
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object PlotSvgExportCommon {

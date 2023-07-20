@@ -5,11 +5,12 @@
 
 package jetbrains.datalore.plot.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
+import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -21,14 +22,14 @@ fun transformToClientPlotConfig(spec: String): PlotConfigFrontend {
 
 fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigFrontend {
     return plotSpec
-        .let(ServerSideTestUtil::backendSpecTransform)
+        .let(BackendTestUtil::backendSpecTransform)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
         .let(TestUtil::assertClientWontFail)
 }
 
 fun failedTransformToClientPlotConfig(spec: String): String {
     return parsePlotSpec(spec)
-        .let(ServerSideTestUtil::backendSpecTransform)
+        .let(BackendTestUtil::backendSpecTransform)
         .let {
             try {
                 PlotConfigFrontend.create(it) {}

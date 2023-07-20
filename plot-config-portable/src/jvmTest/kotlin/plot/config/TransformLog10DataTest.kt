@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -12,16 +13,15 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
-import jetbrains.datalore.plot.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
-import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
-import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMAX
-import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMIN
-import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMAX
-import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMIN
-import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotAssembler
-import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_X
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_Y
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_XMAX
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_XMIN
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMAX
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.RECT_YMIN
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotAssembler
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -590,7 +590,10 @@ class GeoConfigTest {
     @Test
     // check point coordinates
     fun `should handle geometries with positional mapping for map plot`() {
+        @Suppress("LocalVariableName")
         val BOSTON_LON = -71.0884755326693
+
+        @Suppress("LocalVariableName")
         val BOSTON_LAT = 42.3110405355692
 
         val pointLayer = """

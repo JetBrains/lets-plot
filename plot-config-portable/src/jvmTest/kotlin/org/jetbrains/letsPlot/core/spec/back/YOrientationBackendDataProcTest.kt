@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
-import jetbrains.datalore.plot.config.DataMetaUtil
-import jetbrains.datalore.plot.config.Option.Meta.DATA_META
-import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
+import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -52,7 +52,7 @@ class YOrientationBackendDataProcTest {
 
     private fun check(plotSpec: MutableMap<String, Any>, expected: Expected) {
         // See related: TestUtil.createGeomLayers()
-        val layerConfig = ServerSideTestUtil.createLayerConfigs(plotSpec)[0]
+        val layerConfig = BackendTestUtil.createLayerConfigs(plotSpec)[0]
 
         val dataAfterStat = DataFrameUtil.toMap(layerConfig.ownData)
         assertEquals(expected.data, dataAfterStat)

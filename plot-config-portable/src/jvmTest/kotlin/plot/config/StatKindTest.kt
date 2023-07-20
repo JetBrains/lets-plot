@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import org.jetbrains.letsPlot.core.spec.StatKind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

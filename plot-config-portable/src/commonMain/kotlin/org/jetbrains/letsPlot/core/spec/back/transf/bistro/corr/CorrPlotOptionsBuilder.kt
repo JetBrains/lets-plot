@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.core.spec.back.transf.bistro.corr
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.Option.Scale.MapperKind
-import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GRADIENT2
-import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_BREWER
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_BREWER
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.corr.CorrUtil.computeCorrelations
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.corr.CorrUtil.correlationsFromCoefficients
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.corr.CorrUtil.correlationsToDataframe

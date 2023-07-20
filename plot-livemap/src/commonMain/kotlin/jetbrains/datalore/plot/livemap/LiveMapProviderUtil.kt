@@ -23,17 +23,16 @@ import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
-import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DEV_PARAMS
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.ATTRIBUTION
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MAX_ZOOM
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MIN_ZOOM
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DEV_PARAMS
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.LOCATION
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.PROJECTION
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.TILES
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.ATTRIBUTION
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.MAX_ZOOM
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.MIN_ZOOM
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.LiveMapLocation
@@ -52,6 +51,7 @@ import jetbrains.livemap.core.Projections.mercator
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets
 import jetbrains.livemap.ui.CursorService
+import org.jetbrains.letsPlot.core.spec.*
 
 object LiveMapProviderUtil {
 

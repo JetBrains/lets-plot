@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transf.bistro.util
 
-import jetbrains.datalore.plot.config.Option
+import org.jetbrains.letsPlot.core.spec.Option
 
 class TooltipsOptions : Options() {
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)

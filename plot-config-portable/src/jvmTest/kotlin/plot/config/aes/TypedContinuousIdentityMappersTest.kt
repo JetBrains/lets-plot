@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMappers
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

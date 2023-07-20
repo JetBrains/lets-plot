@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.spec.back.transf.bistro.qq
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.aes.LineTypeOptionConverter
-import jetbrains.datalore.plot.config.aes.ShapeOptionConverter
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
+import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.qq.Option.QQ
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.util.LayerOptions
 import org.jetbrains.letsPlot.core.spec.back.transf.bistro.util.PlotOptions
