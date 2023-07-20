@@ -3,8 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.TestingGeomLayersBuilder
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -510,7 +511,7 @@ class GeoConfigTest {
 
     // excluding LiveMap layer
     private fun getGeomLayer(spec: String): GeomLayer {
-        val layers = TestUtil.createSingleTileGeomLayers(parsePlotSpec(spec))
+        val layers = TestingGeomLayersBuilder.createSingleTileGeomLayers(parsePlotSpec(spec))
         val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
         assertTrue(geomLayers.size == 1, "No layers")
         return geomLayers.single()

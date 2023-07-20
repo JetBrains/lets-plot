@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.assertDoesNotFail
-import jetbrains.datalore.plot.DemoAndTest
+import org.jetbrains.letsPlot.core.TestingPlotBuilder
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.IMAGE
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.LIVE_MAP
@@ -40,7 +40,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { DemoAndTest.createPlot(opts) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
     }
 
     @Test
@@ -69,7 +69,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { DemoAndTest.createPlot(opts) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
     }
 
     @Test
@@ -103,7 +103,7 @@ class EdgeCasesTest {
 
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { DemoAndTest.createPlot(opts) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
     }
 
     @Test
@@ -128,7 +128,7 @@ class EdgeCasesTest {
             |    'layers': [ { 'geom':  { 'name': '$geom' } } ]
             |}""".trimMargin()
 
-            assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+            assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
         }
 
         (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
@@ -149,7 +149,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -166,7 +166,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -186,7 +186,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
     }
 
 
@@ -217,7 +217,7 @@ class EdgeCasesTest {
         )
 
         plotSpec["data"] = data
-        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(plotSpec) }
     }
 
     private fun checkWithNullInXYSeries(geom: String) {
@@ -242,7 +242,7 @@ class EdgeCasesTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(plotSpec) }
     }
 
     @Test
@@ -267,7 +267,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -294,6 +294,6 @@ class EdgeCasesTest {
             "c" to listOf(-1, 0, 0.01, 1, 81),
         )
 
-        assertDoesNotFail("log10 with negative data: ") { DemoAndTest.createPlot(plotSpec) }
+        assertDoesNotFail("log10 with negative data: ") { TestingPlotBuilder.createPlot(plotSpec) }
     }
 }

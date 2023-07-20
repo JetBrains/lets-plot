@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
-import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
-import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltip
+import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
+import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
 import kotlin.test.Test
 
 class TooltipWithConstantTest {

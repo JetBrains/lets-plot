@@ -3,9 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
-import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltip
+import demoAndTestShared.TestingGeomLayersBuilder
+import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
 import kotlin.test.Test
 
 
@@ -30,7 +31,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.00")
@@ -51,7 +52,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.0")
@@ -71,7 +72,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00", "n: 20.00")
@@ -98,7 +99,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.0", "n: 20")
@@ -119,7 +120,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00")
@@ -140,7 +141,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00")
@@ -161,7 +162,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.00")
@@ -187,7 +188,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.0")
@@ -217,7 +218,7 @@ class TooltipCheckLabelInLines {
             }
           ]
         }""".trimIndent()
-        val layer = TestUtil.getSingleGeomLayer(spec)
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
             expectedLines = listOf("v: 10.0")

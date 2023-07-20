@@ -3,8 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.TestingGeomLayersBuilder
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.spec.Option
@@ -16,7 +17,7 @@ class TransformLog10DataTest {
     @Test
     fun test() {
         val n = 20
-        val geomLayer = TestUtil.buildGeomLayer(
+        val geomLayer = TestingGeomLayersBuilder.buildGeomLayer(
             geom = Option.GeomName.HISTOGRAM,
             data = mapOf("x" to List(n) { 0.0 }),
             mapping = mapOf(Aes.X.name to "x"),

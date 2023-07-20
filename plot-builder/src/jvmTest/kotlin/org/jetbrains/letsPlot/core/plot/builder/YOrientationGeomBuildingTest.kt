@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot;
+package org.jetbrains.letsPlot.core.plot.builder
 
+import demoAndTestShared.TestingGeomLayersBuilder
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.config.TestUtil
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
@@ -17,8 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
-import org.jetbrains.letsPlot.core.plot.builder.DemoAndTest
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.junit.Test
 import kotlin.math.round
@@ -35,7 +33,7 @@ class YOrientationGeomBuildingTest {
     }
 
     private fun check(plotSpec: MutableMap<String, Any>, geomStub: GeomStub) {
-        val geomLayer = TestUtil.getSingleGeomLayer(plotSpec)
+        val geomLayer = TestingGeomLayersBuilder.getSingleGeomLayer(plotSpec)
         val geomLayerStub = GeomLayerStub(geomLayer, geomStub)
 
         // Just check that this invariant still holds.

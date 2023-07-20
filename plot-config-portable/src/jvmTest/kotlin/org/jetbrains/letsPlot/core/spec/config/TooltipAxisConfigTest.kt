@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime

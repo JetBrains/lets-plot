@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config.transform.migration
+package org.jetbrains.letsPlot.core.spec.transform.migration
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend

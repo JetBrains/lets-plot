@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config.aes
+package org.jetbrains.letsPlot.core.spec.config.conversion
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.spec.conversion.ColorOptionConverter

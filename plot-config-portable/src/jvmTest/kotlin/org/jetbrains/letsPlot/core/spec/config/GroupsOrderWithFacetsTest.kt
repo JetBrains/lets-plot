@@ -3,10 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
+import demoAndTestShared.TestingGeomLayersBuilder
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -42,7 +43,7 @@ class GroupsOrderWithFacetsTest {
             |  ]
             |}""".trimMargin()
 
-        val layersByTile = TestUtil.createMultiTileGeomLayers(parsePlotSpec(spec))
+        val layersByTile = TestingGeomLayersBuilder.createMultiTileGeomLayers(parsePlotSpec(spec))
         assertEquals(2, layersByTile.size)
 
         // tile 1
@@ -107,7 +108,7 @@ class GroupsOrderWithFacetsTest {
             |  ]
             |}""".trimMargin()
 
-        val layersByTile = TestUtil.createMultiTileGeomLayers(parsePlotSpec(spec))
+        val layersByTile = TestingGeomLayersBuilder.createMultiTileGeomLayers(parsePlotSpec(spec))
         assertEquals(2, layersByTile.size)
 
         // tile 1
@@ -167,7 +168,7 @@ class GroupsOrderWithFacetsTest {
             |  ]
             |}""".trimMargin()
 
-        val layersByTile = TestUtil.createMultiTileGeomLayers(parsePlotSpec(spec))
+        val layersByTile = TestingGeomLayersBuilder.createMultiTileGeomLayers(parsePlotSpec(spec))
         assertEquals(2, layersByTile.size)
 
         // tile 1

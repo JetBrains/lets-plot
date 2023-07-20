@@ -3,16 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
+import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage
+import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.LAYER
+import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.PLOT
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.*
 

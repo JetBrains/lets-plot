@@ -3,9 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore
+package org.jetbrains.letsPlot.core.spec.config
 
-import jetbrains.datalore.plot.config.transformToClientPlotConfig
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
@@ -23,7 +22,6 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.SCALE_MAPPER_KIND
-import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals

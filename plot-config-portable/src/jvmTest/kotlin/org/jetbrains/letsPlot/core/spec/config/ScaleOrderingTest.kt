@@ -3,16 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotUtil
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette
-import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -672,7 +672,7 @@ class ScaleOrderingTest {
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
         assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
-     }
+    }
 
     @Test
     // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not combine options

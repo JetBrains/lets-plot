@@ -3,14 +3,16 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.BREAKS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.CONTINUOUS_TRANSFORM
 import org.jetbrains.letsPlot.core.spec.Option.Scale.DATE_TIME
@@ -18,8 +20,6 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.DISCRETE_DOMAIN
 import org.jetbrains.letsPlot.core.spec.Option.Scale.FORMAT
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LABELS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LIMITS
-import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
-import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals

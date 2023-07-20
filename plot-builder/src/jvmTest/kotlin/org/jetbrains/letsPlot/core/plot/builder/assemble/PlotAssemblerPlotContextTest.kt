@@ -1,16 +1,15 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.assemble
+package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 
 
 class PlotAssemblerPlotContextTest {

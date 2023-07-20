@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
-import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
-import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
+import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
+import org.jetbrains.letsPlot.core.spec.config.TestUtil.buildPointLayer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext

@@ -3,9 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot
+package org.jetbrains.letsPlot.core
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
@@ -15,7 +14,7 @@ import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 
-internal object DemoAndTest {
+internal object TestingPlotBuilder {
 
     fun createPlot(plotSpec: MutableMap<String, Any>, andBuildComponent: Boolean = true): PlotSvgComponent {
         val plot = createPlot(plotSpec) {
@@ -81,44 +80,5 @@ internal object DemoAndTest {
         var plotSpec = plotSpec
         plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         return PlotConfigFrontend.processTransform(plotSpec)
-    }
-
-
-    fun contourDemoData(): Map<String, List<*>> {
-        val countX = 20
-        val countY = 20
-
-        val mean = DoubleVector(5.0, 5.0)
-        val height = 1.0
-        val radius = 10.0
-        val slop = height / radius
-        val x = ArrayList<Double>()
-        val y = ArrayList<Double>()
-        val z = ArrayList<Double>()
-        for (row in 0 until countY) {
-            for (col in 0 until countX) {
-                val dist = DoubleVector(col.toDouble(), row.toDouble()).subtract(mean).length()
-                val v = if (dist >= radius)
-                    0.0
-                else
-                    height - dist * slop
-
-                x.add(col.toDouble())
-                y.add(row.toDouble())
-                z.add(v)
-            }
-        }
-
-        val map = HashMap<String, List<*>>()
-        map["x"] = x
-        map["y"] = y
-        map["z"] = z
-        return map
-    }
-
-    fun getMap(opts: Map<String, Any>, key: String): Map<String, Any> {
-        @Suppress("UNCHECKED_CAST")
-        val map = opts[key] as? Map<String, Any>
-        return map ?: emptyMap()
     }
 }

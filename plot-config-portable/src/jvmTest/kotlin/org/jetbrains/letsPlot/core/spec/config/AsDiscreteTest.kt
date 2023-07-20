@@ -3,12 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
-import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
+import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.LAYER
+import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.Storage.PLOT
 import org.junit.Ignore
 import org.junit.Test
 import kotlin.math.pow

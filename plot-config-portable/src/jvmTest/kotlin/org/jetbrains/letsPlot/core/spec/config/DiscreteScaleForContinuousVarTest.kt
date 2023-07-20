@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.config
+package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import jetbrains.datalore.plot.config.TestUtil.assertClientWontFail
+import org.jetbrains.letsPlot.core.spec.config.TestUtil.assertClientWontFail
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil.backendSpecTransform
 import kotlin.test.Test

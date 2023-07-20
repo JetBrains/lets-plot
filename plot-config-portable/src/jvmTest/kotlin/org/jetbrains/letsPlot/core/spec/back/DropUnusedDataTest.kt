@@ -5,13 +5,14 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import jetbrains.datalore.plot.config.TestUtil
-import jetbrains.datalore.plot.config.assertBinding
-import jetbrains.datalore.plot.config.transformToClientPlotConfig
+import demoAndTestShared.DemoData
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_X
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.POINT_Y
+import org.jetbrains.letsPlot.core.spec.config.TestUtil
+import org.jetbrains.letsPlot.core.spec.config.assertBinding
+import org.jetbrains.letsPlot.core.spec.config.transformToClientPlotConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -122,7 +123,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec, data)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -164,7 +165,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
         checkSingleLayerData(opts, 1, mapOf("x" to 4))
@@ -197,7 +198,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -239,7 +240,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -283,7 +284,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -331,7 +332,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
         checkSingleLayerData(
@@ -366,8 +367,8 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
-        TestUtil.checkOptionsClientSide(opts, 1)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, DemoData.contourDemoData())
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -409,8 +410,8 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
-        TestUtil.checkOptionsClientSide(opts, 1)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, DemoData.contourDemoData())
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -453,7 +454,7 @@ class DropUnusedDataTest {
 
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -505,7 +506,7 @@ class DropUnusedDataTest {
                 "}"
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec, data)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -554,8 +555,8 @@ class DropUnusedDataTest {
                 "}"
 
 
-        val opts = BackendTestUtil.parseOptionsServerSide(spec, TestUtil.contourData())
-        TestUtil.checkOptionsClientSide(opts, 2)
+        val opts = BackendTestUtil.parseOptionsServerSide(spec, DemoData.contourDemoData())
+        TestUtil.checkOptionsFrontend(opts, 2)
 
         // keep X, Y, Z in shared data
         val plotData = TestUtil.getPlotData(opts)
@@ -740,7 +741,7 @@ class DropUnusedDataTest {
         }"""
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
         checkSingleLayerData(
@@ -763,7 +764,7 @@ class DropUnusedDataTest {
         }""".trimIndent()
 
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
@@ -802,7 +803,7 @@ class DropUnusedDataTest {
             ]
         }""".trimIndent()
         val opts = BackendTestUtil.parseOptionsServerSide(spec)
-        TestUtil.checkOptionsClientSide(opts, 1)
+        TestUtil.checkOptionsFrontend(opts, 1)
 
         assertEmptyPlotData(opts)
 
