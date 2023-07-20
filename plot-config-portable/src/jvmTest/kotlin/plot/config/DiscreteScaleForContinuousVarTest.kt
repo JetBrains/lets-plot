@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.TestUtil.assertClientWontFail
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil.backendSpecTransform
+import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil.backendSpecTransform
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

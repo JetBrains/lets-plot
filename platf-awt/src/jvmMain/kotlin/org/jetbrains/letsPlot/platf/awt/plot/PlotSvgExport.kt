@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.platf.awt.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.PlotSvgExportPortable
+import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.platf.awt.util.RGBEncoderAwt
 
 object PlotSvgExport {
@@ -21,7 +21,7 @@ object PlotSvgExport {
         plotSize: DoubleVector? = null,
         useCssPixelatedImageRendering: Boolean = true
     ): String {
-        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+        return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
             rgbEncoder = RGBEncoderAwt(),

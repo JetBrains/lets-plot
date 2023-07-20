@@ -17,7 +17,9 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
+import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.assertEquals
 
 object TestUtil {
@@ -25,8 +27,8 @@ object TestUtil {
         return DemoAndTest.contourDemoData()
     }
 
-    fun assertClientWontFail(opts: Map<String, Any>): PlotConfigClientSide {
-        return PlotConfigClientSide.create(opts) {}
+    fun assertClientWontFail(opts: Map<String, Any>): PlotConfigFrontend {
+        return PlotConfigFrontend.create(opts) {}
     }
 
     fun getPlotData(plotSpec: Map<String, Any>): Map<String, Any> {
@@ -61,10 +63,10 @@ object TestUtil {
     }
 
     internal fun createMultiTileGeomLayers(plotSpec: MutableMap<String, Any>): List<List<GeomLayer>> {
-        val transformed = BackendSpecTransformUtil.processTransform(plotSpec)
+        val transformed = SpecTransformBackendUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
-        val config = PlotConfigClientSide.create(transformed) {}
-        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile
+        val config = PlotConfigFrontend.create(transformed) {}
+        return PlotConfigFrontendUtil.createPlotAssembler(config).coreLayersByTile
     }
 
     internal fun createSingleTileGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {

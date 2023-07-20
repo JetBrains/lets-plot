@@ -7,7 +7,7 @@ package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.platf.awt.plot.PlotSvgExport.buildSvgImageFromRawSpecs
-import jetbrains.datalore.plot.PlotSvgHelper.fetchPlotSizeFromSvg
+import org.jetbrains.letsPlot.core.util.PlotSvgHelper.fetchPlotSizeFromSvg
 import org.apache.batik.transcoder.ErrorHandler
 import org.apache.batik.transcoder.TranscoderException
 import org.apache.batik.transcoder.TranscoderInput

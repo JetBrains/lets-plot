@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.*
 
 class SeriesAnnotationTest {
@@ -290,12 +291,12 @@ class SeriesAnnotationTest {
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
-    private fun PlotConfigClientSide.assertDateTimeScale(
+    private fun PlotConfigFrontend.assertDateTimeScale(
         aes: Aes<*>,
         isDateTime: Boolean,
         isDiscrete: Boolean,
         name: String? = null
-    ): PlotConfigClientSide {
+    ): PlotConfigFrontend {
         val scale = scaleMap.getValue(aes)
         if (scale.isContinuous) {
             val breaksGenerator =
@@ -308,10 +309,10 @@ class SeriesAnnotationTest {
         return this
     }
 
-    private fun PlotConfigClientSide.assertDateTimeVariable(
+    private fun PlotConfigFrontend.assertDateTimeVariable(
         varName: String,
         isDateTime: Boolean
-    ): PlotConfigClientSide {
+    ): PlotConfigFrontend {
         val layer = layerConfigs.single()
         if (!DataFrameUtil.hasVariable(layer.combinedData, varName)) {
             fail("Variable $varName is not found in ${layer.combinedData.variables().map(DataFrame.Variable::name)}")

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.demoUtils
 
-import jetbrains.datalore.plot.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
 import org.jetbrains.letsPlot.platf.jfx.plot.component.DefaultPlotPanelJfx
 import java.awt.Color

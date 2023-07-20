@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.platf.awt.plot
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import jetbrains.datalore.plot.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement

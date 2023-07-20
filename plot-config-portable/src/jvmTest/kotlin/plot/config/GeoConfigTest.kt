@@ -19,8 +19,9 @@ import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMAX
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_XMIN
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMAX
 import jetbrains.datalore.plot.config.GeoConfig.Companion.RECT_YMIN
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil.createPlotAssembler
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createPlotAssembler
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -217,7 +218,7 @@ class GeoConfigTest {
     }
 
     private fun singleGeomLayer(spec: String): GeomLayer {
-        val config = PlotConfigClientSide.create(parsePlotSpec(spec)) {}
+        val config = PlotConfigFrontend.create(parsePlotSpec(spec)) {}
         return createPlotAssembler(config).coreLayersByTile.single().single()
     }
 

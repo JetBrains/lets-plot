@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
 import jetbrains.datalore.plot.config.Option.Scale.NAME
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,7 +32,7 @@ class PlotConfigTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        val plotConfig = PlotConfigClientSide.create(opts) {}
+        val plotConfig = PlotConfigFrontend.create(opts) {}
 
         val scaleConfigs = PlotConfigUtil.createScaleConfigs(plotConfig.getList(SCALES))
         assertEquals(1, scaleConfigs.size.toLong())

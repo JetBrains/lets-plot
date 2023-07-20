@@ -8,7 +8,8 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -284,18 +285,18 @@ class OrderOptionsConfigTest {
     }
 
     companion object {
-        private fun PlotConfigClientSide.assertOrderOptionsSize(expectedSize: Int) : PlotConfigClientSide {
+        private fun PlotConfigFrontend.assertOrderOptionsSize(expectedSize: Int) : PlotConfigFrontend {
             val actualOptions = layerConfigs.first().orderOptions
             assertEquals(expectedSize, actualOptions.size)
             return this
         }
 
-        private fun PlotConfigClientSide.assertOrderOptions(
+        private fun PlotConfigFrontend.assertOrderOptions(
             index: Int,
             expectedVariableName: String,
             expectedByVariable: String,
             expectedOrderDir: Int,
-        ): PlotConfigClientSide {
+        ): PlotConfigFrontend {
             val actualOptions = layerConfigs.first().orderOptions
             assertTrue(index < actualOptions.size)
             val actual = actualOptions[index]
@@ -305,11 +306,11 @@ class OrderOptionsConfigTest {
             return this
         }
 
-        private fun PlotConfigClientSide.assertOrderOption(
+        private fun PlotConfigFrontend.assertOrderOption(
             expectedVariableName: String,
             expectedByVariable: String,
             expectedOrderDir: Int,
-        ): PlotConfigClientSide {
+        ): PlotConfigFrontend {
             assertOrderOptions(index = 0, expectedVariableName, expectedByVariable, expectedOrderDir)
             return this
         }
@@ -319,7 +320,7 @@ class OrderOptionsConfigTest {
                 .let(ServerSideTestUtil::backendSpecTransform)
                 .let {
                     try {
-                        PlotConfigClientSide.create(it) {}
+                        PlotConfigFrontend.create(it) {}
                     } catch (e: Throwable) {
                         assertEquals(
                             expectedMessage,

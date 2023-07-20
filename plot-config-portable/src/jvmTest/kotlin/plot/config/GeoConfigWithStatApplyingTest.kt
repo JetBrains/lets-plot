@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -178,7 +179,7 @@ class GeoConfigWithStatApplyingTest {
 
     private fun getGeomLayer(spec: String): GeomLayer {
         val config = transformToClientPlotConfig(spec)
-        val layers = PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile.single()
+        val layers = PlotConfigFrontendUtil.createPlotAssembler(config).coreLayersByTile.single()
         val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
         assertTrue(geomLayers.size == 1, "No layers")
         return geomLayers.single()

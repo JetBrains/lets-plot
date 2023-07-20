@@ -9,16 +9,17 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-fun transformToClientPlotConfig(spec: String): PlotConfigClientSide {
+fun transformToClientPlotConfig(spec: String): PlotConfigFrontend {
     return transformToClientPlotConfig(parsePlotSpec(spec))
 }
 
-fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigClientSide {
+fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigFrontend {
     return plotSpec
         .let(ServerSideTestUtil::backendSpecTransform)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
@@ -30,7 +31,7 @@ fun failedTransformToClientPlotConfig(spec: String): String {
         .let(ServerSideTestUtil::backendSpecTransform)
         .let {
             try {
-                PlotConfigClientSide.create(it) {}
+                PlotConfigFrontend.create(it) {}
             } catch (e: Throwable) {
                 return@let e.localizedMessage as String
             }
@@ -38,17 +39,17 @@ fun failedTransformToClientPlotConfig(spec: String): String {
         }
 }
 
-fun PlotConfigClientSide.assertValue(variable: String, values: List<*>): PlotConfigClientSide {
+fun PlotConfigFrontend.assertValue(variable: String, values: List<*>): PlotConfigFrontend {
     val data = layerConfigs.single().combinedData
     assertEquals(values, data.get(DataFrameUtil.variables(data)[variable]!!))
     return this
 }
 
-fun PlotConfigClientSide.assertVariable(
+fun PlotConfigFrontend.assertVariable(
     varName: String,
     isDiscrete: Boolean,
     msg: () -> String = { "" }
-): PlotConfigClientSide {
+): PlotConfigFrontend {
     val layer = layerConfigs.single()
     if (!DataFrameUtil.hasVariable(layer.combinedData, varName)) {
         fail("Variable $varName is not found in ${layer.combinedData.variables().map(DataFrame.Variable::name)}")
@@ -58,28 +59,28 @@ fun PlotConfigClientSide.assertVariable(
     return this
 }
 
-fun PlotConfigClientSide.assertScale(
+fun PlotConfigFrontend.assertScale(
     aes: Aes<*>,
     isDiscrete: Boolean,
     name: String? = null,
     msg: () -> String = { "" }
-): PlotConfigClientSide {
+): PlotConfigFrontend {
     val scale = scaleMap.getValue(aes)
     assertEquals(!isDiscrete, scale.isContinuous, msg())
     name?.let { assertEquals(it, scale.name, msg()) }
     return this
 }
 
-fun PlotConfigClientSide.hasVariable(variable: DataFrame.Variable): PlotConfigClientSide {
+fun PlotConfigFrontend.hasVariable(variable: DataFrame.Variable): PlotConfigFrontend {
     val layer = layerConfigs.single()
     assertTrue(DataFrameUtil.hasVariable(layer.combinedData, variable.name))
     return this
 }
 
-fun PlotConfigClientSide.assertBinding(
+fun PlotConfigFrontend.assertBinding(
     aes: Aes<*>,
     varName: String
-): PlotConfigClientSide {
+): PlotConfigFrontend {
     val layer = layerConfigs.single()
 
     val aesBindings = layer.varBindings.associateBy { it.aes }
@@ -89,9 +90,9 @@ fun PlotConfigClientSide.assertBinding(
     return this
 }
 
-fun PlotConfigClientSide.assertNoBinding(
+fun PlotConfigFrontend.assertNoBinding(
     aes: Aes<*>
-): PlotConfigClientSide {
+): PlotConfigFrontend {
     val layer = layerConfigs.single()
 
     assert(layer.varBindings.none { it.aes == aes }) { "Binding for aes $aes was found" }

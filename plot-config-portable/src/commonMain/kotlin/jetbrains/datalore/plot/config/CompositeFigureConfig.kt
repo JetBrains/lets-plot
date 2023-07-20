@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.PlotSizeHelper
+import org.jetbrains.letsPlot.core.util.PlotSizeHelper
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
@@ -23,6 +23,7 @@ import jetbrains.datalore.plot.config.Option.SubPlots.Grid.ROW_HEIGHTS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.VSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 
 class CompositeFigureConfig(
     opts: Map<String, Any>,
@@ -40,7 +41,7 @@ class CompositeFigureConfig(
                 @Suppress("UNCHECKED_CAST")
                 spec as Map<String, Any>
                 when (PlotConfig.figSpecKind(spec)) {
-                    FigKind.PLOT_SPEC -> PlotConfigClientSide.create(spec) { computationMessages.addAll(it) }
+                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(spec) { computationMessages.addAll(it) }
                     FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(spec) { computationMessages.addAll(it) }
                     FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
                 }

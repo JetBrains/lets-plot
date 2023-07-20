@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.nat.util
 
-import jetbrains.datalore.plot.PlotSvgExportPortable
+import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.nat.encoding.RGBEncoderNative
 
@@ -22,7 +22,7 @@ actual object PlotSvgExportNative {
         plotSize: DoubleVector?,
         useCssPixelatedImageRendering: Boolean
     ): String {
-        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+        return PlotSvgExportCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
             rgbEncoder = RGBEncoderNative(),

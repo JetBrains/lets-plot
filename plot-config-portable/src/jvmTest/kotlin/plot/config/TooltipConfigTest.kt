@@ -25,7 +25,7 @@ import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
 import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil
+import org.jetbrains.letsPlot.core.spec.back.ServerSideTestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -22,6 +22,8 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -174,8 +176,8 @@ class ScaleConfigTest {
         """.trimIndent()
 
         val opts = parsePlotSpec(spec)
-        val config = PlotConfigClientSide.create(opts) {}
-        PlotConfigClientSideUtil.createPlotAssembler(config)
+        val config = PlotConfigFrontend.create(opts) {}
+        PlotConfigFrontendUtil.createPlotAssembler(config)
     }
 
     @Test

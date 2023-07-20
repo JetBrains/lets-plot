@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.livemap
 
 import demoAndTestShared.parsePlotSpec
-import jetbrains.datalore.plot.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.commons.event.MouseEvent
