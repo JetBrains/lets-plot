@@ -27,8 +27,7 @@ kotlin {
 
                 implementation project(':commons')
                 implementation project(':datamodel')
-                implementation project(':plot-config-portable')
-//                implementation project(':plot-config')
+                implementation project(':plot-stem')
             }
         }
         commonTest {

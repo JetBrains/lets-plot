@@ -24,8 +24,7 @@ def include_sources_letsPlotJvmCommon = [
         'datamodel',
         'plot-base',
         'plot-builder',
-        'plot-config-portable',
-//        'plot-config',
+        'plot-stem',
 ]
 
 def include_sources_letsPlotJvmJfx = [
@@ -239,7 +238,7 @@ subprojects {
             'datamodel',
             'plot-base',
             'plot-builder',
-            'plot-config-portable',
+            'plot-stem',
             'platf-native',
             'demo-and-test-shared',
     ]) {
@@ -279,7 +278,7 @@ subprojects {
             'commons',
             'datamodel',
             'plot-base',
-            'plot-config-portable',
+            'plot-stem',
             'plot-builder',
     ]) {
         apply plugin: "maven-publish"

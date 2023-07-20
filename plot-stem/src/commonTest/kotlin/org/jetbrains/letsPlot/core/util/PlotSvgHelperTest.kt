@@ -5,10 +5,9 @@
 
 package org.jetbrains.letsPlot.core.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import demoAndTestShared.EXPECTED_BUNCH_SVG
 import demoAndTestShared.EXPECTED_SINGLE_PLOT_SVG
-import org.jetbrains.letsPlot.core.util.PlotSvgHelper
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

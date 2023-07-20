@@ -5,7 +5,7 @@
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
+//    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -52,13 +52,9 @@ kotlin {
                 // (!) only `portable` sources
                 implementation project(':commons')
                 implementation project(':datamodel')
-                implementation project(':plot-config-portable')
+                implementation project(':plot-stem')
                 implementation project(':platf-native')
             }
         }
-//        nativeTest {
-//            dependencies {
-//            }
-//        }
     }
 }

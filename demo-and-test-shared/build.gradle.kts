@@ -21,7 +21,7 @@ kotlin {
                 api(project(":commons"))
                 api(project(":plot-base"))
                 api(project(":plot-builder"))
-                api(project(":plot-config-portable"))
+                api(project(":plot-stem"))
             }
         }
     }

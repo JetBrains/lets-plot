@@ -19,7 +19,7 @@ kotlin {
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
-                implementation(project(":plot-config-portable"))
+                implementation(project(":plot-stem"))
             }
         }
 
