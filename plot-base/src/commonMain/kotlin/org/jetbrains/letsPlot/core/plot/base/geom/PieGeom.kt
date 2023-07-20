@@ -64,9 +64,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 val pieSectors = computeSectors(pieCenter, dataPoints)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
-                root.appendNodes(
-                    pieSectors.mapNotNull { if (it.p.stroke()!! > 0.0) buildSvgArcs(it) else null }
-                )
+                root.appendNodes(pieSectors.map(::buildSvgArcs))
                 if (spacerWidth > 0) {
                     root.appendNodes(
                         buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.plotBackground)
@@ -134,8 +132,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 }
             }
         ).apply {
-            width().set(sector.p.stroke()!!)
-            color().set(sector.p.color()!!)
+            width().set(sector.strokeWidth)
+            color().set(sector.p.color())
         }
     }
 
@@ -255,11 +253,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val endAngle: Double
     ) {
         val angle = endAngle - startAngle
-        private val hasVisibleStroke = p.stroke()!! > 0.0 && p.color() != Color.TRANSPARENT
+        val strokeWidth = p.stroke() ?: 0.0
+        private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = if (holeSize == 0.0 && strokeSide.hasInner && hasVisibleStroke) {
             // Add a hole if an inner stroke is needed
-            p.stroke()!! + spacerWidth
+            strokeWidth + spacerWidth
         } else {
             radius * holeSize
         }
@@ -274,9 +273,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val innerArcStart = arcPoint(holeRadius, startAngle)
         val innerArcEnd = arcPoint(holeRadius, endAngle - fullCircleDrawingFix)
 
-        private val hasOuterStroke = strokeSide.hasOuter && hasVisibleStroke
-        private val hasInnerStroke = strokeSide.hasInner && hasVisibleStroke && holeRadius > 0.0
-
         val outerStrokeStartPoint = outerArcPointWithStroke(startAngle)
         val outerStrokeEndPoint = outerArcPointWithStroke(endAngle - fullCircleDrawingFix)
 
@@ -284,18 +280,18 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val innerStrokeEndPoint = innerArcPointWithStroke(endAngle - fullCircleDrawingFix)
 
         fun outerArcPointWithStroke(angle: Double) = arcPoint(
-            radius = when (hasOuterStroke) {
-                true -> radius + p.stroke()!! / 2
+            radius = when (strokeSide.hasOuter && hasVisibleStroke) {
+                true -> radius + strokeWidth / 2
                 false -> radius
             },
-            angle
+            angle = angle
         )
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
-            radius = when (hasInnerStroke) {
-                true -> holeRadius - p.stroke()!! / 2
+            radius = when (strokeSide.hasInner && hasVisibleStroke) {
+                true -> holeRadius - strokeWidth / 2
                 false -> holeRadius
             },
-            angle
+            angle = angle
         )
 
         private fun arcPoint(radius: Double, angle: Double): DoubleVector {
