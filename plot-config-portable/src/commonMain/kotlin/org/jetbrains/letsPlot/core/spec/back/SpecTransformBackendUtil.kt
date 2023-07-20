@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
-import org.jetbrains.letsPlot.core.spec.back.transf.PlotConfigServerSideTransforms
+import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigServerSideTransforms
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 
 

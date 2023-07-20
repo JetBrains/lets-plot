@@ -24,8 +24,8 @@ import org.jetbrains.letsPlot.core.spec.config.FontFamilyRegistryConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
-import org.jetbrains.letsPlot.core.spec.transf.PlotSpecTransform
-import org.jetbrains.letsPlot.core.spec.transf.migration.MoveGeomPropertiesToLayerMigration
+import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
+import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 
 class PlotConfigFrontend private constructor(opts: Map<String, Any>) :
     PlotConfig(
