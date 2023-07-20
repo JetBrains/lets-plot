@@ -32,7 +32,7 @@ open class Histogram {
             val count = 100
 //            val count = 500000
 
-            val xs = normal(count, 12, 0.0, 5.0)
+            val xs = normal(count, 0.0, 5.0, 12)
             val weights = ArrayList<Double>()
             for (x in xs) {
                 weights.add(if (x < 0.0) 2.0 else 0.5);

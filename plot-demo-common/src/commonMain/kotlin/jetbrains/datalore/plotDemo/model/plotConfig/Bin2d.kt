@@ -28,8 +28,8 @@ open class Bin2d {
         private fun data(): Map<String, List<*>> {
             val count = 200
 
-            val xs = normal(count, 12, 0.0, 5.0)
-            val ys = normal(count, 21, 0.0, 1.0)
+            val xs = normal(count, 0.0, 5.0, 12)
+            val ys = normal(count, 0.0, 1.0, 21)
             val weights = ArrayList<Double>()
             for (x in xs) {
                 weights.add(if (x < 0.0) 2.0 else 0.5);

@@ -50,8 +50,8 @@ open class BinDemo : SimpleDemoBase() {
 
         val count = 200
 
-        val x = normal(count, 32, 0.0, 100.0)
-        val y = normal(count, 64, 0.0, 50.0)
+        val x = normal(count, 0.0, 100.0, 32)
+        val y = normal(count, 0.0, 50.0, 64)
 
         val mapperX = Mappers.mul(1.0)
         var scaleX = Scales.DemoAndTest.continuousDomainNumericRange("A scale")

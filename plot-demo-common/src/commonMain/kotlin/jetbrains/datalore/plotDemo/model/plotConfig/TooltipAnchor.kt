@@ -30,8 +30,8 @@ open class TooltipAnchor {
         private fun data(): Map<String, List<*>> {
             val count1 = 20
             val count2 = 50
-            val ratingA = normal(count1, 12, 0.0, 1.0)
-            val ratingB = normal(count2, 24, 0.0, 1.0)
+            val ratingA = normal(count1, 0.0, 1.0, 12)
+            val ratingB = normal(count2, 0.0, 1.0, 24)
             val rating = DemoUtil.interlace(ratingA, ratingB)
             val cond = DemoUtil.interlace(List(count1) { "a" }, List(count2) { "b" })
             val map = HashMap<String, List<*>>()

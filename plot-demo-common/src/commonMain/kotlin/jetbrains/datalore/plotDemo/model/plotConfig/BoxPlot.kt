@@ -275,8 +275,8 @@ open class BoxPlot {
             val count1 = 50
             val count2 = 100
 
-            val ratingA = normal(count1, 12, 0.0, 1.0)
-            val ratingB = normal(count2, 24, 0.0, 1.0)
+            val ratingA = normal(count1, 0.0, 1.0, 12)
+            val ratingB = normal(count2, 0.0, 1.0, 24)
             val rating = interlace(ratingA, ratingB)
             val cond = interlace(List(count1) { "a" }, List(count2) { "b" })
 

@@ -9,8 +9,9 @@ import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plot.config.TestUtil
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -19,10 +20,8 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.DemoAndTest
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test
 import kotlin.math.round
-import kotlin.random.Random
 import kotlin.test.assertEquals
 
 /**
@@ -76,8 +75,8 @@ class YOrientationGeomBuildingTest {
             val count1 = 50
             val count2 = 100
 
-            val ratingA = gauss(count1, 12, 0.0, 1.0)
-            val ratingB = gauss(count2, 24, 0.0, 1.0)
+            val ratingA = normal(count1, 0.0, 1.0, 12)
+            val ratingB = normal(count2, 0.0, 1.0, 24)
             val rating = ratingA + ratingB
             val cond = List(count1) { "a" } + List(count2) { "b" }
 
@@ -86,12 +85,6 @@ class YOrientationGeomBuildingTest {
             map["rating"] = rating
             map
         }
-
-        private fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
-            val r = RandomGaussian(Random(seed))
-            return List(count) { r.nextGaussian() * stdDeviance + mean }
-        }
-
 
         private fun createPlotSpec(yOrientation: Boolean): MutableMap<String, Any> {
             val spec = """
