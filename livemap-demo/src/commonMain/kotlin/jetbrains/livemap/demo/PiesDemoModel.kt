@@ -11,6 +11,7 @@ import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.layers
 import jetbrains.livemap.api.pie
 import jetbrains.livemap.api.pies
+import jetbrains.livemap.chart.donut.StrokeSide
 import jetbrains.livemap.model.Cities
 import jetbrains.livemap.model.coord
 
@@ -28,7 +29,7 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         fillColors = listOf(Color.LIGHT_GREEN, Color.LIGHT_PINK, Color.LIGHT_BLUE)
                         strokeColors = listOf(Color.DARK_GREEN, Color.PINK, Color.DARK_BLUE)
                         strokeWidths = List(3) { 4.0 }
-                        strokeSide = "both"
+                        strokeSide = StrokeSide.BOTH
                         spacerWidth = 4.0
                     }
 

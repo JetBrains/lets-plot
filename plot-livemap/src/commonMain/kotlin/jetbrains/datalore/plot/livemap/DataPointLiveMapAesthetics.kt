@@ -29,6 +29,8 @@ import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.
 import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
+import jetbrains.livemap.chart.donut.StrokeSide
+import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {
@@ -194,8 +196,14 @@ internal class DataPointLiveMapAesthetics {
         get() = myPieOptions?.spacerColor ?: Color.WHITE
     val spacerWidth: Double
         get() = myPieOptions?.spacerWidth ?: 1.0
-    val strokeSide: String
-        get() = myPieOptions?.strokeSide?.toString()?.lowercase() ?: "outer"
+    val strokeSide: StrokeSide
+        get() = myPieOptions?.strokeSide?.let {
+            when (it) {
+                PieGeom.StrokeSide.OUTER -> StrokeSide.OUTER
+                PieGeom.StrokeSide.INNER -> StrokeSide.INNER
+                PieGeom.StrokeSide.BOTH -> StrokeSide.BOTH
+            }
+        } ?: StrokeSide.OUTER
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())

@@ -23,6 +23,10 @@ class Renderer : jetbrains.livemap.mapengine.Renderer {
         ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
 
         fun fillSector(sector: Sector) {
+            if (sector.fillColor == null) {
+                return
+            }
+
             ctx.setFillStyle(changeAlphaWithMin(sector.fillColor, chartElement.scalingAlphaValue))
             ctx.beginPath()
             with(sector) {

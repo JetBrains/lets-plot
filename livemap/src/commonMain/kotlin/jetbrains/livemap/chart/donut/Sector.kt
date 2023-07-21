@@ -19,7 +19,7 @@ internal class Sector(
     val holeRadius: Double,
     val startAngle: Double,
     val endAngle: Double,
-    val fillColor: Color,
+    val fillColor: Color?,
     val strokeColor: Color?,
     val strokeWidth: Double,
     val drawInnerArc: Boolean,
@@ -58,6 +58,16 @@ internal class Sector(
     }
 }
 
+ enum class StrokeSide {
+    OUTER, INNER, BOTH;
+
+     val hasOuter: Boolean
+         get() = this == OUTER || this == BOTH
+
+     val hasInner: Boolean
+         get() = this == INNER || this == BOTH
+}
+
 internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): List<Sector> {
     val sum = pieSpec.sliceValues.sum()
     fun angle(slice: Double) = when (sum) {
@@ -87,13 +97,13 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
         else -> index + 1 !in explodedSectors
     }
 
-    val hasInnerArc = pieSpec.strokeSide in listOf("inner", "both")
-    val hasOuterArc = pieSpec.strokeSide in listOf("outer", "both")
+    val hasInnerArc = pieSpec.strokeSide?.hasInner ?: false
+    val hasOuterArc = pieSpec.strokeSide?.hasOuter ?: false
 
     return pieIndices.map { index ->
         val strokeColor = pieSpec.strokeColors.getOrNull(index)
-        val fillColor = pieSpec.fillColors.getOrElse(index) { Color.PACIFIC_BLUE }
-        val strokeWidth = pieSpec.strokeWidths.getOrElse(index) { 1.0 }
+        val fillColor = pieSpec.fillColors.getOrNull(index)
+        val strokeWidth = pieSpec.strokeWidths.getOrElse(index) { 0.0 }
 
         val hasVisibleStroke = strokeWidth > 0.0 && strokeColor != null && strokeColor != Color.TRANSPARENT
         val holeRadius = if (pieSpec.holeSize == 0.0 && hasInnerArc && hasVisibleStroke) {

@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.chart.donut.StrokeSide
 import jetbrains.livemap.chart.path.PathRenderer.ArrowSpec
 import jetbrains.livemap.chart.text.TextSpec
 import jetbrains.livemap.core.ecs.EcsComponent
@@ -48,7 +49,7 @@ class PieSpecComponent : EcsComponent {
     var explodeValues: List<Double>? = null
     var spacerColor: Color? = null
     var spacerWidth: Double = 0.0
-    var strokeSide: String? = null
+    var strokeSide: StrokeSide? = null
 }
 
 class SearchResultComponent : EcsComponent {

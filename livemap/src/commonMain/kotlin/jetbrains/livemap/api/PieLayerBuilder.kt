@@ -14,6 +14,7 @@ import jetbrains.livemap.chart.LocatorComponent
 import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.chart.donut.Locator
 import jetbrains.livemap.chart.donut.Renderer
+import jetbrains.livemap.chart.donut.StrokeSide
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
@@ -66,7 +67,7 @@ class PieEntityBuilder(
     var fillColors: List<Color> = emptyList()
     var strokeColors: List<Color> = emptyList()
     var strokeWidths: List<Double> = emptyList()
-    var strokeSide: String = "outer"
+    var strokeSide: StrokeSide? = null
     var spacerColor: Color = Color.WHITE
     var spacerWidth: Double = 1.0
     var explodes: List<Double>? = null
