@@ -5,19 +5,19 @@
 
 package jetbrains.livemap.demo
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.livemap.api.*
 import jetbrains.livemap.model.Cities.BOSTON
 import jetbrains.livemap.model.Cities.FRISCO
 import jetbrains.livemap.model.Cities.MOSCOW
 import jetbrains.livemap.model.Cities.NEW_YORK
 import jetbrains.livemap.model.Cities.SPB
 import jetbrains.livemap.model.coord
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.livemap.api.*
 
 class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {

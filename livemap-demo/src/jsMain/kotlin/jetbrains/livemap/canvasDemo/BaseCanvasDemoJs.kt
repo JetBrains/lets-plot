@@ -5,13 +5,13 @@
 
 package jetbrains.livemap.canvasDemo
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.core.platf.dom.DomEventMapper
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
 import jetbrains.livemap.demo.DemoBaseJs
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.platf.dom.DomEventMapper
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
 import org.w3c.dom.HTMLElement
 
 fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {

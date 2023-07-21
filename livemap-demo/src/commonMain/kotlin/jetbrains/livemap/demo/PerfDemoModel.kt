@@ -5,13 +5,13 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.livemap.model.coord
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.api.layers
-import jetbrains.livemap.api.point
-import jetbrains.livemap.api.points
-import jetbrains.livemap.model.coord
+import org.jetbrains.letsPlot.livemap.api.LiveMapBuilder
+import org.jetbrains.letsPlot.livemap.api.layers
+import org.jetbrains.letsPlot.livemap.api.point
+import org.jetbrains.letsPlot.livemap.api.points
 
 class PerfDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
@@ -32,7 +32,8 @@ class PerfDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                             strokeColor = Color.WHITE
                             coord(
                                 lon = -180.0 + it / w * xDelta,
-                                lat = -80.0 +  it % h * yDelta)
+                                lat = -80.0 + it % h * yDelta
+                            )
                         }
                     }
                 }

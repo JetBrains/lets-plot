@@ -9,15 +9,15 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import jetbrains.livemap.LiveMapLocation
-import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.api.Services
-import jetbrains.livemap.api.liveMapConfig
-import jetbrains.livemap.api.projection
-import jetbrains.livemap.canvascontrols.LiveMapPresenter
-import jetbrains.livemap.core.Clipboard
-import jetbrains.livemap.core.Projections
-import jetbrains.livemap.mapengine.basemap.Tilesets
+import org.jetbrains.letsPlot.livemap.LiveMapLocation
+import org.jetbrains.letsPlot.livemap.api.LiveMapBuilder
+import org.jetbrains.letsPlot.livemap.api.Services
+import org.jetbrains.letsPlot.livemap.api.liveMapConfig
+import org.jetbrains.letsPlot.livemap.api.projection
+import org.jetbrains.letsPlot.livemap.canvascontrols.LiveMapPresenter
+import org.jetbrains.letsPlot.livemap.core.Clipboard
+import org.jetbrains.letsPlot.livemap.core.Projections
+import org.jetbrains.letsPlot.livemap.mapengine.basemap.Tilesets
 
 abstract class DemoModelBase(private val dimension: DoubleVector) {
     fun show(canvasControl: CanvasControl, block: LiveMapBuilder.() -> Unit = {}): Registration {

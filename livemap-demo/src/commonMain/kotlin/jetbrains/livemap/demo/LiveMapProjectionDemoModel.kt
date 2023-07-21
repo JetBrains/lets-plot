@@ -6,9 +6,9 @@
 package jetbrains.livemap.demo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.config.DevParams
-import jetbrains.livemap.core.Projections
+import org.jetbrains.letsPlot.livemap.api.LiveMapBuilder
+import org.jetbrains.letsPlot.livemap.config.DevParams
+import org.jetbrains.letsPlot.livemap.core.Projections
 
 class LiveMapProjectionDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {

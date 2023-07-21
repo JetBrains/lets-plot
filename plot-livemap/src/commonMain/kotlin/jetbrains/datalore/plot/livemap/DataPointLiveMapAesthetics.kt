@@ -28,8 +28,8 @@ import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
-import jetbrains.livemap.api.GeoObject
-import jetbrains.livemap.chart.donut.StrokeSide
+import org.jetbrains.letsPlot.livemap.api.GeoObject
+import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import kotlin.math.ceil
 

@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.livemap.model.Cities.GERMANY
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.livemap.api.*
-import jetbrains.livemap.model.Cities.GERMANY
+import org.jetbrains.letsPlot.livemap.api.*
 
 class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {

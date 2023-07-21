@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.livemap.ui.CursorService
+import org.jetbrains.letsPlot.livemap.ui.CursorService
 
 class CursorServiceConfig {
     val cursorService = CursorService()

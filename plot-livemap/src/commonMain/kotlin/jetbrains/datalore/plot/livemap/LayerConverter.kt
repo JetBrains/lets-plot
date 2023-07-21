@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.SegmentGeom
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import jetbrains.livemap.api.*
+import org.jetbrains.letsPlot.livemap.api.*
 
 
 object LayerConverter {

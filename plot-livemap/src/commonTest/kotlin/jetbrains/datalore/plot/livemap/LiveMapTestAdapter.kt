@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.livemap
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
-import jetbrains.livemap.config.LiveMapCanvasFigure
+import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec

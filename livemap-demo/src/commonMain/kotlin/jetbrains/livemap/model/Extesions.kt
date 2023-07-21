@@ -6,7 +6,7 @@
 package jetbrains.livemap.model
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import jetbrains.livemap.api.*
+import org.jetbrains.letsPlot.livemap.api.*
 
 fun PointEntityBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)

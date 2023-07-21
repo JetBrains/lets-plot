@@ -12,10 +12,10 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.livemap.api.LiveMapBuilder
-import jetbrains.livemap.api.layers
-import jetbrains.livemap.api.polygon
-import jetbrains.livemap.api.polygons
+import org.jetbrains.letsPlot.livemap.api.LiveMapBuilder
+import org.jetbrains.letsPlot.livemap.api.layers
+import org.jetbrains.letsPlot.livemap.api.polygon
+import org.jetbrains.letsPlot.livemap.api.polygons
 
 class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 

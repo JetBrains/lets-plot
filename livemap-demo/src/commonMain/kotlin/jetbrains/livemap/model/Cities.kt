@@ -7,7 +7,7 @@ package jetbrains.livemap.model
 
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import jetbrains.livemap.api.GeoObject
+import org.jetbrains.letsPlot.livemap.api.GeoObject
 
 object Cities {
     val SPB = GeoObject(
