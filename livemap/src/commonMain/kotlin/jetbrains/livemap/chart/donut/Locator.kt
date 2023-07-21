@@ -33,8 +33,8 @@ object Locator : Locator {
             if (isCoordinateInPieSector(
                     renderHelper.posToWorld(coord),
                     origin,
-                    renderHelper.dimToWorld(sector.radius),
-                    renderHelper.dimToWorld(sector.holeRadius),
+                    renderHelper.dimToWorld(sector.radiusWithStroke),
+                    renderHelper.dimToWorld(sector.holeRadiusWithStroke),
                     sector.startAngle,
                     sector.endAngle
                 )

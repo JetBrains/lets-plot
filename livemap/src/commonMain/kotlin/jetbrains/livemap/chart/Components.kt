@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.chart.donut.StrokeSide
 import jetbrains.livemap.chart.path.PathRenderer.ArrowSpec
 import jetbrains.livemap.chart.text.TextSpec
 import jetbrains.livemap.core.ecs.EcsComponent
@@ -42,8 +43,13 @@ class PieSpecComponent : EcsComponent {
     var holeSize: Double = 0.0
     var indices: List<Int> = emptyList()
     var sliceValues: List<Double> = emptyList()
-    var colors: List<Color> = emptyList()
+    var fillColors: List<Color> = emptyList()
+    var strokeColors: List<Color> = emptyList()
+    var strokeWidths: List<Double> = emptyList()
     var explodeValues: List<Double>? = null
+    var spacerColor: Color? = null
+    var spacerWidth: Double = 0.0
+    var strokeSide: StrokeSide? = null
 }
 
 class SearchResultComponent : EcsComponent {

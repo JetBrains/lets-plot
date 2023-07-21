@@ -199,15 +199,18 @@ object LayerConverter {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
-                        holeSize = it.holeRatio
                         point = it.point
                         radius = it.radius
-                        strokeWidth = it.strokeWidth
-                        strokeColor = it.strokeColor
                         indices = it.indices
                         values = it.valueArray
-                        colors = it.colorArray
+                        fillColors = it.fillArray
                         explodes = it.explodeArray
+                        strokeColors = it.colorArray
+                        strokeWidths = it.strokeArray
+                        strokeSide = it.strokeSide
+                        holeSize = it.holeRatio
+                        spacerColor = it.spacerColor
+                        spacerWidth = it.spacerWidth
                     }
                 }
             }

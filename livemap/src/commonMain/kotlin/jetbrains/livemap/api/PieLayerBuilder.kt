@@ -14,6 +14,7 @@ import jetbrains.livemap.chart.LocatorComponent
 import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.chart.donut.Locator
 import jetbrains.livemap.chart.donut.Renderer
+import jetbrains.livemap.chart.donut.StrokeSide
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
@@ -57,16 +58,18 @@ class PieEntityBuilder(
     var alphaScalingEnabled: Boolean = false
 
     var layerIndex: Int? = null
-    var radius: Double = 0.0
-    var holeSize: Double = 0.0
     var point: Vec<LonLat>? = null
-
-    var strokeColor: Color = Color.WHITE
-    var strokeWidth: Double = 0.0
 
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
-    var colors: List<Color> = emptyList()
+    var radius: Double = 0.0
+    var holeSize: Double = 0.0
+    var fillColors: List<Color> = emptyList()
+    var strokeColors: List<Color> = emptyList()
+    var strokeWidths: List<Double> = emptyList()
+    var strokeSide: StrokeSide? = null
+    var spacerColor: Color = Color.WHITE
+    var spacerWidth: Double = 1.0
     var explodes: List<Double>? = null
 
     fun build(): EcsEntity {
@@ -86,15 +89,18 @@ class PieEntityBuilder(
                 +ChartElementComponent().apply {
                     sizeScalingRange = this@PieEntityBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PieEntityBuilder.alphaScalingEnabled
-                    strokeColor = this@PieEntityBuilder.strokeColor
-                    strokeWidth = this@PieEntityBuilder.strokeWidth
                 }
                 + PieSpecComponent().apply {
+                    indices = this@PieEntityBuilder.indices
+                    sliceValues = this@PieEntityBuilder.values
                     radius = this@PieEntityBuilder.radius
                     holeSize = this@PieEntityBuilder.holeSize
-                    sliceValues = this@PieEntityBuilder.values
-                    colors = this@PieEntityBuilder.colors
-                    indices = this@PieEntityBuilder.indices
+                    fillColors = this@PieEntityBuilder.fillColors
+                    strokeColors = this@PieEntityBuilder.strokeColors
+                    strokeWidths = this@PieEntityBuilder.strokeWidths
+                    strokeSide = this@PieEntityBuilder.strokeSide
+                    spacerColor = this@PieEntityBuilder.spacerColor
+                    spacerWidth = this@PieEntityBuilder.spacerWidth
                     explodeValues = this@PieEntityBuilder.explodes
                 }
                 +WorldOriginComponent(worldPoint)
