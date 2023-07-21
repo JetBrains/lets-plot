@@ -39,7 +39,7 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
   The `stroke_color` parameter is no longer supported.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/pie_stroke_and_spacers.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
 
 
 ### Changed
