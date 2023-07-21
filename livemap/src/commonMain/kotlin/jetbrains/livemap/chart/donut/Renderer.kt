@@ -46,17 +46,12 @@ class Renderer : jetbrains.livemap.mapengine.Renderer {
         }
 
         fun arcs(sector: Sector) {
-             if (sector.strokeWidth == 0.0) {
+             if (sector.strokeColor == null || sector.strokeWidth == 0.0) {
                  return
              }
 
             ctx.apply {
-                setStrokeStyle(
-                    changeAlphaWithMin(
-                        sector.strokeColor,
-                        chartElement.scalingAlphaValue
-                    )
-                )
+                setStrokeStyle(sector.strokeColor)
                 setLineWidth(sector.strokeWidth)
 
                 if (sector.drawInnerArc) {
@@ -88,12 +83,7 @@ class Renderer : jetbrains.livemap.mapengine.Renderer {
                 return
             }
             ctx.apply {
-                setStrokeStyle(
-                    changeAlphaWithMin(
-                        sector.spacerColor,
-                        chartElement.scalingAlphaValue
-                    )
-                )
+                setStrokeStyle(sector.spacerColor)
                 setLineWidth(sector.spacerWidth)
 
                 if (sector.drawSpacerAtStart) {

@@ -20,7 +20,7 @@ internal class Sector(
     val startAngle: Double,
     val endAngle: Double,
     val fillColor: Color,
-    val strokeColor: Color,
+    val strokeColor: Color?,
     val strokeWidth: Double,
     val drawInnerArc: Boolean,
     val drawOuterArc: Boolean,
@@ -91,11 +91,11 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
     val hasOuterArc = pieSpec.strokeSide in listOf("outer", "both")
 
     return pieIndices.map { index ->
-        val strokeColor = pieSpec.strokeColors.getOrElse(index) { Color.TRANSPARENT }
+        val strokeColor = pieSpec.strokeColors.getOrNull(index)
         val fillColor = pieSpec.fillColors.getOrElse(index) { Color.PACIFIC_BLUE }
         val strokeWidth = pieSpec.strokeWidths.getOrElse(index) { 1.0 }
 
-        val hasVisibleStroke = strokeWidth > 0.0 && strokeColor != Color.TRANSPARENT
+        val hasVisibleStroke = strokeWidth > 0.0 && strokeColor != null && strokeColor != Color.TRANSPARENT
         val holeRadius = if (pieSpec.holeSize == 0.0 && hasInnerArc && hasVisibleStroke) {
             // Add a hole if an inner stroke is needed
             strokeWidth + pieSpec.spacerWidth
