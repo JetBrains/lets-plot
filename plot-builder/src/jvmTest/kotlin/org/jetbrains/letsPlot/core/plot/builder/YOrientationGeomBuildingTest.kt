@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import org.jetbrains.letsPlot.commons.values.Color
 import org.junit.Test
 import kotlin.math.round
 import kotlin.test.assertEquals
