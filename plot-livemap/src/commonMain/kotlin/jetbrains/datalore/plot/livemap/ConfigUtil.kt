@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.livemap
 
-import org.jetbrains.letsPlot.commons.intern.spatial.*
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import jetbrains.datalore.plot.config.GeoConfig
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.api.MapLocation
+import org.jetbrains.letsPlot.commons.intern.spatial.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.core.spec.config.GeoConfig
 
 object ConfigUtil {
     private const val REGION_TYPE = "type"
@@ -86,6 +86,7 @@ object ConfigUtil {
                 handlerMap[REGION_TYPE_IDS] = { getWithIdList(it) }
                 handleRegionObject(region, handlerMap)
             }
+
             else -> throw IllegalArgumentException("Expected: parent" + " = [String]")
         }
     }
@@ -103,6 +104,7 @@ object ConfigUtil {
                     { data -> MapLocation.create(calculateGeoRectangle(data as Map<*, *>)) }
                 handleRegionObject(location, handlerMap)
             }
+
             else -> throw IllegalArgumentException("Expected: location" + " = [String|Array|DataFrame]")
         }
     }

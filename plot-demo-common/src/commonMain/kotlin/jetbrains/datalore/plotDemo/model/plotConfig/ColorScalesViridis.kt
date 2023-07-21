@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_CMAP
-import jetbrains.datalore.plot.config.Option.Scale.Viridis
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_CMAP
+import org.jetbrains.letsPlot.core.spec.Option.Scale.Viridis
 import demoAndTestShared.parsePlotSpec
 
 /**

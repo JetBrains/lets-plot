@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.batik.plot.component
 
-import jetbrains.datalore.plot.MonolithicCommon
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.platf.awt.plot.component.ApplicationContext
 import org.jetbrains.letsPlot.platf.awt.plot.component.DefaultPlotContentPane
 import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel

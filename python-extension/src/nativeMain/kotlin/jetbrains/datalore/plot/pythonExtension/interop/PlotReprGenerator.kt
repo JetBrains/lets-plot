@@ -2,14 +2,13 @@ package jetbrains.datalore.plot.pythonExtension.interop
 
 import Python.PyObject
 import Python.Py_BuildValue
-import jetbrains.datalore.plot.PlotHtmlExport
-import jetbrains.datalore.plot.PlotHtmlHelper
-import jetbrains.datalore.plot.PlotSvgExportPortable
+import org.jetbrains.letsPlot.core.util.PlotHtmlExport
+import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
-import jetbrains.datalore.plot.pythonExtension.pngj.RGBEncoderNative
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
@@ -29,10 +28,9 @@ object PlotReprGenerator {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+            val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 plotSize = null,
-                rgbEncoder = RGBEncoderNative(),
                 useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
             )
             Py_BuildValue("s", svg)

@@ -28,7 +28,7 @@ kotlin {
                 implementation project(':commons')
                 implementation project(':plot-base')
                 implementation project(':plot-builder')
-                implementation project(':plot-config-portable')
+                implementation project(':plot-stem')
                 implementation project(':canvas')
                 implementation project(':gis')
                 implementation project(':livemap')

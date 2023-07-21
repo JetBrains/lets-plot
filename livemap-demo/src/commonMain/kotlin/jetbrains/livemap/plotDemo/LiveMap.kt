@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.plotDemo
 
-import jetbrains.datalore.plot.config.asMaps
-import jetbrains.datalore.plot.config.asMutable
-import jetbrains.datalore.plot.config.getList
+import org.jetbrains.letsPlot.core.spec.asMaps
+import org.jetbrains.letsPlot.core.spec.asMutable
+import org.jetbrains.letsPlot.core.spec.getList
 import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 

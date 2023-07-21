@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.config.Option
+import org.jetbrains.letsPlot.core.spec.Option
 import demoAndTestShared.parsePlotSpec
 
 open class AxisPositionFixedBreaks90Deg {

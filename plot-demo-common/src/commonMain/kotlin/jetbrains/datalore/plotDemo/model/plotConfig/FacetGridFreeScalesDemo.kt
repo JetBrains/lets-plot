@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.config.Option.Facet
+import org.jetbrains.letsPlot.core.spec.Option.Facet
 import demoAndTestShared.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.AutoMpg
 

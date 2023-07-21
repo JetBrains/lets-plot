@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.stat
 
 import demoAndTestShared.assertEquals
-import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.DensityStat
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,12 +31,12 @@ class DensityStatTest {
         stddev: Double,
         halfRange: Double
     ): List<Double> {
-        val gaussian = ArrayList<Double>()
-        val random = RandomGaussian(Random)
-        //random.setSeed(43);
-        for (i in 0 until n - 2) {
-            gaussian.add(random.nextGaussian() * stddev + mu)
-        }
+        val gaussian = normal(
+            count = n - 2,
+            mean = mu,
+            stddev
+        ).toMutableList()
+
         gaussian.add(mu - halfRange)
         gaussian.add(mu + halfRange)
         return gaussian

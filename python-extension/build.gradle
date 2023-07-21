@@ -5,7 +5,7 @@
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
+//    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -45,13 +45,6 @@ kotlin {
     }
 
     sourceSets {
-        commonTest {
-            dependencies {
-//                implementation kotlin('test-common')
-//                implementation kotlin('test-annotations-common')
-                implementation project(':demo-and-test-shared')
-            }
-        }
         nativeMain {
             dependencies {
                 implementation kotlin('stdlib-common')
@@ -59,11 +52,8 @@ kotlin {
                 // (!) only `portable` sources
                 implementation project(':commons')
                 implementation project(':datamodel')
-                implementation project(':plot-config-portable')
-            }
-        }
-        nativeTest {
-            dependencies {
+                implementation project(':plot-stem')
+                implementation project(':platf-native')
             }
         }
     }
