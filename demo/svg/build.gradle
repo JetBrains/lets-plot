@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+//    id "org.jetbrains.gradle.plugin.idea-ext"
+}
+
+kotlin {
+    jvm("jvmBatik")
+    jvm("jvmJfx")
+    jvm("jvmBrowser")   // generates index.html and opens it in browser
+    js(LEGACY) {
+        browser {
+            dceTask {
+                keep.addAll(
+                        "lets-plot-demo-svg.demo.svgMapping.svgElementsDemoA",
+                        "lets-plot-demo-svg.demo.svgMapping.svgElementsDemoB",
+                )
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+
+                implementation project(':commons')
+                implementation project(':datamodel')
+                implementation project(':vis-demo-common')
+            }
+        }
+
+        allJvm {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+                compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
+            }
+        }
+        jvmBatikMain {
+            dependsOn allJvm
+            dependencies {
+                implementation project(":platf-batik")
+                implementation project(':vis-demo-common-batik')
+            }
+        }
+        jvmJfxMain {
+            dependsOn allJvm
+            dependencies {
+                implementation project(':canvas') // needed for `svg transform` parsing
+                implementation project(":platf-jfx-swing")
+                implementation project(':vis-demo-common-jfx')
+            }
+        }
+        jvmBrowserMain {
+            dependsOn allJvm
+            dependencies {
+                implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
+            }
+        }
+
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+
+                implementation project(":platf-w3c")
+            }
+        }
+    }
+}
+
+//idea {
+//    module {
+//        settings {
+//            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jvmJfxMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jvmBatikMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jvmBrowserMain/kotlin"] = "jetbrains.datalore"
+//        }
+//    }
+//}
+
+
