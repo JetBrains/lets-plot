@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import jetbrains.gis.tileprotocol.TileGeometryParser
-import jetbrains.gis.tileprotocol.TileLayer
+import org.jetbrains.letsPlot.gis.tileprotocol.TileGeometryParser
+import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.Transforms

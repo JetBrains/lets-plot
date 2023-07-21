@@ -10,15 +10,15 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
-import jetbrains.gis.geoprotocol.GeoRequest
-import jetbrains.gis.geoprotocol.GeoResponse
-import jetbrains.gis.geoprotocol.GeoTransport
-import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.tileprotocol.TileLayer
-import jetbrains.gis.tileprotocol.TileService
-import jetbrains.gis.tileprotocol.socket.Socket
-import jetbrains.gis.tileprotocol.socket.SocketBuilder
-import jetbrains.gis.tileprotocol.socket.SocketHandler
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoRequest
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoResponse
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoTransport
+import org.jetbrains.letsPlot.gis.geoprotocol.GeocodingService
+import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
+import org.jetbrains.letsPlot.gis.tileprotocol.TileService
+import org.jetbrains.letsPlot.gis.tileprotocol.socket.Socket
+import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketBuilder
+import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketHandler
 
 object Services {
 

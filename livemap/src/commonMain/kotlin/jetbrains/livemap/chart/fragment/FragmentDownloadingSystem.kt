@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
-import jetbrains.gis.geoprotocol.Fragment
+import org.jetbrains.letsPlot.gis.geoprotocol.Fragment
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.mapengine.LiveMapContext

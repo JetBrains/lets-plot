@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
-import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
+import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.Client
 import jetbrains.livemap.mapengine.basemap.vector.TileFeature.FieldName.CLASS
 import jetbrains.livemap.mapengine.basemap.vector.TileFeature.FieldName.SUB

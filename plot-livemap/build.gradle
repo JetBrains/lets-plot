@@ -5,7 +5,6 @@
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
@@ -63,14 +62,6 @@ kotlin {
             dependencies {
                 implementation kotlin('test-js')
             }
-        }
-    }
-}
-idea {
-    module {
-        settings {
-            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
 }

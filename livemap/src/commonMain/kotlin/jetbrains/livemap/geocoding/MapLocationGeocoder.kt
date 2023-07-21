@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
-import jetbrains.gis.geoprotocol.GeoRequest
-import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
-import jetbrains.gis.geoprotocol.GeocodingService
-import jetbrains.gis.geoprotocol.MapRegion
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoRequest
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
+import org.jetbrains.letsPlot.gis.geoprotocol.GeocodingService
+import org.jetbrains.letsPlot.gis.geoprotocol.MapRegion
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.MapRuler

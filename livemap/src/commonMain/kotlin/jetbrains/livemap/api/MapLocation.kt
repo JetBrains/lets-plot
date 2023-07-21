@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import jetbrains.gis.geoprotocol.MapRegion
+import org.jetbrains.letsPlot.gis.geoprotocol.MapRegion
 import jetbrains.livemap.World
 import jetbrains.livemap.geocoding.MapLocationGeocoder
 

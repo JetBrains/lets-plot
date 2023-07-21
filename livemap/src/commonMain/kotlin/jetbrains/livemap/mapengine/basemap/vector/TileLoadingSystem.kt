@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import org.jetbrains.letsPlot.commons.intern.math.round
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import jetbrains.gis.tileprotocol.TileLayer
-import jetbrains.gis.tileprotocol.TileService
+import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
+import org.jetbrains.letsPlot.gis.tileprotocol.TileService
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.BusyStateComponent
 import jetbrains.livemap.core.ecs.*

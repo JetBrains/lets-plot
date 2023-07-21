@@ -8,7 +8,7 @@ package jetbrains.datalore.jetbrains.livemap.chart.fragments
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
-import jetbrains.gis.geoprotocol.Boundary
+import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import jetbrains.livemap.chart.fragment.FragmentKey
 import jetbrains.livemap.chart.fragment.Utils
 import jetbrains.livemap.core.ecs.EcsComponentManager

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.gis.geoprotocol.MapRegion
+import org.jetbrains.letsPlot.gis.geoprotocol.MapRegion
 import jetbrains.livemap.api.MapLocation
 import org.jetbrains.letsPlot.commons.intern.spatial.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect

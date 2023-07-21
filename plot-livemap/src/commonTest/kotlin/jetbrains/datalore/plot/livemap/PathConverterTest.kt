@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.vectorEq
-import jetbrains.gis.geoprotocol.Boundary
+import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 

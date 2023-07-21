@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import jetbrains.gis.tileprotocol.mapConfig.MapConfig
-import jetbrains.gis.tileprotocol.mapConfig.Rule
+import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
+import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.map

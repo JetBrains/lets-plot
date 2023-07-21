@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector.debug
 
-import jetbrains.gis.tileprotocol.TileLayer
+import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask
 import jetbrains.livemap.core.multitasking.MicroTask

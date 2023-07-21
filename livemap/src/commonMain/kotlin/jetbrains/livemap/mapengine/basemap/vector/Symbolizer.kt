@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.core.canvas.*
-import jetbrains.gis.tileprotocol.mapConfig.Style
+import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.Client
 import org.jetbrains.letsPlot.core.canvas.*
 import kotlin.math.round

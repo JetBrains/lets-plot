@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.datalore.maps.Utils
-import jetbrains.gis.geoprotocol.Fragment
+import org.jetbrains.letsPlot.gis.geoprotocol.Fragment
 import jetbrains.livemap.chart.fragment.*
 import jetbrains.livemap.core.ecs.EcsSystem
 import jetbrains.livemap.core.multitasking.SchedulerSystem

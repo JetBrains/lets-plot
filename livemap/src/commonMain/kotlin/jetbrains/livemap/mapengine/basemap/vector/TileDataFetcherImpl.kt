@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import jetbrains.gis.tileprotocol.TileLayer
-import jetbrains.gis.tileprotocol.TileService
+import org.jetbrains.letsPlot.gis.tileprotocol.TileLayer
+import org.jetbrains.letsPlot.gis.tileprotocol.TileService
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.convertCellKeyToQuadKeys

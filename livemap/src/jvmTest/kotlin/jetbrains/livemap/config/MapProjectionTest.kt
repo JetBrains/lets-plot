@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.datalore.maps.Utils.square
-import jetbrains.gis.geoprotocol.Boundary
+import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import jetbrains.livemap.World
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.Geographic

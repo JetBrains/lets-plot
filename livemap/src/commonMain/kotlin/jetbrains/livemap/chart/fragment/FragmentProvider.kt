@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
-import jetbrains.gis.geoprotocol.Fragment
-import jetbrains.gis.geoprotocol.GeoRequest
-import jetbrains.gis.geoprotocol.GeoRequestBuilder
-import jetbrains.gis.geoprotocol.GeocodingService
+import org.jetbrains.letsPlot.gis.geoprotocol.Fragment
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoRequest
+import org.jetbrains.letsPlot.gis.geoprotocol.GeoRequestBuilder
+import org.jetbrains.letsPlot.gis.geoprotocol.GeocodingService
 import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.containers.LruCache
 

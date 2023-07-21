@@ -6,7 +6,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import jetbrains.gis.geoprotocol.Boundary
+import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import jetbrains.livemap.mapengine.viewport.CellKey
 import java.util.*
 import java.util.function.Function

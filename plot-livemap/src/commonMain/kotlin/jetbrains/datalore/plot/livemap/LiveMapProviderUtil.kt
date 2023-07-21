@@ -33,7 +33,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.ATTRIBUTION
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.MAX_ZOOM
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.Tile.MIN_ZOOM
-import jetbrains.gis.tileprotocol.TileService
+import org.jetbrains.letsPlot.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.LiveMapBuilder

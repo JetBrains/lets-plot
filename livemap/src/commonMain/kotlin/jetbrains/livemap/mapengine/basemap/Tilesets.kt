@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine.basemap
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.gis.tileprotocol.TileService
+import org.jetbrains.letsPlot.gis.tileprotocol.TileService
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.mapengine.LiveMapContext

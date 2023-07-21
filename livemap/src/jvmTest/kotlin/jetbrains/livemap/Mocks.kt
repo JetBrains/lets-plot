@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.chart.fragments.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.ViewportGridSpec
-import jetbrains.gis.geoprotocol.Fragment
+import org.jetbrains.letsPlot.gis.geoprotocol.Fragment
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.chart.fragment.*
