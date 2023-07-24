@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.livemap
+package org.jetbrains.letsPlot.core.plot.livemap
 
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.MULTIPOLYGON
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.rings
-import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.geometryEq
-import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.AestheticsDataHelper
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.MULTIPOLYGON
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.createDefaultMatcher
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.rings
+import org.jetbrains.letsPlot.core.plot.livemap.MapObjectMatcher.Companion.geometryEq
+import org.jetbrains.letsPlot.core.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import kotlin.test.BeforeTest
 import kotlin.test.Test

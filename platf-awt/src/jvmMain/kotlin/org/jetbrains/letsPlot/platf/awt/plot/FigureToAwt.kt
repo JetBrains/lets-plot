@@ -15,8 +15,8 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
-import jetbrains.datalore.plot.livemap.CursorServiceConfig
-import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
+import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
+import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.awt.util.AwtEventUtil
 import java.awt.Rectangle

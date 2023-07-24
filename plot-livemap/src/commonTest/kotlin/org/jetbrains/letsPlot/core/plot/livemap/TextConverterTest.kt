@@ -1,19 +1,19 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.livemap
+package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
-import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
-import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
-import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.sizeEq
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.AestheticsDataHelper
+import org.jetbrains.letsPlot.core.plot.livemap.ConverterDataHelper.createDefaultMatcher
+import org.jetbrains.letsPlot.core.plot.livemap.MapObjectMatcher.Companion.eq
+import org.jetbrains.letsPlot.core.plot.livemap.MapObjectMatcher.Companion.sizeEq
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

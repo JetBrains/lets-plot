@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.livemap
+package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
@@ -24,10 +24,10 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
-import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
-import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
-import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
-import jetbrains.datalore.plot.livemap.MapLayerKind.*
+import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.LabelOptions
+import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
+import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.PieOptions
+import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
 import org.jetbrains.letsPlot.livemap.api.GeoObject
 import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom

@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.livemap
+package org.jetbrains.letsPlot.core.plot.livemap
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
+import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
 import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 import org.jetbrains.letsPlot.core.canvas.CanvasControlDelegate
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 
 class LiveMapTestAdapter(
     plotSpec: String

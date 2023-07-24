@@ -1,16 +1,17 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.livemap
+package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
-import jetbrains.datalore.plot.livemap.MapLayerKind.*
+import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
 import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.core.plot.livemap.DataPointLiveMapAesthetics
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
