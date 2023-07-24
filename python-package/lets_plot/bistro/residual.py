@@ -12,6 +12,11 @@ try:
 except ImportError:
     pd = None
 
+try:
+    import polars as pl
+except ImportError:
+    pl = None
+
 from ..plot.core import PlotSpec, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
@@ -103,7 +108,14 @@ def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
         predictor = _get_predictor(xs, ys, method, deg, span, seed, max_n)
         return group_df.assign(**{_RESIDUAL_COL: ys - predictor(xs)}), xs, ys
 
-    df = data.copy() if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+    if isinstance(data, dict):
+        df = pd.DataFrame(data)
+    elif isinstance(data, pd.DataFrame):
+        df = data.copy()
+    elif pl is not None and isinstance(data, pl.DataFrame):
+        df = pd.DataFrame(data.to_dict(False))
+    else:
+        raise Exception("Unsupported type of data: {0}".format(data))
     df = df[(df[x].notna()) & df[y].notna()]
     if group_by is None:
         return _get_group_stat_data(df)
