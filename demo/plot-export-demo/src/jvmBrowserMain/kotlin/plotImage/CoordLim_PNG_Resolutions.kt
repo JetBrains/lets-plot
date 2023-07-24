@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.CoordLim
+import demo.plot.common.model.plotConfig.CoordLim
 
 @Suppress("ClassName")
 object CoordLim_PNG_Resolutions {

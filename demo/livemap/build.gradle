@@ -54,11 +54,11 @@ kotlin {
                 implementation project(':plot-builder')
                 implementation project(':plot-stem')
                 implementation project(':canvas')
-                implementation project(':vis-demo-common')
                 implementation project(':gis')
                 implementation project(':livemap')
                 implementation project(':plot-livemap')
                 implementation project(':demo-and-test-shared')
+                implementation project(':demo-common-util')
             }
         }
         allJvm {
@@ -91,14 +91,14 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(':platf-jfx-swing')
-                implementation project(':vis-demo-common-jfx')
+                implementation project(':demo-common-jfx')
             }
         }
 
         jvmBatikPlotMain {
             dependsOn allJvm
             dependencies {
-                implementation project(':vis-demo-common-batik')
+                implementation project(':demo-common-batik')
                 implementation project(':platf-batik')
             }
         }

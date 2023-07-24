@@ -29,7 +29,7 @@ kotlin {
 
                 implementation project(':commons')
                 implementation project(':datamodel')
-                implementation project(':vis-demo-common')
+                implementation project(':demo-common-util')
             }
         }
 
@@ -43,7 +43,7 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(":platf-batik")
-                implementation project(':vis-demo-common-batik')
+                implementation project(':demo-common-batik')
             }
         }
         jvmJfxMain {
@@ -51,7 +51,7 @@ kotlin {
             dependencies {
                 implementation project(':canvas') // needed for `svg transform` parsing
                 implementation project(":platf-jfx-swing")
-                implementation project(':vis-demo-common-jfx')
+                implementation project(':demo-common-jfx')
             }
         }
         jvmBrowserMain {

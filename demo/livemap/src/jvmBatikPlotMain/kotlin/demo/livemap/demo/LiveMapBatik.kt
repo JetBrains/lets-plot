@@ -5,8 +5,8 @@
 
 package demo.livemap.demo
 
+import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
 import demo.livemap.plotDemo.LiveMap
-import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 object LiveMapBatik {
     @JvmStatic

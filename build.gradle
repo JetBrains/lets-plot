@@ -30,15 +30,15 @@ def include_sources_letsPlotJvmCommon = [
 def include_sources_letsPlotJvmJfx = [
         'platf-awt',
         'platf-jfx-swing',
-        'vis-demo-common',
-        'vis-demo-common-jfx',
+//        'demo-common',
+//        'demo-common-jfx',
 ]
 
 def include_sources_letsPlotJvmBatik = [
         'platf-awt',
         'platf-batik',
-        'vis-demo-common',
-        'vis-demo-common-batik',
+//        'demo-common-util',
+//        'demo-common-batik',
 ]
 
 def include_sources_letsPlotGIS = [

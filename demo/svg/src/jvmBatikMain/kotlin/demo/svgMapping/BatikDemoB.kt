@@ -5,7 +5,7 @@
 
 package demo.svgMapping
 
-import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
+import demo.common.batik.demoUtils.SvgViewerDemoWindowBatik
 import demo.svgMapping.model.DemoModelB
 
 fun main() {

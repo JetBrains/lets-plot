@@ -20,8 +20,8 @@ kotlin {
 
                 implementation project(':commons')
                 implementation project(':plot-image-export')
-                implementation project(':plot-demo-common')
-                implementation project(':vis-demo-common')
+                implementation project(':demo-plot-common')
+                implementation project(':demo-common-util')
             }
         }
 

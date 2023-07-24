@@ -6,8 +6,8 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport
-import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
-import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil.createDemoFile
+import demo.common.util.demoUtils.browser.BrowserDemoUtil
+import demo.common.util.demoUtils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.io.StringWriter

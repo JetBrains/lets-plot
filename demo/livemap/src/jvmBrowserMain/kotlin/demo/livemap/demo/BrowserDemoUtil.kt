@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
+import demo.common.util.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
 import java.awt.Desktop

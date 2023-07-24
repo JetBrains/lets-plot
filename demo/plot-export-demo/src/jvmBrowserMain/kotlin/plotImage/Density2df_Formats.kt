@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.Density2df
+import demo.plot.common.model.plotConfig.Density2df
 
 @Suppress("ClassName")
 object Density2df_Formats {

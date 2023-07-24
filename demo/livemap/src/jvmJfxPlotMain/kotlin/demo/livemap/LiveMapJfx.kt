@@ -6,7 +6,7 @@
 package demo.livemap
 
 import demo.livemap.plotDemo.LiveMap
-import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
+import demo.common.jfx.demoUtils.PlotSpecsDemoWindowJfx
 
 
 object LiveMapJfx {

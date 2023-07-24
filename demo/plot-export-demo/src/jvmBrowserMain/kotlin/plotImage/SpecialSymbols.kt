@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport
-import jetbrains.datalore.plotDemo.model.plotConfig.SpecialSymbols
+import demo.plot.common.model.plotConfig.SpecialSymbols
 
 object SpecialSymbols {
     @JvmStatic

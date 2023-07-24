@@ -5,7 +5,7 @@
 
 package demo.svgMapping
 
-import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
+import demo.common.util.demoUtils.browser.BrowserDemoUtil
 
 private const val DEMO_PROJECT_PATH = "demo/svg"
 private const val DEMO_PROJECT = "demo-svg"

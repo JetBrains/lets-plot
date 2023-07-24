@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
+import demo.plot.common.model.plotConfig.GGBunch
 
 @Suppress("ClassName")
 object GGBunch_PNG_Resolutions {

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport
-import jetbrains.datalore.plotDemo.model.plotConfig.Raster
+import demo.plot.common.model.plotConfig.Raster
 
 @Suppress("ClassName")
 object Raster_PNG_Resolutions {

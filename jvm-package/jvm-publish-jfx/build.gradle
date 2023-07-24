@@ -21,8 +21,8 @@ kotlin {
                 compileOnly project(':jvm-package:jvm-publish-common')
                 api project(':platf-awt')
                 api project(':platf-jfx-swing')
-                api project(':vis-demo-common')
-                api project(':vis-demo-common-jfx')
+//                api project(':demo-common-util')
+//                api project(':demo-common-jfx')
             }
         }
     }
@@ -59,7 +59,7 @@ task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
     // This jar should contain only packages:
     //  - jetbrains.datalore.vis.svgMapper.jfx  (:vis-svg-mapper-jfx)
     //  - jetbrains.datalore.vis.swing            (:vis-svg-mapper-jfx, :vis-swing-common, :vis-swing-jfx)
-    //  - jetbrains.datalore.vis.demoUtils        (:vis-demo-common, :vis-demo-common-jfx)
+    //  - jetbrains.datalore.vis.demoUtils        (:demo-common-util, :demo-common-jfx)
     exclude 'jetbrains/datalore/base/**/*'
     exclude 'jetbrains/datalore/mapper/**/*'
     exclude 'jetbrains/datalore/plot/**/*'

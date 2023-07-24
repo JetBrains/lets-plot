@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotImage
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import jetbrains.datalore.plotDemo.model.plotConfig.Area
+import demo.plot.common.model.plotConfig.Area
 
 @Suppress("ClassName")
 object Area_PNG_Resolutions {

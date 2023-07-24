@@ -5,9 +5,9 @@
 
 package demo.svgMapping
 
-import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import demo.common.batik.demoUtils.SvgViewerDemoWindowBatik
 import demo.svgMapping.model.DemoModelA
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 fun main() {
     val svgGroup = DemoModelA.createModel()
