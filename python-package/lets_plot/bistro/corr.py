@@ -141,7 +141,7 @@ class corr_plot:
         """
         Parameters
         ----------
-        data : dict or `DataFrame`
+        data : dict or Pandas or Polars `DataFrame`
             Correlation matrix or data (correlation will be calculated for each variable pair).
             Data will be recognized as correlation matrix if it has a square shape and all values are
             in range -1.0..+1.0 or NaN.

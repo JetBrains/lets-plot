@@ -1,5 +1,15 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
+try:
+    import polars as pl
+except ImportError:
+    pl = None
+
 from .core import aes
 from .geom import _geom
 
@@ -47,8 +57,14 @@ def _get_fun_data(mapping, data, fun, xlim, n):
     if data is None:
         return {_fun_x_name: xs, _fun_y_name: ys}
     else:
-        data[_fun_y_name] = ys
-        return data
+        if isinstance(data, dict):
+            return {**data, **{_fun_y_name: ys}}
+        elif pd is not None and isinstance(data, pd.DataFrame):
+            return data.assign(**{_fun_y_name: ys})
+        elif pl is not None and isinstance(data, pl.DataFrame):
+            return data.with_columns(**{_fun_y_name: pl.Series(values=ys)})
+        else:
+            raise Exception("Unsupported type of data: {0}".format(data))
 
 
 def _get_mapping(mapping):
@@ -72,7 +88,7 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be used in this layer. Specify to describe the definition area of a function.
         If None, the default, the data will not be used at all.
     stat : str, default='identity'

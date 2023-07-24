@@ -46,7 +46,7 @@ def joint_plot(data, x, y, *,
 
     Parameters
     ----------
-    data : dict or `DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed.
     x, y : str
         Names of a variables.

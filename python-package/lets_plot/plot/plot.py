@@ -20,7 +20,7 @@ def ggplot(data=None, mapping=None):
 
     Parameters
     ----------
-    data : dict or `DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         Default dataset to use for the plot. If not specified,
         must be supplied in each layer added to the plot.
     mapping : `FeatureSpec`
