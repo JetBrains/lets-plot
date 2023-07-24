@@ -24,7 +24,7 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'
@@ -186,7 +186,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'

@@ -88,7 +88,7 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be used in this layer. Specify to describe the definition area of a function.
         If None, the default, the data will not be used at all.
     stat : str, default='identity'

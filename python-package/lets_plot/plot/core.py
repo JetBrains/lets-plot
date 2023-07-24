@@ -84,7 +84,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         'bin' (count number of points with x-axis coordinate in the same bin),
         'smooth' (perform smoothing - linear default),
         'density' (compute and draw kernel density estimate).
-    data : dict or `DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     mapping : `FeatureSpec`

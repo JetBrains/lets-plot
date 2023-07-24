@@ -22,7 +22,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
 
     Parameters
     ----------
-    data : dict or `DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed.
     sample : str
         Name of variable specifying a vector of observations used for computing of "sample quantiles".
