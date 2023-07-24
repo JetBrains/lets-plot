@@ -3,15 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.canvasDemo
+package demo.livemap.canvasDemo
 
-import jetbrains.livemap.demo.BrowserDemoUtil
+import demo.livemap.demo.BrowserDemoUtil
 
-private const val DEMO_PROJECT = "livemap-demo"
-private const val CALL_FUN = "jetbrains.livemap.canvasDemo.fillRectStrokeRectDemo"
+private const val DEMO_PROJECT = "demo-livemap"
+private const val CALL_FUN = "demo.livemap.canvasDemo.fillRectStrokeRectDemo"
 
 fun main() {
-    BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+    BrowserDemoUtil.openInBrowser {
         BrowserDemoUtil.mapperDemoHtml(DEMO_PROJECT, CALL_FUN, "fillRect strokeRect Demo")
     }
 }

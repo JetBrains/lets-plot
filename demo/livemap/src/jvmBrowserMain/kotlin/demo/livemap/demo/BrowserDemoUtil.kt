@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.demo
+package demo.livemap.demo
 
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
@@ -16,10 +16,11 @@ import java.io.StringWriter
 object BrowserDemoUtil {
 
     private const val ROOT_PROJECT = "lets-plot"
+    private const val DEMO_PROJECT_PATH = "demo/livemap"
     private const val JS_DIST_PATH = "js-package/build/distributions"
 
-    fun openInBrowser(demoProject: String, html: () -> String) {
-        val outputDir = "$demoProject/build/distributions"
+    fun openInBrowser(html: () -> String) {
+        val outputDir = "$DEMO_PROJECT_PATH/build/distributions"
 
         val projectRoot = getProjectRoot()
         println("Project root: $projectRoot")
