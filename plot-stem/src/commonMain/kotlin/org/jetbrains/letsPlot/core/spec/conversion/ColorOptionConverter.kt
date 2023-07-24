@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 
-class ColorOptionConverter : Function<Any?, Color?> {
+open class ColorOptionConverter : Function<Any?, Color?> {
     override fun apply(value: Any?): Color? {
         if (value == null) {
             return null
@@ -26,5 +26,14 @@ class ColorOptionConverter : Function<Any?, Color?> {
         } catch (ignored: RuntimeException) {
             throw IllegalArgumentException("Can't convert to color: '$value' (${value::class.simpleName})")
         }
+    }
+}
+
+class NamedSystemColorOptionConverter(private val namedSystemColors: NamedSystemColors): ColorOptionConverter() {
+    override fun apply(value: Any?): Color? {
+        if (value is String && NamedSystemColors.isSystemColorName(value)) {
+            return namedSystemColors.getColor(value)
+        }
+        return super.apply(value)
     }
 }
