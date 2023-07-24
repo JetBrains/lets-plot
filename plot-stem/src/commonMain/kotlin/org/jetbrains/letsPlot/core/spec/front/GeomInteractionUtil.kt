@@ -418,7 +418,7 @@ object GeomInteractionUtil {
         }
     }
 
-    // the number of factors starting from which tooltips can be displayed
+    // Add a discrete variable to the tooltip only if the number of factor levels > 4
     private const val MIN_FACTORS_TO_SHOW_TOOLTIPS = 5
     private fun isTooltipForAesEnabled(aes: Aes<*>, scaleMap: Map<Aes<*>, Scale>): Boolean {
         if (isVariableContinuous(scaleMap, aes)) {
