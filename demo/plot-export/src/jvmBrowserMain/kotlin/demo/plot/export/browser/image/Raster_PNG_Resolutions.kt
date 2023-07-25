@@ -1,25 +1,24 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotImage
+package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport.Format
-import demo.plot.common.model.plotConfig.Density2df
+import jetbrains.datalore.plot.PlotImageExport
+import demo.plot.common.model.plotConfig.Raster
 
 @Suppress("ClassName")
-object Density2df_PNG_Resolutions {
+object Raster_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Density2df()) {
-            @Suppress("UNCHECKED_CAST")
+        with(Raster()) {
             (PlotImageDemoUtil.show(
-                "Density2df plot",
+                "Raster plot",
                 plotSpecList().first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { Format.PNG }
+                formats = MutableList(3) { PlotImageExport.Format.PNG }
             ))
         }
     }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotImage
+package demo.plot.export.browser.image
 
 import jetbrains.datalore.plot.PlotImageExport
 import demo.common.util.demoUtils.browser.BrowserDemoUtil
@@ -13,7 +13,8 @@ import kotlinx.html.stream.appendHTML
 import java.io.StringWriter
 
 object PlotImageDemoUtil {
-    private const val DEMO_PROJECT = "plot-export-demo"
+    private const val DEMO_PROJECT_PATH = "demo/plot-export"
+    private const val DEMO_PROJECT = "demo-plot-export"
 
     fun show(
         title: String,
@@ -22,7 +23,7 @@ object PlotImageDemoUtil {
         targetDPIs: List<Number>,
         formats: List<PlotImageExport.Format>
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
+        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpec,
@@ -79,7 +80,7 @@ object PlotImageDemoUtil {
 
                     val titleTrimmed = Regex("[^a-z0-9_]").replace(title.lowercase(), "_")
                     val namePrefix = "${titleTrimmed}_scale_${scalingFactor}_"
-                    val imgFile = createDemoFile(DEMO_PROJECT, namePrefix, format.defFileExt)
+                    val imgFile = createDemoFile(DEMO_PROJECT_PATH, namePrefix, format.defFileExt)
                     imgFile.writeBytes(image.bytes)
                     val imgSrc = imgFile.toURI()
 

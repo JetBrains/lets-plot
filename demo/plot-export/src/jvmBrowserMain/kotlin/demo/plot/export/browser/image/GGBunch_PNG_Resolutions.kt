@@ -1,26 +1,27 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotImage
+package demo.plot.export.browser.image
 
 import jetbrains.datalore.plot.PlotImageExport.Format
-import demo.plot.common.model.plotConfig.Area
+import demo.plot.common.model.plotConfig.GGBunch
 
 @Suppress("ClassName")
-object Area_PNG_Resolutions {
+object GGBunch_PNG_Resolutions {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(Area()) {
+        with(GGBunch()) {
             @Suppress("UNCHECKED_CAST")
-            (PlotImageDemoUtil.show(
-                "Area plot",
-                plotSpecList().first(),
+            val plotSpecList = plotSpecList()
+            PlotImageDemoUtil.show(
+                "GGBunch",
+                plotSpecList.first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
                 formats = MutableList(3) { Format.PNG }
-            ))
+            )
         }
     }
 }

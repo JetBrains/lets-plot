@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotImage
+package demo.plot.export.browser.image
 
 import jetbrains.datalore.plot.PlotImageExport.Format
 import demo.plot.common.model.plotConfig.CoordLim
@@ -19,7 +19,7 @@ object CoordLim_PNG_Resolutions {
                 plotSpecList().first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { Format.PNG}
+                formats = MutableList(3) { Format.PNG }
             ))
         }
     }

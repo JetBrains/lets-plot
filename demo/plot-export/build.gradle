@@ -1,13 +1,12 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
-}
-
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+}
+
 
 kotlin {
     jvm()
@@ -40,15 +39,6 @@ kotlin {
             dependencies {
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
             }
-        }
-    }
-}
-
-idea {
-    module {
-        settings {
-            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmBrowserMain/kotlin"] = "jetbrains.datalore"
         }
     }
 }
