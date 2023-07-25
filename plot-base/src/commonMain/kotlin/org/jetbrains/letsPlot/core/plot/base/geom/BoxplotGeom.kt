@@ -8,12 +8,15 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.BarTooltipHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.extendHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.colorWithAlpha
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class BoxplotGeom : GeomBase() {
@@ -32,7 +35,7 @@ class BoxplotGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        CrossBarHelper.buildBoxes(
+        BoxHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
         )
@@ -52,7 +55,7 @@ class BoxplotGeom : GeomBase() {
         ctx: GeomContext,
         geomHelper: GeomHelper
     ) {
-        CrossBarHelper.buildMidlines(root, aesthetics, ctx, geomHelper, fattenMidline)
+        BoxHelper.buildMidlines(root, aesthetics, middleAesthetic = Aes.MIDDLE, ctx, geomHelper, fatten = fattenMidline)
 
         val elementHelper = geomHelper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
@@ -115,7 +118,7 @@ class BoxplotGeom : GeomBase() {
         const val DEF_WHISKER_WIDTH = 0.5
         const val HANDLES_GROUPS = false
 
-        private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
+        private val LEGEND_FACTORY = BoxHelper.legendFactory(true)
 
         private fun clientRectByDataPoint(
             ctx: GeomContext,

@@ -33,7 +33,7 @@ class CrossBar {
             |                 'mapping': {
             |                              'ymin': 'min',
             |                              'ymax': 'max',
-            |                              'middle': 'len'
+            |                              'y': 'len'
             |                            }
             |             }
             |         ]
@@ -58,7 +58,7 @@ class CrossBar {
             |                 'mapping': {
             |                              'ymin': 'min',
             |                              'ymax': 'max',
-            |                              'middle': 'len'
+            |                              'y': 'len'
             |                            },
             |                 'width': 0.3,
             |                 'position': {'name': 'dodge', 'width': 0.33}
@@ -85,7 +85,7 @@ class CrossBar {
             |                 'mapping': {
             |                              'ymin': 'min',
             |                              'ymax': 'max',
-            |                              'middle': 'len'
+            |                              'y': 'len'
             |                            },
             |                 'width': 0.3,
             |                 'position': {'name': 'dodge', 'width': 0.33},
