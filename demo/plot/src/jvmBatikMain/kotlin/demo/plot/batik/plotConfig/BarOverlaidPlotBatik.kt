@@ -1,4 +1,4 @@
-package jetbrains.datalore.plotDemo.plotConfig
+package demo.plot.batik.plotConfig
 
 import demo.plot.common.model.plotConfig.BarOverlaidPlot
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik

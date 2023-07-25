@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotSvg
+package demo.plot.browser.plotSvg
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import demo.plot.common.model.plotConfig.GGBunch

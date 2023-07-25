@@ -17,9 +17,7 @@ kotlin {
         browser {
             dceTask {
                 keep.addAll(
-                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.component.axisComponentDemo",
-                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.linearRegressionDemo",
-                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.loessRegressionDemo",
+                        "lets-plot-demo-plot.demo.plot.js.component.axisComponentDemo",
                 )
             }
         }

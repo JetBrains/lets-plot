@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotDemo.defaultViewer
+package demo.plot.batik.defaultViewer
 
 import demo.plot.common.model.plotConfig.FacetGridDemo
 import org.jetbrains.letsPlot.platf.batik.plot.component.PlotViewerWindowBatik
