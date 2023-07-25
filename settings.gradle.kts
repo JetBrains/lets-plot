@@ -6,12 +6,10 @@
 pluginManagement {
     plugins {
         val kotlinVersion = extra["kotlin_version"] as String
-        val ideaExtVersion = extra["idea_ext_version"] as String
 
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("js").version(kotlinVersion)
 
-        id("org.jetbrains.gradle.plugin.idea-ext").version(ideaExtVersion)
         id("com.github.johnrengelman.shadow").version("5.1.0")
         id("io.codearte.nexus-staging").version("0.30.0")
     }
