@@ -2,9 +2,10 @@
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
-package jetbrains.datalore.plot
+package org.jetbrains.letsPlot.core.plot.export
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
 import kotlin.test.Test
 
 class PlotImageExportTest {

@@ -5,8 +5,8 @@
 
 package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport.Format
 import demo.plot.common.model.plotConfig.Density2df
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
 
 @Suppress("ClassName")
 object Density2df_PNG_Resolutions {
@@ -19,7 +19,7 @@ object Density2df_PNG_Resolutions {
                 plotSpecList().first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { Format.PNG }
+                formats = MutableList(3) { PlotImageExport.Format.PNG }
             ))
         }
     }

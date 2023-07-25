@@ -5,11 +5,11 @@
 
 package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport
 import demo.common.util.demoUtils.browser.BrowserDemoUtil
 import demo.common.util.demoUtils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
 import java.io.StringWriter
 
 object PlotImageDemoUtil {

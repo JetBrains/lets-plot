@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.scale.breaks
+package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime

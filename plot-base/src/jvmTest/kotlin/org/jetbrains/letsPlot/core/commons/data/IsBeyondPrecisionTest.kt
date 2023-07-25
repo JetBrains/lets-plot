@@ -3,10 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.common.data
+package org.jetbrains.letsPlot.core.commons.data
 
-import jetbrains.datalore.plot.common.data.MeshGen.genGrid
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -38,18 +36,18 @@ class IsBeyondPrecisionTest(
         @Parameterized.Parameters
         fun params(): Array<Array<Any?>> {
             return arrayOf(
-                args( 1.0, 1E+20, false),
-                args( 1.0, 1.0, false),
-                args( 1.0, 1E-5, false),
-                args( 1.0, 1E-10, false),
-                args( 1.0, 1E-12, false),
-                args( 1.0, 1E-13, true),
+                args(1.0, 1E+20, false),
+                args(1.0, 1.0, false),
+                args(1.0, 1E-5, false),
+                args(1.0, 1E-10, false),
+                args(1.0, 1E-12, false),
+                args(1.0, 1E-13, true),
 
-                args( -1.0, 1E-12, false),
-                args( 1E-15, 1.0, false),
-                args( 1E-15, 1E-13, false),
-                args( 1E-15, 1E-27, false),
-                args( 1E-15, 1E-28, true),
+                args(-1.0, 1E-12, false),
+                args(1E-15, 1.0, false),
+                args(1E-15, 1E-13, false),
+                args(1E-15, 1E-27, false),
+                args(1E-15, 1E-28, true),
             )
         }
     }

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.stat
+package org.jetbrains.letsPlot.core.plot.base.stat
 
 import junit.framework.TestCase
 import org.hamcrest.MatcherAssert

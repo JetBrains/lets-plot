@@ -5,8 +5,8 @@
 
 package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport
 import demo.plot.common.model.plotConfig.SpecialSymbols
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
 
 object SpecialSymbols {
     @JvmStatic

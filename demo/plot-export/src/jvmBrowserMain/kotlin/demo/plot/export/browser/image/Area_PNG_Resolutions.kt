@@ -5,8 +5,8 @@
 
 package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport.Format
 import demo.plot.common.model.plotConfig.Area
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
 
 @Suppress("ClassName")
 object Area_PNG_Resolutions {
@@ -19,7 +19,7 @@ object Area_PNG_Resolutions {
                 plotSpecList().first(),
                 scalingFactors = listOf(1.0, 2.0, 4.0),
                 targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { Format.PNG }
+                formats = MutableList(3) { PlotImageExport.Format.PNG }
             ))
         }
     }

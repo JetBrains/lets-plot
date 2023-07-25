@@ -5,8 +5,8 @@
 
 package demo.plot.export.browser.image
 
-import jetbrains.datalore.plot.PlotImageExport.Format
 import demo.plot.common.model.plotConfig.CoordLim
+import org.jetbrains.letsPlot.core.plot.export.PlotImageExport.Format
 
 @Suppress("ClassName")
 object CoordLim_PNG_Resolutions {

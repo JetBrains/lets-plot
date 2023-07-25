@@ -3,10 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.common.data
+package org.jetbrains.letsPlot.core.commons.data
 
-import jetbrains.datalore.plot.common.data.MeshGen.genGrid
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.MeshGen.genGrid
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
