@@ -12,15 +12,20 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
-import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
+import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasControl
+import org.jetbrains.letsPlot.jfx.canvas.JavafxEventPeer
 
 class BaseCanvasDemoJfx(val demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
 
     fun start(theStage: Stage) {
         val dim = Vector(800, 600)
         val group = Group()
-        val javafxCanvasControl = JavafxCanvasControl(group, dim, 1.0, JavafxEventPeer(group, Rectangle(Vector.ZERO, dim)))
+        val javafxCanvasControl = org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasControl(
+            group,
+            dim,
+            1.0,
+            JavafxEventPeer(group, Rectangle(Vector.ZERO, dim))
+        )
 
         val canvas = javafxCanvasControl.createCanvas(dim)
         demoModel(canvas, javafxCanvasControl::createSnapshot)

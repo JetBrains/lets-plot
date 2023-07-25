@@ -6,7 +6,7 @@
 package demo.plot.jfx.defaultViewer
 
 import demo.plot.common.model.plotConfig.Area
-import org.jetbrains.letsPlot.platf.jfx.plot.component.PlotViewerWindowJfx
+import org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx
 
 object AreaViewerJfx {
     @JvmStatic

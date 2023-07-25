@@ -277,8 +277,8 @@ subprojects {
             'commons',
             'datamodel',
             'plot-base',
-            'plot-stem',
             'plot-builder',
+            'plot-stem',
     ]) {
         apply plugin: "maven-publish"
         apply plugin: "signing"
@@ -295,7 +295,7 @@ subprojects {
 
                         pom {
                             name = "Lets-Plot (Kotlin) internal dependency artifact"
-                            description = "The Let-Plot Kotlin API depends on this artifact."
+                            description = "The Lets-Plot Kotlin API depends on this artifact."
 
                             url = "https://github.com/JetBrains/lets-plot"
                             licenses {

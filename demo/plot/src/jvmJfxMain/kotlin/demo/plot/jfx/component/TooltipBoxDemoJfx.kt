@@ -8,7 +8,7 @@ package demo.plot.jfx.component
 import javafx.application.Platform.runLater
 import demo.plot.shared.model.component.TooltipBoxDemo
 import demo.common.jfx.demoUtils.SvgViewerDemoWindowJfx
-import org.jetbrains.letsPlot.platf.jfx.util.runOnFxThread
+import org.jetbrains.letsPlot.jfx.util.runOnFxThread
 import java.awt.EventQueue.invokeLater
 
 fun main() {

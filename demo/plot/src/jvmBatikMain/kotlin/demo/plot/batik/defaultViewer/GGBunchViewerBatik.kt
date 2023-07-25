@@ -6,7 +6,7 @@
 package demo.plot.batik.defaultViewer
 
 import demo.plot.common.model.plotConfig.GGBunch
-import org.jetbrains.letsPlot.platf.batik.plot.component.PlotViewerWindowBatik
+import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
 
 @Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {

@@ -11,10 +11,10 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import demo.common.util.demoUtils.swing.PlotResizableDemoWindowBase
-import org.jetbrains.letsPlot.platf.awt.plot.component.PlotComponentProvider
-import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
-import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
-import org.jetbrains.letsPlot.platf.jfx.plot.component.DefaultSwingContextJfx
+import org.jetbrains.letsPlot.awt.plot.component.PlotComponentProvider
+import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.jfx.plot.component.DefaultSwingContextJfx
 import java.awt.Dimension
 import javax.swing.JComponent
 

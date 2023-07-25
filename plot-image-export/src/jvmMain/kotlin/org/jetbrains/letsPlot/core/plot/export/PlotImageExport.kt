@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.export
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.platf.awt.plot.PlotSvgExport.buildSvgImageFromRawSpecs
+import org.jetbrains.letsPlot.awt.plot.PlotSvgExport.buildSvgImageFromRawSpecs
 import org.jetbrains.letsPlot.core.util.PlotSvgHelper.fetchPlotSizeFromSvg
 import org.apache.batik.transcoder.ErrorHandler
 import org.apache.batik.transcoder.TranscoderException

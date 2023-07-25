@@ -6,7 +6,7 @@
 package demo.plot.browser.plotSvg
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.platf.awt.plot.PlotSvgExport
+import org.jetbrains.letsPlot.awt.plot.PlotSvgExport
 import demo.common.util.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML

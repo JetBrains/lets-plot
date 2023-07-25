@@ -7,7 +7,7 @@ package demo.common.jfx.demoUtils
 
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import demo.common.util.demoUtils.swing.PlotSpecsDemoWindowBase
-import org.jetbrains.letsPlot.platf.jfx.plot.component.DefaultPlotPanelJfx
+import org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension

@@ -7,7 +7,7 @@ package demo.plot.batik.plotConfig
 
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.platf.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.*

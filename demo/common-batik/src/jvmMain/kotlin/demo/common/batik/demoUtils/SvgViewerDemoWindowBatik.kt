@@ -7,7 +7,7 @@ package demo.common.batik.demoUtils
 
 import demo.common.util.demoUtils.swing.SvgViewerDemoWindowBase
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.platf.batik.plot.util.BatikMapperComponent
+import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent
 import java.awt.Color
 import javax.swing.BorderFactory
 import javax.swing.JComponent

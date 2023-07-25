@@ -8,9 +8,9 @@ package demo.livemap.demo
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtEventPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
+import org.jetbrains.letsPlot.awt.canvas.AwtEventPeer
 import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JPanel
@@ -26,7 +26,7 @@ class RawAwtDemo(val demoModel: (DoubleVector) -> DemoModelBase) {
         val canvasControl = AwtCanvasControl(
             canvasSize.toVector(),
             AwtEventPeer(canvasContainer, Rectangle(Vector.ZERO, canvasSize.toVector())),
-            AwtAnimationTimerPeer()
+            org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer()
         )
 
         demoModel(canvasSize.toDoubleVector()).show(canvasControl)

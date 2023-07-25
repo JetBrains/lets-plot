@@ -9,9 +9,9 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl
-import org.jetbrains.letsPlot.platf.awt.canvas.AwtEventPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
+import org.jetbrains.letsPlot.awt.canvas.AwtEventPeer
 import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JFrame.EXIT_ON_CLOSE
@@ -28,7 +28,7 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
     val canvasControl = AwtCanvasControl(
         dim,
         AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)),
-        AwtAnimationTimerPeer()
+        org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer()
     )
     panel.add(canvasControl.component())
     frame.add(panel)

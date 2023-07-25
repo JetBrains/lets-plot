@@ -7,7 +7,7 @@ package demo.common.jfx.demoUtils
 
 import demo.common.util.demoUtils.swing.SvgViewerDemoWindowBase
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 import java.awt.Color
 import javax.swing.BorderFactory
 import javax.swing.JComponent

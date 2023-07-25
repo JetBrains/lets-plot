@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import demo.common.util.demoUtils.swing.PlotObjectsDemoWindowBase
-import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.jfx.plot.util.SceneMapperJfxPanel
 import java.awt.Dimension
 import javax.swing.JComponent
 

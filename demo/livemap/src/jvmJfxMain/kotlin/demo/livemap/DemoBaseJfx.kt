@@ -13,8 +13,8 @@ import javafx.scene.Scene
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
-import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
+import org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasControl
+import org.jetbrains.letsPlot.jfx.canvas.JavafxEventPeer
 import java.awt.BorderLayout
 import javax.swing.JFrame
 import javax.swing.WindowConstants
@@ -25,7 +25,12 @@ open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoMode
     internal fun show() {
         val group = Group()
         val component = JFXPanel().apply { scene = Scene(group) }
-        val canvasControl = JavafxCanvasControl(group, size, 1.0, JavafxEventPeer(group, Rectangle(Vector.ZERO, size)))
+        val canvasControl = org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasControl(
+            group,
+            size,
+            1.0,
+            JavafxEventPeer(group, Rectangle(Vector.ZERO, size))
+        )
 
         val frame = JFrame("JFX LiveMap Demo")
         frame.layout = BorderLayout()

@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import demo.common.util.demoUtils.swing.PlotObjectsDemoWindowBase
-import org.jetbrains.letsPlot.platf.batik.plot.util.BatikMapperComponent
+import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent
 import java.awt.Dimension
 import javax.swing.JComponent
 
