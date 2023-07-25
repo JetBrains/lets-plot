@@ -1,16 +1,23 @@
-package jetbrains.datalore.plot.pythonExtension.interop
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.pythonExtension.interop
 
 import Python.*
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.BOOL
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.DICT
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.FLOAT
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.INT
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.LIST
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.NONE
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.STR
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.TUPLE
-import jetbrains.datalore.plot.pythonExtension.interop.PythonTypes.getPyObjectType
-import kotlinx.cinterop.*
+import kotlinx.cinterop.CPointer
+import kotlinx.cinterop.CValuesRef
+import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.BOOL
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.DICT
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.FLOAT
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.INT
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.LIST
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.NONE
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.STR
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.TUPLE
+import org.jetbrains.letsPlot.pythonExtension.interop.PythonTypes.getPyObjectType
 
 typealias TPyObjPtr = CPointer<PyObject>
 
@@ -43,8 +50,8 @@ internal object TypeUtils {
             FLOAT -> PyFloat_AsDouble(obj)
             BOOL -> PyObject_IsTrue(obj) == 1
             DICT -> pyDictToMap(obj)
-            LIST -> asSequence(obj, ::PyList_Size, ::PyList_GetItem).map(::pyObjectToKotlin).toMutableList()
-            TUPLE -> asSequence(obj, ::PyTuple_Size, ::PyTuple_GetItem).map(::pyObjectToKotlin).toMutableList()
+            LIST -> asSequence(obj, ::PyList_Size, ::PyList_GetItem).map(TypeUtils::pyObjectToKotlin).toMutableList()
+            TUPLE -> asSequence(obj, ::PyTuple_Size, ::PyTuple_GetItem).map(TypeUtils::pyObjectToKotlin).toMutableList()
             NONE -> null
             else -> error("pyObjectToKotlin() - unexpected type: $objType")
         }

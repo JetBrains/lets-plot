@@ -1,14 +1,19 @@
-package jetbrains.datalore.plot.pythonExtension.interop
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.pythonExtension.interop
 
 import Python.PyObject
 import Python.Py_BuildValue
-import org.jetbrains.letsPlot.core.util.PlotHtmlExport
-import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
-import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.core.util.PlotHtmlExport
+import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
+import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
