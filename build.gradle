@@ -213,7 +213,7 @@ subprojects {
             'plot-livemap',
             'platf-awt',
             'platf-batik',
-            'platf-jfx',
+            'platf-jfx-swing',
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
