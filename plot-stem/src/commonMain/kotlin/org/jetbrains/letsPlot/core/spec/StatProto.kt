@@ -117,6 +117,8 @@ object StatProto {
 
             StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
 
+            StatKind.ECDF -> return ECDFStat()
+
             StatKind.SUMMARY -> return configureSummaryStat(options)
 
             StatKind.SUMMARYBIN -> return configureSummaryBinStat(options)
