@@ -11,32 +11,26 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 class NamedSystemColors(private val themeFlavor: ThemeFlavor?) {
 
     fun getColor(id: String): Color? {
-        val systemColor = fromString(id) ?: return null
+        val systemColor = toSystemColor(id) ?: return null
         return when (systemColor) {
-            SystemColorId.SYSTEM_BLUE -> Color.PACIFIC_BLUE
-            SystemColorId.SYSTEM_WHITE -> themeFlavor?.systemLight ?: Color.WHITE
-            SystemColorId.SYSTEM_BLACK -> themeFlavor?.systemDark ?: Color.BLACK
+            SystemColor.PEN -> Color.PACIFIC_BLUE
+            SystemColor.PAPER -> themeFlavor?.fill ?: Color.WHITE
+            SystemColor.BRUSH -> themeFlavor?.color ?: Color.BLACK
         }
     }
 
     companion object {
-        enum class SystemColorId {
-            SYSTEM_BLUE, SYSTEM_WHITE, SYSTEM_BLACK;
+        enum class SystemColor {
+            PEN, PAPER, BRUSH;
         }
 
-        private fun fromString(str: String): SystemColorId? {
-            val normalized = str
-                .replace("_", "")
-                .replace("-", "")
-                .replace(" ", "")
-            return when (normalized) {
-                "sysblue" -> SystemColorId.SYSTEM_BLUE
-                "syswhite" -> SystemColorId.SYSTEM_WHITE
-                "sysblack" -> SystemColorId.SYSTEM_BLACK
-                else -> null
-            }
+        private fun toSystemColor(str: String) = when (str.lowercase()) {
+            "pen" -> SystemColor.PEN
+            "paper" -> SystemColor.PAPER
+            "brush" -> SystemColor.BRUSH
+            else -> null
         }
 
-        fun isSystemColorName(str: String) = fromString(str) != null
+        fun isSystemColorName(str: String) = toSystemColor(str) != null
     }
 }
