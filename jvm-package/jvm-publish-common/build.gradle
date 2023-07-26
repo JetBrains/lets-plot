@@ -34,6 +34,8 @@ def pom_dependencies = [
         [project.group, "plot-builder-jvm", project.version],
         [project.group, "plot-stem-jvm", project.version],
 
+        [project.group, "deprecated-in-v4-jvm", project.version],
+
         // Kotlin logging.
         ["io.github.microutils", "kotlin-logging", kotlinLogging_version],
 ]

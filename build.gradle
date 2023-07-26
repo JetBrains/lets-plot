@@ -17,8 +17,8 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "3.2.1-alpha1"
-    project.ext.js_artifact_version = "3.2.1.dev1"
+    version = "4.0.0-alpha1"
+    project.ext.js_artifact_version = "4.0.0.dev1"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
@@ -214,6 +214,7 @@ subprojects {
             'platf-awt',
             'platf-batik',
             'platf-jfx-swing',
+            'deprecated-in-v4'
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
         kotlin.jvm {}   // for `jvmSourcesJar` task
