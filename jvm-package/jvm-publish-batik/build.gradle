@@ -1,111 +1,42 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "maven-publish"
-    id "com.github.johnrengelman.shadow"
-    id "signing"
-}
-
-kotlin {
-    jvm()
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                compileOnly kotlin('stdlib-common')
-            }
-        }
-        jvmMain {
-            dependencies {
-                compileOnly kotlin('stdlib-jdk8')
-
-                compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':platf-awt')
-                api project(':platf-batik')
-//                api project(':demo-common-util')
-//                api project(':demo-common-batik')
-            }
-        }
-    }
-}
-
-
-def artifactBaseName = 'lets-plot-batik'
-def artifactGroupId = project.group
-def artifactVersion = project.version
-
-//def task_group = 'lets plot'
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-// https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520
-// https://youtrack.jetbrains.com/issue/KT-25709
-// https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
-task jarLetsPlotJvmBatikClasses(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    configurations = [project.configurations.jvmRuntimeClasspath]
-
-    exclude '**/*.kotlin_metadata'
-    exclude '**/*.kotlin_module'
-    exclude '**/*.kotlin_builtins'
-
-    // Exclude classes that duplicates `lets-plot-common.jar`
-    // This jar should contain only packages:
-    //  - jetbrains.datalore.vis.svgMapper.batik  (:vis-svg-mapper-batik)
-    //  - jetbrains.datalore.vis.swing            (:vis-svg-mapper-batik, :vis-swing-common, :vis-swing-batik)
-    //  - jetbrains.datalore.vis.demoUtils        (:demo-common-util, :demo-common-batik)
-    exclude 'jetbrains/datalore/base/**/*'
-    exclude 'jetbrains/datalore/mapper/**/*'
-    exclude 'jetbrains/datalore/plot/**/*'
-    exclude 'jetbrains/datalore/vis/canvas/**/*'
-    exclude 'jetbrains/datalore/vis/canvasFigure/**/*'
-    exclude 'jetbrains/datalore/vis/svg/**/*'
-    exclude 'jetbrains/datalore/vis/svgToScene/**/*'
-    exclude 'jetbrains/datalore/vis/svgToString/**/*'
-    
-    // Exclude other classes: either not needed or present in `lets-plot-common.jar`
-    exclude 'com/google/**/*'
-    exclude 'kotlin/**/*'
-    exclude 'kotlinx/**/*'
-    exclude 'mu/**/*'
-    exclude 'org/intellij/lang/annotations/**/*'
-    exclude 'org/jetbrains/annotations/**/*'
-    exclude 'org/slf4j/**/*'
-    exclude 'junit/**/*'
-    exclude 'org/junit/**/*'
-    exclude 'org/hamcrest/**/*'
-
-    // exclude Batik packages and its dependencies
-    exclude 'org/apache/**/*'
-    exclude 'org/w3c/**/*'
-    exclude 'org/xml/**/*'
-
-    // exclude something java (?)
-    exclude 'java_cup/**/*'     // Construction of Useful Parsers and is an LALR parser generator for Java.
-    exclude 'javax/**/*'
-
-    // lets-plot JavaFX renderer resource.
-    exclude 'svgMapper/**/*'
-
-    // Fix for "META-INF/services files specify xalan" https://github.com/JetBrains/lets-plot/issues/576
-    // Get rid only of harmful services.
-    exclude 'META-INF/services/org.apache.*'
-    exclude 'META-INF/services/javax.*'
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "signing"
 }
 
-task jarLetsPlotJvmBatikSources(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    classifier 'sources'
-    configurations = [rootProject.configurations.letsPlotJvmBatikSources]
+kotlin.jvm()
+
+def artifactBaseName = 'lets-plot-batik'
+def artifactGroupId = project.group
+def artifactVersion = project.version
+
+jvmJar {
+    archiveFileName = "$artifactBaseName-${artifactVersion}.jar"
+
+    // Add LICENSE file to the META-INF folder inside published JAR files.
+    metaInf {
+        from("$rootDir") {
+            include "LICENSE"
+        }
+    }
 }
+
+def pom_dependencies = [
+        // Lets-Plot JVM common
+        [project.group, "lets-plot-common", project.version],
+
+        // Lets-Plot core artifacts.
+        [project.group, "platf-awt-jvm", project.version],
+        [project.group, "platf-batik-jvm", project.version],
+
+        // Batik.
+        ["org.apache.xmlgraphics", "batik-codec", batik_version],
+]
 
 publishing {
     publications {
@@ -114,9 +45,7 @@ publishing {
             artifactId artifactBaseName
             version artifactVersion
 
-            artifact jarLetsPlotJvmBatikClasses
-            artifact jarLetsPlotJvmBatikSources
-            artifact rootProject.jarJavaDocs
+            artifact jvmJar
 
             pom {
                 name = "Lets-Plot for Swing/Batik"
@@ -140,30 +69,18 @@ publishing {
                 }
                 withXml {
                     def deps = asNode().appendNode('dependencies')
-                    // Apache Batik dependencies
-                    batikArtifacts.forEach {
+                    pom_dependencies.each {
                         def dep = deps.appendNode('dependency')
-                        dep.appendNode('groupId', batikGroupId)
-                        dep.appendNode('artifactId', it)
-                        dep.appendNode('version', batik_version)
+                        dep.appendNode('groupId', it[0])
+                        dep.appendNode('artifactId', it[1])
+                        dep.appendNode('version', it[2])
                     }
 
-                    // Other dependencies
-                    // Lets-Plot common
-                    def dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', artifactGroupId)
-                    dep.appendNode('artifactId', 'lets-plot-common')
-                    dep.appendNode('version', artifactVersion)
-                    // Kotlin HTML
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.jetbrains.kotlinx')
-                    dep.appendNode('artifactId', 'kotlinx-html-jvm')
-                    dep.appendNode('version', kotlinx_html_version)
-                    // Hamcrest tests
+//                    // Kotlin HTML
 //                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.hamcrest')
-//                    dep.appendNode('artifactId', 'hamcrest-core')
-//                    dep.appendNode('version', hamcrest_version)
+//                    dep.appendNode('groupId', 'org.jetbrains.kotlinx')
+//                    dep.appendNode('artifactId', 'kotlinx-html-jvm')
+//                    dep.appendNode('version', kotlinx_html_version)
                 }
             }
         }

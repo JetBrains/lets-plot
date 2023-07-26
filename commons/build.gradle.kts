@@ -43,8 +43,6 @@ kotlin {
 
         jvmTest {
             dependencies {
-////                implementation kotlin('test')
-//                implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")

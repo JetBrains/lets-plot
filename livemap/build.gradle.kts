@@ -7,7 +7,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-
 val hamcrestVersion = extra["hamcrest_version"] as String
 val mockitoVersion = extra["mockito_version"] as String
 val assertjVersion = extra["assertj_version"] as String

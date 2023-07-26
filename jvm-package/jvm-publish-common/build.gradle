@@ -1,86 +1,42 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "maven-publish"
-    id "com.github.johnrengelman.shadow"
-    id "signing"
-}
-
-kotlin {
-    jvm()
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                api kotlin('stdlib-common')
-
-                api project(':commons')
-                api project(':datamodel')
-                api project(':plot-base')
-                api project(':plot-builder')
-                api project(':plot-stem')
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
-        }
-    }
-}
-
-
-def artifactBaseName = 'lets-plot-common'
-def artifactGroupId = project.group
-def artifactVersion = project.version
-
-//def task_group = 'lets plot'
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "signing"
+}
 
-// https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520
-// https://youtrack.jetbrains.com/issue/KT-25709
-// https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
-task jarLetsPlotJvmCommonClasses(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    configurations = [project.configurations.jvmRuntimeClasspath]
+kotlin.jvm()
 
-    exclude '**/*.kotlin_metadata'
-    exclude '**/*.kotlin_module'
-    exclude '**/*.kotlin_builtins'
+def artifactBaseName = 'lets-plot-common'
+def artifactGroupId = project.group
+def artifactVersion = project.version
 
-    exclude 'kotlin/**/*'
-    exclude 'mu/**/*'      // kotlin logging
-    exclude 'org/slf4j/**/*'
-    exclude 'org/intellij/lang/annotations/**/*'
-    exclude 'org/jetbrains/annotations/**/*'
+jvmJar {
+    archiveFileName = "$artifactBaseName-${artifactVersion}.jar"
 
-    // lets-plot JavaFX renderer resource.
-    exclude 'svgMapper/**/*'
-
-    // Include License file in shadow JAR.
-    jvmJar {
-        metaInf {
-            from("$rootDir"){
-                include "LICENSE"
-            }
+    // Add LICENSE file to the META-INF folder inside published JAR files.
+    metaInf {
+        from("$rootDir") {
+            include "LICENSE"
         }
     }
 }
 
-task jarLetsPlotJvmCommonSources(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    classifier 'sources'
-    configurations = [rootProject.configurations.letsPlotJvmCommonSources]
-}
+def pom_dependencies = [
+        // Lets-Plot core artifacts.
+        [project.group, "commons-jvm", project.version],
+        [project.group, "datamodel-jvm", project.version],
+        [project.group, "plot-base-jvm", project.version],
+        [project.group, "plot-builder-jvm", project.version],
+        [project.group, "plot-stem-jvm", project.version],
+
+        // Kotlin logging.
+        ["io.github.microutils", "kotlin-logging", kotlinLogging_version],
+]
 
 publishing {
     publications {
@@ -89,13 +45,11 @@ publishing {
             artifactId artifactBaseName
             version artifactVersion
 
-            artifact jarLetsPlotJvmCommonClasses
-            artifact jarLetsPlotJvmCommonSources
-            artifact rootProject.jarJavaDocs
+            artifact jvmJar
 
             pom {
-                name = "Lets-Plot common classes"
-                description = "Lets-Plot JVM package without rendering part"
+                name = "Lets-Plot common modules"
+                description = "Lets-Plot JVM package without the actual rendering."
                 url = "https://github.com/JetBrains/lets-plot"
                 licenses {
                     license {
@@ -116,35 +70,12 @@ publishing {
                 // Dependencies
                 withXml {
                     def deps = asNode().appendNode('dependencies')
-                    // Kotlin std lib
-                    def dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
-                    dep.appendNode('artifactId', 'kotlin-stdlib-jdk8')
-                    dep.appendNode('version', kotlin_version)
-                    // Kotlin reflection
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
-//                    dep.appendNode('artifactId', 'kotlin-reflect')
-//                    dep.appendNode('version', kotlin_version)
-                    // Kotlin test
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
-//                    dep.appendNode('artifactId', 'kotlin-test')
-//                    dep.appendNode('version', kotlin_version)
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.jetbrains.kotlin')
-//                    dep.appendNode('artifactId', 'kotlin-test-junit')
-//                    dep.appendNode('version', kotlin_version)
-                    // Kotlin logging
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'io.github.microutils')
-                    dep.appendNode('artifactId', 'kotlin-logging')
-                    dep.appendNode('version', kotlinLogging_version)
-//                    // Console logging
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.slf4j')
-//                    dep.appendNode('artifactId', 'slf4j-simple')
-//                    dep.appendNode('version', slf4j_version)
+                    pom_dependencies.each {
+                        def dep = deps.appendNode('dependency')
+                        dep.appendNode('groupId', it[0])
+                        dep.appendNode('artifactId', it[1])
+                        dep.appendNode('version', it[2])
+                    }
                 }
             }
         }

@@ -10,7 +10,6 @@ pluginManagement {
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("js").version(kotlinVersion)
 
-        id("com.github.johnrengelman.shadow").version("5.1.0")
         id("io.codearte.nexus-staging").version("0.30.0")
     }
 }

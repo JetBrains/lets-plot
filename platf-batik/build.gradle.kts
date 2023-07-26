@@ -31,7 +31,7 @@ kotlin {
             dependencies {
                 implementation(project(":platf-awt"))
 
-                api("org.apache.xmlgraphics:batik-codec:$batikVersion")
+                compileOnly("org.apache.xmlgraphics:batik-codec:$batikVersion")
             }
         }
 
@@ -39,6 +39,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
+                implementation("org.apache.xmlgraphics:batik-codec:$batikVersion")
             }
         }
     }

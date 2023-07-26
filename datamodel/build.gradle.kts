@@ -7,7 +7,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-
 val mockkVersion = extra["mockk_version"] as String
 val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
 val hamcrestVersion = extra["hamcrest_version"] as String
@@ -30,8 +29,6 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-//                implementation(kotlin("test-annotations-common"))
-
                 implementation("io.mockk:mockk-common:$mockkVersion")
             }
         }
@@ -44,7 +41,6 @@ kotlin {
 
         jvmTest {
             dependencies {
-//                implementation kotlin('test')
                 implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")

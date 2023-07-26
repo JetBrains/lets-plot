@@ -29,7 +29,7 @@ kotlin {
             }
         }
 
-        jvmMain {
+        named("jvmMain") {
             dependencies {
                 compileOnly("org.openjfx:javafx-base:$jfxVersion:$jfxPlatform")
                 compileOnly("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
@@ -39,7 +39,7 @@ kotlin {
             }
         }
 
-        jvmTest {
+        named("jvmTest") {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))

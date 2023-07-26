@@ -1,94 +1,28 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "maven-publish"
-    id "com.github.johnrengelman.shadow"
-    id "signing"
-}
-
-kotlin {
-    jvm()
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                compileOnly kotlin('stdlib-common')
-            }
-        }
-        jvmMain {
-            dependencies {
-                compileOnly kotlin('stdlib-jdk8')
-
-                compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':platf-awt')
-                api project(':platf-jfx-swing')
-//                api project(':demo-common-util')
-//                api project(':demo-common-jfx')
-            }
-        }
-    }
-}
-
-
-def artifactBaseName = 'lets-plot-jfx'
-def artifactGroupId = project.group
-def artifactVersion = project.version
-
-//def task_group = 'lets plot'
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
-// https://discuss.kotlinlang.org/t/how-to-publish-fat-jar-from-kotlin-multi-project-mpp/14520
-// https://youtrack.jetbrains.com/issue/KT-25709
-// https://discuss.kotlinlang.org/t/kotlin-1-3-m2-new-multiplatform-projects-model/9264/107
-task jarLetsPlotJvmJfxClasses(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    configurations = [project.configurations.jvmRuntimeClasspath]
-
-    exclude '**/*.kotlin_metadata'
-    exclude '**/*.kotlin_module'
-    exclude '**/*.kotlin_builtins'
-
-    // Exclude classes that duplicates `lets-plot-common.jar`
-    // This jar should contain only packages:
-    //  - jetbrains.datalore.vis.svgMapper.jfx  (:vis-svg-mapper-jfx)
-    //  - jetbrains.datalore.vis.swing            (:vis-svg-mapper-jfx, :vis-swing-common, :vis-swing-jfx)
-    //  - jetbrains.datalore.vis.demoUtils        (:demo-common-util, :demo-common-jfx)
-    exclude 'jetbrains/datalore/base/**/*'
-    exclude 'jetbrains/datalore/mapper/**/*'
-    exclude 'jetbrains/datalore/plot/**/*'
-    exclude 'jetbrains/datalore/vis/canvas/**/*'
-    exclude 'jetbrains/datalore/vis/canvasFigure/**/*'
-    exclude 'jetbrains/datalore/vis/svg/**/*'
-    exclude 'jetbrains/datalore/vis/svgToScene/**/*'
-    exclude 'jetbrains/datalore/vis/svgToString/**/*'
-
-    // Exclude other classes: either not needed or present in `lets-plot-common.jar`
-    exclude 'com/google/**/*'
-    exclude 'kotlin/**/*'
-    exclude 'kotlinx/**/*'
-    exclude 'mu/**/*'
-    exclude 'org/intellij/lang/annotations/**/*'
-    exclude 'org/jetbrains/annotations/**/*'
-    exclude 'org/slf4j/**/*'
-    exclude 'junit/**/*'
-    exclude 'org/junit/**/*'
-    exclude 'org/hamcrest/**/*'
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "maven-publish"
+    id "signing"
 }
 
-task jarLetsPlotJvmJfxSources(type: ShadowJar) {
-    group project.letsPlotTaskGroup
-    archiveBaseName = artifactBaseName
-    archiveVersion = artifactVersion
-    classifier 'sources'
-    configurations = [rootProject.configurations.letsPlotJvmJfxSources]
-}
+kotlin.jvm()
+
+def artifactBaseName = 'lets-plot-jfx'
+def artifactGroupId = project.group
+def artifactVersion = project.version
+
+def pom_dependencies = [
+        // Lets-Plot JVM common
+        [project.group, "lets-plot-common", project.version],
+
+        // Lets-Plot core artifacts.
+        [project.group, "platf-awt-jvm", project.version],
+        [project.group, "platf-jfx-swing-jvm", project.version],
+]
 
 publishing {
     publications {
@@ -97,13 +31,11 @@ publishing {
             artifactId artifactBaseName
             version artifactVersion
 
-            artifact jarLetsPlotJvmJfxClasses
-            artifact jarLetsPlotJvmJfxSources
-            artifact rootProject.jarJavaDocs
+            artifact jvmJar
 
             pom {
                 name = "Lets-Plot for JavaFX"
-                description = "Lets-Plot JVM package with JavaFX rendering"
+                description = "Lets-Plot JVM package with Swing/JavaFX rendering"
                 url = "https://github.com/JetBrains/lets-plot"
                 licenses {
                     license {
@@ -124,21 +56,12 @@ publishing {
                 // Dependencies
                 withXml {
                     def deps = asNode().appendNode('dependencies')
-                    // Lets-Plot common
-                    def dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', artifactGroupId)
-                    dep.appendNode('artifactId', 'lets-plot-common')
-                    dep.appendNode('version', artifactVersion)
-                    // Kotlin HTML
-                    dep = deps.appendNode('dependency')
-                    dep.appendNode('groupId', 'org.jetbrains.kotlinx')
-                    dep.appendNode('artifactId', 'kotlinx-html-jvm')
-                    dep.appendNode('version', kotlinx_html_version)
-                    // Hamcrest tests
-//                    dep = deps.appendNode('dependency')
-//                    dep.appendNode('groupId', 'org.hamcrest')
-//                    dep.appendNode('artifactId', 'hamcrest-core')
-//                    dep.appendNode('version', hamcrest_version)
+                    pom_dependencies.each {
+                        def dep = deps.appendNode('dependency')
+                        dep.appendNode('groupId', it[0])
+                        dep.appendNode('artifactId', it[1])
+                        dep.appendNode('version', it[2])
+                    }
                 }
             }
         }

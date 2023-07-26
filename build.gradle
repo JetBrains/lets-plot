@@ -7,7 +7,6 @@ buildscript {
 plugins {
     id "org.jetbrains.kotlin.multiplatform" apply false
     id "org.jetbrains.kotlin.js" apply false
-    id "com.github.johnrengelman.shadow" apply false
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
@@ -15,44 +14,6 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.yaml.snakeyaml.Yaml
 
 project.ext.letsPlotTaskGroup = 'lets-plot'
-
-def include_sources_letsPlotJvmCommon = [
-        'commons',
-        'base',
-        'canvas',
-        'datamodel',
-        'plot-base',
-        'plot-builder',
-        'plot-stem',
-]
-
-def include_sources_letsPlotJvmJfx = [
-        'platf-awt',
-        'platf-jfx-swing',
-//        'demo-common',
-//        'demo-common-jfx',
-]
-
-def include_sources_letsPlotJvmBatik = [
-        'platf-awt',
-        'platf-batik',
-//        'demo-common-util',
-//        'demo-common-batik',
-]
-
-def include_sources_letsPlotGIS = [
-        'canvas',
-        'gis',
-        'livemap',
-        ':plot-livemap',
-]
-
-configurations {
-    letsPlotJvmCommonSources
-    letsPlotJvmJfxSources
-    letsPlotJvmBatikSources
-    letsPlotGISSources
-}
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
@@ -87,39 +48,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-    }
-
-    // jar jvm sources of this project
-    if (name in include_sources_letsPlotJvmCommon ||
-            name in include_sources_letsPlotJvmJfx ||
-            name in include_sources_letsPlotJvmBatik ||
-            name in include_sources_letsPlotGIS) {
-        apply plugin: "org.jetbrains.kotlin.multiplatform"
-        kotlin.jvm {}   // for `jvmSourcesJar` task
-        build.dependsOn += jvmSourcesJar
-    }
-
-    // make build configuration depend on sources jars
-    def sources_jar_path = "${buildDir}/libs/${name}-jvm-${version}-sources.jar"
-    if (name in include_sources_letsPlotJvmCommon) {
-        rootProject.dependencies {
-            letsPlotJvmCommonSources files(sources_jar_path)
-        }
-    }
-    if (name in include_sources_letsPlotJvmJfx) {
-        rootProject.dependencies {
-            letsPlotJvmJfxSources files(sources_jar_path)
-        }
-    }
-    if (name in include_sources_letsPlotJvmBatik) {
-        rootProject.dependencies {
-            letsPlotJvmBatikSources files(sources_jar_path)
-        }
-    }
-    if (name in include_sources_letsPlotGIS) {
-        rootProject.dependencies {
-            letsPlotGISSources files(sources_jar_path)
-        }
     }
 }
 
@@ -272,14 +200,24 @@ subprojects {
         }
     }
 
-    // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
+    // Configure publishing core artifacts.
     if (name in [
             'commons',
             'datamodel',
+            'canvas',
+            'gis',
+            'livemap',
             'plot-base',
             'plot-builder',
             'plot-stem',
+            'plot-livemap',
+            'platf-awt',
+            'platf-batik',
+            'platf-jfx',
     ]) {
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
+        kotlin.jvm {}   // for `jvmSourcesJar` task
+
         apply plugin: "maven-publish"
         apply plugin: "signing"
 
@@ -294,8 +232,8 @@ subprojects {
                         artifact rootProject.jarJavaDocs
 
                         pom {
-                            name = "Lets-Plot (Kotlin) internal dependency artifact"
-                            description = "The Lets-Plot Kotlin API depends on this artifact."
+                            name = "Lets-Plot core artifact"
+                            description = "A part of the Lets-Plot library."
 
                             url = "https://github.com/JetBrains/lets-plot"
                             licenses {
