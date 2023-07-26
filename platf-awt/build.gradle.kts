@@ -13,13 +13,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":plot-livemap"))
-                implementation(project(":canvas"))
-                implementation(project(":plot-base"))
-                implementation(project(":plot-builder"))
-                implementation(project(":plot-stem"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":plot-livemap"))
+                compileOnly(project(":canvas"))
+                compileOnly(project(":plot-base"))
+                compileOnly(project(":plot-builder"))
+                compileOnly(project(":plot-stem"))
             }
         }
 

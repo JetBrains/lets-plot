@@ -24,31 +24,28 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":plot-base"))
-                implementation(project(":plot-builder"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":plot-base"))
+                compileOnly(project(":plot-builder"))
             }
         }
+
         commonTest {
             dependencies {
-//                implementation kotlin('test-common')
-//                implementation kotlin('test-annotations-common')
-
                 implementation(kotlin("test"))
                 implementation(project(":demo-and-test-shared"))
             }
         }
+
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-//                implementation( project (':datamodel'))
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
+
         jvmTest {
             dependencies {
-//                implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
@@ -57,15 +54,10 @@ kotlin {
                 implementation("org.slf4j:slf4j-simple:$slf4jVersion")  // Enable logging to console
             }
         }
+
         named("jsMain") {
             dependencies {
-//                implementation kotlin('stdlib-js')
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
-            }
-        }
-        named("jsTest") {
-            dependencies {
-//                implementation kotlin('test-js')
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

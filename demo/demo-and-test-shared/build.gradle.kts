@@ -13,15 +13,30 @@ kotlin {
         browser()
     }
 
+    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation(kotlin("test"))
 
                 api(project(":commons"))
+                api(project(":datamodel"))
                 api(project(":plot-base"))
                 api(project(":plot-builder"))
                 api(project(":plot-stem"))
+            }
+        }
+
+        named("jvmMain") {
+            dependencies {
+                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

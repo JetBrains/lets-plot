@@ -11,19 +11,35 @@ kotlin {
     jvm()
     js() {
         browser {}
-        // browser {}
-        // /\
-        // ||
-        // ERROR in ./kotlin/lets-plot-livemap.js
-        // Module not found: Error: Can't resolve 'vis-canvas' in '/Users/ikupriyanov/Projects/lets-plot/build/js/packages/lets-plot-livemap/kotlin'
-        // @ ./kotlin/lets-plot-livemap.js 3:4-120
-        // @ multi ./kotlin/lets-plot-livemap.js source-map-support/browser-source-map-support.js
     }
+
+    val ktorVersion = extra["ktor_version"] as String
+    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
 
     sourceSets {
         commonMain {
             dependencies {
+                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
+
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":canvas"))
+                compileOnly(project(":gis"))
+                compileOnly(project(":livemap"))
+                compileOnly(project(":plot-base"))
+                compileOnly(project(":plot-builder"))
+                compileOnly(project(":plot-stem"))
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+
+                implementation(project(":demo-and-test-shared"))
                 implementation(project(":commons"))
+                implementation(project(":datamodel"))
                 implementation(project(":canvas"))
                 implementation(project(":gis"))
                 implementation(project(":livemap"))
@@ -32,10 +48,23 @@ kotlin {
                 implementation(project(":plot-stem"))
             }
         }
-        commonTest {
+
+        jvmMain {
             dependencies {
-                implementation(kotlin("test"))
-                implementation(project(":demo-and-test-shared"))
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+            }
+        }
+
+        jvmTest {
+            dependencies {
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

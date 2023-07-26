@@ -23,20 +23,25 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
+                compileOnly(project(":commons"))
+            }
+        }
+
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
                 implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 implementation(project(":commons"))
             }
         }
-        commonTest {
-            dependencies {
-                implementation(kotlin("test"))
-            }
-        }
+
         jvmMain {
             dependencies {
-                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-cio:$ktorVersion")
             }
         }
+
         jvmTest {
             dependencies {
                 implementation(kotlin("test-junit"))
@@ -46,9 +51,10 @@ kotlin {
                 implementation("org.assertj:assertj-core:$assertjVersion")
             }
         }
+
         named("jsMain") {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }

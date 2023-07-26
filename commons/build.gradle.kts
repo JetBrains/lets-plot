@@ -24,11 +24,6 @@ kotlin {
     }
 
     sourceSets {
-        commonMain {
-            dependencies {
-            }
-        }
-
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
@@ -37,7 +32,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 

@@ -19,6 +19,9 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":commons"))
+                implementation(project(":datamodel"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
             }
         }

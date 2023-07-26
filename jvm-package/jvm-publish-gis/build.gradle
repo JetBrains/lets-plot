@@ -34,7 +34,7 @@ def pom_dependencies = [
         [project.group, "plot-livemap-jvm", project.version],
 
         // Ktor
-        ["io.ktor", "ktor-client-websockets", ktor_version],
+        ["io.ktor", "ktor-client-websockets-jvm", ktor_version],
         ["io.ktor", "ktor-client-cio", ktor_version],
 ]
 

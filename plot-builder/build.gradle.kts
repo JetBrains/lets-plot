@@ -22,9 +22,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":plot-base"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":plot-base"))
             }
         }
         commonTest {
@@ -35,12 +35,11 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
         jvmTest {
             dependencies {
-//                implementation kotlin('test')
                 implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
@@ -50,13 +49,11 @@ kotlin {
         }
         named("jsMain") {
             dependencies {
-//                implementation kotlin('stdlib-js')
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
         named("jsTest") {
             dependencies {
-//                implementation kotlin('test-js')
             }
         }
     }

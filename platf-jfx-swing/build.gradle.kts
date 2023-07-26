@@ -16,10 +16,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":canvas"))
-                implementation(project(":plot-stem"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":canvas"))
+                compileOnly(project(":plot-stem"))
             }
         }
 
@@ -35,7 +35,7 @@ kotlin {
                 compileOnly("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
                 compileOnly("org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform")
 
-                implementation(project(":platf-awt"))
+                compileOnly(project(":platf-awt"))
             }
         }
 

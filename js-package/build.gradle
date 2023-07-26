@@ -14,8 +14,11 @@ dependencies {
     implementation project(':plot-stem')
     implementation project(':gis')
     implementation project(':plot-livemap')
-}
 
+    implementation("io.ktor:ktor-client-websockets-js:$ktor_version")
+    implementation("io.ktor:ktor-client-js:$ktor_version")
+    implementation("io.github.microutils:kotlin-logging-js:$kotlinLogging_version")
+}
 
 kotlin {
     js(LEGACY) {

@@ -22,7 +22,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
+                compileOnly(project(":commons"))
             }
         }
 
@@ -30,12 +30,14 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("io.mockk:mockk-common:$mockkVersion")
+
+                implementation(project(":commons"))
             }
         }
 
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
