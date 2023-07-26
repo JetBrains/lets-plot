@@ -13,9 +13,9 @@ class NamedSystemColors(private val themeFlavor: ThemeFlavor?) {
     fun getColor(id: String): Color? {
         val systemColor = toSystemColor(id) ?: return null
         return when (systemColor) {
-            SystemColor.PEN -> Color.PACIFIC_BLUE
+            SystemColor.PEN -> themeFlavor?.color ?: Color.BLACK
             SystemColor.PAPER -> themeFlavor?.fill ?: Color.WHITE
-            SystemColor.BRUSH -> themeFlavor?.color ?: Color.BLACK
+            SystemColor.BRUSH -> Color.PACIFIC_BLUE
         }
     }
 
