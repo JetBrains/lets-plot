@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 
 class ThemeFlavor(
-    private val fill: Color,
-    private val color: Color,
+    val fill: Color,
+    val color: Color,
     private val specialColors: Map<String, Map<String, Color>> = emptyMap(),
 ) {
     fun updateColors(options: Map<String, Any>): Map<String, Any> {
@@ -93,7 +93,7 @@ class ThemeFlavor(
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#141414")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#BBBBBB")),
-                    ),
+                    )
                 )
 
                 ThemeOption.Flavor.SOLARIZED_LIGHT -> ThemeFlavor(
@@ -105,7 +105,7 @@ class ThemeFlavor(
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#D7D4CB")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#FEFBF3")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#2E4E58")),
-                    ),
+                    )
                 )
 
                 ThemeOption.Flavor.SOLARIZED_DARK -> ThemeFlavor(
@@ -117,7 +117,7 @@ class ThemeFlavor(
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#455458")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#0B2F3A")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#A7B6BA")),
-                    ),
+                    )
                 )
 
                 ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeFlavor(
@@ -129,7 +129,7 @@ class ThemeFlavor(
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#E9E9E9")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to Color.WHITE),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.BLACK),
-                    ),
+                    )
                 )
 
                 ThemeOption.Flavor.HIGH_CONTRAST_DARK -> ThemeFlavor(
@@ -141,7 +141,7 @@ class ThemeFlavor(
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#460073")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.WHITE),
-                    ),
+                    )
                 )
 
                 else -> throw IllegalArgumentException("Unsupported theme flavor: '$flavor'")
