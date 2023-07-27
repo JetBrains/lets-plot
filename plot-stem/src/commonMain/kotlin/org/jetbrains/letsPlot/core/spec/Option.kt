@@ -431,6 +431,10 @@ object Option {
             const val LINE_QUANTILES = "quantiles"
         }
 
+        object ECDF {
+            const val N = "n"
+        }
+
         object Summary {
             const val QUANTILES = "quantiles"
             const val FUN = "fun"

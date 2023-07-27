@@ -12,6 +12,7 @@ class ECDF {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            withInterpolation(),
         )
     }
 
@@ -29,6 +30,32 @@ class ECDF {
                 {
                   'geom': 'step',
                   'stat': 'ecdf'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun withInterpolation(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'sepal length (cm)'
+              },
+              'ggtitle': {
+                'text': 'Interpolation'
+              },
+              'layers': [
+                {
+                  'geom': 'step',
+                  'stat': 'ecdf',
+                  'n': 10
                 }
               ]
             }
