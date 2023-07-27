@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.UniformDistribution
 
 class ECDFStat : BaseStat(DEF_MAPPING) {
 
@@ -22,26 +21,16 @@ class ECDFStat : BaseStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.X))
+        val xs = data.getNumeric(TransformVar.X)
+        val xValues = xs.filter { it?.isFinite() ?: false }.map { it!! }
+        val ecdf: (Double) -> Double = { t -> xValues.count { x -> x <= t }.toDouble() / xValues.size }
+        val statX = xValues.distinct()
+        val statY = statX.map { ecdf(it) }
 
         return DataFrame.Builder()
-            .putNumeric(Stats.X, statData.getValue(Stats.X))
-            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
+            .putNumeric(Stats.X, statX)
+            .putNumeric(Stats.Y, statY)
             .build()
-    }
-
-    private fun buildStat(
-        xs: List<Double?>
-    ): MutableMap<DataFrame.Variable, List<Double>> {
-        val statX = xs.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
-        val t = (1..statX.size).map { (it - 0.5) / statX.size }
-        val dist = UniformDistribution(0.0, 1.0)
-        val statY = t.map { dist.inverseCumulativeProbability(it) }
-
-        return mutableMapOf(
-            Stats.X to statX,
-            Stats.Y to statY
-        )
     }
 
     companion object {
