@@ -13,6 +13,7 @@ class ECDF {
         return listOf(
             basic(),
             withInterpolation(),
+            withGrouping()
         )
     }
 
@@ -29,7 +30,8 @@ class ECDF {
               'layers': [
                 {
                   'geom': 'step',
-                  'stat': 'ecdf'
+                  'stat': 'ecdf',
+                  'pad': true
                 }
               ]
             }
@@ -55,7 +57,36 @@ class ECDF {
                 {
                   'geom': 'step',
                   'stat': 'ecdf',
-                  'n': 10
+                  'n': 10,
+                  'pad': true,
+                  'direction': 'vh'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun withGrouping(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'sepal length (cm)',
+                'color': 'target'
+              },
+              'ggtitle': {
+                'text': 'With additional grouping'
+              },
+              'layers': [
+                {
+                  'geom': 'step',
+                  'stat': 'ecdf',
+                  'pad': true
                 }
               ]
             }

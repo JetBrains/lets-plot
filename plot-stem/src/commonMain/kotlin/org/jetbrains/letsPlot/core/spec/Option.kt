@@ -242,6 +242,7 @@ object Option {
 
         object Step {
             const val DIRECTION = "direction"
+            const val PADDED = "pad"
         }
 
         object Segment {
