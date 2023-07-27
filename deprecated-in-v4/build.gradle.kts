@@ -34,6 +34,11 @@ kotlin {
         jvmMain {
             dependencies {
                 compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
+                compileOnly(project(":platf-awt"))
+                compileOnly(project(":platf-jfx-swing"))
+                compileOnly(project(":platf-batik"))
+                compileOnly(project(":plot-image-export"))
             }
         }
 

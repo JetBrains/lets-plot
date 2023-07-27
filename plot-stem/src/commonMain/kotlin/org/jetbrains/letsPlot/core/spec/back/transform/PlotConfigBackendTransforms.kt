@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesTo
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.CorrPlotSpecChange
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.QQPlotSpecChange
 
-object PlotConfigServerSideTransforms {
+object PlotConfigBackendTransforms {
     fun migrationTransform(): PlotSpecTransform {
         // ToDo: remove after all input is updated (demo, test, sci ide)
         return PlotSpecTransform.builderForRawSpec()

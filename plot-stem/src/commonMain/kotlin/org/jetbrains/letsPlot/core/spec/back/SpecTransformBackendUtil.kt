@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
-import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigServerSideTransforms
+import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 
 
@@ -130,9 +130,9 @@ object SpecTransformBackendUtil {
         // testing of error handling
 //            throwTestingException(plotSpecRaw)
 
-        var plotSpec = PlotConfigServerSideTransforms.migrationTransform().apply(plotSpecRaw)
-        plotSpec = PlotConfigServerSideTransforms.bistroTransform().apply(plotSpec)
-        plotSpec = PlotConfigServerSideTransforms.entryTransform().apply(plotSpec)
+        var plotSpec = PlotConfigBackendTransforms.migrationTransform().apply(plotSpecRaw)
+        plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
+        plotSpec = PlotConfigBackendTransforms.entryTransform().apply(plotSpec)
         val plotConfig = PlotConfigBackend(plotSpec)
         plotConfig.updatePlotSpec()
         return Pair(plotSpec, plotConfig)
