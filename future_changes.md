@@ -42,6 +42,12 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
 
 
+- New named system colors: "pen", "paper", "brush".
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
+
+
+
 ### Changed
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
