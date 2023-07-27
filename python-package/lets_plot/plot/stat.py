@@ -5,10 +5,10 @@ from .geom import _geom
 #
 # Stats - functions, drawing attention to the statistical transformation rather than the visual appearance.
 #
-__all__ = ['stat_summary', 'stat_summary_bin']
+__all__ = ['stat_summary', 'stat_summary_bin', 'stat_ecdf']
 
 
-def stat_summary(mapping=None, *, data=None, geom='pointrange',
+def stat_summary(mapping=None, *, data=None, geom=None,
                  position=None, show_legend=None, sampling=None, tooltips=None,
                  orientation=None,
                  fun=None, fun_min=None, fun_max=None,
@@ -152,7 +152,8 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
                          position=position_nudge(x=.1), color="blue")
 
     """
-    return _geom(geom,
+    summary_geom = geom if geom is not None else 'pointrange'
+    return _geom(summary_geom,
                  mapping=mapping,
                  data=data,
                  stat='summary',
@@ -167,7 +168,7 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
                  **other_args)
 
 
-def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
+def stat_summary_bin(mapping=None, *, data=None, geom=None,
                      position=None, show_legend=None, sampling=None, tooltips=None,
                      orientation=None,
                      fun=None, fun_min=None, fun_max=None,
@@ -325,7 +326,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
             geom_point()
 
     """
-    return _geom(geom,
+    summary_bin_geom = geom if geom is not None else 'pointrange'
+    return _geom(summary_bin_geom,
                  mapping=mapping,
                  data=data,
                  stat='summarybin',
@@ -339,4 +341,27 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
                  bins=bins, binwidth=binwidth,
                  center=center, boundary=boundary,
                  color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def stat_ecdf(mapping=None, *, data=None, geom=None,
+              position=None, show_legend=None, sampling=None, tooltips=None,
+              orientation=None,
+              n=None, pad=None,
+              color_by=None,
+              **other_args):
+    ecdf_geom = geom if geom is not None else 'step'
+    ecdf_pad = pad if pad is not None else True
+    return _geom(ecdf_geom,
+                 mapping=mapping,
+                 data=data,
+                 stat='ecdf',
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
+                 n=n,
+                 pad=ecdf_pad,
+                 color_by=color_by,
                  **other_args)
