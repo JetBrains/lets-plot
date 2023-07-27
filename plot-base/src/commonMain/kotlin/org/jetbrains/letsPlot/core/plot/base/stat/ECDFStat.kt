@@ -23,10 +23,23 @@ class ECDFStat(
             return withEmptyStatValues()
         }
 
-        val xs = data.getNumeric(TransformVar.X)
+        val statData = buildStat(data.getNumeric(TransformVar.X))
+
+        return DataFrame.Builder()
+            .putNumeric(Stats.X, statData.getValue(Stats.X))
+            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
+            .build()
+    }
+
+    private fun buildStat(
+        xs: List<Double?>
+    ): Map<DataFrame.Variable, List<Double>> {
         val xValues = xs.filter { it?.isFinite() ?: false }.map { it!! }
         if (xValues.isEmpty()) {
-            return withEmptyStatValues()
+            return mapOf(
+                Stats.X to emptyList(),
+                Stats.Y to emptyList(),
+            )
         }
 
         val ecdf: (Double) -> Double = { t -> xValues.count { x -> x <= t }.toDouble() / xValues.size }
@@ -37,10 +50,10 @@ class ECDFStat(
         }
         val statY = statX.map { ecdf(it) }
 
-        return DataFrame.Builder()
-            .putNumeric(Stats.X, statX)
-            .putNumeric(Stats.Y, statY)
-            .build()
+        return mapOf(
+            Stats.X to statX,
+            Stats.Y to statY,
+        )
     }
 
     private fun linspace(start: Double, stop: Double, num: Int): List<Double> {
