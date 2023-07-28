@@ -1,6 +1,7 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from .geom import _geom
+from .scale_convenience import xlim, ylim
 
 #
 # Stats - functions, drawing attention to the statistical transformation rather than the visual appearance.
@@ -352,6 +353,10 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
               **other_args):
     ecdf_geom = geom if geom is not None else 'step'
     ecdf_pad = pad if pad is not None else True
+    if orientation == 'y':
+        limits_spec = xlim(0, 1)
+    else:
+        limits_spec = ylim(0, 1)
     return _geom(ecdf_geom,
                  mapping=mapping,
                  data=data,
@@ -364,4 +369,5 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  n=n,
                  pad=ecdf_pad,
                  color_by=color_by,
-                 **other_args)
+                 **other_args) + \
+        limits_spec
