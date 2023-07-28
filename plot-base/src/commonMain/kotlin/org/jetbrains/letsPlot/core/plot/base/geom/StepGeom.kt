@@ -55,40 +55,46 @@ class StepGeom : LineGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ): List<SvgLineElement> {
-        val pads: MutableList<SvgLineElement> = mutableListOf()
-
-        val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
         val viewPort = overallAesBounds(ctx)
+        val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
+        helper.setStrokeAlphaEnabled(true)
+
         val definedPoints = GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y)
         if (!definedPoints.any()) {
-            return pads
+            return emptyList()
         }
 
-        val startPoint = definedPoints.first()
-        val startX = startPoint.x()!!
-        val startY = startPoint.y()!!
-        val endPoint = definedPoints.last()
-        val endX = endPoint.x()!!
-        val endY = endPoint.y()!!
+        val firstPoint = definedPoints.first()
+        val firstX = firstPoint.x()!!
+        val firstY = firstPoint.y()!!
+        val lastPoint = definedPoints.last()
+        val lastX = lastPoint.x()!!
+        val lastY = lastPoint.y()!!
 
-        if (startY < 0 || endY > 1) {
-            return pads
+        if (firstY < 0 || lastY > 1) {
+            return emptyList()
         }
 
+        val pads: MutableList<SvgLineElement> = mutableListOf()
         helper.createLine(
             DoubleVector(viewPort.left, 0.0),
-            DoubleVector(startX, 0.0),
-            startPoint
+            DoubleVector(firstX, 0.0),
+            firstPoint
         )?.let { pads.add(it) }
         helper.createLine(
-            DoubleVector(startX, 0.0),
-            DoubleVector(startX, startY),
-            startPoint
+            DoubleVector(firstX, 0.0),
+            DoubleVector(firstX, firstY),
+            firstPoint
         )?.let { pads.add(it) }
         helper.createLine(
-            DoubleVector(endX, 1.0),
+            DoubleVector(lastX, lastY),
+            DoubleVector(lastX, 1.0),
+            lastPoint
+        )?.let { pads.add(it) }
+        helper.createLine(
+            DoubleVector(lastX, 1.0),
             DoubleVector(viewPort.right, 1.0),
-            endPoint
+            lastPoint
         )?.let { pads.add(it) }
 
         return pads
