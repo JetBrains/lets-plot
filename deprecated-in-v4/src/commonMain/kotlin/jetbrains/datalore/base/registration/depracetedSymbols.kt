@@ -7,6 +7,18 @@ package jetbrains.datalore.base.registration
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.commons.registration\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.registration.Registration"), level = DeprecationLevel.WARNING
+)
+typealias Registration = org.jetbrains.letsPlot.commons.registration.Registration
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.registration\"",
     ReplaceWith("org.jetbrains.letsPlot.commons.registration.Disposable"), level = DeprecationLevel.WARNING
 )
 typealias Disposable = org.jetbrains.letsPlot.commons.registration.Disposable
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.registration\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.registration.DisposingHub"), level = DeprecationLevel.WARNING
+)
+typealias DisposingHub = org.jetbrains.letsPlot.commons.registration.DisposingHub

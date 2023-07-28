@@ -10,3 +10,15 @@ package jetbrains.datalore.base.geometry
     ReplaceWith("org.jetbrains.letsPlot.commons.geometry.DoubleVector"), level = DeprecationLevel.WARNING
 )
 typealias DoubleVector = org.jetbrains.letsPlot.commons.geometry.DoubleVector
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.geometry\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.geometry.DoubleRectangle"), level = DeprecationLevel.WARNING
+)
+typealias DoubleRectangle = org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.geometry\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.geometry.Vector"), level = DeprecationLevel.WARNING
+)
+typealias Vector = org.jetbrains.letsPlot.commons.geometry.Vector

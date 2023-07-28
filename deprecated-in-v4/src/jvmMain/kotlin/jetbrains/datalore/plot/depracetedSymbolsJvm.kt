@@ -23,3 +23,9 @@ typealias PlotSvgExport = org.jetbrains.letsPlot.awt.plot.PlotSvgExport
 )
 typealias MonolithicAwt = org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.awt.plot\"",
+    ReplaceWith("org.jetbrains.letsPlot.awt.plot.DisposableJPanel"), level = DeprecationLevel.WARNING
+)
+typealias DisposableJPanel = org.jetbrains.letsPlot.awt.plot.DisposableJPanel
+

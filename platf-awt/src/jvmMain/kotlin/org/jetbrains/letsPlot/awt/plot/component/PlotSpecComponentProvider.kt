@@ -5,19 +5,15 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.spec.FigKind
-import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
-import org.jetbrains.letsPlot.core.util.PlotSizeHelper
+import org.jetbrains.letsPlot.core.util.PlotSizeUtil.preferredFigureSize
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JScrollPane
-import kotlin.math.ceil
-import kotlin.math.floor
 
 abstract class PlotSpecComponentProvider(
     private val processedSpec: MutableMap<String, Any>,
@@ -28,7 +24,13 @@ abstract class PlotSpecComponentProvider(
 ) : PlotComponentProvider {
 
     override fun getPreferredSize(containerSize: Dimension): Dimension {
-        return preferredFigureSize(processedSpec, preserveAspectRatio, containerSize)
+        val outerSize = DoubleVector(containerSize.width.toDouble(), containerSize.height.toDouble())
+        return preferredFigureSize(processedSpec, preserveAspectRatio, outerSize).let {
+            Dimension(
+                it.x.toInt(),
+                it.y.toInt()
+            )
+        }
     }
 
     override fun createComponent(containerSize: Dimension?): JComponent {
@@ -77,82 +79,6 @@ abstract class PlotSpecComponentProvider(
                 executor = executor,
                 computationMessagesHandler = computationMessagesHandler
             )
-        }
-
-        private fun preferredFigureSize(
-            figureSpec: Map<String, Any>,
-            preserveAspectRatio: Boolean,
-            containerSize: Dimension
-        ): Dimension {
-
-            if (PlotConfig.isFailure(figureSpec)) {
-                // just keep given size
-                return containerSize
-            }
-
-            return when (PlotConfig.figSpecKind(figureSpec)) {
-
-                FigKind.GG_BUNCH_SPEC -> {
-                    // Don't scale GGBunch.
-                    val bunchSize = PlotSizeHelper.plotBunchSize(figureSpec)
-                    Dimension(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
-                }
-
-                FigKind.SUBPLOTS_SPEC -> {
-                    // Subplots figure has flexible size.
-                    if (!preserveAspectRatio) {
-                        return containerSize
-                    }
-
-                    val compositeFigureConfig = CompositeFigureConfig(figureSpec) {
-                        // ignore message when computing a figure size.
-                    }
-
-                    val defaultSize = PlotSizeHelper.compositeFigureSize(
-                        compositeFigureConfig,
-                        plotSize = null,
-                        plotMaxWidth = null,
-                        plotPreferredWidth = null,
-                    )
-                    fitPlotInContainer(plotSize = defaultSize, containerSize)
-                }
-
-                FigKind.PLOT_SPEC -> {
-                    // Singe plot has flexible size.
-                    if (!preserveAspectRatio) {
-                        return containerSize
-                    }
-
-                    val config = PlotConfigFrontend.create(figureSpec) { /*ignore messages*/ }
-                    val defaultSize = PlotSizeHelper.singlePlotSize(
-                        figureSpec,
-                        plotSize = null,
-                        plotMaxWidth = null,
-                        plotPreferredWidth = null,
-                        config.facets,
-                        config.containsLiveMap
-                    )
-
-                    fitPlotInContainer(plotSize = defaultSize, containerSize)
-                }
-            }
-        }
-
-        private fun fitPlotInContainer(plotSize: DoubleVector, containerSize: Dimension): Dimension {
-            val aspectRatio = plotSize.x / plotSize.y
-
-            val width = containerSize.width
-            val height = containerSize.height
-
-            return if (aspectRatio >= 1.0) {
-                val plotHeight = width / aspectRatio
-                val scaling = if (plotHeight > height) height / plotHeight else 1.0
-                Dimension(floor(width * scaling).toInt(), floor(plotHeight * scaling).toInt())
-            } else {
-                val plotWidth = height * aspectRatio
-                val scaling = if (plotWidth > width) width / plotWidth else 1.0
-                Dimension(floor(plotWidth * scaling).toInt(), floor(height * scaling).toInt())
-            }
         }
     }
 }
