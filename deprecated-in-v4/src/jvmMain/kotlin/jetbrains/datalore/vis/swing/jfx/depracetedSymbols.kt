@@ -10,3 +10,10 @@ package jetbrains.datalore.vis.swing.jfx
     ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx"), level = DeprecationLevel.WARNING
 )
 typealias PlotViewerWindowJfx = org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.jfx.plot.component\"",
+    ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx"), level = DeprecationLevel.WARNING
+)
+typealias DefaultPlotPanelJfx = org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx
+
