@@ -351,6 +351,116 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
               n=None, pad=None,
               color_by=None,
               **other_args):
+    """
+    Visualise the empirical cumulative distribution function.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    geom : str, default='step'
+        The geometry to display the ecdf stat for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    orientation : str, default='x'
+        Specify the axis that the layer's stat and geom should run along.
+        Possible values: 'x', 'y'.
+    n : int
+        If None, do not interpolate.
+        If not None, this is the number of points to interpolate with.
+    pad : bool, default=True
+        If geometry is `'step'` and `pad=True`, then the points at the ends:
+        (-inf, 0) and (inf, 1) are added to the ecdf.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `stat_ecdf()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+
+    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        ggplot({'x': x}, aes(x='x')) + stat_ecdf()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14-15
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.concatenate([
+            np.random.normal(size=n),
+            np.random.uniform(size=n),
+            np.random.poisson(size=n),
+        ])
+        g = ["A"] * n + ["B"] * n + ["C"] * n
+        p = ggplot({'x': x, 'g': g}, aes(x='x', color='g'))
+        gggrid([
+            p + stat_ecdf() + ggtitle("pad=True (default)"),
+            p + stat_ecdf(pad=False) + ggtitle("pad=False")
+        ])
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8-9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 500
+        np.random.seed(42)
+        x = np.random.normal(size=n)
+        ggplot() + \\
+            stat_ecdf(aes(x=x), geom='point', n=20, \\
+                      shape=21, color="#f03b20", fill="#ffeda0")
+
+    """
     ecdf_geom = geom if geom is not None else 'step'
     ecdf_pad = pad if pad is not None else True
     if orientation == 'y':
