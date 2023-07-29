@@ -22,3 +22,15 @@ typealias Disposable = org.jetbrains.letsPlot.commons.registration.Disposable
     ReplaceWith("org.jetbrains.letsPlot.commons.registration.DisposingHub"), level = DeprecationLevel.WARNING
 )
 typealias DisposingHub = org.jetbrains.letsPlot.commons.registration.DisposingHub
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.registration\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.registration.CompositeRegistration"), level = DeprecationLevel.WARNING
+)
+typealias CompositeRegistration = org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.registration\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.registration.DisposableRegistration"), level = DeprecationLevel.WARNING
+)
+typealias DisposableRegistration = org.jetbrains.letsPlot.commons.registration.DisposableRegistration

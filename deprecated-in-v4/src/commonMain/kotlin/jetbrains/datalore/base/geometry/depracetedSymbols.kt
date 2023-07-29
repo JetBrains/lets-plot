@@ -22,3 +22,9 @@ typealias DoubleRectangle = org.jetbrains.letsPlot.commons.geometry.DoubleRectan
     ReplaceWith("org.jetbrains.letsPlot.commons.geometry.Vector"), level = DeprecationLevel.WARNING
 )
 typealias Vector = org.jetbrains.letsPlot.commons.geometry.Vector
+
+@Deprecated(
+    "Moved to package \"org.jetbrains.letsPlot.commons.geometry\"",
+    ReplaceWith("org.jetbrains.letsPlot.commons.geometry.Rectangle"), level = DeprecationLevel.WARNING
+)
+typealias Rectangle = org.jetbrains.letsPlot.commons.geometry.Rectangle
