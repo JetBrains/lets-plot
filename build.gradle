@@ -150,10 +150,10 @@ task jarJavaDocs(type: Jar) {
 }
 
 // Publish some sub-projects as Kotlin Multiproject libraries.
-task publishKotlinApiDependenciesToMavenLocalRepository {
+task publishLetsPlotCoreModulesToMavenLocalRepository {
     group project.letsPlotTaskGroup
 }
-task publishKotlinApiDependenciesToMavenRepository {
+task publishLetsPlotCoreModulesToMavenRepository {
     group project.letsPlotTaskGroup
 }
 
@@ -281,9 +281,9 @@ subprojects {
                 if (task.getPublication().name in publications_to_publish) {
                     def repoName = task.repository.name
                     if (repoName == "MavenLocal") {
-                        publishKotlinApiDependenciesToMavenLocalRepository.dependsOn += task
+                        publishLetsPlotCoreModulesToMavenLocalRepository.dependsOn += task
                     } else if (repoName == "maven") {
-                        publishKotlinApiDependenciesToMavenRepository.dependsOn += task
+                        publishLetsPlotCoreModulesToMavenRepository.dependsOn += task
                         publications_to_sign += task.getPublication()
                     } else {
                         throw new IllegalStateException("Repository expected: 'MavenLocal' or 'maven' but was: '$repoName'.")

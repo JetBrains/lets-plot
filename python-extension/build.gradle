@@ -12,6 +12,9 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
+//    // Enable the default target hierarchy:
+//    targetHierarchy.default()
+
     if (project.buildSettings.build_python_extension) {
 
         def target
