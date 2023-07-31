@@ -6,13 +6,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
     implementation project(':commons')
-    implementation project(':platf-w3c')
     implementation project(':datamodel')
     implementation project(':canvas')
     implementation project(':plot-base')
     implementation project(':plot-builder')
     implementation project(':plot-stem')
+    implementation project(':platf-w3c')
     implementation project(':gis')
+    implementation(project(":livemap"))
     implementation project(':plot-livemap')
 
     implementation("io.ktor:ktor-client-websockets-js:$ktor_version")
