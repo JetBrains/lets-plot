@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
@@ -14,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
-class StepGeom : LineGeom() {
+class StepGeom : LineGeom(), WithHeight {
     private var myDirection = DEF_DIRECTION
     var padded = DEF_PADDED
 
@@ -98,6 +99,19 @@ class StepGeom : LineGeom() {
         )?.let { pads.add(it) }
 
         return pads
+    }
+
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return when {
+            padded -> DoubleSpan(0.0, 1.0)
+            p.x()?.isFinite() == true && p.y()?.isFinite() == true -> DoubleSpan(p.y()!!, p.y()!!)
+            else -> DoubleSpan(-0.5, 0.5)
+        }
     }
 
     enum class Direction {
