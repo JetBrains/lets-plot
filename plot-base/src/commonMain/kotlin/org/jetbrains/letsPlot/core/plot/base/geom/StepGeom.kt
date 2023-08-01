@@ -76,29 +76,28 @@ class StepGeom : LineGeom(), WithHeight {
             return emptyList()
         }
 
-        val pads: MutableList<SvgLineElement> = mutableListOf()
-        helper.createLine(
-            DoubleVector(viewPort.left, 0.0),
-            DoubleVector(firstX, 0.0),
-            firstPoint
-        )?.let { pads.add(it) }
-        helper.createLine(
-            DoubleVector(firstX, 0.0),
-            DoubleVector(firstX, firstY),
-            firstPoint
-        )?.let { pads.add(it) }
-        helper.createLine(
-            DoubleVector(lastX, lastY),
-            DoubleVector(lastX, 1.0),
-            lastPoint
-        )?.let { pads.add(it) }
-        helper.createLine(
-            DoubleVector(lastX, 1.0),
-            DoubleVector(viewPort.right, 1.0),
-            lastPoint
-        )?.let { pads.add(it) }
-
-        return pads
+        return listOfNotNull(
+            helper.createLine(
+                DoubleVector(viewPort.left, 0.0),
+                DoubleVector(firstX, 0.0),
+                firstPoint
+            ),
+            helper.createLine(
+                DoubleVector(firstX, 0.0),
+                DoubleVector(firstX, firstY),
+                firstPoint
+            ),
+            helper.createLine(
+                DoubleVector(lastX, lastY),
+                DoubleVector(lastX, 1.0),
+                lastPoint
+            ),
+            helper.createLine(
+                DoubleVector(lastX, 1.0),
+                DoubleVector(viewPort.right, 1.0),
+                lastPoint
+            )
+        )
     }
 
     override fun heightSpan(
