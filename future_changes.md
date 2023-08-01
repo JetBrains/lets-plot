@@ -47,6 +47,10 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
 
 
+- New theme: `theme_void()` [[#830](https://github.com/JetBrains/lets-plot/issues/830)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/theme_void.ipynb)
+
 
 ### Changed
 
