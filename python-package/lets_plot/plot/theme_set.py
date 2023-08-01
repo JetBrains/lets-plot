@@ -12,6 +12,7 @@ __all__ = [
     'theme_minimal2',
     'theme_none',
     'theme_bw',
+    'theme_void',
     'flavor_darcula',
     'flavor_solarized_light',
     'flavor_solarized_dark',
@@ -207,6 +208,34 @@ def theme_bw():
 
     """
     return FeatureSpec('theme', name="bw")
+
+
+def theme_void():
+    """
+    A completely empty theme.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Theme specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme_void()
+
+    """
+    blank_elems = {'line': 'blank', 'rect': 'blank', 'axis': 'blank'}
+    return theme_classic() + FeatureSpec('theme', name=None, **blank_elems)
 
 
 def flavor_darcula():
