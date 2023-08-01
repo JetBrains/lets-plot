@@ -15,23 +15,27 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                implementation(project(":plot-stem"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+                compileOnly(project(":plot-stem"))
             }
         }
 
         commonTest {
             dependencies {
+                implementation(project(":commons"))
+                implementation(project(":datamodel"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
+                implementation(project(":plot-stem"))
                 implementation(project(":demo-and-test-shared"))
             }
         }
 
         jvmMain {
             dependencies {
-                implementation(project(":platf-awt"))
-
-                api("org.apache.xmlgraphics:batik-codec:$batikVersion")
+                compileOnly(project(":platf-awt"))
+                compileOnly("org.apache.xmlgraphics:batik-codec:$batikVersion")
             }
         }
 
@@ -39,6 +43,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
+                implementation("org.apache.xmlgraphics:batik-codec:$batikVersion")
+                implementation(project(":platf-awt"))
             }
         }
     }

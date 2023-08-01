@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.encoding
 
+// ToDo: replace with kotlin.io.encoding.Base64
 object Base64 {
     private const val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
     private const val padChar = '='
@@ -21,8 +22,8 @@ object Base64 {
             .forEach { block ->
                 val word =
                     (block.getOrElse(0) { 0 } shl 16) or
-                    (block.getOrElse(1) { 0 } shl 8) or
-                    (block.getOrElse(2) { 0 })
+                            (block.getOrElse(1) { 0 } shl 8) or
+                            (block.getOrElse(2) { 0 })
 
                 val c1 = alphabet[word ushr 18 and 0b111111]
                 val c2 = alphabet[word ushr 12 and 0b111111]
@@ -35,14 +36,14 @@ object Base64 {
                     1 -> result.append(c1, c2, padChar, padChar)
                     else -> Unit
                 }
-        }
+            }
 
         return result.toString()
     }
 
     fun decode(data: String): ByteArray {
         @Suppress("NAME_SHADOWING")
-        val data = data.filter {  it in validSymbols }
+        val data = data.filter { it in validSymbols }
 
         require(data.length % 4 == 0) { "Invalid string length: ${data.length}" }
 
@@ -53,9 +54,9 @@ object Base64 {
             .forEach { block ->
                 val word =
                     (block[0].alphabetToByte() shl 18) or
-                    (block[1].alphabetToByte() shl 12) or
-                    (block[2].alphabetToByte() shl 6) or
-                    (block[3].alphabetToByte())
+                            (block[1].alphabetToByte() shl 12) or
+                            (block[2].alphabetToByte() shl 6) or
+                            (block[3].alphabetToByte())
 
                 val b1 = (word ushr 16).toByte()
                 val b2 = (word ushr 8).toByte()

@@ -17,10 +17,10 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
-                
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
+
+                compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }
     }

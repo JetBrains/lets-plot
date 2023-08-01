@@ -7,7 +7,7 @@ from ..plot.geom import *
 from ..plot.marginal_layer import ggmarginal
 
 _BINS_DEF = 30
-_COLOR_DEF = "#118ed8"
+_COLOR_DEF = "pen"
 
 _MARGINAL_ALPHA = .1
 

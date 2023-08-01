@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.conversion
 
+import org.jetbrains.letsPlot.commons.intern.function.Function
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
 object AesOptionConversion {
@@ -33,5 +35,14 @@ object AesOptionConversion {
      */
     fun has(aes: Aes<*>): Boolean {
         return CONVERTERS_MAP.containsKey(aes)
+    }
+
+    fun updateWith(converter: Function<Any?, Color?>) {
+        val cnv = { o: Any? -> converter.apply(o) }
+        CONVERTERS_MAP.put(Aes.COLOR, cnv)
+        CONVERTERS_MAP.put(Aes.FILL, cnv)
+        CONVERTERS_MAP.put(Aes.PAINT_A, cnv)
+        CONVERTERS_MAP.put(Aes.PAINT_B, cnv)
+        CONVERTERS_MAP.put(Aes.PAINT_C, cnv)
     }
 }

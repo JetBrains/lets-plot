@@ -10,7 +10,6 @@ pluginManagement {
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("js").version(kotlinVersion)
 
-        id("com.github.johnrengelman.shadow").version("5.1.0")
         id("io.codearte.nexus-staging").version("0.30.0")
     }
 }
@@ -32,13 +31,18 @@ include("platf-batik")
 include("platf-jfx-swing")
 include("platf-native")
 include("plot-image-export")
+
+include("deprecated-in-v4")
+
 include("python-extension")
 include("python-package-build")
+
 include("js-package")
 include("jvm-package:jvm-publish-common")
 include("jvm-package:jvm-publish-jfx")
 include("jvm-package:jvm-publish-batik")
 include("jvm-package:jvm-publish-gis")
+
 
 include("demo-and-test-shared")
 include("demo-common-util")

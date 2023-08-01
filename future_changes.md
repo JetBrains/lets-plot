@@ -1,4 +1,4 @@
-## [3.2.1] - 2023-mm-dd
+## [4.0.0] - 2023-mm-dd
 
 ### Added
 
@@ -45,6 +45,12 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
   The `stroke_color` parameter is no longer supported.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
+
+
+- New named system colors: "pen", "paper", "brush".
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
+
 
 
 ### Changed

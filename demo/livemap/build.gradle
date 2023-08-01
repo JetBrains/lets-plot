@@ -100,6 +100,8 @@ kotlin {
             dependencies {
                 implementation project(':demo-common-batik')
                 implementation project(':platf-batik')
+
+                implementation("org.apache.xmlgraphics:batik-codec:$batik_version")
             }
         }
 

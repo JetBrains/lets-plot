@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.gis.common.testUtils.HexParser.parseHex
 import org.jetbrains.letsPlot.gis.common.twkb.Twkb
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,8 +17,8 @@ class ParserTest {
     private fun p(x: Double, y: Double): Vec<Untyped> {
         return explicitVec(x, y)
     }
-    
-    private fun <T> optionalListOf (vararg elements: T): List<T>? {
+
+    private fun <T> optionalListOf(vararg elements: T): List<T>? {
         return if (elements.isNotEmpty()) elements.asList() else emptyList()
     }
 

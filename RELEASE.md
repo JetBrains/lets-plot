@@ -130,7 +130,7 @@ Publish JVM artifacts from one of build machines:
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
-          publishKotlinApiDependenciesToMavenRepository
+          publishLetsPlotCoreModulesToMavenRepository
 ```
 
 Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories

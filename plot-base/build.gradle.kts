@@ -23,8 +23,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project(":commons"))
-                implementation(project(":datamodel"))
+                compileOnly(project(":commons"))
+                compileOnly(project(":datamodel"))
             }
         }
         commonTest {
@@ -36,7 +36,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -51,7 +51,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

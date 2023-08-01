@@ -76,7 +76,7 @@ jvmJar {
 
     // Add LICENSE file to the META-INF folder inside published JAR files.
     metaInf {
-        from("$rootDir"){
+        from("$rootDir") {
             include "LICENSE"
         }
     }
@@ -132,6 +132,12 @@ publishing {
                     dep.appendNode('groupId', tiffioGroupId)
                     dep.appendNode('artifactId', tiffioArtifact)
                     dep.appendNode('version', tiffioVersion)
+
+                    // Lets-Plot core 'platf-awt' dependency
+                    dep = deps.appendNode('dependency')
+                    dep.appendNode('groupId', project.group)
+                    dep.appendNode('artifactId', "platf-awt")
+                    dep.appendNode('version', project.version)
                 }
             }
         }

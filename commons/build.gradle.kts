@@ -24,11 +24,6 @@ kotlin {
     }
 
     sourceSets {
-        commonMain {
-            dependencies {
-            }
-        }
-
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
@@ -37,14 +32,12 @@ kotlin {
 
         jvmMain {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
         jvmTest {
             dependencies {
-////                implementation kotlin('test')
-//                implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")

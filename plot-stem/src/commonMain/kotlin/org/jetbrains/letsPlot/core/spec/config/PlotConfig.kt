@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.spec.*
@@ -27,6 +28,9 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
+import org.jetbrains.letsPlot.core.spec.conversion.NamedSystemColorOptionConverter
+import org.jetbrains.letsPlot.core.spec.conversion.NamedSystemColors
 
 abstract class PlotConfig(
     opts: Map<String, Any>,
@@ -56,6 +60,11 @@ abstract class PlotConfig(
 
     init {
         sharedData = ConfigUtil.createDataFrame(get(DATA))
+
+        // update the color option converter with system named colors including flavors
+        val flavorTheme = getMap(Option.Plot.THEME).getString(Option.Theme.FLAVOR)?.let(ThemeFlavor.Companion::forName)
+        val colorConverter = NamedSystemColorOptionConverter(NamedSystemColors(flavorTheme))
+        AesOptionConversion.updateWith(colorConverter)
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
 

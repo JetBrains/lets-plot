@@ -28,6 +28,8 @@ kotlin {
                 implementation project(':platf-awt')
                 implementation project(':platf-batik')
                 implementation project(':demo-common-util')
+
+                implementation("org.apache.xmlgraphics:batik-codec:$batik_version")
             }
         }
     }

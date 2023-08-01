@@ -116,7 +116,7 @@ internal class TypedOptionConverterMap {
         this.put(EXPLODE, DOUBLE_CVT)
     }
 
-    private fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {
+    internal fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {
         myMap[aes] = value
     }
 
