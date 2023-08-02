@@ -93,7 +93,7 @@ class JupyterNotebookContext(FrontendContext):
 
     @staticmethod
     def _configure_embedded_script(verbose: bool) -> str:
-        js_name = "lets-plot-latest.min.js"
+        js_name = "lets-plot-latest.js"
         path = os.path.join("package_data", js_name)
         js_code = pkgutil.get_data("lets_plot", path).decode("utf-8")
         success_message = '<div style="color:darkblue;">Lets-Plot JS is embedded.</div>' if verbose else ""

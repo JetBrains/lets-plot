@@ -11,15 +11,8 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")   // generates index.html and opens it in browser
-    js(LEGACY) {
-        browser {
-            dceTask {
-                keep.addAll(
-                        "lets-plot-demo-svg.demo.svgMapping.svgElementsDemoA",
-                        "lets-plot-demo-svg.demo.svgMapping.svgElementsDemoB",
-                )
-            }
-        }
+    js() {
+        browser()
     }
 
     sourceSets {
@@ -66,7 +59,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-
+                implementation project(":plot-base")
                 implementation project(":platf-w3c")
             }
         }

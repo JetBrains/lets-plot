@@ -13,14 +13,8 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js(LEGACY) {
-        browser {
-            dceTask {
-                keep.addAll(
-                        "lets-plot-demo-plot.demo.plot.js.component.axisComponentDemo",
-                )
-            }
-        }
+    js() {
+        browser()
     }
 
     sourceSets {

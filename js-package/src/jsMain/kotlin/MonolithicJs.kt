@@ -30,6 +30,7 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
  */
 @Suppress("unused")
 @JsName("buildPlotFromRawSpecs")
+@JsExport
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -47,6 +48,7 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
  */
 @Suppress("unused")
 @JsName("buildPlotFromProcessedSpecs")
+@JsExport
 fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)

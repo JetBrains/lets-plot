@@ -1,92 +1,57 @@
 plugins {
-    id "org.jetbrains.kotlin.js"
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-
-    implementation project(':commons')
-    implementation project(':datamodel')
-    implementation project(':canvas')
-    implementation project(':plot-base')
-    implementation project(':plot-builder')
-    implementation project(':plot-stem')
-    implementation project(':platf-w3c')
-    implementation project(':gis')
-    implementation(project(":livemap"))
-    implementation project(':plot-livemap')
-
-    implementation("io.ktor:ktor-client-websockets-js:$ktor_version")
-    implementation("io.ktor:ktor-client-js:$ktor_version")
-    implementation("io.github.microutils:kotlin-logging-js:$kotlinLogging_version")
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 kotlin {
-    js(LEGACY) {
+    js() {
+        browser()
+        binaries.executable()
+    }
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
-        target {
-            browser {
-                dceTask {
-                    keep.addAll(
-                            "lets-plot-js-package.buildPlotFromRawSpecs",
-                            "lets-plot-js-package.buildPlotFromProcessedSpecs",
-                            "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
-                    )
-                }
+                implementation project(':commons')
+                implementation project(':datamodel')
+                implementation project(':canvas')
+                implementation project(':plot-base')
+                implementation project(':plot-builder')
+                implementation project(':plot-stem')
+                implementation project(':platf-w3c')
+                implementation project(':gis')
+                implementation(project(":livemap"))
+                implementation project(':plot-livemap')
+
+                implementation("io.ktor:ktor-client-websockets-js:$ktor_version")
+                implementation("io.ktor:ktor-client-js:$ktor_version")
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLogging_version")
             }
         }
     }
 }
 
-def artifact_version = project.js_artifact_version
 def dist_dir = "${project.buildDir}/distributions"
+def js_publish_dir = "${rootDir}/js-package/distr"
 
-task copyProduction() {
+tasks.register('renameJsArtifact') {
     group = project.letsPlotTaskGroup
-
-    doLast {
-        def prodTargets = ["lets-plot-latest.min.js", "lets-plot-${artifact_version}.min.js"]
-
-        prodTargets.each { target ->
-            copy {
-                from "${dist_dir}/js-package.js"
-                rename "js-package.js", target
-                into dist_dir
-            }
+    doLast{
+        copy {
+            from "${dist_dir}/js-package.js"
+            rename "js-package.js", "lets-plot-latest.js"
+            into dist_dir
         }
     }
 }
 
-task copyDevelopment() {
-    group = project.letsPlotTaskGroup
+jsBrowserProductionWebpack.finalizedBy renameJsArtifact
 
-    doLast {
-        def devTargets = ["lets-plot-latest.js", "lets-plot-${artifact_version}.js"]
-
-        devTargets.each { target ->
-            copy {
-                from "${project.buildDir}/distributions/js-package.js"
-                rename "js-package.js", target
-                into dist_dir
-            }
-        }
+tasks.register("copyForPublish") {
+    dependsOn jsBrowserProductionWebpack
+    copy {
+        from "${dist_dir}/js-package.js"
+        rename "js-package.js", "lets-plot.js"
+        into js_publish_dir
     }
-}
-
-browserProductionWebpack.finalizedBy copyProduction
-browserDevelopmentWebpack.finalizedBy copyDevelopment
-
-//copyProduction.dependsOn(browserProductionWebpack)
-//copyProduction.dependsOn(browserDevelopmentWebpack)
-//build.dependsOn += copyProduction
-build.dependsOn += browserDevelopmentWebpack
-
-task copyForPublish(type: Copy) {
-    dependsOn browserDevelopmentWebpack, browserProductionWebpack
-
-    def js_publish_dir = "${rootDir}/js-package/distr"
-
-    from "${dist_dir}/lets-plot-${artifact_version}.js", "${dist_dir}/lets-plot-${artifact_version}.min.js"
-    rename("\\-${artifact_version}", "")
-    into js_publish_dir
 }
