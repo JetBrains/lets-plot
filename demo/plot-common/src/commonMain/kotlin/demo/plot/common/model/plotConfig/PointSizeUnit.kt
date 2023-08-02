@@ -10,11 +10,11 @@ import demoAndTestShared.parsePlotSpec
 class PointSizeUnit {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            strValsInX(),
+            sizeUnitX(),
         )
     }
 
-    private fun strValsInX(): MutableMap<String, Any> {
+    private fun sizeUnitX(): MutableMap<String, Any> {
         val spec = """
             {
               "kind": "plot",
