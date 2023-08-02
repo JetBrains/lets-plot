@@ -6,16 +6,19 @@
 package org.jetbrains.letsPlot.core.spec.conversion
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 
-class NamedSystemColors(private val themeFlavor: ThemeFlavor?) {
-
+class NamedSystemColors(
+    private val colorTheme: ColorTheme,
+    private val themeFlavor: ThemeFlavor?
+) {
     fun getColor(id: String): Color? {
         val systemColor = toSystemColor(id) ?: return null
         return when (systemColor) {
-            SystemColor.PEN -> themeFlavor?.color ?: Color.BLACK
-            SystemColor.PAPER -> themeFlavor?.fill ?: Color.WHITE
-            SystemColor.BRUSH -> Color.PACIFIC_BLUE
+            SystemColor.PEN -> themeFlavor?.color ?: colorTheme.pen()
+            SystemColor.PAPER -> themeFlavor?.fill ?: colorTheme.paper()
+            SystemColor.BRUSH -> colorTheme.brush()
         }
     }
 
