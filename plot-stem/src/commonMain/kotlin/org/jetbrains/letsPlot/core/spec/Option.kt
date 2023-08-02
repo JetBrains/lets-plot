@@ -434,6 +434,7 @@ object Option {
 
         object ECDF {
             const val N = "n"
+            const val PADDED = "pad"
         }
 
         object Summary {

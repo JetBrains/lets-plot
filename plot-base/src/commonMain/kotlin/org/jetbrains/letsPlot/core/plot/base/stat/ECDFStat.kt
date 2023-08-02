@@ -11,7 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
 class ECDFStat(
-    private val n: Int?
+    private val n: Int?,
+    private val padded: Boolean
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -49,10 +50,20 @@ class ECDFStat(
             linspace(xValues.min(), xValues.max(), n)
         }
         val statY = statX.map { ecdf(it) }
+        val padX = if (padded) {
+            listOf(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)
+        } else {
+            emptyList()
+        }
+        val padY = if (padded) {
+            listOf(0.0, 1.0)
+        } else {
+            emptyList()
+        }
 
         return mapOf(
-            Stats.X to statX,
-            Stats.Y to statY,
+            Stats.X to statX + padX,
+            Stats.Y to statY + padY,
         )
     }
 
@@ -64,6 +75,8 @@ class ECDFStat(
     }
 
     companion object {
+        const val DEF_PADDED = true
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y

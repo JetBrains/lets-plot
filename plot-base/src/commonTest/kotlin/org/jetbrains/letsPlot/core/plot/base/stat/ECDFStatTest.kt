@@ -11,7 +11,7 @@ import kotlin.test.Test
 class ECDFStatTest : BaseStatTest() {
     @Test
     fun emptyDataFrame() {
-        testEmptyDataFrame(ECDFStat(null))
+        testEmptyDataFrame(ECDFStat(null, false))
     }
 
     @Test
@@ -20,7 +20,7 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(x)
         ))
-        val stat = ECDFStat(null)
+        val stat = ECDFStat(null, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, listOf(x))
@@ -32,7 +32,7 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(null, null, null)
         ))
-        val stat = ECDFStat(null)
+        val stat = ECDFStat(null, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, emptyList())
@@ -44,7 +44,7 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(-1.0, null, null, 1.0)
         ))
-        val stat = ECDFStat(null)
+        val stat = ECDFStat(null, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, listOf(-1.0, 1.0))
@@ -56,7 +56,7 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(-2.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0)
         ))
-        val stat = ECDFStat(null)
+        val stat = ECDFStat(null, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, listOf(-2.0, -1.0, 0.0, 1.0, 2.0))
@@ -68,7 +68,7 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(2.0, -1.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 1.0, -2.0)
         ))
-        val stat = ECDFStat(null)
+        val stat = ECDFStat(null, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, listOf(2.0, -1.0, 0.0, 1.0, -2.0))
@@ -80,10 +80,22 @@ class ECDFStatTest : BaseStatTest() {
         val df = dataFrame(mapOf(
             TransformVar.X to listOf(-2.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0)
         ))
-        val stat = ECDFStat(3)
+        val stat = ECDFStat(3, false)
         val statDf = stat.apply(df, statContext(df))
 
         checkStatVarValues(statDf, Stats.X, listOf(-2.0, 0.0, 2.0))
         checkStatVarValues(statDf, Stats.Y, listOf(0.1, 0.7, 1.0))
+    }
+
+    @Test
+    fun withPads() {
+        val df = dataFrame(mapOf(
+            TransformVar.X to listOf(-2.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 2.0)
+        ))
+        val stat = ECDFStat(null, true)
+        val statDf = stat.apply(df, statContext(df))
+
+        checkStatVarValues(statDf, Stats.X, listOf(-2.0, -1.0, 0.0, 1.0, 2.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY))
+        checkStatVarValues(statDf, Stats.Y, listOf(0.1, 0.3, 0.7, 0.9, 1.0, 0.0, 1.0))
     }
 }

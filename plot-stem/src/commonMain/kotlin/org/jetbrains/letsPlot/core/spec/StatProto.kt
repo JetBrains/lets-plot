@@ -120,7 +120,8 @@ object StatProto {
 
             StatKind.ECDF -> {
                 return ECDFStat(
-                    n = options.getInteger(ECDF.N)
+                    n = options.getInteger(ECDF.N),
+                    padded = options.getBoolean(ECDF.PADDED, ECDFStat.DEF_PADDED)
                 )
             }
 
