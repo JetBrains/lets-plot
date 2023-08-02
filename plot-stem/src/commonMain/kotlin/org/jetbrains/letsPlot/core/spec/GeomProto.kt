@@ -138,6 +138,7 @@ class GeomProto(val geomKind: GeomKind) {
             else -> {
                 // Layer also can be set via stat_xxx function
                 when (StatKind.safeValueOf(layerOptions.getStringSafe(Layer.STAT))) {
+                    // Added for synchronization with default position for boxplot
                     StatKind.BOXPLOT_OUTLIER -> mapOf(
                         Meta.NAME to PosProto.DODGE,
                         Pos.Dodge.WIDTH to 0.95
