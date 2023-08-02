@@ -13,7 +13,8 @@ class ECDF {
         return listOf(
             basic(),
             withInterpolation(),
-            withGrouping()
+            withGrouping(),
+            withOrientationChange(),
         )
     }
 
@@ -58,8 +59,7 @@ class ECDF {
                   'geom': 'step',
                   'stat': 'ecdf',
                   'n': 10,
-                  'pad': true,
-                  'direction': 'vh'
+                  'pad': true
                 }
               ]
             }
@@ -87,6 +87,33 @@ class ECDF {
                   'geom': 'step',
                   'stat': 'ecdf',
                   'pad': true
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun withOrientationChange(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'y': 'sepal length (cm)'
+              },
+              'ggtitle': {
+                'text': 'Orientation changed'
+              },
+              'layers': [
+                {
+                  'geom': 'step',
+                  'stat': 'ecdf',
+                  'pad': true,
+                  'orientation': 'y'
                 }
               ]
             }
