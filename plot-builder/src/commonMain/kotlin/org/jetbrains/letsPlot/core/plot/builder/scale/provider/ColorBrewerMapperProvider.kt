@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Qualitative.Set2
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Qualitative.Set3
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Type.*
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
@@ -89,17 +87,15 @@ class ColorBrewerMapperProvider(
         return when {
             paletteNameOrIndex is Number -> colorSchemeByIndex(paletteType, paletteNameOrIndex.toInt())
             paletteNameOrIndex is String -> colorSchemeByName(paletteType, paletteNameOrIndex)
-            paletteType == QUALITATIVE -> {
-                if (colorCount != null && colorCount <= Set2.maxColors) Set2
-                else Set3
-            }
-
+            paletteType == QUALITATIVE -> DEFAULT_QUAL_COLOR_SCHEME
             else -> colorSchemeByIndex(paletteType, 0)
         }
     }
 
 
     companion object {
+        val DEFAULT_QUAL_COLOR_SCHEME: ColorScheme = ColorPalette.Qualitative.Set1
+
         private fun paletteType(name: String?): ColorPalette.Type {
             if (name == null) {
                 return SEQUENTIAL
@@ -123,7 +119,7 @@ class ColorBrewerMapperProvider(
                 }
             } catch (ignore: IllegalArgumentException) {
                 // Enum type has no constant with the specified name error.
-                // Replace generic error massage with specific one
+                // Replace generic error message with specific one
                 throw IllegalArgumentException(cantFindPaletteError(paletteName))
             }
         }

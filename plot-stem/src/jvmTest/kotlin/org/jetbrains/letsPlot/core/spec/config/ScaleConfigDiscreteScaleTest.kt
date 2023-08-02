@@ -6,13 +6,13 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.provider.ColorBrewerMapperProvider
 import org.jetbrains.letsPlot.core.spec.Option
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -188,8 +188,8 @@ internal class ScaleConfigDiscreteScaleTest(
         }
 
         private fun getColors(count: Int, pickAt: List<Int>? = null): List<Color> {
-            // Default palette type: brewer 'Set2'
-            val colorScheme: ColorScheme = ColorPalette.Qualitative.Set2
+            // Default palette type: brewer 'Set1'
+            val colorScheme: ColorScheme = ColorBrewerMapperProvider.DEFAULT_QUAL_COLOR_SCHEME
             val colors = PaletteUtil.schemeColors(colorScheme, count)
             return pickAt?.let { SeriesUtil.pickAtIndices(colors, pickAt) } ?: colors
         }

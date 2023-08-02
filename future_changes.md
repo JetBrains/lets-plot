@@ -59,6 +59,8 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 ### Changed
 
+- The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
+
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
 
 - [BREAKING] `geom_pointrange()`: `size` aesthetic shouldn't affect line width [[#751](https://github.com/JetBrains/lets-plot/issues/751)]:
