@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
+import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 
 object StatProto {
@@ -116,6 +117,13 @@ object StatProto {
             StatKind.QQ_LINE -> return configureQQLineStat(options)
 
             StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
+
+            StatKind.ECDF -> {
+                return ECDFStat(
+                    n = options.getInteger(ECDF.N),
+                    padded = options.getBoolean(ECDF.PADDED, ECDFStat.DEF_PADDED)
+                )
+            }
 
             StatKind.SUMMARY -> return configureSummaryStat(options)
 
