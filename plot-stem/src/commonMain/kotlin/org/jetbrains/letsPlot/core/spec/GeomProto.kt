@@ -174,10 +174,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[DOT_PLOT] = dotplotDefaults()
             DEFAULTS[CONTOUR] = contourDefaults()
             DEFAULTS[CONTOURF] = contourfDefaults()
-            DEFAULTS[ERROR_BAR] = verticalIntervalDefaults()
-            DEFAULTS[CROSS_BAR] = verticalIntervalDefaults()
-            DEFAULTS[LINE_RANGE] = verticalIntervalDefaults()
-            DEFAULTS[POINT_RANGE] = verticalIntervalDefaults()
+            DEFAULTS[CROSS_BAR] = crossBarDefaults()
             DEFAULTS[BOX_PLOT] = boxplotDefaults()
             DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
             DEFAULTS[VIOLIN] = violinDefaults()
@@ -240,7 +237,7 @@ class GeomProto(val geomKind: GeomKind) {
         }
 
 
-        private fun verticalIntervalDefaults(): Map<String, Any> {
+        private fun crossBarDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "identity"
             defaults[Layer.POS] = mapOf(
