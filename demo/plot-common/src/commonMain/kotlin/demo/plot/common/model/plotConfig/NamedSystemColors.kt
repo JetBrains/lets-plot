@@ -10,21 +10,70 @@ import demoAndTestShared.parsePlotSpec
 class NamedSystemColors {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            withFlavor(null),
-            withFlavor("solarized_light"),
-            withFlavor("solarized_dark"),
-            withFlavor("solarized_dark", background = "dark_blue"),
+            pieChart(),
+            pieChart(flavor = "darcula"),
+            pieChart(flavor = "solarized_light"),
+            pieChart(flavor = "solarized_dark"),
+            pieChart(flavor = "high_contrast_light"),
+            pieChart(flavor = "high_contrast_dark"),
+            pieChart(useCustomColors = true),
+            pieChart(flavor = "darcula", useCustomColors = true)
         )
     }
 
-    private fun withFlavor(flavor: String?, background: String? = null): MutableMap<String, Any> {
+    private fun pieChart(theme: String = "grey", flavor: String? = null, useCustomColors: Boolean = false ): MutableMap<String, Any> {
+        val themeSettings = listOf(
+            "'name': '$theme'",
+            flavor?.let { "'flavor': '$flavor'" } ?: "",
+            if (useCustomColors) {
+                "'geom': { 'pen': 'red', 'brush': 'blue', 'paper': 'green' }"
+            } else ""
+        ).filter(String::isNotEmpty).joinToString()
+
+        val spec = """
+            {
+              'data': {
+                'name': ['pen', 'brush', 'paper']
+              },
+              'theme': { $themeSettings },
+              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$useCustomColors' },
+              'kind': 'plot',
+              'scales': [
+                {
+                  'aesthetic': 'fill',
+                  'values': ['pen', 'brush', 'paper']
+                }
+              ],
+              'layers': [
+                {
+                  'geom': 'pie',
+                  'stat': 'identity',
+                  'mapping': {
+                    'fill': 'name'
+                  },
+                  'tooltips': 'none',
+                  'labels': {
+                    'lines': ['@name']
+                  },
+                  'color': 'pen'
+                }
+              ]
+            }""".trimIndent()
+        return parsePlotSpec(spec)
+    }
+
+    private fun example(theme: String = "light", flavor: String? = null, background: String? = null): MutableMap<String, Any> {
+        val themeSettings = listOf(
+            "'name': '$theme'",
+            background?.let { "'plot_background': {'fill': '$background', 'blank': false}" }  ?: "",
+            flavor?.let { "'flavor': '$flavor'" } ?: ""
+        ).filter(String::isNotEmpty).joinToString()
+
         val spec = """{   
           "ggsize": { "width": 400, "height": 200 },
-          "theme": {
-            ${background?.let { "'plot_background': {'fill': '$background', 'blank': false}" }  ?: "" }
-            ${if (background != null && flavor != null) "," else ""}
-            ${flavor?.let { "'flavor': '$flavor'" } ?: ""}
-          },
+          "ggtitle": { "text": "theme=$theme, flavor=$flavor
+                                point: \'brush\'+\'paper\'; line: \'pen\'" }, 
+          "theme": { $themeSettings },
           "kind": "plot",
           "layers": [
             {
