@@ -28,8 +28,8 @@ class DefaultTheme(
     private val facets = DefaultFacetsTheme(options, fontFamilyRegistry)
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
-
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
+    private val colors = DefaultColorTheme(options, fontFamilyRegistry)
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
@@ -49,6 +49,8 @@ class DefaultTheme(
         // use settings from named theme and flavor options (without specified in theme())
         DefaultGeomTheme.forGeomKind(geomKind, themeSettings)
     }
+
+    override fun colors(): ColorTheme = colors
 
     companion object {
         // For demo and tests

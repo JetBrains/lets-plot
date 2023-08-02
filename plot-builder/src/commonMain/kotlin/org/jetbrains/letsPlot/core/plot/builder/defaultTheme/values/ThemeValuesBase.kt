@@ -137,6 +137,13 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             TOOLTIP_TITLE_TEXT to mapOf(
                 Elem.FONT_FACE to FontFace.BOLD,
+            ),
+
+            // Named colors
+            GEOM to mapOf(
+                Geom.PEN to DARK_GREY,
+                Geom.PAPER to Color.WHITE,
+                Geom.BRUSH to Color.PACIFIC_BLUE
             )
         )
     }

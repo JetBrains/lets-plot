@@ -83,6 +83,8 @@ object ThemeOption {
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
 
+    const val GEOM = "geom"
+
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)
     const val ELEMENT_BLANK_SHORTHAND = "blank"
@@ -133,6 +135,13 @@ object ThemeOption {
         const val SOLARIZED_DARK = "solarized_dark"
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
         const val HIGH_CONTRAST_DARK = "high_contrast_dark"
+    }
+
+    object Geom {
+        // Named colors
+        const val PEN = "pen"
+        const val PAPER = "paper"
+        const val BRUSH = "brush"
     }
 
     internal object ForTest {
