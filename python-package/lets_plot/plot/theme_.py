@@ -10,7 +10,8 @@ __all__ = [
     "element_line",
     'element_rect',
     'element_text',
-    'margin'
+    'margin',
+    'element_geom',
 ]
 
 
@@ -66,7 +67,9 @@ def theme(*,
           axis_tooltip_text=None, axis_tooltip_text_x=None, axis_tooltip_text_y=None,
 
           tooltip=None,
-          tooltip_text=None, tooltip_title_text=None
+          tooltip_text=None, tooltip_title_text=None,
+
+          geom=None
           ):
     """
     Use `theme()` to modify individual components of a theme,
@@ -198,6 +201,9 @@ def theme(*,
     tooltip_title_text: str or dict
         Tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
+    geom: dict
+        Geometry colors.
+        Set `element_geom()` to specify new values for the named colors.
     Returns
     -------
     `FeatureSpec`
@@ -484,6 +490,47 @@ def margin(t=None, r=None, b=None, l=None) -> dict:
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
             theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
+
+    """
+    return locals()
+
+
+def element_geom(
+        pen=None,
+        brush=None,
+        paper=None,
+        # ToDo: fatten
+) -> dict:
+    """
+    Specify new values for the named colors.
+
+    Parameters
+    ----------
+    pen : str
+        Color to use by name "pen".
+    brush : str
+        Color to use by name "brush".
+    paper : str
+        Color to use by name "paper".
+
+    Returns
+    -------
+    `dict`
+        Theme element specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram(color='pen', fill='paper') + \\
+            theme(geom=element_geom(pen='dark_blue', paper='light_blue'))
 
     """
     return locals()
