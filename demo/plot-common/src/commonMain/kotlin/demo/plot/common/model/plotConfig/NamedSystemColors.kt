@@ -16,19 +16,28 @@ class NamedSystemColors {
             pieChart(flavor = "solarized_dark"),
             pieChart(flavor = "high_contrast_light"),
             pieChart(flavor = "high_contrast_dark"),
-            pieChart(useCustomColors = true),
-            pieChart(flavor = "darcula", useCustomColors = true)
+            pieChart(flavor ="darcula",  withCustomColors = true, flavorOverCustomColors = true),
+            pieChart(flavor ="darcula",  withCustomColors = true, flavorOverCustomColors = false)
         )
     }
 
-    private fun pieChart(theme: String = "grey", flavor: String? = null, useCustomColors: Boolean = false ): MutableMap<String, Any> {
-        val themeSettings = listOf(
-            "'name': '$theme'",
-            flavor?.let { "'flavor': '$flavor'" } ?: "",
-            if (useCustomColors) {
-                "'geom': { 'pen': 'red', 'brush': 'blue', 'paper': 'green' }"
-            } else ""
-        ).filter(String::isNotEmpty).joinToString()
+    private fun pieChart(
+        theme: String = "grey",
+        flavor: String? = null,
+        withCustomColors: Boolean = false,
+        flavorOverCustomColors: Boolean = true
+    ): MutableMap<String, Any> {
+        val flavorOpts =  flavor?.let { "'flavor': '$flavor'" } ?: ""
+        val customColors = if (withCustomColors) "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }" else ""
+
+        val themeSettings = (listOf(
+            "'name': '$theme'"
+        ) + if (flavorOverCustomColors) {
+            listOf(customColors, flavorOpts)
+        } else {
+            listOf(flavorOpts, customColors)
+        }
+                ).filter(String::isNotEmpty).joinToString()
 
         val spec = """
             {
@@ -36,7 +45,7 @@ class NamedSystemColors {
                 'name': ['pen', 'brush', 'paper']
               },
               'theme': { $themeSettings },
-              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$useCustomColors' },
+              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$withCustomColors, ${if (flavorOverCustomColors) "theme() + flavor()"  else "flavor() + theme()"} ' },
               'kind': 'plot',
               'scales': [
                 {
