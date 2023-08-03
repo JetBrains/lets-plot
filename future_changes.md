@@ -73,6 +73,8 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 - `geom_boxplot()`: the `size` and `stroke` parameters started to affect outliers.
 
+- `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed. 
+
 
 ### Fixed
 
