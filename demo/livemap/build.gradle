@@ -99,6 +99,7 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(':demo-common-batik')
+                implementation project(':platf-awt')
                 implementation project(':platf-batik')
 
                 implementation("org.apache.xmlgraphics:batik-codec:$batik_version")

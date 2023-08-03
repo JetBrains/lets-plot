@@ -8,11 +8,11 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotUtil
+import org.jetbrains.letsPlot.core.plot.builder.scale.provider.ColorBrewerMapperProvider
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -765,7 +765,8 @@ class ScaleOrderingTest {
             }.toMap()
         }
 
-        private val legendColors = ColorPalette.Qualitative.Set2.getColors(4).map(Colors::parseColor)
+        private val legendColors =
+            ColorBrewerMapperProvider.DEFAULT_QUAL_COLOR_SCHEME.getColors(4).map(Colors::parseColor)
 
         internal fun assertScaleOrdering(
             geomLayer: GeomLayer,

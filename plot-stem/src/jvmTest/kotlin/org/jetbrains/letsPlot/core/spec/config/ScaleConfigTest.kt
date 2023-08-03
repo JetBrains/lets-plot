@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
 import org.jetbrains.letsPlot.commons.values.Color.Companion.GREEN
@@ -19,10 +20,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.LineTypeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette
+import org.jetbrains.letsPlot.core.plot.builder.scale.provider.ColorBrewerMapperProvider
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
-import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test
@@ -132,7 +131,8 @@ class ScaleConfigTest {
                 .createMapperProvider()
                 .createDiscreteMapper(DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
 
-            val expected = ColorPalette.Qualitative.Set2.getColors(4).map { Colors.parseColor(it) }
+            val expected =
+                ColorBrewerMapperProvider.DEFAULT_QUAL_COLOR_SCHEME.getColors(4).map { Colors.parseColor(it) }
             assertEquals(expected[0], scaleMapper(0.0))
             assertEquals(expected[1], scaleMapper(1.0))
             assertEquals(expected[2], scaleMapper(2.0))

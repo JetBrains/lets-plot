@@ -242,6 +242,7 @@ object Option {
 
         object Step {
             const val DIRECTION = "direction"
+            const val PADDED = "pad"
         }
 
         object Segment {
@@ -429,6 +430,11 @@ object Option {
             const val DISTRIBUTION = "distribution"
             const val DISTRIBUTION_PARAMETERS = "dparams"
             const val LINE_QUANTILES = "quantiles"
+        }
+
+        object ECDF {
+            const val N = "n"
+            const val PADDED = "pad"
         }
 
         object Summary {
