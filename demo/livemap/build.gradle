@@ -12,6 +12,7 @@ kotlin {
     jvm("jvmBatikPlot")
     js {
         browser()
+        binaries.executable()
     }
 
 

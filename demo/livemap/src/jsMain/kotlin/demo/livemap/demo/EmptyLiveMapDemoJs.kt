@@ -5,7 +5,9 @@
 
 package demo.livemap.demo
 
+@OptIn(ExperimentalJsExport::class)
 @JsName("emptyLiveMapDemo")
+@JsExport
 fun emptyLiveMapDemo() {
     DemoBaseJs(::EmptyLiveMapDemoModel).show()
 }

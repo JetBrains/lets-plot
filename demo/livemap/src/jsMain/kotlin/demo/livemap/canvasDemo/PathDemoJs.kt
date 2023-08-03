@@ -5,8 +5,10 @@
 
 package demo.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("pathDemo")
+@JsExport
 fun pathDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         PathDemoModel(canvas)

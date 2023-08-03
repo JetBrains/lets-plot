@@ -5,8 +5,10 @@
 
 package demo.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("saveRestoreDemo")
+@JsExport
 fun saveRestoreDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         SaveRestoreDemoModel(canvas)

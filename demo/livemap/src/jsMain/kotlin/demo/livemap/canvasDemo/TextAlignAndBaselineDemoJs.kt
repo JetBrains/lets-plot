@@ -5,8 +5,10 @@
 
 package demo.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("textAlignAndBaselineDemo")
+@JsExport
 fun textAlignAndBaselineDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         TextAlignAndBaselineDemoModel(canvas)

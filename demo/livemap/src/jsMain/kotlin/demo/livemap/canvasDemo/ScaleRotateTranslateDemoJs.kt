@@ -5,8 +5,10 @@
 
 package demo.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("scaleRotateTranslateDemo")
+@JsExport
 fun scaleRotateTranslateDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         ScaleRotateTranslateDemoModel(canvas)

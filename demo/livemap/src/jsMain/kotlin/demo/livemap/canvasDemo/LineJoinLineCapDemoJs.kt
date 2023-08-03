@@ -5,8 +5,10 @@
 
 package demo.livemap.canvasDemo
 
+@OptIn(ExperimentalJsExport::class)
 @Suppress("unused")
 @JsName("lineJoinLineCapDemo")
+@JsExport
 fun lineJoinLineCapDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         LineJoinLineCapDemoModel(canvas)

@@ -5,7 +5,9 @@
 
 package demo.livemap.demo
 
+@OptIn(ExperimentalJsExport::class)
 @JsName("rectDemo")
+@JsExport
 fun rectDemo() {
     DemoBaseJs(::RectDemoModel).show()
 }
