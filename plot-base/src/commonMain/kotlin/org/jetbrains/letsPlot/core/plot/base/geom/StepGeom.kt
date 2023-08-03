@@ -33,7 +33,12 @@ class StepGeom : LineGeom() {
         val linesHelper = LinesHelper(pos, coord, ctx)
 
         val pathDataList = linesHelper.createPathDataByGroup(dataPoints, toLocationFor(overallAesBounds(ctx)))
-        val linePaths = linesHelper.createSteps(pathDataList, myDirection)
+        val horizontalThenVertical = when {
+            !ctx.flipped && myDirection == Direction.HV -> true
+            ctx.flipped && myDirection == Direction.VH -> true
+            else -> false
+        }
+        val linePaths = linesHelper.createSteps(pathDataList, horizontalThenVertical)
 
         root.appendNodes(linePaths)
 
