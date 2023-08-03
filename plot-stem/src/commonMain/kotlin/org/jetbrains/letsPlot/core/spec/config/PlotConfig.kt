@@ -66,10 +66,7 @@ abstract class PlotConfig(
         run {
             val themeConfig = ThemeConfig(getMap(Option.Plot.THEME), DefaultFontFamilyRegistry())
             val colorConverter = NamedSystemColorOptionConverter(
-                NamedSystemColors(
-                    colorTheme = themeConfig.theme.colors(),
-                    themeFlavor = themeConfig.themeFlavor
-                )
+                NamedSystemColors(colorTheme = themeConfig.theme.colors())
             )
             AesOptionConversion.updateWith(colorConverter)
         }

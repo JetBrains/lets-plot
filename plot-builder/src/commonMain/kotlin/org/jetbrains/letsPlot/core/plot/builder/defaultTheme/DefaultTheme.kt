@@ -47,7 +47,7 @@ class DefaultTheme(
 
     override fun geometries(geomKind: GeomKind): GeomTheme = geometries.getOrPut(geomKind) {
         // use settings from named theme and flavor options (without specified in theme())
-        DefaultGeomTheme.forGeomKind(geomKind, themeSettings)
+        DefaultGeomTheme.forGeomKind(geomKind, colors)
     }
 
     override fun colors(): ColorTheme = colors

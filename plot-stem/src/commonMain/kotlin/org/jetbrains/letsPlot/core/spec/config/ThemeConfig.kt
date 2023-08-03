@@ -21,7 +21,6 @@ class ThemeConfig constructor(
 ) {
 
     val theme: Theme
-    val themeFlavor: ThemeFlavor?
 
     init {
 
@@ -36,9 +35,13 @@ class ThemeConfig constructor(
             LegendThemeConfig.convertValue(key, value)
         }
 
-        val themeFlavorOptions = baselineValues.values.let { baseOptions ->
-            themeFlavor = themeSettings.getString(Option.Theme.FLAVOR)?.let(ThemeFlavor.Companion::forName)
-            themeFlavor?.updateColors(baseOptions) ?: baseOptions
+        val themeFlavorOptions = baselineValues.values.let {
+            val flavorName = themeSettings.getString(ThemeOption.FLAVOR)
+            if (flavorName != null) {
+                ThemeFlavor.forName(flavorName).updateColors(it)
+            } else {
+                it
+            }
         }
 
         theme = DefaultTheme(themeFlavorOptions, fontFamilyRegistry, userOptions)
