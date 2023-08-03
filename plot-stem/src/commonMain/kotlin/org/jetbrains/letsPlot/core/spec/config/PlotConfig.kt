@@ -64,9 +64,9 @@ abstract class PlotConfig(
 
         // update the color option converter with system named colors including flavors
         run {
-            val themeConfig = ThemeConfig(getMap(Option.Plot.THEME), DefaultFontFamilyRegistry())
+            val colorTheme = ThemeConfig(getMap(Option.Plot.THEME), DefaultFontFamilyRegistry()).theme.colors()
             val colorConverter = NamedSystemColorOptionConverter(
-                NamedSystemColors(colorTheme = themeConfig.theme.colors())
+                NamedSystemColors(colorTheme)
             )
             AesOptionConversion.updateWith(colorConverter)
         }
