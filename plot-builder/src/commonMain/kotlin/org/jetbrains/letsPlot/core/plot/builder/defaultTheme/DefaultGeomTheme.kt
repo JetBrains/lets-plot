@@ -162,7 +162,7 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
-                    size = 10.0
+                    size = PieGeom.DEF_PIE_SIZE
                     lineWidth *= sizeMultiplier
                 }
 
