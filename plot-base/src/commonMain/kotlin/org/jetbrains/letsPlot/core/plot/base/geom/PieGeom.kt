@@ -462,6 +462,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
     companion object {
         const val HANDLES_GROUPS = false
+        const val DEF_PIE_SIZE = 10.0
 
         private fun getSizeUnitRatio(
             p: DoubleVector,

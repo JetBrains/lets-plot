@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
@@ -181,7 +182,7 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
-                    size = 10.0
+                    size = PieGeom.DEF_PIE_SIZE
                     lineWidth *= sizeMultiplier
                 }
 
