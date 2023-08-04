@@ -10,7 +10,7 @@ kotlin {
     sourceSets {
         jsMain {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version")
 
                 implementation project(':commons')
                 implementation project(':datamodel')
@@ -20,7 +20,7 @@ kotlin {
                 implementation project(':plot-stem')
                 implementation project(':platf-w3c')
                 implementation project(':gis')
-                implementation(project(":livemap"))
+                implementation project(":livemap")
                 implementation project(':plot-livemap')
 
                 implementation("io.ktor:ktor-client-websockets-js:$ktor_version")
@@ -31,15 +31,15 @@ kotlin {
     }
 }
 
-def dist_dir = "${project.buildDir}/distributions"
-def js_publish_dir = "${rootDir}/js-package/distr"
+def dist_dir = "${project.buildDir}/distributions/"
+def artifact_name = "js-package.js"
 
 tasks.register('renameJsArtifact') {
     group = project.letsPlotTaskGroup
     doLast{
         copy {
-            from "${dist_dir}/js-package.js"
-            rename "js-package.js", "lets-plot-latest.js"
+            from "${dist_dir}${artifact_name}"
+            rename "${artifact_name}", "lets-plot-latest.min.js"
             into dist_dir
         }
     }
@@ -47,11 +47,10 @@ tasks.register('renameJsArtifact') {
 
 jsBrowserProductionWebpack.finalizedBy renameJsArtifact
 
-tasks.register("copyForPublish") {
+tasks.register('copyForPublish', Copy) {
     dependsOn jsBrowserProductionWebpack
-    copy {
-        from "${dist_dir}/js-package.js"
-        rename "js-package.js", "lets-plot.js"
-        into js_publish_dir
-    }
+
+    from "${dist_dir}${artifact_name}"
+    rename "${artifact_name}", "lets-plot.min.js"
+    into "${rootDir}/js-package/distr/"
 }

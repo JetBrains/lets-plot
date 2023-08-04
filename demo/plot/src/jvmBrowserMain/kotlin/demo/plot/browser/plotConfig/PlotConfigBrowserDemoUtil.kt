@@ -38,7 +38,7 @@ object PlotConfigBrowserDemoUtil {
     }
 
     private fun getPlotLibPath(): String {
-        val name = "lets-plot-latest.js"
+        val name = "lets-plot-latest.min.js"
         return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
     }
 

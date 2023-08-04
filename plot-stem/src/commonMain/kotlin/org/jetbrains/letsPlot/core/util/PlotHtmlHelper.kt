@@ -40,7 +40,7 @@ object PlotHtmlHelper {
             // cdnjs: v2.0.2
 //            "https://cdnjs.cloudflare.com/ajax/libs/lets-plot/$version/lets-plot.min.js"
             // jsdelivr: since v2.0.3 (all prev versions shoul work as well)
-            "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v$version/js-package/distr/lets-plot.js"
+            "https://cdn.jsdelivr.net/gh/JetBrains/lets-plot@v$version/js-package/distr/lets-plot.min.js"
         }
     }
 
