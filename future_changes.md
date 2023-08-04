@@ -51,7 +51,9 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
 
 
-- New named system colors: "pen", "paper", "brush".
+- New named system colors: "pen", "paper", "brush";
+   
+  `geom` parameter in `theme()` to specify new values for these colors via `element_geom()` function.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
 
@@ -73,9 +75,9 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 
-- Change the default `position` value from `'identity'` to `'dodge'` for `geom_errorbar()`, `geom_pointrange()` and `geom_linerange()`.
-
 - `geom_boxplot()`: the `size` and `stroke` parameters started to affect outliers.
+
+- `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed. 
 
 
 ### Fixed

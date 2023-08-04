@@ -27,7 +27,7 @@ object DemoAndTest {
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            plotBackground = plotBackground
+            backgroundColor = plotBackground
         )
     }
 }

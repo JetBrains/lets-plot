@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
@@ -28,8 +29,16 @@ class DefaultTheme(
     private val facets = DefaultFacetsTheme(options, fontFamilyRegistry)
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
-
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
+    private val colors = run {
+        // theme() + flavor() => use colors from flavor
+        // flavor() + theme() => from theme(geom)
+        val useGeomOption = with(userOptions.keys) { indexOf(ThemeOption.GEOM) > indexOf(ThemeOption.FLAVOR) }
+        DefaultColorTheme(
+            if (useGeomOption) options else themeSettings,
+            fontFamilyRegistry
+        )
+    }
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
@@ -46,9 +55,10 @@ class DefaultTheme(
     override fun tooltips(): TooltipsTheme = tooltips
 
     override fun geometries(geomKind: GeomKind): GeomTheme = geometries.getOrPut(geomKind) {
-        // use settings from named theme and flavor options (without specified in theme())
-        DefaultGeomTheme.forGeomKind(geomKind, themeSettings)
+        DefaultGeomTheme.forGeomKind(geomKind, colors)
     }
+
+    override fun colors(): ColorTheme = colors
 
     companion object {
         // For demo and tests

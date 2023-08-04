@@ -23,7 +23,7 @@ class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
     override val annotations: Annotations? = null
-    override val plotBackground: Color = Color.WHITE
+    override val backgroundColor: Color = Color.WHITE
 
     override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")
