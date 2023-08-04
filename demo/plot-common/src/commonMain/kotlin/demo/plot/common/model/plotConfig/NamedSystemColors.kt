@@ -16,8 +16,8 @@ class NamedSystemColors {
             pieChart(flavor = "solarized_dark"),
             pieChart(flavor = "high_contrast_light"),
             pieChart(flavor = "high_contrast_dark"),
-            pieChart(flavor ="darcula",  withCustomColors = true, flavorOverCustomColors = true),
-            pieChart(flavor ="darcula",  withCustomColors = true, flavorOverCustomColors = false)
+            pieChart(flavor = "darcula", withCustomColors = true, flavorOverCustomColors = true),
+            pieChart(flavor = "darcula", withCustomColors = true, flavorOverCustomColors = false)
         )
     }
 
@@ -27,17 +27,23 @@ class NamedSystemColors {
         withCustomColors: Boolean = false,
         flavorOverCustomColors: Boolean = true
     ): MutableMap<String, Any> {
-        val flavorOpts =  flavor?.let { "'flavor': '$flavor'" } ?: ""
-        val customColors = if (withCustomColors) "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }" else ""
-
-        val themeSettings = (listOf(
-            "'name': '$theme'"
-        ) + if (flavorOverCustomColors) {
-            listOf(customColors, flavorOpts)
+        val flavorOpts = flavor?.let { "'flavor': '$flavor'" } ?: ""
+        val customColors = if (withCustomColors) {
+            "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }"
         } else {
-            listOf(flavorOpts, customColors)
+            ""
         }
-                ).filter(String::isNotEmpty).joinToString()
+
+        val themeSettings = (
+                listOf(
+                    "'name': '$theme'"
+                ) + if (flavorOverCustomColors) {
+                    listOf(customColors, flavorOpts)
+                } else {
+                    listOf(flavorOpts, customColors)
+                })
+            .filter(String::isNotEmpty)
+            .joinToString()
 
         val spec = """
             {
@@ -45,7 +51,8 @@ class NamedSystemColors {
                 'name': ['pen', 'brush', 'paper']
               },
               'theme': { $themeSettings },
-              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$withCustomColors, ${if (flavorOverCustomColors) "theme() + flavor()"  else "flavor() + theme()"} ' },
+              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$withCustomColors, 
+                                    ${if (flavorOverCustomColors) "theme() + flavor()" else "flavor() + theme()"}' },
               'kind': 'plot',
               'scales': [
                 {
@@ -71,10 +78,14 @@ class NamedSystemColors {
         return parsePlotSpec(spec)
     }
 
-    private fun example(theme: String = "light", flavor: String? = null, background: String? = null): MutableMap<String, Any> {
+    private fun example(
+        theme: String = "light",
+        flavor: String? = null,
+        background: String? = null
+    ): MutableMap<String, Any> {
         val themeSettings = listOf(
             "'name': '$theme'",
-            background?.let { "'plot_background': {'fill': '$background', 'blank': false}" }  ?: "",
+            background?.let { "'plot_background': {'fill': '$background', 'blank': false}" } ?: "",
             flavor?.let { "'flavor': '$flavor'" } ?: ""
         ).filter(String::isNotEmpty).joinToString()
 
