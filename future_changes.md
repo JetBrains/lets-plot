@@ -47,7 +47,9 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
 
 
-- New named system colors: "pen", "paper", "brush".
+- New named system colors: "pen", "paper", "brush";
+   
+  `geom` parameter in `theme()` to specify new values for these colors via `element_geom()` function.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
 
