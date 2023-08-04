@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 
 internal class DefaultGeomTheme private constructor(

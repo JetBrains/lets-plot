@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
 
-object PlotConfigUtil {
+internal object PlotConfigUtil {
 
     fun splitLayerDataByTile(
         layerData: DataFrame,
