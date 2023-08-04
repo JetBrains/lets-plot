@@ -144,16 +144,28 @@ class LetsPlot:
 
         .. jupyter-execute::
             :linenos:
+            :emphasize-lines: 4
+
+            from lets_plot import *
+            from lets_plot.tilesets import *
+            LetsPlot.setup_html()
+            LetsPlot.set(OPEN_TOPO_MAP)
+            ggplot() + geom_livemap()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
             :emphasize-lines: 12
 
             from lets_plot import *
             LetsPlot.setup_html()
             attribution = '''
             Map tiles by
-            <a href="http://stamen.com">Stamen Design</a>, under
-            <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-            Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
-            <a href="http://www.openstreetmap.org/copyright">ODbL</a>
+            <a href="https://stamen.com">Stamen Design</a>, under
+            <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
+            Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
+            <a href="https://www.openstreetmap.org/copyright">ODbL</a>
             '''
             tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
                                  attribution=attribution)
