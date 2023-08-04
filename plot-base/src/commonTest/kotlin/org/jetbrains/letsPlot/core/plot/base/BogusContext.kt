@@ -18,7 +18,7 @@ object BogusContext : GeomContext {
         get() = error("Not available in a bogus geom context")
     override val annotations: Annotations
         get() = error("Not available in a bogus geom context")
-    override val plotBackground: Color
+    override val backgroundColor: Color
         get() = error("Not available in a bogus geom context")
 
     override fun getResolution(aes: Aes<Double>): Double {

@@ -67,7 +67,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 root.appendNodes(pieSectors.map(::buildSvgArcs))
                 if (spacerWidth > 0) {
                     root.appendNodes(
-                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.plotBackground)
+                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.backgroundColor)
                     )
                 }
 

@@ -53,7 +53,7 @@ class ThemeOptionsOrderToApplyTest(
         @Parameterized.Parameters
         fun params(): Collection<Array<Any?>> {
             val namedThemeOption = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_MINIMAL)
-            val flavorOption = mapOf(Option.Theme.FLAVOR to ThemeOption.Flavor.DARCULA)
+            val flavorOption = mapOf(ThemeOption.FLAVOR to ThemeOption.Flavor.DARCULA)
 
             return listOf(
                 arrayOf(namedThemeOption, Color.WHITE, null),

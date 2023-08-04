@@ -22,7 +22,7 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
     var handleAnyNullable: (o: dynamic) -> Any? = {}
 
     val handleObject: (o: dynamic) -> MutableMap<String, Any> = { o: dynamic ->
-        val map = HashMap<String, Any>()
+        val map = LinkedHashMap<String, Any>()
         val entries = js("Object.entries(o)")
         for (entry in entries) {
             val key = entry[0] as String

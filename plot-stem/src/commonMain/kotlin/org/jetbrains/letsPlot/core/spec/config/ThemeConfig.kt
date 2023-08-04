@@ -36,7 +36,7 @@ class ThemeConfig constructor(
         }
 
         val themeFlavorOptions = baselineValues.values.let {
-            val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
+            val flavorName = themeSettings.getString(ThemeOption.FLAVOR)
             if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {
