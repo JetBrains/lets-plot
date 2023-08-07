@@ -4,7 +4,7 @@
 #
 from lets_plot.geo_data_internals.utils import is_geocoder
 
-from .core import FeatureSpec, LayerSpec, aes
+from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
@@ -1510,7 +1510,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1771,7 +1771,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1895,7 +1895,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True

@@ -138,7 +138,7 @@ class GeoConfigTest {
             .assertBinding(Aes.Y, POINT_Y)
             .assertBinding(Aes.COLOR, "kind")
             .assertGroups(polygonSequence(0) + multiPolygonSequence(1))
-            .assertAes(Aes.COLOR, polygonSequence(Color(102, 194, 165)) + multiPolygonSequence(Color(252, 141, 98)))
+            .assertAes(Aes.COLOR, polygonSequence(Color(228, 26, 28)) + multiPolygonSequence(Color(55, 126, 184)))
     }
 
     @Test
@@ -360,8 +360,8 @@ class GeoConfigTest {
             |}""".trimMargin()
 
 
-        val europe = Color(102, 194, 165)
-        val asia = Color(252, 141, 98)
+        val europe = Color(228, 26, 28)
+        val asia = Color(55, 126, 184)
         singleGeomLayer(
             """
             |{
@@ -473,7 +473,7 @@ class GeoConfigTest {
             .assertValues("values", listOf(100.0, 500.0, 42.42))
             .assertValues("lon", listOf(1.0, 3.0, 5.0))
             .assertValues("lat", listOf(2.0, 4.0, 6.0))
-            .assertAes(Aes.COLOR, listOf(Color(102, 194, 165), Color(252, 141, 98), Color(141, 160, 203)))
+            .assertAes(Aes.COLOR, listOf(Color(228, 26, 28), Color(55, 126, 184), Color(77, 175, 74, 255)))
     }
 
     @Test

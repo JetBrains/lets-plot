@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 
 class ThemeFlavor(
-    val fill: Color,
-    val color: Color,
+    private val fill: Color,
+    private val color: Color,
     private val specialColors: Map<String, Map<String, Color>> = emptyMap(),
 ) {
     fun updateColors(options: Map<String, Any>): Map<String, Any> {
@@ -46,6 +46,11 @@ class ThemeFlavor(
                 if (key == ThemeOption.TOOLTIP_RECT) {
                     specialColors[key]?.get(Elem.FILL)?.let { updated[Elem.FILL] = it }
                 }
+
+                // Set flavor values for named colors
+                updated[ThemeOption.Geom.PEN] = color
+                updated[ThemeOption.Geom.PAPER] = fill
+
                 updated
             } else {
                 value

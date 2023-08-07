@@ -242,6 +242,7 @@ object Option {
 
         object Step {
             const val DIRECTION = "direction"
+            const val PADDED = "pad"
         }
 
         object Segment {
@@ -293,6 +294,7 @@ object Option {
             const val SPACER_WIDTH = "spacer_width"
             const val SPACER_COLOR = "spacer_color"
             const val STROKE_SIDE = "stroke_side"
+            const val SIZE_UNIT = "size_unit"
         }
 
         object Lollipop {
@@ -429,6 +431,11 @@ object Option {
             const val DISTRIBUTION = "distribution"
             const val DISTRIBUTION_PARAMETERS = "dparams"
             const val LINE_QUANTILES = "quantiles"
+        }
+
+        object ECDF {
+            const val N = "n"
+            const val PADDED = "pad"
         }
 
         object Summary {
@@ -650,8 +657,6 @@ object Option {
     }
 
     object Theme {
-        const val FLAVOR = "flavor"
-
         // All other options were moved to
         // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
 

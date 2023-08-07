@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
+import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.spec.*
@@ -62,9 +62,13 @@ abstract class PlotConfig(
         sharedData = ConfigUtil.createDataFrame(get(DATA))
 
         // update the color option converter with system named colors including flavors
-        val flavorTheme = getMap(Option.Plot.THEME).getString(Option.Theme.FLAVOR)?.let(ThemeFlavor.Companion::forName)
-        val colorConverter = NamedSystemColorOptionConverter(NamedSystemColors(flavorTheme))
-        AesOptionConversion.updateWith(colorConverter)
+        run {
+            val colorTheme = ThemeConfig(getMap(Option.Plot.THEME), DefaultFontFamilyRegistry()).theme.colors()
+            val colorConverter = NamedSystemColorOptionConverter(
+                NamedSystemColors(colorTheme)
+            )
+            AesOptionConversion.updateWith(colorConverter)
+        }
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
 

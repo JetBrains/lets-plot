@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.StepGeom
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.math.abs
@@ -69,7 +68,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     }
 
 
-    internal fun createSteps(paths: List<PathData>, dir: StepGeom.Direction): List<LinePath> {
+    internal fun createSteps(paths: List<PathData>, horizontalThenVertical: Boolean): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
 
         // draw step for each group
@@ -80,8 +79,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
                 var prev: DoubleVector? = null
                 for (point in points) {
                     if (prev != null) {
-                        val x = if (dir === StepGeom.Direction.HV) point.x else prev.x
-                        val y = if (dir === StepGeom.Direction.HV) prev.y else point.y
+                        val x = if (horizontalThenVertical) point.x else prev.x
+                        val y = if (horizontalThenVertical) prev.y else point.y
                         newPoints.add(DoubleVector(x, y))
                     }
                     newPoints.add(point)

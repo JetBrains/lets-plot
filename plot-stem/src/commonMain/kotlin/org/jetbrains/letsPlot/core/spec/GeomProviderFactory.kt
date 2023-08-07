@@ -203,6 +203,9 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Step.DIRECTION)) {
                     geom.setDirection(layerConfig.getString(Option.Geom.Step.DIRECTION)!!)
                 }
+                if (layerConfig.hasOwn(Option.Geom.Step.PADDED)) {
+                    geom.padded = layerConfig.getBoolean(Option.Geom.Step.PADDED, StepGeom.DEF_PADDED)
+                }
                 geom
             }
 
@@ -307,6 +310,7 @@ internal object GeomProviderFactory {
                         )
                     }
                 }
+                geom.sizeUnit = layerConfig.getString(Option.Geom.Pie.SIZE_UNIT)?.lowercase()
                 geom
             }
 

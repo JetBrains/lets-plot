@@ -9,13 +9,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
+import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 
 internal class DefaultGeomTheme private constructor(
     private val color: Color,
@@ -35,18 +30,6 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     companion object {
-        private class InheritedColors(
-            options: Map<String, Any>
-        ) : ThemeValuesAccess(options, DefaultFontFamilyRegistry()) {
-            private val lineKey = listOf(AXIS_LINE, AXIS, LINE)
-
-            private val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
-
-            fun lineColor() = getColor(getElemValue(lineKey), ThemeOption.Elem.COLOR)
-
-            fun backgroundFill() = getColor(getElemValue(backgroundKey), ThemeOption.Elem.FILL)
-        }
-
         private class FixedColors(geomKind: GeomKind) {
             val color = if (geomKind == GeomKind.SMOOTH) {
                 Color.MAGENTA
@@ -57,8 +40,7 @@ internal class DefaultGeomTheme private constructor(
         }
 
         // defaults for geomKind
-        fun forGeomKind(geomKind: GeomKind, themeSettings: Map<String, Any>): GeomTheme {
-            val inheritedColors = InheritedColors(themeSettings)
+        fun forGeomKind(geomKind: GeomKind, colorTheme: ColorTheme): GeomTheme {
             val fixedColors = FixedColors(geomKind)
 
             var color = fixedColors.color
@@ -82,13 +64,13 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.Q_Q_2_LINE,
                 GeomKind.ERROR_BAR,
                 GeomKind.LINE_RANGE -> {
-                    color = inheritedColors.lineColor()
+                    color = colorTheme.pen()
                     size *= sizeMultiplier
                 }
 
                 GeomKind.CONTOUR,
                 GeomKind.DENSITY2D -> {
-                    color = inheritedColors.lineColor()
+                    color = colorTheme.pen()
                 }
 
                 GeomKind.AREA_RIDGES,
@@ -97,16 +79,16 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.RECT,
                 GeomKind.RIBBON,
                 GeomKind.MAP -> {
-                    color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    color = colorTheme.pen()
+                    fill = Colors.withOpacity(colorTheme.pen(), 0.1)
                     size *= sizeMultiplier
                 }
 
                 GeomKind.VIOLIN,
                 GeomKind.CROSS_BAR,
                 GeomKind.BOX_PLOT -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill()
+                    color = colorTheme.pen()
+                    fill = colorTheme.paper()
                     size *= sizeMultiplier
                 }
 
@@ -114,33 +96,33 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.JITTER,
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill()
+                    color = colorTheme.pen()
+                    fill = colorTheme.paper()
                     size = 2.0 * sizeMultiplier
                     lineWidth *= sizeMultiplier
                 }
 
                 GeomKind.DOT_PLOT,
                 GeomKind.Y_DOT_PLOT -> {
-                    color = inheritedColors.backgroundFill()
+                    color = colorTheme.paper()
                 }
 
                 GeomKind.POINT_RANGE -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill()
+                    color = colorTheme.pen()
+                    fill = colorTheme.paper()
                     size *= sizeMultiplier              // mid-point size
                     lineWidth = 1.0 * sizeMultiplier    // line width and stroke for point
                 }
 
                 GeomKind.LOLLIPOP -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill()
+                    color = colorTheme.pen()
+                    fill = colorTheme.paper()
                     size = 2.0                          // point size
                     lineWidth = 1.0 * sizeMultiplier    // line width and stroke for point
                 }
 
                 GeomKind.SMOOTH -> {
-                    fill = inheritedColors.lineColor()
+                    fill = colorTheme.pen()
                     alpha = 0.15
                     size *= sizeMultiplier
                 }
@@ -151,19 +133,19 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.HISTOGRAM -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.lineColor()
+                    color = colorTheme.pen()
+                    fill = colorTheme.pen()
                 }
 
                 GeomKind.POLYGON -> {
-                    color = inheritedColors.backgroundFill()
+                    color = colorTheme.paper()
                     size *= sizeMultiplier
                 }
 
                 GeomKind.TILE,
                 GeomKind.BIN_2D -> {
                     color = Color.TRANSPARENT
-                    fill = inheritedColors.lineColor()
+                    fill = colorTheme.pen()
                     size *= sizeMultiplier
                 }
 
@@ -174,14 +156,14 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.TEXT, GeomKind.LABEL -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill() // background for label
+                    color = colorTheme.pen()
+                    fill = colorTheme.paper() // background for label
                     size = 7.0
                 }
 
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
-                    size = 10.0
+                    size = PieGeom.DEF_PIE_SIZE
                     lineWidth *= sizeMultiplier
                 }
 

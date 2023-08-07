@@ -12,6 +12,11 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
 
 
+- New layer `stat_ecdf()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_ecdf.ipynb). 
+
+
 - New layer `geom_function()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_function.ipynb).
@@ -41,8 +46,14 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
 
+  - `size_unit` parameter.
 
-- New named system colors: "pen", "paper", "brush".
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
+
+
+- New named system colors: "pen", "paper", "brush";
+   
+  `geom` parameter in `theme()` to specify new values for these colors via `element_geom()` function.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
 
@@ -54,6 +65,8 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 ### Changed
 
+- The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
+
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
 
 - [BREAKING] `geom_pointrange()`: `size` aesthetic shouldn't affect line width [[#751](https://github.com/JetBrains/lets-plot/issues/751)]:
@@ -62,9 +75,9 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 
-- Change the default `position` value from `'identity'` to `'dodge'` for `geom_errorbar()`, `geom_pointrange()` and `geom_linerange()`.
-
 - `geom_boxplot()`: the `size` and `stroke` parameters started to affect outliers.
+
+- `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed. 
 
 
 ### Fixed
