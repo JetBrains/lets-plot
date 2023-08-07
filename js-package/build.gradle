@@ -34,18 +34,30 @@ kotlin {
 def dist_dir = "${project.buildDir}/distributions/"
 def artifact_name = "js-package.js"
 
-tasks.register('renameJsArtifact') {
+tasks.register('renameProdJsArtifact') {
     group = project.letsPlotTaskGroup
     doLast{
         copy {
             from "${dist_dir}${artifact_name}"
-            rename "${artifact_name}", "lets-plot-latest.min.js"
+            rename "${artifact_name}", "lets-plot.min.js"
             into dist_dir
         }
     }
 }
 
-jsBrowserProductionWebpack.finalizedBy renameJsArtifact
+tasks.register('renameDevJsArtifact') {
+    group = project.letsPlotTaskGroup
+    doLast{
+        copy {
+            from "${project.buildDir}/developmentExecutable/${artifact_name}"
+            rename "${artifact_name}", "lets-plot.js"
+            into dist_dir
+        }
+    }
+}
+
+jsBrowserDevelopmentWebpack.finalizedBy renameDevJsArtifact
+jsBrowserProductionWebpack.finalizedBy renameProdJsArtifact
 
 tasks.register('copyForPublish', Copy) {
     dependsOn jsBrowserProductionWebpack
