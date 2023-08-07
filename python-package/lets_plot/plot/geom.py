@@ -244,7 +244,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : bool, default=False.
-        True - keeps a line flat, False - allows projection to curve a line.
+        True - keeps a line flat, i.e. draws a loxodrome in Mercator projection.
+        False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -5571,7 +5572,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : bool, default=False.
-        True - keeps a line flat, False - allows projection to curve a line.
+        True - keeps a line flat, i.e. draws a loxodrome in Mercator projection.
+        False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
