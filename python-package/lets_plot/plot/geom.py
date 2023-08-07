@@ -6071,6 +6071,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              hole=None,
              stroke_side=None,
              spacer_width=None, spacer_color=None,
+             size_unit=None,
              fill_by=None,
              **other_args):
     """
@@ -6124,6 +6125,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the plot background color is used.
+    size_unit : {'x', 'y'}
+        Allows to relate the size of the pie chart to the division value of the corresponding scale.
+        If None, the fitting does not take place.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args
@@ -6206,6 +6210,17 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill='name', weight='value'), size_unit='x') + xlim(-7, 7)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 4-6
 
         from lets_plot import *
@@ -6282,6 +6297,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stroke_side=stroke_side,
                  spacer_width=spacer_width,
                  spacer_color=spacer_color,
+                 size_unit=size_unit,
                  fill_by=fill_by,
                  **other_args)
 
