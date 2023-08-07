@@ -294,6 +294,7 @@ object Option {
             const val SPACER_WIDTH = "spacer_width"
             const val SPACER_COLOR = "spacer_color"
             const val STROKE_SIDE = "stroke_side"
+            const val SIZE_UNIT = "size_unit"
         }
 
         object Lollipop {
@@ -656,8 +657,6 @@ object Option {
     }
 
     object Theme {
-        const val FLAVOR = "flavor"
-
         // All other options were moved to
         // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
 

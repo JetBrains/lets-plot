@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
 object AesScaling {
     const val UNIT_SHAPE_SIZE = 2.2
+    const val PIE_UNIT_SHAPE_SIZE = 10.0
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
@@ -37,7 +38,7 @@ object AesScaling {
 
     fun pieDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 10.0
+        return p.size()!! * PIE_UNIT_SHAPE_SIZE
     }
 
     fun circleDiameterSmaller(p: DataPointAesthetics): Double {

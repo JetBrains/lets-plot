@@ -34,7 +34,7 @@ interface ImmutableGeomContext : GeomContext {
 
         fun annotations(annotations: Annotations?): Builder
 
-        fun plotBackground(color: Color): Builder
+        fun backgroundColor(color: Color): Builder
 
         fun build(): ImmutableGeomContext
     }

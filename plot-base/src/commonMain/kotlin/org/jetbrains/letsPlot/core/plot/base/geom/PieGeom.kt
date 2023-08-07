@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
-import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -35,6 +34,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var spacerWidth: Double = 0.75
     var spacerColor: Color? = null
     var strokeSide: StrokeSide = StrokeSide.OUTER
+    var sizeUnit: String? = null
 
     enum class StrokeSide {
         OUTER, INNER, BOTH;
@@ -58,22 +58,26 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
         GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
-            .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
-            .filterNotNullKeys()
-            .forEach { (pieCenter, dataPoints) ->
-                val pieSectors = computeSectors(pieCenter, dataPoints)
+            .groupBy { p -> DoubleVector(p.x()!!, p.y()!!) }
+            .forEach { (point, dataPoints) ->
+                val sizeUnitRatio = when (sizeUnit) {
+                    null -> 1.0
+                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
+                }
+                val toLocation = { p: DataPointAesthetics -> geomHelper.toClient(point, p) }
+                val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
                 root.appendNodes(pieSectors.map(::buildSvgArcs))
                 if (spacerWidth > 0) {
                     root.appendNodes(
-                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.plotBackground)
+                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.backgroundColor)
                     )
                 }
 
                 pieSectors.forEach { buildHint(it, ctx.targetCollector) }
 
-                ctx.annotations?.let { buildAnnotations(root, pieCenter, pieSectors, ctx) }
+                ctx.annotations?.let { buildAnnotations(root, pieSectors, ctx) }
             }
     }
 
@@ -225,7 +229,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
-    private fun computeSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
+    private fun computeSectors(
+        dataPoints: List<DataPointAesthetics>,
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        sizeUnitRatio: Double
+    ): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
         fun angle(p: DataPointAesthetics) = when (sum) {
             0.0 -> 1.0 / dataPoints.size
@@ -236,12 +244,14 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         var currentAngle = -PI / 2.0
         currentAngle -= angle(dataPoints.first())
 
-        return dataPoints.map { p ->
+        return dataPoints.mapNotNull { p ->
+            val pieCenter = toLocation(p) ?: return@mapNotNull null
             Sector(
                 p = p,
                 pieCenter = pieCenter,
                 startAngle = currentAngle,
-                endAngle = currentAngle + angle(p)
+                endAngle = currentAngle + angle(p),
+                sizeUnitRatio = sizeUnitRatio
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
@@ -250,12 +260,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val pieCenter: DoubleVector,
         val p: DataPointAesthetics,
         val startAngle: Double,
-        val endAngle: Double
+        val endAngle: Double,
+        sizeUnitRatio: Double
     ) {
         val angle = endAngle - startAngle
         val strokeWidth = p.stroke() ?: 0.0
         private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT
-        val radius: Double = AesScaling.pieDiameter(p) / 2
+        val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
         val holeRadius = if (holeSize == 0.0 && strokeSide.hasInner && hasVisibleStroke) {
             // Add a hole if an inner stroke is needed
             strokeWidth + spacerWidth
@@ -339,11 +350,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
     private fun buildAnnotations(
         root: SvgRoot,
-        pieCenter: DoubleVector,
         sectors: List<Sector>,
         ctx: GeomContext
     ) {
         if (ctx.annotations == null || sectors.isEmpty()) return
+
+        val pieCenter = sectors.map(Sector::pieCenter).distinct().singleOrNull() ?: return
 
         // split sectors into left and right...
         val leftSectors = sectors
@@ -450,6 +462,21 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
     companion object {
         const val HANDLES_GROUPS = false
+        const val DEF_PIE_SIZE = 10.0
+
+        private fun getSizeUnitRatio(
+            p: DoubleVector,
+            coord: CoordinateSystem,
+            axis: String
+        ): Double {
+            val unitSquareSize = coord.unitSize(p)
+            val unitSize = when (axis.lowercase()) {
+                "x" -> unitSquareSize.x
+                "y" -> unitSquareSize.y
+                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
+            }
+            return unitSize / AesScaling.PIE_UNIT_SHAPE_SIZE
+        }
 
         // For annotations
 

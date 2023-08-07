@@ -14,8 +14,10 @@ class Pie {
             pie(hole = 0.0, useCountStat = false),
             pie(hole = 0.2),
             pie(hole = 0.5, withOrdering = true),
-            withExplodes(),
-            withStrokeAndSpacerLines()
+            withExplodes(addLabels = false),
+            withExplodes(addLabels = true),
+            withStrokeAndSpacerLines(),
+            sizeUnit()
         )
     }
 
@@ -100,9 +102,48 @@ class Pie {
         return plotSpec
     }
 
-    private fun withExplodes(): MutableMap<String, Any> {
+    private fun sizeUnit(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'ggtitle': {'text' : 'size_unit=x' },
+              'mapping': {'fill': 'name', 'slice': 'value' },
+              'layers': [
+                {
+                  'geom': 'pie', 
+                  'size_unit': 'x',
+                  'stat': 'identity',
+                  'hole': 0.2
+                }
+              ],
+              'coord': {"name": "fixed", "ratio": 1.0, "flip": "False"},
+              'scales': [
+                  {'aesthetic': 'x', 'limits': [-5, 5]},
+                  {'aesthetic': 'y', 'limits': [-5, 5]}
+              ]
+            }""".trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = data
+        return plotSpec
+    }
+
+    private fun withExplodes(addLabels: Boolean): MutableMap<String, Any> {
+        val labels = if (addLabels) {
+            ", 'labels': { 'lines': ['@group_names', '@count']}"
+        } else ""
         val length = mapOf(
-            "group_names" to listOf("2-3 km", "3-5 km", "5-7 km", "7-10 km", "10-20 km", "20-50 km", "50-75 km", "75-100 km", ">100 km"),
+            "group_names" to listOf(
+                "2-3 km",
+                "3-5 km",
+                "5-7 km",
+                "7-10 km",
+                "10-20 km",
+                "20-50 km",
+                "50-75 km",
+                "75-100 km",
+                ">100 km"
+            ),
             "count" to listOf(1109, 696, 353, 192, 168, 86, 74, 65, 53),
             "explode" to listOf(0, 0, 0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.6),
         )
@@ -123,6 +164,7 @@ class Pie {
                 'stroke_side': 'both',
                 'spacer_width': 1.0,
                 'spacer_color': 'black'
+                $labels
              }
           ]
         }""".trimIndent()
@@ -163,7 +205,7 @@ class Pie {
         }""".trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] =  mapOf(
+        plotSpec["data"] = mapOf(
             "name" to ('A'..'C').toList(),
             "value" to listOf(50, 30, 60),
             "stroke" to listOf(6, 8, 10),
