@@ -6,8 +6,6 @@
 package demo.livemap.canvasDemo
 
 @OptIn(ExperimentalJsExport::class)
-@Suppress("unused")
-@JsName("drawImageDemo")
 @JsExport
 fun drawImageDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, createSnapshot ->

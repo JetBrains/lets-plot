@@ -6,8 +6,6 @@
 package demo.livemap.demo
 
 @OptIn(ExperimentalJsExport::class)
-@Suppress("unused")
-@JsName("perfDemo")
 @JsExport
 fun perfDemo() {
     DemoBaseJs(::PerfDemoModel).show()

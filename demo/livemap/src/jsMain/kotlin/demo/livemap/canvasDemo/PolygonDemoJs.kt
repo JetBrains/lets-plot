@@ -6,8 +6,6 @@
 package demo.livemap.canvasDemo
 
 @OptIn(ExperimentalJsExport::class)
-@Suppress("unused")
-@JsName("polygonDemo")
 @JsExport
 fun polygonDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->

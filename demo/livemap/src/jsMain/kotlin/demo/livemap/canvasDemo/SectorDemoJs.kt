@@ -6,8 +6,6 @@
 package demo.livemap.canvasDemo
 
 @OptIn(ExperimentalJsExport::class)
-@Suppress("unused")
-@JsName("sectorDemo")
 @JsExport
 fun sectorDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->

@@ -6,7 +6,6 @@
 package demo.livemap.demo
 
 @OptIn(ExperimentalJsExport::class)
-@JsName("linesDemo")
 @JsExport
 fun linesDemo() {
     DemoBaseJs(::LinesDemoModel).show()
