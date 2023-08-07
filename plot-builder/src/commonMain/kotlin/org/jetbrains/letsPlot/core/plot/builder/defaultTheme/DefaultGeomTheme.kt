@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
-import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 
 internal class DefaultGeomTheme private constructor(
@@ -30,6 +29,10 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     companion object {
+        private const val DEF_LOLLIPOP_SIZE = 2.0
+        private const val DEF_PIE_SIZE = 10.0
+        private const val DEF_TEXT_SIZE = 7.0
+
         private class FixedColors(geomKind: GeomKind) {
             val color = if (geomKind == GeomKind.SMOOTH) {
                 Color.MAGENTA
@@ -117,7 +120,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.LOLLIPOP -> {
                     color = colorTheme.pen()
                     fill = colorTheme.paper()
-                    size = 2.0                          // point size
+                    size = DEF_LOLLIPOP_SIZE            // point size
                     lineWidth = 1.0 * sizeMultiplier    // line width and stroke for point
                 }
 
@@ -158,12 +161,12 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.TEXT, GeomKind.LABEL -> {
                     color = colorTheme.pen()
                     fill = colorTheme.paper() // background for label
-                    size = 7.0
+                    size = DEF_TEXT_SIZE
                 }
 
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
-                    size = PieGeom.DEF_PIE_SIZE
+                    size = DEF_PIE_SIZE
                     lineWidth *= sizeMultiplier
                 }
 

@@ -5,28 +5,28 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
@@ -297,6 +297,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             },
             angle = angle
         )
+
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
             radius = when (strokeSide.hasInner && hasVisibleStroke) {
                 true -> holeRadius - strokeWidth / 2
@@ -462,7 +463,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
     companion object {
         const val HANDLES_GROUPS = false
-        const val DEF_PIE_SIZE = 10.0
 
         private fun getSizeUnitRatio(
             p: DoubleVector,
@@ -653,12 +653,22 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
         if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
         if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }
