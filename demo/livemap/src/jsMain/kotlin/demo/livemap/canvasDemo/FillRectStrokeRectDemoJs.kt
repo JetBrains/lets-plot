@@ -5,7 +5,6 @@
 
 package demo.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun fillRectStrokeRectDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->

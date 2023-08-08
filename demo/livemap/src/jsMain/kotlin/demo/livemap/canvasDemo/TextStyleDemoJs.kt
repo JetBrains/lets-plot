@@ -5,7 +5,6 @@
 
 package demo.livemap.canvasDemo
 
-@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun textStyleDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->

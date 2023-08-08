@@ -5,7 +5,6 @@
 
 package demo.livemap.demo
 
-@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun pathsDemo() {
     DemoBaseJs(::PathsDemoModel).show()

@@ -5,7 +5,6 @@
 
 package demo.livemap.demo
 
-@OptIn(ExperimentalJsExport::class)
 @JsExport
 fun rasterTilesDemo() {
     DemoBaseJs(::RasterTilesDemoModel).show()

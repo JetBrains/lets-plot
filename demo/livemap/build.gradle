@@ -103,6 +103,8 @@ kotlin {
 
                 implementation("io.ktor:ktor-client-websockets:$ktor_version")
                 implementation("io.ktor:ktor-client-js:$ktor_version")
+
+                languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             }
         }
     }
