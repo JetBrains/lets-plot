@@ -165,9 +165,9 @@ class LetsPlot:
             <a href="https://stamen.com">Stamen Design</a>, under
             <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
             Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under
-            <a href="https://www.openstreetmap.org/copyright">ODbL</a>
-            '''
-            tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
+            <a href="https://www.openstreetmap.org/copyright">ODbL</a>.
+            '''.strip()
+            tiles = maptiles_zxy(url='https://stamen-tiles-[abcd].a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
                                  attribution=attribution)
             LetsPlot.set(tiles)
             ggplot() + geom_livemap()
