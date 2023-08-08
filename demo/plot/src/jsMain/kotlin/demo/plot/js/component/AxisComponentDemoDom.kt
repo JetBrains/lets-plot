@@ -12,10 +12,11 @@ import org.jetbrains.letsPlot.platf.w3c.mapping.util.SvgToW3c.generateDom
  * Called from generated HTML
  * Run with AxisComponentDemoBrowser.kt
  */
+
+@JsExport
 fun axisComponentDemo() {
     with(AxisComponentDemo()) {
         val svgRoots = createSvgRoots()
         generateDom(svgRoots, "root")
     }
 }
-
