@@ -10,37 +10,9 @@ kotlin {
     jvm("jvmBrowser")
     jvm("jvmJfxPlot")
     jvm("jvmBatikPlot")
-    js(LEGACY) {
-        browser {
-            dceTask {
-                keep.addAll(
-                        "ktor-ktor-io.\$\$importsForInline\$\$.ktor-ktor-io.io.ktor.utils.io",
-                        "lets-plot-demo-livemap.demo.livemap.demo.barsDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.emptyLiveMapDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.featuresDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.linesDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.pathsDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.piesDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.pointsDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.polygonsDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.rasterTilesDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.solidColorTilesDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.rectDemo",
-                        "lets-plot-demo-livemap.demo.livemap.demo.textDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.pathDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.polygonDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.drawImageDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.scaleRotateTranslateDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.lineJoinLineCapDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.fillRectStrokeRectDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.lineDashDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.textAlignAndBaselineDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.textStyleDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.sectorDemo",
-                        "lets-plot-demo-livemap.demo.livemap.canvasDemo.saveRestoreDemo",
-                )
-            }
-        }
+    js {
+        browser()
+        binaries.executable()
     }
 
 
@@ -127,8 +99,12 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-
                 implementation project(':platf-w3c')
+
+                implementation("io.ktor:ktor-client-websockets:$ktor_version")
+                implementation("io.ktor:ktor-client-js:$ktor_version")
+
+                languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             }
         }
     }

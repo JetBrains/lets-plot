@@ -5,8 +5,7 @@
 
 package demo.livemap.demo
 
-@Suppress("unused")
-@JsName("featuresDemo")
+@JsExport
 fun featuresDemo() {
     DemoBaseJs(::FeaturesDemoModel).show()
 }

@@ -5,8 +5,7 @@
 
 package demo.livemap.demo
 
-@Suppress("unused")
-@JsName("perfDemo")
+@JsExport
 fun perfDemo() {
     DemoBaseJs(::PerfDemoModel).show()
 }

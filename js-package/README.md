@@ -1,21 +1,31 @@
-# lets-plot JS library.
-                                                       
-## `js-package/distr`
+# lets-plot JS library
+                    
+## Build artifacts
 
-During the project release, Lets-Plot JS artifacts are copied to the `distr` folder
-(see [RELEASE.md](https://github.com/JetBrains/lets-plot/blob/master/RELEASE.md#3-build-and-copy-javascript-artifacts-to-the-publish-directory)):
+> **Note**: These commands must be run from the project root.
+> If you want run them from this folder, remove `js-package:` from the task name.
 
-- lets-plot.js
-- lets-plot.min.js
 
-This GitHub location (https://github.com/JetBrains/lets-plot/tree/master/js-package/distr) is
-set up for **git auto-update** at cdnjs.com.
+ - `./gradlew js-package:jsBrowserProductionWebpack` - builds minified JS package `lets-plot.min.js` for embedding;
+ - `./gradlew js-package:jsBrowserDevelopmentWebpack` - builds full-size JS package `lets-plot.js` for develop purpose;
 
-See: [cdnjs/packages/l/lets-plot.json](https://github.com/cdnjs/packages/blob/master/packages/l/lets-plot.json)
+After build artifacts can be found inside `build` directory: `js-package/build/distributions`.
 
-Note: the file lets-plot.js is ignored by CDNJS due to its large size (45MB > 25MB) and 
-not available via CDN.  
+- `./gradlew js-package:copyForPublish` - copies minified JS package for release.
+                                   
+Release artifacts are located inside `distr` directory: `js-package/distr`.
+
 
 ## CDN
 
-See: https://cdnjs.com/libraries/lets-plot
+Lets-Plot project uses `JsDelivr` as CDN service for JS artifacts:
+
+https://www.jsdelivr.com
+
+For CDN update release JS artifacts should be pushed to the project repository with `git tag` (check [RELEASE.md](https://github.com/JetBrains/lets-plot/blob/master/RELEASE.md#3-build-and-copy-javascript-artifacts-to-the-publish-directory)).
+
+CDN link to release artifact looks like:
+
+`https://github.com/JetBrains/lets-plot/releases/download/<RELEASE_VERSION>/lets-plot.min.js`
+
+For example: https://github.com/JetBrains/lets-plot/releases/download/v3.2.0/lets-plot.min.js

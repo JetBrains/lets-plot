@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("drawImageDemo")
+@JsExport
 fun drawImageDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, createSnapshot ->
         demo.livemap.canvasDemo.DrawImageAndClearRectDemoModel(canvas, createSnapshot)

@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-@JsName("solidColorTilesDemo")
+@JsExport
 fun solidColorTilesDemo() {
     DemoBaseJs(::SolidColorTilesDemoModel).show()
 }

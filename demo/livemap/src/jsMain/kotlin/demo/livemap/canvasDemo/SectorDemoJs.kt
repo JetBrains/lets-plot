@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("sectorDemo")
+@JsExport
 fun sectorDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         SectorDemoModel(canvas)

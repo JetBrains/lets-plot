@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-@JsName("pointsDemo")
+@JsExport
 fun pointsDemo() {
     DemoBaseJs(::PointsDemoModel).show()
 }

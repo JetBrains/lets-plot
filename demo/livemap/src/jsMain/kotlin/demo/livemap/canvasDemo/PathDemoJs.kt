@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("pathDemo")
+@JsExport
 fun pathDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         PathDemoModel(canvas)

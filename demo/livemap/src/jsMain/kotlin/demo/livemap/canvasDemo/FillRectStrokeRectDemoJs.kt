@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("fillRectStrokeRectDemo")
+@JsExport
 fun fillRectStrokeRectDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         demo.livemap.canvasDemo.FillRectStrokeRectDemoModel(canvas)
