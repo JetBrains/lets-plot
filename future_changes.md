@@ -93,4 +93,4 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 - ggsave() doesn't save geom_raster() layer to a file [[#778](https://github.com/JetBrains/lets-plot/issues/778)].
 - geom_crossbar aesthetics take `middle` argument instead of `y` [[#804](https://github.com/JetBrains/lets-plot/issues/804)].
 - panning on interactive map should be more responsive [[#336](https://github.com/JetBrains/lets-plot/issues/336)].
-
+- Offline mode doesn't work with manylinux wheels [[#808](https://github.com/JetBrains/lets-plot/issues/808)].
