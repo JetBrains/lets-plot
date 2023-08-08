@@ -30,7 +30,7 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
 
     Notes
     -----
-    If you are using Safari, and you are having trouble loading tiles, try disabling the NSURLSession Websocket feature.
+    If you are using Safari and having trouble loading tiles, try disabling the NSURLSession Websocket feature.
     Go to `Develop -> Experimental Features -> NSURLSession Websocket` to turn it off.
 
     Also, you could use raster tiles from `lets_plot.tilesets`, e.g.

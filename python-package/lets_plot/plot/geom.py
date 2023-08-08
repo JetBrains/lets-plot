@@ -244,7 +244,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : bool, default=False.
-        True - keeps a line straight (correspond to a loxodrome in case of Mercator projection).
+        True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
         False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
@@ -5572,7 +5572,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : bool, default=False.
-        True - keeps a line straight (correspond to a loxodrome in case of Mercator projection).
+        True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
         False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
@@ -6126,8 +6126,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     spacer_color : str
         Color for spacers between sectors. By default, the plot background color is used.
     size_unit : {'x', 'y'}
-        Allows to relate the size of the pie chart to the division value of the corresponding scale.
-        If None, the fitting does not take place.
+        Allow to relate the size of the pie chart to the division value of the corresponding scale.
+        If None, no fitting is performed.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args
