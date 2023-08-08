@@ -475,7 +475,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 "y" -> unitSquareSize.y
                 else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
             }
-            return unitSize / AesScaling.PIE_UNIT_SHAPE_SIZE
+            return unitSize / AesScaling.PIE_UNIT_SIZE
         }
 
         // For annotations

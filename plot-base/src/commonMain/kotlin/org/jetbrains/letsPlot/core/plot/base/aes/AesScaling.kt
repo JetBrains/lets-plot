@@ -8,17 +8,17 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
 object AesScaling {
-    const val UNIT_SHAPE_SIZE = 2.2
-    const val PIE_UNIT_SHAPE_SIZE = 10.0
+    const val POINT_UNIT_SIZE = 2.2
+    const val PIE_UNIT_SIZE = 10.0
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * UNIT_SHAPE_SIZE
+        return p.size()!! * POINT_UNIT_SIZE
     }
 
     fun pointStrokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.stroke()!! * UNIT_SHAPE_SIZE / 2.0
+        return p.stroke()!! * POINT_UNIT_SIZE / 2.0
     }
 
     fun dotStrokeWidth(p: DataPointAesthetics): Double {
@@ -28,17 +28,17 @@ object AesScaling {
 
     fun lineWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.linewidth()!! * UNIT_SHAPE_SIZE / 2.0
+        return p.linewidth()!! * POINT_UNIT_SIZE / 2.0
     }
 
     fun circleDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * UNIT_SHAPE_SIZE
+        return p.size()!! * POINT_UNIT_SIZE
     }
 
     fun pieDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * PIE_UNIT_SHAPE_SIZE
+        return p.size()!! * PIE_UNIT_SIZE
     }
 
     fun circleDiameterSmaller(p: DataPointAesthetics): Double {
@@ -48,7 +48,7 @@ object AesScaling {
 
     fun sizeFromCircleDiameter(diameter: Double): Double {
         // px -> aes Units
-        return diameter / UNIT_SHAPE_SIZE
+        return diameter / POINT_UNIT_SIZE
     }
 
     fun textSize(p: DataPointAesthetics): Double {
