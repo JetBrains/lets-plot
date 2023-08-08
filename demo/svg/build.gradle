@@ -13,6 +13,7 @@ kotlin {
     jvm("jvmBrowser")   // generates index.html and opens it in browser
     js() {
         browser()
+        binaries.executable()
     }
 
     sourceSets {
@@ -61,6 +62,8 @@ kotlin {
                 implementation kotlin('stdlib-js')
                 implementation project(":plot-base")
                 implementation project(":platf-w3c")
+
+                languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             }
         }
     }
