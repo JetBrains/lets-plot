@@ -244,7 +244,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : bool, default=False.
-        True - keeps a line flat, i.e. draws a loxodrome in Mercator projection.
+        True - keeps a line straight (correspond to a loxodrome in case of Mercator projection).
         False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
@@ -5572,7 +5572,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : bool, default=False.
-        True - keeps a line flat, i.e. draws a loxodrome in Mercator projection.
+        True - keeps a line straight (correspond to a loxodrome in case of Mercator projection).
         False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
@@ -6215,7 +6215,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         from lets_plot import *
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
-        ggplot(data) + geom_pie(aes(fill='name', weight='value'), size_unit='x') + xlim(-7, 7)
+        ggplot(data) + geom_pie(aes(fill='name', weight='value'), size=.5, size_unit='x')
 
     |
 

@@ -33,6 +33,9 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     If you're using Safari, and you're having trouble loading tiles, try disabling the NSURLSession Websocket feature.
     Go to `Develop -> Experimental Features -> NSURLSession Websocket` to turn it off.
 
+    Also, you could use raster tiles from `lets_plot.tilesets`, e.g.
+    `ggplot() + geom_livemap(tiles=tilesets.OPEN_TOPO_MAP)`
+
     Examples
     --------
     .. jupyter-execute::
