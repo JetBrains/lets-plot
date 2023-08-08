@@ -18,7 +18,6 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 allprojects {
     group = 'org.jetbrains.lets-plot'
     version = "4.0.0-alpha3"
-    project.ext.js_artifact_version = "4.0.0.dev3"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode

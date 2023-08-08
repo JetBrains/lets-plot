@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("textStyleDemo")
+@JsExport
 fun textStyleDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         TextStyleDemoModel(canvas)

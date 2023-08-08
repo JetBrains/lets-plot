@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-@JsName("rasterTilesDemo")
+@JsExport
 fun rasterTilesDemo() {
     DemoBaseJs(::RasterTilesDemoModel).show()
 }

@@ -19,7 +19,7 @@ python_package = "lets_plot"
 def update_js():
     js_relative_path = ['js-package', 'build', 'distributions']
     js_libs = [
-        'lets-plot-latest.min',
+        'lets-plot.min',
     ]
 
     from shutil import copy

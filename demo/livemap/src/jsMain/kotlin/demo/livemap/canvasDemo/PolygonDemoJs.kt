@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("polygonDemo")
+@JsExport
 fun polygonDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         PolygonDemoModel(canvas)

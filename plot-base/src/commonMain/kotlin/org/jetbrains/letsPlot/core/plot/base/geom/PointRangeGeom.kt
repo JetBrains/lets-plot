@@ -21,8 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
 
 class PointRangeGeom : GeomBase() {
-    var fattenMidPoint: Double =
-        DEF_FATTEN
+    var fattenMidPoint: Double = DEF_FATTEN
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(

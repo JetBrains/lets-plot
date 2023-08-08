@@ -10,7 +10,7 @@ plugins {
 val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
 
 kotlin {
-    js() {
+    js {
         browser {}
     }
 

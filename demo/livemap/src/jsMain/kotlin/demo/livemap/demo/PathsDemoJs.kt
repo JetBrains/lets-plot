@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-@JsName("pathsDemo")
+@JsExport
 fun pathsDemo() {
     DemoBaseJs(::PathsDemoModel).show()
 }

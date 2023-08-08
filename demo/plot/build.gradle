@@ -13,14 +13,9 @@ kotlin {
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
-    js(LEGACY) {
-        browser {
-            dceTask {
-                keep.addAll(
-                        "lets-plot-demo-plot.demo.plot.js.component.axisComponentDemo",
-                )
-            }
-        }
+    js() {
+        browser()
+        binaries.executable()
     }
 
     sourceSets {
@@ -85,8 +80,9 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-
                 implementation project(':platf-w3c')
+
+                languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             }
         }
     }

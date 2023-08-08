@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("textAlignAndBaselineDemo")
+@JsExport
 fun textAlignAndBaselineDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         TextAlignAndBaselineDemoModel(canvas)

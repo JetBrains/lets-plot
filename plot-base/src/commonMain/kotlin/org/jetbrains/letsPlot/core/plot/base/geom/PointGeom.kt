@@ -88,7 +88,7 @@ open class PointGeom : GeomBase() {
 
             // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
             // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            return unitSize / AesScaling.UNIT_SHAPE_SIZE
+            return unitSize / AesScaling.POINT_UNIT_SIZE
         }
     }
 }

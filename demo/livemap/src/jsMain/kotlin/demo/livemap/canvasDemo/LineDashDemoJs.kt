@@ -5,8 +5,7 @@
 
 package demo.livemap.canvasDemo
 
-@Suppress("unused")
-@JsName("lineDashDemo")
+@JsExport
 fun lineDashDemo() {
     demo.livemap.canvasDemo.baseCanvasDemo { canvas, _ ->
         LineDashDemoModel(canvas)

@@ -5,7 +5,7 @@
 
 package demo.livemap.demo
 
-@JsName("textDemo")
+@JsExport
 fun textDemo() {
     DemoBaseJs(::TextDemoModel).show()
 }
