@@ -62,6 +62,8 @@ class PlotAssembler constructor(
     private val layouter: PlotFigureLayouter
 
     init {
+        require(hasLayers()) { "No layers in plot" }
+
         // ToDo: transformed ranges by aes
         plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap)
 
@@ -125,7 +127,6 @@ class PlotAssembler constructor(
     }
 
     fun createPlot(figureLayoutInfo: PlotFigureLayoutInfo): PlotSvgComponent {
-        require(hasLayers()) { "No layers in plot" }
         return createPlot(
             frameProviderByTile = frameProviderByTile,
             figureLayoutInfo = figureLayoutInfo,

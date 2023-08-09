@@ -6,12 +6,13 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.assertDoesNotFail
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.TestingPlotBuilder
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.IMAGE
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.LIVE_MAP
-import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 
 class EdgeCasesTest {
@@ -295,5 +296,22 @@ class EdgeCasesTest {
         )
 
         assertDoesNotFail("log10 with negative data: ") { TestingPlotBuilder.createPlot(plotSpec) }
+    }
+
+    @Test
+    fun emptyPlot() {
+        val spec = """
+            {
+             'kind': 'plot',
+             'layers': []
+             }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+
+        assertFailsWith(
+            IllegalArgumentException::class,
+            "No layers in plot"
+        ) { TestingPlotBuilder.createPlot(plotSpec) }
     }
 }
