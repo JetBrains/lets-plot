@@ -251,14 +251,18 @@ def flavor_darcula():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
+        data = {'name': ['pen', 'brush', 'paper'],
+                'slice': [1, 3, 3]}
+        ggplot(data) + \\
+            geom_pie(aes(fill='name', slice='slice'),
+                     stat='identity', color='pen',
+                     tooltips='none', labels=layer_labels().line('@name')) + \\
+            scale_fill_manual(['pen', 'brush', 'paper']) + \\
             flavor_darcula()
 
     """
@@ -278,14 +282,18 @@ def flavor_solarized_light():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
+        data = {'name': ['pen', 'brush', 'paper'],
+                'slice': [1, 3, 3]}
+        ggplot(data) + \\
+            geom_pie(aes(fill='name', slice='slice'),
+                     stat='identity', color='pen',
+                     tooltips='none', labels=layer_labels().line('@name')) + \\
+            scale_fill_manual(['pen', 'brush', 'paper']) + \\
             flavor_solarized_light()
 
     """
@@ -305,14 +313,18 @@ def flavor_solarized_dark():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
+        data = {'name': ['pen', 'brush', 'paper'],
+                'slice': [1, 3, 3]}
+        ggplot(data) + \\
+            geom_pie(aes(fill='name', slice='slice'),
+                     stat='identity', color='pen',
+                     tooltips='none', labels=layer_labels().line('@name')) + \\
+            scale_fill_manual(['pen', 'brush', 'paper']) + \\
             flavor_solarized_dark()
 
     """
@@ -332,14 +344,18 @@ def flavor_high_contrast_light():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
+        data = {'name': ['pen', 'brush', 'paper'],
+                'slice': [1, 3, 3]}
+        ggplot(data) + \\
+            geom_pie(aes(fill='name', slice='slice'),
+                     stat='identity', color='pen',
+                     tooltips='none', labels=layer_labels().line('@name')) + \\
+            scale_fill_manual(['pen', 'brush', 'paper']) + \\
             flavor_high_contrast_light()
 
     """
@@ -359,14 +375,18 @@ def flavor_high_contrast_dark():
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
+        data = {'name': ['pen', 'brush', 'paper'],
+                'slice': [1, 3, 3]}
+        ggplot(data) + \\
+            geom_pie(aes(fill='name', slice='slice'),
+                     stat='identity', color='pen',
+                     tooltips='none', labels=layer_labels().line('@name')) + \\
+            scale_fill_manual(['pen', 'brush', 'paper']) + \\
             flavor_high_contrast_dark()
 
     """
