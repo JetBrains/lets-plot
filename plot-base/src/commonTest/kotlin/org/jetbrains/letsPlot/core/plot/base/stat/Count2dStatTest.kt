@@ -118,4 +118,17 @@ class Count2dStatTest : BaseStatTest() {
         checkStatVarValues(statDf, Stats.PROP, listOf(1.0))
         checkStatVarValues(statDf, Stats.PROPPCT, listOf(100.0))
     }
+
+    @Test
+    fun simpleSumTest() {
+        val stat = Stats.sum()
+        val dataFrame = DataFrame.Builder()
+            .putNumeric(TransformVar.X, listOf(0.0, 0.0, 0.0, 0.0))
+            .putNumeric(TransformVar.Y, listOf(0.0, 1.0, 2.0, 3.0))
+            .build()
+
+        val statDf = applyStat(stat, dataFrame)
+        checkStatVarValues(statDf, Stats.PROP, listOf(0.25, 0.25, 0.25, 0.25))
+    }
+
 }

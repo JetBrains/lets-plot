@@ -49,7 +49,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'count' (counts number of points with same x-axis coordinate),
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
-        'density' (computes and draws kernel density estimate).
+        'density' (computes and draws kernel density estimate),
+        'sum' (computes proportion of points with same x and y coordinates within a whole dataset or a group).
     position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.

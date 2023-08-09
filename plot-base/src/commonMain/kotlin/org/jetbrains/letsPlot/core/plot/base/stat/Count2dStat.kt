@@ -12,13 +12,13 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
  * Counts the number of cases at each (x, y) position
  * (or if the weight aesthetic is supplied, the sum of the weights and the proportion)
  */
-internal class Count2dStat : AbstractCountStat(DEF_MAPPING, count2d = true) {
+internal class Count2dStat(local: Boolean) : AbstractCountStat(DEF_MAPPING, count2d = true, local = local) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
     }
 
-    override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
+    override fun toStatPositionVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         values.forEach {

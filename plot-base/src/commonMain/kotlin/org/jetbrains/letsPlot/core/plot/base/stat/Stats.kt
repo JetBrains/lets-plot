@@ -114,7 +114,11 @@ object Stats {
     }
 
     fun count2d(): Stat {
-        return Count2dStat()
+        return Count2dStat(local = true)
+    }
+
+    fun sum(): Stat {
+        return Count2dStat(local = false)
     }
 
     fun bin(

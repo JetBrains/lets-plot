@@ -5,19 +5,20 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 
 abstract class AbstractCountStat(
     defaultMappings: Map<Aes<*>, DataFrame.Variable>,
-    private val count2d: Boolean
+    private val count2d: Boolean,
+    private val local: Boolean
 ) : BaseStat(defaultMappings) {
 
-    protected abstract fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>>
+    protected abstract fun toStatPositionVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>>
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         fun getNumerics(variable: DataFrame.Variable) = if (data.has(variable)) {
@@ -40,44 +41,55 @@ abstract class AbstractCountStat(
         }
 
         val weight = BinStatUtil.weightVector(data.rowCount(), data)
+        val countData = computeCount(aggrBy, weight)
+        val positionVars = toStatPositionVars(countData.keys)
 
-        val computedCount = computeCount(aggrBy, weight)
+        val statDf = DataFrame.Builder()
+        if (count2d) {
+            statDf.putNumeric(Stats.X, positionVars[Stats.X]!!)
+            statDf.putNumeric(Stats.Y, positionVars[Stats.Y]!!)
+        } else {
+            statDf.putNumeric(Stats.X, positionVars[Stats.X]!!)
+        }
 
-        val stat = addToStatVars(computedCount.keys).toMutableMap()
-        stat[Stats.COUNT] = computedCount.values.map(MutableDouble::get)
+        statDf.putNumeric(Stats.COUNT, countData.values.map(MutableDouble::get))
 
-        return DataFrame.Builder().apply {
-            stat.forEach { (statVar, values) -> putNumeric(statVar, values) }
-        }.build()
+        if (!local) {
+            val prop = countData.values.map { it.get() / data.rowCount() }
+            val propPercent = prop.map { it * 100 }
+
+            statDf.putNumeric(Stats.PROP, prop)
+            statDf.putNumeric(Stats.PROPPCT, propPercent)
+        }
+
+        return statDf.build()
     }
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
-        val aggrBy = if (count2d) {
-            val xs = dataAfterStat[Stats.X]
-            val ys = dataAfterStat[Stats.Y]
-            xs.zip(ys)
-        } else {
-            dataAfterStat[Stats.X]
-        }.map { it!! }
+        val statDf = dataAfterStat.builder()
 
-        val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+        if (local) {
+            val aggrBy = if (count2d) {
+                val xs = dataAfterStat[Stats.X]
+                val ys = dataAfterStat[Stats.Y]
+                xs.zip(ys)
+            } else {
+                dataAfterStat[Stats.X]
+            }.map { it!! }
 
-        val computedCount = computeCount(aggrBy, counts)
+            val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+            val computedCount = computeCount(aggrBy, counts)
+            val sums = aggrBy.map { computedCount[it]!!.get() }
 
-        val sumStatCount = ArrayList<Double>()
-        val prop = ArrayList<Double>()
-        val propPercent = ArrayList<Double>()
-        for (i in counts.indices) {
-            val sum = computedCount.getValue(aggrBy[i]).get()
-            sumStatCount.add(sum)
-            prop.add(counts[i] / sum)
-            propPercent.add(counts[i] * 100 / sum)
+            val prop = counts.zip(sums).map { (count, sum) -> count / sum }
+            val propPercent = prop.map { it * 100 }
+
+            statDf.putNumeric(Stats.SUM, sums)
+            statDf.putNumeric(Stats.PROP, prop)
+            statDf.putNumeric(Stats.PROPPCT, propPercent)
         }
-        return dataAfterStat.builder()
-            .putNumeric(Stats.SUM, sumStatCount)
-            .putNumeric(Stats.PROP, prop)
-            .putNumeric(Stats.PROPPCT, propPercent)
-            .build()
+
+        return statDf.build()
     }
 
     companion object {
