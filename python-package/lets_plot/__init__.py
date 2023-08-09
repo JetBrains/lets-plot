@@ -106,6 +106,7 @@ class LetsPlot:
     def set(cls, settings: Dict):
         """
         Set up library options.
+        For more info see https://lets-plot.org/pages/basemap_tiles.html#configuring-globally.
 
         Parameters
         ----------
@@ -120,7 +121,7 @@ class LetsPlot:
         - offline : to work with notebook without the Internet connection (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`.
         - no_js : do not generate HTML+JS as an output (bool). Do not use this parameter explicitly. Instead you should call `LetsPlot.setup_html()`. Also note that without JS interactive maps and tooltips doesn't work!
 
-        Geocoding settings could also be specified:
+        Interactive map settings could also be specified:
 
         - maptiles_kind : kind of the tiles, could be 'raster_zxy' or 'vector_lets_plot'. Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
         - maptiles_url : address of the tile server (str). Do not use this parameter explicitly. Instead you should construct it with functions `maptiles_zxy()` and `maptiles_lets_plot()`.
@@ -133,31 +134,24 @@ class LetsPlot:
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 3
+            :emphasize-lines: 4
 
             from lets_plot import *
+            from lets_plot import tilesets
             LetsPlot.setup_html()
-            LetsPlot.set(maptiles_lets_plot(theme='light'))
+            LetsPlot.set(tilesets.LETS_PLOT_LIGHT)
             ggplot() + geom_livemap()
 
         |
 
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 12
+            :emphasize-lines: 4
 
             from lets_plot import *
+            from lets_plot import tilesets
             LetsPlot.setup_html()
-            attribution = '''
-            Map tiles by
-            <a href="http://stamen.com">Stamen Design</a>, under
-            <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>.
-            Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under
-            <a href="http://www.openstreetmap.org/copyright">ODbL</a>
-            '''
-            tiles = maptiles_zxy(url='http://c.tile.stamen.com/terrain/{z}/{x}/{y}@2x.png',
-                                 attribution=attribution)
-            LetsPlot.set(tiles)
+            LetsPlot.set(tilesets.STAMEN_DESIGN_TERRAIN)
             ggplot() + geom_livemap()
 
         """

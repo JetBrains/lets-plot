@@ -119,17 +119,17 @@ Examples
 """
 
 
-def _stamen_tiles(tileset, data_license, max_zoom, lowres_only=False):
+def _stamen_tiles(tileset, data_license, max_zoom, lowres_only=False, ext='png'):
     if data_license == 'osm':
-        attribution = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
+        attribution = 'Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://www.openstreetmap.org/copyright">ODbL</a>.'
     elif data_license == 'cc':
-        attribution = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
+        attribution = 'Map tiles by <a href="https://stamen.com">Stamen Design</a>, under <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="https://openstreetmap.org">OpenStreetMap</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
     else:
         raise ValueError("Unknown data license: {}. Expected 'osm' or 'cc'".format(data_license))
 
     def build_stamen_tiles_config(hi_res=""):
         return _maptiles_zxy(
-            "https://stamen-tiles-{{s}}.a.ssl.fastly.net/{tileset}/{{z}}/{{x}}/{{y}}{hi_res}.png".format(tileset=tileset, hi_res=hi_res),
+            "https://stamen-tiles-{{s}}.a.ssl.fastly.net/{tileset}/{{z}}/{{x}}/{{y}}{hi_res}.{ext}".format(tileset=tileset, hi_res=hi_res, ext=ext),
             attribution,
             min_zoom=1, max_zoom=max_zoom, subdomains='abcd'
         )
@@ -280,7 +280,7 @@ Examples
 
 """
 
-STAMEN_DESIGN_WATERCOLOR = _stamen_tiles('watercolor', data_license='cc', max_zoom=18, lowres_only=True)
+STAMEN_DESIGN_WATERCOLOR = _stamen_tiles('watercolor', data_license='cc', max_zoom=18, lowres_only=True, ext='jpg')
 """
 Stamen design, watercolor theme.
 

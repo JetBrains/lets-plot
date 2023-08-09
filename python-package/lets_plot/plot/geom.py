@@ -244,7 +244,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : bool, default=False.
-        True - keeps a line flat, False - allows projection to curve a line.
+        True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
+        False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -5571,7 +5572,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : bool, default=False.
-        True - keeps a line flat, False - allows projection to curve a line.
+        True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
+        False - allow a line to be reprojected, so it can become a curve.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -6069,6 +6071,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              hole=None,
              stroke_side=None,
              spacer_width=None, spacer_color=None,
+             size_unit=None,
              fill_by=None,
              **other_args):
     """
@@ -6122,6 +6125,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
         Color for spacers between sectors. By default, the plot background color is used.
+    size_unit : {'x', 'y'}
+        Allow to relate the size of the pie chart to the division value of the corresponding scale.
+        If None, no fitting is performed.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args
@@ -6204,6 +6210,17 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill='name', weight='value'), size=.5, size_unit='x')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 4-6
 
         from lets_plot import *
@@ -6280,6 +6297,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stroke_side=stroke_side,
                  spacer_width=spacer_width,
                  spacer_color=spacer_color,
+                 size_unit=size_unit,
                  fill_by=fill_by,
                  **other_args)
 
