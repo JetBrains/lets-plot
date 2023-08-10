@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -18,44 +18,38 @@ abstract class AbstractCountStat(
     private val local: Boolean
 ) : BaseStat(defaultMappings) {
 
-    protected abstract fun toStatPositionVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>>
-
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        fun getNumerics(variable: DataFrame.Variable) = if (data.has(variable)) {
-            data.getNumeric(variable).map {
-                if (SeriesUtil.isFinite(it)) it else null
-            }
-        } else {
-            List(data.rowCount()) { 0.0 }
+        fun getPositional(data:DataFrame, variable: DataFrame.Variable) = when (data.has(variable)) {
+            true -> data.getNumeric(variable).map { it.takeIf(SeriesUtil::isFinite) }
+            false -> List(data.rowCount()) { 0.0 }
         }
 
-        val aggrBy = if (count2d) {
-            val xs = getNumerics(TransformVar.X)
-            val ys = getNumerics(TransformVar.Y)
-            xs.zip(ys).map { (x, y) ->
-                if (x == null || y == null) null
-                else x to y
-            }
+        val locations = if (count2d) {
+            val xs = getPositional(data, TransformVar.X)
+            val ys = getPositional(data, TransformVar.Y)
+            xs.zip(ys).map { it.takeIf { (x, y) -> x != null && y != null } }
         } else {
-            getNumerics(TransformVar.X)
+            getPositional(data, TransformVar.X)
         }
 
-        val weight = BinStatUtil.weightVector(data.rowCount(), data)
-        val countData = computeCount(aggrBy, weight)
-        val positionVars = toStatPositionVars(countData.keys)
+        val weights = BinStatUtil.weightVector(data.rowCount(), data)
+        val localSums = sumCounts(locations, weights)
 
         val statDf = DataFrame.Builder()
+        statDf.putNumeric(Stats.COUNT, localSums.values.toList())
+
         if (count2d) {
-            statDf.putNumeric(Stats.X, positionVars[Stats.X]!!)
-            statDf.putNumeric(Stats.Y, positionVars[Stats.Y]!!)
+            @Suppress("UNCHECKED_CAST")
+            val xys = localSums.keys as Collection<Pair<*, *>>
+            statDf.putNumeric(Stats.X, xys.map { (x, _) -> x as Double })
+            statDf.putNumeric(Stats.Y, xys.map { (_, y) -> y as Double })
         } else {
-            statDf.putNumeric(Stats.X, positionVars[Stats.X]!!)
+            val xs = localSums.keys
+            statDf.putNumeric(Stats.X, xs.map { it as Double })
         }
 
-        statDf.putNumeric(Stats.COUNT, countData.values.map(MutableDouble::get))
-
         if (!local) {
-            val prop = countData.values.map { it.get() / data.rowCount() }
+            val prop = localSums.values.map { it / data.rowCount() }
             val propPercent = prop.map { it * 100 }
 
             statDf.putNumeric(Stats.PROP, prop)
@@ -66,48 +60,39 @@ abstract class AbstractCountStat(
     }
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
+        val locations = if (count2d) {
+            val xs = dataAfterStat[Stats.X]
+            val ys = dataAfterStat[Stats.Y]
+            xs.zip(ys)
+        } else {
+            dataAfterStat[Stats.X].map { it!! }
+        }
+
+        val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+        val localSums = sumCounts(locations, counts)
+        val sums = locations.map { localSums[it]!! }
+
         val statDf = dataAfterStat.builder()
-
         if (local) {
-            val aggrBy = if (count2d) {
-                val xs = dataAfterStat[Stats.X]
-                val ys = dataAfterStat[Stats.Y]
-                xs.zip(ys)
-            } else {
-                dataAfterStat[Stats.X]
-            }.map { it!! }
-
-            val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
-            val computedCount = computeCount(aggrBy, counts)
-            val sums = aggrBy.map { computedCount[it]!!.get() }
-
             val prop = counts.zip(sums).map { (count, sum) -> count / sum }
             val propPercent = prop.map { it * 100 }
 
             statDf.putNumeric(Stats.SUM, sums)
             statDf.putNumeric(Stats.PROP, prop)
             statDf.putNumeric(Stats.PROPPCT, propPercent)
+        } else {
+            statDf.putNumeric(Stats.N, sums)
         }
 
         return statDf.build()
     }
 
     companion object {
-        private fun computeCount(
-            aggrBy: List<Any?>,
-            weight: List<Double?>
-        ): Map<Any, MutableDouble> {
-            val result = LinkedHashMap<Any, MutableDouble>()
-            for (i in aggrBy.indices) {
-                val key = aggrBy[i]
-                if (key != null) {
-                    if (!result.containsKey(key)) {
-                        result[key] = MutableDouble(0.0)
-                    }
-                    result.getValue(key).getAndAdd(SeriesUtil.asFinite(weight[i], 0.0))
-                }
-            }
-            return result
+        private fun sumCounts(locations: List<Any?>, counts: List<Double?>): Map<Any, Double> {
+            return locations.zip(counts)
+                .groupBy { (loc, _) -> loc }
+                .filterNotNullKeys()
+                .mapValues { (_, localCounts) -> localCounts.sumOf { (_, count) -> SeriesUtil.asFinite(count, 0.0) } }
         }
     }
 }

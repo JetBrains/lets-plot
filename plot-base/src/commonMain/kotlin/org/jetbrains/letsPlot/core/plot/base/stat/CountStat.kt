@@ -18,11 +18,6 @@ internal class CountStat : AbstractCountStat(DEF_MAPPING, count2d = false, local
         return listOf(Aes.X, Aes.WEIGHT)
     }
 
-    override fun toStatPositionVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
-        val statX = values.map { it as Double }
-        return mapOf(Stats.X to statX)
-    }
-
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

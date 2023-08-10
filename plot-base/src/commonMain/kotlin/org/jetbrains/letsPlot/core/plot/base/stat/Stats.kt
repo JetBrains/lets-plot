@@ -25,6 +25,7 @@ object Stats {
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
     val MEAN = DataFrame.Variable("..mean..", STAT, "mean")
     val MEDIAN = DataFrame.Variable("..median..", STAT, "median")
+    val N = DataFrame.Variable("..n..", STAT, "n")
     val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
     val LOWER_QUANTILE = DataFrame.Variable("..lq..", STAT, "lower quantile")
     val MIDDLE_QUANTILE = DataFrame.Variable("..mq..", STAT, "middle quantile")
@@ -60,6 +61,7 @@ object Stats {
             LEVEL,
             MEAN,
             MEDIAN,
+            N,
             QUANTILE,
             LOWER_QUANTILE,
             MIDDLE_QUANTILE,
@@ -114,11 +116,11 @@ object Stats {
     }
 
     fun count2d(): Stat {
-        return Count2dStat(local = true)
+        return Count2dStat()
     }
 
     fun sum(): Stat {
-        return Count2dStat(local = false)
+        return SumStat()
     }
 
     fun bin(
