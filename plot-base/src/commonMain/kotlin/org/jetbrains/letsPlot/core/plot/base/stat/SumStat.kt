@@ -18,7 +18,7 @@ internal class SumStat : AbstractCountStat(DEF_MAPPING, count2d = true, local = 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.SIZE to Stats.PROP
+            Aes.SIZE to Stats.N
         )
     }
 }
