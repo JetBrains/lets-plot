@@ -32,7 +32,6 @@ internal class DefaultGeomTheme private constructor(
         private const val COMMON_POINT_SIZE = 3.0
         private const val COMMON_LINE_WIDTH = 0.75
         private const val THIN_LINE_WIDTH = 0.5
-        private const val BOLD_LINE_WIDTH = 1.5
 
         private const val LOLLIPOP_SIZE = 2.0
         private const val PIE_SIZE = 10.0
@@ -69,12 +68,7 @@ internal class DefaultGeomTheme private constructor(
             }
 
             // Linewidth (also used for "stroke")
-            val lineWidth = when (geomKind) {
-                GeomKind.POINT_RANGE,
-                GeomKind.LOLLIPOP -> BOLD_LINE_WIDTH
-
-                else -> COMMON_LINE_WIDTH
-            }
+            val lineWidth = COMMON_LINE_WIDTH
 
             // Color
             val color = when (geomKind) {
