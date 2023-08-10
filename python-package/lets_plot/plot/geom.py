@@ -6126,7 +6126,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     spacer_color : str
         Color for spacers between sectors. By default, the plot background color is used.
     size_unit : {'x', 'y'}
-        Allow to relate the size of the pie chart to the division value of the corresponding scale.
+        Relate the size of the pie chart to the length of the unit step along one of the axes.
         If None, no fitting is performed.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
