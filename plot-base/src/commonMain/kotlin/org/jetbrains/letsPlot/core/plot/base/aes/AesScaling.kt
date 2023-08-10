@@ -18,17 +18,12 @@ object AesScaling {
 
     fun pointStrokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.stroke()!! * POINT_UNIT_SIZE / 2.0
-    }
-
-    fun dotStrokeWidth(p: DataPointAesthetics): Double {
-        // aes Units -> px
-        return p.stroke()!! / 2.0
+        return p.stroke()!! * POINT_UNIT_SIZE
     }
 
     fun lineWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.linewidth()!! * POINT_UNIT_SIZE / 2.0
+        return p.linewidth()!! * POINT_UNIT_SIZE
     }
 
     fun circleDiameter(p: DataPointAesthetics): Double {

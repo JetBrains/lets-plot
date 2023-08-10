@@ -188,7 +188,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             builder.closePath()
 
             val path = LinePath(builder)
-            decorate(path, p, true, AesScaling::dotStrokeWidth)
+            decorate(path, p, true, AesScaling::pointStrokeWidth)
 
             return path
         }
