@@ -36,7 +36,7 @@ file as argument (EXAMPLE):
 import platform
 import sys
 import subprocess
-import yaml # PyYAML package is required. `pip install pyyaml`
+import yaml  # PyYAML package is required. `pip install pyyaml`
 
 
 def print_message(message):
@@ -109,9 +109,6 @@ else:
 gradle_build_command = [gradle_script_name, "build", "-Pbuild_release=true"]
 python_extension_clean_command = [gradle_script_name, "python-extension:clean"]
 
-# Run project build. JS and JVM artifacts will be built only:
-print_message("Started main Gradle build...")
-run_command(gradle_build_command)
 
 # Run Python artifacts build.
 if system == "Linux":
