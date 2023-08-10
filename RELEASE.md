@@ -30,13 +30,12 @@ For `RC` skip this step.
 ### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
 
  - `version` in `build.gradle` (`X.X.X` or `X.X.X-rcN`)
- - `js_artifact_version` in `build.gradle` (`X.X.X` or `X.X.XrcN`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X` or `X.X.XrcN`)
  
 ### 3. Build and copy JavaScript artifacts to the publish-directory:
 
  - `./gradlew js-package:copyForPublish`
- - check `js-package/distr` directory. It must contain `lets-plot.js` and `lets-plot.min.js` files.
+ - check `js-package/distr` directory. It must contain `lets-plot.min.js` file.
   
 ### 4. Push the version changes and git tag:
          
@@ -46,7 +45,6 @@ For `RC` skip this step.
 ### 5. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
          
  - `version` in `build.gradle` (`X.X.X-alphaN`)
- - `js_artifact_version` in `build.gradle` (`X.X.X.devN`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
 ### 6. Push new dev version to GitHub
