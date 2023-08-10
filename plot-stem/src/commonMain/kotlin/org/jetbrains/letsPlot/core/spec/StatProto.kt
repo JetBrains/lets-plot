@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec
 
-import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Stat
 import org.jetbrains.letsPlot.core.plot.base.stat.*
@@ -15,13 +14,14 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Boxplot
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Contour
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density2d
-import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
-import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
+import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
-import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
+import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
 object StatProto {
 
@@ -125,11 +125,11 @@ object StatProto {
                 )
             }
 
+            StatKind.SUM -> return Stats.sum()
+
             StatKind.SUMMARY -> return configureSummaryStat(options)
 
             StatKind.SUMMARYBIN -> return configureSummaryBinStat(options)
-
-            else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
     }
 

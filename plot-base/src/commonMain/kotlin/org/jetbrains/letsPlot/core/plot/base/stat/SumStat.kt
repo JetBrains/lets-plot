@@ -8,21 +8,17 @@ package org.jetbrains.letsPlot.core.plot.base.stat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
-/**
- * Counts the number of cases at each (x, y) position
- * (or if the weight aesthetic is supplied, the sum of the weights and the proportion)
- */
-internal class Count2dStat : AbstractCountStat(DEF_MAPPING, count2d = true, local = true) {
+internal class SumStat : AbstractCountStat(DEF_MAPPING, count2d = true, local = false) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
+        return listOf(Aes.X, Aes.Y)
     }
 
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.SLICE to Stats.COUNT
+            Aes.SIZE to Stats.N
         )
     }
 }

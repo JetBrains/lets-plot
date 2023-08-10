@@ -14,6 +14,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 open class BaseStatTest {
+    protected fun applyStat(stat: Stat, d: DataFrame): DataFrame {
+        return stat.normalize(stat.apply(d, statContext(d)))
+    }
+
     protected fun statContext(d: DataFrame): StatContext {
         return SimpleStatContext(d, emptyList())
     }

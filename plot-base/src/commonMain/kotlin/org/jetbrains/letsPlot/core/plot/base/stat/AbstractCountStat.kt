@@ -5,97 +5,94 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 
 abstract class AbstractCountStat(
     defaultMappings: Map<Aes<*>, DataFrame.Variable>,
-    private val count2d: Boolean
+    private val count2d: Boolean,
+    private val local: Boolean
 ) : BaseStat(defaultMappings) {
 
-    protected abstract fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>>
-
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        fun getNumerics(variable: DataFrame.Variable) = if (data.has(variable)) {
-            data.getNumeric(variable).map {
-                if (SeriesUtil.isFinite(it)) it else null
-            }
-        } else {
-            List(data.rowCount()) { 0.0 }
+        fun getPositional(data:DataFrame, variable: DataFrame.Variable) = when (data.has(variable)) {
+            true -> data.getNumeric(variable).map { it.takeIf(SeriesUtil::isFinite) }
+            false -> List(data.rowCount()) { 0.0 }
         }
 
-        val aggrBy = if (count2d) {
-            val xs = getNumerics(TransformVar.X)
-            val ys = getNumerics(TransformVar.Y)
-            xs.zip(ys).map { (x, y) ->
-                if (x == null || y == null) null
-                else x to y
-            }
+        val locations = if (count2d) {
+            val xs = getPositional(data, TransformVar.X)
+            val ys = getPositional(data, TransformVar.Y)
+            xs.zip(ys).map { it.takeIf { (x, y) -> x != null && y != null } }
         } else {
-            getNumerics(TransformVar.X)
+            getPositional(data, TransformVar.X)
         }
 
-        val weight = BinStatUtil.weightVector(data.rowCount(), data)
+        val weights = BinStatUtil.weightVector(data.rowCount(), data)
+        val localSums = sumCounts(locations, weights)
 
-        val computedCount = computeCount(aggrBy, weight)
+        val statDf = DataFrame.Builder()
+        statDf.putNumeric(Stats.COUNT, localSums.values.toList())
 
-        val stat = addToStatVars(computedCount.keys).toMutableMap()
-        stat[Stats.COUNT] = computedCount.values.map(MutableDouble::get)
+        if (count2d) {
+            @Suppress("UNCHECKED_CAST")
+            val xys = localSums.keys as Collection<Pair<*, *>>
+            statDf.putNumeric(Stats.X, xys.map { (x, _) -> x as Double })
+            statDf.putNumeric(Stats.Y, xys.map { (_, y) -> y as Double })
+        } else {
+            val xs = localSums.keys
+            statDf.putNumeric(Stats.X, xs.map { it as Double })
+        }
 
-        return DataFrame.Builder().apply {
-            stat.forEach { (statVar, values) -> putNumeric(statVar, values) }
-        }.build()
+        if (!local) {
+            val prop = localSums.values.map { it / data.rowCount() }
+            val propPercent = prop.map { it * 100 }
+
+            statDf.putNumeric(Stats.PROP, prop)
+            statDf.putNumeric(Stats.PROPPCT, propPercent)
+        }
+
+        return statDf.build()
     }
 
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
-        val aggrBy = if (count2d) {
+        val locations = if (count2d) {
             val xs = dataAfterStat[Stats.X]
             val ys = dataAfterStat[Stats.Y]
             xs.zip(ys)
         } else {
-            dataAfterStat[Stats.X]
-        }.map { it!! }
+            dataAfterStat[Stats.X].map { it!! }
+        }
 
         val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+        val localSums = sumCounts(locations, counts)
+        val sums = locations.map { localSums[it]!! }
 
-        val computedCount = computeCount(aggrBy, counts)
+        val statDf = dataAfterStat.builder()
+        if (local) {
+            val prop = counts.zip(sums).map { (count, sum) -> count / sum }
+            val propPercent = prop.map { it * 100 }
 
-        val sumStatCount = ArrayList<Double>()
-        val prop = ArrayList<Double>()
-        val propPercent = ArrayList<Double>()
-        for (i in counts.indices) {
-            val sum = computedCount.getValue(aggrBy[i]).get()
-            sumStatCount.add(sum)
-            prop.add(counts[i] / sum)
-            propPercent.add(counts[i] * 100 / sum)
+            statDf.putNumeric(Stats.SUM, sums)
+            statDf.putNumeric(Stats.PROP, prop)
+            statDf.putNumeric(Stats.PROPPCT, propPercent)
+        } else {
+            statDf.putNumeric(Stats.N, sums)
         }
-        return dataAfterStat.builder()
-            .putNumeric(Stats.SUM, sumStatCount)
-            .putNumeric(Stats.PROP, prop)
-            .putNumeric(Stats.PROPPCT, propPercent)
-            .build()
+
+        return statDf.build()
     }
 
     companion object {
-        private fun computeCount(
-            aggrBy: List<Any?>,
-            weight: List<Double?>
-        ): Map<Any, MutableDouble> {
-            val result = LinkedHashMap<Any, MutableDouble>()
-            for (i in aggrBy.indices) {
-                val key = aggrBy[i]
-                if (key != null) {
-                    if (!result.containsKey(key)) {
-                        result[key] = MutableDouble(0.0)
-                    }
-                    result.getValue(key).getAndAdd(SeriesUtil.asFinite(weight[i], 0.0))
-                }
-            }
-            return result
+        private fun sumCounts(locations: List<Any?>, counts: List<Double?>): Map<Any, Double> {
+            return locations.zip(counts)
+                .groupBy { (loc, _) -> loc }
+                .filterNotNullKeys()
+                .mapValues { (_, localCounts) -> localCounts.sumOf { (_, count) -> SeriesUtil.asFinite(count, 0.0) } }
         }
     }
 }

@@ -30,6 +30,7 @@ enum class StatKind {
     QQ_LINE,
     QQ2_LINE,
     ECDF,
+    SUM,
     SUMMARY,
     SUMMARYBIN;
 
