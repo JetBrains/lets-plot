@@ -660,6 +660,8 @@ object Option {
         // All other options were moved to
         // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
 
+        const val FLAVOR = "flavor"
+
         // view element
         const val ELEMENT_BLANK = ELEMENT_BLANK_SHORTHAND
     }

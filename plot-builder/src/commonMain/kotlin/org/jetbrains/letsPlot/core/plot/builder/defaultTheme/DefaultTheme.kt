@@ -33,7 +33,7 @@ class DefaultTheme(
     private val colors = run {
         // theme() + flavor() => use colors from flavor
         // flavor() + theme() => from theme(geom)
-        val useGeomOption = with(userOptions.keys) { indexOf(ThemeOption.GEOM) > indexOf(ThemeOption.FLAVOR) }
+        val useGeomOption = with(userOptions.keys) { indexOf(ThemeOption.GEOM) > indexOf("flavor") }
         DefaultColorTheme(
             if (useGeomOption) options else themeSettings,
             fontFamilyRegistry

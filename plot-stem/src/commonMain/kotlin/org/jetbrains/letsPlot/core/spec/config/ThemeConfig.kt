@@ -5,14 +5,15 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Theme.FLAVOR
 import org.jetbrains.letsPlot.core.spec.getString
 
 class ThemeConfig constructor(
@@ -36,7 +37,7 @@ class ThemeConfig constructor(
         }
 
         val themeFlavorOptions = baselineValues.values.let {
-            val flavorName = themeSettings.getString(ThemeOption.FLAVOR)
+            val flavorName = themeSettings.getString(FLAVOR)
             if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {

@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Theme.FLAVOR
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -53,7 +54,7 @@ class ThemeOptionsOrderToApplyTest(
         @Parameterized.Parameters
         fun params(): Collection<Array<Any?>> {
             val namedThemeOption = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_MINIMAL)
-            val flavorOption = mapOf(ThemeOption.FLAVOR to ThemeOption.Flavor.DARCULA)
+            val flavorOption = mapOf(FLAVOR to ThemeOption.Flavor.DARCULA)
 
             return listOf(
                 arrayOf(namedThemeOption, Color.WHITE, null),
