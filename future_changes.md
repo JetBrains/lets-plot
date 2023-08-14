@@ -51,7 +51,6 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
 
 
-
 ### Changed
 
 - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
@@ -66,9 +65,7 @@
 
   `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
 
-# ToDo: ?
-- `geom_boxplot()`: the `size` and `stroke` parameters started to affect outliers.
-
+- `geom_boxplot()`: `size` and `stroke` parameters now affect outlier shapes.
 
 
 ### Fixed
