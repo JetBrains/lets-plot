@@ -2,75 +2,63 @@
 
 ### Added
 
-- New layer `stat_summary()`.
+- `stat_summary()` : 
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
+- `stat_summary_bin()` :
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
 
+- `stat_ecdf()` :
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_ecdf.ipynb). 
 
-- New layer `stat_summary_bin()`.
+- `geom_function()` :
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_function.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
+- `theme_void()` [[#830](https://github.com/JetBrains/lets-plot/issues/830)] :
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/theme_void.ipynb).
 
+- `"sum"` statistic [[#821](https://github.com/JetBrains/lets-plot/issues/821)]:
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
+                                  
+# ToDo: example.
+- `"boxplot_outlier"` statistic.          
+                               
+- Support for variadic line width and/or color in `geom_line()` and `geom_path()` [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
 
-- New layer `stat_ecdf()`.
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb). 
+      
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_ecdf.ipynb). 
+- In tooltip customization API:\
+  `disable_splitting()` function [[LPK-189](https://github.com/JetBrains/lets-plot-kotlin/issues/189)].
 
-
-- New layer `geom_function()`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_function.ipynb).
-
-
-- Tooltips for `geom_step()`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_step_tooltips.ipynb).
-
-
-- In tooltip customization API:
-  `disable_splitting()` function to hide side tooltips [[LPK-189](https://github.com/JetBrains/lets-plot-kotlin/issues/189)].
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
-
-
-- Variadic lines with `size` and `color` mapping in `geom_line()` and `geom_path()`.  
-See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
-- `geom_pie()`:
-  - `stroke` and `color` aesthetics - the width and color of the pie sector arcs.
-  - `stroke_side` parameter - which arcs should have a stroke (inner, outer, both).
+- In `geom_pie()`:
+  - `stroke` and `color` aesthetics - the width and color of pie sector arcs.
+  - `stroke_side` parameter - which arcs to show (inner, outer, both).
   - `spacer_width` and `spacer_color` parameters - lines between sectors.
-
-  The `stroke_color` parameter is no longer supported.
-
+  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
 
-  - `size_unit` parameter.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
+  - `size_unit` parameter : [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
 
 
-- New named system colors: "pen", "paper", "brush";
-   
-  `geom` parameter in `theme()` to specify new values for these colors via `element_geom()` function.
+- Flavor-dependent colors: **pen**, **brush** and **paper** 
+  - By default, all geometries utilize new flavor-dependent colors. 
+  - Theme `geom` parameter allowing redefinition of "geom colors":  `theme(geom=element_geom(pen, brush,paper))`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/named_system_colors.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
 
-
-- New theme: `theme_void()` [[#830](https://github.com/JetBrains/lets-plot/issues/830)].
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/theme_void.ipynb)
-
-
-- New stat `stat='sum'`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
 
 
 ### Changed
 
 - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
+- Geometries default colors are now flavor-dependent.
+- Geometries default size/line-width is now slightly bigger.
+
+- [BREAKING] `geom_pie()` no longer supports parameter `stroke_color`.
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
 
@@ -78,25 +66,26 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
   `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
 
-- Reduce the default `width`/`height` values for `geom_errorbar()`.
-
+# ToDo: ?
 - `geom_boxplot()`: the `size` and `stroke` parameters started to affect outliers.
 
-- `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed. 
 
 
 ### Fixed
 
-- ggsave: saving geomImshow() to SVG produces fuzzy picture [[LPK-188](https://github.com/JetBrains/lets-plot-kotlin/issues/188)].
-- ggsave: saving geomImshow() to raster format produces fuzzy picture.
-- geom_livemap: memory leak when re-run cells without reloading a page.
-- Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
-- `geom_path` doesn't support different colors for segments [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
-- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
-- Add `stat_summary`, `stat_summary_bin` to ggplot [[#316](https://github.com/JetBrains/lets-plot/issues/316)].
+- `ggsave()` doesn't save geom_raster() layer to a file [[#778](https://github.com/JetBrains/lets-plot/issues/778)].
+- `ggsave()`: saving geomImshow() to SVG produces fuzzy picture [[LPK-188](https://github.com/JetBrains/lets-plot-kotlin/issues/188)].
+- `ggsave()`: saving geomImshow() to raster format produces fuzzy picture.
+- `geom_crossbar()` aesthetics take `middle` argument instead of `y` [[#804](https://github.com/JetBrains/lets-plot/issues/804)].
 - `geom_boxplot()` doesn't apply alpha to outliers [[#754](https://github.com/JetBrains/lets-plot/issues/754)].
-- ggsave() doesn't save geom_raster() layer to a file [[#778](https://github.com/JetBrains/lets-plot/issues/778)].
-- geom_crossbar aesthetics take `middle` argument instead of `y` [[#804](https://github.com/JetBrains/lets-plot/issues/804)].
+- `geom_boxplot()` outliers do not show tooltips.
+- `geom_step()` no tooltips.
+- `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed.
+- `geom_livemap()`: memory leak when re-run cells without reloading a page.
+- Bug in empty plot: IndexOutOfBoundsException [[#194](https://github.com/JetBrains/lets-plot-kotlin/issues/194)].
+- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
 - panning on interactive map should be more responsive [[#336](https://github.com/JetBrains/lets-plot/issues/336)].
 - Offline mode doesn't work with manylinux wheels [[#808](https://github.com/JetBrains/lets-plot/issues/808)].
-- Bug in empty plot: IndexOutOfBoundsException [[#194](https://github.com/JetBrains/lets-plot-kotlin/issues/194)].
+
+# ToDo: ?
+- Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
