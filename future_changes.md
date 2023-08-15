@@ -20,8 +20,8 @@
 - `"sum"` statistic [[#821](https://github.com/JetBrains/lets-plot/issues/821)]:
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
                                   
-# ToDo: example.
 - `"boxplot_outlier"` statistic.          
+  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
                                
 - Support for variadic line width and/or color in `geom_line()` and `geom_path()` [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
 
