@@ -5,18 +5,19 @@
 
 package demo.plot.batik.plotConfig
 
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
+import java.awt.Point
 import java.awt.Rectangle
+import java.awt.event.ComponentEvent
+import java.awt.event.ComponentListener
 import javax.swing.*
 
 fun main() {
-    val plotSpecEditor = PlotSpecEditor()
     // Plot spec can be set by PLOT_SPEC env var via IDEA run configuration.
-    // TODO: add pretty print for JsonSupport
-    plotSpecEditor.plotSpec.text = System.getenv("PLOT_SPEC")
+    val spec = System.getenv("PLOT_SPEC")
         ?: """
         {
             'kind': 'plot',
@@ -26,43 +27,75 @@ fun main() {
         }
         """.trimIndent()
 
+    // TODO: add pretty print for JsonSupport
+    val plotSpecEditor = PlotSpecEditor()
+    plotSpecEditor.setSpec(spec)
     plotSpecEditor.evaluate()
     plotSpecEditor.isVisible = true
 }
 
 
 class PlotSpecEditor : JFrame("PlotSpec Editor") {
+    private val specEditorPane = JScrollPane()
     private val plotPanel = JPanel()
-    val plotSpec = JTextArea().apply {
+    private val evaluateButton = JButton("Evaluate")
+    private val plotSpecTextArea = JTextArea().apply {
         wrapStyleWord = true
         lineWrap = true
         autoscrolls = true
     }
 
     init {
-        isResizable = false // temp. Incorrect plot size after resize.
+        isResizable = true
         defaultCloseOperation = EXIT_ON_CLOSE
         preferredSize = Dimension(1400, 600)
         layout = null
+
         contentPane.apply {
-            add(JScrollPane(plotSpec).apply {
-                bounds = Rectangle(10, 10, 400, 500)
+            add(plotPanel)
+            add(specEditorPane.apply {
+                viewport.add(plotSpecTextArea)
             })
-            add(JButton("Evaluate").apply {
-                bounds = Rectangle(10, 520, 400, 30)
+            add(evaluateButton.apply {
                 addActionListener { evaluate() }
             })
         }
-        contentPane.add(plotPanel.apply {
-            bounds = Rectangle(410, 0, 990, 550)
+
+        addComponentListener(object : ComponentListener {
+            override fun componentResized(e: ComponentEvent?) = doLayout(size)
+            override fun componentMoved(e: ComponentEvent?) = Unit
+            override fun componentShown(e: ComponentEvent?) = Unit
+            override fun componentHidden(e: ComponentEvent?) = Unit
         })
+
         pack()
+    }
+
+    private fun doLayout(size: Dimension) {
+        val systemMenuHeight = 40
+        val evalButtonHeight = 30
+
+        val specEditorPos = Point(10, 10)
+        val specEditorSize = Dimension(400, size.height - systemMenuHeight - evalButtonHeight - specEditorPos.y)
+        specEditorPane.bounds = Rectangle(specEditorPos, specEditorSize)
+
+        val evaluatePos = Point(10, specEditorPos.y + specEditorSize.height)
+        val evaluateSize = Dimension(specEditorSize.width, evalButtonHeight)
+        evaluateButton.bounds = Rectangle(evaluatePos, evaluateSize)
+
+        val plotPanelPos = Point(specEditorPos.x + specEditorSize.width + 10, 5)
+        val plotPanelSize = Dimension(size.width - plotPanelPos.x - 10, size.height - systemMenuHeight)
+        plotPanel.bounds = Rectangle(plotPanelPos, plotPanelSize)
+        preferredSize = size
     }
 
     fun evaluate() {
         plotPanel.components.forEach(plotPanel::remove)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec.text), frontendOnly = false),
+            processedSpec = MonolithicCommon.processRawSpecs(
+                parsePlotSpec(plotSpecTextArea.text),
+                frontendOnly = false
+            ),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,
@@ -75,5 +108,9 @@ class PlotSpecEditor : JFrame("PlotSpec Editor") {
             alignmentX = CENTER_ALIGNMENT
         })
         pack()
+    }
+
+    fun setSpec(spec: String) {
+        plotSpecTextArea.text = spec
     }
 }
