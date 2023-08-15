@@ -2,6 +2,13 @@
 
 ### Added
 
+- Flavor-dependent colors: **pen**, **brush** and **paper**
+  - By default, all geometries utilize new flavor-dependent colors.
+  - Theme `geom` parameter allowing redefinition of "geom colors":  `theme(geom=element_geom(pen, brush,paper))`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
+
+
 - `stat_summary()` : 
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
 
@@ -20,9 +27,9 @@
 - `"sum"` statistic [[#821](https://github.com/JetBrains/lets-plot/issues/821)]:
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
                                   
-- `"boxplot_outlier"` statistic :           
-  [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
-                               
+- `"boxplot_outlier"` statistic: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
+          
+                     
 - Support for variadic line width and/or color in `geom_line()` and `geom_path()` [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
 
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb). 
@@ -44,17 +51,10 @@
   - `size_unit` parameter : [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
 
 
-- Flavor-dependent colors: **pen**, **brush** and **paper** 
-  - By default, all geometries utilize new flavor-dependent colors. 
-  - Theme `geom` parameter allowing redefinition of "geom colors":  `theme(geom=element_geom(pen, brush,paper))`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
-
-
 ### Changed
 
 - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
-- Geometries default colors are now flavor-dependent.
+- Geometries default colors are now flavor-dependent: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
 - Geometries default size/line-width is now slightly bigger.
 
 - [BREAKING] `geom_pie()` no longer supports parameter `stroke_color`.
