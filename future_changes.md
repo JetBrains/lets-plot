@@ -20,7 +20,7 @@
 - `"sum"` statistic [[#821](https://github.com/JetBrains/lets-plot/issues/821)]:
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
                                   
-- `"boxplot_outlier"` statistic.          
+- `"boxplot_outlier"` statistic :           
   [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
                                
 - Support for variadic line width and/or color in `geom_line()` and `geom_path()` [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
@@ -79,8 +79,8 @@
 - `geom_step()` no tooltips.
 - `geom_step()`: toggle the behavior of the `direction` parameter when the orientation is changed.
 - `geom_livemap()`: memory leak when re-run cells without reloading a page.
+- `geom_ribbon()`: not all tooltips are shown on a multi-layer plot [[#847](https://github.com/JetBrains/lets-plot/issues/847)].
 - Bug in empty plot: IndexOutOfBoundsException [[#194](https://github.com/JetBrains/lets-plot-kotlin/issues/194)].
 - Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
 - panning on interactive map should be more responsive [[#336](https://github.com/JetBrains/lets-plot/issues/336)].
 - Offline mode doesn't work with manylinux wheels [[#808](https://github.com/JetBrains/lets-plot/issues/808)].
-- Not all tooltips on multi-layer ribbon plot are displayed [[#847](https://github.com/JetBrains/lets-plot/issues/847)].
