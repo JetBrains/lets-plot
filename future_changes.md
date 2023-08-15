@@ -83,6 +83,4 @@
 - Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
 - panning on interactive map should be more responsive [[#336](https://github.com/JetBrains/lets-plot/issues/336)].
 - Offline mode doesn't work with manylinux wheels [[#808](https://github.com/JetBrains/lets-plot/issues/808)].
-
-# ToDo: ?
-- Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
+- Not all tooltips on multi-layer ribbon plot are displayed [[#847](https://github.com/JetBrains/lets-plot/issues/847)].

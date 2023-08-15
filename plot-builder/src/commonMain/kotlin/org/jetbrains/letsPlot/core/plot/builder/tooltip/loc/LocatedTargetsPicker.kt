@@ -34,6 +34,9 @@ class LocatedTargetsPicker(
                     lookupResult.geomKind in listOf(V_LINE, H_LINE)
         }
 
+        // TODO: take into account LookupSpace and LookupStrategy, i.e. first check XY target to fall into CUTOFF_DISTANCE
+        // then check distance. This will allow to use bar-alike geoms to use their X lookup strategy and to not win
+        // every distance checks as the distance between them and the cursor is an order of magnitude smaller than for XY
         val withDistances = myAllLookupResults
             .map { lookupResult -> lookupResult to distance(lookupResult, myCursorCoord) }
             .filter { (lookupResult, distance) ->
@@ -142,7 +145,7 @@ class LocatedTargetsPicker(
             coord: DoubleVector?,
             flippedAxis: Boolean
         ): LookupResult {
-            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT)) {
+            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON)) {
                 return lookupResult
             }
 

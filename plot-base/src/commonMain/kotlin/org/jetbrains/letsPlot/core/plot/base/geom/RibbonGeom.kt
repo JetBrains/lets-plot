@@ -7,12 +7,12 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
 class RibbonGeom : GeomBase() {
 
@@ -43,65 +43,34 @@ class RibbonGeom : GeomBase() {
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.RIBBON, ctx)
+        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.RIBBON, ctx)
+        val hint = HintsCollection.HintConfigFactory()
+            .defaultObjectRadius(0.0)
+            .defaultKind(HORIZONTAL_TOOLTIP.takeIf { !ctx.flipped } ?: VERTICAL_TOOLTIP)
 
         for (p in aesthetics.dataPoints()) {
-            addTarget(p, ctx, GeomUtil.TO_LOCATION_X_YMAX, helper, colorsByDataPoint)
-        }
-    }
+            val x = GeomUtil.TO_LOCATION_X_ZERO(p)?.let { helper.toClient(it, p) }?.x ?: continue
+            val top = GeomUtil.TO_LOCATION_X_YMAX(p)?.let { helper.toClient(it, p) }?.y ?: continue
+            val bottom = GeomUtil.TO_LOCATION_X_YMIN(p)?.let { helper.toClient(it, p) }?.y ?: continue
 
-    private fun addTarget(
-        p: DataPointAesthetics,
-        ctx: GeomContext,
-        toLocation: (DataPointAesthetics) -> DoubleVector?,
-        helper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
-    ) {
-        val coord = toLocation(p)
-        if (coord != null) {
-            val hint = HintsCollection.HintConfigFactory()
-                .defaultObjectRadius(0.0)
-                .defaultCoord(p.x()!!)
-                .defaultKind(
-                    if (ctx.flipped) {
-                        TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                    } else {
-                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                    }
-                )
-                .defaultColor(
-                    p.fill()!!,
-                    alpha = null
-                )
+            hint.defaultCoord(p.x()!!)
+                .defaultColor(p.fill()!!, alpha = null)
 
             val hintsCollection = HintsCollection(p, helper)
                 .addHint(hint.create(Aes.YMAX))
                 .addHint(hint.create(Aes.YMIN))
 
-            ctx.targetCollector.addPoint(
-                p.index(),
-                helper.toClient(coord, p)!!,
-                0.0,
-                GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hintsCollection.hints,
-                    markerColors = colorsByDataPoint(p)
-                )
+            val tooltipParams = GeomTargetCollector.TooltipParams(
+                tipLayoutHints = hintsCollection.hints,
+                markerColors = colorMapper(p)
             )
+
+            ctx.targetCollector.addPoint(p.index(), DoubleVector(x, top), 0.0, tooltipParams)
+            ctx.targetCollector.addPoint(p.index(), DoubleVector(x, bottom), 0.0, tooltipParams)
         }
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.YMIN,
-//                Aes.YMAX,
-//                Aes.SIZE,
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = true
     }
 }

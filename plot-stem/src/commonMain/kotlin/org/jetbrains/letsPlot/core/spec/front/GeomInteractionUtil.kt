@@ -129,14 +129,14 @@ object GeomInteractionUtil {
             isCrosshairEnabled,
             definedAesList
         ).let {
-            var multilayerLookup: Boolean = false
+            var multilayerLookup = false
             if (multilayerWithTooltips && !isCrosshairEnabled) {
                 // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
                 // and tooltips should not be disabled in other layers.
                 // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
                 // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
                 // but not above a column).
-                if (listOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY).contains(geomKind)) {
+                if (geomKind in setOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY, GeomKind.RIBBON)) {
                     multilayerLookup = true
                 } else if (statKind === StatKind.SMOOTH) {
                     multilayerLookup = geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR)
