@@ -86,6 +86,8 @@ class PlotSpecEditor : JFrame("PlotSpec Editor") {
         val plotPanelPos = Point(specEditorPos.x + specEditorSize.width + 10, 5)
         val plotPanelSize = Dimension(size.width - plotPanelPos.x - 10, size.height - systemMenuHeight)
         plotPanel.bounds = Rectangle(plotPanelPos, plotPanelSize)
+        plotPanel.components.firstOrNull()?.let { it.preferredSize = plotPanelSize }
+
         preferredSize = size
     }
 
