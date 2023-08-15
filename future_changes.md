@@ -67,6 +67,10 @@
 
 - `geom_boxplot()`: `size` and `stroke` parameters now affect outlier shapes.
 
+- [BREAKING] (affects only users of Lets-Plot Kotlin API) the whole project has undergone package refactoring.\
+  As a result of package names changed, this vertion of Lets-Plot\
+  is only partially compatible with current version 4.4.1 of Lets-Plot Kotlin API.
+
 
 ### Fixed
 
