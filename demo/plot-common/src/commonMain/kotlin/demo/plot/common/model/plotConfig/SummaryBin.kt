@@ -34,7 +34,15 @@ class SummaryBin {
                   'geom': 'pointrange',
                   'stat': 'summarybin',
                   'binwidth': 1,
-                  'color': 'red'
+                  'color': 'red',
+                  'tooltips': {
+                    'lines': [
+                      'max|@..ymax..',
+                      'mean|@..mean..',
+                      'median|@..median..',
+                      'min|@..ymin..'
+                    ]
+                  }
                 }
               ]
             }
