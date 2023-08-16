@@ -85,8 +85,8 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
-    Notes
-    -----
+    |
+
     Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. would not be computed without mappings.
 
     Examples
@@ -247,8 +247,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
-    Notes
-    -----
+    |
+
     Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. would not be computed without mappings.
 
     Examples
