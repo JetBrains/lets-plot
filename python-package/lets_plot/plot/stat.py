@@ -87,8 +87,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
     Notes
     -----
-    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq..
-    will be computed only if they are attached to the aesthetics that the current geometry can handle.
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. cannot be computed without mappings.
 
     Examples
     --------
@@ -250,8 +249,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
     Notes
     -----
-    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq..
-    will be computed only if they are attached to the aesthetics that the current geometry can handle.
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. cannot be computed without mappings.
 
     Examples
     --------
