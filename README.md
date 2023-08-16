@@ -75,6 +75,11 @@ Lets-Plot v4.0.0 is partially incompatible with Lets-Plot Kotlin API versions 4.
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/flavor_geom_colors.png" alt="f-23c/images/flavor_geom_colors.png" width="1024" height="120">
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
+       
+  - Size of points is slightly adjusted to match the width of a line of the same "size".
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/point_vs_line.png" alt="f-23c/images/point_vs_line.png" width="170" height="150">
+  <br>
 
 ### Support for Variadic Line Width and/or Color in `geom_line()` and `geom_path()`
   <br>
