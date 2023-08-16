@@ -87,7 +87,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
     Notes
     -----
-    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. cannot be computed without mappings.
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. would not be computed without mappings.
 
     Examples
     --------
@@ -249,7 +249,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
     Notes
     -----
-    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. cannot be computed without mappings.
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq.. would not be computed without mappings.
 
     Examples
     --------
