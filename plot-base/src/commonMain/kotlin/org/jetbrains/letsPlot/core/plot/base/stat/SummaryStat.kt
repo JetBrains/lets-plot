@@ -66,6 +66,7 @@ class SummaryStat(
         val statYMin = ArrayList<Double>()
         val statYMax = ArrayList<Double>()
         val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.mappedStatVariables()
+            .filter { it != Stats.X && it != Stats.Y }
             .associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             val sortedBin = bin.sorted()
