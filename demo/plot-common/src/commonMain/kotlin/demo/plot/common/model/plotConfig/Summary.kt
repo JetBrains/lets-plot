@@ -77,6 +77,7 @@ class Summary {
     }
 
     private fun crossbarGeom(): MutableMap<String, Any> {
+        // Failed with error (Internal error: IllegalStateException : Unsupported stat variable: '..y..') before
         val spec = """
             {
               'kind': 'plot',
@@ -89,11 +90,19 @@ class Summary {
               },
               'layers': [
                 {
+                  'mapping': {'fill': '..y..'},
                   'geom': 'crossbar',
                   'stat': 'summary',
                   'fun': 'median',
                   'fun_min': 'lq',
-                  'quantiles': [0.45, 0.5, 0.55]
+                  'quantiles': [0.45, 0.5, 0.55],
+                  'tooltips': {
+                    'lines': [
+                      'max|^ymax',
+                      'median|^y',
+                      'min|^ymin'
+                    ]
+                  }
                 }
               ]
             }
