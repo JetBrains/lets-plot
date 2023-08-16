@@ -85,13 +85,13 @@ class Summary {
                 'y': 'sepal length (cm)'
               },
               'ggtitle': {
-                'text': 'Basic demo'
+                'text': 'Crossbar demo'
               },
               'layers': [
                 {
                   'geom': 'crossbar',
-                  'mapping': {'middle': '..median..'},
                   'stat': 'summary',
+                  'fun': 'median',
                   'fun_min': 'lq',
                   'quantiles': [0.45, 0.5, 0.55]
                 }

@@ -20,8 +20,4 @@ class SimpleStatContext(private val myDataFrame: DataFrame, private val mappedSt
     override fun overallYRange(): DoubleSpan? {
         return myDataFrame.range(TransformVar.Y)
     }
-
-    override fun mappedStatVariables(): List<DataFrame.Variable> {
-        return mappedStatVariables
-    }
 }

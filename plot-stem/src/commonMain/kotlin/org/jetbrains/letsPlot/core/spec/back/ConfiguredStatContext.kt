@@ -35,10 +35,6 @@ internal class ConfiguredStatContext(
         return overallRange(Aes.Y)
     }
 
-    override fun mappedStatVariables(): List<DataFrame.Variable> {
-        return mappedStatVariables
-    }
-
     private fun overallRange(aes: Aes<*>): DoubleSpan? {
         val transformVar = DataFrameUtil.transformVarFor(aes)
 

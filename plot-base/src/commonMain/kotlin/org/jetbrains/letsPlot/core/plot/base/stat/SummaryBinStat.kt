@@ -45,12 +45,13 @@ class SummaryBinStat(
             Stats.Y_MIN to yMinAggFunction,
             Stats.Y_MAX to yMaxAggFunction,
         )
-        val aesAggFunctions = statCtx.mappedStatVariables()
-            .filter { it != Stats.X && it != Stats.Y }
-            .associateWith { AggregateFunctions.byStatVar(it, lowerQuantile, middleQuantile, upperQuantile) }
+        val standardAggFunctions = listOf(
+            Stats.COUNT, Stats.SUM, Stats.MEAN, Stats.MEDIAN,
+            Stats.LOWER_QUANTILE, Stats.MIDDLE_QUANTILE, Stats.UPPER_QUANTILE
+        ).associateWith { AggregateFunctions.byStatVar(it, lowerQuantile, middleQuantile, upperQuantile) }
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
-        val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, paramAggFunctions + aesAggFunctions, rangeX, xPosKind, xPos, binOptions)
+        val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, paramAggFunctions + standardAggFunctions, rangeX, xPosKind, xPos, binOptions)
         if (statData.isEmpty()) {
             return withEmptyStatValues()
         }

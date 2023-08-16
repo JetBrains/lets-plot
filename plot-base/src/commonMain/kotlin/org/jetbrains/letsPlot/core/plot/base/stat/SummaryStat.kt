@@ -36,7 +36,7 @@ class SummaryStat(
             List(ys.size) { 0.0 }
         }
 
-        val statData = buildStat(xs, ys, statCtx)
+        val statData = buildStat(xs, ys)
         if (statData.isEmpty()) {
             return withEmptyStatValues()
         }
@@ -50,8 +50,7 @@ class SummaryStat(
 
     private fun buildStat(
         xs: List<Double?>,
-        ys: List<Double?>,
-        statCtx: StatContext
+        ys: List<Double?>
     ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = SeriesUtil.filterFinite(xs, ys)
             .let { (xs, ys) -> xs zip ys }
@@ -65,9 +64,10 @@ class SummaryStat(
         val statY = ArrayList<Double>()
         val statYMin = ArrayList<Double>()
         val statYMax = ArrayList<Double>()
-        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.mappedStatVariables()
-            .filter { it != Stats.X && it != Stats.Y }
-            .associateWith { mutableListOf() }
+        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = listOf(
+            Stats.COUNT, Stats.SUM, Stats.MEAN, Stats.MEDIAN,
+            Stats.LOWER_QUANTILE, Stats.MIDDLE_QUANTILE, Stats.UPPER_QUANTILE
+        ).associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             val sortedBin = bin.sorted()
             statX.add(x)
