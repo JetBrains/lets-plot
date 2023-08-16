@@ -46,6 +46,7 @@ class SummaryBinStat(
             Stats.Y_MAX to yMaxAggFunction,
         )
         val aesAggFunctions = statCtx.mappedStatVariables()
+            .filter { it != Stats.X && it != Stats.Y }
             .associateWith { AggregateFunctions.byStatVar(it, lowerQuantile, middleQuantile, upperQuantile) }
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
