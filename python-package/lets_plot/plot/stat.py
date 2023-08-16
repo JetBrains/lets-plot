@@ -44,19 +44,16 @@ def stat_summary(mapping=None, *, data=None, geom=None,
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     fun : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='mean'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..y..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     fun_min : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='min'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..ymin..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     fun_max : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='max'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..ymax..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        The list of probabilities defining the quantile functions 'lq', 'mq' and 'uq'.
+        A list of probabilities defining the quantile functions 'lq', 'mq' and 'uq'.
         Must contain exactly 3 values between 0 and 1.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -77,18 +74,12 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     -----
     Computed variables:
 
+    - ..y.. : mean of all observations.
     - ..ymin.. : smallest observation.
     - ..ymax.. : largest observation.
 
-    `stat_summary()` understands the following aesthetics mappings:
-
-    - x : x-axis coordinates.
-    - y : mean.
-    - ymin : lower bound.
-    - ymax : upper bound.
-
-    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
-    They can be mapped to the following variables, which will be immediately computed:
+    The following variables can be used in tooltips and `as_discrete()` only if
+    they are mapped to an aesthetics that the current geometry can handle:
 
     - ..count.. : number of observations.
     - ..sum.. : sum of observations.
@@ -99,6 +90,13 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
+
+    `stat_summary()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : mean.
+    - ymin : lower bound.
+    - ymax : upper bound.
 
     Examples
     --------
@@ -207,19 +205,16 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     fun : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='mean'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..y..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     fun_min : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='min'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..ymin..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     fun_max : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='max'
-        A name of a function that get a vector of values and should return a single number.
-        Values 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles,
-        which are determined by the probabilities passed in the `quantiles` parameter.
+        Name of function computing stat variable '..ymax..'.
+        Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        The list of probabilities defining the quantile functions 'lq', 'mq' and 'uq'.
+        A list of probabilities defining the quantile functions 'lq', 'mq' and 'uq'.
         Must contain exactly 3 values between 0 and 1.
     bins : int, default=30
         Number of bins. Overridden by `binwidth`.
@@ -250,18 +245,12 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     -----
     Computed variables:
 
+    - ..y.. : mean of all observations.
     - ..ymin.. : smallest observation.
     - ..ymax.. : largest observation.
 
-    `stat_summary_bin()` understands the following aesthetics mappings:
-
-    - x : x-axis coordinates.
-    - y : mean.
-    - ymin : lower bound.
-    - ymax : upper bound.
-
-    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
-    They can be mapped to the following variables, which will be immediately computed:
+    The following variables can be used in tooltips and `as_discrete()` only if
+    they are mapped to an aesthetics that the current geometry can handle:
 
     - ..count.. : number of observations.
     - ..sum.. : sum of observations.
@@ -272,6 +261,13 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
+
+    `stat_summary_bin()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : mean.
+    - ymin : lower bound.
+    - ymax : upper bound.
 
     Examples
     --------
