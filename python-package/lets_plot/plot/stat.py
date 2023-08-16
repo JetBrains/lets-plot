@@ -148,7 +148,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             stat_summary(position=position_nudge(x=-.1), color="red") + \\
-            stat_summary(fun_min='lq', fun_max='uq', quantiles=[.1, .5, .9], \\
+            stat_summary(fun='mq', fun_min='lq', fun_max='uq', quantiles=[.1, .5, .9], \\
                          position=position_nudge(x=.1), color="blue")
 
     """
