@@ -56,6 +56,7 @@
 - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8))
 - Geometries default colors are now flavor-dependent: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
 - Geometries default size/line-width is now slightly bigger.
+- Point size is adjusted to match the width of a line of the same "size".
 
 - [BREAKING] `geom_pie()` no longer supports parameter `stroke_color`.
 
