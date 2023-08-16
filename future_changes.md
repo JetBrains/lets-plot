@@ -2,9 +2,9 @@
 
 ### Added
 
-- Flavor-dependent colors: **pen**, **brush** and **paper**
-  - By default, all geometries utilize new flavor-dependent colors.
-  - Theme `geom` parameter allowing redefinition of "geom colors":  `theme(geom=element_geom(pen, brush,paper))`.
+- Flavor-aware colors: **pen**, **brush** and **paper**
+  - By default, all geometries utilize new flavor-aware colors.
+  - Theme `geom` parameter allows redefinition of "geom colors":  `theme(geom=element_geom(pen, brush,paper))`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
 
@@ -70,8 +70,8 @@
 
 - [BREAKING, only affects users of Lets-Plot Kotlin API] \
   The entire project has undergone package refactoring.\
-  As a result of package names changed, this Lets-Plot v4.0.0 is only partially compatible \
-  with the current Lets-Plot Kotlin API v4.4.1.
+  As a result of package names changed, Lets-Plot v4.0.0 is partially incompatible\
+  with Lets-Plot Kotlin API versions 4.4.1 and earlier.
 
 
 ### Fixed
