@@ -74,29 +74,21 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     -----
     Computed variables:
 
-    - ..y.. : mean of all observations.
-    - ..ymin.. : smallest observation.
-    - ..ymax.. : largest observation.
-
-    The following variables can be used in tooltips and `as_discrete()` only if
-    they are mapped to an aesthetics that the current geometry can handle:
-
+    - ..y.. : result of calculating of `fun`.
+    - ..ymin.. : result of calculating of `fun_min`.
+    - ..ymax.. : result of calculating of `fun_max`.
     - ..count.. : number of observations.
     - ..sum.. : sum of observations.
     - ..mean.. : mean of observations.
     - ..median.. : median of observations.
-    - ..ymin.. : smallest observation.
-    - ..ymax.. : largest observation.
     - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
-    `stat_summary()` understands the following aesthetics mappings:
-
-    - x : x-axis coordinates.
-    - y : mean.
-    - ymin : lower bound.
-    - ymax : upper bound.
+    Notes
+    -----
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq..
+    will be computed only if they are attached to the aesthetics that the current geometry can handle.
 
     Examples
     --------
@@ -245,29 +237,21 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     -----
     Computed variables:
 
-    - ..y.. : mean of all observations.
-    - ..ymin.. : smallest observation.
-    - ..ymax.. : largest observation.
-
-    The following variables can be used in tooltips and `as_discrete()` only if
-    they are mapped to an aesthetics that the current geometry can handle:
-
+    - ..y.. : result of calculating of `fun`.
+    - ..ymin.. : result of calculating of `fun_min`.
+    - ..ymax.. : result of calculating of `fun_max`.
     - ..count.. : number of observations.
     - ..sum.. : sum of observations.
     - ..mean.. : mean of observations.
     - ..median.. : median of observations.
-    - ..ymin.. : smallest observation.
-    - ..ymax.. : largest observation.
     - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
     - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
     - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
-    `stat_summary_bin()` understands the following aesthetics mappings:
-
-    - x : x-axis coordinates.
-    - y : mean.
-    - ymin : lower bound.
-    - ymax : upper bound.
+    Notes
+    -----
+    Variables ..count.., ..sum.., ..mean.., ..median.., ..lq.., ..mq.., ..uq..
+    will be computed only if they are attached to the aesthetics that the current geometry can handle.
 
     Examples
     --------
@@ -317,7 +301,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         x = np.random.uniform(size=n)
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-            stat_summary_bin(fun_min='lq', fun_max='uq', geom='crossbar', \\
+            stat_summary_bin(fun='mq', fun_min='lq', fun_max='uq', geom='crossbar', \\
                              bins=11, width=1, quantiles=[.05, .5, .95], boundary=0) + \\
             geom_point()
 
