@@ -1,7 +1,9 @@
 <component name="CopyrightManager">
-  <settings default="Datalore plot">
+  <settings>
     <module2copyright>
-      <element module="Project Files" copyright="Datalore plot" />
+      <element module="LetsPlot" copyright="Datalore plot" />
+      <element module="gcommon" copyright="Datalore plot gcommon" />
+      <element module="math3" copyright="Datalore plot math3" />
     </module2copyright>
   </settings>
 </component>

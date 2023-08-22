@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="/*&#10; * Copyright (c) &amp;#36;today.year JetBrains s.r.o.&#10; * Use of this source code is governed by the MIT license that can be found in the LICENSE file.&#10; *&#10; * This file has been modified by JetBrains : Java code has been converted to Kotlin code.&#10; *&#10; * THE FOLLOWING IS THE COPYRIGHT OF THE ORIGINAL DOCUMENT:&#10; *&#10; * Copyright (c) 2009-2012, Hernán J. González.&#10; * Licensed under the Apache License, Version 2.0.&#10; *&#10; * The original PNGJ library is written in Java and can be found here: [PNGJ](https://github.com/leonbloy/pngj).&#10; */" />
+    <option name="myName" value="Datalore plot pngj" />
+  </copyright>
+</component>
