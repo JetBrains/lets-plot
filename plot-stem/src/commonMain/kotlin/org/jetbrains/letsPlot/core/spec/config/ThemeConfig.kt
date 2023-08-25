@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Theme.FLAVOR
@@ -34,18 +35,27 @@ class ThemeConfig constructor(
             var value = convertElementBlank(value)
             value = convertMargins(value)
             LegendThemeConfig.convertValue(key, value)
+        }.let { opts ->
+            // theme() + flavor() => use colors from flavor
+            // flavor() + theme() => from theme(geom)
+            if (with(opts.keys) { indexOf(FLAVOR) > indexOf(ThemeOption.GEOM) }) {
+                opts - ThemeOption.GEOM
+            } else {
+                opts
+            }
         }
 
-        val themeFlavorOptions = baselineValues.values.let {
+      // User specific options will be applied to the combination of named theme and flavor options
+        val effectiveOptions = baselineValues.values.let {
             val flavorName = themeSettings.getString(FLAVOR)
             if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {
                 it
             }
-        }
+        }.mergeWith(userOptions)
 
-        theme = DefaultTheme(themeFlavorOptions, fontFamilyRegistry, userOptions)
+        theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
     }
 
     companion object {
