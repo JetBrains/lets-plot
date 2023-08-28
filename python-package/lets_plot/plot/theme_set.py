@@ -212,7 +212,7 @@ def theme_bw():
 
 def theme_void():
     """
-    A completely empty theme.
+    A completely blank (or "void") background theme: no borders, axes, or gridlines.
 
     Returns
     -------
@@ -234,7 +234,7 @@ def theme_void():
             theme_void()
 
     """
-    blank_elems = {'line': 'blank', 'rect': 'blank', 'axis': 'blank'}
+    blank_elems = {'line': 'blank', 'axis': 'blank'}
     return theme_classic() + FeatureSpec('theme', name=None, **blank_elems)
 
 
