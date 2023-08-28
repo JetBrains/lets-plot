@@ -65,8 +65,8 @@ object AestheticsUtil {
 
     fun updateFill(shape: SvgShape, p: DataPointAesthetics) {
         shape.fillColor().set(p.fill())
-        if (solid(p.fill()!!)) {
-            shape.fillOpacity().set(p.alpha())
-        }
+        //if (solid(p.fill()!!)) {
+        shape.fillOpacity().set(p.alpha())
+        //}
     }
 }
