@@ -74,10 +74,10 @@ internal class DefaultGeomTheme private constructor(
             val color = when (geomKind) {
                 GeomKind.POLYGON,
                 GeomKind.DOT_PLOT,
-                GeomKind.Y_DOT_PLOT -> colorTheme.paper()
-
+                GeomKind.Y_DOT_PLOT,
                 GeomKind.BAR,
-                GeomKind.PIE,
+                GeomKind.PIE -> colorTheme.paper()
+
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2DF,
                 GeomKind.TILE,
