@@ -65,7 +65,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
                 val toLocation = { p: DataPointAesthetics -> geomHelper.toClient(point, p) }
-                val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio)
+                val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio, ctx.backgroundColor)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
                 root.appendNodes(pieSectors.map(::buildSvgArcs))
@@ -232,7 +232,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     private fun computeSectors(
         dataPoints: List<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
-        sizeUnitRatio: Double
+        sizeUnitRatio: Double,
+        backgroundColor: Color
     ): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
         fun angle(p: DataPointAesthetics) = when (sum) {
@@ -251,7 +252,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 pieCenter = pieCenter,
                 startAngle = currentAngle,
                 endAngle = currentAngle + angle(p),
-                sizeUnitRatio = sizeUnitRatio
+                sizeUnitRatio = sizeUnitRatio,
+                backgroundColor = backgroundColor
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
@@ -261,11 +263,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val p: DataPointAesthetics,
         val startAngle: Double,
         val endAngle: Double,
-        sizeUnitRatio: Double
+        sizeUnitRatio: Double,
+        backgroundColor: Color
     ) {
         val angle = endAngle - startAngle
         val strokeWidth = p.stroke() ?: 0.0
-        private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT
+        private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT && p.color() != backgroundColor
         val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
@@ -288,7 +291,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         fun outerArcPointWithStroke(angle: Double) = arcPoint(
             radius = when (strokeSide.hasOuter && hasVisibleStroke) {
                 true -> radius + strokeWidth / 2
-                false -> radius
+                false -> radius - strokeWidth / 2
             },
             angle = angle
         )
@@ -296,7 +299,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
             radius = when (strokeSide.hasInner && hasVisibleStroke) {
                 true -> holeRadius - strokeWidth / 2
-                false -> holeRadius
+                false -> holeRadius + strokeWidth / 2
             },
             angle = angle
         )

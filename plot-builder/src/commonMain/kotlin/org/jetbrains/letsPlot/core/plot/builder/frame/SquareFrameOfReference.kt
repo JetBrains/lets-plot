@@ -176,7 +176,7 @@ internal class SquareFrameOfReference(
             coord,
             flipAxis,
             targetCollector,
-            theme.colors().paper()
+            theme.plot().backgroundFill()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
