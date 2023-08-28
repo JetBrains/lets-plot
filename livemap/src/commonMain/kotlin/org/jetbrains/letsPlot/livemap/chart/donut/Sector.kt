@@ -106,12 +106,7 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
         val strokeWidth = pieSpec.strokeWidths.getOrElse(index) { 0.0 }
 
         val hasVisibleStroke = strokeWidth > 0.0 && strokeColor != null && strokeColor != Color.TRANSPARENT
-        val holeRadius = if (pieSpec.holeSize == 0.0 && hasInnerArc && hasVisibleStroke) {
-            // Add a hole if an inner stroke is needed
-            strokeWidth + pieSpec.spacerWidth
-        } else {
-            radius * pieSpec.holeSize
-        }
+        val holeRadius = strokeWidth + pieSpec.spacerWidth
 
         Sector(
             index = pieSpec.indices[index],

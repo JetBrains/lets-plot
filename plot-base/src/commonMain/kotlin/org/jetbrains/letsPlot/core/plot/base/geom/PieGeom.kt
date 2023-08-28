@@ -33,7 +33,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
     var spacerWidth: Double = 0.75
     var spacerColor: Color? = null
-    var strokeSide: StrokeSide = StrokeSide.OUTER
+    var strokeSide: StrokeSide = StrokeSide.BOTH
     var sizeUnit: String? = null
 
     enum class StrokeSide {
@@ -267,12 +267,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val strokeWidth = p.stroke() ?: 0.0
         private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT
         val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
-        val holeRadius = if (holeSize == 0.0 && strokeSide.hasInner && hasVisibleStroke) {
-            // Add a hole if an inner stroke is needed
-            strokeWidth + spacerWidth
-        } else {
-            radius * holeSize
-        }
+        val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
         private val explode = p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
