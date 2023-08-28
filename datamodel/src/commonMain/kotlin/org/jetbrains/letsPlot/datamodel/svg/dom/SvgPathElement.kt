@@ -21,8 +21,8 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
     SvgShape {
 
     companion object {
-        val D: SvgAttributeSpec<SvgPathData> =
-            SvgAttributeSpec.createSpec("d")
+        val FILL_RULE: SvgAttributeSpec<FillRule> = SvgAttributeSpec.createSpec("fill-rule")
+        val D: SvgAttributeSpec<SvgPathData> = SvgAttributeSpec.createSpec("d")
     }
 
     override val elementName = "path"
@@ -32,6 +32,10 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
 
     constructor(d: SvgPathData) : this() {
         setAttribute(D, d)
+    }
+
+    fun fillRule(): Property<FillRule?> {
+        return getAttribute(FILL_RULE)
     }
 
     fun d(): Property<SvgPathData?> {
@@ -76,5 +80,14 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer()!!.applyTransform(this, point)
+    }
+
+    enum class FillRule(private val myAttrString: String) {
+        EVEN_ODD("evenodd"),
+        NON_ZERO("nonzero");
+
+        override fun toString(): String {
+            return myAttrString
+        }
     }
 }

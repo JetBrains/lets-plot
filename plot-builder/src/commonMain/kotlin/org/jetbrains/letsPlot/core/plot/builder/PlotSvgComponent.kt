@@ -37,14 +37,12 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
-class PlotSvgComponent constructor(
+class PlotSvgComponent(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
@@ -135,25 +133,32 @@ class PlotSvgComponent constructor(
     private fun buildPlotComponents() {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, figureSize)
 
-        val plotTheme = theme.plot()
-        if (plotTheme.showBackground()) {
-            add(SvgRectElement(overallRect).apply {
-                strokeColor().set(plotTheme.backgroundColor())
-                strokeWidth().set(plotTheme.backgroundStrokeWidth())
-                fillColor().set(plotTheme.backgroundFill())
-                if (containsLiveMap) {
-                    // Don't fill rect over livemap figure.
-                    fillOpacity().set(0.0)
-                } else {
-                    // Previously there was a fix for JFX here:
-                    // if the background color has no transparency - set its opacity to 0.99.
-                    // Now jfx-mapper will fix it in SvgShapeMapping.
-                }
-            })
+        fun SvgPathDataBuilder.rect(rect: DoubleRectangle) = apply {
+            moveTo(rect.left, rect.top)
+            lineTo(rect.left, rect.bottom)
+            lineTo(rect.right, rect.bottom)
+            lineTo(rect.right, rect.top)
+            lineTo(rect.right, rect.top)
         }
 
-        if (DEBUG_DRAWING) {
-            drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
+        val plotTheme = theme.plot()
+        val background: SvgPathElement? =
+            when (plotTheme.showBackground()) {
+                true -> SvgPathElement()
+                false -> null
+            }
+
+        background?.let {
+            it.fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
+            it.strokeColor().set(plotTheme.backgroundColor())
+            it.strokeWidth().set(plotTheme.backgroundStrokeWidth())
+            it.fillColor().set(plotTheme.backgroundFill())
+            add(it)
+        }
+
+        val backgroundPath: SvgPathDataBuilder? = when (plotTheme.showBackground()) {
+            true -> SvgPathDataBuilder().rect(overallRect)
+            false -> null
         }
 
         // -------------
@@ -236,6 +241,15 @@ class PlotSvgComponent constructor(
             if (DEBUG_DRAWING) {
                 drawDebugRect(geomInnerBoundsAbsolute, Color.ORANGE, "ORANGE: geomInnerBoundsAbsolute")
             }
+
+            if (containsLiveMap) {
+                // Add a hole for a map
+                backgroundPath?.rect(geomInnerBoundsAbsolute)
+            }
+        }
+
+        if (background != null && backgroundPath != null) {
+            background.d().set(backgroundPath.build())
         }
 
         val geomAreaBounds = figureLayoutInfo.geomAreaBounds

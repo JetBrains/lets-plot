@@ -12,6 +12,15 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 internal object SvgPathAttrMapping : SvgShapeMapping<SVGPath>() {
     override fun setAttribute(target: SVGPath, name: String, value: Any?) {
         when (name) {
+            SvgPathElement.FILL_RULE.name -> {
+                val fillRule = when (value as? SvgPathElement.FillRule) {
+                    SvgPathElement.FillRule.EVEN_ODD -> javafx.scene.shape.FillRule.EVEN_ODD
+                    SvgPathElement.FillRule.NON_ZERO -> javafx.scene.shape.FillRule.NON_ZERO
+                    null -> null
+                }
+                target.fillRule = fillRule
+            }
+
             SvgPathElement.D.name -> {
                 // Can be string (slim path) or SvgPathData
                 val pathStr = when (value) {

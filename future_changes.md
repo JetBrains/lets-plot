@@ -5,3 +5,5 @@
 ### Changed
 
 ### Fixed
+
+- `geom_livemap()`: theme/flavor plot background is not shown [[#857](https://github.com/JetBrains/lets-plot/issues/857)].
