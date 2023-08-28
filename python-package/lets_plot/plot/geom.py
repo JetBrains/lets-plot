@@ -6073,7 +6073,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              stroke_side=None,
              spacer_width=None, spacer_color=None,
              size_unit=None,
-             fill_by=None,
+             color_by=None, fill_by=None,
              **other_args):
     """
     Draw pie chart.
@@ -6129,6 +6129,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     size_unit : {'x', 'y'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
         If None, no fitting is performed.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     other_args
@@ -6299,7 +6301,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  spacer_width=spacer_width,
                  spacer_color=spacer_color,
                  size_unit=size_unit,
-                 fill_by=fill_by,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
