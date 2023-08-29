@@ -16,7 +16,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
                  color_by=None, fill_by=None,
                  **other_args):
     """
-    Visualise the aggregated values of a single continuous variable grouped along the x axis.
+    Display the aggregated values of a single continuous variable grouped along the x axis.
 
     Parameters
     ----------
@@ -329,7 +329,7 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
               color_by=None,
               **other_args):
     """
-    Visualise the empirical cumulative distribution function.
+    Display the empirical cumulative distribution function.
 
     Parameters
     ----------
