@@ -1114,8 +1114,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                color_by=None, fill_by=None,
                **other_args):
     """
-    Display a 1d distribution by dividing variable mapped to x axis into bins
-    and counting the number of observations in each bin.
+    Divides the plane into a grid and color the bins by the count of cases in them.
 
     Parameters
     ----------
