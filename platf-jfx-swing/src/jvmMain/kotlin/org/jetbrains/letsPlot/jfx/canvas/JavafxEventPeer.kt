@@ -10,13 +10,14 @@ import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.core.canvas.EventPeer
 import org.jetbrains.letsPlot.jfx.util.JfxEventUtil
 import javafx.event.EventHandler as jfxHandler
-import javafx.scene.input.MouseEvent as JfxMouseEvent
 
-class JavafxEventPeer(node: Node, private val myTargetBounds: Rectangle) :
-    EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
+// TODO: remove EventPeer, see AwtMouseEventMapper
+class JavafxEventPeer(
+    node: Node,
+    private val myTargetBounds: Rectangle
+) : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
 
     init {
         node.onMouseEntered = jfxHandler {

@@ -7,3 +7,4 @@
 ### Fixed
 
 - `geom_livemap()`: theme/flavor plot background is not shown [[#857](https://github.com/JetBrains/lets-plot/issues/857)].
+- `geom_livemap()`: in AWT dragging a map in a facet moves maps in all facets. 

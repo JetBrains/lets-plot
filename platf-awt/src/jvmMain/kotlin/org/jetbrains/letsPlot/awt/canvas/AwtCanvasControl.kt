@@ -5,19 +5,18 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.EventPeer
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
@@ -30,8 +29,8 @@ import javax.swing.JComponent
 
 class AwtCanvasControl(
     override val size: Vector,
-    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>,
-    private val myAnimationTimerPeer: org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer,
+    private val animationTimerPeer: AwtAnimationTimerPeer,
+    private val mouseEventSource: MouseEventSource,
     private val myPixelRatio: Double = 1.0
 ) : CanvasControl {
 
@@ -60,11 +59,11 @@ class AwtCanvasControl(
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : AnimationTimer {
             override fun start() {
-                myAnimationTimerPeer.addHandler(::handle)
+                animationTimerPeer.addHandler(::handle)
             }
 
             override fun stop() {
-                myAnimationTimerPeer.removeHandler(::handle)
+                animationTimerPeer.removeHandler(::handle)
             }
 
             fun handle(millisTime: Long) {
@@ -112,16 +111,11 @@ class AwtCanvasControl(
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return myEventPeer.addEventHandler(
-            eventSpec,
-            handler {
-                eventHandler.onEvent(it)
-            }
-        )
+        return mouseEventSource.addEventHandler(eventSpec, eventHandler)
     }
 
     override fun <T> schedule(f: () -> T) {
 //        invokeLater { f() }
-        myAnimationTimerPeer.executor { f() }
+        animationTimerPeer.executor { f() }
     }
 }

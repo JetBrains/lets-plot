@@ -29,7 +29,7 @@ class LiveMap {
             fourPointsTwoLayers(),
             osmTiles(),
             bunch(),
-            facet()
+            facet(),
         ).onEach {
             it.updateTiles()
         }

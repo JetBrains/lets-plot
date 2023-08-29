@@ -5,21 +5,21 @@
 
 package org.jetbrains.letsPlot.platf.w3c.canvas
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.EventPeer
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image
@@ -31,19 +31,9 @@ import org.w3c.files.BlobPropertyBag
 
 class DomCanvasControl(
     private val myRootElement: HTMLElement,
-    override val size: Vector
+    override val size: Vector,
+    private val mouseEventSource: MouseEventSource,
 ) : CanvasControl {
-
-    val mousePeer: EventPeer<MouseEventSpec, MouseEvent> = object : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
-        override fun onSpecAdded(spec: MouseEventSpec) {
-
-        }
-
-        override fun onSpecRemoved(spec: MouseEventSpec) {
-
-        }
-
-    }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : DomAnimationTimer() {
@@ -54,7 +44,7 @@ class DomCanvasControl(
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return mousePeer.addEventHandler(eventSpec, eventHandler)
+        return mouseEventSource.addEventHandler(eventSpec, eventHandler)
     }
 
     override fun createCanvas(size: Vector): Canvas {

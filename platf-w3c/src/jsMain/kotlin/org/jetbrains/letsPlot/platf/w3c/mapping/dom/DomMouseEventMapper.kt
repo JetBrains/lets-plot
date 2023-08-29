@@ -5,31 +5,31 @@
 
 package org.jetbrains.letsPlot.core.platf.dom
 
+import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
-import kotlinx.browser.document
-import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
-import org.jetbrains.letsPlot.platf.w3c.dom.on
+import org.jetbrains.letsPlot.core.canvas.MouseEventSourceBase
 import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getButton
 import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getModifiers
+import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
+import org.jetbrains.letsPlot.platf.w3c.dom.on
 import org.w3c.dom.Element
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
 
 private const val ENABLE_DEBUG_LOG = false
 
-class DomEventMapper(
-    private val myEventTarget: Element,
-    private val myTargetBounds: DoubleRectangle? = null,
-    private val destMouseEventPeer: (MouseEventSpec, MouseEvent) -> Unit
-) {
+class DomMouseEventMapper(
+    private val eventSource: Element,
+    private val bounds: DoubleRectangle? = null,
+) : MouseEventSourceBase() {
     private var state: MouseState = HoverState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
-                println("state($${this@DomEventMapper.hashCode()}): ${field::class.simpleName} -> ${value::class.simpleName}")
+                println("state($${this@DomMouseEventMapper.hashCode()}): ${field::class.simpleName} -> ${value::class.simpleName}")
             }
             field = value
         }
@@ -45,8 +45,8 @@ class DomEventMapper(
     }
 
     private fun handle(eventSpec: DomEventType<DomMouseEvent>, handler: (DomMouseEvent) -> Unit) {
-        myEventTarget.on(eventSpec, consumer = {
-            val needHandle = myTargetBounds?.contains(DoubleVector(it.offsetX, it.offsetY)) ?: true
+        eventSource.on(eventSpec, consumer = {
+            val needHandle = bounds?.contains(DoubleVector(it.offsetX, it.offsetY)) ?: true
             if (needHandle) {
                 handler(it)
             }
@@ -56,8 +56,8 @@ class DomEventMapper(
     private fun dispatch(eventSpec: MouseEventSpec, domMouseEvent: DomMouseEvent) {
         domMouseEvent.preventDefault() // Fix for Safari to prevent selection when user drags outside a canvas
 
-        val targetClientOrigin = myEventTarget.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
-        val targetAbsoluteOrigin = myTargetBounds?.origin ?: DoubleVector.ZERO
+        val targetClientOrigin = eventSource.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
+        val targetAbsoluteOrigin = bounds?.origin ?: DoubleVector.ZERO
         val eventClientCoord = DoubleVector(domMouseEvent.clientX.toDouble(), domMouseEvent.clientY.toDouble())
         val eventTargetCoord = eventClientCoord.subtract(targetClientOrigin).subtract(targetAbsoluteOrigin)
 
@@ -68,7 +68,7 @@ class DomEventMapper(
             getModifiers(domMouseEvent)
         )
 
-        destMouseEventPeer.invoke(eventSpec, mouseEvent)
+        fire(eventSpec, mouseEvent)
     }
 
     private abstract inner class MouseState {
@@ -81,7 +81,7 @@ class DomEventMapper(
 
         fun log(str: String) {
             if (ENABLE_DEBUG_LOG) {
-                println("${this::class.simpleName}(${this@DomEventMapper.hashCode()}): $str")
+                println("${this::class.simpleName}(${this@DomMouseEventMapper.hashCode()}): $str")
             }
         }
     }

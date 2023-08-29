@@ -5,13 +5,12 @@
 
 package demo.livemap.canvasDemo
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.geometry.Rectangle
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
-import org.jetbrains.letsPlot.awt.canvas.AwtEventPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import java.awt.Dimension
 import javax.swing.JFrame
 import javax.swing.JFrame.EXIT_ON_CLOSE
@@ -26,10 +25,11 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
 
     val panel = JPanel(null)
     val canvasControl = AwtCanvasControl(
-        dim,
-        AwtEventPeer(panel, Rectangle(Vector.ZERO, dim)),
-        org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer()
+        size = dim,
+        animationTimerPeer = AwtAnimationTimerPeer(),
+        mouseEventSource = AwtMouseEventMapper(panel)
     )
+
     panel.add(canvasControl.component())
     frame.add(panel)
 
