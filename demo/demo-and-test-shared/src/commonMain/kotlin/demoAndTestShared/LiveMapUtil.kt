@@ -74,7 +74,7 @@ object LiveMapUtil {
         when(val specKind = get(Option.Meta.KIND)) {
             Option.Meta.Kind.PLOT -> update(this)
             Option.Meta.Kind.SUBPLOTS -> getMaps(Option.SubPlots.FIGURES)!!.forEach(::update)
-            Option.Meta.Kind.GG_BUNCH -> getMaps(Option.GGBunch.ITEMS)!!.flatMap { it.getMaps(Option.GGBunch.Item.FEATURE_SPEC)!! }.forEach(::update)
+            Option.Meta.Kind.GG_BUNCH -> getMaps(Option.GGBunch.ITEMS)!!.map { it.getMap(Option.GGBunch.Item.FEATURE_SPEC)!! }.forEach(::update)
             else -> error("Unknown spec kind: $specKind")
         }
     }
