@@ -62,7 +62,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 
 object AesInitValue {
 
-    const val DEFAULT_ALPHA = 0.9999
+    const val DEFAULT_ALPHA = 0.999887
+
     private val VALUE_MAP = TypedKeyHashMap()
 
     init {
