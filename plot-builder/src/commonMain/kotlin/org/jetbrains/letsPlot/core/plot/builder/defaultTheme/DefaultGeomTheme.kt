@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 
@@ -116,7 +117,7 @@ internal class DefaultGeomTheme private constructor(
             // Alpha
             val alpha = when (geomKind) {
                 GeomKind.SMOOTH -> 0.15
-                else -> 1.0
+                else -> DEFAULT_ALPHA
             }
 
             return DefaultGeomTheme(color, fill, alpha, size, lineWidth)

@@ -43,11 +43,11 @@ object AestheticsUtil {
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {
-        return if (solid(color)) {    // only apply 'aes' alpha to solid colors
+        return if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {    //  apply only custom 'aes' alpha
             p.alpha()!!
-        } else SvgUtils.alpha2opacity(color.alpha)
-
-        // else, override with color's alpha
+        } else {
+            SvgUtils.alpha2opacity(color.alpha)
+        }
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
@@ -65,8 +65,8 @@ object AestheticsUtil {
 
     fun updateFill(shape: SvgShape, p: DataPointAesthetics) {
         shape.fillColor().set(p.fill())
-        //if (solid(p.fill()!!)) {
-        shape.fillOpacity().set(p.alpha())
-        //}
+        if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {
+            shape.fillOpacity().set(p.alpha())
+        }
     }
 }
