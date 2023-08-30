@@ -16,7 +16,9 @@ class Alpha {
             areaFillAndAlpha(),
 
             rectDefault(),
-            rectFillAndAlpha()
+            rectFillAndAlpha(),
+
+            segment()
         )
     }
 
@@ -107,6 +109,22 @@ class Alpha {
                   'xmin': -1, 'xmax': 1, 'ymin': -1, 'ymax': 1,
                   'alpha': 0.2,
                   'fill': 'rgba(255,0,0,0.8)'
+                }
+            ]
+        }""".trimIndent()
+        return parsePlotSpec(spec)
+    }
+
+    private fun segment(): MutableMap<String, Any> {
+        val spec = """{
+            'kind': 'plot',
+            'layers': [
+                {
+                    'geom': 'segment',
+                    'x': 0, 'y': 0, 'xend': 1, 'yend': 1,
+                    'size': 4,
+                    'color': 'rgba(255,0,0,0.95)',
+                    'alpha': 0.2
                 }
             ]
         }""".trimIndent()

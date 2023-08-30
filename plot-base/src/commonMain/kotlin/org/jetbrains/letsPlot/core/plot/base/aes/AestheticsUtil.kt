@@ -43,9 +43,9 @@ object AestheticsUtil {
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {
-        return if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {    //  apply only custom 'aes' alpha
+        return if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {  //  apply only custom 'aes' alpha
             p.alpha()!!
-        } else {
+        } else {                                               // else, override with color's alpha
             SvgUtils.alpha2opacity(color.alpha)
         }
     }
@@ -58,7 +58,7 @@ object AestheticsUtil {
 
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
         shape.strokeColor().set(p.color())
-        if (solid(p.color()!!) && applyAlpha) {
+        if (p.alpha() != AesInitValue.DEFAULT_ALPHA && applyAlpha) {
             shape.strokeOpacity().set(p.alpha())
         }
     }
