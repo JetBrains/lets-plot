@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.datetime.tz
 
 import org.jetbrains.letsPlot.commons.intern.datetime.*
+import kotlin.math.abs
 
 internal object TimeZones {
     private const val MILLIS_IN_SECOND: Long = 1000
@@ -15,20 +16,37 @@ internal object TimeZones {
 
     private fun toDateTime(instant: Instant, offset: Duration): DateTime {
         @Suppress("NAME_SHADOWING")
-        var instant = instant
-        instant = instant.add(offset)
+        val instant = instant.add(offset)
 
-        val days = (instant.timeSinceEpoch / MILLIS_IN_DAY).toInt()
-        val date = Date.EPOCH.addDays(days)
+        val dayDelta = (instant.timeSinceEpoch / MILLIS_IN_DAY).toInt()
         var rest = instant.timeSinceEpoch % MILLIS_IN_DAY
-        val hour = (rest / MILLIS_IN_HOUR).toInt()
+        val hourDelta = (rest / MILLIS_IN_HOUR).toInt()
         rest %= MILLIS_IN_HOUR
-        val minutes = (rest / MILLIS_IN_MINUTE).toInt()
+        val minuteDelta = (rest / MILLIS_IN_MINUTE).toInt()
         rest %= MILLIS_IN_MINUTE
-        val seconds = (rest / MILLIS_IN_SECOND).toInt()
+        val secondDelta = (rest / MILLIS_IN_SECOND).toInt()
         rest %= MILLIS_IN_SECOND
-        val milliseconds = (rest % MILLIS_IN_SECOND).toInt()
-        return DateTime(date, Time(hour, minutes, seconds, milliseconds))
+        val millisDelta = (rest % MILLIS_IN_SECOND).toInt()
+
+        return if (instant.timeSinceEpoch >= 0) {
+            val date = Date.EPOCH.addDays(dayDelta)
+            DateTime(date, Time(hourDelta, minuteDelta, secondDelta, millisDelta))
+        } else {
+            fun subtract(minuend: Int, subtrahend: Int): Pair<Int, Int> {
+                // returns pair - difference and borrowing flag
+                return if (subtrahend == 0) { 0 to 0 } else { minuend - subtrahend to 1 }
+            }
+
+            val (milliseconds, secondBorrowing) = subtract(1_000, abs(millisDelta))
+            val (seconds, minuteBorrowing) = subtract(60, abs(secondDelta) + secondBorrowing)
+            val (minutes, hourBorrowing) = subtract(60, abs(minuteDelta) + minuteBorrowing)
+            val (hours, dayBorrowing) = subtract(24, abs(hourDelta) + hourBorrowing)
+            val days = abs(dayDelta) + dayBorrowing
+
+            val time = Time(hours, minutes, seconds, milliseconds)
+            val date = Date.EPOCH.subtractDays(days)
+            DateTime(date, time)
+        }
     }
 
     private fun toInstant(dateTime: DateTime, offset: Duration): Instant {

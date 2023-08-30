@@ -16,8 +16,13 @@ class DateTimeUtilTest {
 
     @Test
     fun centuryLeapYears() {
+        assertFalse(DateTimeUtil.isLeap(1700))
+        assertFalse(DateTimeUtil.isLeap(1800))
+        assertFalse(DateTimeUtil.isLeap(1900))
         assertTrue(DateTimeUtil.isLeap(2000))
         assertFalse(DateTimeUtil.isLeap(2100))
+        assertFalse(DateTimeUtil.isLeap(2200))
+        assertFalse(DateTimeUtil.isLeap(2300))
     }
 
     @Test
