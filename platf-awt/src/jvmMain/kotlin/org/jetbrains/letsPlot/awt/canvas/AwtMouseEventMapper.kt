@@ -6,10 +6,13 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.awt.util.AwtEventUtil
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.core.canvas.MouseEventSourceBase
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.Registration
 import java.awt.Component
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -21,7 +24,9 @@ private const val ENABLE_DEBUG_LOG = false
 class AwtMouseEventMapper(
     eventSource: Component,
     private val bounds: Rectangle? = null
-) : MouseEventSourceBase() {
+) : MouseEventSource {
+    private val mouseEventPeer = MouseEventPeer()
+
     private var state: MouseState = HoverState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
@@ -128,9 +133,9 @@ class AwtMouseEventMapper(
         }
     }
 
-    private fun dispatch(eventSpec: MouseEventSpec, e: MouseEvent) {
+    private fun dispatch(eventSpec: MouseEventSpec, e: AwtMouseEvent) {
         val mouseEvent = AwtEventUtil.translate(e, bounds?.origin ?: Vector.ZERO)
-        fire(eventSpec, mouseEvent)
+        mouseEventPeer.dispatch(eventSpec, mouseEvent)
     }
 
     private fun isHitWithinBounds(event: AwtMouseEvent): Boolean {
@@ -146,5 +151,12 @@ class AwtMouseEventMapper(
         MOUSE_DRAGGED,
         MOUSE_MOVED,
         ;
+    }
+
+    override fun addEventHandler(
+        eventSpec: MouseEventSpec,
+        eventHandler: EventHandler<org.jetbrains.letsPlot.commons.event.MouseEvent>
+    ): Registration {
+        return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
     }
 }

@@ -7,11 +7,13 @@ package org.jetbrains.letsPlot.core.platf.dom
 
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.canvas.MouseEventSourceBase
 import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getButton
 import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getModifiers
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
@@ -25,7 +27,9 @@ private const val ENABLE_DEBUG_LOG = false
 class DomMouseEventMapper(
     private val eventSource: Element,
     private val bounds: DoubleRectangle? = null,
-) : MouseEventSourceBase() {
+) : MouseEventSource {
+    private val mouseEventPeer = MouseEventPeer()
+
     private var state: MouseState = HoverState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
@@ -68,7 +72,7 @@ class DomMouseEventMapper(
             getModifiers(domMouseEvent)
         )
 
-        fire(eventSpec, mouseEvent)
+        mouseEventPeer.dispatch(eventSpec, mouseEvent)
     }
 
     private abstract inner class MouseState {
@@ -170,5 +174,9 @@ class DomMouseEventMapper(
 
             state = HoverState()
         }
+    }
+
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+        return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
     }
 }
