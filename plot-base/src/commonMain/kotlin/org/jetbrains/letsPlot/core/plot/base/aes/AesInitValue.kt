@@ -62,6 +62,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 
 object AesInitValue {
 
+    const val DEFAULT_ALPHA = 0.999887
+
     private val VALUE_MAP = TypedKeyHashMap()
 
     init {
@@ -75,7 +77,7 @@ object AesInitValue {
         VALUE_MAP[PAINT_A] = Color.PACIFIC_BLUE
         VALUE_MAP[PAINT_B] = Color.PACIFIC_BLUE
         VALUE_MAP[PAINT_C] = Color.PACIFIC_BLUE
-        VALUE_MAP[ALPHA] = 1.0
+        VALUE_MAP[ALPHA] = DEFAULT_ALPHA
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID
         VALUE_MAP[SIZE] = 0.5 // Line thickness. Should be redefined for other shapes

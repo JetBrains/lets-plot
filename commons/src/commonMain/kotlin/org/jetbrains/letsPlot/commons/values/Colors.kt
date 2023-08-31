@@ -204,9 +204,7 @@ object Colors {
     }
 
     fun withOpacity(c: Color, opacity: Double): Color {
-        return if (opacity < 1.0) {
-            c.changeAlpha(max(0, min(255, round(255 * opacity).toInt())))
-        } else c
+        return c.changeAlpha(max(0, min(255, round(255 * opacity).toInt())))
     }
 
     fun contrast(color: Color, other: Color): Double {

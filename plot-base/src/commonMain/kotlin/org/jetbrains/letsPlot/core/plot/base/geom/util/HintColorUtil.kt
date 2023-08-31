@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors.solid
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
@@ -30,9 +30,11 @@ object HintColorUtil {
 
     fun applyAlpha(color: Color, alpha: Double): Color {
         val intAlpha = (255 * alpha).toInt()
-        return if (solid(color)) {
+        return if (alpha != AesInitValue.DEFAULT_ALPHA) {
             color.changeAlpha(intAlpha)
-        } else color
+        } else {
+            color
+        }
     }
 
     fun createColorMarkerMapper(
