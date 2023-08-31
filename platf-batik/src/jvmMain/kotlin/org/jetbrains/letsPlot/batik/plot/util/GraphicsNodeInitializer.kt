@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.batik.plot.util
 
 import org.apache.batik.gvt.GraphicsNode
-import java.util.ServiceLoader
 
 /**
  * Applied to each graphics node that is created by [BatikMapperComponentHelper].
@@ -18,9 +17,8 @@ interface GraphicsNodeInitializer {
 
     companion object {
         fun initialize(node: GraphicsNode) {
-            val serviceClass = GraphicsNodeInitializer::class.java
-            val loader = ServiceLoader.load(serviceClass, serviceClass.classLoader)
-            loader.forEach { it.initialize(node) }
+            val instances = ServiceLoaderHelper.loadInstances<GraphicsNodeInitializer>()
+            instances.forEach { it.initialize(node) }
         }
     }
 }
