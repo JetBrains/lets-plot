@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 
 open class AestheticsDefaults(geomTheme: GeomTheme) {
