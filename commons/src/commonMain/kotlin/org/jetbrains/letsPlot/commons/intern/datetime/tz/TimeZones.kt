@@ -32,9 +32,11 @@ internal object TimeZones {
             val date = Date.EPOCH.addDays(dayDelta)
             DateTime(date, Time(hourDelta, minuteDelta, secondDelta, millisDelta))
         } else {
-            fun subtract(minuend: Int, subtrahend: Int): Pair<Int, Int> {
-                // returns pair - difference and borrowing flag
-                return if (subtrahend == 0) { 0 to 0 } else { minuend - subtrahend to 1 }
+
+            // returns pair - difference and borrowing flag
+            fun subtract(borrowNumber: Int, subtrahend: Int): Pair<Int, Int> {
+                // minuend is implicitly zero - start of the epoch
+                return if (subtrahend == 0) { 0 to 0 } else { borrowNumber - subtrahend to 1 }
             }
 
             val (milliseconds, secondBorrowing) = subtract(1_000, abs(millisDelta))
