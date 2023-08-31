@@ -35,14 +35,6 @@ class ThemeConfig constructor(
             var value = convertElementBlank(value)
             value = convertMargins(value)
             LegendThemeConfig.convertValue(key, value)
-        }.let { opts ->
-            // theme() + flavor() => use colors from flavor
-            // flavor() + theme() => from theme(geom)
-            if (with(opts.keys) { indexOf(FLAVOR) > indexOf(ThemeOption.GEOM) }) {
-                opts - ThemeOption.GEOM
-            } else {
-                opts
-            }
         }
 
       // User specific options will be applied to the combination of named theme and flavor options
