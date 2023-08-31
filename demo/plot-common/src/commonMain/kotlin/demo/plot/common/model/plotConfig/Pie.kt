@@ -17,7 +17,8 @@ class Pie {
             withExplodes(addLabels = false),
             withExplodes(addLabels = true),
             withStrokeAndSpacerLines(),
-            sizeUnit()
+            sizeUnit(),
+            useFillBy()
         )
     }
 
@@ -212,5 +213,30 @@ class Pie {
             "color" to ('a'..'c').toList(),
         )
         return plotSpec
+    }
+
+    private fun useFillBy(): MutableMap<String, Any> {
+        val spec = """{
+            'ggtitle': {'text' : 'fill_by=\'paint_a\''},            
+            'data': {'color': ['a', 'b', 'c'], 's': [1, 2, 3]},
+            'theme': {'name': 'classic', 'line': 'blank', 'axis': 'blank', 'legend_position': 'bottom' },
+            'kind': 'plot',
+            'layers': [
+              {
+                'geom': 'pie',
+                'stat': 'identity',
+                'mapping': {'paint_a': 'color','paint_b': 'color', 'slice': 's', 'size': 's' },
+                'fill_by': 'paint_a',
+                'color_by': 'paint_b'
+              }
+            ] ,
+            'scales': [{'name': 'stroke color',
+           'aesthetic': 'paint_b',
+           'breaks': [2, 4, 7],
+           'labels': ['red', 'green', 'blue'],
+           'values': ['red', 'green', 'blue']}]
+                }""".trimIndent()
+
+        return parsePlotSpec(spec)
     }
 }

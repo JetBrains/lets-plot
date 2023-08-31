@@ -12,8 +12,7 @@ fun main() {
     with(Pie()) {
         PlotSpecsDemoWindowBatik(
             "Pie chart",
-            plotSpecList(),
-            maxCol = 2
+            plotSpecList()
         ).open()
     }
 }

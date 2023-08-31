@@ -52,6 +52,16 @@ internal object LegendAssemblerUtil {
             val dataPoint = HashMap<Aes<*>, Any>()
             for (aes in Aes.values()) {
                 dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(aes)!!
+
+                // fix defaults for 'color_by/fill_by' (https://github.com/JetBrains/lets-plot/issues/867)
+                if (aes in listOf(Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C)) {
+                    val baseAes = when (aes) {
+                        colorByAes -> Aes.COLOR
+                        fillByAes -> Aes.FILL
+                        else -> aes
+                    }
+                    dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(baseAes)!!
+                }
             }
 
             // Derive some aesthetics from constants
