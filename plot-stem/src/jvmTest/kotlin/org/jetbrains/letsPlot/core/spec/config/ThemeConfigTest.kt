@@ -53,44 +53,29 @@ class ThemeConfigTest {
     }
 
     @Test
-    fun `theme(geom) + flavor = use flavor colors`() {
-        val customColors = "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }"
-        val spec = plotSpec(flavorName = "darcula", customColors = customColors, flavorOverCustomColors = true)
-        val colors = transformToClientPlotConfig(spec).theme.colors()
-
-        assertEquals(Color.parseHex("#BBBBBB"), colors.pen())
-        assertEquals(Color.parseHex("#303030"), colors.paper())
-        assertEquals(Color.PACIFIC_BLUE, colors.brush())
-    }
-
-    @Test
-    fun `flavor + theme(geom) = use custom colors`() {
-        val customColors = "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }"
-        val spec = plotSpec(flavorName = "darcula", customColors = customColors, flavorOverCustomColors = false)
+    fun `theme(geom) redefines flavor colors`() {
+        val customColors = "'geom': { 'pen': 'red', 'brush': 'blue' }"
+        val spec = plotSpec(flavorName = "darcula", customColors = customColors)
         val colors = transformToClientPlotConfig(spec).theme.colors()
 
         assertEquals(Color.RED, colors.pen())
-        assertEquals(Color.GREEN, colors.paper())
+        assertEquals(Color.parseHex("#303030"), colors.paper())
         assertEquals(Color.BLUE, colors.brush())
     }
 
     private fun plotSpec(
         themeName: String? = null,
         flavorName: String? = null,
-        customColors: String? = null,
-        flavorOverCustomColors: Boolean = true
+        customColors: String? = null
     ): String {
         val themeNameOpts = themeName?.let { "'name': '$themeName'" } ?: ""
         val flavorOpts = flavorName?.let { "'flavor': '$flavorName'" } ?: ""
 
-        val themeSettings = (listOf(
-            themeNameOpts
-        ) + if (flavorOverCustomColors) {
-            listOf(customColors, flavorOpts)
-        } else {
-            listOf(flavorOpts, customColors)
-        }
-                ).filterNot(String?::isNullOrEmpty).joinToString()
+        val themeSettings = listOf(
+            themeNameOpts,
+            customColors,
+            flavorOpts
+        ).filterNot(String?::isNullOrEmpty).joinToString()
 
         return """
             {
