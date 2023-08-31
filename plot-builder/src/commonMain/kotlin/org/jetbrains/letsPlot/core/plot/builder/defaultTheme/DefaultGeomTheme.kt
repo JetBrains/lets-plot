@@ -17,7 +17,8 @@ internal class DefaultGeomTheme private constructor(
     private val fill: Color,
     private val alpha: Double,
     private val size: Double,
-    private val lineWidth: Double
+    private val lineWidth: Double,
+    private val pen: Color
 ) : GeomTheme {
     override fun color() = color
 
@@ -28,6 +29,8 @@ internal class DefaultGeomTheme private constructor(
     override fun size() = size
 
     override fun lineWidth() = lineWidth
+
+    override fun pen() = pen
 
     companion object {
         private const val COMMON_POINT_SIZE = 3.0
@@ -120,7 +123,7 @@ internal class DefaultGeomTheme private constructor(
                 else -> DEFAULT_ALPHA
             }
 
-            return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
+            return DefaultGeomTheme(color, fill, alpha, size, lineWidth, colorTheme.pen())
         }
     }
 }

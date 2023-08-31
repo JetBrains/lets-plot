@@ -324,12 +324,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         size.y / 2,
                         shapeSize(p) / 2
                     ).apply {
-                        val fill = p.fill()
-                        val color = p.color()
-                        fillColor().set(fill)
-                        strokeColor().set(
-                            if (color == Color.TRANSPARENT && fill == Color.TRANSPARENT) Color.BLACK else color
-                        )
+                        fillColor().set(p.fill())
+                        strokeColor().set(p.color())
                         strokeWidth().set(p.stroke())
                     }
                 )

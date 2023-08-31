@@ -94,6 +94,7 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
             return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 1.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.COLOR, geomTheme.pen())
         }
 
         private fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {

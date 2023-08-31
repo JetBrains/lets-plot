@@ -17,4 +17,6 @@ interface GeomTheme {
     fun size(): Double
 
     fun lineWidth(): Double
+
+    fun pen(): Color
 }
