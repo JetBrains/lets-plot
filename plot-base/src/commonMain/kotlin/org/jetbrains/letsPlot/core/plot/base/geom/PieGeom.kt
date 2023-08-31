@@ -268,7 +268,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     ) {
         val angle = endAngle - startAngle
         val strokeWidth = p.stroke() ?: 0.0
-        private val hasVisibleStroke = strokeWidth > 0.0 && p.color() != Color.TRANSPARENT && p.color() != backgroundColor
+        private val hasVisibleStroke = strokeWidth > 0.0 && p.color()?.alpha != 0 && p.color() != backgroundColor
         val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
@@ -291,16 +291,15 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         fun outerArcPointWithStroke(angle: Double) = arcPoint(
             radius = when (strokeSide.hasOuter && hasVisibleStroke) {
                 true -> radius + strokeWidth / 2
-                false -> radius - strokeWidth / 2
+                false -> radius
             },
             angle = angle
         )
 
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
-            radius = when {
-                holeSize == 0.0 -> holeRadius
-                strokeSide.hasInner && hasVisibleStroke -> holeRadius - strokeWidth / 2
-                else -> holeRadius + strokeWidth / 2
+            radius = when (strokeSide.hasInner && hasVisibleStroke && holeSize > 0 ){
+                true -> holeRadius - strokeWidth / 2
+                false -> holeRadius
             },
             angle = angle
         )
