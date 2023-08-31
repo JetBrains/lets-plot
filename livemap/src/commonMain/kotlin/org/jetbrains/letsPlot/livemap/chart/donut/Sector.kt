@@ -118,7 +118,7 @@ internal fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): Lis
             fillColor = fillColor,
             strokeColor = strokeColor,
             strokeWidth = strokeWidth,
-            drawInnerArc = hasInnerArc && hasVisibleStroke,
+            drawInnerArc = hasInnerArc && hasVisibleStroke && holeRadius > 0,
             drawOuterArc = hasOuterArc && hasVisibleStroke,
             spacerColor = pieSpec.spacerColor,
             spacerWidth = pieSpec.spacerWidth,

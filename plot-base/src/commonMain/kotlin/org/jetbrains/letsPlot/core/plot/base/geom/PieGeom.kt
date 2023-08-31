@@ -297,9 +297,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         )
 
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
-            radius = when (strokeSide.hasInner && hasVisibleStroke) {
-                true -> holeRadius - strokeWidth / 2
-                false -> holeRadius + strokeWidth / 2
+            radius = when {
+                holeSize == 0.0 -> holeRadius
+                strokeSide.hasInner && hasVisibleStroke -> holeRadius - strokeWidth / 2
+                else -> holeRadius + strokeWidth / 2
             },
             angle = angle
         )
