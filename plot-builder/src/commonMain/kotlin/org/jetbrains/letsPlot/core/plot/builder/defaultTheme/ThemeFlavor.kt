@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.parseHex
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.GEOM
 
 class ThemeFlavor(
     private val fill: Color,
@@ -48,8 +49,10 @@ class ThemeFlavor(
                 }
 
                 // Set flavor values for named colors
-                updated[ThemeOption.Geom.PEN] = color
-                updated[ThemeOption.Geom.PAPER] = fill
+                if (key == GEOM) {
+                    updated[ThemeOption.Geom.PEN] = color
+                    updated[ThemeOption.Geom.PAPER] = fill
+                }
 
                 updated
             } else {
