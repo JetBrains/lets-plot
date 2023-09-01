@@ -6118,7 +6118,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
-    stroke_side : {'outer', 'inner', 'both'}, default='outer'
+    stroke_side : {'outer', 'inner', 'both'}, default='both'
         Define which arcs of pie sector should have a stroke.
     spacer_width : float, default=0.75
         Line width between sectors.
