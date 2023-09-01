@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 
 interface PlotTheme {
     fun showBackground(): Boolean
+    fun showMessage(): Boolean
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double

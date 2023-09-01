@@ -58,6 +58,7 @@ def theme(*,
           plot_title=None,
           plot_subtitle=None,
           plot_caption=None,
+          plot_message=None,
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -174,6 +175,10 @@ def theme(*,
         Plot caption.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify plot caption parameters, inherited from `title`.
+    plot_message : str or dict
+        Plot message (sampling notifications and so on).
+        Set 'blank' or result of `element_blank()` to show nothing.
+        Set `element_text()` to show the message.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.

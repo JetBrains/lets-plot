@@ -14,16 +14,19 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
+import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
+import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
 import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.getString
 
 open class PlotConfigBackend(
@@ -32,6 +35,7 @@ open class PlotConfigBackend(
     opts,
     isClientSide = false
 ) {
+    val theme = ThemeConfig(getMap(THEME), DefaultFontFamilyRegistry()).theme
 
     /**
      * WARN! Side effects - performs modifications deep in specs tree
@@ -41,7 +45,10 @@ open class PlotConfigBackend(
 
         val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
-            PlotConfigUtil.addComputationMessage(this, message)
+
+            if (theme.plot().showMessage()) {
+                PlotConfigUtil.addComputationMessage(this, message)
+            }
         }
 
         // replace layer data with data after stat
