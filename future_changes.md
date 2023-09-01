@@ -8,7 +8,7 @@
   - `geom_bar()`: `color='paper'`
   - `geom_pie()`:  `color='paper'`, `stroke_side = 'both'`, no automatic hole creation when `stroke_side = 'both'/'inner'`
 
-- The `alpha` aesthetic parameter changes the alpha channel in the color, even if the original value was set via the RGBA specification.
+- The `alpha` aesthetic parameter overrides the alpha channel in the color, even if the original value was set via the RGBA specification.
 
 
 ### Fixed
