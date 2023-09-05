@@ -176,9 +176,9 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify plot caption parameters, inherited from `title`.
     plot_message : str or dict
-        Plot message (sampling notifications and so on).
+        Plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank()` to show nothing.
-        Set `element_text()` to show the message.
+        Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
