@@ -9,38 +9,73 @@ import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+@Suppress("PrivatePropertyName")
 class DateTimeBeforeUnixEpochTest {
+    private val instant1969dec31_h00m00s00 = Instant(-Duration.DAY.duration) // -86400000
+    private val datetime1969dec31_h00m00s00 = DateTime(Date(31, Month.DECEMBER, 1969), Time(0, 0))
+
+    private val instant1969dec31_h23m59s59ms999 = Instant(-1)
+    private val datetime1969dec31_h23m59s59ms999 = DateTime(Date(31, Month.DECEMBER, 1969), Time(23, 59, 59, 999))
+
+    private val instant1969dec23_h23m59s59ms1 = Instant(-Duration.DAY.mul(8).add(Duration.MS.mul(999)).duration) // -691200999
+    private val datetime1969dec23_h23m59s59ms1 = DateTime(Date(23, Month.DECEMBER, 1969), Time(23, 59, 59, 1))
+
+    private val instant1752sep14_h01m02s03ms456 = Instant(-6857218676544)
+    private val datetime1752sep14_h01m02s03ms456 = DateTime(Date(14, Month.SEPTEMBER, 1752), Time(1, 2, 3, 456))
 
     @Test
-    fun subtractDayOnDate() {
-        assertEquals(Date(31, Month.DECEMBER, 1969), Date.EPOCH.subtractDays(1))
+    fun toDateTime1969dec31h00m00s00() {
+        val actual = toDateTime(instant1969dec31_h00m00s00)
+        assertEquals(datetime1969dec31_h00m00s00, actual)
     }
 
     @Test
-    fun subtractDayInMillis() {
-        val actual = toDateTime(-Duration.DAY.duration)
-        assertEquals(DateTime(Date(31, Month.DECEMBER, 1969), Time(0, 0)), actual)
+    fun toInstant1969dec31h00m00s00() {
+        val actual = toInstant(datetime1969dec31_h00m00s00)
+        assertEquals(instant1969dec31_h00m00s00, actual)
     }
 
     @Test
-    fun subtractSeconds() {
-        assertEquals(Date(31, Month.DECEMBER, 1969), toDateTime(-3601).date)
+    fun toDateTime1969dec31_h23m59s59ms999() {
+        val actual = toDateTime(instant1969dec31_h23m59s59ms999)
+        assertEquals(datetime1969dec31_h23m59s59ms999, actual)
     }
 
     @Test
-    fun deepToThePastWithBorrowing() {
-        val actual = toDateTime(-6857218676544)
-        assertEquals(DateTime(Date(14, Month.SEPTEMBER, 1752), Time(1, 2, 3, 456)), actual)
+    fun toInstant1969dec31_h23m59s59ms999() {
+        val actual = toInstant(datetime1969dec31_h23m59s59ms999)
+        assertEquals(instant1969dec31_h23m59s59ms999, actual)
     }
 
     @Test
-    fun borrowingTest() {
-        val epoch = Duration.DAY.mul(8).add(Duration.MS.mul(999)).duration
-        val actual = toDateTime(-epoch)
-        assertEquals(DateTime(Date(23, Month.DECEMBER, 1969), Time(23, 59, 59, 1)), actual)
+    fun toDateTime1969dec23_h23m59s59ms1() {
+        val actual = toDateTime(instant1969dec23_h23m59s59ms1)
+        assertEquals(datetime1969dec23_h23m59s59ms1, actual)
     }
 
-    private fun toDateTime(epochMillis: Long): DateTime {
-        return TimeZone.UTC.toDateTime(Instant(epochMillis))
+    @Test
+    fun toInstant1969dec23_h23m59s59ms1() {
+        val actual = toInstant(datetime1969dec23_h23m59s59ms1)
+        assertEquals(instant1969dec23_h23m59s59ms1, actual)
+    }
+
+    @Test
+    fun toDateTime1752sep14_h01m02s03ms456() {
+        val actual = toDateTime(instant1752sep14_h01m02s03ms456)
+        assertEquals(datetime1752sep14_h01m02s03ms456, actual)
+    }
+
+    @Test
+    fun toInstant1752sep14_h01m02s03ms456() {
+        val actual = toInstant(datetime1752sep14_h01m02s03ms456)
+        assertEquals(instant1752sep14_h01m02s03ms456, actual)
+    }
+
+    private fun toDateTime(epochMillis: Instant): DateTime {
+        return TimeZone.UTC.toDateTime(epochMillis)
+    }
+
+    private fun toInstant(dateTime: DateTime): Instant {
+        return TimeZone.UTC.toInstant(dateTime)
     }
 }

@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.commons.intern.datetime
 
 import kotlin.jvm.JvmOverloads
+import kotlin.math.max
+import kotlin.math.min
 
 class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
 
@@ -35,21 +37,18 @@ class Date(val day: Int, val month: Month, val year: Int) : Comparable<Date> {
     }
 
     fun daysFrom(date: Date): Int {
-        if (compareTo(date) < 0) {
-            throw IllegalArgumentException()
-        }
-
-        var result = 0
-
-        if (year != date.year) {
-            val fromYear = date.year
-            val toYear = year
+        val daysBetweenYears = run {
+            val fromYear = min(date.year, year)
+            val toYear = max(date.year, year)
             val leapYears = DateTimeUtil.leapYearsBetween(fromYear, toYear)
-            val years = toYear - fromYear
-            result += leapYears * DateTimeUtil.DAYS_IN_LEAP_YEAR + (years - leapYears) * DateTimeUtil.DAYS_IN_YEAR
+            val commonYears = toYear - fromYear - leapYears
+            leapYears * DateTimeUtil.DAYS_IN_LEAP_YEAR + commonYears * DateTimeUtil.DAYS_IN_YEAR
         }
 
-        return result + daysFromYearStart() - date.daysFromYearStart()
+        return when (this >= date) {
+            true -> daysFromYearStart() - date.daysFromYearStart() + daysBetweenYears
+            false -> daysFromYearStart() - date.daysFromYearStart() - daysBetweenYears
+        }
     }
 
     fun daysFromYearStart(): Int {
