@@ -49,7 +49,11 @@ class CurveGeom : GeomBase() {
                     d().set(
                         SvgPathDataBuilder().apply {
                             moveTo(geometry.first())
-                            geometry.forEach(::lineTo)
+                            //geometry.forEach(::lineTo)
+                            interpolatePoints(
+                                geometry,
+                                SvgPathDataBuilder.Interpolation.CARDINAL
+                            )
                         }.build()
                     )
                     strokeColor().set(p.color())
