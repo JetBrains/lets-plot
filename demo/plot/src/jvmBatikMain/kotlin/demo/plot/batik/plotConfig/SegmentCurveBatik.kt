@@ -3,10 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plotDemo.plotConfig
+package demo.plot.batik.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.Curve
-import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
+import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
+import demo.plot.common.model.plotConfig.Curve
 
 fun main() {
     with(Curve()) {

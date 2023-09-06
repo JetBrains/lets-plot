@@ -3,19 +3,19 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.base.geom
+package org.jetbrains.letsPlot.core.plot.base.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgPathElement
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import kotlin.math.*
 
 class CurveGeom : GeomBase() {
