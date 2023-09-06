@@ -389,17 +389,16 @@ class PlotSpec(FeatureSpec):
 
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.props().items() if v is not None}
-                old_theme_options = plot.props().get('theme', {})
                 if 'name' in new_theme_options:
+                    # keep the previously specified flavor
+                    if plot.props().get('theme', {}).get('flavor', None) is not None:
+                        new_theme_options.update({'flavor': plot.props()['theme']['flavor']})
+
                     # pre-configured theme overrides existing theme altogether.
                     plot.props()['theme'] = new_theme_options
-
-                    # keep specified flavor
-                    old_flavor = old_theme_options.get('flavor')
-                    if old_flavor is not None:
-                        plot.props()['theme'].update({'flavor': old_flavor})
                 else:
                     # merge themes
+                    old_theme_options = plot.props().get('theme', {})
                     plot.props()['theme'] = _theme_dicts_merge(old_theme_options, new_theme_options)
 
                 return plot

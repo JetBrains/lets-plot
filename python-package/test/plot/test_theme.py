@@ -6,7 +6,7 @@ from lets_plot import element_blank
 from lets_plot import element_rect
 from lets_plot.plot import theme
 from lets_plot.plot.geom import _geom
-from lets_plot.plot.theme_set import theme_classic, flavor_darcula
+from lets_plot.plot.theme_set import theme_classic, flavor_darcula, flavor_solarized_dark
 
 
 def test_theme_options_should_be_merged():
@@ -109,6 +109,21 @@ def test_named_theme_not_override_the_flavor():
         'flavor': 'darcula'
     }
     assert expected_theme == spec.as_dict()['theme']
+
+
+def test_append_flavor_to_named_theme():
+    spec = gg.ggplot() + _geom('foo') + theme_classic() + flavor_darcula()
+    expected_theme = {
+        'name': 'classic',
+        'flavor': 'darcula'
+    }
+    assert expected_theme == spec.as_dict()['theme']
+
+
+def test_use_the_last_specified_flavor():
+    spec = gg.ggplot() + _geom('foo') + flavor_solarized_dark() + flavor_darcula()
+
+    assert 'darcula' == spec.as_dict()['theme']['flavor']
 
 
 def test_global_flavor_not_override_with_named_theme():
