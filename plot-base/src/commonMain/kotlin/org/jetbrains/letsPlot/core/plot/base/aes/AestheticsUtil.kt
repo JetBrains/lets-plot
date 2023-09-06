@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors.solid
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape

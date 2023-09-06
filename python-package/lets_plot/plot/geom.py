@@ -1176,7 +1176,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - size : line width.
+    - size : line width. The default size is 0, so the stroke will be invisible.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
@@ -1232,7 +1232,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         x, y = np.random.multivariate_normal(mean, cov, 500).T
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_bin2d(aes(alpha='..count..'), bins=[20, 20], \\
-                       color='white', fill='darkgreen') + \\
+                       fill='darkgreen') + \\
             geom_point(size=1.5, shape=21, color='white', \\
                        fill='darkgreen') + \\
             ggsize(600, 450)
@@ -1320,7 +1320,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - size : line width.
+    - size : line width. The default size is 0, so the stroke will be invisible.
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1342,7 +1342,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         X, Y = np.meshgrid(x, y)
         Z = np.exp(-5 * np.abs(Y ** 2 - X ** 3 - a * X - b))
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile()
+        ggplot(data, aes(x='x', y='y', color='z', fill='z')) + geom_tile(size=.5)
 
     |
 
@@ -1366,7 +1366,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Z = rv.pdf(np.dstack((X, Y)))
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
         ggplot(data, aes(x='x', y='y')) + \\
-            geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
+            geom_tile(aes(fill='z'), width=.8, height=.8, color='black', size=.5) + \\
             scale_fill_gradient(low='yellow', high='darkgreen')
 
     |

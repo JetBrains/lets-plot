@@ -36,6 +36,7 @@ internal class DefaultGeomTheme private constructor(
         private const val COMMON_POINT_SIZE = 3.0
         private const val COMMON_LINE_WIDTH = 0.75
         private const val THIN_LINE_WIDTH = 0.5
+        private const val ZERO_LINE_WIDTH = 0.0
 
         private const val LOLLIPOP_SIZE = 2.0
         private const val PIE_SIZE = 10.0
@@ -68,6 +69,9 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.PIE -> PIE_SIZE
 
+                GeomKind.TILE,
+                GeomKind.BIN_2D -> ZERO_LINE_WIDTH
+
                 else -> COMMON_LINE_WIDTH
             }
 
@@ -80,12 +84,12 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.DOT_PLOT,
                 GeomKind.Y_DOT_PLOT,
                 GeomKind.BAR,
-                GeomKind.PIE -> colorTheme.paper()
+                GeomKind.PIE,
+                GeomKind.TILE,
+                GeomKind.BIN_2D -> colorTheme.paper()
 
                 GeomKind.CONTOURF,
-                GeomKind.DENSITY2DF,
-                GeomKind.TILE,
-                GeomKind.BIN_2D -> Color.TRANSPARENT
+                GeomKind.DENSITY2DF -> Color.TRANSPARENT
 
                 GeomKind.SMOOTH -> Color.MAGENTA
 

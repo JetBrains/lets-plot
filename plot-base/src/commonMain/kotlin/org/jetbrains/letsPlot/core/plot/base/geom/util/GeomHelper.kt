@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
 open class GeomHelper(
@@ -176,9 +177,19 @@ open class GeomHelper(
             shape.strokeWidth().set(strokeScaler(p))
         }
 
-        internal fun decorateSlimShape(shape: SvgSlimShape, p: DataPointAesthetics) {
+        internal fun decorateSlimShape(
+            shape: SvgSlimShape,
+            p: DataPointAesthetics,
+            applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH
+        ) {
             val stroke = p.color()!!
-            val strokeAlpha = AestheticsUtil.alpha(stroke, p)
+            val strokeAlpha = if (applyAlphaToAll) {
+                // apply alpha aes
+                AestheticsUtil.alpha(stroke, p)
+            } else {
+                // keep color's alpha
+                SvgUtils.alpha2opacity(stroke.alpha)
+            }
 
             val fill = p.fill()!!
             val fillAlpha = AestheticsUtil.alpha(fill, p)
