@@ -5,7 +5,7 @@ from .geom import _geom
 #
 # Stats - functions, drawing attention to the statistical transformation rather than the visual appearance.
 #
-__all__ = ['stat_summary', 'stat_summary_bin', 'stat_ecdf']
+__all__ = ['stat_summary', 'stat_summary_bin', 'stat_ecdf', 'stat_sum']
 
 
 def stat_summary(mapping=None, *, data=None, geom=None,
@@ -452,4 +452,96 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  n=n,
                  pad=ecdf_pad,
                  color_by=color_by,
+                 **other_args)
+
+
+def stat_sum(mapping=None, *, data=None, geom=None,
+             position=None, show_legend=None, sampling=None, tooltips=None,
+             **other_args):
+    """
+    Sum unique values
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    geom : str, default='point'
+        The geometry to display the sum stat for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `stat_sum()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+
+    In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
+        y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
+        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + stat_sum()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14-15
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
+        y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
+        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + stat_sum(aes(size='..prop..', group='x'))
+"""
+    sum_geom = 'point' if geom is None else geom
+    return _geom(sum_geom,
+                 mapping=mapping,
+                 data=data,
+                 stat='sum',
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  **other_args)
