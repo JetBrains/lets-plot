@@ -138,7 +138,7 @@ class PlotSvgComponent(
             lineTo(rect.left, rect.bottom)
             lineTo(rect.right, rect.bottom)
             lineTo(rect.right, rect.top)
-            lineTo(rect.right, rect.top)
+            closePath()
         }
 
         val plotTheme = theme.plot()
