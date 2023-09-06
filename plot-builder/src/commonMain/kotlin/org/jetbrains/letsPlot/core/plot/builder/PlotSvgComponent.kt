@@ -142,24 +142,12 @@ class PlotSvgComponent(
         }
 
         val plotTheme = theme.plot()
-        val background: SvgPathElement? =
-            when (plotTheme.showBackground()) {
-                true -> SvgPathElement()
-                false -> null
-            }
 
-        background?.let {
-            it.fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
-            it.strokeColor().set(plotTheme.backgroundColor())
-            it.strokeWidth().set(plotTheme.backgroundStrokeWidth())
-            it.fillColor().set(plotTheme.backgroundFill())
-            add(it)
-        }
-
-        val backgroundPath: SvgPathDataBuilder? = when (plotTheme.showBackground()) {
-            true -> SvgPathDataBuilder().rect(overallRect)
-            false -> null
-        }
+        val backgroundArea = SvgPathElement()
+        add(backgroundArea)
+        val backgroundBorder = SvgPathElement()
+        add(backgroundBorder)
+        val backgroundLiveMapWindows = mutableListOf<DoubleRectangle>()
 
         // -------------
         val axisEnabled = !containsLiveMap
@@ -243,13 +231,28 @@ class PlotSvgComponent(
             }
 
             if (containsLiveMap) {
-                // Add a hole for a map
-                backgroundPath?.rect(geomInnerBoundsAbsolute)
+                // Add a hole for the map
+                backgroundLiveMapWindows.add(geomInnerBoundsAbsolute)
             }
         }
 
-        if (background != null && backgroundPath != null) {
-            background.d().set(backgroundPath.build())
+        if (plotTheme.showBackground()) {
+            val backgroundAreaPath = SvgPathDataBuilder().rect(overallRect)
+            backgroundLiveMapWindows.forEach(backgroundAreaPath::rect)
+
+            backgroundArea.apply {
+                // Do not set stroke - livemap windows (polygon holes) will get stroke too
+                fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
+                fillColor().set(plotTheme.backgroundFill())
+                d().set(backgroundAreaPath.build())
+            }
+
+            backgroundBorder.apply {
+                fillColor().set(Color.TRANSPARENT)
+                strokeColor().set(plotTheme.backgroundColor())
+                strokeWidth().set(plotTheme.backgroundStrokeWidth())
+                d().set(SvgPathDataBuilder().rect(overallRect).build())
+            }
         }
 
         val geomAreaBounds = figureLayoutInfo.geomAreaBounds
