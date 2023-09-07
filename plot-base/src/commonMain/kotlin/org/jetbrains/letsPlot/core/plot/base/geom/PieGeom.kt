@@ -32,7 +32,7 @@ import kotlin.math.*
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
     var spacerWidth: Double = 0.75
-    var spacerColor: Color? = null
+    var spacerColor: Color = Color.WHITE
     var strokeSide: StrokeSide = StrokeSide.BOTH
     var sizeUnit: String? = null
 
@@ -71,7 +71,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 root.appendNodes(pieSectors.map(::buildSvgArcs))
                 if (spacerWidth > 0) {
                     root.appendNodes(
-                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor ?: ctx.backgroundColor)
+                        buildSvgSpacerLines(pieSectors, width = spacerWidth, color = spacerColor)
                     )
                 }
 
@@ -141,7 +141,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun buildSvgSpacerLines(pieSectors: List<Sector>, width: Double, color: Color?): List<LinePath> {
+    private fun buildSvgSpacerLines(pieSectors: List<Sector>, width: Double, color: Color): List<LinePath> {
         fun svgSpacerLines(sector: Sector, atStart: Boolean, atEnd: Boolean): LinePath {
             return LinePath(
                 SvgPathDataBuilder().apply {

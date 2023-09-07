@@ -6124,7 +6124,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Line width between sectors.
         Spacers are not applied to exploded sectors and to sides of adjacent sectors.
     spacer_color : str
-        Color for spacers between sectors. By default, the plot background color is used.
+        Color for spacers between sectors. By default, the "paper" color is used.
     size_unit : {'x', 'y'}
         Relate the size of the pie chart to the length of the unit step along one of the axes.
         If None, no fitting is performed.

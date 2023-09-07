@@ -343,7 +343,8 @@ class GeomProto(val geomKind: GeomKind) {
 
         private fun pieDefaults(): Map<String, Any> {
             return mapOf(
-                Layer.STAT to "count2d"
+                Layer.STAT to "count2d",
+                Geom.Pie.SPACER_COLOR to "paper"
             )
         }
     }
