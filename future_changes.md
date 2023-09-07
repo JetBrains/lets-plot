@@ -2,9 +2,11 @@
 
 ### Added
 
-- Add `stat_sum()` (`geom_count()` in original version) [[#821](https://github.com/JetBrains/lets-plot/issues/821)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/stat_sum.ipynb).
+- `plot_message` parameter in `theme(...)` [[#863](https://github.com/JetBrains/lets-plot/issues/863)].  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/theme_plot_message.ipynb).  
 
+- Add `stat_sum()` (`geom_count()` in original version) [[#821](https://github.com/JetBrains/lets-plot/issues/821)].  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/stat_sum.ipynb).  
 
 ### Changed
 
