@@ -4,11 +4,14 @@
 
 - Add `stat_sum()` (`geom_count()` in original version) [[#821](https://github.com/JetBrains/lets-plot/issues/821)].  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/stat_sum.ipynb).
+
+
 ### Changed
 
 - New defaults:
-  - `geom_bar()`: `color='paper'`
-  - `geom_pie()`:  `color='paper'`, `stroke_side = 'both'`, no automatic hole creation when `stroke_side = 'both'/'inner'`
+    - `geom_bar()`: `color='paper'`
+    - `geom_pie()`:  `color='paper'`, `stroke_side='both'`, no automatic hole creation when `stroke_side = 'both'/'inner'`
+    - `geom_tile()`, `geom_bin2d()`: `size=0, color='paper'`; the `alpha` aesthetic parameter is not applied to the stroke.
 
 - The `alpha` aesthetic parameter overrides the alpha channel in the color, even if the original value was set via the RGBA specification.
 
