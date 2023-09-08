@@ -70,7 +70,8 @@ class Curve {
                         "yend": -1.0,
                         "curvature": $curvature,
                         "angle": $angle,
-                        "ncp": 5.0
+                        "ncp": 5.0,
+                        "arrow": {"name": "arrow", "ends": "both", "type": "open"}
                     }
                 ]
             }""".trimIndent()

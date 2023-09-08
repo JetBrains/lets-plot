@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -23,6 +24,8 @@ class CurveGeom : GeomBase() {
     var curvature: Double = DEF_CURVATURE   // amount of curvature
     var angle: Double = DEF_ANGLE           // amount to skew the control points of the curve
     var ncp: Int = DEF_NCP                  // number of control points used to draw the curve
+
+    var arrowSpec: ArrowSpec? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -62,6 +65,29 @@ class CurveGeom : GeomBase() {
                 }
                 root.add(curve)
 
+                arrowSpec?.let { arrowSpec ->
+                    if (arrowSpec.isOnFirstEnd) {
+                        val (startPoint, endPoint) = geometry.take(2).reversed()
+                        ArrowSpec.createArrow(
+                            p,
+                            startPoint,
+                            endPoint,
+                            arrowSpec
+                        )?.let(root::add)
+                    }
+                    if (arrowSpec.isOnLastEnd) {
+                        val (startPoint, endPoint) = geometry.takeLast(2)
+                        ArrowSpec.createArrow(
+                            p,
+                            startPoint,
+                            endPoint,
+                            arrowSpec
+                        )?.let(root::add)
+                    }
+
+                }
+
+                // hints
                 targetCollector.addPath(
                     geometry,
                     { p.index() },

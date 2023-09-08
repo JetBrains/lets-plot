@@ -232,11 +232,10 @@ internal object GeomProviderFactory {
                 layerConfig.getDouble(Option.Geom.Curve.CURVATURE)?.let { geom.curvature = it }
                 layerConfig.getDouble(Option.Geom.Curve.ANGLE)?.let { geom.angle = it }
                 layerConfig.getInteger(Option.Geom.Curve.NCP)?.let { geom.ncp = it }
-                // ToDo arrow
-                /*if (layerConfig.has(Option.Geom.Segment.ARROW)) {
-                    val cfg1 = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+                if (layerConfig.has(Option.Geom.Segment.ARROW)) {
+                    val cfg1 = ArrowSpecConfig.create(layerConfig[Option.Geom.Curve.ARROW]!!)
                     geom.arrowSpec = cfg1.createArrowSpec()
-                }*/
+                }
 
                 geom
             }
