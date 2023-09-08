@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 
 // Predefined location of a chart element, used by map to initialize its viewport initial state
 class ChartElementLocationComponent : EcsComponent {
-    lateinit var geometry: Geometry<org.jetbrains.letsPlot.livemap.World>
+    lateinit var geometry: Geometry<World>
 }
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
@@ -33,6 +33,11 @@ class ChartElementComponent : EcsComponent {
     var alphaScalingEnabled: Boolean = false
     var scalingSizeFactor: Double = 1.0
     var scalingAlphaValue: Int? = null
+
+    fun scaledStrokeColor() = alphaScaledColor(strokeColor!!, scalingAlphaValue)
+    fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
+    fun scaledStrokeWidth() = scaledStrokeWidth(strokeWidth, scalingSizeFactor)
+    fun scaledLineDash() = scaledLineDash(lineDash!!, scalingSizeFactor)
 }
 
 class TextSpecComponent : EcsComponent {
@@ -41,6 +46,8 @@ class TextSpecComponent : EcsComponent {
 
 class PointComponent : EcsComponent {
     var size: Double = 0.0
+
+    fun scaledSize(scalingSizeFactor: Double) = scaledPointSize(size, scalingSizeFactor)
 }
 
 class PieSpecComponent : EcsComponent {
@@ -60,7 +67,7 @@ class PieSpecComponent : EcsComponent {
 class SearchResultComponent : EcsComponent {
     var hoverObjects: List<HoverObject> = emptyList()
     var zoom : Int? = null
-    var cursorPosition : Vec<org.jetbrains.letsPlot.livemap.Client>? = null
+    var cursorPosition : Vec<Client>? = null
 }
 
 class IndexComponent(val layerIndex: Int, val index: Int): EcsComponent

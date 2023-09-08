@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.livemap.World
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
-import org.jetbrains.letsPlot.livemap.chart.changeAlphaWithMin
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
@@ -27,7 +24,7 @@ class PathRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val geometry = entity.get<WorldGeometryComponent>().geometry.multiLineString
         val chartElement = entity.get<ChartElementComponent>()
-        val color = changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue)
+        val color = chartElement.scaledStrokeColor()
 
         ctx.save()
         ctx.scale(renderHelper.zoomFactor)

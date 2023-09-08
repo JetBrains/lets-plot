@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.livemap.chart.polygon
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.LineJoin
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
-import org.jetbrains.letsPlot.livemap.chart.changeAlphaWithMin
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
@@ -29,13 +28,14 @@ class PolygonRenderer : Renderer {
         ctx.restore()
 
         if (chartElement.fillColor != null) {
-            ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
+            ctx.setFillStyle(chartElement.scaledFillColor())
             ctx.fill()
         }
 
         if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-            ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
-            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
+            ctx.setStrokeStyle(chartElement.scaledStrokeColor())
+            ctx.setLineDash(chartElement.scaledLineDash())
+            ctx.setLineWidth(chartElement.scaledStrokeWidth())
             ctx.stroke()
         }
     }

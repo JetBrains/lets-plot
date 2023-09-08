@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.livemap.chart.point
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.PointComponent
-import org.jetbrains.letsPlot.livemap.chart.changeAlphaWithMin
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
@@ -35,11 +34,11 @@ class PointRenderer(
         ctx.beginPath()
         drawPath(ctx, radius, stroke, shape)
         if (chartElement.fillColor != null) {
-            ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
+            ctx.setFillStyle(chartElement.scaledFillColor())
             ctx.fill()
         }
         if (chartElement.strokeColor != null && stroke > 0.0) {
-            ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
+            ctx.setStrokeStyle(chartElement.scaledStrokeColor())
             ctx.setLineWidth(stroke)
             ctx.stroke()
         }

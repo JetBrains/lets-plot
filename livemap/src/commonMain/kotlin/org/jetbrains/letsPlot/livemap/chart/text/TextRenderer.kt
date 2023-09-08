@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.TextSpecComponent
-import org.jetbrains.letsPlot.livemap.chart.changeAlphaWithMin
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
@@ -24,7 +23,7 @@ class TextRenderer : Renderer {
         val chartElementComponent = entity.get<ChartElementComponent>()
         val textSpec = entity.get<TextSpecComponent>().textSpec
 
-        val textPosition: Vec<org.jetbrains.letsPlot.livemap.Client>
+        val textPosition: Vec<Client>
 
         ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
         ctx.rotate(textSpec.angle)
@@ -34,9 +33,7 @@ class TextRenderer : Renderer {
             drawRoundedRectangle(rectangle, textSpec.labelRadius * rectangle.height, ctx)
 
             if (chartElementComponent.fillColor != null) {
-                ctx.setFillStyle(
-                    changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
-                )
+                ctx.setFillStyle(chartElementComponent.scaledFillColor())
                 ctx.fill()
             }
             if (chartElementComponent.strokeColor != null && textSpec.labelSize != 0.0) {
