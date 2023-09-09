@@ -37,8 +37,8 @@ class PathRenderer : Renderer {
         ctx.restore()
 
         ctx.setStrokeStyle(color)
-        ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
-        ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
+        ctx.setLineDash(chartElement.scaledLineDash())
+        ctx.setLineWidth(chartElement.scaledStrokeWidth())
         ctx.stroke()
 
         chartElement.arrowSpec?.let { arrowSpec ->

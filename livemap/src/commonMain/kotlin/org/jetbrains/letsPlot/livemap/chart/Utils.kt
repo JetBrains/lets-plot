@@ -16,11 +16,11 @@ fun alphaScaledColor(color: Color, newAlpha: Int?): Color {
 }
 
 fun scaledPointSize(size: Double, scalingSizeFactor: Double): Double {
-    return size * scalingSizeFactor / 2.0
+    return size * scalingSizeFactor
 }
 
-fun scaledStrokeWidth(strokeWidth: Double, scalingSizeFactor: Double): Double {
-    return strokeWidth * scalingSizeFactor
+fun scaledSize(size: Double, scalingSizeFactor: Double): Double {
+    return size * scalingSizeFactor
 }
 
 fun scaledLineDash(lineDash: DoubleArray, scalingSizeFactor: Double): DoubleArray {

@@ -92,7 +92,7 @@ class PointEntityBuilder(
                         }
                         in 15..18, 20 -> {
                             fillColor = this@PointEntityBuilder.strokeColor
-                            strokeWidth = Double.NaN
+                            strokeWidth = 0.0
                         }
                         19 -> {
                             fillColor = this@PointEntityBuilder.strokeColor

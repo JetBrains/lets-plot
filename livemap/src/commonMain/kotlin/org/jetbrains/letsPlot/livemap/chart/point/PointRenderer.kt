@@ -23,27 +23,27 @@ class PointRenderer(
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val chartElement = entity.get<ChartElementComponent>()
         val pointData = entity.get<PointComponent>()
-        val radius = pointData.size * chartElement.scalingSizeFactor / 2.0
-        val stroke = if (!chartElement.strokeWidth.isNaN())
-            chartElement.strokeWidth * chartElement.scalingSizeFactor
-        else
-            0.0
 
         ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
 
         ctx.beginPath()
-        drawPath(ctx, radius, stroke, shape)
+        drawMarker(
+            ctx = ctx,
+            radius = pointData.scaledRadius(chartElement.scalingSizeFactor),
+            stroke = chartElement.scaledStrokeWidth(),
+            shape = shape
+        )
         if (chartElement.fillColor != null) {
             ctx.setFillStyle(chartElement.scaledFillColor())
             ctx.fill()
         }
-        if (chartElement.strokeColor != null && stroke > 0.0) {
+        if (chartElement.strokeColor != null && chartElement.scaledStrokeWidth() > 0.0) {
             ctx.setStrokeStyle(chartElement.scaledStrokeColor())
-            ctx.setLineWidth(stroke)
+            ctx.setLineWidth(chartElement.scaledStrokeWidth())
             ctx.stroke()
         }
     }
-    private fun drawPath(ctx: Context2d, radius: Double, stroke: Double, shape: Int) {
+    private fun drawMarker(ctx: Context2d, radius: Double, stroke: Double, shape: Int) {
         when (shape) {
             0 -> square(ctx, radius)
             1 -> circle(ctx, radius)

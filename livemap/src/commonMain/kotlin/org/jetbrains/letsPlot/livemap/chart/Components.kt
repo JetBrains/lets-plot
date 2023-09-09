@@ -36,7 +36,7 @@ class ChartElementComponent : EcsComponent {
 
     fun scaledStrokeColor() = alphaScaledColor(strokeColor!!, scalingAlphaValue)
     fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
-    fun scaledStrokeWidth() = scaledStrokeWidth(strokeWidth, scalingSizeFactor)
+    fun scaledStrokeWidth() = scaledSize(strokeWidth, scalingSizeFactor)
     fun scaledLineDash() = scaledLineDash(lineDash!!, scalingSizeFactor)
 }
 
@@ -47,7 +47,7 @@ class TextSpecComponent : EcsComponent {
 class PointComponent : EcsComponent {
     var size: Double = 0.0
 
-    fun scaledSize(scalingSizeFactor: Double) = scaledPointSize(size, scalingSizeFactor)
+    fun scaledRadius(scalingSizeFactor: Double) = scaledPointSize(size, scalingSizeFactor) / 2.0
 }
 
 class PieSpecComponent : EcsComponent {
