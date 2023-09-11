@@ -3068,7 +3068,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_boxplot(fatten=5, varwidth=True, \\
-                         outlier_shape=8, outlier_size=5)
+                         outlier_shape=8, outlier_size=2)
 
     |
 
@@ -3111,7 +3111,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         ggplot(df.melt()) + \\
             geom_boxplot(aes(x='variable', y='value', color='variable', \\
                              fill='variable'), \\
-                         outlier_shape=21, outlier_size=4, size=2, \\
+                         outlier_shape=21, outlier_size=1.5, size=2, \\
                          alpha=.5, width=.5, show_legend=False)
 
     """
