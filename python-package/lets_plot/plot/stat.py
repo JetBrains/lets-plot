@@ -507,7 +507,7 @@ def stat_sum(mapping=None, *, data=None, geom=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10git
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
