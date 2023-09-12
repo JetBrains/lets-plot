@@ -455,8 +455,8 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  **other_args)
 
 
-def stat_sum(mapping=None, *, data=None, geom=None,
-             position=None, show_legend=None, sampling=None, tooltips=None,
+def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             color_by=None, fill_by=None,
              **other_args):
     """
     Sum unique values
@@ -483,6 +483,10 @@ def stat_sum(mapping=None, *, data=None, geom=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -547,4 +551,6 @@ def stat_sum(mapping=None, *, data=None, geom=None,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by,
+                 fill_by=fill_by,
                  **other_args)

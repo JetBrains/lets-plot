@@ -5,8 +5,8 @@
 - `plot_message` parameter in `theme(...)` [[#863](https://github.com/JetBrains/lets-plot/issues/863)].  
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/theme_plot_message.ipynb).  
 
-- Add `stat_sum()` (`geom_count()` in original version) [[#821](https://github.com/JetBrains/lets-plot/issues/821)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/stat_sum.ipynb).  
+- Add `geom_count()`/`stat_sum()` [[#821](https://github.com/JetBrains/lets-plot/issues/821)].  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23d/geom_count.ipynb).  
 
 ### Changed
 
@@ -20,9 +20,9 @@
 
 ### Fixed
 
+- `scale_x_datetime()`: error building plot for early dates [[#346](https://github.com/JetBrains/lets-plot/issues/346)].
 - `geom_livemap()`: theme/flavor plot background is not shown [[#857](https://github.com/JetBrains/lets-plot/issues/857)].
 - `geom_livemap()`: in AWT dragging a map in a facet moves maps in all facets.
 - `geom_livemap()`: support rectangle 'linetype' [[#307](https://github.com/JetBrains/lets-plot/issues/307)].
-- `scale_x_datetime()`: error building plot for early dates [[#346](https://github.com/JetBrains/lets-plot/issues/346)].
 - `theme_void()` + `flavor_xxx()`: no expected plot background [[#858](https://github.com/JetBrains/lets-plot/issues/858)].
 - Inconsistent color in legend when using `paint_a/paint_b/paint_c` [[#867](https://github.com/JetBrains/lets-plot/issues/867)].
