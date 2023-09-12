@@ -507,7 +507,7 @@ def stat_sum(mapping=None, *, data=None, geom=None,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 10git
 
         import numpy as np
         from lets_plot import *
@@ -517,13 +517,14 @@ def stat_sum(mapping=None, *, data=None, geom=None,
         np.random.seed(42)
         x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
-        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + stat_sum()
+        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + \\
+            stat_sum()
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 14-15
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
@@ -533,7 +534,9 @@ def stat_sum(mapping=None, *, data=None, geom=None,
         np.random.seed(42)
         x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
-        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + stat_sum(aes(size='..prop..', group='x'))
+        ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + \\
+            stat_sum(aes(size='..prop..', group='x'))
+
 """
     sum_geom = 'point' if geom is None else geom
     return _geom(sum_geom,
