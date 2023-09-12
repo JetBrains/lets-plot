@@ -141,13 +141,11 @@ class PlotSvgComponent(
             closePath()
         }
 
-        val plotTheme = theme.plot()
-
         val backgroundArea = SvgPathElement()
-        add(backgroundArea)
         val backgroundBorder = SvgPathElement()
-        add(backgroundBorder)
         val backgroundLiveMapWindows = mutableListOf<DoubleRectangle>()
+
+        add(backgroundArea)
 
         // -------------
         val axisEnabled = !containsLiveMap
@@ -169,6 +167,7 @@ class PlotSvgComponent(
         }
 
         val plotAreaOrigin = figureLayoutInfo.plotAreaOrigin
+        val plotTheme = theme.plot()
 
         // build tiles
         @Suppress("UnnecessaryVariable")
@@ -428,6 +427,8 @@ class PlotSvgComponent(
                 className = Style.PLOT_CAPTION
             )
         }
+
+        add(backgroundBorder)
     }
 
     private fun createTextRectangle(
