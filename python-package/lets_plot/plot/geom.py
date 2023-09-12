@@ -6523,7 +6523,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + \\
-            stat_sum()
+            geom_count()
 
     |
 
@@ -6540,7 +6540,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         x = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         y = [round(it) for it in np.random.normal(0, 1.5, size=n)]
         ggplot({'x': x, 'y': y}, aes(x=as_discrete('x', order=1), y=as_discrete('y', order=1))) + \\
-            stat_sum(aes(size='..prop..', group='x'))
+            geom_count(aes(size='..prop..', group='x'))
 
 """
     stat = 'sum' if stat is None else stat
