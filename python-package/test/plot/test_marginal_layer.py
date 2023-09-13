@@ -75,28 +75,53 @@ def _clean_input(input):
 
 
 @pytest.mark.parametrize('marginal_layer_spec, expected', [
-    (gg.ggmarginal("l", layer=gg.geom_histogram()), expected_x_stat_l("histogram")),
-    (gg.ggmarginal("t", layer=gg.geom_histogram()), expected_x_stat_t("histogram")),
-    (gg.ggmarginal("tl", layer=gg.geom_point(stat='bin')),
-     _to_feature_list(expected_x_stat_t("point"), expected_x_stat_l("point"))),
-    (gg.ggmarginal("tl", layer=gg.geom_histogram()),
-     _to_feature_list(expected_x_stat_t("histogram"), expected_x_stat_l("histogram"))),
-    (gg.ggmarginal("tl", layer=gg.geom_density()),
-     _to_feature_list(expected_x_stat_t("density"), expected_x_stat_l("density"))),
-    (gg.ggmarginal("tl", layer=gg.geom_freqpoly()),
-     _to_feature_list(expected_x_stat_t("freqpoly"), expected_x_stat_l("freqpoly"))),
+    (
+        gg.ggmarginal("l", layer=gg.geom_histogram()),
+        expected_x_stat_l("histogram")
+    ),
+    (
+        gg.ggmarginal("t", layer=gg.geom_histogram()),
+        expected_x_stat_t("histogram")
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_point(stat='bin')),
+        _to_feature_list(expected_x_stat_t("point"), expected_x_stat_l("point"))
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_histogram()),
+        _to_feature_list(expected_x_stat_t("histogram"), expected_x_stat_l("histogram"))
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_density()),
+        _to_feature_list(expected_x_stat_t("density"), expected_x_stat_l("density"))
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_freqpoly()),
+        _to_feature_list(expected_x_stat_t("freqpoly"), expected_x_stat_l("freqpoly"))
+    ),
 
     # y-stat
-    (gg.ggmarginal("tl", layer=gg.geom_point(stat="ydensity")),
-     _to_feature_list(expected_y_stat_t("point"), expected_y_stat_l("point"))),
-    (gg.ggmarginal("tl", layer=gg.geom_boxplot()),
-     _to_feature_list(expected_y_stat_t("boxplot"), expected_y_stat_l("boxplot"),
-                      expected_y_stat_t("point"), expected_y_stat_l("point"))),
-    (gg.ggmarginal("tl", layer=gg.geom_violin()),
-     _to_feature_list(expected_y_stat_t("violin"), expected_y_stat_l("violin"))),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_point(stat="ydensity")),
+        _to_feature_list(expected_y_stat_t("point"), expected_y_stat_l("point"))
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_boxplot()),
+        _to_feature_list(
+            expected_y_stat_t("boxplot"), expected_y_stat_l("boxplot"),
+            expected_y_stat_t("point"), expected_y_stat_l("point")
+        )
+    ),
+    (
+        gg.ggmarginal("tl", layer=gg.geom_violin()),
+        _to_feature_list(expected_y_stat_t("violin"), expected_y_stat_l("violin"))
+    ),
 
     # Don't change 'orientation' if specified.
-    (gg.ggmarginal("l", layer=gg.geom_histogram(orientation='x')), {**expected_x_stat_l("histogram"), 'orientation': 'x'})
+    (
+        gg.ggmarginal("l", layer=gg.geom_histogram(orientation='x')),
+        {**expected_x_stat_l("histogram"), 'orientation': 'x'}
+    )
 ])
 def test_marginal_layer(marginal_layer_spec, expected):
     input = marginal_layer_spec.as_dict()
