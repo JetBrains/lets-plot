@@ -6455,7 +6455,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                color_by=None, fill_by=None,
                **other_args):
     """
-    Sum unique values
+    Sum unique values.
 
     Parameters
     ----------

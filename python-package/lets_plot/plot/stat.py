@@ -459,7 +459,7 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
              color_by=None, fill_by=None,
              **other_args):
     """
-    Sum unique values
+    Sum unique values.
 
     Parameters
     ----------
