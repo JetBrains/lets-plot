@@ -155,7 +155,7 @@ def test_empty_marginal__get_marginal_layers():
 def test_marginal_split__get_marginal_layers():
     marginal = " hist:t,dens:tr ,  dens:b:.1,\n\tbox :\n\ttblr  "
     marginals = _get_marginal_layers(**_get_marginal_layers_props(marginal=marginal))
-    assert 8 == len(marginals)
+    assert 12 == len(marginals)
     for marginal_layer in marginals:
         spec_dict = marginal_layer.as_dict()
         assert spec_dict['marginal']
@@ -212,7 +212,7 @@ def test_marginal_hist_params__get_marginal_layers():
 
 
 def test_marginal_color_params__get_marginal_layers():
-    _COLOR_DEF = "#118ed8"
+    _COLOR_DEF = "pen"
 
     def get_spec_dict(geom_kind, color=None, color_by=None):
         return _get_marginal_layers(**_get_marginal_layers_props(
