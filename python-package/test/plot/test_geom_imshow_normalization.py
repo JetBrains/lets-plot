@@ -16,6 +16,7 @@ class TestParams(NamedTuple):
     normalize: bool
     expected_equal: bool
     descr: str
+    show_legend: bool = True
 
 
 class Test:
@@ -31,9 +32,10 @@ class Test:
                 [0, 0, 0],
                 [100, 100, 100]
             ]),
-            normalize = None,
+            normalize=None,
             expected_equal=True,
             descr='gray: 2 x 3 array of ints -> normalized (default)',
+            show_legend=False
         ),
         # 2 x 3 array of ints -> no normalization
         TestParams(
@@ -45,7 +47,7 @@ class Test:
                 [0, 0, 0],
                 [100, 100, 100]
             ]),
-            normalize = False,
+            normalize=False,
             expected_equal=False,
             descr='gray: 2 x 3 array of ints -> no normalization',
         ),
@@ -59,9 +61,10 @@ class Test:
                 [0., 0., 0.],
                 [100., 100., 100.]
             ]),
-            normalize = None,
+            normalize=None,
             expected_equal=True,
             descr='gray: 2 x 3 array of floats -> normalization (default)',
+            show_legend=False
         ),
         # -- rgb --
         # int (will be brought to range [0,255] by clipping
@@ -74,7 +77,7 @@ class Test:
                 [[0, 0, 0],
                  [100, 100, 255]]
             ]),
-            normalize = None,
+            normalize=None,
             expected_equal=True,
             descr='rgb / int : no normalization, values will be brought to range [0,255] by appying mod op',
         ),
@@ -90,7 +93,7 @@ class Test:
                 [[0, 0, 0],
                  [255, 255, 255]]
             ]),
-            normalize = None,
+            normalize=None,
             expected_equal=True,
             descr='rgb: float  vs  int'
         )
@@ -101,8 +104,8 @@ class Test:
         params.image_data_0.flags.writeable = False
         params.image_data_1.flags.writeable = False
 
-        spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize)
-        spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize)
+        spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize, show_legend=params.show_legend)
+        spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize, show_legend=params.show_legend)
 
         if params.expected_equal:
             assert spec_0.as_dict() == spec_1.as_dict()
