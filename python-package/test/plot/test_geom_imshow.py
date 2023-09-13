@@ -7,39 +7,7 @@ import numpy as np
 import pytest
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
-
-
-def _image_spec(width, height, href):
-    return dict(
-        data_meta={},
-        geom='image',
-        href=href,
-        mapping={},
-        show_legend=True,
-        xmin=-0.5,
-        ymin=-0.5,
-        xmax=width - 1 + 0.5,
-        ymax=height - 1 + 0.5
-    )
-
-
-def _image_with_color_grey_scale_spec(width, height, href, data_min, data_max):
-    layer_spec = _image_spec(width, height, href)
-    layer_spec['color_by'] = 'paint_c'
-    layer_spec['mapping'] = dict(paint_c=[data_min, data_max])
-    scale_spec = dict(
-        aesthetic='paint_c',
-        start=0,
-        end=1,
-        name='',
-        scale_mapper_kind='color_grey'
-    )
-    return {
-        'feature-list': [
-            dict(layer=layer_spec),
-            dict(scale=scale_spec),
-        ]
-    }
+from test_geom_imshow_util import _image_spec, _image_bbox
 
 
 def _append_test_params(params_list: list, image_data, expected_spec: dict):
@@ -52,14 +20,14 @@ class Test:
     # -- gray --
 
     # 2 x 3 array of ints
-    expected_gray_2_x_3_href='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAD0lEQVR4nGNgAIL///8DAAYCAv507macAAAAAElFTkSuQmCC'
+    expected_gray_2_x_3_href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAD0lEQVR4nGNgAIL///8DAAYCAv507macAAAAAElFTkSuQmCC'
 
     _append_test_params(test_params_list,
                         np.array([
                             [0, 0, 0],
                             [255, 255, 255]
                         ]),
-                        _image_with_color_grey_scale_spec(3, 2, expected_gray_2_x_3_href, data_min=0, data_max=255))
+                        _image_spec(expected_gray_2_x_3_href, _image_bbox(width=3, height=2), data_min=0, data_max=255))
 
     # 2 x 3 array of floats
     _append_test_params(test_params_list,
@@ -67,14 +35,14 @@ class Test:
                             [0., 0., 0.],
                             [1., 1., 1.]
                         ]),
-                        _image_with_color_grey_scale_spec(3, 2, expected_gray_2_x_3_href, data_min=0, data_max=1))
+                        _image_spec(expected_gray_2_x_3_href, _image_bbox(width=3, height=2), data_min=0, data_max=1))
 
     # -- rgb --
 
     # 1 x 2 x 3 array of ints
     expected_RGB_1_x_2 = _image_spec(
-        2, 1,
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAB7QOjdAAAAD0lEQVR4nGNgYGD4//8/AAYBAv4CsjmuAAAAAElFTkSuQmCC'
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAB7QOjdAAAAD0lEQVR4nGNgYGD4//8/AAYBAv4CsjmuAAAAAElFTkSuQmCC',
+        _image_bbox(width=2, height=1)
     )
     _append_test_params(test_params_list,
                         np.array([
@@ -93,8 +61,8 @@ class Test:
 
     # 1 x 2 x 4 array of ints
     expected_RGBA_1_2 = _image_spec(
-        2, 1,
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGNgYGBo+P//fwMADAAD/jYVGcgAAAAASUVORK5CYII='
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAEUlEQVR4nGNgYGBo+P//fwMADAAD/jYVGcgAAAAASUVORK5CYII=',
+        _image_bbox(width=2, height=1)
     )
     _append_test_params(test_params_list,
                         np.array([
