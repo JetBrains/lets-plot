@@ -31,12 +31,10 @@ def _image_spec(href, width, height):
     )
 
 
-def _image_with_color_grey_scale_spec(href, width, height, data_min, data_max, normalize=True):
+def _image_with_color_grey_scale_spec(href, width, height, data_min, data_max, start=0., end=1.):
     layer_spec = _image_spec(href, width, height)
     layer_spec['color_by'] = 'paint_c'
     layer_spec['mapping'] = dict(paint_c=[data_min, data_max])
-    start = 0 if normalize else data_min / 255.
-    end = 1 if normalize else data_max / 255.
     scale_spec = dict(
         aesthetic='paint_c',
         start=start,
@@ -106,7 +104,8 @@ class Test:
             height=2,
             data_min=50,
             data_max=200,
-            normalize=False
+            start=50 / 255,
+            end=200 / 255
         )
     ))
 
