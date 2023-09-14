@@ -5,69 +5,44 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
 
 class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
 
     companion object {
 
-        private val PLOT_BACKGROUND = Color.WHITE
-
-        private val BLACK: Color = Color.parseHex("#171717")
-        private val DARK_GREY: Color = Color.parseHex("#474747")
-        private val LIGHT_GREY: Color = Color.parseHex("#E9E9E9")
-
-//        private val BLACK: Color = Color.GREEN
-//        private val DARK_GREY: Color = Color.RED
-//        private val LIGHT_GREY: Color = Color.ORANGE
-
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-
-            LINE to mapOf(
-                Elem.COLOR to DARK_GREY
-            ),
-
-            RECT to mapOf(
-                Elem.COLOR to DARK_GREY,
-                Elem.FILL to LIGHT_GREY
-            ),
-
-            TEXT to mapOf(
-                Elem.COLOR to DARK_GREY
-            ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID_MINOR to ELEMENT_BLANK,
-            PANEL_GRID to mapOf(
-                Elem.COLOR to LIGHT_GREY
-            ),
 
             AXIS_LINE_Y to ELEMENT_BLANK,
             AXIS_TICKS_Y to ELEMENT_BLANK,
-            AXIS to mapOf(
-                Elem.COLOR to DARK_GREY
-            ),
+
+            FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
+
+            // Flavors
+
+            FLAVOR to Flavor.MINIMAL,
 
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to PLOT_BACKGROUND,
-                Elem.FILL to DARK_GREY,
+                Elem.FILL to PEN,
+                Elem.COLOR to PAPER
             ),
-
-            FACET_STRIP_BGR_RECT to mapOf(
-                Elem.BLANK to true,
+            PANEL_GRID to mapOf(
+                Elem.SIZE to 1.0
             ),
         )
     }
