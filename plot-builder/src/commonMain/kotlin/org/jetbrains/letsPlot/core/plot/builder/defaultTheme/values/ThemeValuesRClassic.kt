@@ -25,10 +25,6 @@ class ThemeValuesRClassic : ThemeValues(VALUES) {
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID to ELEMENT_BLANK,
 
-            // Flavors
-
-            FLAVOR to Flavor.MINIMAL,
-
             FACET_STRIP_BGR_RECT to mapOf(
                 Elem.FILL to PAPER
             ),
@@ -36,6 +32,8 @@ class ThemeValuesRClassic : ThemeValues(VALUES) {
                 Elem.FILL to PEN,
                 Elem.COLOR to PAPER
             ),
+
+            FLAVOR to Flavor.MINIMAL,
         )
     }
 }

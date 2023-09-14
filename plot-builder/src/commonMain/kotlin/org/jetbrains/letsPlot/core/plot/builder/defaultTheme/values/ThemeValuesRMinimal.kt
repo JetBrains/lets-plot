@@ -31,17 +31,16 @@ class ThemeValuesRMinimal : ThemeValues(VALUES) {
 
             FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
 
-            // Flavors
-
-            FLAVOR to Flavor.MINIMAL,
+            PANEL_GRID to mapOf(
+                Elem.SIZE to 1.0
+            ),
 
             AXIS_TOOLTIP to mapOf(
                 Elem.FILL to PEN,
                 Elem.COLOR to PAPER
             ),
-            PANEL_GRID to mapOf(
-                Elem.SIZE to 1.0
-            ),
+
+            FLAVOR to Flavor.MINIMAL,
         )
     }
 }

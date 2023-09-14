@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
@@ -129,7 +128,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FONT_FACE to FontFace.BOLD,
             ),
 
-            // Flavors
             FLAVOR to Flavor.BASE,
         )
     }

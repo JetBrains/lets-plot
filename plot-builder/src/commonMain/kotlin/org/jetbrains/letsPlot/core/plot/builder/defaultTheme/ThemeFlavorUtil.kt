@@ -88,7 +88,7 @@ object ThemeFlavorUtil {
     private class ThemeFlavor(
         val fill: Color,
         val color: Color,
-        val specialColors: Map<String, Map<String, Color>> = emptyMap(),
+        val specialColors: Map<String, Map<String, Color>>
     )
 
     private fun forName(flavor: String): ThemeFlavor {
@@ -109,6 +109,7 @@ object ThemeFlavorUtil {
                     ),
                 )
             )
+
             Flavor.MINIMAL -> ThemeFlavor(
                 fill = Color.WHITE,
                 color = DARK_GREY,
@@ -130,6 +131,7 @@ object ThemeFlavorUtil {
                     ),
                 )
             )
+
             Flavor.LIGHT -> ThemeFlavor(
                 fill = Color.WHITE,
                 color = DARK_GREY,
@@ -154,6 +156,7 @@ object ThemeFlavorUtil {
                     ),
                 )
             )
+
             Flavor.GREY -> ThemeFlavor(
                 fill = Color.WHITE,
                 color = DARK_GREY,
@@ -175,6 +178,7 @@ object ThemeFlavorUtil {
                     ),
                 )
             )
+
             Flavor.BW -> ThemeFlavor(
                 fill = Color.WHITE,
                 color = DARK_GREY,
@@ -212,7 +216,8 @@ object ThemeFlavorUtil {
                         Elem.FILL to parseHex("#363636")
                     ),
                     ThemeOption.PANEL_GRID to mapOf(
-                        Elem.COLOR to parseHex("#474747")),
+                        Elem.COLOR to parseHex("#474747")
+                    ),
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.FILL to parseHex("#141414")
                     ),
@@ -248,11 +253,21 @@ object ThemeFlavorUtil {
                 fill = parseHex("#0E3C4A"),
                 color = parseHex("#A7B6BA"),
                 specialColors = mapOf(
-                    ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#1B4854")),
-                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#1F4650")),
-                    ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#455458")),
-                    ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#0B2F3A")),
-                    ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#A7B6BA")),
+                    ThemeOption.PANEL_BKGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#1B4854")
+                    ),
+                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#1F4650")
+                    ),
+                    ThemeOption.PANEL_GRID to mapOf(
+                        Elem.COLOR to parseHex("#455458")
+                    ),
+                    ThemeOption.TOOLTIP_RECT to mapOf(
+                        Elem.FILL to parseHex("#0B2F3A")
+                    ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to parseHex("#A7B6BA")
+                    ),
                 )
             )
 
@@ -260,11 +275,21 @@ object ThemeFlavorUtil {
                 fill = Color.WHITE,
                 color = Color.BLACK,
                 specialColors = mapOf(
-                    ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#EBEBEB")),
-                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#D9D9D9")),
-                    ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#E9E9E9")),
-                    ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to Color.WHITE),
-                    ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.BLACK),
+                    ThemeOption.PANEL_BKGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#EBEBEB")
+                    ),
+                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#D9D9D9")
+                    ),
+                    ThemeOption.PANEL_GRID to mapOf(
+                        Elem.COLOR to parseHex("#E9E9E9")
+                    ),
+                    ThemeOption.TOOLTIP_RECT to mapOf(
+                        Elem.FILL to Color.WHITE
+                    ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to Color.BLACK
+                    ),
                 )
             )
 
@@ -272,11 +297,21 @@ object ThemeFlavorUtil {
                 fill = Color.BLACK,
                 color = Color.WHITE,
                 specialColors = mapOf(
-                    ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#3B3B3B")),
-                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#363636")),
-                    ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
-                    ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#460073")),
-                    ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.WHITE),
+                    ThemeOption.PANEL_BKGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#3B3B3B")
+                    ),
+                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
+                        Elem.FILL to parseHex("#363636")
+                    ),
+                    ThemeOption.PANEL_GRID to mapOf(
+                        Elem.COLOR to parseHex("#474747")
+                    ),
+                    ThemeOption.TOOLTIP_RECT to mapOf(
+                        Elem.FILL to parseHex("#460073")
+                    ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to Color.WHITE
+                    ),
                 )
             )
 

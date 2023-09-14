@@ -49,9 +49,6 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
                 Elem.SIZE to 0.0,
             ),
 
-            // Flavors
-            FLAVOR to Flavor.GREY,
-
             PANEL_GRID to mapOf(
                 Elem.COLOR to PAPER,
             ),
@@ -60,6 +57,8 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
                 Elem.FILL to PEN,
                 Elem.COLOR to PAPER
             ),
+
+            FLAVOR to Flavor.GREY,
         )
     }
 }

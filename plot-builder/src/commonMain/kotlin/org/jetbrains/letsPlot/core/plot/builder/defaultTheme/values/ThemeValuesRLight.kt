@@ -29,9 +29,9 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
                 Elem.SIZE to 0.0,
             ),
 
-            // Flavors
-
-            FLAVOR to Flavor.LIGHT,
+            PANEL_GRID to mapOf(
+                Elem.SIZE to 1.0
+            ),
 
             PANEL_BKGR_RECT to mapOf(
                 Elem.SIZE to 1.0,
@@ -41,9 +41,8 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
                 Elem.FILL to PEN,
                 Elem.COLOR to PAPER
             ),
-            PANEL_GRID to mapOf(
-                Elem.SIZE to 1.0
-            ),
+
+            FLAVOR to Flavor.LIGHT,
         )
     }
 }
