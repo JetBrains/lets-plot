@@ -82,7 +82,7 @@ class Test:
         image_data = args_list[0]
         image_data.flags.writeable = False
 
-        spec = geom_imshow(*args_list)
+        spec = geom_imshow(*args_list, **args_dict)
         assert spec.as_dict() == expected
         # print(json.dumps(spec.as_dict(), indent=2))
         # print(json.dumps(expected, indent=2))
