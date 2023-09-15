@@ -14,10 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
 
 class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
 
@@ -32,15 +29,6 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             AXIS_TICKS_Y to ELEMENT_BLANK,
 
             FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
-
-            PANEL_GRID to mapOf(
-                Elem.SIZE to 1.0
-            ),
-
-            AXIS_TOOLTIP to mapOf(
-                Elem.FILL to PEN,
-                Elem.COLOR to PAPER
-            ),
 
             FLAVOR to Flavor.MINIMAL,
         )

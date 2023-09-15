@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.GEOM
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR_FILL
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 
 object ThemeFlavorUtil {
 
@@ -20,41 +20,58 @@ object ThemeFlavorUtil {
         val flavor = forName(flavorName)
 
         fun chooseNewColor(
-            elementName: String,
             elementColor: Any?,
             isFillColor: Boolean,
         ): Color {
-            if (elementColor == PEN) return flavor.color
-            if (elementColor == PAPER) return flavor.fill
-
-            return flavor.specialColors[elementName]?.get(if (isFillColor) Elem.FILL else Elem.COLOR)
-                ?: if (isFillColor) flavor.fill else flavor.color
+            return when {
+                elementColor == FLAVOR_FILL -> flavor.fill
+                isFillColor -> flavor.fill
+                else -> flavor.color
+            }
         }
 
         // set named colors + apply flavor colors to theme options
-        return mapOf(
+        val geomFlavors = mapOf(
             GEOM to mapOf(
                 ThemeOption.Geom.PEN to flavor.color,
                 ThemeOption.Geom.PAPER to flavor.fill,
                 ThemeOption.Geom.BRUSH to Color.PACIFIC_BLUE
             )
-        ) + mapValues { (key, value) ->
+        )
+
+        // Set flavor's 'color' and 'fill'
+        val updated = mapValues { (key, value) ->
             if (value is Map<*, *>) {
                 val updated = value.toMutableMap()
                 if (key in ELEM_TO_UPDATE_COLOR) {
-                    updated[Elem.COLOR] = chooseNewColor(key, value[Elem.COLOR], isFillColor = false)
+                    updated[Elem.COLOR] = chooseNewColor(value[Elem.COLOR], isFillColor = false)
                 }
                 if (key in ELEM_TO_UPDATE_FILL) {
-                    updated[Elem.FILL] = chooseNewColor(key, value[Elem.FILL], isFillColor = true)
-                }
-                if (key == ThemeOption.TOOLTIP_RECT) {
-                    flavor.specialColors[key]?.get(Elem.FILL)?.let { updated[Elem.FILL] = it }
+                    updated[Elem.FILL] = chooseNewColor(value[Elem.FILL], isFillColor = true)
                 }
                 updated
             } else {
                 value
             }
         }
+
+        // exclude key with links to FLAVOR_FILL
+        val keysWithFlavorFill = this
+            .filterValues { it is Map<*,*> }
+            .filterValues { (it as Map<*,*>).containsValue(FLAVOR_FILL) }
+            .mapValues { (it.value as Map<*,*>).keys }
+
+        val filteredSpecialColors = HashMap<String, Any>(flavor.specialColors)
+        keysWithFlavorFill.forEach { (k, v) ->
+            val specialVal = flavor.specialColors[k]
+            if (specialVal is Map<*, *>) {
+                val keepKeys = specialVal.filterKeys { it !in v }
+                filteredSpecialColors[k] = keepKeys
+            }
+        }
+
+
+        return geomFlavors + updated.mergeWith(filteredSpecialColors)
     }
 
     private val ELEM_TO_UPDATE_COLOR = listOf(
@@ -129,6 +146,10 @@ object ThemeFlavorUtil {
                     ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
                         Elem.FILL to LIGHT_GREY
                     ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to DARK_GREY,
+                        Elem.COLOR to Color.WHITE
+                    ),
                 )
             )
 
@@ -154,6 +175,10 @@ object ThemeFlavorUtil {
                     ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
                         Elem.FILL to STRIP_BACKGROUND
                     ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to DARK_GREY,
+                        Elem.COLOR to Color.WHITE
+                    ),
                 )
             )
 
@@ -175,6 +200,10 @@ object ThemeFlavorUtil {
                     ),
                     ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
                         Elem.FILL to STRIP_BACKGROUND
+                    ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to DARK_GREY,
+                        Elem.COLOR to Color.WHITE
                     ),
                 )
             )
@@ -202,6 +231,10 @@ object ThemeFlavorUtil {
                         Elem.FILL to STRIP_BACKGROUND,
                         Elem.COLOR to parseHex("#333333"),
                     ),
+                    ThemeOption.AXIS_TOOLTIP to mapOf(
+                        Elem.FILL to DARK_GREY,
+                        Elem.COLOR to Color.WHITE
+                    ),
                 )
             )
 
@@ -216,13 +249,14 @@ object ThemeFlavorUtil {
                         Elem.FILL to parseHex("#363636")
                     ),
                     ThemeOption.PANEL_GRID to mapOf(
-                        Elem.COLOR to parseHex("#474747")
+                        Elem.COLOR to parseHex("#474747"),
                     ),
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.FILL to parseHex("#141414")
                     ),
                     ThemeOption.AXIS_TOOLTIP to mapOf(
-                        Elem.FILL to parseHex("#BBBBBB")
+                        Elem.FILL to parseHex("#BBBBBB"),
+                        Elem.COLOR to parseHex("#303030")
                     ),
                 )
             )
@@ -244,7 +278,8 @@ object ThemeFlavorUtil {
                         Elem.FILL to parseHex("#FEFBF3")
                     ),
                     ThemeOption.AXIS_TOOLTIP to mapOf(
-                        Elem.FILL to parseHex("#2E4E58")
+                        Elem.FILL to parseHex("#2E4E58"),
+                        Elem.COLOR to parseHex("#FDF6E3")
                     ),
                 )
             )
@@ -266,7 +301,8 @@ object ThemeFlavorUtil {
                         Elem.FILL to parseHex("#0B2F3A")
                     ),
                     ThemeOption.AXIS_TOOLTIP to mapOf(
-                        Elem.FILL to parseHex("#A7B6BA")
+                        Elem.FILL to parseHex("#A7B6BA"),
+                        Elem.COLOR to parseHex("#0E3C4A")
                     ),
                 )
             )
@@ -288,7 +324,8 @@ object ThemeFlavorUtil {
                         Elem.FILL to Color.WHITE
                     ),
                     ThemeOption.AXIS_TOOLTIP to mapOf(
-                        Elem.FILL to Color.BLACK
+                        Elem.FILL to Color.BLACK,
+                        Elem.COLOR to Color.WHITE
                     ),
                 )
             )
@@ -310,7 +347,8 @@ object ThemeFlavorUtil {
                         Elem.FILL to parseHex("#460073")
                     ),
                     ThemeOption.AXIS_TOOLTIP to mapOf(
-                        Elem.FILL to Color.WHITE
+                        Elem.FILL to Color.WHITE,
+                        Elem.COLOR to Color.BLACK
                     ),
                 )
             )

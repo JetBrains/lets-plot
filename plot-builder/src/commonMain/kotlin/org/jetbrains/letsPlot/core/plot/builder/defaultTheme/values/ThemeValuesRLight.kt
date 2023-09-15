@@ -6,16 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR_FILL
 
 class ThemeValuesRLight : ThemeValues(VALUES) {
 
@@ -29,17 +26,8 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
                 Elem.SIZE to 0.0,
             ),
 
-            PANEL_GRID to mapOf(
-                Elem.SIZE to 1.0
-            ),
-
             PANEL_BKGR_RECT to mapOf(
-                Elem.SIZE to 1.0,
-                Elem.FILL to PAPER
-            ),
-            AXIS_TOOLTIP to mapOf(
-                Elem.FILL to PEN,
-                Elem.COLOR to PAPER
+                Elem.FILL to FLAVOR_FILL
             ),
 
             FLAVOR to Flavor.LIGHT,

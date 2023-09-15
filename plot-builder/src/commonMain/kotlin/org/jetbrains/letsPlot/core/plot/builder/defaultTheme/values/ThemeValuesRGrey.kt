@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
@@ -17,8 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR_FILL
 
 class ThemeValuesRGrey : ThemeValues(VALUES) {
 
@@ -50,12 +48,7 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
             ),
 
             PANEL_GRID to mapOf(
-                Elem.COLOR to PAPER,
-            ),
-
-            AXIS_TOOLTIP to mapOf(
-                Elem.FILL to PEN,
-                Elem.COLOR to PAPER
+                Elem.COLOR to FLAVOR_FILL
             ),
 
             FLAVOR to Flavor.GREY,

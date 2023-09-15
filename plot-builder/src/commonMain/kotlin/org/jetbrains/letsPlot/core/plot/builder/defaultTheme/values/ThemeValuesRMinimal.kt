@@ -7,16 +7,11 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PAPER
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PEN
 
 class ThemeValuesRMinimal : ThemeValues(VALUES) {
 
@@ -30,15 +25,6 @@ class ThemeValuesRMinimal : ThemeValues(VALUES) {
             AXIS_TICKS to ELEMENT_BLANK,
 
             FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
-
-            PANEL_GRID to mapOf(
-                Elem.SIZE to 1.0
-            ),
-
-            AXIS_TOOLTIP to mapOf(
-                Elem.FILL to PEN,
-                Elem.COLOR to PAPER
-            ),
 
             FLAVOR to Flavor.MINIMAL,
         )
