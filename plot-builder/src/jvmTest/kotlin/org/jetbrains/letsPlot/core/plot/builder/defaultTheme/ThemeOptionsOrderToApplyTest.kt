@@ -65,7 +65,10 @@ class ThemeOptionsOrderToApplyTest(
                     ),
                     expectedPlotBackground = Color.WHITE,
                     expectedYAxisColor = Color.parseHex("#474747"),
-                    expectedPanelBackground = Color.parseHex("#E9E9E9")
+                    expectedPanelBackground = panelBackground(
+                        expectedColor = Color.parseHex("#474747"),
+                        expectedFill = Color.parseHex("#E9E9E9")
+                    )
                 ),
                 test(
                     themeOptions = minimalTheme + flavorOption,
@@ -80,7 +83,10 @@ class ThemeOptionsOrderToApplyTest(
                     ),
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = Color.parseHex("#BBBBBB"),
-                    expectedPanelBackground = Color.parseHex("#3B3B3B") // special flavor color
+                    expectedPanelBackground = panelBackground( // special flavor color
+                        expectedColor = Color.parseHex("#BBBBBB"),
+                        expectedFill = Color.parseHex("#3B3B3B")
+                    )
                 ),
                 // custom settings override predefined options
                 test(
@@ -97,7 +103,10 @@ class ThemeOptionsOrderToApplyTest(
                     ),
                     expectedPlotBackground = Color.RED,
                     expectedYAxisColor = Color.GREEN,
-                    expectedPanelBackground = Color.BLUE
+                    expectedPanelBackground = panelBackground(
+                        expectedColor = Color.parseHex("#BBBBBB"), // special flavor color
+                        expectedFill = Color.BLUE  // specified
+                    )
                 ),
 
                 // Check the light theme
@@ -105,7 +114,10 @@ class ThemeOptionsOrderToApplyTest(
                     themeOptions = lightTheme,
                     expectedPlotBackground = Color.WHITE,
                     expectedYAxisColor = null,
-                    expectedPanelBackground = Color.WHITE,
+                    expectedPanelBackground = panelBackground(
+                        expectedColor = Color.parseHex("#C9C9C9"),
+                        expectedFill = Color.WHITE
+                    ),
                     otherExpected = xAxisTooltipColor(
                         expectedColor = Color.WHITE,
                         expectedFill = Color.parseHex("#474747")
@@ -117,10 +129,13 @@ class ThemeOptionsOrderToApplyTest(
                     themeOptions = lightTheme + flavorOption,
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = null,
-                    expectedPanelBackground = Color.parseHex("#303030"),
+                    expectedPanelBackground = panelBackground(
+                        expectedColor = Color.parseHex("#BBBBBB"),
+                        expectedFill = Color.parseHex("#303030")
+                    ),
                     otherExpected = xAxisTooltipColor(
-                        expectedColor = Color.parseHex("#303030"),  // like plot background ("paper")
-                        expectedFill = Color.parseHex("#BBBBBB")    // like "pen"
+                        expectedColor = Color.parseHex("#303030"),
+                        expectedFill = Color.parseHex("#BBBBBB")
                     )
                 )
             )
@@ -150,10 +165,17 @@ class ThemeOptionsOrderToApplyTest(
             ThemeOption.PANEL_BKGR_RECT
         )
 
-        private fun panelBackground(expected: Color) = Expected(
-            expected,
-            { theme: Theme -> theme.panel().rectFill() },
-            ThemeOption.PANEL_BKGR_RECT
+        private fun panelBackground(expectedColor: Color, expectedFill: Color) = listOf(
+            Expected(
+                expectedColor,
+                { theme: Theme -> theme.panel().rectColor() },
+                ThemeOption.PANEL_BKGR_RECT
+            ),
+            Expected(
+                expectedFill,
+                { theme: Theme -> theme.panel().rectFill() },
+                ThemeOption.PANEL_BKGR_RECT
+            )
         )
 
         private fun xAxisTooltipColor(expectedColor: Color, expectedFill: Color) = listOf(
@@ -173,7 +195,7 @@ class ThemeOptionsOrderToApplyTest(
             themeOptions: Map<String, Any>,
             expectedPlotBackground: Color,
             expectedYAxisColor: Color?,
-            expectedPanelBackground: Color?,
+            expectedPanelBackground: List<Expected>?,
             otherExpected: List<Expected> = emptyList()
         ) = arrayOf(
             themeOptions,
@@ -181,9 +203,9 @@ class ThemeOptionsOrderToApplyTest(
                 plotBackground(expectedPlotBackground),
                 showYAxis(expectedYAxisColor != null),
                 expectedYAxisColor?.let(this::yAxisColor),
-                showPanelRect(expectedPanelBackground != null),
-                expectedPanelBackground?.let(this::panelBackground)
-            ) + otherExpected
+                showPanelRect(expectedPanelBackground != null)
+            ) + (expectedPanelBackground ?: emptyList())
+                    + otherExpected
         )
     }
 }
