@@ -87,8 +87,6 @@ object ThemeOption {
     const val GEOM = "geom"
     const val FLAVOR = "flavor"
 
-    // link to flavor's base fill
-    const val FLAVOR_FILL = "flavor_fill"
 
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)

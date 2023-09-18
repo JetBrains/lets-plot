@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColors
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
@@ -14,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 
 class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
@@ -25,12 +28,24 @@ class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID_MINOR to ELEMENT_BLANK,
 
+            PANEL_GRID to mapOf(
+                Elem.COLOR to SymbolicColors.LIGHT_GRAY_1,
+            ),
+
             AXIS_LINE_Y to ELEMENT_BLANK,
             AXIS_TICKS_Y to ELEMENT_BLANK,
+            AXIS to mapOf(
+                Elem.COLOR to SymbolicColors.DARK_GRAY_1,
+            ),
+
+            AXIS_TOOLTIP to mapOf(
+                Elem.COLOR to SymbolicColors.WHITE,
+                Elem.FILL to SymbolicColors.DARK_GRAY_1,
+            ),
 
             FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
 
-            FLAVOR to Flavor.MINIMAL,
+            FLAVOR to Flavor.BASE,
         )
     }
 }
