@@ -145,14 +145,14 @@ internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleSpan
 
             rule(
                 Matcher()
-                    .topSpaceOk(false),
-                BOTTOM
+                    .bottomSpaceOk(false),
+                TOP
             ),
 
             rule(
                 Matcher()
-                    .bottomSpaceOk(false),
-                TOP
+                    .topSpaceOk(false),
+                BOTTOM
             ),
 
             rule(
