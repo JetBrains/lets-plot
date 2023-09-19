@@ -39,7 +39,7 @@ class ThemeConfig constructor(
         }
         val flavorName = themeSettings.getString(FLAVOR)
             ?: baselineValues.getString(FLAVOR)
-            ?: ThemeOption.Flavor.MINIMAL
+            ?: ThemeOption.Flavor.BASE
 
         val effectiveOptions = baselineValues
             .applyFlavor(flavorName)

@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 
 
 @RunWith(Parameterized::class)
-class ThemeOptionsOrderToApplyTest(
+class ThemeColorOptionsTest(
     themeValues: Map<String, Any>,
     private val expected: List<Expected>
 ) {
@@ -67,10 +67,10 @@ class ThemeOptionsOrderToApplyTest(
                     expectedYAxisColor = Color.parseHex("#474747"),
                     expectedPanelBackground = panelBackground(
                         expectedColor = Color.parseHex("#474747"),
-                        expectedFill = Color.parseHex("#E9E9E9")
+                        expectedFill = Color.parseHex("#EBEBEB")
                     )
                 ),
-                test(
+               test(
                     themeOptions = minimalTheme + flavorOption,
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = null,

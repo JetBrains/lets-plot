@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColors
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
@@ -26,11 +26,11 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
 
             PANEL_BKGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColors.DARK_GRAY_2,
-                Elem.FILL to SymbolicColors.WHITE,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.FILL to SymbolicColor.WHITE,
             ),
             PANEL_GRID to mapOf(
-                Elem.COLOR to SymbolicColors.LIGHT_GRAY_1,
+                Elem.COLOR to SymbolicColor.LIGHT_GRAY_1,
             ),
 
             PANEL_GRID_MAJOR to mapOf(
@@ -42,18 +42,18 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             AXIS_LINE to ELEMENT_BLANK,
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColors.DARK_GRAY_2
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
             ),
 
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColors.WHITE,
-                Elem.FILL to SymbolicColors.DARK_GRAY_1,
+                Elem.COLOR to SymbolicColor.WHITE,
+                Elem.FILL to SymbolicColor.DARK_GRAY,
             ),
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColors.DARK_GRAY_2,
-                Elem.FILL to SymbolicColors.GRAY_2,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.FILL to SymbolicColor.GRAY_2,
             ),
 
             FLAVOR to Flavor.BASE,

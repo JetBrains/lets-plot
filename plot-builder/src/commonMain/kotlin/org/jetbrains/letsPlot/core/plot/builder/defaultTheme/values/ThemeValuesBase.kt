@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColors
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
@@ -47,12 +47,12 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
         private val VALUES: Map<String, Any> = mapOf(
             LINE to mapOf(
                 Elem.SIZE to 1.0,
-                Elem.COLOR to SymbolicColors.DARK_GRAY_1,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
             ),
             RECT to mapOf(
                 Elem.SIZE to 1.0,
-                Elem.COLOR to SymbolicColors.DARK_GRAY_1,
-                Elem.FILL to SymbolicColors.LIGHT_GRAY_2,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.FILL to SymbolicColor.LIGHT_GRAY_2,
             ),
             TEXT to mapOf(
                 Elem.SIZE to Defaults.FONT_SMALL,
@@ -61,7 +61,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 //                Elem.FONT_MONOSPACED to Defaults.FONT_FAMILY_NORMAL.monospaced,
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
-                Elem.COLOR to SymbolicColors.DARK_GRAY_1,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
@@ -85,12 +85,12 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColors.WHITE,
+                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             LEGEND_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColors.WHITE,
+                Elem.FILL to SymbolicColor.WHITE,
             ),
 
             AXIS_ONTOP to false,
@@ -132,8 +132,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             // Tooltip
             TOOLTIP_RECT to mapOf(
                 Elem.SIZE to 1.0,
-                Elem.COLOR to SymbolicColors.BLACK,
-                Elem.FILL to SymbolicColors.WHITE,
             ),
 
             TOOLTIP_TITLE_TEXT to mapOf(
@@ -141,9 +139,9 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             GEOM to mapOf(
-                Geom.PEN to SymbolicColors.DARK_GRAY_1,
-                Geom.PAPER to SymbolicColors.WHITE,
-                Geom.BRUSH to Color.PACIFIC_BLUE, // todo use SymbolicColors also
+                Geom.PEN to SymbolicColor.DARK_GRAY,
+                Geom.PAPER to SymbolicColor.WHITE,
+                Geom.BRUSH to Color.PACIFIC_BLUE,
             ),
 
             FLAVOR to Flavor.BASE,

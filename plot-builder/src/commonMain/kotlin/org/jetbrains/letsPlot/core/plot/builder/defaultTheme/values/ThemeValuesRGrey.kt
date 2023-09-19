@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColors
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS
@@ -28,12 +28,12 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
             // Panel (no border)
             PANEL_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColors.GRAY_1,
+                Elem.FILL to SymbolicColor.GRAY_1,
             ),
 
             // Grid
             PANEL_GRID to mapOf(
-                Elem.COLOR to SymbolicColors.WHITE,
+                Elem.COLOR to SymbolicColor.WHITE,
             ),
             PANEL_GRID_MAJOR to mapOf(
                 Elem.SIZE to 1.4,
@@ -44,7 +44,7 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
 
             // Axis
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColors.DARK_GRAY_1,
+                Elem.COLOR to SymbolicColor.DARK_GRAY,
             ),
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to mapOf(
@@ -52,14 +52,14 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
             ),
 
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to SymbolicColors.WHITE,
-                Elem.FILL to SymbolicColors.DARK_GRAY_1,
+                Elem.COLOR to SymbolicColor.WHITE,
+                Elem.FILL to SymbolicColor.DARK_GRAY,
             ),
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColors.GRAY_2,
+                Elem.FILL to SymbolicColor.GRAY_2,
             ),
 
             FLAVOR to Flavor.BASE,

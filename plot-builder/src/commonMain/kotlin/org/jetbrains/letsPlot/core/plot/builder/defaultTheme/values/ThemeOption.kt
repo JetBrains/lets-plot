@@ -141,10 +141,6 @@ object ThemeOption {
 
         // base theme flavors
         const val BASE = "base"
-        const val MINIMAL = "minimal"
-        const val GREY = "grey"
-        const val LIGHT = "light"
-        const val BW = "bw"
     }
 
     object Geom {
