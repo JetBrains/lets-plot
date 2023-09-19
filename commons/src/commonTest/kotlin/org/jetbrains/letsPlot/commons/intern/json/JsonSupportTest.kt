@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.intern.json
 
-import org.jetbrains.letsPlot.commons.intern.json.JsonParser
-import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -209,12 +207,13 @@ class JsonSupportTest {
                 )
             ),
             TestData(
-                """{"int":1,"double":2.2,"str":"hello","null":null,"obj":{}}""",
+                """{"int":1,"double":2.2,"str":"hello","null":null, "bool": true, "obj":{}}""",
                 mapOf(
                     "int" to 1.0,
                     "double" to 2.2,
                     "str" to "hello",
                     "null" to null,
+                    "bool" to true,
                     "obj" to emptyMap<String, Any?>()
                 )
             ),

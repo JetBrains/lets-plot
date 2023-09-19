@@ -30,11 +30,12 @@ class JsonFormatter {
         when (v) {
             null -> append("null")
             is String -> handleString(v)
-            is Number, Boolean -> append(v.toString())
+            is Boolean -> append(v.toString())
+            is Number -> append(v.toString())
             is Array<*> -> handleList(v.asList())
             is List<*> -> handleList(v)
             is Map<*, *> -> handleMap(v)
-            else -> throw IllegalArgumentException("Can't serialize object $v")
+            else -> throw IllegalArgumentException("Can't serialize object `$v`(type ${v::class.simpleName}`)")
         }
     }
 
