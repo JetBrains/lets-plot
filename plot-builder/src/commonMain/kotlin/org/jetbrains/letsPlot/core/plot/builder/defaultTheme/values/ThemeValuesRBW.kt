@@ -67,7 +67,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
-             //   Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.BLACK,
                 Elem.FILL to SymbolicColor.GREY_2,
             ),
 

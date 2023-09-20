@@ -26,7 +26,7 @@ class ThemeColorOptionsTest(
     data class Expected(
         val expected: Any,
         val actualGetter: (Theme) -> Any,
-        val paramName: String
+        val message: String
     )
 
     private val theme: Theme = ThemeConfig(themeValues, DefaultFontFamilyRegistry()).theme
@@ -39,7 +39,7 @@ class ThemeColorOptionsTest(
     @Test
     fun eval() {
         expected.forEach {
-            assertEquals(it.expected, it.actualGetter(theme), "Wrong '${it.paramName}'")
+            assertEquals(it.expected, it.actualGetter(theme), it.message)
         }
     }
 
@@ -192,37 +192,38 @@ class ThemeColorOptionsTest(
         private fun plotBackground(expected: Color) = Expected(
             expected,
             { theme: Theme -> theme.plot().backgroundFill() },
-            ThemeOption.PLOT_BKGR_RECT
+            "Wrong ${ThemeOption.PLOT_BKGR_RECT}/fill"
         )
 
         private fun showYAxis(expected: Boolean) = Expected(
             expected,
             { theme: Theme -> theme.verticalAxis(flipAxis = false).showLine() },
-            ThemeOption.AXIS_LINE_Y
+            "Wrong ${ThemeOption.AXIS_LINE_Y}"
         )
 
         private fun yAxisColor(expected: Color) = Expected(
             expected,
             { theme: Theme -> theme.verticalAxis(flipAxis = false).lineColor() },
-            ThemeOption.AXIS_LINE_Y
+            "Wrong ${ThemeOption.AXIS_LINE_Y}/color"
+
         )
 
         private fun showPanelBackgroundRect(expected: Boolean) = Expected(
             expected,
             { theme: Theme -> theme.panel().showRect() },
-            ThemeOption.PANEL_BKGR_RECT
+            "Wrong ${ThemeOption.PANEL_BKGR_RECT}"
         )
 
         private fun panelBackgroundRect(expectedColor: Color, expectedFill: Color) = listOf(
             Expected(
                 expectedColor,
                 { theme: Theme -> theme.panel().rectColor() },
-                ThemeOption.PANEL_BKGR_RECT
+                "Wrong ${ThemeOption.PANEL_BKGR_RECT}/color"
             ),
             Expected(
                 expectedFill,
                 { theme: Theme -> theme.panel().rectFill() },
-                ThemeOption.PANEL_BKGR_RECT
+                "Wrong ${ThemeOption.PANEL_BKGR_RECT}/fill"
             )
         )
 
@@ -230,12 +231,12 @@ class ThemeColorOptionsTest(
             Expected(
                 expectedColor,
                 { theme: Theme -> theme.horizontalAxis(flipAxis = false).tooltipColor() },
-                ThemeOption.AXIS_LINE_X
+                "Wrong ${ThemeOption.AXIS_LINE_X}/color"
             ),
             Expected(
                 expectedFill,
                 { theme: Theme -> theme.horizontalAxis(flipAxis = false).tooltipFill() },
-                ThemeOption.AXIS_LINE_X
+                "Wrong ${ThemeOption.AXIS_LINE_X}/fill"
             )
         )
 
@@ -243,12 +244,12 @@ class ThemeColorOptionsTest(
             Expected(
                 expectedColor,
                 { theme: Theme -> theme.facets().stripColor() },
-                ThemeOption.FACET_STRIP_BGR_RECT
+                "Wrong ${ThemeOption.FACET_STRIP_BGR_RECT}/color"
             ),
             Expected(
                 expectedFill,
                 { theme: Theme -> theme.facets().stripFill() },
-                ThemeOption.FACET_STRIP_BGR_RECT
+                "Wrong ${ThemeOption.FACET_STRIP_BGR_RECT}/fill"
             )
         )
 
