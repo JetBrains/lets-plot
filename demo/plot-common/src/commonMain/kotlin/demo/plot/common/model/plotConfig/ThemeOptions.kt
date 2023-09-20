@@ -11,25 +11,26 @@ class ThemeOptions {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             // use predefined themes
-            withTheme("classic"),
-            withTheme("light"),
-            withTheme("grey"),
-            withTheme("minimal"),
-            withTheme("minimal2"),
-            withTheme("none"),
-            withTheme("bw"),
+           withTheme("none"),
+           withTheme("minimal"),
+           withTheme("minimal2"),
+           withTheme("classic"),
+           withTheme("light"),
+           withTheme("grey"),
+           withTheme("bw"),
 
-            setThemeOptions()
+           setThemeOptions()
         )
     }
 
-    fun theme(name: String) = "'theme': { 'name': '$name' }"
 
-    private fun withTheme(themeName: String?): MutableMap<String, Any> {
-        val theme = themeName?.let(this::theme)
+    private fun withTheme(themeName: String, flavorName: String? = null): MutableMap<String, Any> {
+        val flavor = flavorName?.let { ", 'flavor': '$it'" } ?: ""
+        val theme = "'theme': { 'name': '$themeName' $flavor }"
+        // , 'strip_background' : {'size': 2, 'blank': false },  'panel_background': {'size': 6, 'blank': false} }"
         return plot(
-            plotTitle = "With theme = ${themeName ?: "default"}",
-            theme = theme ?: ""
+            plotTitle = "theme = $themeName, flavor = $flavorName",
+            theme = theme
         )
     }
 
@@ -69,6 +70,7 @@ class ThemeOptions {
                 "," + text("axis_text", color = "pink", face = "italic") +
                 "," + rect("axis_tooltip_x", color = "pink", fill = "#6c4675", size = 2.0) +
                 "," + text("axis_tooltip_text_x", color = "pink") +
+                "," + "'geom' : { 'pen':'dark_green' }" +
                 "}"
 
         return plot(
@@ -83,19 +85,19 @@ class ThemeOptions {
             {
                 "kind": "plot",
                  ${(theme + ",").takeIf { theme.isNotEmpty() } ?: ""}
+                "ggsize": { "width": 500, "height": 300 },                 
                 "data": {
-                    "x": [0,1,2,3,4],
-                    "y": [0,1,2,3,4]
+                    "x": [0],
+                    "y": [0]
                 },
                 "mapping": {
                     "x": "x",
                     "y": "y",
-                    "size": "y",
-                    "fill": "y"
+                    "size": "y"
                 },
+                'facet': {'name': 'grid', 'x': 'x' },
                 "ggtitle": {
-                    "text": "$plotTitle",
-                    "subtitle": "The plot subtitle"
+                    "text": "$plotTitle"
                 },
                 "caption": { "text": "The plot caption" },
                 "scales": [
@@ -114,7 +116,7 @@ class ThemeOptions {
                 ],
                 "layers": [
                     {
-                        "geom": "point",
+                        "geom": "point", "shape": 21,
                         "tooltips": {
                             "lines": [
                                 "label|value", "The static text"
