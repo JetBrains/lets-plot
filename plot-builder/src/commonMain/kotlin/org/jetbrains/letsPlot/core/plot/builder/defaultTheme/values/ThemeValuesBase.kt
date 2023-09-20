@@ -47,12 +47,12 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
         private val VALUES: Map<String, Any> = mapOf(
             LINE to mapOf(
                 Elem.SIZE to 1.0,
-                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.COLOR to SymbolicColor.BLACK,
             ),
             RECT to mapOf(
                 Elem.SIZE to 1.0,
-                Elem.COLOR to SymbolicColor.DARK_GRAY,
-                Elem.FILL to SymbolicColor.LIGHT_GRAY_2,
+                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.FILL to SymbolicColor.WHITE
             ),
             TEXT to mapOf(
                 Elem.SIZE to Defaults.FONT_SMALL,
@@ -61,7 +61,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 //                Elem.FONT_MONOSPACED to Defaults.FONT_FAMILY_NORMAL.monospaced,
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
-                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.COLOR to SymbolicColor.BLACK,
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
@@ -139,7 +139,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             GEOM to mapOf(
-                Geom.PEN to SymbolicColor.DARK_GRAY,
+                Geom.PEN to SymbolicColor.BLACK,
                 Geom.PAPER to SymbolicColor.WHITE,
                 Geom.BRUSH to Color.PACIFIC_BLUE,
             ),

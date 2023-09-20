@@ -15,20 +15,34 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
 class ThemeValuesRGrey : ThemeValues(VALUES) {
 
     companion object {
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
+            LINE to mapOf(
+                Elem.COLOR to SymbolicColor.BLACK
+            ),
+
+            RECT to mapOf(
+                Elem.COLOR to SymbolicColor.BLACK
+            ),
+
+            TEXT to mapOf(
+                Elem.COLOR to SymbolicColor.BLACK
+            ),
 
             // Panel (no border)
             PANEL_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.GRAY_1,
+                Elem.FILL to SymbolicColor.GREY_3,
             ),
 
             // Grid
@@ -44,7 +58,7 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
 
             // Axis
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.COLOR to SymbolicColor.BLACK,
             ),
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to mapOf(
@@ -53,16 +67,16 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
 
             AXIS_TOOLTIP to mapOf(
                 Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.DARK_GRAY,
+                Elem.FILL to SymbolicColor.BLACK,
             ),
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
-                Elem.FILL to SymbolicColor.GRAY_2,
+                Elem.FILL to SymbolicColor.GREY_2,
             ),
 
-            FLAVOR to Flavor.BASE,
+            FLAVOR to Flavor.GREY,
         )
     }
 }

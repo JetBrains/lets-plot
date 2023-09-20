@@ -15,37 +15,50 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
 class ThemeValuesRMinimal : ThemeValues(VALUES) {
 
     companion object {
 
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
+            LINE to mapOf(
+                Elem.COLOR to SymbolicColor.BLACK
+            ),
 
             RECT to mapOf(
-                Elem.FILL to SymbolicColor.GRAY_1,
+                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.FILL to SymbolicColor.GREY_3
+            ),
+
+            TEXT to mapOf(
+                Elem.COLOR to SymbolicColor.BLACK
             ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
 
             PANEL_GRID to mapOf(
-                Elem.COLOR to SymbolicColor.LIGHT_GRAY_1,
+                Elem.COLOR to SymbolicColor.GREY_1,
             ),
 
             AXIS_LINE to ELEMENT_BLANK,
             AXIS_TICKS to ELEMENT_BLANK,
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.DARK_GRAY,
+                Elem.COLOR to SymbolicColor.BLACK,
             ),
             AXIS_TOOLTIP to mapOf(
                 Elem.COLOR to SymbolicColor.WHITE,
-                Elem.FILL to SymbolicColor.DARK_GRAY,
+                Elem.FILL to SymbolicColor.BLACK,
             ),
 
-            FACET_STRIP_BGR_RECT to ELEMENT_BLANK,
+            FACET_STRIP_BGR_RECT to mapOf(
+                Elem.BLANK to true,
+                Elem.FILL to SymbolicColor.GREY_2,
+            ),
 
             FLAVOR to Flavor.BASE,
         )
