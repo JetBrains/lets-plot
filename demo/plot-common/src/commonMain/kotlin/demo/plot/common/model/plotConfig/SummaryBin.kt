@@ -37,10 +37,9 @@ class SummaryBin {
                   'color': 'red',
                   'tooltips': {
                     'lines': [
-                      'max|@..ymax..',
-                      'mean|@..mean..',
-                      'median|@..median..',
-                      'min|@..ymin..'
+                      'max|^ymax',
+                      'mean|^y',
+                      'min|^ymin'
                     ]
                   }
                 }

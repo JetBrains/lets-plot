@@ -98,10 +98,9 @@ class Summary {
                   'quantiles': [0.45, 0.5, 0.55],
                   'tooltips': {
                     'lines': [
-                      'max|@..ymax..',
-                      'mean|@..mean..',
-                      'median|@..median..',
-                      'min|@..ymin..'
+                      'max|^ymax',
+                      'median|^y',
+                      'min|^ymin'
                     ]
                   }
                 }

@@ -14,10 +14,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 class SummaryStat(
     private val yAggFunction: (List<Double>) -> Double,
     private val yMinAggFunction: (List<Double>) -> Double,
-    private val yMaxAggFunction: (List<Double>) -> Double,
-    private val lowerQuantile: Double,
-    private val middleQuantile: Double,
-    private val upperQuantile: Double
+    private val yMaxAggFunction: (List<Double>) -> Double
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -64,20 +61,12 @@ class SummaryStat(
         val statY = ArrayList<Double>()
         val statYMin = ArrayList<Double>()
         val statYMax = ArrayList<Double>()
-        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = listOf(
-            Stats.COUNT, Stats.SUM, Stats.MEAN, Stats.MEDIAN,
-            Stats.LOWER_QUANTILE, Stats.MIDDLE_QUANTILE, Stats.UPPER_QUANTILE
-        ).associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             val sortedBin = bin.sorted()
             statX.add(x)
             statY.add(yAggFunction(sortedBin))
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
-            for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = AggregateFunctions.byStatVar(statVar, lowerQuantile, middleQuantile, upperQuantile)
-                aggValues.add(aggFunction(sortedBin))
-            }
         }
 
         return mapOf(
@@ -85,7 +74,7 @@ class SummaryStat(
             Stats.Y to statY,
             Stats.Y_MIN to statYMin,
             Stats.Y_MAX to statYMax,
-        ) + statAggValues
+        )
     }
 
     companion object {
