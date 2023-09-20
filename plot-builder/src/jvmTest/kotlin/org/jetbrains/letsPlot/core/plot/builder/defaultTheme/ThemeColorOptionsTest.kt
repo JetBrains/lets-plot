@@ -44,11 +44,15 @@ class ThemeColorOptionsTest(
     }
 
     companion object {
+        private val DARK_GREY = Color.parseHex("#474747")
+        private val LIGHT_GREY = Color.parseHex("#E9E9E9")
+
         @JvmStatic
         @Parameterized.Parameters
         fun params(): Collection<Array<Any>> {
             val minimalTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_MINIMAL)
             val lightTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.R_LIGHT)
+            val noneTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_NONE)
             val flavorOption = mapOf(FLAVOR to ThemeOption.Flavor.DARCULA)
 
             return listOf(
@@ -64,13 +68,13 @@ class ThemeColorOptionsTest(
                         ThemeOption.PANEL_BKGR_RECT to mapOf(ThemeOption.Elem.BLANK to false)
                     ),
                     expectedPlotBackground = Color.WHITE,
-                    expectedYAxisColor = Color.parseHex("#474747"),
-                    expectedPanelBackground = panelBackground(
-                        expectedColor = Color.parseHex("#474747"),
-                        expectedFill = Color.parseHex("#EBEBEB")
+                    expectedYAxisColor = DARK_GREY,
+                    expectedPanelBackground = panelBackgroundRect(
+                        expectedColor = DARK_GREY,
+                        expectedFill = LIGHT_GREY
                     )
                 ),
-               test(
+                test(
                     themeOptions = minimalTheme + flavorOption,
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = null,
@@ -83,9 +87,34 @@ class ThemeColorOptionsTest(
                     ),
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = Color.parseHex("#BBBBBB"),
-                    expectedPanelBackground = panelBackground( // special flavor color
+                    expectedPanelBackground = panelBackgroundRect( // special flavor color
                         expectedColor = Color.parseHex("#BBBBBB"),
                         expectedFill = Color.parseHex("#3B3B3B")
+                    )
+                ),
+                // check facet rect
+                test(
+                    themeOptions = minimalTheme + mapOf(
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(ThemeOption.Elem.BLANK to false)
+                    ),
+                    expectedPlotBackground = Color.WHITE,
+                    expectedYAxisColor = null,
+                    expectedPanelBackground = null,
+                    otherExpected = facetStripBackgroundRect(
+                        expectedColor = DARK_GREY,
+                        expectedFill = LIGHT_GREY
+                    )
+                ),
+                test(
+                    themeOptions = minimalTheme + flavorOption + mapOf(
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(ThemeOption.Elem.BLANK to false)
+                    ),
+                    expectedPlotBackground = Color.parseHex("#303030"),
+                    expectedYAxisColor = null,
+                    expectedPanelBackground = null,
+                    otherExpected = facetStripBackgroundRect(
+                        expectedColor = Color.parseHex("#BBBBBB"),
+                        expectedFill = Color.parseHex("#363636")
                     )
                 ),
                 // custom settings override predefined options
@@ -103,7 +132,7 @@ class ThemeColorOptionsTest(
                     ),
                     expectedPlotBackground = Color.RED,
                     expectedYAxisColor = Color.GREEN,
-                    expectedPanelBackground = panelBackground(
+                    expectedPanelBackground = panelBackgroundRect(
                         expectedColor = Color.parseHex("#BBBBBB"), // special flavor color
                         expectedFill = Color.BLUE  // specified
                     )
@@ -114,22 +143,21 @@ class ThemeColorOptionsTest(
                     themeOptions = lightTheme,
                     expectedPlotBackground = Color.WHITE,
                     expectedYAxisColor = null,
-                    expectedPanelBackground = panelBackground(
+                    expectedPanelBackground = panelBackgroundRect(
                         expectedColor = Color.parseHex("#C9C9C9"),
                         expectedFill = Color.WHITE
                     ),
                     otherExpected = xAxisTooltipColor(
                         expectedColor = Color.WHITE,
-                        expectedFill = Color.parseHex("#474747")
+                        expectedFill = DARK_GREY
                     )
                 ),
-                // The original panel background and axis tooltip colors are equal to the plot background
-                // => the result colors should also be the same color as the plot background
+                // light theme: panel background and axis tooltip colors are equal to the plot background
                 test(
                     themeOptions = lightTheme + flavorOption,
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = null,
-                    expectedPanelBackground = panelBackground(
+                    expectedPanelBackground = panelBackgroundRect(
                         expectedColor = Color.parseHex("#BBBBBB"),
                         expectedFill = Color.parseHex("#303030")
                     ),
@@ -137,7 +165,27 @@ class ThemeColorOptionsTest(
                         expectedColor = Color.parseHex("#303030"),
                         expectedFill = Color.parseHex("#BBBBBB")
                     )
-                )
+                ),
+                // Check the none theme
+                test(
+                    themeOptions = noneTheme,
+                    expectedPlotBackground = Color.WHITE,
+                    expectedYAxisColor = DARK_GREY,
+                    expectedPanelBackground = panelBackgroundRect(
+                        expectedColor = DARK_GREY,
+                        expectedFill = LIGHT_GREY
+                    )
+                ),
+                // 'none' theme with flavor: panel background is equal to the plot background
+                test(
+                    themeOptions = noneTheme + flavorOption,
+                    expectedPlotBackground = Color.parseHex("#303030"),
+                    expectedYAxisColor = Color.parseHex("#BBBBBB"),
+                    expectedPanelBackground = panelBackgroundRect(
+                        expectedColor = Color.parseHex("#BBBBBB"),
+                        expectedFill = Color.parseHex("#303030")
+                    )
+                ),
             )
         }
 
@@ -159,13 +207,13 @@ class ThemeColorOptionsTest(
             ThemeOption.AXIS_LINE_Y
         )
 
-        private fun showPanelRect(expected: Boolean) = Expected(
+        private fun showPanelBackgroundRect(expected: Boolean) = Expected(
             expected,
             { theme: Theme -> theme.panel().showRect() },
             ThemeOption.PANEL_BKGR_RECT
         )
 
-        private fun panelBackground(expectedColor: Color, expectedFill: Color) = listOf(
+        private fun panelBackgroundRect(expectedColor: Color, expectedFill: Color) = listOf(
             Expected(
                 expectedColor,
                 { theme: Theme -> theme.panel().rectColor() },
@@ -188,7 +236,20 @@ class ThemeColorOptionsTest(
                 expectedFill,
                 { theme: Theme -> theme.horizontalAxis(flipAxis = false).tooltipFill() },
                 ThemeOption.AXIS_LINE_X
+            )
+        )
+
+        private fun facetStripBackgroundRect(expectedColor: Color, expectedFill: Color) = listOf(
+            Expected(
+                expectedColor,
+                { theme: Theme -> theme.facets().stripColor() },
+                ThemeOption.FACET_STRIP_BGR_RECT
             ),
+            Expected(
+                expectedFill,
+                { theme: Theme -> theme.facets().stripFill() },
+                ThemeOption.FACET_STRIP_BGR_RECT
+            )
         )
 
         private fun test(
@@ -203,7 +264,7 @@ class ThemeColorOptionsTest(
                 plotBackground(expectedPlotBackground),
                 showYAxis(expectedYAxisColor != null),
                 expectedYAxisColor?.let(this::yAxisColor),
-                showPanelRect(expectedPanelBackground != null)
+                showPanelBackgroundRect(expectedPanelBackground != null)
             ) + (expectedPanelBackground ?: emptyList())
                     + otherExpected
         )
