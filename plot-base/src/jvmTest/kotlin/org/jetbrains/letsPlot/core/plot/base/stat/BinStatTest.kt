@@ -25,7 +25,7 @@ class BinStatTest {
             BinStat.XPosKind.NONE,
             0.0
         )
-        val statDf = stat.apply(df, SimpleStatContext(df, emptyList()))
+        val statDf = stat.apply(df, SimpleStatContext(df))
         DataFrameAssert.assertHasVars(statDf, listOf(Stats.X, Stats.COUNT, Stats.DENSITY), binCount)
         return statDf
     }
