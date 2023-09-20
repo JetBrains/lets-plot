@@ -72,6 +72,7 @@ internal class MeasuredTooltipBuilder private constructor(
 
     private fun createHint(): TipLayoutHint {
         return when (myLayoutHint) {
+            Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(myCoord, myObjectRadius!!, myFillColor)
             Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!)
             Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!)
             Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord)
@@ -104,6 +105,10 @@ internal class MeasuredTooltipBuilder private constructor(
         fun defaultTipText(v: String): MeasuredTooltipBuilderFactory {
             myDefaultTipText = v
             return this
+        }
+
+        fun rotated(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
+            return setDefaults(rotatedTooltip(targetCoord).text(key))
         }
 
         fun vertical(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
@@ -145,6 +150,10 @@ internal class MeasuredTooltipBuilder private constructor(
     }
 
     companion object {
+
+        private fun rotatedTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
+            return MeasuredTooltipBuilder(Kind.ROTATED_TOOLTIP, coord)
+        }
 
         private fun verticalTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
             return MeasuredTooltipBuilder(Kind.VERTICAL_TOOLTIP, coord)

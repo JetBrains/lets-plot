@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.layout
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.coord
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.size
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
@@ -145,6 +147,24 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
         assertAllTooltips(
             expect()
                 .tooltipY(expectedAroundPointY(VERTICAL_TIP_KEY, BOTTOM))
+        )
+    }
+
+    @Test
+    fun issue837() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(22.727272727272727)
+            .defaultTipSize(DoubleVector(40.78125, 28.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(DoubleRectangle.XYWH(0, 0, 700, 90))
+            .addTooltip(tooltipBuilder.rotated("rotated", coord(447.68382202975073, 59.0)).buildTooltip())
+            .geomBounds(DoubleRectangle.XYWH(50.03470122028142, 34.0, 639.9652987797186, 50.0))
+            .build()
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect()
+                .tooltipY(expectedAroundPointY("rotated", TOP))
         )
     }
 

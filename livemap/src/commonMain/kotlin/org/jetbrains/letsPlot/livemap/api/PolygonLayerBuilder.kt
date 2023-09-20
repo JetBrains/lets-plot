@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.LocatorComponent
@@ -106,6 +105,7 @@ class PolygonEntityBuilder(
                 +ChartElementComponent().apply {
                     sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PolygonEntityBuilder.alphaScalingEnabled
+                    lineDash = this@PolygonEntityBuilder.lineDash.toDoubleArray()
                     fillColor = this@PolygonEntityBuilder.fillColor
                     strokeColor = this@PolygonEntityBuilder.strokeColor
                     strokeWidth = this@PolygonEntityBuilder.strokeWidth

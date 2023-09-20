@@ -91,6 +91,7 @@ class GeomLayerBuilderTest {
 //            .pos(posProvider)
 //                .addConstantAes(Aes.ALPHA, 0.5)
             .geomTheme(object : GeomTheme {
+                override fun pen(): Color = Color.PACIFIC_BLUE
                 override fun color(): Color = Color.PACIFIC_BLUE
                 override fun fill(): Color = Color.PACIFIC_BLUE
                 override fun alpha() = 1.0

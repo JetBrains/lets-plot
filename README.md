@@ -6,9 +6,9 @@
 
 ##
 
-**Lets-Plot** is an open-source plotting library for statistical data. 
+**Lets-Plot** is a multiplatform plotting library based on the Grammar of Graphics. 
 
-The design of Lets-Plot library is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
+The library' design is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
 > This grammar [...] is made up of a set of independent components that can be composed in many different ways. This makes [it] very powerful because you are not limited to a set of pre-specified graphics, but you can create new graphics that are precisely tailored for your problem.
 > - Hadley Wickham, "[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html)"
@@ -58,37 +58,56 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 3.2.0
+## What is new in 4.0.0
 
-### Aesthetics `stroke` and `linewidth`
+The major version was bumped to 4 due to a major package refactoring that the project has undergone.\
+This refactoring doesn't affect the Python API, however, as a result of package names changed,\
+Lets-Plot v4.0.0 is partially incompatible with Lets-Plot Kotlin API versions 4.4.1 and earlier.
+    
+### A Number of Geometry Defaults Changed
+
+  - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8)).
+  - Slightly bigger default size of points and width of lines.
+  - Flavor-aware default colors for points, lines etc.
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/stroke.png" alt="f-23b/images/stroke.png" width="336" height="150">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_stroke.ipynb).
-  
-  See also `geom_lollipop()` example below.
-
-
-### Lollipop Plot
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/geom_defaults.png" alt="f-23c/images/geom_defaults.png" width="504" height="150">
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/lollipop.png" alt="f-23b/images/lollipop.png" width="600" height="200">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/flavor_geom_colors.png" alt="f-23c/images/flavor_geom_colors.png" width="1024" height="120">
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
-
-
-### Horizontal error bars and vertical "dodge"
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
-
-
-### Multi-line Labels in Legends
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
-
-              
-### Colorbar in `geom_imshow()`
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
+       
+  - Size of points is slightly adjusted to match the width of a line of the same "size".
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/imshow_legend.png" alt="f-23b/images/imshow_legend.png" width="514" height="400">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/point_vs_line.png" alt="f-23c/images/point_vs_line.png" width="170" height="150">
+  <br>
+
+### Support for Variadic Line Width and/or Color in `geom_line()` and `geom_path()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/variadic_width.png" alt="f-23c/images/variadic_width.png" width="455" height="150">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
+       
+### Parameter `"size_unit"` in `geom_pie()`
+  A way to specify size of the pie in units relative to the plot size.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
+
+### Stroke and Spacers in `geom_pie()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/pie_stroke.png" alt="f-23c/images/pie_stroke.png" width="162" height="150">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
+
+
+### New `theme_void()`, Geometries and Statistics
+
+- `theme_void()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/theme_void.ipynb).
+- `geom_function()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_function.ipynb).
+- `stat_ecdf()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_ecdf.ipynb).
+- `stat_summary()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
+- `stat_summary_bin()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
+- `"sum"` statistic: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
+- `"boxplot_outlier"` statistic: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
 
 
 ## Change Log

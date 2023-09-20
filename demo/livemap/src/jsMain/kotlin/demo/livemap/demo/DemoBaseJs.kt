@@ -5,11 +5,11 @@
 
 package demo.livemap.demo
 
-import org.jetbrains.letsPlot.core.platf.dom.DomEventMapper
+import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
-import kotlinx.browser.document
 import org.w3c.dom.HTMLElement
 
 class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
@@ -18,10 +18,10 @@ class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase)
     fun show() {
         val rootElement: HTMLElement = document.createElement("div") as HTMLElement
         val canvasControl = DomCanvasControl(
-            rootElement,
-            size
+            myRootElement = rootElement,
+            size = size,
+            mouseEventSource = DomMouseEventMapper(rootElement)
         )
-        DomEventMapper(rootElement, destMouseEventPeer = canvasControl.mousePeer::dispatch)
 
         demoModelProvider(size.toDoubleVector()).show(canvasControl)
 

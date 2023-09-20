@@ -50,7 +50,7 @@ def theme_grey():
 
 def theme_light():
     """
-    Light grey lines of various widths on white backgrounds.
+    Light grey lines of various widths on white background.
 
     Returns
     -------
@@ -77,7 +77,7 @@ def theme_light():
 
 def theme_classic():
     """
-    Black axes and no gridlines.
+    Dark grey axes and no gridlines.
 
     Returns
     -------
@@ -158,7 +158,7 @@ def theme_minimal2():
 
 def theme_none():
     """
-    A completely empty theme.
+    Basic settings are applied.
 
     Returns
     -------
@@ -185,7 +185,7 @@ def theme_none():
 
 def theme_bw():
     """
-    Grey lines on white backgrounds with black plot border.
+    Grey lines on white background with dark grey plot border.
 
     Returns
     -------
@@ -212,7 +212,7 @@ def theme_bw():
 
 def theme_void():
     """
-    A completely empty theme.
+    A completely blank (or "void") background theme: no borders, axes, or gridlines.
 
     Returns
     -------
@@ -234,7 +234,7 @@ def theme_void():
             theme_void()
 
     """
-    blank_elems = {'line': 'blank', 'rect': 'blank', 'axis': 'blank'}
+    blank_elems = {'line': 'blank', 'axis': 'blank'}
     return theme_classic() + FeatureSpec('theme', name=None, **blank_elems)
 
 

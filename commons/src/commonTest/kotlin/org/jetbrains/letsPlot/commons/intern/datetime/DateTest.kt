@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTimeUtil.MAX_SUPPORTED_YEAR
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTimeUtil.MIN_SUPPORTED_YEAR
 import org.jetbrains.letsPlot.commons.intern.datetime.Month.Companion.DECEMBER
 import org.jetbrains.letsPlot.commons.intern.datetime.Month.Companion.FEBRUARY
 import org.jetbrains.letsPlot.commons.intern.datetime.Month.Companion.JANUARY
@@ -67,7 +65,7 @@ class DateTest {
         assertEquals(Date(1, JANUARY, 1991), Date(30, DECEMBER, 1990).addDays(2))
         assertEquals(Date(5, JANUARY, 1991), Date(5, JANUARY, 1990).addDays(365))
         assertEquals(Date(5, SEPTEMBER, 2004), Date(5, SEPTEMBER, 2003).addDays(366))
-        assertEquals(Date(1, JANUARY, MAX_SUPPORTED_YEAR + 1), Date(31, DECEMBER, MAX_SUPPORTED_YEAR).addDays(1))
+        assertEquals(Date(1, JANUARY, 2101), Date(31, DECEMBER, 2100).addDays(1))
     }
 
     @Test
@@ -84,7 +82,7 @@ class DateTest {
         assertEquals(Date(30, DECEMBER, 1990), Date(1, JANUARY, 1991).subtractDays(2))
         assertEquals(Date(5, JANUARY, 1990), Date(5, JANUARY, 1991).subtractDays(365))
         assertEquals(Date(5, SEPTEMBER, 2003), Date(5, SEPTEMBER, 2004).subtractDays(366))
-        assertEquals(Date(31, DECEMBER, MIN_SUPPORTED_YEAR - 1), Date(1, JANUARY, MIN_SUPPORTED_YEAR).subtractDays(1))
+        assertEquals(Date(31, DECEMBER, 1969), Date(1, JANUARY, 1970).subtractDays(1))
     }
 
     private fun assertParsed(date: Date) {

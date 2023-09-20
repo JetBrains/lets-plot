@@ -3,9 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import kotlinx.browser.document
+import kotlinx.browser.window
+import kotlinx.dom.createElement
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
@@ -13,18 +18,13 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
-import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
-import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.dom.createElement
 import org.jetbrains.letsPlot.platf.w3c.dom.css.*
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssCursor
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
-import org.jetbrains.letsPlot.core.platf.dom.DomEventMapper
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.SvgRootDocumentMapper
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Node
@@ -174,7 +174,7 @@ internal class FigureToHtml(
                 }
             }
 
-            DomEventMapper(svg, destMouseEventPeer = plotContainer.mouseEventPeer::dispatch)
+            plotContainer.mouseEventPeer.addEventSource(DomMouseEventMapper(svg))
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -188,19 +188,17 @@ internal class FigureToHtml(
                 }
 
                 val canvasControl = DomCanvasControl(
-                    liveMapDiv,
-                    Vector(bounds.dimension.x, bounds.dimension.y),
-                )
-
-                DomEventMapper(
-                    myEventTarget = svg,
-                    myTargetBounds = DoubleRectangle.XYWH(
-                        bounds.origin.x,
-                        bounds.origin.y,
-                        bounds.dimension.x,
-                        bounds.dimension.y
-                    ),
-                    destMouseEventPeer = canvasControl.mousePeer::dispatch
+                    myRootElement = liveMapDiv,
+                    size = Vector(bounds.dimension.x, bounds.dimension.y),
+                    mouseEventSource = DomMouseEventMapper(
+                        eventSource = svg,
+                        bounds = DoubleRectangle.XYWH(
+                            bounds.origin.x,
+                            bounds.origin.y,
+                            bounds.dimension.x,
+                            bounds.dimension.y
+                        )
+                    )
                 )
 
                 val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)

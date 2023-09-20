@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ColorTheme
 
@@ -16,7 +17,8 @@ internal class DefaultGeomTheme private constructor(
     private val fill: Color,
     private val alpha: Double,
     private val size: Double,
-    private val lineWidth: Double
+    private val lineWidth: Double,
+    private val pen: Color
 ) : GeomTheme {
     override fun color() = color
 
@@ -28,10 +30,13 @@ internal class DefaultGeomTheme private constructor(
 
     override fun lineWidth() = lineWidth
 
+    override fun pen() = pen
+
     companion object {
         private const val COMMON_POINT_SIZE = 3.0
         private const val COMMON_LINE_WIDTH = 0.75
         private const val THIN_LINE_WIDTH = 0.5
+        private const val ZERO_LINE_WIDTH = 0.0
 
         private const val LOLLIPOP_SIZE = 2.0
         private const val PIE_SIZE = 10.0
@@ -64,6 +69,9 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.PIE -> PIE_SIZE
 
+                GeomKind.TILE,
+                GeomKind.BIN_2D -> ZERO_LINE_WIDTH
+
                 else -> COMMON_LINE_WIDTH
             }
 
@@ -74,14 +82,14 @@ internal class DefaultGeomTheme private constructor(
             val color = when (geomKind) {
                 GeomKind.POLYGON,
                 GeomKind.DOT_PLOT,
-                GeomKind.Y_DOT_PLOT -> colorTheme.paper()
-
+                GeomKind.Y_DOT_PLOT,
                 GeomKind.BAR,
                 GeomKind.PIE,
-                GeomKind.CONTOURF,
-                GeomKind.DENSITY2DF,
                 GeomKind.TILE,
-                GeomKind.BIN_2D -> Color.TRANSPARENT
+                GeomKind.BIN_2D -> colorTheme.paper()
+
+                GeomKind.CONTOURF,
+                GeomKind.DENSITY2DF -> Color.TRANSPARENT
 
                 GeomKind.SMOOTH -> Color.MAGENTA
 
@@ -116,10 +124,10 @@ internal class DefaultGeomTheme private constructor(
             // Alpha
             val alpha = when (geomKind) {
                 GeomKind.SMOOTH -> 0.15
-                else -> 1.0
+                else -> DEFAULT_ALPHA
             }
 
-            return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
+            return DefaultGeomTheme(color, fill, alpha, size, lineWidth, colorTheme.pen())
         }
     }
 }

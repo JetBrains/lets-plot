@@ -5,8 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
+import org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasControl
-import org.jetbrains.letsPlot.awt.canvas.AwtEventPeer
+import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper
 import org.jetbrains.letsPlot.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -23,7 +24,7 @@ import javax.swing.JLayeredPane
 
 // Have to be 'public' because "Lets-plot IDEA plugin" must access: `if (plotComponent is AwtLiveMapPanel)`
 /*internal*/ class AwtLiveMapPanel(
-    private val liveMapFigures: List<SomeFig>,
+    liveMapFigures: List<SomeFig>,
     private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
@@ -51,16 +52,16 @@ import javax.swing.JLayeredPane
 //        plotContainer.liveMapFigures
         liveMapFigures
             .map { it as CanvasFigure }
-            .forEach { liveMapFigures ->
-                val liveMapBounds = liveMapFigures.bounds().get()
-                val livemapCanvasControl = AwtCanvasControl(
-                    liveMapBounds.dimension,
-                    AwtEventPeer(plotOverlayComponent, liveMapBounds),
-                    org.jetbrains.letsPlot.awt.canvas.AwtAnimationTimerPeer(executor)
-                        .also { registrations.add(Registration.from(it)) }
+            .forEach { liveMapFigure ->
+                val liveMapBounds = liveMapFigure.bounds().get()
+                val liveMapCanvasControl = AwtCanvasControl(
+                    size = liveMapBounds.dimension,
+                    animationTimerPeer = AwtAnimationTimerPeer(executor).also { registrations.add(Registration.from(it)) },
+                    mouseEventSource = AwtMouseEventMapper(plotOverlayComponent, liveMapBounds)
                 )
+
                 mappers.add {
-                    liveMapFigures.mapToCanvas(livemapCanvasControl).also(registrations::add)
+                    liveMapFigure.mapToCanvas(liveMapCanvasControl).also(registrations::add)
                 }
 
                 add(
@@ -70,7 +71,7 @@ import javax.swing.JLayeredPane
                         .apply {
                             background = Color.WHITE
                             bounds = liveMapBounds.run { Rectangle(origin.x, origin.y, dimension.x, dimension.y) }
-                            add(livemapCanvasControl.component())
+                            add(liveMapCanvasControl.component())
                         }
                 )
             }

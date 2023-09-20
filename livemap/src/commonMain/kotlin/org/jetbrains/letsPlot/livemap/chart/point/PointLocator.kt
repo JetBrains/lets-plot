@@ -16,13 +16,15 @@ import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
 
 object PointLocator : Locator {
-    override fun search(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
+    override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         if (REQUIRED_COMPONENTS !in target) {
             return null
         }
 
         val origin = target.get<WorldOriginComponent>().origin
-        val radius = renderHelper.dimToWorld(target.get<PointComponent>().size * target.get<ChartElementComponent>().scalingSizeFactor / 2)
+        val pointComponent = target.get<PointComponent>()
+        val chartElementComponent = target.get<ChartElementComponent>()
+        val radius = renderHelper.dimToWorld(pointComponent.scaledRadius(chartElementComponent.scalingSizeFactor))
 
         val distance = (renderHelper.posToWorld(coord) - origin).length
         if (distance <= radius) {

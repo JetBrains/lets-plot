@@ -5,9 +5,8 @@
 
 package demo.livemap.plotDemo
 
-import org.jetbrains.letsPlot.core.spec.asMaps
-import org.jetbrains.letsPlot.core.spec.asMutable
-import org.jetbrains.letsPlot.core.spec.getList
+import demoAndTestShared.LiveMapUtil.Tiles
+import demoAndTestShared.LiveMapUtil.updateTiles
 import demoAndTestShared.parsePlotSpec
 import kotlin.random.Random
 
@@ -15,6 +14,7 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            darcula().updateTiles(Tiles.productionDark),
             variadicPath(),
             titanic(),
             airports(),
@@ -29,53 +29,85 @@ class LiveMap {
             fourPointsTwoLayers(),
             osmTiles(),
             bunch(),
-            facet()
-        )
+            facet(),
+        ).onEach {
+            it.updateTiles()
+        }
     }
 
-    object Tileset {
-        val nasa = mapOf(
-            "tiles" to mapOf(
-                "kind" to "raster_zxy",
-                "url" to "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/ASTER_GDEM_Greyscale_Shaded_Relief/default//GoogleMapsCompatible_Level12/{z}/{y}/{x}.jpg",
-                "attribution" to "<a href=\"https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs\">\u00a9 NASA Global Imagery Browse Services (GIBS)</a>",
-                "min_zoom" to 1,
-                "max_zoom" to 12
-            )
-        )
+    private fun darcula(): MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |      "x": [ 20.0, 30.0, 40.0 ],
+            |      "y": [ 60.0, 60.0, 60.0 ],
+            |      "s": [ 1.0, 5.0, 10.0 ],
+            |      "g": [ "A", "B", "C" ]
+            |  },
+            |  "mapping": {
+            |      "x": "x",
+            |      "y": "y",
+            |      "color": "g",
+            |      "size": "s"
+            |  },
+            |  "theme": {
+            |      "flavor": "darcula"
+            |  },
+            |  "ggtitle": {
+            |      "text": "geom_livemap() + geom_point() + flavour_darcula()"
+            |  },
+            |  "layers": [
+            |      { "geom": "livemap" },
+            |      { "geom": "point" }
+            |  ]
+            |}
+        """.trimMargin()
 
-        val osm = mapOf(
-            "tiles" to mapOf(
-                "kind" to "raster_zxy",
-                "url" to "https://[abc].tile.openstreetmap.org/{z}/{x}/{y}.png",
-                "attribution" to "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
-            )
-        )
-
-        val devVector = mapOf(
-            "tiles" to mapOf(
-                "kind" to "vector_lets_plot",
-                "url" to "ws://10.0.0.127:3943",
-                "min_zoom" to 1,
-                "max_zoom" to 15,
-                "theme" to "color"
-            )
-        )
-
-        val chessboard = mapOf(
-            "tiles" to mapOf(
-                "kind" to "chessboard"
-            )
-        )
-    }
-
-    private fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any>) = apply {
-        getList("layers")!!.asMaps().first().asMutable().putAll(tilesSpec)
+        return parsePlotSpec(spec)
     }
 
     private fun variadicPath(): MutableMap<String, Any> {
         val spec = """
-            {   "data": {     "x": [       1.0,       2.0,       3.0,       4.0,       5.0,       6.0,       7.0,       8.0,       9.0     ],     "y": [       0.0,       5.0,       0.0,       10.0,       0.0,       5.0,       0.0,       5.0,       0.0     ],     "g": [       0.0,       0.0,       0.0,       1.0,       1.0,       1.0,       2.0,       2.0,       2.0     ],     "c": [       1.0,       17.0,       4.0,       8.0,       3.0,       15.0,       15.0,       2.0,       9.0     ],     "s": [       10.0,       10.0,       10.0,       8.0,       3.0,       9.0,       15.0,       12.0,       9.0     ]   },   "mapping": {},   "data_meta": {},   "ggtitle": {     "text": "geom_path(aes(x=x, y=y, size=s, color=c))"   },   "kind": "plot",   "scales": [],   "layers": [     {       "geom": "livemap",       "mapping": {},       "data_meta": {},       "tiles": {         "kind": "vector_lets_plot",         "url": "ws://localhost:3112",         "theme": "color",         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."       },       "geocoding": {         "url": "http://localhost:3012/map_data/geocoding"       }     },     {       "geom": "path",       "mapping": {         "x": "x",         "y": "y",         "size": "s",         "color": "c"       },       "tooltips": {         "formats": [],         "lines": [           "x"         ]       },       "data_meta": {}     }   ],   "metainfo_list": [] }
+            {   
+                "data": { 
+                    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0 ],
+                    "y": [ 0.0, 5.0, 0.0, 10.0, 0.0, 5.0, 0.0, 5.0, 0.0 ],
+                    "g": [ 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0 ],
+                    "c": [ 1.0, 17.0, 4.0, 8.0, 3.0, 15.0, 15.0, 2.0, 9.0 ],     
+                    "s": [ 10.0, 10.0, 10.0, 8.0, 3.0, 9.0, 15.0, 12.0, 9.0 ]
+                },   
+                "mapping": {},   
+                "data_meta": {},   
+                "ggtitle": {
+                    "text": "geom_path(aes(x=x, y=y, size=s, color=c))"   
+                },   
+                "kind": "plot",   
+                "scales": [],   
+                "layers": [
+                    {
+                        "geom": "livemap",
+                        "geocoding": {
+                            "url": "http://localhost:3012/map_data/geocoding"
+                        }
+                    },
+                    {
+                        "geom": "path",
+                        "mapping": {
+                            "x": "x",
+                            "y": "y",
+                            "size": "s",
+                            "color": "c"
+                        },
+                        "tooltips": {
+                            "formats": [],
+                            "lines": [ "x" ]
+                        },
+                        "data_meta": {}
+                     }
+                ],
+                "metainfo_list": [] 
+            }
         """.trimIndent()
         return parsePlotSpec(spec)
     }
@@ -97,12 +129,6 @@ class LiveMap {
                 {
                   "geom": "livemap",
                   "projection": "epsg4326",
-                  "tiles": {
-                    "kind": "vector_lets_plot",
-                    "url": "wss://tiles.datalore.jetbrains.com",
-                    "theme": "dark",
-                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-                  },
                   "geocoding": {
                     "url": "http://10.0.0.127:3020/map_data/geocoding"
                   },

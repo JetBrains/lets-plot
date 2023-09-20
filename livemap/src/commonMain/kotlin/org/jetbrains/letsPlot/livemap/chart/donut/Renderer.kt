@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.livemap.chart.donut
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.PieSpecComponent
-import org.jetbrains.letsPlot.livemap.chart.changeAlphaWithMin
+import org.jetbrains.letsPlot.livemap.chart.alphaScaledColor
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
@@ -27,7 +27,7 @@ class Renderer : org.jetbrains.letsPlot.livemap.mapengine.Renderer {
                 return
             }
 
-            ctx.setFillStyle(changeAlphaWithMin(sector.fillColor, chartElement.scalingAlphaValue))
+            ctx.setFillStyle(alphaScaledColor(sector.fillColor, chartElement.scalingAlphaValue))
             ctx.beginPath()
             with(sector) {
                 ctx.arc(

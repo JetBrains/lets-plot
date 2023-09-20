@@ -658,8 +658,6 @@ object Option {
     }
 
     object Theme {
-        const val FLAVOR = "flavor"
-
         // All other options were moved to
         // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
 

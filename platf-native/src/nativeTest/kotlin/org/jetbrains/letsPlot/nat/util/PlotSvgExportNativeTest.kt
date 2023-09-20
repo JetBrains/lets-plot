@@ -81,7 +81,7 @@ internal class PlotSvgExportNativeTest {
         PlotSvgExportNative.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
             useCssPixelatedImageRendering = true
-        ).let { assertTrue(it.contains("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR4nGP49OH7/xD1/v8MIALEAQBnTQvDalokzwAAAABJRU5ErkJggg==")) }
+        ).let { assertTrue(it.contains("iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR4nGP49OH7vxD1/n8MIALEAQBnLwu/xaBIdAAAAABJRU5ErkJggg==")) }
     }
 
 }

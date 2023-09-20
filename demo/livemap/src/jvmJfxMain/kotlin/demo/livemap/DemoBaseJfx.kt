@@ -25,7 +25,7 @@ open class DemoBaseJfx(private val demoModelProvider: (DoubleVector) -> DemoMode
     internal fun show() {
         val group = Group()
         val component = JFXPanel().apply { scene = Scene(group) }
-        val canvasControl = org.jetbrains.letsPlot.jfx.canvas.JavafxCanvasControl(
+        val canvasControl = JavafxCanvasControl(
             group,
             size,
             1.0,

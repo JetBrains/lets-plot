@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="gcommon" pattern="src[lets-plot.commons.commonMain]:org.jetbrains.letsPlot.commons.intern.gcommon.base.*||src[lets-plot.commons.commonMain]:org.jetbrains.letsPlot.commons.intern.gcommon.collect.*" />
+</component>

@@ -1,6 +1,7 @@
 .idea/*
 # share copyright profiles
 !.idea/copyright
+!.idea/scopes
 
 *.iml
 .gradle

@@ -18,26 +18,26 @@ class RenderHelper(
     private val dimWorldToClientTransform = Transforms.scale(::zoomFactor)
     val zoomFactor get()  = Transforms.zoomFactor(viewport.zoom)
 
-    fun dimToScreen(p: Vec<org.jetbrains.letsPlot.livemap.World>): Vec<org.jetbrains.letsPlot.livemap.Client> {
+    fun dimToScreen(p: Vec<World>): Vec<Client> {
         return Vec(
             dimWorldToClientTransform.apply(p.x),
             dimWorldToClientTransform.apply(p.y)
         )
     }
 
-    fun posToWorld(p: Vec<org.jetbrains.letsPlot.livemap.Client>): Vec<org.jetbrains.letsPlot.livemap.World> {
+    fun posToWorld(p: Vec<Client>): Vec<World> {
         return viewport.getMapCoord(p)
     }
 
-    fun dimToWorld(v: Double): Scalar<org.jetbrains.letsPlot.livemap.World> {
+    fun dimToWorld(v: Double): Scalar<World> {
         return Scalar(dimWorldToClientTransform.invert(v))
     }
 
-    fun dimToClient(v: Double): Scalar<org.jetbrains.letsPlot.livemap.Client> {
+    fun dimToClient(v: Double): Scalar<Client> {
         return Scalar(dimWorldToClientTransform.apply(v))
     }
 
-    fun dimToClient(v: Scalar<org.jetbrains.letsPlot.livemap.World>): Scalar<org.jetbrains.letsPlot.livemap.Client> {
+    fun dimToClient(v: Scalar<World>): Scalar<Client> {
         return Scalar(dimWorldToClientTransform.apply(v.value))
     }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors.solid
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
@@ -43,11 +42,11 @@ object AestheticsUtil {
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {
-        return if (solid(color)) {    // only apply 'aes' alpha to solid colors
+        return if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {  //  apply only custom 'aes' alpha
             p.alpha()!!
-        } else SvgUtils.alpha2opacity(color.alpha)
-
-        // else, override with color's alpha
+        } else {                                               // else, override with color's alpha
+            SvgUtils.alpha2opacity(color.alpha)
+        }
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
@@ -58,14 +57,14 @@ object AestheticsUtil {
 
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
         shape.strokeColor().set(p.color())
-        if (solid(p.color()!!) && applyAlpha) {
+        if (p.alpha() != AesInitValue.DEFAULT_ALPHA && applyAlpha) {
             shape.strokeOpacity().set(p.alpha())
         }
     }
 
     fun updateFill(shape: SvgShape, p: DataPointAesthetics) {
         shape.fillColor().set(p.fill())
-        if (solid(p.fill()!!)) {
+        if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {
             shape.fillOpacity().set(p.alpha())
         }
     }

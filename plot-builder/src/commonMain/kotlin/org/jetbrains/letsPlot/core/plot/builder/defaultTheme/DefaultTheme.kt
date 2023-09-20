@@ -8,20 +8,14 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 
 class DefaultTheme(
-    private val themeSettings: Map<String, Any>,
+    options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry(),
-    userOptions: Map<String, Any> = emptyMap()
 ) : Theme {
-    // User specific options are applied to the theme settings (combination of named theme and flavor options)
-    private val options = themeSettings.mergeWith(userOptions)
-
     private val axisX = DefaultAxisTheme("x", options, fontFamilyRegistry)
     private val axisY = DefaultAxisTheme("y", options, fontFamilyRegistry)
     private val legend = DefaultLegendTheme(options, fontFamilyRegistry)
@@ -30,15 +24,7 @@ class DefaultTheme(
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
-    private val colors = run {
-        // theme() + flavor() => use colors from flavor
-        // flavor() + theme() => from theme(geom)
-        val useGeomOption = with(userOptions.keys) { indexOf(ThemeOption.GEOM) > indexOf("flavor") }
-        DefaultColorTheme(
-            if (useGeomOption) options else themeSettings,
-            fontFamilyRegistry
-        )
-    }
+    private val colors = DefaultColorTheme(options, fontFamilyRegistry)
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 

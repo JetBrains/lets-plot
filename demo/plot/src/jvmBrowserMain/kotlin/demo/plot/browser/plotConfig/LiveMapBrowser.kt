@@ -5,13 +5,12 @@
 
 package demo.plot.browser.plotConfig
 
-import demo.plot.common.model.plotConfig.LiveMapWithFacet
+import demo.plot.common.model.plotConfig.LiveMap
 
-object LiveMapWithFacetBrowser {
+object LiveMapBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(LiveMapWithFacet()) {
-            @Suppress("UNCHECKED_CAST")
+        with(LiveMap()) {
             (PlotConfigBrowserDemoUtil.show(
                 "LiveMap plot",
                 plotSpecList(),

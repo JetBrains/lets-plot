@@ -419,7 +419,7 @@ class corr_plot:
             coefficients = True
         else:
             if is_data_frame(data):
-                data = data.corr()
+                data = data.corr(numeric_only=True)
                 coefficients = True
             else:
                 coefficients = False

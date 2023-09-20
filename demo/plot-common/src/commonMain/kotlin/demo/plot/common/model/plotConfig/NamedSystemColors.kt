@@ -16,32 +16,22 @@ class NamedSystemColors {
             pieChart(flavor = "solarized_dark"),
             pieChart(flavor = "high_contrast_light"),
             pieChart(flavor = "high_contrast_dark"),
-            pieChart(flavor = "darcula", withCustomColors = true, flavorOverCustomColors = true),
-            pieChart(flavor = "darcula", withCustomColors = true, flavorOverCustomColors = false)
+            pieChart(flavor = "darcula", customColors = "'geom': { 'pen': 'red' }")
         )
     }
 
     private fun pieChart(
         theme: String = "grey",
         flavor: String? = null,
-        withCustomColors: Boolean = false,
-        flavorOverCustomColors: Boolean = true
+        customColors: String? = null,
     ): MutableMap<String, Any> {
         val flavorOpts = flavor?.let { "'flavor': '$flavor'" } ?: ""
-        val customColors = if (withCustomColors) {
-            "'geom': { 'pen': 'red', 'paper': 'green', 'brush': 'blue' }"
-        } else {
-            ""
-        }
 
-        val themeSettings = (
-                listOf(
-                    "'name': '$theme'"
-                ) + if (flavorOverCustomColors) {
-                    listOf(customColors, flavorOpts)
-                } else {
-                    listOf(flavorOpts, customColors)
-                })
+        val themeSettings = listOf(
+            "'name': '$theme'",
+            customColors ?: "",
+            flavorOpts
+        )
             .filter(String::isNotEmpty)
             .joinToString()
 
@@ -51,8 +41,7 @@ class NamedSystemColors {
                 'name': ['pen', 'brush', 'paper']
               },
               'theme': { $themeSettings },
-              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=$withCustomColors, 
-                                    ${if (flavorOverCustomColors) "theme() + flavor()" else "flavor() + theme()"}' },
+              'ggtitle': { 'text': 'theme=$theme, flavor=$flavor, custom colors=${customColors != null}' },
               'kind': 'plot',
               'scales': [
                 {

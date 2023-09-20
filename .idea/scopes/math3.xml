@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="math3" pattern="src[lets-plot.plot-base.commonMain]:org.jetbrains.letsPlot.core.plot.base.stat.math3..*" />
+</component>

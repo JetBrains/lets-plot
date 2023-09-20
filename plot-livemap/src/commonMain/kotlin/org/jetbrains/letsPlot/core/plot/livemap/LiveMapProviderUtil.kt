@@ -5,24 +5,25 @@
 
 package org.jetbrains.letsPlot.core.plot.livemap
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider.LiveMapData
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DEV_PARAMS
@@ -51,7 +52,7 @@ import org.jetbrains.letsPlot.livemap.core.Projections.mercator
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapTileSystemProvider
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.Tilesets
 import org.jetbrains.letsPlot.livemap.ui.CursorService
-import org.jetbrains.letsPlot.core.spec.*
+import kotlin.math.roundToInt
 
 object LiveMapProviderUtil {
 
@@ -138,10 +139,10 @@ object LiveMapProviderUtil {
                         LiveMapCanvasFigure(liveMapAsync).apply {
                             setBounds(
                                 Rectangle(
-                                    bounds.origin.x.toInt(),
-                                    bounds.origin.y.toInt(),
-                                    bounds.dimension.x.toInt(),
-                                    bounds.dimension.y.toInt()
+                                    bounds.origin.x.roundToInt(),
+                                    bounds.origin.y.roundToInt(),
+                                    bounds.dimension.x.roundToInt(),
+                                    bounds.dimension.y.roundToInt()
                                 )
                             )
                         },

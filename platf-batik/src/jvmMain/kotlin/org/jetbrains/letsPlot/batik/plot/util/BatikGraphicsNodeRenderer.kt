@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.batik.plot.util
 import org.apache.batik.gvt.GraphicsNode
 import java.awt.Dimension
 import java.awt.Graphics2D
-import java.util.*
 
 interface BatikGraphicsNodeRenderer {
     val priority: Int
@@ -25,9 +24,8 @@ interface BatikGraphicsNodeRenderer {
 
     companion object {
         fun getInstance(): BatikGraphicsNodeRenderer {
-            val serviceClass = BatikGraphicsNodeRenderer::class.java
-            val loader = ServiceLoader.load(serviceClass, serviceClass.classLoader)
-            return loader.maxByOrNull { it.priority } ?: Default
+            val instances = ServiceLoaderHelper.loadInstances<BatikGraphicsNodeRenderer>()
+            return instances.maxByOrNull { it.priority } ?: Default
         }
     }
 }
