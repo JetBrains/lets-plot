@@ -53,6 +53,7 @@ class ThemeColorOptionsTest(
             val minimalTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_MINIMAL)
             val lightTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.R_LIGHT)
             val noneTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_NONE)
+            val classicTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.R_CLASSIC)
             val flavorOption = mapOf(FLAVOR to ThemeOption.Flavor.DARCULA)
 
             return listOf(
@@ -182,6 +183,27 @@ class ThemeColorOptionsTest(
                     expectedPlotBackground = Color.parseHex("#303030"),
                     expectedYAxisColor = Color.parseHex("#BBBBBB"),
                     expectedPanelBackground = panelBackgroundRect(
+                        expectedColor = Color.parseHex("#BBBBBB"),
+                        expectedFill = Color.parseHex("#303030")
+                    )
+                ),
+                // The 'classic' theme: facet rect fill = plot background
+                test(
+                    themeOptions = classicTheme,
+                    expectedPlotBackground = Color.WHITE,
+                    expectedYAxisColor = DARK_GREY,
+                    expectedPanelBackground = null,
+                    otherExpected = facetStripBackgroundRect(
+                        expectedColor = DARK_GREY,
+                        expectedFill = Color.WHITE
+                    )
+                ),
+                test(
+                    themeOptions = classicTheme + flavorOption,
+                    expectedPlotBackground = Color.parseHex("#303030"),
+                    expectedYAxisColor = Color.parseHex("#BBBBBB"),
+                    expectedPanelBackground = null,
+                    otherExpected = facetStripBackgroundRect(
                         expectedColor = Color.parseHex("#BBBBBB"),
                         expectedFill = Color.parseHex("#303030")
                     )
