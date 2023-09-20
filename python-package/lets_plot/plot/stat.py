@@ -77,13 +77,6 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     - ..y.. : result of calculating of `fun`.
     - ..ymin.. : result of calculating of `fun_min`.
     - ..ymax.. : result of calculating of `fun_max`.
-    - ..count.. : number of observations.
-    - ..sum.. : sum of observations.
-    - ..mean.. : mean of observations.
-    - ..median.. : median of observations.
-    - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
-    - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
-    - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
     Examples
     --------
@@ -105,18 +98,17 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
+        x = np.random.choice(['a', 'b', 'c'], size=n)
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y', fill='x')) + \\
-            stat_summary(aes(lower='..lq..', middle='..mq..', upper='..uq..'), \\
-                         geom='boxplot', fatten=5)
+            stat_summary(geom='crossbar', fatten=5)
 
     |
 
@@ -235,13 +227,6 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     - ..y.. : result of calculating of `fun`.
     - ..ymin.. : result of calculating of `fun_min`.
     - ..ymax.. : result of calculating of `fun_max`.
-    - ..count.. : number of observations.
-    - ..sum.. : sum of observations.
-    - ..mean.. : mean of observations.
-    - ..median.. : median of observations.
-    - ..lq.. : lower quantile defined by first element of the `quantiles` parameter.
-    - ..mq.. : middle quantile defined by first element of the `quantiles` parameter.
-    - ..uq.. : upper quantile defined by first element of the `quantiles` parameter.
 
     Examples
     --------
@@ -263,7 +248,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
@@ -274,8 +259,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         y = np.random.normal(size=n)
         g = np.random.choice(["A", "B"], size=n)
         ggplot({'x': x, 'y': y, 'g': g}, aes(x='x', y='y', fill='g')) + \\
-            stat_summary_bin(aes(lower='..lq..', middle='..mq..', upper='..uq..'), \\
-                             geom='boxplot', bins=6, fatten=5, position='dodge')
+            stat_summary_bin(geom='crossbar', bins=6, fatten=5, position='dodge')
 
     |
 
