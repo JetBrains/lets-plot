@@ -14,10 +14,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 class SummaryStat(
     private val yAggFunction: (List<Double>) -> Double,
     private val yMinAggFunction: (List<Double>) -> Double,
-    private val yMaxAggFunction: (List<Double>) -> Double,
-    private val lowerQuantile: Double,
-    private val middleQuantile: Double,
-    private val upperQuantile: Double
+    private val yMaxAggFunction: (List<Double>) -> Double
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -36,7 +33,7 @@ class SummaryStat(
             List(ys.size) { 0.0 }
         }
 
-        val statData = buildStat(xs, ys, statCtx)
+        val statData = buildStat(xs, ys)
         if (statData.isEmpty()) {
             return withEmptyStatValues()
         }
@@ -50,8 +47,7 @@ class SummaryStat(
 
     private fun buildStat(
         xs: List<Double?>,
-        ys: List<Double?>,
-        statCtx: StatContext
+        ys: List<Double?>
     ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = SeriesUtil.filterFinite(xs, ys)
             .let { (xs, ys) -> xs zip ys }
@@ -65,19 +61,12 @@ class SummaryStat(
         val statY = ArrayList<Double>()
         val statYMin = ArrayList<Double>()
         val statYMax = ArrayList<Double>()
-        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.mappedStatVariables()
-            .filter { it != Stats.X && it != Stats.Y }
-            .associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             val sortedBin = bin.sorted()
             statX.add(x)
             statY.add(yAggFunction(sortedBin))
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
-            for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = AggregateFunctions.byStatVar(statVar, lowerQuantile, middleQuantile, upperQuantile)
-                aggValues.add(aggFunction(sortedBin))
-            }
         }
 
         return mapOf(
@@ -85,7 +74,7 @@ class SummaryStat(
             Stats.Y to statY,
             Stats.Y_MIN to statYMin,
             Stats.Y_MAX to statYMax,
-        ) + statAggValues
+        )
     }
 
     companion object {

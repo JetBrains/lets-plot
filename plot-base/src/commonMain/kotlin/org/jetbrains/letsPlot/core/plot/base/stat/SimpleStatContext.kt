@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 
-class SimpleStatContext(private val myDataFrame: DataFrame, private val mappedStatVariables: List<DataFrame.Variable>) :
+class SimpleStatContext(private val myDataFrame: DataFrame) :
     StatContext {
 
     override fun overallXRange(): DoubleSpan? {
@@ -19,9 +19,5 @@ class SimpleStatContext(private val myDataFrame: DataFrame, private val mappedSt
 
     override fun overallYRange(): DoubleSpan? {
         return myDataFrame.range(TransformVar.Y)
-    }
-
-    override fun mappedStatVariables(): List<DataFrame.Variable> {
-        return mappedStatVariables
     }
 }

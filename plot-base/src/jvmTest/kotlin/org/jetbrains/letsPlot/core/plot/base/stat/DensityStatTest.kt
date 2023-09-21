@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 class DensityStatTest {
 
     private fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d, emptyList())
+        return SimpleStatContext(d)
     }
 
     private fun generateNormalDatapointsWithFixedEnds(

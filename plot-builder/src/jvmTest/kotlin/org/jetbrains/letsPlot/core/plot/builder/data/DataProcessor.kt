@@ -52,8 +52,7 @@ class DataProcessor {
             expectMultiple = true
         )
         val statContext = SimpleStatContext(
-            myDataFrame = transformedData,
-            mappedStatVariables = emptyList()
+            myDataFrame = transformedData
         )
 
         val statInput = StatInput(

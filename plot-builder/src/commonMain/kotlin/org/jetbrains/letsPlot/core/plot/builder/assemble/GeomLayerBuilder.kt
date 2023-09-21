@@ -371,9 +371,7 @@ class GeomLayerBuilder(
                 when (builder.stat) {
                     Stats.IDENTITY -> transformedData
                     else -> {
-                        val mappedStatVariables =
-                            builder.myBindings.map(VarBinding::variable).filter(DataFrame.Variable::isStat)
-                        val statCtx = SimpleStatContext(transformedData, mappedStatVariables)
+                        val statCtx = SimpleStatContext(transformedData)
                         val groupingVariables = DataProcessing.defaultGroupingVariables(
                             data,
                             builder.myBindings,

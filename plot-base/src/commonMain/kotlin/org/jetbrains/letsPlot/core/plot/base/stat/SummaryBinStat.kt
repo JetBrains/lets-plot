@@ -17,10 +17,7 @@ class SummaryBinStat(
     private val xPos: Double,
     private val yAggFunction: (List<Double>) -> Double,
     private val yMinAggFunction: (List<Double>) -> Double,
-    private val yMaxAggFunction: (List<Double>) -> Double,
-    private val lowerQuantile: Double,
-    private val middleQuantile: Double,
-    private val upperQuantile: Double
+    private val yMaxAggFunction: (List<Double>) -> Double
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
@@ -40,17 +37,14 @@ class SummaryBinStat(
             List(ys.size) { 0.0 }
         }
 
-        val paramAggFunctions = mapOf(
+        val aggFunctions = mapOf(
             Stats.Y to yAggFunction,
             Stats.Y_MIN to yMinAggFunction,
             Stats.Y_MAX to yMaxAggFunction,
         )
-        val aesAggFunctions = statCtx.mappedStatVariables()
-            .filter { it != Stats.X && it != Stats.Y }
-            .associateWith { AggregateFunctions.byStatVar(it, lowerQuantile, middleQuantile, upperQuantile) }
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
-        val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, paramAggFunctions + aesAggFunctions, rangeX, xPosKind, xPos, binOptions)
+        val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, aggFunctions, rangeX, xPosKind, xPos, binOptions)
         if (statData.isEmpty()) {
             return withEmptyStatValues()
         }

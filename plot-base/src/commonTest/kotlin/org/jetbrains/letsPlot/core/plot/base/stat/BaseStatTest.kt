@@ -19,7 +19,7 @@ open class BaseStatTest {
     }
 
     protected fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d, emptyList())
+        return SimpleStatContext(d)
     }
 
     protected fun dataFrame(dataMap: Map<DataFrame.Variable, List<Double?>>): DataFrame {

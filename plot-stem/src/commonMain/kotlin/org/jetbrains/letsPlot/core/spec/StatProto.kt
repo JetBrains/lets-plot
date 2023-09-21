@@ -417,14 +417,12 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        val (lq, mq, uq) = getSummaryQuantiles(options)
         val (yAggFun, yMinFun, yMaxFun) = getSummaryAggFunctions(options)
 
-        return SummaryStat(yAggFun, yMinFun, yMaxFun, lq, mq, uq)
+        return SummaryStat(yAggFun, yMinFun, yMaxFun)
     }
 
     private fun configureSummaryBinStat(options: OptionsAccessor): SummaryBinStat {
-        val (lq, mq, uq) = getSummaryQuantiles(options)
         val (yAggFun, yMinFun, yMaxFun) = getSummaryAggFunctions(options)
 
         val boundary = options.getDouble(Bin.BOUNDARY)
@@ -440,8 +438,7 @@ object StatProto {
             options.getDouble(Bin.BINWIDTH),
             xPosKind,
             xPos,
-            yAggFun, yMinFun, yMaxFun,
-            lq, mq, uq
+            yAggFun, yMinFun, yMaxFun
         )
     }
 

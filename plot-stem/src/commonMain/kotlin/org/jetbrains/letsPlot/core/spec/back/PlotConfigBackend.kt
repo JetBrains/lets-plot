@@ -133,12 +133,10 @@ open class PlotConfigBackend(
         }
 
         return layerConfigs.mapIndexed { layerIndex, layerConfig ->
-            val mappedStatVariables =
-                layerConfig.varBindings.map(VarBinding::variable).filter(DataFrame.Variable::isStat)
             applyLayerStatistic(
                 layerConfig,
                 layerData = dataByLayer[layerIndex],
-                ConfiguredStatContext(dataByLayer, transformByAes, mappedStatVariables),
+                ConfiguredStatContext(dataByLayer, transformByAes),
             ) { message ->
                 layerMessageHandler(layerIndex, message)
             }
