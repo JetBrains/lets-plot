@@ -26,25 +26,31 @@ object Colors {
         "very_light_gray" to Color.VERY_LIGHT_GRAY,
         "very_light_yellow" to Color.VERY_LIGHT_YELLOW
     )
-    private val namedColors = mapOf<String, Color>(
-        "white" to Color.WHITE,
-        "black" to Color.BLACK,
-        "gray" to Color.GRAY,
-        "red" to Color.RED,
-        "green" to Color.GREEN,
-        "blue" to Color.BLUE,
-        "yellow" to Color.YELLOW,
-        "magenta" to Color.MAGENTA,
-        "cyan" to Color.CYAN,
-        "orange" to Color.ORANGE,
-        "pink" to Color.PINK
-    ) +
+    private val namedColors = (
+        mapOf<String, Color>(
+            "white" to Color.WHITE,
+            "black" to Color.BLACK,
+            "gray" to Color.GRAY,
+            "red" to Color.RED,
+            "green" to Color.GREEN,
+            "blue" to Color.BLUE,
+            "yellow" to Color.YELLOW,
+            "magenta" to Color.MAGENTA,
+            "cyan" to Color.CYAN,
+            "orange" to Color.ORANGE,
+            "pink" to Color.PINK
+        ) +
             // light_gray
             variantColors +
             // light-gray
             variantColors.mapKeys { it.key.replace('_', '-') } +
             // lightgray
             variantColors.mapKeys { it.key.replace("_", "") }
+    )
+        .run {
+            // ***grey
+            this + mapKeys { it.key.replace("gray", "grey") }
+        }
 
 
     /**
