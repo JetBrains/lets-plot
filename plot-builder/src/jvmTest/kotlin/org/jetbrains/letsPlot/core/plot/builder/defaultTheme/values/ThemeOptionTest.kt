@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.applyFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FONT_FACE
@@ -18,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.spec.getString
 import kotlin.test.Test
 
 internal class ThemeOptionTest {
@@ -25,8 +27,8 @@ internal class ThemeOptionTest {
     @Test
     fun checkElements() {
         for (themeName in themeNames) {
-            val themeValues = ThemeValues.forName(themeName)
-            val theme = DefaultTheme(themeValues.values)
+            val themeValues = themeValues(themeName, withFlavor = true)
+            val theme = DefaultTheme(themeValues)
 
             for (elem in elemWithColorAndSize + elemWithColorOnly + elemWithFill) {
                 val elemKey = accessKeyForOption(theme, elem)
@@ -48,8 +50,8 @@ internal class ThemeOptionTest {
     @Test
     fun checkOptions() {
         for (themeName in themeNames) {
-            val themeValues = ThemeValues.forName(themeName)
-            val theme = DefaultTheme(themeValues.values)
+            val themeValues = themeValues(themeName, withFlavor = false)
+            val theme = DefaultTheme(themeValues)
 
             for (option in numericOptions) {
                 val optionKey = accessKeyForOption(theme, option)
@@ -59,8 +61,8 @@ internal class ThemeOptionTest {
     }
 
     private fun checkElemProperty(theme: String, elemKey: List<String>, elemProperty: String) {
-        val themeValues = ThemeValues.forName(theme)
-        val access = object : ThemeValuesAccess(themeValues.values, DefaultFontFamilyRegistry()) {
+        val themeValues = themeValues(theme, withFlavor = true)
+        val access = object : ThemeValuesAccess(themeValues, DefaultFontFamilyRegistry()) {
             fun check() {
                 when (elemProperty) {
                     COLOR, FILL -> this.getColor(getElemValue(elemKey), elemProperty)
@@ -78,14 +80,14 @@ internal class ThemeOptionTest {
     }
 
     private fun checkNumericOption(theme: String, optionKey: List<String>) {
-        val themeValues = ThemeValues.forName(theme)
-        val acccess = object : ThemeValuesAccess(themeValues.values, DefaultFontFamilyRegistry()) {
+        val themeValues = themeValues(theme, withFlavor = false)
+        val access = object : ThemeValuesAccess(themeValues, DefaultFontFamilyRegistry()) {
             fun check() {
                 this.getNumber(optionKey)
             }
         }
         try {
-            acccess.check()
+            access.check()
         } catch (e: Exception) {
             throw RuntimeException("Numeric failed. Theme: '$theme', option: $optionKey", e)
         }
@@ -150,6 +152,16 @@ internal class ThemeOptionTest {
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
+        }
+    }
+
+    private fun themeValues(themeName: String, withFlavor: Boolean): Map<String, Any> {
+        return ThemeValues.forName(themeName).values.let { baseValues ->
+            if (withFlavor) {
+                val flavorName = baseValues.getString(ThemeOption.FLAVOR) ?: error("Flavor name should be specified")
+                applyFlavor(baseValues, flavorName)
+            } else
+                baseValues
         }
     }
 }

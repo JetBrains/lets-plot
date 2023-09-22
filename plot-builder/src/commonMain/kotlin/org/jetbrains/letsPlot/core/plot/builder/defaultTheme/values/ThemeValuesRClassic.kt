@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
@@ -21,48 +23,39 @@ class ThemeValuesRClassic : ThemeValues(VALUES) {
 
     companion object {
 
-        private val PLOT_BACKGROUND = Color.WHITE
-
-        private val BLACK: Color = Color.parseHex("#171717")
-        private val DARK_GREY: Color = Color.parseHex("#474747")
-        private val LIGHT_GREY: Color = Color.parseHex("#E9E9E9")
-
-//        private val BLACK: Color = Color.GREEN
-//        private val DARK_GREY: Color = Color.RED
-//        private val LIGHT_GREY: Color = Color.ORANGE
-
         private val VALUES: Map<String, Any> = ThemeValuesBase() + mapOf(
-
             LINE to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to SymbolicColor.BLACK
             ),
 
             RECT to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.FILL to SymbolicColor.GREY_3
             ),
 
             TEXT to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to SymbolicColor.BLACK
             ),
 
             PANEL_BKGR_RECT to ELEMENT_BLANK,
             PANEL_GRID to mapOf(
                 Elem.BLANK to true,
-                Elem.COLOR to LIGHT_GREY
+                Elem.COLOR to SymbolicColor.GREY_1,
             ),
 
             AXIS to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to SymbolicColor.BLACK,
             ),
-
             AXIS_TOOLTIP to mapOf(
-                Elem.COLOR to PLOT_BACKGROUND,
-                Elem.FILL to DARK_GREY,
+                Elem.COLOR to SymbolicColor.WHITE,
+                Elem.FILL to SymbolicColor.BLACK,
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.FILL to PLOT_BACKGROUND,
+                Elem.FILL to SymbolicColor.WHITE,
             ),
+
+            FLAVOR to Flavor.BASE,
         )
     }
 }

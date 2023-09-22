@@ -5,16 +5,17 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.applyFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.Option.Theme.FLAVOR
 import org.jetbrains.letsPlot.core.spec.getString
 
 class ThemeConfig constructor(
@@ -27,7 +28,7 @@ class ThemeConfig constructor(
     init {
 
         val themeName = themeSettings.getOrElse(Option.Meta.NAME) { ThemeOption.Name.LP_MINIMAL }.toString()
-        val baselineValues = ThemeValues.forName(themeName)
+        val baselineValues = ThemeValues.forName(themeName).values
 
         // Make sure all values are converted to proper objects.
         @Suppress("NAME_SHADOWING")
@@ -36,16 +37,12 @@ class ThemeConfig constructor(
             value = convertMargins(value)
             LegendThemeConfig.convertValue(key, value)
         }
+        val flavorName = themeSettings.getString(FLAVOR)
+            ?: baselineValues.getString(FLAVOR)
+            ?: ThemeOption.Flavor.BASE
 
-      // User specific options will be applied to the combination of named theme and flavor options
-        val effectiveOptions = baselineValues.values.let {
-            val flavorName = themeSettings.getString(FLAVOR)
-            if (flavorName != null) {
-                ThemeFlavor.forName(flavorName).updateColors(it)
-            } else {
-                it
-            }
-        }.mergeWith(userOptions)
+        val effectiveOptions = applyFlavor(baselineValues, flavorName)
+            .mergeWith(userOptions)
 
         theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
     }
