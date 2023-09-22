@@ -158,9 +158,8 @@ internal class ThemeOptionTest {
     private fun themeValues(themeName: String, withFlavor: Boolean): Map<String, Any> {
         return ThemeValues.forName(themeName).values.let { baseValues ->
             if (withFlavor) {
-                val flavorName = baseValues.getString(ThemeOption.FLAVOR)
-                requireNotNull(flavorName) { "Flavor name should be specified"}
-                baseValues.applyFlavor(flavorName)
+                val flavorName = baseValues.getString(ThemeOption.FLAVOR) ?: error("Flavor name should be specified")
+                applyFlavor(baseValues, flavorName)
             } else
                 baseValues
         }

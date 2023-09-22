@@ -13,16 +13,15 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.
 
 object ThemeFlavorUtil {
 
-    fun Map<String, Any>.applyFlavor(flavorName: String): Map<String, Any> {
+    fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
         val flavor = createFlavor(flavorName)
 
-        return mapValues { (parameter, options) ->
+        return themeSettings.mapValues { (parameter, options) ->
             if (options is Map<*, *>) {
                 options.mapValues { (key, value) ->
                     if (value is SymbolicColor) {
-                        val color = flavor.symbolicColors[value]
-                        requireNotNull(color) { "Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'" }
-                        color
+                        flavor.symbolicColors[value]
+                            ?: "Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'"
                     } else {
                         value
                     }

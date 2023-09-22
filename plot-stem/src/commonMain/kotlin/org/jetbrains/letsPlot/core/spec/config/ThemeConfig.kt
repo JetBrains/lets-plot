@@ -41,8 +41,7 @@ class ThemeConfig constructor(
             ?: baselineValues.getString(FLAVOR)
             ?: ThemeOption.Flavor.BASE
 
-        val effectiveOptions = baselineValues
-            .applyFlavor(flavorName)
+        val effectiveOptions = applyFlavor(baselineValues, flavorName)
             .mergeWith(userOptions)
 
         theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
