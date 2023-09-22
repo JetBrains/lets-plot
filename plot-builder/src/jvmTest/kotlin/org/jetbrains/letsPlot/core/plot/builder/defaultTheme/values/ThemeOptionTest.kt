@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.commons.intern.json.getString
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.applyFlavor
@@ -20,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.spec.getString
 import kotlin.test.Test
 
 internal class ThemeOptionTest {
@@ -159,6 +159,7 @@ internal class ThemeOptionTest {
         return ThemeValues.forName(themeName).values.let { baseValues ->
             if (withFlavor) {
                 val flavorName = baseValues.getString(ThemeOption.FLAVOR)
+                requireNotNull(flavorName) { "Flavor name should be specified"}
                 baseValues.applyFlavor(flavorName)
             } else
                 baseValues
