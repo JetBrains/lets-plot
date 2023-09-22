@@ -17,17 +17,16 @@ object ThemeFlavorUtil {
         val flavor = createFlavor(flavorName)
 
         return themeSettings.mapValues { (parameter, options) ->
-            if (options is Map<*, *>) {
-                options.mapValues { (key, value) ->
-                    if (value is SymbolicColor) {
-                        flavor.symbolicColors[value]
-                            ?: "Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'"
-                    } else {
-                        value
-                    }
+            if (options !is Map<*, *>) {
+                return@mapValues options
+            }
+            options.mapValues { (key, value) ->
+                when (value) {
+                    !is SymbolicColor -> value
+                    else -> flavor.symbolicColors[value]
+                        ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'")
+
                 }
-            } else {
-                options
             }
         }
             .mergeWith(flavor.specialColors)
