@@ -27,6 +27,10 @@ class AdaptiveResampler<T> private constructor(
         fun <T> generic(transform: (T) -> T?, precision: Double, adapter: DataAdapter<T>): AdaptiveResampler<T> {
             return AdaptiveResampler(transform, precision, adapter)
         }
+
+        fun resample(points: List<DoubleVector>, precision: Double, transform: (DoubleVector) -> DoubleVector?): List<DoubleVector> {
+            return forDoubleVector(transform, precision).resample(points)
+        }
     }
     private val precisionSqr: Double = precision * precision
 

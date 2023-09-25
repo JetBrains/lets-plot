@@ -31,9 +31,10 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
+        isLinearCoordSystem: Boolean,
         theme: Theme
     ): GeomInteraction {
-        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, theme).build()
+        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, isLinearCoordSystem, theme).build()
     }
 
     internal fun createGeomInteractionBuilder(
@@ -41,12 +42,14 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
+        isLinearCoordSystem: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind = layerConfig.geomProto.geomKind,
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
+            isLinearCoordSystem = isLinearCoordSystem,
             multilayerWithTooltips = multilayerWithTooltips,
             definedAesList = layerConfig.varBindings.map(VarBinding::aes) + layerConfig.constantsMap.keys
         )
@@ -120,6 +123,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
+        isLinearCoordSystem: Boolean,
         multilayerWithTooltips: Boolean,
         definedAesList: List<Aes<*>>,
     ): GeomTooltipSetup {
@@ -127,6 +131,7 @@ object GeomInteractionUtil {
             geomKind,
             statKind,
             isCrosshairEnabled,
+            isLinearCoordSystem,
             definedAesList
         ).let {
             var multilayerLookup = false
@@ -157,8 +162,16 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
+        isLinearCoordSystem: Boolean,
         definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
+        if (!isLinearCoordSystem) {
+            return GeomTooltipSetup.bivariateFunction(
+                GeomTooltipSetup.AREA_GEOM,
+                axisTooltipVisibilityFromConfig = true
+            )
+        }
+
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
                 GeomKind.POINT,

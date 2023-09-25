@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 
-class CoordinatesMapper private constructor(
+class CoordinatesMapper(
     val hScaleMapper: ScaleMapper<Double>,
     val vScaleMapper: ScaleMapper<Double>,
     val clientBounds: DoubleRectangle,
@@ -19,6 +19,8 @@ class CoordinatesMapper private constructor(
     private val flipAxis: Boolean,
 ) {
     private var cachedUnitSize: DoubleVector? = null
+
+    val isLinear: Boolean = !projection.nonlinear
 
     fun toClient(p: DoubleVector): DoubleVector? {
         val projected = projection.project(p)

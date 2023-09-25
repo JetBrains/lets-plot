@@ -10,7 +10,8 @@ from .core import FeatureSpec
 __all__ = ['coord_cartesian',
            'coord_fixed',
            'coord_map',
-           'coord_flip'
+           'coord_flip',
+           'coord_polar'
            ]
 
 
@@ -188,6 +189,10 @@ def coord_flip(xlim=None, ylim=None):
     """
 
     return _coord('flip', xlim=xlim, ylim=ylim, flip=True)
+
+
+def coord_polar(theta=None, start=None, direction=None, clip=None):
+    return _coord('polar', theta=theta, start=start, direction=direction, clip=clip)
 
 
 def _coord(name, **other):

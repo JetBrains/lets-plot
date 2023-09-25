@@ -9,6 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 interface CoordinateSystem {
+    val isLinear: Boolean
+
     fun toClient(p: DoubleVector): DoubleVector?
 
     fun toClient(r: DoubleRectangle): DoubleRectangle? {

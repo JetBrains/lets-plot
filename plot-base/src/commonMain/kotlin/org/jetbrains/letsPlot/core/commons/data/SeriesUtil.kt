@@ -53,6 +53,13 @@ object SeriesUtil {
             defaultValue
     }
 
+    fun finiteOrNull(v: Double?): Double? {
+        return if (v != null && v.isFinite())
+            v
+        else
+            null
+    }
+
     fun isFinite(v: Double): Boolean {
         return v.isFinite()
     }
