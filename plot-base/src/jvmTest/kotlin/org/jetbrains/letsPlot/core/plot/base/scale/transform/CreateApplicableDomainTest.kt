@@ -49,7 +49,7 @@ internal class CreateApplicableDomainTest(
         @JvmStatic
         @Parameterized.Parameters
         fun params(): List<Array<Any>> {
-            return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10()
+            return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10() + paramsLog2()
         }
 
         private fun paramsIdentity(): List<Array<Any>> {
@@ -157,6 +157,40 @@ internal class CreateApplicableDomainTest(
             )
         }
 
+        private fun paramsLog2(): List<Array<Any>> {
+            return listOf(
+                arrayOf(
+                    Transforms.LOG2,
+                    0.0,
+                    DoubleSpan(LogTransform.calcLowerLimDomain(2.0), 0.5)
+                ),
+                arrayOf(
+                    Transforms.LOG2,
+                    -5.0,
+                    DoubleSpan(0.5, 1.5)
+                ),
+                arrayOf(
+                    Transforms.LOG2,
+                    Double.NaN,
+                    DoubleSpan(0.5, 1.5)
+                ),
+                arrayOf(
+                    Transforms.LOG2,
+                    0.3,
+                    DoubleSpan(0.15, 0.8)
+                ),
+                arrayOf(
+                    Transforms.LOG2,
+                    2.0.pow(50),
+                    DoubleSpan(1.1258999068426235E15, 1.1258999068426235E15)
+                ),
+                arrayOf(
+                    Transforms.LOG2,
+                    2.0.pow(-50),
+                    DoubleSpan(4.440892098500626E-16, 0.5)
+                ),
+            )
+        }
 
         private fun assertEqualRanges(expected: DoubleSpan, actual: DoubleSpan, message: String) {
             fun almostEqual(v0: Double, v1: Double): Boolean {

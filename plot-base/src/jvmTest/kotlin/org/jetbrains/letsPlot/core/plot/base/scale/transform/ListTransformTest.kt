@@ -67,19 +67,24 @@ internal class ListTransformTest(
                 arrayOf(
                     Transforms.LOG10, false,
                     input,
-                    trimInfinity(input.map { it?.let { log10(it) } })
+                    trimInfinity(input.map { it?.let { log10(it) } }, 10.0)
+                ),
+                arrayOf(
+                    Transforms.LOG2, false,
+                    input,
+                    trimInfinity(input.map { it?.let { log2(it) } }, 2.0)
                 ),
             )
 
         }
 
-        private fun trimInfinity(l: List<Double?>): List<Double?> {
+        private fun trimInfinity(l: List<Double?>, base: Double): List<Double?> {
             return l.map {
                 it?.let {
                     if (it.isNaN()) {
                         Double.NaN
                     } else {
-                        max(LogTransform.calcLowerLimTransformed(10.0), it)
+                        max(LogTransform.calcLowerLimTransformed(base), it)
                     }
                 }
             }
