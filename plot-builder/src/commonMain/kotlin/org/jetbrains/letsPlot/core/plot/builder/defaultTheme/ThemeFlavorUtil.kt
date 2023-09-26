@@ -73,7 +73,7 @@ object ThemeFlavorUtil {
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
-                        Elem.COLOR to Color.BLACK,
+                        Elem.COLOR to DARK_GREY,
                         Elem.FILL to Color.WHITE
                     ),
                     ThemeOption.RECT to mapOf(
@@ -97,7 +97,7 @@ object ThemeFlavorUtil {
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
-                        Elem.COLOR to Color.BLACK,
+                        Elem.COLOR to DARK_GREY,
                         Elem.FILL to Color.WHITE
                     )
                 ),
@@ -118,7 +118,7 @@ object ThemeFlavorUtil {
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
-                        Elem.COLOR to Color.BLACK,
+                        Elem.COLOR to DARK_GREY,
                         Elem.FILL to Color.WHITE
                     )
                 ),
@@ -139,7 +139,7 @@ object ThemeFlavorUtil {
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
-                        Elem.COLOR to Color.BLACK,
+                        Elem.COLOR to DARK_GREY,
                         Elem.FILL to Color.WHITE
                     )
                 ),
