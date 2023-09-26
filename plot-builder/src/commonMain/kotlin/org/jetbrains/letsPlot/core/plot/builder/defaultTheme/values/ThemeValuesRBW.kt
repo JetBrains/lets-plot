@@ -41,7 +41,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
             ),
 
             PANEL_BKGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
                 Elem.FILL to SymbolicColor.WHITE,
             ),
             PANEL_GRID to mapOf(
@@ -57,7 +57,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             AXIS_LINE to ELEMENT_BLANK,
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
             ),
 
             AXIS_TOOLTIP to mapOf(
@@ -67,7 +67,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
                 Elem.FILL to SymbolicColor.GREY_2,
             ),
 

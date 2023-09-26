@@ -39,6 +39,7 @@ object ThemeFlavorUtil {
         GREY_1,  // 'panel_grid' in themes
         GREY_2,  // facet 'strip_background'
         GREY_3,  // 'panel_background'
+        GREY_4,  // borders in 'light' and 'bw' theme
         ;
     }
 
@@ -60,6 +61,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to LIGHT_GREY,
                     SymbolicColor.GREY_2 to LIGHT_GREY,
                     SymbolicColor.GREY_3 to LIGHT_GREY,
+                    SymbolicColor.GREY_4 to LIGHT_GREY,
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -80,7 +82,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to LIGHT_GREY,
                     SymbolicColor.GREY_2 to GREY85,
                     SymbolicColor.GREY_3 to parseHex("#EBEBEB"),
-
+                    SymbolicColor.GREY_4 to DARK_GREY,
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -98,6 +100,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to LIGHT_GREY,
                     SymbolicColor.GREY_2 to GREY85,
                     SymbolicColor.GREY_3 to Color.WHITE,
+                    SymbolicColor.GREY_4 to parseHex("#C9C9C9"),
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -121,6 +124,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to LIGHT_GREY,
                     SymbolicColor.GREY_2 to GREY85,
                     SymbolicColor.GREY_3 to Color.WHITE,
+                    SymbolicColor.GREY_4 to parseHex("#333333"),
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -146,6 +150,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to parseHex("#474747"),
                     SymbolicColor.GREY_2 to parseHex("#363636"),
                     SymbolicColor.GREY_3 to parseHex("#3B3B3B"),
+                    SymbolicColor.GREY_4 to parseHex("#BBBBBB"),
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -162,6 +167,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to parseHex("#D7D4CB"),
                     SymbolicColor.GREY_2 to parseHex("#E6DFCA"),
                     SymbolicColor.GREY_3 to parseHex("#EEE8D5"),
+                    SymbolicColor.GREY_4 to parseHex("#2E4E58"),
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -178,6 +184,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to parseHex("#455458"),
                     SymbolicColor.GREY_2 to parseHex("#1F4650"),
                     SymbolicColor.GREY_3 to parseHex("#1B4854"),
+                    SymbolicColor.GREY_4 to parseHex("#A7B6BA"),
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -194,6 +201,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to parseHex("#E9E9E9"),
                     SymbolicColor.GREY_2 to parseHex("#D9D9D9"),
                     SymbolicColor.GREY_3 to parseHex("#EBEBEB"),
+                    SymbolicColor.GREY_4 to Color.BLACK,
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
@@ -210,6 +218,7 @@ object ThemeFlavorUtil {
                     SymbolicColor.GREY_1 to parseHex("#474747"),
                     SymbolicColor.GREY_2 to parseHex("#363636"),
                     SymbolicColor.GREY_3 to parseHex("#3B3B3B"),
+                    SymbolicColor.GREY_4 to Color.WHITE,
                 ),
                 specialColors = mapOf(
                     ThemeOption.TOOLTIP_RECT to mapOf(
