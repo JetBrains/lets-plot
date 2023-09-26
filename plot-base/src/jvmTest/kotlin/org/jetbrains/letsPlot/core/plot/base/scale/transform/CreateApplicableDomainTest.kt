@@ -49,7 +49,7 @@ internal class CreateApplicableDomainTest(
         @JvmStatic
         @Parameterized.Parameters
         fun params(): List<Array<Any>> {
-            return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10() + paramsLog2()
+            return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10() + paramsLog2() + paramsSymlog()
         }
 
         private fun paramsIdentity(): List<Array<Any>> {
@@ -188,6 +188,26 @@ internal class CreateApplicableDomainTest(
                     Transforms.LOG2,
                     2.0.pow(-50),
                     DoubleSpan(4.440892098500626E-16, 0.5)
+                ),
+            )
+        }
+
+        private fun paramsSymlog(): List<Array<Any>> {
+            return listOf(
+                arrayOf(
+                    Transforms.SYMLOG,
+                    0.0,
+                    DoubleSpan(-0.5, 0.5)
+                ),
+                arrayOf(
+                    Transforms.SYMLOG,
+                    -5.0,
+                    DoubleSpan(-5.5, -4.5)
+                ),
+                arrayOf(
+                    Transforms.SYMLOG,
+                    Double.NaN,
+                    DoubleSpan(-0.5, 0.5)
                 ),
             )
         }

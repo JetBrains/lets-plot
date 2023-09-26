@@ -74,6 +74,11 @@ internal class ListTransformTest(
                     input,
                     trimInfinity(input.map { it?.let { log2(it) } }, 2.0)
                 ),
+                arrayOf(
+                    Transforms.SYMLOG, false,
+                    input,
+                    input.map { it?.let(SymlogTransform::transformFun) }
+                ),
             )
 
         }
