@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
 import junit.framework.TestCase.failNotEquals
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Log10Transform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.math.*
@@ -81,7 +79,7 @@ internal class ListTransformTest(
                     if (it.isNaN()) {
                         Double.NaN
                     } else {
-                        max(Log10Transform.LOWER_LIM_TRANSFOTMED, it)
+                        max(LogTransform.calcLowerLimTransformed(10.0), it)
                     }
                 }
             }

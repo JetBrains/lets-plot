@@ -10,8 +10,6 @@ import junit.framework.TestCase.failNotEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Log10Transform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.math.abs
@@ -139,27 +137,27 @@ internal class EnsureApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG10,
                     DoubleSpan(-5.0, -5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     DoubleSpan(-5.0, 0.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     DoubleSpan(-5.0, 5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 5.0)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     DoubleSpan(0.0, 5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 5.0)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     DoubleSpan(0.0, 0.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
