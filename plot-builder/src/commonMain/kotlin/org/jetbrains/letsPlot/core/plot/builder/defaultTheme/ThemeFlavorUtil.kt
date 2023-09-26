@@ -16,7 +16,13 @@ object ThemeFlavorUtil {
     fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
         val flavor = createFlavor(flavorName)
 
-        return themeSettings.mapValues { (parameter, options) ->
+        return mapOf(
+            ThemeOption.GEOM to mapOf(
+                ThemeOption.Geom.PEN to flavor.pen,
+                ThemeOption.Geom.PAPER to flavor.paper,
+                ThemeOption.Geom.BRUSH to flavor.brush
+            )
+        ) + themeSettings.mapValues { (parameter, options) ->
             if (options !is Map<*, *>) {
                 return@mapValues options
             }
@@ -25,7 +31,6 @@ object ThemeFlavorUtil {
                     !is SymbolicColor -> value
                     else -> flavor.symbolicColors[value]
                         ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'")
-
                 }
             }
         }
@@ -45,7 +50,10 @@ object ThemeFlavorUtil {
 
     private class Flavor(
         val symbolicColors: Map<SymbolicColor, Color>,
-        val specialColors: Map<String, Map<String, Color>>
+        val specialColors: Map<String, Map<String, Color>>,
+        val pen: Color,
+        val brush: Color,
+        val paper: Color,
     )
 
     private val DARK_GREY = parseHex("#474747")
@@ -71,7 +79,10 @@ object ThemeFlavorUtil {
                     ThemeOption.RECT to mapOf(
                         Elem.FILL to LIGHT_GREY
                     ),
-                )
+                ),
+                pen = DARK_GREY,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
             )
 
             ThemeOption.Flavor.GREY -> Flavor(
@@ -88,8 +99,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to Color.BLACK,
                         Elem.FILL to Color.WHITE
-                    ),
-                )
+                    )
+                ),
+                pen = DARK_GREY,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
             )
 
             ThemeOption.Flavor.LIGHT -> Flavor(
@@ -106,14 +120,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to Color.BLACK,
                         Elem.FILL to Color.WHITE
-                    ),
-                    ThemeOption.AXIS to mapOf(
-                        Elem.COLOR to parseHex("#C9C9C9")
-                    ),
-                    ThemeOption.PANEL_BKGR_RECT to mapOf(
-                        Elem.COLOR to parseHex("#C9C9C9")
-                    ),
-                )
+                    )
+                ),
+                pen = DARK_GREY,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
             )
 
             ThemeOption.Flavor.BW -> Flavor(
@@ -130,17 +141,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to Color.BLACK,
                         Elem.FILL to Color.WHITE
-                    ),
-                    ThemeOption.PANEL_BKGR_RECT to mapOf(
-                        Elem.COLOR to parseHex("#333333")
-                    ),
-                    ThemeOption.AXIS to mapOf(
-                        Elem.COLOR to parseHex("#333333")
-                    ),
-                    ThemeOption.FACET_STRIP_BGR_RECT to mapOf(
-                        Elem.COLOR to parseHex("#333333")
-                    ),
-                )
+                    )
+                ),
+                pen = DARK_GREY,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
             )
 
             ThemeOption.Flavor.DARCULA -> Flavor(
@@ -156,8 +161,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to parseHex("#BBBBBB"),
                         Elem.FILL to parseHex("#141414")
-                    ),
-                )
+                    )
+                ),
+                pen = parseHex("#BBBBBB"),
+                brush = Color.PACIFIC_BLUE,
+                paper = parseHex("#303030")
             )
 
             ThemeOption.Flavor.SOLARIZED_LIGHT -> Flavor(
@@ -173,8 +181,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to parseHex("#2E4E58"),
                         Elem.FILL to parseHex("#FEFBF3")
-                    ),
-                )
+                    )
+                ),
+                pen = parseHex("#2E4E58"),
+                brush = Color.PACIFIC_BLUE,
+                paper = parseHex("#FDF6E3")
             )
 
             ThemeOption.Flavor.SOLARIZED_DARK -> Flavor(
@@ -190,8 +201,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to parseHex("#A7B6BA"),
                         Elem.FILL to parseHex("#0B2F3A")
-                    ),
-                )
+                    )
+                ),
+                pen = parseHex("#A7B6BA"),
+                brush = Color.PACIFIC_BLUE,
+                paper = parseHex("#0E3C4A")
             )
 
             ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> Flavor(
@@ -207,8 +221,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to Color.BLACK,
                         Elem.FILL to Color.WHITE
-                    ),
-                )
+                    )
+                ),
+                pen = Color.BLACK,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.WHITE
             )
 
             ThemeOption.Flavor.HIGH_CONTRAST_DARK -> Flavor(
@@ -224,8 +241,11 @@ object ThemeFlavorUtil {
                     ThemeOption.TOOLTIP_RECT to mapOf(
                         Elem.COLOR to Color.WHITE,
                         Elem.FILL to parseHex("#460073")
-                    ),
-                )
+                    )
+                ),
+                pen = Color.WHITE,
+                brush = Color.PACIFIC_BLUE,
+                paper = Color.BLACK
             )
 
             else -> throw IllegalArgumentException("Unsupported theme flavor: '$name'")
