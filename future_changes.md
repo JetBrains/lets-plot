@@ -4,7 +4,7 @@
 
 - New scale transformations: `'log2'` and `'symlog'`.
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/scale_transformations.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/new_scale_transformations.ipynb).
 
 ### Changed
 
