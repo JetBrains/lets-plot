@@ -33,17 +33,19 @@ class SymlogTransform : FunTransform(
         private const val SCALE = 1.0
 
         internal fun transformFun(v: Double): Double {
-            return if (abs(v) < THRESHOLD)
+            return if (abs(v) < THRESHOLD) {
                 v
-            else
+            } else {
                 sign(v) * (THRESHOLD + SCALE * log(sign(v) * v / THRESHOLD, BASE))
+            }
         }
 
         internal fun inverseFun(v: Double): Double {
-            return if (abs(v) < THRESHOLD)
+            return if (abs(v) < THRESHOLD) {
                 v
-            else
+            } else {
                 sign(v) * THRESHOLD * BASE.pow((sign(v) * v - THRESHOLD) / SCALE)
+            }
         }
     }
 }
