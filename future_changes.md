@@ -2,6 +2,10 @@
 
 ### Added
 
+- New scale transformations: `'log2'` and `'symlog'`.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/scale_transformations.ipynb).
+
 ### Changed
 
 - [BREAKING] `stat_summary()` and `stat_summary_bin` no longer supports computing of additional variables through the specifying of mappings.
