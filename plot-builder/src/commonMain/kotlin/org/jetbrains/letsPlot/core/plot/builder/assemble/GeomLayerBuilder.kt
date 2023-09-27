@@ -31,8 +31,8 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationLine
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
+import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationsProviderUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.PointDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
@@ -140,7 +140,7 @@ class GeomLayerBuilder(
         themeTextStyle: ThemeTextStyle
     ): GeomLayerBuilder {
         myAnnotationsProvider = { dataAccess, dataFrame ->
-            AnnotationLine.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
+            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
         }
         return this
     }

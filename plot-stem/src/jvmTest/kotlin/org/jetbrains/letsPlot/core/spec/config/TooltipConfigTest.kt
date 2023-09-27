@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import org.jetbrains.letsPlot.core.spec.config.TestUtil.buildPointLayer
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
@@ -27,7 +27,6 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

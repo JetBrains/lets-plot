@@ -5,13 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.base.annotations
 
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 class Annotations(
-    private val lines: List<AnnotationLineSpec>,
+    private val lines: List<LineSpec>,
     val textStyle: TextStyle
 ) {
     fun getAnnotationText(index: Int): String {
-         return lines.mapNotNull { it.getAnnotationText(index) }.joinToString("\n")
+        return lines.mapNotNull { it.getAnnotationText(index) }.joinToString("\n")
     }
 }

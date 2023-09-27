@@ -9,18 +9,17 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
-class TooltipLine(
-    label: String?,
-    pattern: String,
-    fields: List<ValueSource>
-) : LineSpec(label, pattern, fields), TooltipLineSpec {
+class LinePattern(
+    private val label: String?,
+    private val pattern: String,
+    val fields: List<ValueSource>
+) : LineSpec {
 
-    constructor(other: LineSpec) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
+    constructor(other: LinePattern) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
 
     private val myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields")
 
@@ -44,7 +43,7 @@ class TooltipLine(
         } else {
             DataPoint(
                 label = chooseLabel(dataValues.joinToString(", ") { it.label ?: "" }),
-                value = myLineFormatter.format(dataValues.map { it.value }),
+                value = myLineFormatter.format(dataValues.map(DataPoint::value)),
                 aes = null,
                 isAxis = false,
                 isSide = false
@@ -59,9 +58,19 @@ class TooltipLine(
         }
     }
 
+    override fun getAnnotationText(index: Int): String? {
+        val dataValues = fields.map { dataValue ->
+            dataValue.getAnnotationText(index) ?: return null
+        }
+        return myLineFormatter.format(dataValues.map { it })
+    }
+
     companion object {
-        fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
-            LineSpec.defaultLineForValueSource(valueSource)
+        fun defaultLineForValueSource(valueSource: ValueSource): LinePattern = LinePattern(
+            label = DEFAULT_LABEL_SPECIFIER,
+            pattern = StringFormat.valueInLinePattern(),
+            fields = listOf(valueSource)
         )
+        private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

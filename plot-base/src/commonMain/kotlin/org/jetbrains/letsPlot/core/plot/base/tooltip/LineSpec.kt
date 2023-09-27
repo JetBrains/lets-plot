@@ -7,8 +7,10 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
-interface TooltipLineSpec {
+interface LineSpec {
     fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
+
+    fun getAnnotationText(index: Int): String?
 
     class DataPoint(
         val label: String?,
