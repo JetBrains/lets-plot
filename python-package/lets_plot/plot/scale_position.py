@@ -53,7 +53,7 @@ def scale_x_continuous(name=None, *,
         Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -132,7 +132,7 @@ def scale_y_continuous(name=None, *,
         Defaults: multiplicative = 0.05, additive = 0.
     na_value
         Missing values will be replaced with this value.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
