@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
+internal class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
 
     companion object {
 

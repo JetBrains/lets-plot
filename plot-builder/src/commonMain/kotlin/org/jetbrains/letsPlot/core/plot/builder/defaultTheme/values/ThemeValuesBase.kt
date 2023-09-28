@@ -37,7 +37,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 
-open class ThemeValuesBase : ThemeValues(VALUES) {
+internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
     companion object {
 

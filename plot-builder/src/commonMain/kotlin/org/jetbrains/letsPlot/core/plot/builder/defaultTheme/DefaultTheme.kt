@@ -49,10 +49,8 @@ class DefaultTheme(
 
     companion object {
         // For demo and tests
-        fun minimal2() = withBaseFlavor(ThemeValuesLPMinimal2().values)
-
-        fun withBaseFlavor(themeValues: Map<String, Any>) = DefaultTheme(
-            ThemeFlavorUtil.applyFlavor(themeValues, Flavor.BASE)
+        fun minimal2() = DefaultTheme(
+            ThemeFlavorUtil.applyFlavor(ThemeValuesLPMinimal2().values, Flavor.BASE)
         )
     }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class ThemeValuesRClassic : ThemeValues(VALUES) {
+internal class ThemeValuesRClassic : ThemeValues(VALUES) {
 
     companion object {
 

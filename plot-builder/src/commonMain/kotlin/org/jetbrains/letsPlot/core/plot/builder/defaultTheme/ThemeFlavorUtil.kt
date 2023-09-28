@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 
-object ThemeFlavorUtil {
+internal object ThemeFlavorUtil {
 
     fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
         val flavor = createFlavor(flavorName)

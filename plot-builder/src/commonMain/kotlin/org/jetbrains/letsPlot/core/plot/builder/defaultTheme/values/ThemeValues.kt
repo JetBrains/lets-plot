@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-abstract class ThemeValues(
+internal abstract class ThemeValues(
     val values: Map<String, Any>
 ) {
     operator fun plus(other: Map<String, Any>): Map<String, Any> {

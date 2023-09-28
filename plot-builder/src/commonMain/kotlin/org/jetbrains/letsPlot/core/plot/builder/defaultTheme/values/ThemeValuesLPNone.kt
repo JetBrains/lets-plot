@@ -5,5 +5,5 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-class ThemeValuesLPNone : ThemeValuesBase()
+internal class ThemeValuesLPNone : ThemeValuesBase()
 
