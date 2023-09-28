@@ -27,7 +27,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.TILE] = GeomProvider.tile()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
-        PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
         PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
@@ -35,7 +34,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
         PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
         PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
-        PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
         PROVIDER[GeomKind.AREA] = GeomProvider.area()
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
@@ -96,33 +94,34 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
-                // Horizontal or vertical
-                val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-                val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-                require(!(isVertical && isHorizontal)) {
-                    "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
-                }
-
-                ErrorBarGeom(isVertical)
+                ErrorBarGeom(isVertical(ctx, geomKind.name))
             }
 
-            GeomKind.CROSS_BAR -> GeomProvider.crossBar {
-                val geom = CrossBarGeom()
+            GeomKind.LINE_RANGE -> GeomProvider.lineRange { ctx ->
+                LineRangeGeom(isVertical(ctx, geomKind.name))
+            }
+
+            GeomKind.RIBBON -> GeomProvider.ribbon { ctx ->
+                RibbonGeom(isVertical(ctx, geomKind.name))
+            }
+
+            GeomKind.CROSS_BAR -> GeomProvider.crossBar { ctx ->
+                val geom = CrossBarGeom(isVertical(ctx, geomKind.name))
                 if (layerConfig.hasOwn(Option.Geom.CrossBar.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.CrossBar.FATTEN)!!
                 }
                 geom
             }
 
-            GeomKind.POINT_RANGE -> GeomProvider.pointRange {
-                val geom = PointRangeGeom()
+            GeomKind.POINT_RANGE -> GeomProvider.pointRange {ctx ->
+                val geom = PointRangeGeom(isVertical(ctx, geomKind.name))
                 if (layerConfig.hasOwn(Option.Geom.PointRange.FATTEN)) {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
                 }
                 geom
             }
 
-            GeomKind.BOX_PLOT -> GeomProvider.boxplot {
+            GeomKind.BOX_PLOT -> GeomProvider.boxplot { ctx ->
                 val geom = BoxplotGeom()
                 if (layerConfig.hasOwn(Option.Geom.Boxplot.FATTEN)) {
                     geom.fattenMidline = layerConfig.getDouble(Option.Geom.Boxplot.FATTEN)!!
@@ -352,4 +351,15 @@ internal object GeomProviderFactory {
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }
+
+    private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
+        // Horizontal or vertical
+        val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+        val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+        require(!(isVertical && isHorizontal)) {
+            "Either ymin, ymax or xmin, xmax must be specified for the $geomName."
+        }
+        return isVertical
+    }
+
 }

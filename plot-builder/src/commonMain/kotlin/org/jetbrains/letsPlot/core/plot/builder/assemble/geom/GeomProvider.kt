@@ -107,11 +107,12 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun lineRange(): GeomProvider {
+        fun lineRange(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LINE_RANGE,
-                LineRangeGeom.HANDLES_GROUPS
-            ) { LineRangeGeom() }
+                LineRangeGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
         fun pointRange(supplier: (Context) -> Geom): GeomProvider {
@@ -210,11 +211,12 @@ class GeomProvider internal constructor(
             ) { LiveMapGeom() }
         }
 
-        fun ribbon(): GeomProvider {
+        fun ribbon(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.RIBBON,
-                RibbonGeom.HANDLES_GROUPS
-            ) { RibbonGeom() }
+                RibbonGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
         fun area(): GeomProvider {
