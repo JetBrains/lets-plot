@@ -8,20 +8,25 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
+import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 
-object ThemeOptionsUtil {
+class ThemeBuilder(
+    private val themeName: String,
+    private val userOptions: Map<String, Any> = emptyMap(),
+    private val fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry()
+) {
+    fun build(): DefaultTheme {
 
-    fun prepareThemeOptions(
-        themeName: String,
-        userOptions: Map<String, Any>
-    ): Map<String, Any> {
         val baselineValues = ThemeValues.forName(themeName).values
 
         val flavorName = userOptions[ThemeOption.FLAVOR] as? String
             ?: baselineValues[ThemeOption.FLAVOR] as? String
             ?: error("Flavor name should be specified")
 
-        return ThemeFlavorUtil.applyFlavor(baselineValues, flavorName)
+        val effectiveOptions = ThemeFlavorUtil.applyFlavor(baselineValues, flavorName)
             .mergeWith(userOptions)
+
+        return DefaultTheme(effectiveOptions, fontFamilyRegistry)
     }
 }

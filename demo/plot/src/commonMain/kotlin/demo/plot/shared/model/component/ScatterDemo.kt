@@ -34,7 +34,7 @@ import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
 import demo.plot.common.model.SimpleDemoBase
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeOptionsUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeBuilder
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 
 open class ScatterDemo : SimpleDemoBase() {
@@ -47,12 +47,7 @@ open class ScatterDemo : SimpleDemoBase() {
         )
     }
 
-    private fun classicTheme() = DefaultTheme(
-        ThemeOptionsUtil.prepareThemeOptions(
-            ThemeOption.Name.LP_MINIMAL,
-            userOptions = emptyMap()
-        )
-    )
+    private fun classicTheme() = ThemeBuilder(ThemeOption.Name.R_CLASSIC).build()
 
     private fun gauss(): GroupComponent {
         val count = 200

@@ -6,8 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeOptionsUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeBuilder
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
@@ -32,9 +31,7 @@ class ThemeConfig constructor(
             LegendThemeConfig.convertValue(key, value)
         }
 
-        val effectiveOptions = ThemeOptionsUtil.prepareThemeOptions(themeName, userOptions)
-
-        theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
+        theme = ThemeBuilder(themeName, userOptions, fontFamilyRegistry).build()
     }
 
     companion object {
