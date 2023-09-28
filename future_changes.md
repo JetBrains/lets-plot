@@ -2,6 +2,10 @@
 
 ### Added
 
+- New scale transformations: `'log2'` and `'symlog'`.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/new_scale_transformations.ipynb).
+
 - Horizontal orientation by assigning y, xmin, xmax aesthetics of geoms:
   - `geom_errorbar()`;
   - `geom_crossbar()`;

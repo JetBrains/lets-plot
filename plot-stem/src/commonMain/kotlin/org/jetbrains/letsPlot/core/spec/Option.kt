@@ -812,6 +812,8 @@ object Option {
     object TransformName {
         const val IDENTITY = "identity"
         const val LOG10 = "log10"
+        const val LOG2 = "log2"
+        const val SYMLOG = "symlog"
         const val REVERSE = "reverse"
         const val SQRT = "sqrt"
     }

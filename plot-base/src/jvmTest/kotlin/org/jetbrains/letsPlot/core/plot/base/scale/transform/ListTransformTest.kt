@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
 import junit.framework.TestCase.failNotEquals
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Log10Transform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.math.*
@@ -69,19 +67,29 @@ internal class ListTransformTest(
                 arrayOf(
                     Transforms.LOG10, false,
                     input,
-                    trimInfinity(input.map { it?.let { log10(it) } })
+                    trimInfinity(input.map { it?.let { log10(it) } }, 10.0)
+                ),
+                arrayOf(
+                    Transforms.LOG2, false,
+                    input,
+                    trimInfinity(input.map { it?.let { log2(it) } }, 2.0)
+                ),
+                arrayOf(
+                    Transforms.SYMLOG, false,
+                    input,
+                    input.map { it?.let(SymlogTransform::transformFun) }
                 ),
             )
 
         }
 
-        private fun trimInfinity(l: List<Double?>): List<Double?> {
+        private fun trimInfinity(l: List<Double?>, base: Double): List<Double?> {
             return l.map {
                 it?.let {
                     if (it.isNaN()) {
                         Double.NaN
                     } else {
-                        max(Log10Transform.LOWER_LIM_TRANSFOTMED, it)
+                        max(LogTransform.calcLowerLimTransformed(base), it)
                     }
                 }
             }
