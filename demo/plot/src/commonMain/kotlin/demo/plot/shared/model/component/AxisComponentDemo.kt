@@ -5,6 +5,8 @@
 
 package demo.plot.shared.model.component
 
+import demo.plot.common.model.SimpleDemoBase
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
@@ -20,7 +22,6 @@ import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
@@ -147,15 +148,16 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 breaksData = AxisUtil.breaksData(
                     scale.getScaleBreaks(), /*scaleMapper, */
                     coord,
+                    DoubleRectangle.XYWH(0, 0, DEMO_BOX_SIZE.x, DEMO_BOX_SIZE.y),
                     flipAxis = false,
                     orientation.isHorizontal
                 ),
-                gridLineLength = 100.0,
-                gridLineDistance = 0.0,
+                //gridLineLength = 100.0,
+                //gridLineDistance = 0.0,
                 axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(
                     flipAxis = false
                 ),
-                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
+                //gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
             )
 
             return axis

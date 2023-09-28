@@ -31,8 +31,11 @@ internal class PolarCoordProvider(
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
-        // No adjustment needed.
-        return geomSize
+        return if (geomSize.x < geomSize.y) {
+            DoubleVector(geomSize.x, geomSize.x)
+        } else {
+            DoubleVector(geomSize.y, geomSize.y)
+        }
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
@@ -70,7 +73,7 @@ internal class PolarCoordProvider(
         val polarProjection = object : Projection {
             override val nonlinear: Boolean = true
 
-            override fun project(v: DoubleVector): DoubleVector? {
+            override fun project(v: DoubleVector): DoubleVector {
                 val (r, phi) = scaler(v.add(norm))
                 checkNotNull(r)
                 checkNotNull(phi)
@@ -80,7 +83,7 @@ internal class PolarCoordProvider(
                 return center.add(DoubleVector(x, y))
             }
 
-            override fun invert(v: DoubleVector): DoubleVector? = TODO("Not yet implemented")
+            override fun invert(v: DoubleVector): DoubleVector = TODO("Not yet implemented")
             override fun validDomain(): DoubleRectangle = TODO("Not yet implemented")
 
         }

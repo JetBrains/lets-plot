@@ -16,13 +16,10 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil
-import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
-import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
+import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
@@ -85,18 +82,30 @@ internal class SquareFrameOfReference(
         if (drawHAxis || drawGridlines) {
             // Top/Bottom axis
             listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                if (drawGridlines) {
+                    val gridComponent = buildGrid(
+                        scaleBreaks = hScaleBreaks,
+                        info = axisInfo,
+                        coord = coord,
+                        domain = adjustedDomain,
+                        flipAxis = flipAxis,
+                        gridTheme = hGridTheme,
+                    )
+
+                    val gridBounds = marginsLayout.toOuterBounds(geomBounds)
+                    gridComponent.moveTo(gridBounds.origin)
+                    parent.add(gridComponent)
+                }
+
                 val axisComponent = buildAxis(
-                    hScaleBreaks,
-                    axisInfo,
+                    scaleBreaks = hScaleBreaks,
+                    info = axisInfo,
                     hideAxis = !drawHAxis,
                     hideAxisBreaks = !layoutInfo.hAxisShown,
-                    hideGridlines = !drawGridlines,
-                    coord,
-                    flipAxis,
-                    hAxisTheme,
-                    hGridTheme,
-                    gridLineLength = geomBounds.height,
-                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
+                    coord = coord,
+                    domain = adjustedDomain,
+                    flipAxis = flipAxis,
+                    axisTheme = hAxisTheme,
                     isDebugDrawing
                 )
 
@@ -110,18 +119,30 @@ internal class SquareFrameOfReference(
         if (drawVAxis || drawGridlines) {
             // Left/Right axis
             listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                if (drawGridlines) {
+                    val gridComponent = buildGrid(
+                        scaleBreaks = vScaleBreaks,
+                        info = axisInfo,
+                        coord = coord,
+                        domain = adjustedDomain,
+                        flipAxis = flipAxis,
+                        gridTheme = vGridTheme,
+                    )
+
+                    val gridBounds = marginsLayout.toOuterBounds(geomBounds)
+                    gridComponent.moveTo(gridBounds.origin)
+                    parent.add(gridComponent)
+                }
+
                 val axisComponent = buildAxis(
                     vScaleBreaks,
                     axisInfo,
                     hideAxis = !drawVAxis,
                     hideAxisBreaks = !layoutInfo.vAxisShown,
-                    hideGridlines = !drawGridlines,
                     coord,
+                    adjustedDomain,
                     flipAxis,
                     vAxisTheme,
-                    vGridTheme,
-                    gridLineLength = geomBounds.width,
-                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
                     isDebugDrawing
                 )
 
@@ -187,49 +208,54 @@ internal class SquareFrameOfReference(
 
 
     companion object {
+        private fun buildGrid(
+            scaleBreaks: ScaleBreaks,
+            info: AxisLayoutInfo,
+            coord: CoordinateSystem,
+            domain: DoubleRectangle,
+            flipAxis: Boolean,
+            gridTheme: PanelGridTheme,
+        ): GridComponent {
+            val breaksData = AxisUtil.breaksData(scaleBreaks, coord, domain, flipAxis, info.orientation.isHorizontal)
+
+            return GridComponent(
+                majorGrid = breaksData.majorGrid,
+                minorGrid = breaksData.minorGrid,
+                gridTheme = gridTheme
+            )
+        }
+
         private fun buildAxis(
             scaleBreaks: ScaleBreaks,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
-            hideGridlines: Boolean,
             coord: CoordinateSystem,
+            domain: DoubleRectangle,
             flipAxis: Boolean,
             axisTheme: AxisTheme,
-            gridTheme: PanelGridTheme,
-            gridLineLength: Double,
-            gridLineDistance: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
-            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
-            val orientation = info.orientation
+            //check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
+
+            val breaksData = AxisUtil.breaksData(scaleBreaks, coord, domain, flipAxis, info.orientation.isHorizontal)
+
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
-                orientation = orientation,
+                orientation = info.orientation,
                 horizontalAnchor = info.tickLabelHorizontalAnchor,
                 verticalAnchor = info.tickLabelVerticalAnchor,
                 rotationDegree = info.tickLabelRotationAngle,
                 additionalOffsets = info.tickLabelAdditionalOffsets
             )
 
-            val breaksData = org.jetbrains.letsPlot.core.plot.builder.AxisUtil.breaksData(
-                scaleBreaks,
-                coord,
-                flipAxis,
-                orientation.isHorizontal
-            )
-
             val axis = AxisComponent(
                 length = info.axisLength,
-                orientation = orientation,
+                orientation = info.orientation,
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
-                gridLineLength = gridLineLength,
-                gridLineDistance = gridLineDistance,
                 axisTheme = axisTheme,
-                gridTheme = gridTheme,
                 hideAxis = hideAxis,
-                hideAxisBreaks = hideAxisBreaks,
-                hideGridlines = hideGridlines
+                hideAxisBreaks = hideAxisBreaks
             )
 
             if (isDebugDrawing) {
@@ -318,19 +344,6 @@ internal class SquareFrameOfReference(
             val geom = layer.geom
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
-        }
-
-        private fun gridLineDistance(
-            geomInnerBounds: DoubleRectangle,
-            geomOuterBounds: DoubleRectangle,
-            orientation: Orientation
-        ): Double {
-            return when (orientation) {
-                Orientation.LEFT -> geomInnerBounds.left - geomOuterBounds.left
-                Orientation.RIGHT -> geomOuterBounds.right - geomInnerBounds.right
-                Orientation.TOP -> geomInnerBounds.top - geomOuterBounds.top
-                Orientation.BOTTOM -> geomOuterBounds.bottom - geomInnerBounds.bottom
-            }
         }
     }
 }

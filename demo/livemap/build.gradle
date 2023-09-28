@@ -63,6 +63,7 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(':platf-jfx-swing')
+                implementation project(':platf-awt')
                 implementation project(':demo-common-jfx')
             }
         }

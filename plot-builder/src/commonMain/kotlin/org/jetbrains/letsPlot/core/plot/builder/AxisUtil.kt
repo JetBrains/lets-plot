@@ -5,7 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.matchingIndices
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.pickAtIndices
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -14,58 +19,62 @@ object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
         coord: CoordinateSystem,
+        domain: DoubleRectangle,
         flipAxis: Boolean,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
-        val (breakCoords, breakLabels) = toAxisCoord(
-            scaleBreaks,
-            coord,
-            flipAxis,
-            horizontal
-        )
-        return AxisComponent.BreaksData(
-            majorBreaks = breakCoords,
-            majorLabels = breakLabels
-        )
-    }
+        fun toClient(v: DoubleVector): DoubleVector? = finiteOrNull(coord.toClient(if (flipAxis) v.flip() else v))
 
-    private fun toAxisCoord(
-        scaleBreaks: ScaleBreaks,
-        coord: CoordinateSystem,
-        flipAxis: Boolean,
-        horizontal: Boolean
-    ): Pair<List<Double>, List<String>> {
-        val breaksDataAndLabel: List<Pair<Double, String>> = scaleBreaks.transformedValues.zip(scaleBreaks.labels)
+        val majorBreakCoords = scaleBreaks.transformedValues
+        val minorBreakCoords = majorBreakCoords
+            .windowed(size = 2, step = 1)
+            .map { (prev, next) -> prev + ((next - prev) / 2.0) }
 
-        val axisBreaks = ArrayList<Double>()
-        val axisLabels = ArrayList<String>()
-        for ((br, label) in breaksDataAndLabel) {
-            // ToDo: the second coordinate should be taken from "valid domain"
-            val bpCoord = when (horizontal) {
-                true -> DoubleVector(br, 0.0)
-                false -> DoubleVector(0.0, br)
-            }.let {
-                if (flipAxis) {
-                    it.flip()
-                } else {
-                    it
+        fun buildGrid(breaks: List<Double>): List<List<DoubleVector>> {
+            val domainGrid = breaks.map { breakCoord ->
+                when (horizontal) {
+                    true -> listOf(
+                        DoubleVector(breakCoord, domain.yRange().lowerEnd),
+                        DoubleVector(breakCoord, domain.yRange().upperEnd)
+                    )
+
+                    false -> listOf(
+                        DoubleVector(domain.xRange().lowerEnd, breakCoord),
+                        DoubleVector(domain.xRange().upperEnd, breakCoord)
+                    )
                 }
             }
 
-            val bpClientCoord = coord.toClient(bpCoord)
-            if (!(bpClientCoord != null && bpClientCoord.isFinite)) {
-                // skip this break-point: it's outside the coordinate system' domain.
-                continue
-            }
-
-            val bpOnAxis = if (horizontal)
-                bpClientCoord.x
-            else
-                bpClientCoord.y
-
-            axisBreaks.add(bpOnAxis)
-            axisLabels.add(label)
+            return domainGrid.map { line -> resample(line, 0.5, ::toClient) }
         }
-        return Pair(axisBreaks, axisLabels)
+
+        fun buildBreaks(breaks: List<Double>): List<Double?> {
+            return breaks.map { breakValue ->
+                val breakCoord = when (horizontal) {
+                    true -> DoubleVector(breakValue, domain.yRange().lowerEnd)
+                    false -> DoubleVector(domain.xRange().lowerEnd, breakValue)
+                }
+
+                val breakClientCoord = toClient(breakCoord) ?: return@map null
+
+                when (horizontal) {
+                    true -> breakClientCoord.x
+                    false -> breakClientCoord.y
+                }
+            }
+        }
+
+        val majorBreaks = buildBreaks(majorBreakCoords)
+        val minorBreaks = buildBreaks(minorBreakCoords)
+
+        val majorGrid = buildGrid(majorBreakCoords)
+        val minorGrid = buildGrid(minorBreakCoords)
+        return AxisComponent.BreaksData(
+            majorBreaks = majorBreaks.filterNotNull(),
+            minorBreaks = minorBreaks.filterNotNull(),
+            majorLabels = pickAtIndices(scaleBreaks.labels, matchingIndices(majorBreaks) { it != null }),
+            majorGrid = majorGrid,
+            minorGrid = minorGrid
+        )
     }
 }

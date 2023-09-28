@@ -7,14 +7,12 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -28,13 +26,9 @@ class AxisComponent(
     private val orientation: Orientation,
     private val breaksData: BreaksData,
     private val labelAdjustments: TickLabelAdjustments = TickLabelAdjustments(orientation),
-    private val gridLineLength: Double,
-    private val gridLineDistance: Double,
     private val axisTheme: AxisTheme,
-    private val gridTheme: PanelGridTheme,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
-    private val hideGridlines: Boolean = false
 ) : SvgComponent() {
 
     override fun buildComponent() {
@@ -63,33 +57,6 @@ class AxisComponent(
                 x2 = end
                 y1 = 0.0
                 y2 = 0.0
-            }
-        }
-
-        // Grid lines.
-        if (!hideGridlines) {
-            // Minor grid.
-            // do not draw grid lines then it's too close to axis ends.
-            val gridLineMinPos = start + 6
-            val gridLineMaxPos = end - 6
-
-            if (gridTheme.showMinor()) {
-                for (br in breaksData.minorBreaks) {
-                    if (br >= gridLineMinPos && br <= gridLineMaxPos) {
-                        val elem = buildGridLine(br, gridTheme.minorLineWidth(), gridTheme.minorLineColor())
-                        rootElement.children().add(elem)
-                    }
-                }
-            }
-
-            // Major grid.
-            if (gridTheme.showMajor()) {
-                for (br in breaksData.majorBreaks) {
-                    if (br >= gridLineMinPos && br <= gridLineMaxPos) {
-                        val elem = buildGridLine(br, gridTheme.majorLineWidth(), gridTheme.majorLineColor())
-                        rootElement.children().add(elem)
-                    }
-                }
             }
         }
 
@@ -137,32 +104,6 @@ class AxisComponent(
                 rootElement.children().add(axisLine)
             }
         }
-    }
-
-    private fun buildGridLine(br: Double, width: Double, color: Color): SvgLineElement {
-        val start = gridLineDistance
-        val end = start + gridLineLength
-        val elem = when (orientation) {
-            Orientation.LEFT -> SvgLineElement(start, 0.0, end, 0.0)
-            Orientation.RIGHT -> SvgLineElement(-start, 0.0, -end, 0.0)
-            Orientation.TOP -> SvgLineElement(0.0, start, 0.0, end)
-            Orientation.BOTTOM -> SvgLineElement(0.0, -start, 0.0, -end)
-        }
-        elem.strokeColor().set(color)
-        elem.strokeWidth().set(width)
-
-        when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT -> {
-                elem.y1().set(br)
-                elem.y2().set(br)
-            }
-
-            Orientation.TOP, Orientation.BOTTOM -> {
-                elem.x1().set(br)
-                elem.x2().set(br)
-            }
-        }
-        return elem
     }
 
     private fun buildTick(
@@ -241,38 +182,13 @@ class AxisComponent(
         }
     }
 
-    class BreaksData constructor(
+    class BreaksData(
         val majorBreaks: List<Double>,
         val majorLabels: List<String>,
-        minorBreaks: List<Double>? = null,
-    ) {
-        val minorBreaks: List<Double> = minorBreaks ?: let {
-            if (majorBreaks.size <= 1) {
-                emptyList()
-            } else {
-                // Default minor grid: a minor line in the middle between each pair of major lines.
-                @Suppress("NAME_SHADOWING")
-                val minorBreaks: MutableList<Double> = majorBreaks.subList(0, majorBreaks.size - 1)
-                    .zip(majorBreaks.subList(1, majorBreaks.size))
-                    .fold(ArrayList()) { l, pair ->
-                        l.add((pair.second - pair.first) / 2 + pair.first)
-                        l
-                    }
-
-                // Add one in the front
-                majorBreaks.take(2).reduce { first, second -> second - first }.run {
-                    minorBreaks.add(0, minorBreaks.first() - this)
-                }
-
-                // Add one in the back.
-                majorBreaks.takeLast(2).reduce { first, second -> second - first }.run {
-                    minorBreaks.add(0, minorBreaks.last() + this)
-                }
-
-                minorBreaks
-            }
-        }
-    }
+        val minorBreaks: List<Double>,
+        val majorGrid: List<List<DoubleVector>>,
+        val minorGrid: List<List<DoubleVector>>,
+    )
 
     class TickLabelAdjustments(
         orientation: Orientation,
