@@ -25,22 +25,16 @@ object ThemeUtil {
 
     // open for ThemeOptionTest
     internal fun getThemeValues(themeName: String, userOptions: Map<String, Any> = emptyMap()): Map<String, Any> {
-        val baselineValues = ThemeValues.forName(themeName).values
+        val baselineValues = ThemeValues.forName(themeName)
 
-        val flavorName = if (themeName != ThemeOption.Name.LP_NONE) {
-            // use flavor to not 'none' theme only
-            userOptions[ThemeOption.FLAVOR] as? String
-                ?: baselineValues[ThemeOption.FLAVOR] as? String
-                ?: error("Flavor name should be specified")
-        } else {
-            null
+        val effectiveOptions = baselineValues + userOptions
+
+        if (themeName == ThemeOption.Name.LP_NONE) {
+            // Not apply flavor to 'none' theme
+            return effectiveOptions
         }
 
-        return (flavorName?.let { applyFlavor(baselineValues, flavorName) } ?: baselineValues)
-            .mergeWith(userOptions)
-    }
-
-    private fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
+        val flavorName = effectiveOptions[ThemeOption.FLAVOR] as? String ?: error("Flavor name should be specified")
         val flavor = ThemeFlavor.forName(flavorName)
 
         val geomThemeOptions = mapOf(
@@ -52,20 +46,16 @@ object ThemeUtil {
         )
 
         // resolve symbolic colors
-        val withResolvedColors = themeSettings.mapValues { (parameter, options) ->
-            if (options !is Map<*, *>) {
-                return@mapValues options
-            }
-            options.mapValues { (key, value) ->
-                when (value) {
-                    !is SymbolicColor -> value
-                    else -> flavor.symbolicColors[value]
-                        ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${value.name}'")
-                }
+        val withResolvedColors = effectiveOptions.mapValues { (parameter, options) ->
+            val subOptions = options as? Map<*, *> ?: return@mapValues options
+            subOptions.mapValues subOptionsScope@{ (key, value) ->
+                val color = value as? SymbolicColor ?: return@subOptionsScope value
+                flavor.symbolicColors[color]
+                    ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${color.name}'")
             }
         }
             .mergeWith(flavor.specialColors)
 
-        return geomThemeOptions + withResolvedColors
+        return geomThemeOptions.mergeWith(withResolvedColors)
     }
 }
