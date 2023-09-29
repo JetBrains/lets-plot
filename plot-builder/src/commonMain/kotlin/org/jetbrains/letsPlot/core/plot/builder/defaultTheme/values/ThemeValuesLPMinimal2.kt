@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
+internal class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
 
     companion object {
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class ThemeValuesRBW : ThemeValues(VALUES) {
+internal class ThemeValuesRBW : ThemeValues(VALUES) {
 
     companion object {
 
@@ -41,7 +41,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
             ),
 
             PANEL_BKGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
                 Elem.FILL to SymbolicColor.WHITE,
             ),
             PANEL_GRID to mapOf(
@@ -57,7 +57,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             AXIS_LINE to ELEMENT_BLANK,
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
             ),
 
             AXIS_TOOLTIP to mapOf(
@@ -67,7 +67,7 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
 
             // Facets
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK,
+                Elem.COLOR to SymbolicColor.GREY_4,
                 Elem.FILL to SymbolicColor.GREY_2,
             ),
 

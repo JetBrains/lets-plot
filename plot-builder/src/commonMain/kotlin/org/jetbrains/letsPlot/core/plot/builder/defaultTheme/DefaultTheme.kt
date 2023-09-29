@@ -8,12 +8,11 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 
-class DefaultTheme(
+class DefaultTheme internal constructor(
     options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry(),
 ) : Theme {
@@ -49,10 +48,6 @@ class DefaultTheme(
 
     companion object {
         // For demo and tests
-        fun minimal2() = withBaseFlavor(ThemeValuesLPMinimal2().values)
-
-        fun withBaseFlavor(themeValues: Map<String, Any>) = DefaultTheme(
-            ThemeFlavorUtil.applyFlavor(themeValues, Flavor.BASE)
-        )
+        fun minimal2() = ThemeUtil.buildTheme(ThemeOption.Name.LP_MINIMAL)
     }
 }

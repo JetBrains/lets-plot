@@ -5,22 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.GEOM
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
@@ -40,7 +35,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 
-open class ThemeValuesBase : ThemeValues(VALUES) {
+internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
     companion object {
 
@@ -137,14 +132,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             TOOLTIP_TITLE_TEXT to mapOf(
                 Elem.FONT_FACE to FontFace.BOLD,
             ),
-
-            GEOM to mapOf(
-                Geom.PEN to SymbolicColor.BLACK,
-                Geom.PAPER to SymbolicColor.WHITE,
-                Geom.BRUSH to Color.PACIFIC_BLUE,
-            ),
-
-            FLAVOR to Flavor.BASE,
         )
     }
 }

@@ -27,14 +27,14 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
 import demo.plot.common.model.SimpleDemoBase
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 
 open class ScatterDemo : SimpleDemoBase() {
 
@@ -45,6 +45,8 @@ open class ScatterDemo : SimpleDemoBase() {
             gaussWithLimitsX()
         )
     }
+
+    private fun classicTheme() = ThemeUtil.buildTheme(ThemeOption.Name.R_CLASSIC)
 
     private fun gauss(): GroupComponent {
         val count = 200
@@ -97,7 +99,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // Render
         val groupComponent = GroupComponent()
 
-        val theme = DefaultTheme.withBaseFlavor(ThemeValuesRClassic().values)
+        val theme = classicTheme()
 
         run {
             // X axis
@@ -281,7 +283,7 @@ open class ScatterDemo : SimpleDemoBase() {
         // coord system
         val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
-        val theme = DefaultTheme.withBaseFlavor(ThemeValuesRClassic().values)
+        val theme = classicTheme()
 
         run {
             // X axis

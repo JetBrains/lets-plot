@@ -17,12 +17,11 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import demo.plot.common.model.SimpleDemoBase
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
@@ -135,11 +134,12 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 //            axis.gridLineWidth.set(Plot.Axis.GRID_LINE_WIDTH)
 //            axis.gridLineLength.set(100.0)
 
-            val baselineValues = ThemeValuesRClassic()
-            val themeOptions = baselineValues + mapOf(
-                ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
+            val theme = ThemeUtil.buildTheme(
+                themeName = ThemeOption.Name.R_CLASSIC,
+                userOptions = mapOf(
+                    ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
+                )
             )
-            val theme = DefaultTheme.withBaseFlavor(themeOptions)
 
             val axis = AxisComponent(
                 length = axisLength,

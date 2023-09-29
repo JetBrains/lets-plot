@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
-class ThemeValuesRLight : ThemeValues(VALUES) {
+internal class ThemeValuesRLight : ThemeValues(VALUES) {
 
     companion object {
 
@@ -40,7 +40,7 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
 
             PANEL_BKGR_RECT to mapOf(
                 Elem.FILL to SymbolicColor.WHITE,
-                Elem.COLOR to SymbolicColor.BLACK
+                Elem.COLOR to SymbolicColor.GREY_4
             ),
             PANEL_GRID to mapOf(
                 Elem.COLOR to SymbolicColor.GREY_1
@@ -49,7 +49,7 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
             AXIS_LINE to ELEMENT_BLANK,
 
             AXIS to mapOf(
-                Elem.COLOR to SymbolicColor.BLACK
+                Elem.COLOR to SymbolicColor.GREY_4
             ),
 
             AXIS_TOOLTIP to mapOf(

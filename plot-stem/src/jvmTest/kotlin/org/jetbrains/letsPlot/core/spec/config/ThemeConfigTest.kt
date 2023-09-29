@@ -23,10 +23,20 @@ class ThemeConfigTest {
 
     @Test
     fun withThemeName() {
-        val spec = plotSpec(themeName = "none")
+        val spec = plotSpec(themeName = "classic")
         val colors = transformToClientPlotConfig(spec).theme.colors()
 
         assertEquals(Color.parseHex("#474747"), colors.pen())
+        assertEquals(Color.WHITE, colors.paper())
+        assertEquals(Color.PACIFIC_BLUE, colors.brush())
+    }
+
+    @Test
+    fun withThemeNone() {
+        val spec = plotSpec(themeName = "none")
+        val colors = transformToClientPlotConfig(spec).theme.colors()
+
+        assertEquals(Color.BLUE, colors.pen())
         assertEquals(Color.WHITE, colors.paper())
         assertEquals(Color.PACIFIC_BLUE, colors.brush())
     }

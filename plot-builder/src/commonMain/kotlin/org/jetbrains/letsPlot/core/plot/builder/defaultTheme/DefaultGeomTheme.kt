@@ -43,7 +43,7 @@ internal class DefaultGeomTheme private constructor(
         private const val TEXT_SIZE = 7.0
 
         // defaults for geomKind
-        fun forGeomKind(geomKind: GeomKind, colorTheme: ColorTheme): GeomTheme {
+        internal fun forGeomKind(geomKind: GeomKind, colorTheme: ColorTheme): GeomTheme {
 
             // Size: point size or line width - depending on the geom kind.
             val size = when (geomKind) {

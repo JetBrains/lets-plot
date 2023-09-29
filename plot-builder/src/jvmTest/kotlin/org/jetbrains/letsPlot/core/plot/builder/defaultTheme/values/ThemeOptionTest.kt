@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.applyFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FONT_FACE
@@ -19,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.spec.getString
 import kotlin.test.Test
 
 internal class ThemeOptionTest {
@@ -27,9 +25,7 @@ internal class ThemeOptionTest {
     @Test
     fun checkElements() {
         for (themeName in themeNames) {
-            val themeValues = themeValues(themeName, withFlavor = true)
-            val theme = DefaultTheme(themeValues)
-
+            val theme = ThemeUtil.buildTheme(themeName)
             for (elem in elemWithColorAndSize + elemWithColorOnly + elemWithFill) {
                 val elemKey = accessKeyForOption(theme, elem)
                 checkElemProperty(themeName, accessKeyForOption(theme, elem, COLOR), COLOR)
@@ -50,9 +46,7 @@ internal class ThemeOptionTest {
     @Test
     fun checkOptions() {
         for (themeName in themeNames) {
-            val themeValues = themeValues(themeName, withFlavor = false)
-            val theme = DefaultTheme(themeValues)
-
+            val theme = ThemeUtil.buildTheme(themeName)
             for (option in numericOptions) {
                 val optionKey = accessKeyForOption(theme, option)
                 checkNumericOption(themeName, optionKey)
@@ -61,7 +55,7 @@ internal class ThemeOptionTest {
     }
 
     private fun checkElemProperty(theme: String, elemKey: List<String>, elemProperty: String) {
-        val themeValues = themeValues(theme, withFlavor = true)
+        val themeValues = ThemeUtil.getThemeValues(theme)
         val access = object : ThemeValuesAccess(themeValues, DefaultFontFamilyRegistry()) {
             fun check() {
                 when (elemProperty) {
@@ -80,7 +74,7 @@ internal class ThemeOptionTest {
     }
 
     private fun checkNumericOption(theme: String, optionKey: List<String>) {
-        val themeValues = themeValues(theme, withFlavor = false)
+        val themeValues = ThemeUtil.getThemeValues(theme)
         val access = object : ThemeValuesAccess(themeValues, DefaultFontFamilyRegistry()) {
             fun check() {
                 this.getNumber(optionKey)
@@ -152,16 +146,6 @@ internal class ThemeOptionTest {
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
-        }
-    }
-
-    private fun themeValues(themeName: String, withFlavor: Boolean): Map<String, Any> {
-        return ThemeValues.forName(themeName).values.let { baseValues ->
-            if (withFlavor) {
-                val flavorName = baseValues.getString(ThemeOption.FLAVOR) ?: error("Flavor name should be specified")
-                applyFlavor(baseValues, flavorName)
-            } else
-                baseValues
         }
     }
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
-abstract class ThemeValues(
+internal abstract class ThemeValues(
     val values: Map<String, Any>
 ) {
     operator fun plus(other: Map<String, Any>): Map<String, Any> {
@@ -24,7 +24,7 @@ abstract class ThemeValues(
             return result
         }
 
-        fun forName(theme: String): ThemeValues {
+        internal fun forName(theme: String): ThemeValues {
             return when (theme) {
                 ThemeOption.Name.R_GREY -> ThemeValuesRGrey()
                 ThemeOption.Name.R_LIGHT -> ThemeValuesRLight()
