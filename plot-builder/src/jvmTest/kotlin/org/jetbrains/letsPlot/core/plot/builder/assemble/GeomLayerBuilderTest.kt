@@ -5,12 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -90,14 +88,6 @@ class GeomLayerBuilderTest {
 //            .geom(geomProvider)
 //            .pos(posProvider)
 //                .addConstantAes(Aes.ALPHA, 0.5)
-            .geomTheme(object : GeomTheme {
-                override fun pen(): Color = Color.PACIFIC_BLUE
-                override fun color(): Color = Color.PACIFIC_BLUE
-                override fun fill(): Color = Color.PACIFIC_BLUE
-                override fun alpha() = 1.0
-                override fun size() = 0.5
-                override fun lineWidth() = 0.5
-            })
             .addBinding(bindings[0])
             .addBinding(bindings[1])
             .build(data, scaleByAes, scaleMappersNP)

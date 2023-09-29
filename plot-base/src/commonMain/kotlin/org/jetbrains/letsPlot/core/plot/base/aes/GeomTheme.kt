@@ -19,4 +19,15 @@ interface GeomTheme {
     fun lineWidth(): Double
 
     fun pen(): Color
+
+    companion object {
+        val NONE = object : GeomTheme {
+            override fun pen(): Color = Color.PACIFIC_BLUE
+            override fun color(): Color = Color.PACIFIC_BLUE
+            override fun fill(): Color = Color.PACIFIC_BLUE
+            override fun alpha() = 1.0
+            override fun size() = 1.0
+            override fun lineWidth() = 1.0
+        }
+    }
 }

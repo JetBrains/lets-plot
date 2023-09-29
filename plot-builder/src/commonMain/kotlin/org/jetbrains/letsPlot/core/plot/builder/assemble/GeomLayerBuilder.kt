@@ -71,7 +71,7 @@ class GeomLayerBuilder(
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
-    private lateinit var myGeomTheme: GeomTheme
+    private var myGeomTheme: GeomTheme = GeomTheme.NONE
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)

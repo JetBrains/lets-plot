@@ -6,6 +6,7 @@
 package demo.plot.shared.model.plotContainer
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -41,14 +42,14 @@ class BarPlotResizeDemo private constructor(
             colors, Color.GRAY
         )
 
-        val scaleByAes = mapOf<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>(
-            org.jetbrains.letsPlot.core.plot.base.Aes.X to xScale,
-            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", org.jetbrains.letsPlot.core.plot.base.Aes.Y),
-            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to fillScale
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to xScale,
+            Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
+            Aes.FILL to fillScale
         )
 
-        val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>> = mapOf(
-            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to fillMapper
+        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+            Aes.FILL to fillMapper
         )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
@@ -56,22 +57,22 @@ class BarPlotResizeDemo private constructor(
 //            .geom(GeomProvider.bar())
 //            .pos(PosProvider.dodge())
             .groupingVar(varCat)
-            .addBinding(VarBinding(varX, org.jetbrains.letsPlot.core.plot.base.Aes.X))
+            .addBinding(VarBinding(varX, Aes.X))
             .addBinding(
                 VarBinding(
                     varY,
-                    org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                    Aes.Y
                 )
             )
-            .addBinding(VarBinding(varCat, org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
-            .addConstantAes(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, 0.9)
+            .addBinding(VarBinding(varCat, Aes.FILL))
+            .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
         val geomInteraction = GeomInteractionBuilder.DemoAndTest(
             listOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
-                org.jetbrains.letsPlot.core.plot.base.Aes.FILL
+                Aes.X,
+                Aes.Y,
+                Aes.FILL
             )
         )
             .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -99,7 +100,7 @@ class BarPlotResizeDemo private constructor(
         fun continuousX(): BarPlotResizeDemo {
             return BarPlotResizeDemo(
                 SinCosLineData({ v -> v.toDouble() }, 6),
-                Scales.DemoAndTest.continuousDomain(" ", org.jetbrains.letsPlot.core.plot.base.Aes.X)
+                Scales.DemoAndTest.continuousDomain(" ", Aes.X)
             )
         }
 
