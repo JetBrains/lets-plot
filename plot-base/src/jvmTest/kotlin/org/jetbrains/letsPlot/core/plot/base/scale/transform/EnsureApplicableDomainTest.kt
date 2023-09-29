@@ -10,8 +10,6 @@ import junit.framework.TestCase.failNotEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Log10Transform
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.math.abs
@@ -51,7 +49,10 @@ internal class EnsureApplicableDomainTest(
         @JvmStatic
         @Parameterized.Parameters
         fun params(): List<Array<Any?>> {
-            return paramsIdentity() + paramsReverse() + paramsSqrt() + paramsLog10()
+            return paramsIdentity() + paramsReverse() +
+                    paramsSqrt() +
+                    paramsLog(Transforms.LOG10, 10.0) + paramsLog(Transforms.LOG2, 2.0) +
+                    paramsSymlog()
         }
 
         private fun paramsIdentity(): List<Array<Any?>> {
@@ -129,46 +130,65 @@ internal class EnsureApplicableDomainTest(
             )
         }
 
-        private fun paramsLog10(): List<Array<Any?>> {
+        private fun paramsLog(transform: ContinuousTransform, base: Double): List<Array<Any?>> {
             return listOf(
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     null,
                     DoubleSpan(0.5, 1.5)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(-5.0, -5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(-5.0, 0.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(-5.0, 5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 5.0)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(0.0, 5.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 5.0)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 5.0)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(0.0, 0.0),
-                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
                 ),
                 arrayOf(
-                    Transforms.LOG10,
+                    transform,
                     DoubleSpan(10.0, 10.0),
                     DoubleSpan(9.5, 10.5)
                 ),
             )
         }
 
+        private fun paramsSymlog(): List<Array<Any?>> {
+            return listOf(
+                arrayOf(
+                    Transforms.SYMLOG,
+                    null,
+                    DoubleSpan(-0.5, 0.5)
+                ),
+                arrayOf(
+                    Transforms.SYMLOG,
+                    DoubleSpan(-5.0, -5.0),
+                    DoubleSpan(-5.5, -4.5)
+                ),
+                arrayOf(
+                    Transforms.SYMLOG,
+                    DoubleSpan(0.0, 0.0),
+                    DoubleSpan(-0.5, 0.5)
+                ),
+            )
+        }
 
         private fun assertEqualRanges(expected: DoubleSpan, actual: DoubleSpan, message: String) {
             fun almostEqual(v0: Double, v1: Double): Boolean {

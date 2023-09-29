@@ -63,10 +63,10 @@ object BoxHelper {
         }
     }
     fun legendFactory(whiskers: Boolean): LegendKeyElementFactory =
-        CrossBarLegendKeyElementFactory(whiskers)
+        BoxLegendKeyElementFactory(whiskers)
 }
 
-private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
+private class BoxLegendKeyElementFactory(val whiskers: Boolean) :
     LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {

@@ -17,6 +17,8 @@ object Transforms {
     val REVERSE: ContinuousTransform = ReverseTransform()
     val SQRT: ContinuousTransform = SqrtTransform()
     val LOG10: ContinuousTransform = Log10Transform()
+    val LOG2: ContinuousTransform = Log2Transform()
+    val SYMLOG: ContinuousTransform = SymlogTransform()
 
     fun continuousWithLimits(actual: ContinuousTransform, limits: Pair<Double?, Double?>): ContinuousTransform {
         return ContinuousTransformWithLimits(actual, limits.first, limits.second)
@@ -31,6 +33,8 @@ object Transforms {
             REVERSE -> LinearBreaksGen(labelFormatter)
             SQRT -> NonlinearBreaksGen(SQRT, labelFormatter)
             LOG10 -> NonlinearBreaksGen(LOG10, labelFormatter)
+            LOG2 -> NonlinearBreaksGen(LOG2, labelFormatter)
+            SYMLOG -> NonlinearBreaksGen(SYMLOG, labelFormatter)
             else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
         }
 

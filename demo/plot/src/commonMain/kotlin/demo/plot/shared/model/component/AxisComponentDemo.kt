@@ -139,7 +139,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val themeOptions = baselineValues + mapOf(
                 ThemeOption.PANEL_GRID to mapOf(ThemeOption.Elem.COLOR to Color.RED)
             )
-            val theme = DefaultTheme(themeOptions)
+            val theme = DefaultTheme.withBaseFlavor(themeOptions)
 
             val axis = AxisComponent(
                 length = axisLength,

@@ -1731,7 +1731,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
             geom_jitter(aes(x='x', y='y'), data=df, width=.3, shape=1, color='black', alpha=.5)
 
     """
-    if ('middle' in mapping.props()):
+    if mapping is not None and 'middle' in mapping.props():
         print("WARN: using 'middle' aesthetic parameter for crossbar was deprecated.\n"
               "      Please, use `y` aesthetic instead.")
         mapping.props()['y'] = mapping.props().pop('middle')

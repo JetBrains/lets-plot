@@ -5,4 +5,4 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
-internal class Log10Transform : LogTransform(base = 10.0)
+internal class Log2Transform : LogTransform(base = 2.0)

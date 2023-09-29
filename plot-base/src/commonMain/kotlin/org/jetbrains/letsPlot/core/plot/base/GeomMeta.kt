@@ -158,9 +158,13 @@ object GeomMeta {
             )
 
             GeomKind.CROSS_BAR -> listOf(
-                Aes.X,
-                Aes.YMIN, Aes.YMAX, Aes.Y,
+                Aes.X, Aes.Y,
+                // vertical representation
+                Aes.YMIN, Aes.YMAX,
                 Aes.WIDTH,
+                // horizontal
+                Aes.XMIN, Aes.XMAX,
+                Aes.HEIGHT,
 
                 Aes.ALPHA,
                 Aes.COLOR,
@@ -170,8 +174,13 @@ object GeomMeta {
             )
 
             GeomKind.LINE_RANGE -> listOf(
+                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
+                // horizontal
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
+
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.LINETYPE,
@@ -180,7 +189,11 @@ object GeomMeta {
 
             GeomKind.POINT_RANGE -> listOf(
                 Aes.X, Aes.Y,
+                // vertical representation
                 Aes.YMIN, Aes.YMAX,
+                // horizontal
+                Aes.XMIN, Aes.XMAX,
+
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
@@ -286,8 +299,13 @@ object GeomMeta {
             )
 
             GeomKind.RIBBON -> listOf(
+                //vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
+                //horizontal
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
+
                 Aes.SIZE,
                 Aes.LINETYPE,
                 Aes.COLOR,

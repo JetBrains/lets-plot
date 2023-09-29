@@ -218,6 +218,8 @@ class ScaleConfig<T> constructor(
             val transform = when (transformName.lowercase()) {
                 TransformName.IDENTITY -> Transforms.IDENTITY
                 TransformName.LOG10 -> Transforms.LOG10
+                TransformName.LOG2 -> Transforms.LOG2
+                TransformName.SYMLOG -> Transforms.SYMLOG
                 TransformName.REVERSE -> Transforms.REVERSE
                 TransformName.SQRT -> Transforms.SQRT
                 else -> throw IllegalArgumentException(
@@ -225,6 +227,8 @@ class ScaleConfig<T> constructor(
                         listOf(
                             TransformName.IDENTITY,
                             TransformName.LOG10,
+                            TransformName.LOG2,
+                            TransformName.SYMLOG,
                             TransformName.REVERSE,
                             TransformName.SQRT
                         ).joinToString(transform = { "'$it'" })

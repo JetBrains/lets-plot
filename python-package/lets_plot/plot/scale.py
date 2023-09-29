@@ -634,7 +634,7 @@ def scale_continuous(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -715,7 +715,7 @@ def scale_gradient(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -791,7 +791,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -864,7 +864,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -939,7 +939,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1012,7 +1012,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1088,7 +1088,7 @@ def scale_gradient2(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1171,7 +1171,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1251,7 +1251,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1328,7 +1328,7 @@ def scale_gradientn(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1405,7 +1405,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1479,7 +1479,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1562,7 +1562,7 @@ def scale_hue(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1645,7 +1645,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -1726,7 +1726,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2032,7 +2032,7 @@ def scale_grey(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2113,7 +2113,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2189,7 +2189,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2292,7 +2292,7 @@ def scale_brewer(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2390,7 +2390,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2485,7 +2485,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2597,7 +2597,7 @@ def scale_viridis(aesthetic, *,
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2701,7 +2701,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2800,7 +2800,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         Guide to use for this scale. It can either be a string ('colorbar', 'legend')
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2874,7 +2874,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -2943,7 +2943,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -3013,7 +3013,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -3088,7 +3088,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
@@ -3157,7 +3157,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         Missing values will be replaced with this value.
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
