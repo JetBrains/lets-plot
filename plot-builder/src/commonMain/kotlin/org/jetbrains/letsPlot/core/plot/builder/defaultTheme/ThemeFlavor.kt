@@ -50,10 +50,7 @@ internal class ThemeFlavor private constructor(
                         ThemeOption.TOOLTIP_RECT to mapOf(
                             Elem.COLOR to DARK_GREY,
                             Elem.FILL to Color.WHITE
-                        ),
-                        ThemeOption.RECT to mapOf(
-                            Elem.FILL to LIGHT_GREY
-                        ),
+                        )
                     ),
                     pen = DARK_GREY,
                     brush = Color.PACIFIC_BLUE,

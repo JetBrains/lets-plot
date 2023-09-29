@@ -18,20 +18,29 @@ object ThemeUtil {
         themeName: String,
         userOptions: Map<String, Any> = emptyMap(),
         fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry()
-    ): DefaultTheme {
+    ) = DefaultTheme(
+        getThemeValues(themeName, userOptions),
+        fontFamilyRegistry
+    )
 
+    // open for ThemeOptionTest
+    internal fun getThemeValues(themeName: String, userOptions: Map<String, Any> = emptyMap()): Map<String, Any> {
         val baselineValues = ThemeValues.forName(themeName).values
 
-        val flavorName = userOptions[ThemeOption.FLAVOR] as? String
-            ?: baselineValues[ThemeOption.FLAVOR] as? String
-            ?: error("Flavor name should be specified")
+        val flavorName = if (themeName != ThemeOption.Name.LP_NONE) {
+            // use flavor to not 'none' theme only
+            userOptions[ThemeOption.FLAVOR] as? String
+                ?: baselineValues[ThemeOption.FLAVOR] as? String
+                ?: error("Flavor name should be specified")
+        } else {
+            null
+        }
 
-        val effectiveOptions = applyFlavor(baselineValues, flavorName).mergeWith(userOptions)
-
-        return DefaultTheme(effectiveOptions, fontFamilyRegistry)
+        return (flavorName?.let { applyFlavor(baselineValues, flavorName) } ?: baselineValues)
+            .mergeWith(userOptions)
     }
 
-    internal fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
+    private fun applyFlavor(themeSettings: Map<String, Any>, flavorName: String): Map<String, Any> {
         val flavor = ThemeFlavor.forName(flavorName)
 
         val geomThemeOptions = mapOf(

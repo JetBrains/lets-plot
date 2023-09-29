@@ -171,20 +171,20 @@ class ThemeColorOptionsTest(
                 test(
                     themeOptions = noneTheme,
                     expectedPlotBackground = Color.WHITE,
-                    expectedYAxisColor = DARK_GREY,
+                    expectedYAxisColor = Color.BLUE,
                     expectedPanelBackground = panelBackgroundRect(
-                        expectedColor = DARK_GREY,
-                        expectedFill = LIGHT_GREY
+                        expectedColor = Color.BLUE,
+                        expectedFill = Color.LIGHT_BLUE
                     )
                 ),
-                // 'none' theme with flavor: panel background is equal to the plot background
+                // flavor is not applied to 'none' theme
                 test(
                     themeOptions = noneTheme + flavorOption,
-                    expectedPlotBackground = Color.parseHex("#303030"),
-                    expectedYAxisColor = Color.parseHex("#BBBBBB"),
+                    expectedPlotBackground = Color.WHITE,
+                    expectedYAxisColor = Color.BLUE,
                     expectedPanelBackground = panelBackgroundRect(
-                        expectedColor = Color.parseHex("#BBBBBB"),
-                        expectedFill = Color.parseHex("#303030")
+                        expectedColor = Color.BLUE,
+                        expectedFill = Color.LIGHT_BLUE
                     )
                 ),
                 // The 'classic' theme: facet rect fill = plot background
