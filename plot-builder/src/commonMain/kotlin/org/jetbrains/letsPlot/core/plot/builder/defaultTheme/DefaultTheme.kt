@@ -48,6 +48,6 @@ class DefaultTheme internal constructor(
 
     companion object {
         // For demo and tests
-        fun minimal2() = ThemeBuilder(ThemeOption.Name.LP_MINIMAL).build()
+        fun minimal2() = ThemeUtil.buildTheme(ThemeOption.Name.LP_MINIMAL)
     }
 }

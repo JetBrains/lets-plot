@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.applyFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FONT_FACE
@@ -159,7 +158,7 @@ internal class ThemeOptionTest {
         return ThemeValues.forName(themeName).values.let { baseValues ->
             if (withFlavor) {
                 val flavorName = baseValues.getString(ThemeOption.FLAVOR) ?: error("Flavor name should be specified")
-                applyFlavor(baseValues, flavorName)
+                ThemeUtil.applyFlavor(baseValues, flavorName)
             } else
                 baseValues
         }

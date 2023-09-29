@@ -27,14 +27,13 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
 import demo.plot.common.model.SimpleDemoBase
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeBuilder
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 
 open class ScatterDemo : SimpleDemoBase() {
@@ -47,7 +46,7 @@ open class ScatterDemo : SimpleDemoBase() {
         )
     }
 
-    private fun classicTheme() = ThemeBuilder(ThemeOption.Name.R_CLASSIC).build()
+    private fun classicTheme() = ThemeUtil.buildTheme(ThemeOption.Name.R_CLASSIC)
 
     private fun gauss(): GroupComponent {
         val count = 200

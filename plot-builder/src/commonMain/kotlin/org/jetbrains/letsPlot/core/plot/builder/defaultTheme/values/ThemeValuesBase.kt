@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavorUtil.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH

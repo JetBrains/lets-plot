@@ -24,7 +24,7 @@ internal abstract class ThemeValues(
             return result
         }
 
-        fun forName(theme: String): ThemeValues {
+        internal fun forName(theme: String): ThemeValues {
             return when (theme) {
                 ThemeOption.Name.R_GREY -> ThemeValuesRGrey()
                 ThemeOption.Name.R_LIGHT -> ThemeValuesRLight()
