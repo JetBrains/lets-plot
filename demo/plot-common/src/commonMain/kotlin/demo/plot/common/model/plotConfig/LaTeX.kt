@@ -10,7 +10,8 @@ import demoAndTestShared.parsePlotSpec
 class LaTeX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            inTitle("y = x^2"),
+            inTitle("""y = \\frac{x^2}{2}"""),
+            inTitle("""y = \\log_{10}(x)"""),
         )
     }
 
@@ -19,7 +20,7 @@ class LaTeX {
             {
               'kind': 'plot',
               'ggtitle': {
-                'text': 'Formula: $$formula$'
+                'text': 'Formula: \\($formula\\)'
               },
               'layers': [
                 {

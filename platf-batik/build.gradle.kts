@@ -18,6 +18,8 @@ kotlin {
                 compileOnly(project(":commons"))
                 compileOnly(project(":datamodel"))
                 compileOnly(project(":plot-stem"))
+
+                implementation("org.scilab.forge:jlatexmath:1.0.7")
             }
         }
 
