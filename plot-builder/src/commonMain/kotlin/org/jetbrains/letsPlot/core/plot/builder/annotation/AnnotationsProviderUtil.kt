@@ -23,13 +23,14 @@ object AnnotationsProviderUtil {
         dataFrame: DataFrame,
         themeTextStyle: ThemeTextStyle?
     ): Annotations? {
-        if (spec.linePatterns.isEmpty()) {
-            return null
-        }
         val mappedLines = spec.linePatterns.filter { line ->
             val dataAesList = line.fields.filterIsInstance<MappingField>()
             dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
         }
+        if (mappedLines.isEmpty()) {
+            return null
+        }
+
         mappedLines.forEach { it.initDataContext(dataFrame, dataAccess) }
         return Annotations(
             mappedLines,
