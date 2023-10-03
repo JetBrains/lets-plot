@@ -65,26 +65,9 @@ class CurveGeom : GeomBase() {
                 }
                 root.add(curve)
 
+                // arrows
                 arrowSpec?.let { arrowSpec ->
-                    if (arrowSpec.isOnFirstEnd) {
-                        val (startPoint, endPoint) = geometry.take(2).reversed()
-                        ArrowSpec.createArrow(
-                            p,
-                            startPoint,
-                            endPoint,
-                            arrowSpec
-                        )?.let(root::add)
-                    }
-                    if (arrowSpec.isOnLastEnd) {
-                        val (startPoint, endPoint) = geometry.takeLast(2)
-                        ArrowSpec.createArrow(
-                            p,
-                            startPoint,
-                            endPoint,
-                            arrowSpec
-                        )?.let(root::add)
-                    }
-
+                    createArrows(p, geometry, arrowSpec).forEach(root::add)
                 }
 
                 // hints
@@ -99,80 +82,74 @@ class CurveGeom : GeomBase() {
         }
     }
 
+    private fun createArrows(
+        p: DataPointAesthetics,
+        geometry: List<DoubleVector>,
+        arrowSpec: ArrowSpec
+    ): List<SvgPathElement> {
+        val arrows = mutableListOf<SvgPathElement?>()
+        if (arrowSpec.isOnFirstEnd) {
+            val (startPoint, endPoint) = geometry.take(2).reversed()
+            arrows += ArrowSpec.createArrow(
+                p,
+                startPoint,
+                endPoint,
+                arrowSpec
+            )
+        }
+        if (arrowSpec.isOnLastEnd) {
+            val (startPoint, endPoint) = geometry.takeLast(2)
+            arrows += ArrowSpec.createArrow(
+                p,
+                startPoint,
+                endPoint,
+                arrowSpec
+            )
+        }
+        return arrows.filterNotNull()
+    }
+
     /*
         Calculates a set of control points based on:
-        'curvature', ' angle', and 'ncp'
-        and the start and end point locations.
-     */
-    private fun createGeometry(
-        start: DoubleVector,
-        end: DoubleVector
-    ): List<DoubleVector> {
-
-        if (curvature == 0.0) {
-            return listOf(start, end)
-        }
+        'curvature', ' angle', and 'ncp' and the start and end point locations.
+    */
+    private fun createGeometry(start: DoubleVector, end: DoubleVector): List<DoubleVector> {
 
         val degreeAngle = angle % 180
 
-        // ToDo curvature and angle ?
         val controlPoints = calcControlPoints(
-            start.x, start.y,
-            end.x, end.y,
+            start,
+            end,
             if (degreeAngle < 0) -curvature else curvature,
             -degreeAngle,
             ncp
         )
         //println(controlPoints)
         return listOf(start) + controlPoints + listOf(end)
-
-        /*
-                val curvature = 1
-
-                // mid-point of line:
-                val midPoint = start.add(end).mul(0.5)
-
-                // angle of perpendicular to line:
-                val theta = 90.0// atan2(end.y - start.y, end.x - start.x) - PI / 2;
-
-                val segmentLength = start.subtract(end).length()
-                // distance of control point from mid-point of line:
-                val offset = segmentLength * curvature
-
-                // location of control point:
-                val c1x = midPoint.x + offset * cos(theta);
-                val c1y = midPoint.y + offset * sin(theta);
-
-                val data = SvgPathDataBuilder().apply {
-                    moveTo(start.x, start.y)
-                    //quadraticBezierCurveTo(c1x, c1y, end.x, end.y)
-                    curveTo(start, DoubleVector(c1x, c1y), end)
-                }.build()
-
-
-
-                val curve =  SvgPathElement().apply {
-                    d().set(data)
-                    strokeColor().set(p.color())
-                    fillOpacity().set(0.0)
-                }
-         */
     }
+
 
     // https://svn.r-project.org/R/trunk/src/library/grid/R/curve.R
 
-    /*
-        Find origin of rotation
-        Rotate around that origin
-    */
     private fun calcControlPoints(
-        x1: Double, y1: Double, x2: Double, y2: Double,
-        curvature: Double, degreeAngle: Double, ncp: Int
+        start: DoubleVector,
+        end: DoubleVector,
+        curvature: Double,
+        degreeAngle: Double,
+        ncp: Int
     ): List<DoubleVector> {
+        if (curvature == 0.0) {  // straight line
+            return emptyList()
+        }
 
         // Negative curvature means curve to the left
         // Positive curvature means curve to the right
         // Special case curvature = 0 (straight line) has been handled
+
+        val x1 = start.x
+        val y1 = start.y
+        val x2 = end.x
+        val y2 = end.y
 
         val xm = (x1 + x2) / 2
         val ym = (y1 + y2) / 2
@@ -196,7 +173,6 @@ class CurveGeom : GeomBase() {
         val newY2 = y1 + dy * cosb + dx * sinb
 
         // Calculate x-scale factor to make region "square"
-        // FIXME:  special case of vertical or horizontal line ?
         val scalex = (newY2 - y1) / (newX2 - x1)
         // Scale end points to make region "square"
         val newX1 = x1 * scalex
@@ -303,6 +279,130 @@ class CurveGeom : GeomBase() {
         val oy = ym + (tmpOX - xm) * sinTheta
 
         return DoubleVector(ox, oy)
+    }
+
+    //Refactored
+
+    private fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
+        return (v2.y - v1.y) / (v2.x - v1.x)
+    }
+
+    private fun calcControlPoints2(
+        start: DoubleVector,
+        end: DoubleVector,
+        curvature: Double,
+        degreeAngle: Double,
+        ncp: Int
+    ): List<DoubleVector> {
+        if (curvature == 0.0) {  // straight line
+            return emptyList()
+        }
+
+        val mid = start.add(end).mul(0.5)
+        val d = end.subtract(start)
+
+        val angle = toRadians(degreeAngle)
+        val corner = mid.add(
+            start.subtract(mid).rotate(angle)
+        )
+
+        // Calculate angle to rotate region by to align it with x/y axes
+        val beta = -atan(lineSlope(start, corner))
+
+        // Rotate end point about start point to align region with x/y axes
+        val new = start.add(
+            d.rotate(beta)
+        )
+
+        // Calculate x-scale factor to make region "square"
+        val scaleX = lineSlope(start, new)
+
+        // Calculate the origin in the "square" region
+        // (for rotating start point to produce control points)
+        // (depends on 'curvature')
+        // 'origin' calculated from 'curvature'
+        val ratio = 2 * (sin(atan(curvature)).pow(2))
+        val origin = curvature - curvature / ratio
+
+        val ps = DoubleVector(start.x * scaleX, start.y)
+        val oxy = calcOrigin2(
+            ps = ps,
+            pe = DoubleVector(new.x * scaleX, new.y),
+            origin
+        )
+
+        // Direction of rotation
+        val dir = sign(curvature)
+
+        // Angle of rotation depends on location of origin
+        val maxTheta = PI + sign(origin * dir) * 2 * atan(abs(origin))
+
+        val theta = (0 until (ncp + 2))
+            .map { it * dir * maxTheta / (ncp + 1) }
+            .drop(1)
+            .dropLast(1)
+
+        // May have BOTH multiple end points AND multiple
+        // control points to generate (per set of end points)
+        // Generate consecutive sets of control points by performing
+        // matrix multiplication
+
+        val indices = List(theta.size) { index -> index }
+
+        val p = ps.subtract(oxy)
+        val cp = indices.map { index ->
+            oxy.add(
+                p.rotate(theta[index])
+            )
+        }
+            // Reverse transformations (scaling and rotation) to
+            // produce control points in the original space
+            .map {
+                DoubleVector(
+                    it.x / scaleX,
+                    it.y
+                )
+            }
+
+        return indices.map { index ->
+            start.add(
+                cp[index].subtract(start).rotate(-beta)
+            )
+        }
+    }
+
+    private fun calcOrigin2(
+        ps: DoubleVector,
+        pe: DoubleVector,
+        origin: Double
+    ): DoubleVector {
+
+        val mid = ps.add(pe).mul(0.5)
+        val d = pe.subtract(ps)
+        val slope = lineSlope(ps, pe)
+
+        val oSlope = -1 / slope
+
+        // The origin is a point somewhere along the line between
+        // the end points, rotated by 90 (or -90) degrees
+        // Two special cases:
+        // If slope is non-finite then the end points lie on a vertical line, so
+        // the origin lies along a horizontal line (oSlope = 0)
+        // If oSlope is non-finite then the end points lie on a horizontal line,
+        // so the origin lies along a vertical line (oSlope = Inf)
+        val tmpOX = when {
+            !slope.isFinite() -> 0.0
+            !oSlope.isFinite() -> origin * d.x / 2
+            else -> origin * d.x / 2
+        }
+
+        val tmpOY = when {
+            !slope.isFinite() -> origin * d.y / 2
+            !oSlope.isFinite() -> 0.0
+            else -> origin * d.y / 2
+        }
+
+        return DoubleVector(mid.x + tmpOY, mid.y - tmpOX)
     }
 
     companion object {

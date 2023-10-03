@@ -20,6 +20,7 @@ class Curve {
             val spec = """{
                 'ggtitle': { 'text': 'curvature = $curvature, angle = $angle' },
                 'kind': 'plot',
+                'theme': { 'name' : 'grey' },
                 'layers': [
                   {
                     'data': {'x': [-3,3], 'y': [-3,3]},
@@ -58,6 +59,7 @@ class Curve {
                 },
                 "ggtitle": { "text": "curvature = $curvature, angle=$angle" },
                 "kind": "plot",
+                'theme': { 'name' : 'grey' },
                 "layers": [
                     {
                         "geom": "point"
