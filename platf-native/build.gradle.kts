@@ -16,6 +16,10 @@ kotlin {
     targetHierarchy.default()
 
     sourceSets {
+        all {
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+
         commonMain {
             dependencies {
                 implementation(project(":commons"))

@@ -22,7 +22,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
 
                 compileOnly(project(":commons"))
                 compileOnly(project(":datamodel"))
@@ -58,6 +57,7 @@ kotlin {
         named("jsMain") {
             dependencies {
                 compileOnly("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
