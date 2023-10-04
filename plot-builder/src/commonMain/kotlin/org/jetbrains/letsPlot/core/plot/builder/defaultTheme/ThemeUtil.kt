@@ -54,8 +54,9 @@ object ThemeUtil {
                     ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${color.name}'")
             }
         }
-            .mergeWith(flavor.specialColors)
 
-        return geomThemeOptions.mergeWith(withResolvedColors)
+        return geomThemeOptions
+            .mergeWith(flavor.specialColors)
+            .mergeWith(withResolvedColors)
     }
 }
