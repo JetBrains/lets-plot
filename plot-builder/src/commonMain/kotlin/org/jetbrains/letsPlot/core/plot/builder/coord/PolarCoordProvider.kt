@@ -26,6 +26,9 @@ internal class PolarCoordProvider(
     yLim: DoubleSpan?
 ) : CoordProviderBase(xLim, yLim, false) {
 
+    override val isLinear: Boolean
+        get() = false
+
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(theta, start, clockwise, clip, xLim, yLim)
     }
