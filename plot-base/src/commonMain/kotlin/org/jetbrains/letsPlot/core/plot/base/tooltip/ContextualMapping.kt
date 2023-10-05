@@ -9,16 +9,16 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
 // `open` for Mockito tests
 open class ContextualMapping(
-    private val tooltipLines: List<TooltipLineSpec>,
+    private val tooltipLines: List<LineSpec>,
     val tooltipAnchor: TooltipAnchor?,
     val tooltipMinWidth: Double?,
     val ignoreInvisibleTargets: Boolean,
     val hasGeneralTooltip: Boolean,
     val hasAxisTooltip: Boolean,
     val isCrosshairEnabled: Boolean,
-    private val tooltipTitle: TooltipLineSpec?
+    private val tooltipTitle: LineSpec?
 ) {
-    fun getDataPoints(index: Int, ctx: PlotContext): List<TooltipLineSpec.DataPoint> {
+    fun getDataPoints(index: Int, ctx: PlotContext): List<LineSpec.DataPoint> {
         return tooltipLines.mapNotNull { it.getDataPoint(index, ctx) }
     }
 

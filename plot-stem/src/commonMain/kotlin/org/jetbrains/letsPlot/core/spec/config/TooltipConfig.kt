@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.spec.Option
 
@@ -22,12 +21,12 @@ class TooltipConfig(
         return create().run {
             TooltipSpecification(
                 valueSources,
-                linePatterns?.map(::TooltipLine),
+                linePatterns,
                 TooltipSpecification.TooltipProperties(
                     anchor = readAnchor(),
                     minWidth = readMinWidth()
                 ),
-                titleLine?.let(::TooltipLine),
+                titleLine,
                 disableSplitting = getBoolean(Option.Layer.DISABLE_SPLITTING, def = false)
             )
         }

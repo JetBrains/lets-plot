@@ -5,11 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
 class AnnotationSpecification(
     val valueSources: List<ValueSource>,
-    val linePatterns: List<AnnotationLine>,
+    val linePatterns: List<LinePattern>,
     // other settings
     val textSize: Double?
 ) {

@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
 class TooltipSpecification(
     val valueSources: List<ValueSource>,
-    val tooltipLinePatterns: List<TooltipLine>?,
+    val tooltipLinePatterns: List<LinePattern>?,
     val tooltipProperties: TooltipProperties,
-    val tooltipTitle: TooltipLine?,
+    val tooltipTitle: LinePattern?,
     val disableSplitting: Boolean
 ) {
     class TooltipProperties(

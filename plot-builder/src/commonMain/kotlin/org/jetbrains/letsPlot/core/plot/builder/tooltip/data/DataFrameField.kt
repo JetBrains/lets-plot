@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class DataFrameField(
