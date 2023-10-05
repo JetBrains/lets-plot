@@ -33,11 +33,12 @@ internal class LinearBreaksGen(
     }
 
     companion object {
-        internal fun generateBreakValues(domain: DoubleSpan, targetCount: Int): List<Double> {
+        internal fun generateBreakValues(domain: DoubleSpan, targetCount: Int, minStep: Double = Double.MIN_VALUE): List<Double> {
             val helper = LinearBreaksHelper(
                 domain.lowerEnd,
                 domain.upperEnd,
-                targetCount
+                targetCount,
+                minStep = minStep
             )
             return helper.breaks
         }

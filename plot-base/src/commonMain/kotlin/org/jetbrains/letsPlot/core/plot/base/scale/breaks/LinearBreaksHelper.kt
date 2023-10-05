@@ -12,6 +12,7 @@ class LinearBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
     count: Int,
+    minStep: Double = Double.MIN_VALUE,
     precise: Boolean = false
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
     override val breaks: List<Double>
@@ -22,7 +23,7 @@ class LinearBreaksHelper(
         val step = if (precise) {
             this.targetStep
         } else {
-            computeNiceStep(this.span, count)
+            computeNiceStep(this.span, count, minStep)
         }
 
         val breaks =
@@ -44,20 +45,29 @@ class LinearBreaksHelper(
     }
 
     companion object {
+        private const val MIN_BREAKS_COUNT = 3
+
         private fun computeNiceStep(
             span: Double,
-            count: Int
+            count: Int,
+            minStep: Double
         ): Double {
             // compute step so that it is multiple of 10, 5 or 2.
             val stepRaw = span / count
             val step10Power = floor(log10(stepRaw))
-            val step = 10.0.pow(step10Power)
-            val error = step * count / span
-            return when {
-                error <= 0.15 -> step * 10.0
-                error <= 0.35 -> step * 5.0
-                error <= 0.75 -> step * 2.0
-                else -> step
+            val stepPow = 10.0.pow(step10Power)
+            val error = stepPow * count / span
+            val step = when {
+                error <= 0.15 -> stepPow * 10.0
+                error <= 0.35 -> stepPow * 5.0
+                error <= 0.75 -> stepPow * 2.0
+                else -> stepPow
+            }
+            // If there is enough space for the minimal number of breaks, then restrict step to minStep.
+            return if (minStep * (MIN_BREAKS_COUNT - 1) < span) {
+                max(step, minStep)
+            } else {
+                step
             }
         }
 

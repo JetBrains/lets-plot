@@ -46,8 +46,14 @@ internal class NonlinearBreaksGen(
             transform: ContinuousTransform
         ): List<Double> {
             val transformedDomain = ScaleUtil.applyTransform(domain, transform)
+            val minStep = when (transform) {
+                is Log10Transform,
+                is Log2Transform,
+                is SymlogTransform -> 1.0
+                else -> Double.MIN_VALUE
+            }
             val transformedBreakValues: List<Double> =
-                LinearBreaksGen.generateBreakValues(transformedDomain, targetCount)
+                LinearBreaksGen.generateBreakValues(transformedDomain, targetCount, minStep)
 
             // Transform back to data space.
             return transform.applyInverse(transformedBreakValues).filterNotNull()
