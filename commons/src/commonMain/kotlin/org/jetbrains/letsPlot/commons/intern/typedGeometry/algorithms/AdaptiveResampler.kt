@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.pointSqrDistance
+import org.jetbrains.letsPlot.commons.intern.math.pointToLineSqrDistance
 
 
 class AdaptiveResampler<T> private constructor(
@@ -13,14 +15,21 @@ class AdaptiveResampler<T> private constructor(
     precision: Double,
     private val dataAdapter: DataAdapter<T>
 ) {
+    private val precisionSqr: Double = precision * precision
+
     companion object {
+        private const val MAX_DEPTH_LIMIT = 9 // 1_025 points maximum (2^(LIMIT + 1) + 1)
+
         private val DOUBLE_VECTOR_ADAPTER = object : DataAdapter<DoubleVector> {
             override fun x(p: DoubleVector) = p.x
             override fun y(p: DoubleVector) = p.y
             override fun create(x: Double, y: Double) = DoubleVector(x, y)
         }
 
-        fun forDoubleVector(transform: (DoubleVector) -> DoubleVector?, precision: Double): AdaptiveResampler<DoubleVector> {
+        private fun forDoubleVector(
+            transform: (DoubleVector) -> DoubleVector?,
+            precision: Double
+        ): AdaptiveResampler<DoubleVector> {
             return AdaptiveResampler(transform, precision, DOUBLE_VECTOR_ADAPTER)
         }
 
@@ -28,78 +37,82 @@ class AdaptiveResampler<T> private constructor(
             return AdaptiveResampler(transform, precision, adapter)
         }
 
-        fun resample(points: List<DoubleVector>, precision: Double, transform: (DoubleVector) -> DoubleVector?): List<DoubleVector> {
+        fun resample(
+            points: List<DoubleVector>,
+            precision: Double,
+            transform: (DoubleVector) -> DoubleVector?
+        ): List<DoubleVector> {
             return forDoubleVector(transform, precision).resample(points)
         }
 
-        fun resample(p1: DoubleVector, p2: DoubleVector, precision: Double, transform: (DoubleVector) -> DoubleVector?): List<DoubleVector> {
+        fun resample(
+            p1: DoubleVector,
+            p2: DoubleVector,
+            precision: Double,
+            transform: (DoubleVector) -> DoubleVector?
+        ): List<DoubleVector> {
             return forDoubleVector(transform, precision).resample(p1, p2)
         }
     }
-    private val precisionSqr: Double = precision * precision
 
     fun resample(points: List<T>): List<T> {
-        val result = ArrayList<T>(points.size)
+        var pPrev: T = points.firstOrNull() ?: return emptyList()
+        var tPrev: T = transform(pPrev) ?: return emptyList()
 
-        for (i in 1.until(points.size)) {
-            result.removeLastOrNull()
+        val pLast = points.lastOrNull() ?: return emptyList()
+        val tLast = transform(pLast) ?: return emptyList()
 
-            resample(points[i - 1], points[i])
-                .forEach(result::add)
-        }
+        val output = ArrayList<T>(points.size)
+        points
+            .asSequence()
+            .drop(1)
+            .forEach { p ->
+                val t = transform(p) ?: return@forEach
+                output.add(tPrev)
+                resample(pPrev, tPrev, p, t, output, MAX_DEPTH_LIMIT)
 
-        return result
+                pPrev = p
+                tPrev = t
+            }
+
+        output.add(tLast)
+
+        return output
     }
 
     fun resample(p1: T, p2: T): List<T> {
-        val result = ArrayList<T>()
-        val temp = ArrayList<T>()
-        result.add(p1)
-        temp.add(p2)
+        val t1 = transform(p1) ?: return emptyList()
+        val t2 = transform(p2) ?: return emptyList()
 
-        while (temp.isNotEmpty()) {
-            when (val missingPoint = computeMissingPoint(result.last(), temp.last())) {
-                null -> result.add(temp.removeLast())
-                else -> temp.add(missingPoint)
+        val output = mutableListOf<T>()
+        output.add(t1)
+        resample(p1, t1, p2, t2, output, MAX_DEPTH_LIMIT)
+        output.add(t2)
+        return output
+    }
+
+    private fun resample(p1: T, t1: T, p2: T, t2: T, output: MutableList<T>, depth: Int) {
+        if (p1 == p2) {
+            return
+        }
+
+        val pm = (p1 + p2) / 2.0
+        val tm = transform(pm) ?: return
+
+        if (pointToLineSqrDistance(tm.x, tm.y, t1.x, t1.y, t2.x, t2.y) >= precisionSqr && depth > 0) {
+            resample(p1, t1, pm, tm, output, depth - 1)
+            output.add(tm)
+            resample(pm, tm, p2, t2, output, depth - 1)
+        } else {
+            if (pointSqrDistance(t1.x, t1.y, t2.x, t2.y) > precisionSqr) {
+                output.add(tm)
             }
         }
-        return result.mapNotNull { transform(it) }
-    }
-
-    private fun computeMissingPoint(p1: T, p2: T): T? {
-        val pc = (p1 + p2) / 2.0
-        val q1 = transform(p1) ?: return null
-        val q2 = transform(p2) ?: return null
-        val qc = transform(pc) ?: return null
-
-        val distance = if (q1 == q2) {
-            length(q1, qc)
-        } else {
-            distance(qc, q1, q2)
-        }
-
-        return if (distance < precisionSqr) null else pc
-    }
-
-
-    private fun length(p1: T, p2: T): Double {
-        val x = p2.x - p1.x
-        val y = p2.y - p1.y
-        return x * x + y * y
-    }
-
-    private fun distance(p: T, l1: T, l2: T): Double {
-        val ortX = l2.x - l1.x
-        val ortY = -(l2.y - l1.y)
-
-        val dot = (p.x - l1.x) * ortY + (p.y - l1.y) * ortX
-        val len = ortY * ortY + ortX * ortX
-
-        return dot * dot / len
     }
 
     val T.x get() = dataAdapter.x(this)
     val T.y get() = dataAdapter.y(this)
+    private operator fun T.minus(other: T): T = dataAdapter.create(x - other.x, y - other.y)
     private operator fun T.plus(other: T): T = dataAdapter.create(x + other.x, y + other.y)
     private operator fun T.div(other: T): T = dataAdapter.create(x / other.x, y / other.y)
     private operator fun T.div(v: Double): T = dataAdapter.create(x / v, y / v)
