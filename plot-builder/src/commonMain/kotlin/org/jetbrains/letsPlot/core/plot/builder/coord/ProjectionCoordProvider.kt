@@ -5,10 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.coord
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.coord.projectDomain
 
 internal class ProjectionCoordProvider(
     projection: Projection,
@@ -31,20 +32,10 @@ internal class ProjectionCoordProvider(
         geomSize: DoubleVector
     ): DoubleVector {
         // Adjust geom dimensions ratio.
-        val bbox = boundingBox(
-            listOf(
-                DoubleVector(hDomain.lowerEnd, vDomain.lowerEnd),
-                DoubleVector(hDomain.lowerEnd, vDomain.upperEnd),
-                DoubleVector(hDomain.upperEnd, vDomain.lowerEnd),
-                DoubleVector(hDomain.upperEnd, vDomain.upperEnd)
-            )
-                .map {
-                    if (flipped) it.flip() else it
-                }.mapNotNull(projection::project)
-                .map {
-                    if (flipped) it.flip() else it
-                }
-        ) ?: error("adjustGeomSize() - can't compute bbox")
+        val bbox = DoubleRectangle(hDomain, vDomain)
+            .let { if (flipped) it.flip() else it }
+            .let { projectDomain(projection, it) }
+            .let { if (flipped) it.flip() else it }
 
         val domainRatio = bbox.width / bbox.height
         return FixedRatioCoordProvider.reshapeGeom(geomSize, domainRatio)
