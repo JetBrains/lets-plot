@@ -6,13 +6,12 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.CoordPolarPlotSpecs
-
+import demo.plot.common.model.plotConfig.GeoProjectionsPlotSpecs
 
 fun main() {
-    with(CoordPolarPlotSpecs()) {
+    with(GeoProjectionsPlotSpecs()) {
         PlotSpecsDemoWindowBatik(
-            "coord_polar()",
+            "Geo projections",
             plotSpecList()
         ).open()
     }
