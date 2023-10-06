@@ -89,9 +89,6 @@ kotlin {
 // Fix Gradle 7 error:
 // Execution failed for task ':plot-demo:jvm*Jar'.
 // Entry diamonds.csv is a duplicate but no duplicate handling strategy has been set.
-jvmJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
 
 jvmBatikJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
