@@ -10,7 +10,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
 
-class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) {
+class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) : BreakFormatter {
     private var formatter: NumberFormat
 
     init {
@@ -68,5 +68,5 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
         formatter = NumberFormat("$delimiter.${precision.toInt()}$type")
     }
 
-    fun apply(value: Any): String = formatter.apply(value as Number)
+    override fun apply(value: Any): String = formatter.apply(value as Number)
 }

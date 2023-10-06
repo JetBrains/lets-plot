@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.PowerBreakFormatter
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.abs
 import kotlin.math.min
@@ -24,7 +25,7 @@ internal class NonlinearBreaksGen(
         val breakFormatters = if (formatter != null) {
             List(breakValues.size) { formatter }
         } else {
-            createFormatters(breakValues)
+            createFormatters(breakValues, transform)
         }
 
         val labels = breakValues.mapIndexed() { i, v -> breakFormatters[i](v) }
@@ -36,7 +37,7 @@ internal class NonlinearBreaksGen(
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
+        return createMultiFormatter(generateBreakValues(domain, targetCount, transform), transform)
     }
 
     companion object {
@@ -59,17 +60,17 @@ internal class NonlinearBreaksGen(
             return transform.applyInverse(transformedBreakValues).filterNotNull()
         }
 
-        private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
-            val breakFormatters = createFormatters(breakValues)
+        private fun createMultiFormatter(breakValues: List<Double>, transform: ContinuousTransform): (Any) -> String {
+            val breakFormatters = createFormatters(breakValues, transform)
             return MultiFormatter(breakValues, breakFormatters)::apply
         }
 
-        private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
+        private fun createFormatters(breakValues: List<Double>, transform: ContinuousTransform): List<(Any) -> String> {
             if (breakValues.isEmpty()) return emptyList()
             if (breakValues.size == 1) {
                 val domainValue = breakValues[0]
                 val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step))
+                return listOf(createFormatter(domainValue, step, transform))
             }
 
             // format each tick with its own formatter
@@ -81,17 +82,19 @@ internal class NonlinearBreaksGen(
                         else -> currValue - breakValues[i - 1]
                     }
                 )
-                createFormatter(currValue, step)
+                createFormatter(currValue, step, transform)
             }
             return formatters
         }
 
-        private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
-            return NumericBreakFormatter(
-                domainValue,
-                step,
-                true
-            )::apply
+        private fun createFormatter(domainValue: Double, step: Double, transform: ContinuousTransform): (Any) -> String {
+            val formatter = when (transform) {
+                is Log10Transform,
+                is SymlogTransform -> PowerBreakFormatter(10, domainValue, step, true)
+                is Log2Transform -> PowerBreakFormatter(2, domainValue, step, true)
+                else -> NumericBreakFormatter(domainValue, step, true)
+            }
+            return formatter::apply
         }
     }
 
