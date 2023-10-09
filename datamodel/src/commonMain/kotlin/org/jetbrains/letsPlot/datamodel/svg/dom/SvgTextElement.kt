@@ -132,4 +132,27 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer()!!.applyTransform(this, point)
     }
+
+    fun asPowerDegreeFormula(): SvgTextElement {
+        if (children().isEmpty()) {
+            return this
+        }
+
+        val text = (children()[0] as SvgTextNode).textContent().get()
+        val powerDegreePattern = """^\\\((-?\d+)\^\{?(-?\d+)\}?\\\)${'$'}""".toRegex()
+        val match = powerDegreePattern.find(text) ?: return this
+
+        val base = match.groupValues[1]
+        val degree = match.groupValues[2]
+        val baseTSpan = SvgTSpanElement(base)
+        val degreeTSpan = SvgTSpanElement(degree)
+        degreeTSpan.setAttribute("baseline-shift", "super")
+        degreeTSpan.setAttribute("font-size", "75%")
+        val formulaTextElement = SvgTextElement()
+        SvgUtils.copyAttributes(this, formulaTextElement)
+        formulaTextElement.addTSpan(baseTSpan)
+        formulaTextElement.addTSpan(degreeTSpan)
+
+        return formulaTextElement
+    }
 }

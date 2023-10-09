@@ -13,10 +13,9 @@ class PowerFormat(private val base: Int) {
         val deg: Int = num.toDouble().absoluteValue.let {
             log(it, base.toDouble()).roundToInt()
         }
-        return when {
-            deg == 0 -> "${sign}1"
-            deg == 1 -> "$sign$base"
-            deg > 0 -> "\\($sign$base^$deg\\)"
+        return when (deg) {
+            0 -> "${sign}1"
+            1 -> "$sign$base"
             else -> "\\($sign$base^{$deg}\\)"
         }
     }
