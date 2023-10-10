@@ -21,9 +21,6 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
         var src = source
         val target = Utils.newBatikNode(src, myDoc)
 
-        if (src is SvgTextElement) {
-            src = src.asPowerDegreeFormula()
-        }
         if (src is SvgImageElementEx) {
             src = src.asImageElement(RGBEncoderAwt())
         }

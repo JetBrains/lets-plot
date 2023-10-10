@@ -15,7 +15,7 @@ class SvgToString(
     private val rgbEncoder: RGBEncoder,
     private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder or Cairo
 ) {
-    fun render(svg: SvgSvgElement): String {
+    fun render(svg: SvgElement): String {
         val buffer = StringBuilder()
         renderElement(svg, buffer, 0)
         return buffer.toString()
