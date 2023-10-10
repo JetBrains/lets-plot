@@ -18,19 +18,17 @@ import kotlin.math.min
 import kotlin.math.sin
 
 internal class PolarCoordProvider(
-    private val theta: String,
-    private val start: Int,
-    private val clockwise: Boolean,
-    private val clip: Boolean,
-    xLim: DoubleSpan?,
-    yLim: DoubleSpan?
-) : CoordProviderBase(xLim, yLim, false) {
+    private val thetaFromX: Boolean,
+    private val start: Double,
+    private val clockwise: Boolean
+) : CoordProviderBase(xLim = null, yLim = null, false) {
 
     override val isLinear: Boolean
         get() = false
 
+    // TODO: polar coord actually does not support flipped and xLim/yLim
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(theta, start, clockwise, clip, xLim, yLim)
+        return PolarCoordProvider(thetaFromX, start, clockwise)
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
@@ -42,47 +40,47 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
-        val (rRange, phiRange) = when (theta) {
-            "x" -> adjustedDomain.yRange() to adjustedDomain.xRange()
-            "y" -> adjustedDomain.xRange() to adjustedDomain.yRange()
-            else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
+        val (rDomain, thetaDomain) = when (thetaFromX) {
+            true -> adjustedDomain.yRange() to adjustedDomain.xRange()
+            false -> adjustedDomain.xRange() to adjustedDomain.yRange()
         }
 
-        val rNorm = 0.0 - rRange.lowerEnd
-        val phiNorm = 0.0 - phiRange.lowerEnd
+        val rNorm = 0.0 - rDomain.lowerEnd
+        val thetaNorm = 0.0 - thetaDomain.lowerEnd
 
-        val rRangeNorm = DoubleSpan(0.0, rRange.upperEnd + rNorm)
-        val phiRangeNorm = DoubleSpan(0.0, phiRange.upperEnd + phiNorm)
+        val rRangeNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
+        val thetaRangeNorm = DoubleSpan(0.0, thetaDomain.upperEnd + thetaNorm)
 
         val rScaleMapper = Mappers.mul(rRangeNorm, min(clientSize.x, clientSize.y) / 2.0)
-        val phiScaleMapper = Mappers.mul(phiRangeNorm, 2.0 * PI)
+        val thetaScaleMapper = Mappers.mul(thetaRangeNorm, 2.0 * PI)
         val center = clientSize.mul(0.5)
 
-        val norm = when (theta) {
-            "x" -> DoubleVector(phiNorm, rNorm)
-            "y" -> DoubleVector(rNorm, phiNorm)
-            else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
+        val norm = when (thetaFromX) {
+            true -> DoubleVector(thetaNorm, rNorm)
+            false -> DoubleVector(rNorm, thetaNorm)
         }
 
-        fun scalerThetaX(v: DoubleVector) = rScaleMapper(v.y) to phiScaleMapper(v.x)
-        fun scalerThetaY(v: DoubleVector) = rScaleMapper(v.x) to phiScaleMapper(v.y)
+        fun scalerThetaX(v: DoubleVector) = rScaleMapper(v.y) to thetaScaleMapper(v.x)
+        fun scalerThetaY(v: DoubleVector) = rScaleMapper(v.x) to thetaScaleMapper(v.y)
 
-        val scaler = when (theta) {
-            "x" -> ::scalerThetaX
-            "y" -> ::scalerThetaY
-            else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
+        val scaler = when (thetaFromX) {
+            true -> ::scalerThetaX
+            false -> ::scalerThetaY
         }
+
+        val sign = if (clockwise) -1.0 else 1.0
+        val startAngle = PI / 2.0 + sign * start
 
         val polarProjection = object : Projection {
             override val nonlinear: Boolean = true
 
             override fun project(v: DoubleVector): DoubleVector {
-                val (r, phi) = scaler(v.add(norm))
+                val (r, theta) = scaler(v.add(norm))
                 checkNotNull(r)
-                checkNotNull(phi)
+                checkNotNull(theta)
 
-                val x = r * cos(-phi + (PI / 2.0))
-                val y = r * sin(-phi + (PI / 2.0))
+                val x = r * cos(sign * theta + startAngle)
+                val y = r * sin(sign * theta + startAngle)
                 return center.add(DoubleVector(x, y))
             }
 

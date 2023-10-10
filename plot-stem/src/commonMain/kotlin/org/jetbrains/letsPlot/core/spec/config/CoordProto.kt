@@ -45,15 +45,19 @@ internal object CoordProto {
             }
 
             POLAR -> CoordProviders.polar(
-                theta = options.getString(Coord.THETA) ?: "x",
-                start = options.getInteger(Coord.START) ?: 0,
-                clockwise = when (options.getInteger(Coord.DIRECTION)) {
+                thetaFromX = when (val theta = options.getString(Coord.THETA.lowercase())) {
+                    "x" -> true
+                    "y" -> false
+                    null -> true
+                    else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
+                },
+                start = options.getDouble(Coord.START) ?: 0.0,
+                clockwise = when (val dir = options.getInteger(Coord.DIRECTION)) {
                     1 -> true
                     -1 -> false
                     null -> true
-                    else -> error("Unsupported direction")
-                },
-                clip = options.getBoolean(Coord.CLIP, true)
+                    else -> error("Unsupported direction. Expected 1 or -1, but was `$dir`")
+                }
             )
 
             FLIP -> throw IllegalStateException("Don't try to instantiate coord FLIP, it's only a flag.")
