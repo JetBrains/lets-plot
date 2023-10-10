@@ -48,7 +48,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 

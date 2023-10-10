@@ -15,7 +15,7 @@ import java.io.StringWriter
 object BrowserDemoUtil {
     private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
-    private const val JS_DIST_PATH = "js-package/build/distributions"
+    private const val JS_DIST_PATH = "js-package/build/dist/js/productionExecutable"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
         val file = createDemoFile(

@@ -31,16 +31,17 @@ kotlin {
     }
 }
 
-def dist_dir = "${project.buildDir}/distributions/"
+def prod_js_exec_dist_dir = "${project.buildDir}/dist/js/productionExecutable/"
+def dev_js_exec_dist_dir = "${project.buildDir}/dist/js/devExecutable/"
 def artifact_name = "js-package.js"
 
 tasks.register('renameProdJsArtifact') {
     group = project.letsPlotTaskGroup
     doLast{
         copy {
-            from "${dist_dir}${artifact_name}"
+            from "${prod_js_exec_dist_dir}${artifact_name}"
             rename "${artifact_name}", "lets-plot.min.js"
-            into dist_dir
+            into prod_js_exec_dist_dir
         }
     }
 }
@@ -49,9 +50,9 @@ tasks.register('renameDevJsArtifact') {
     group = project.letsPlotTaskGroup
     doLast{
         copy {
-            from "${project.buildDir}/developmentExecutable/${artifact_name}"
+            from "${dev_js_exec_dist_dir}${artifact_name}"
             rename "${artifact_name}", "lets-plot.js"
-            into dist_dir
+            into dev_js_exec_dist_dir
         }
     }
 }
@@ -62,7 +63,7 @@ jsBrowserProductionWebpack.finalizedBy renameProdJsArtifact
 tasks.register('copyForPublish', Copy) {
     dependsOn jsBrowserProductionWebpack
 
-    from "${dist_dir}${artifact_name}"
+    from "${prod_js_exec_dist_dir}${artifact_name}"
     rename "${artifact_name}", "lets-plot.min.js"
     into "${rootDir}/js-package/distr/"
 }

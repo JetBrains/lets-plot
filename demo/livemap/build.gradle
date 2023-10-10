@@ -3,7 +3,6 @@ plugins {
 }
 
 kotlin {
-    jvm()
     jvm("jvmJfx")
     jvm("jvmRawJfx")
     jvm("jvmRawAwt")
@@ -46,11 +45,6 @@ kotlin {
                 implementation("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
-//        jvmMain {
-//            dependsOn allJvm
-//            dependencies {
-//            }
-//        }
 
         jvmJfxMain {
             dependsOn allJvm
