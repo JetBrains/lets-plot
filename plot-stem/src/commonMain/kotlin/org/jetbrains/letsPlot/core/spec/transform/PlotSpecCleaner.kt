@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.transform
 object PlotSpecCleaner {
 
     /**
-     * Makes muitable 'copy' and converts keys and values to canonic form.
+     * Makes mutable 'copy' and converts keys and values to canonic form.
      */
     fun apply(plotSpec: Map<*, *>): MutableMap<String, Any> {
         return cleanCopyOfMap(plotSpec)
@@ -17,36 +17,21 @@ object PlotSpecCleaner {
     private fun cleanCopyOfMap(map: Map<*, *>): MutableMap<String, Any> {
         // - drops key-value pair if value is null
         // - converts all keys to strings
-        val out = LinkedHashMap<String, Any>()
-        for (k in map.keys) {
-            val v = map[k]
-            if (v != null) {
-                val key = k.toString()
-                out[key] = cleanValue(v)
-            }
-        }
-        return out
+
+        return map.entries
+            .mapNotNull { (key, value) -> value?.let { key.toString() to cleanValue(it) } }
+            .toMap(LinkedHashMap())
     }
 
-    private fun cleanValue(v: Any): Any {
-        if (v is Map<*, *>) {
-            return cleanCopyOfMap(v)
-        } else if (v is List<*>) {
-            return cleanList(v)
-        }
-        return v
+    private fun cleanValue(v: Any): Any = when (v) {
+        is Map<*, *> -> cleanCopyOfMap(v)
+        is List<*> -> cleanList(v)
+        else -> v
     }
 
-    private fun cleanList(list: List<*>): List<*> {
-        if (!containSpecs(list)) {
-            // do not change data vectors
-            return list
-        }
-        val copy = ArrayList<Any>(list.size)
-        for (o in list) {
-            copy.add(cleanValue(o!!))
-        }
-        return copy
+    private fun cleanList(list: List<*>): List<*> = when {
+        containSpecs(list) -> list.filterNotNull().map(::cleanValue)
+        else -> list // do not change data vectors
     }
 
     private fun containSpecs(list: List<*>): Boolean {
