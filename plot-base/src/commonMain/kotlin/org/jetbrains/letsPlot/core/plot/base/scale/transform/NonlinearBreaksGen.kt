@@ -91,7 +91,6 @@ internal class NonlinearBreaksGen(
             val formatter = when (transform) {
                 is Log10Transform,
                 is SymlogTransform -> PowerBreakFormatter(10, domainValue, step, true)
-                is Log2Transform -> PowerBreakFormatter(2, domainValue, step, true)
                 else -> NumericBreakFormatter(domainValue, step, true)
             }
             return formatter::apply
