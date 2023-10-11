@@ -12,8 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.PowerBreakFormatter
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
-import kotlin.math.abs
-import kotlin.math.min
+import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
@@ -33,7 +32,7 @@ internal class NonlinearBreaksGen(
     }
 
     override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return formatter ?: defaultFormatter(domain, targetCount)
+        return formatter ?: defaultFormatter(domain, recalculateBreaksCount(targetCount, domain, transform))
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
@@ -41,23 +40,35 @@ internal class NonlinearBreaksGen(
     }
 
     companion object {
+        private const val MIN_BREAKS_COUNT = 3
+
         private fun generateBreakValues(
             domain: DoubleSpan,
             targetCount: Int,
             transform: ContinuousTransform
         ): List<Double> {
             val transformedDomain = ScaleUtil.applyTransform(domain, transform)
-            val minStep = when (transform) {
-                is Log10Transform,
-                is Log2Transform,
-                is SymlogTransform -> 1.0
-                else -> Double.MIN_VALUE
-            }
             val transformedBreakValues: List<Double> =
-                LinearBreaksGen.generateBreakValues(transformedDomain, targetCount, minStep)
+                LinearBreaksGen.generateBreakValues(transformedDomain, targetCount)
 
             // Transform back to data space.
             return transform.applyInverse(transformedBreakValues).filterNotNull()
+        }
+
+        private fun recalculateBreaksCount(breaksCount: Int, domain: DoubleSpan, transform: ContinuousTransform): Int {
+            return when (transform) {
+                is Log10Transform,
+                is SymlogTransform -> {
+                    val transformedDomain = ScaleUtil.applyTransform(domain, transform)
+                    val recalculatedBreaksCount = (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt()
+                    if (recalculatedBreaksCount >= MIN_BREAKS_COUNT) {
+                        recalculatedBreaksCount
+                    } else {
+                        breaksCount
+                    }
+                }
+                else -> breaksCount
+            }
         }
 
         private fun createMultiFormatter(breakValues: List<Double>, transform: ContinuousTransform): (Any) -> String {
