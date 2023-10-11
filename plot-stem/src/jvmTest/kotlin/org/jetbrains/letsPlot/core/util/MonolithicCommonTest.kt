@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.junit.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertContentEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -71,13 +71,17 @@ class MonolithicCommonTest {
         )
 
         assertTrue(PlotConfig.isFailure(plotSpec))
-        assertEquals(
-            expected = """
-                |All data series in data frame must have equal size
-                |a : 3
-                |b : 1
-                |""".trimMargin(),
+        assertContentEquals(
+            expected = listOf(
+                "All data series in data frame must have equal size",
+                "a : 3",
+                "b : 1"
+            ),
+            // Sorted list to make test stable (order of variables in data frame is not guaranteed)
             actual = PlotConfig.getErrorMessage(plotSpec)
+                .split("\n")
+                .filter(String::isNotEmpty)
+                .sorted()
         )
     }
 }
