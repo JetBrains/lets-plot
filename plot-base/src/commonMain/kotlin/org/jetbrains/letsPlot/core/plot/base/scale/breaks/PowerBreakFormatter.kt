@@ -20,9 +20,7 @@ class PowerBreakFormatter(base: Int, value: Double, step: Double, allowMetricPre
             usePowerFormatter = false
         } else {
             log(abs(value), base.toDouble()).let { deg ->
-                if (abs(deg - deg.roundToInt()) >= 1e-6) {
-                    usePowerFormatter = false
-                }
+                usePowerFormatter = abs(deg - deg.roundToInt()) < POWER_FORMATTING_THRESHOLD
             }
         }
     }
@@ -33,5 +31,9 @@ class PowerBreakFormatter(base: Int, value: Double, step: Double, allowMetricPre
         } else {
             numericFormatter.apply(value)
         }
+    }
+
+    companion object {
+        private const val POWER_FORMATTING_THRESHOLD = 1e-6
     }
 }
