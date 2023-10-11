@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ConstantField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
@@ -237,6 +237,6 @@ open class LineSpecConfigParser(
         private const val LABEL_SEPARATOR = "|"
 
         // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{(.*?)\})|\.{2}\w+\.{2})""")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
     }
 }
