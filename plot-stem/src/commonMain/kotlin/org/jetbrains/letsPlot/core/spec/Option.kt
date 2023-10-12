@@ -790,7 +790,10 @@ object Option {
         const val EXPAND = "expand"  // todo
         const val ORIENTATION = "orientation" // Todo: see 'coord_map'
         const val PROJECTION = "projection"   // todo
-
+        const val THETA = "theta"
+        const val START = "start"
+        const val DIRECTION = "direction"
+        const val CLIP = "clip"
         object Projections {
             const val MERCATOR = "mercator"
             const val IDENTITY = "identity"

@@ -38,6 +38,11 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
+                implementation project(':canvas')
+                implementation project(':livemap')
+                implementation project(':plot-livemap')
+                implementation project(':gis')
+                implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
 

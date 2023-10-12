@@ -7,14 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectTargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
@@ -29,16 +29,13 @@ open class TileGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
-        val slimGroup = helper.createSlimRectangles(
-            clientRectByDataPoint(ctx, geomHelper)
-        )
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx, geomHelper))
+        val slimGroup = helper.createSlimRectangles()
         root.add(wrap(slimGroup))
 
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TILE, ctx)
         RectTargetCollectorHelper(
             helper,
-            clientRectByDataPoint(ctx, geomHelper),
             TipLayoutHint.Kind.CURSOR_TOOLTIP,
             colorsByDataPoint
         )

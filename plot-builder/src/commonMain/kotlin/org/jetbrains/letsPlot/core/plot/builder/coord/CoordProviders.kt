@@ -43,4 +43,8 @@ object CoordProviders {
             flipped
         )
     }
+
+    fun polar(thetaFromX: Boolean, start: Double, clockwise: Boolean): CoordProvider {
+        return PolarCoordProvider(thetaFromX, start, clockwise)
+    }
 }

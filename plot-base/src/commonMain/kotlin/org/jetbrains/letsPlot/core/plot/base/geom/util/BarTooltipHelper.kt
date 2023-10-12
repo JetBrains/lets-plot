@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
 object BarTooltipHelper {
     fun collectRectangleTargets(
@@ -21,7 +23,7 @@ object BarTooltipHelper {
         clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
         colorMarkerMapper: (DataPointAesthetics) -> List<Color> = HintColorUtil.createColorMarkerMapper(null, ctx),
-        defaultTooltipKind: TipLayoutHint.Kind? = null
+        defaultTooltipKind: TipLayoutHint.Kind = VERTICAL_TOOLTIP.takeIf { ctx.flipped } ?: HORIZONTAL_TOOLTIP
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
@@ -42,7 +44,7 @@ object BarTooltipHelper {
                     if (ctx.flipped) {
                         TipLayoutHint.Kind.ROTATED_TOOLTIP
                     } else {
-                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                        HORIZONTAL_TOOLTIP
                     }
                 )
 
@@ -59,11 +61,7 @@ object BarTooltipHelper {
                     fillColor = fillColorMapper(p),
                     markerColors = colorMarkerMapper(p)
                 ),
-                tooltipKind = defaultTooltipKind ?: if (ctx.flipped) {
-                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                } else {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                }
+                tooltipKind = defaultTooltipKind
             )
         }
     }
