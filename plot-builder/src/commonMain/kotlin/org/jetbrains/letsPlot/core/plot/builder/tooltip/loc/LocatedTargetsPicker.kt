@@ -179,8 +179,7 @@ class LocatedTargetsPicker(
                 }
             }
 
-            // Get closest targets and remove duplicates
-            val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
+            // Get the closest targets and remove duplicates
 
             val minXDistanceToTarget = geomTargets
                 .map(::xDistanceToCoord)
@@ -190,13 +189,7 @@ class LocatedTargetsPicker(
                 .filter { target -> xDistanceToCoord(target) == minXDistanceToTarget }
                 .distinctBy(GeomTarget::hitIndex)
 
-            return LookupResult(
-                targets = newTargets,
-                distance = lookupResult.distance,
-                geomKind = lookupResult.geomKind,
-                contextualMapping = lookupResult.contextualMapping,
-                isCrosshairEnabled = lookupResult.isCrosshairEnabled
-            )
+            return lookupResult.withTargets(newTargets)
         }
     }
 }
