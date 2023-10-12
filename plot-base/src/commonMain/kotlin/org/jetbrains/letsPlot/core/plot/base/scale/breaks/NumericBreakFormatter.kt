@@ -6,12 +6,20 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.PowerFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
 
-open class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) {
-    private var formatter: NumberFormat
+open class NumericBreakFormatter(
+    value: Double,
+    step: Double,
+    allowMetricPrefix: Boolean,
+    base: Int = 10,
+    powerFormattingDegRange: IntRange? = PowerFormat.DEF_POWER_FORMATTING_DEG_RANGE
+) {
+    private var numericFormatter: NumberFormat
+    private val powerFormatter = PowerFormat(base, powerFormattingDegRange)
 
     init {
         @Suppress("NAME_SHADOWING")
@@ -65,8 +73,14 @@ open class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix:
             delimiter = ","
         }
 
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$type")
+        numericFormatter = NumberFormat("$delimiter.${precision.toInt()}$type")
     }
 
-    open fun apply(value: Any): String = formatter.apply(value as Number)
+    open fun apply(value: Any): String {
+        return if (powerFormatter.isPowerDegreeLike(value as Number)) {
+            powerFormatter.apply(value)
+        } else {
+            numericFormatter.apply(value)
+        }
+    }
 }

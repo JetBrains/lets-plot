@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.PowerBreakFormatter
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
 import kotlin.math.*
 
@@ -101,7 +100,7 @@ internal class NonlinearBreaksGen(
         private fun createFormatter(domainValue: Double, step: Double, transform: ContinuousTransform): (Any) -> String {
             val formatter = when (transform) {
                 is Log10Transform,
-                is SymlogTransform -> PowerBreakFormatter(10, domainValue, step, true)
+                is SymlogTransform -> NumericBreakFormatter(domainValue, step, true, powerFormattingDegRange = null)
                 else -> NumericBreakFormatter(domainValue, step, true)
             }
             return formatter::apply

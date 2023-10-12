@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
 import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -135,7 +134,7 @@ class NumberTickFormatTest {
     fun both_small() {
         val domainAndStep = doubleArrayOf(0.01, 0.0005)
         assertEquals(
-            "0.0050",
+            "\\(5·10^{-3}\\)",
             format(0.005, domainAndStep)
         )
         assertEquals(
@@ -155,7 +154,7 @@ class NumberTickFormatTest {
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
         assertEquals(
-            "5.000e-4",
+            "\\(5·10^{-4}\\)",
             format(.0005, domainAndStep)
         )
         assertEquals(
@@ -172,7 +171,7 @@ class NumberTickFormatTest {
     fun domain_large() {
         val domainAndStep = doubleArrayOf(10000.0, 5.0)
         assertEquals(
-            "5,000",
+            "\\(5·10^{3}\\)",
             format(5000, domainAndStep)
         )
         assertEquals(
@@ -189,7 +188,7 @@ class NumberTickFormatTest {
     fun domain_ultraLarge() {
         val domainAndStep = doubleArrayOf(1e8, 5.0)
         assertEquals(
-            "50,000,000",
+            "\\(5·10^{7}\\)",
             format(5e7, domainAndStep)
         )
         assertEquals(
@@ -202,7 +201,7 @@ class NumberTickFormatTest {
     fun both_ultraLarge_metricPrefix() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals(
-            "50M",
+            "\\(5·10^{7}\\)",
             format(5e7, domainAndStep)
         )
         assertEquals(
@@ -223,7 +222,7 @@ class NumberTickFormatTest {
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals(
-            "5.00e+7",
+            "\\(5·10^{7}\\)",
             formatScientific(
                 5e7,
                 domainAndStep
