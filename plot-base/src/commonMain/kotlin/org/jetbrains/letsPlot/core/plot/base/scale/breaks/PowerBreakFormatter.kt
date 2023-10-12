@@ -12,7 +12,7 @@ class PowerBreakFormatter(base: Int, value: Double, step: Double, allowMetricPre
     private val powerFormatter = PowerFormat(base)
 
     override fun apply(value: Any): String {
-        return if (powerFormatter.isPowerDegree(value as Number)) {
+        return if (powerFormatter.isPowerDegreeLike(value as Number)) {
             powerFormatter.apply(value)
         } else {
             super.apply(value)

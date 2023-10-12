@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
+import org.jetbrains.letsPlot.commons.formatting.number.PowerFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
@@ -139,7 +140,7 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         }
 
         val text = (children()[0] as SvgTextNode).textContent().get()
-        val powerDegreePattern = """^\\\((-?\d+)\^\{?(-?\d+)\}?\\\)${'$'}""".toRegex()
+        val powerDegreePattern = """^\\\((-?\d?${PowerFormat.MULTIPLICATION_SYMBOL}?\d+)\^\{?(-?\d+)\}?\\\)${'$'}""".toRegex()
         val match = powerDegreePattern.find(text) ?: return this
 
         val base = match.groupValues[1]
