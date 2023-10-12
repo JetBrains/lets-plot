@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -41,6 +42,46 @@ class LocatedTargetsPickerFilterTargetsTest {
             findTargets(locator, cursor = DoubleVector(3.0, 3.0)),
             pathKey2
         )
+    }
+
+    @Test
+    fun `bar plot - check restriction on visible tooltips`() {
+
+        val targetPrototypes = run {
+            val startTargetRect = DoubleRectangle(DoubleVector.ZERO, DoubleVector(1.0, 10.0))
+            (0..10)
+                .toList()
+                .map { startTargetRect.add(DoubleVector(0.0, it.toDouble())) }
+                .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
+        }
+
+        //  restriction for bar tooltips = 5:
+        //   - if more - choose the one closest target
+        //   - else - get all targets
+
+        run {
+            val locator = createLocator(GeomKind.BAR, targetPrototypes)
+            assertTargets(
+                findTargets(locator, cursor = DoubleVector(0.0, 0.0)),
+                0
+            )
+            assertTargets(
+                findTargets(locator, cursor = DoubleVector(0.0, 6.0)),
+                6
+            )
+            assertTargets(
+                findTargets(locator, cursor = DoubleVector(0.0, 10.0)),
+                10
+            )
+        }
+        run {
+            // targets is not more than the restriction value => use all targets
+            val locator = createLocator(GeomKind.BAR, targetPrototypes.take(5))
+            assertTargets(
+                findTargets(locator, cursor = DoubleVector(0.0, 10.0)),
+                0, 1, 2, 3, 4
+            )
+        }
     }
 
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {

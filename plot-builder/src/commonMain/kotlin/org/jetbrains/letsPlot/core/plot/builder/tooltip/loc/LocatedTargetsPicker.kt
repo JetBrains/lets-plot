@@ -101,6 +101,9 @@ class LocatedTargetsPicker(
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
 
+        private const val BAR_TOOLTIPS_MAX_COUNT = 5 // allowed number of visible tooltips
+        private val BAR_GEOMS = setOf(BAR, HISTOGRAM)
+
         // Consider layers with the same geom as a single layer to join their tooltips
         private val STACKABLE_GEOMS = setOf(
             DENSITY,
@@ -127,8 +130,7 @@ class LocatedTargetsPicker(
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     locatedTargetList.targets
                         .filter { it.tipLayoutHint.coord != null }
-                        .map { target -> MathUtil.distance(coord, target.tipLayoutHint.coord!!) }
-                        .minOrNull()
+                        .minOfOrNull { target -> MathUtil.distance(coord, target.tipLayoutHint.coord!!) }
                         ?: FAKE_DISTANCE
                 }
             } else {
@@ -140,12 +142,32 @@ class LocatedTargetsPicker(
             return lft.geomKind === rgt.geomKind && STACKABLE_GEOMS.contains(rgt.geomKind)
         }
 
+        private fun LookupResult.withTargets(newTargets: List<GeomTarget>) = LookupResult(
+            targets = newTargets,
+            distance = distance,
+            geomKind = geomKind,
+            contextualMapping = contextualMapping,
+            isCrosshairEnabled = isCrosshairEnabled
+        )
+
         private fun filterResults(
             lookupResult: LookupResult,
             coord: DoubleVector?,
             flippedAxis: Boolean
         ): LookupResult {
-            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON)) {
+            if (coord == null) return lookupResult
+
+            val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
+
+            // for bar - if the number of targets exceeds the restriction value => use the closest one
+            if (lookupResult.geomKind in BAR_GEOMS && geomTargets.size > BAR_TOOLTIPS_MAX_COUNT) {
+                val closestTarget = geomTargets.minBy { target ->
+                    MathUtil.distance(coord, target.tipLayoutHint.coord!!)
+                }
+                return lookupResult.withTargets(listOf(closestTarget))
+            }
+
+            if (lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON)) {
                 return lookupResult
             }
 
