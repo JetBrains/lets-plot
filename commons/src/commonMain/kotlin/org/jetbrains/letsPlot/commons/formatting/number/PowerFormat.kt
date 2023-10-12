@@ -19,4 +19,16 @@ class PowerFormat(private val base: Int) {
             else -> "\\($sign$base^{$deg}\\)"
         }
     }
+
+    fun isPowerDegree(value: Number): Boolean {
+        if (value.toDouble() == 0.0) {
+            return false
+        }
+        val deg = log(value.toDouble().absoluteValue, base.toDouble())
+        return abs(deg - deg.roundToInt()) < POWER_FORMATTING_THRESHOLD
+    }
+
+    companion object {
+        private const val POWER_FORMATTING_THRESHOLD = 1e-6
+    }
 }
