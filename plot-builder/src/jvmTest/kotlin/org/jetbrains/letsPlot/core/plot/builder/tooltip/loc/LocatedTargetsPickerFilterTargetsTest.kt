@@ -25,22 +25,37 @@ import kotlin.test.assertEquals
 class LocatedTargetsPickerFilterTargetsTest {
 
     @Test
-    fun `line plot - use the closest one to cursor`() {
+    fun `line plot - choose targets closest to cursor by x`() {
         val pathKey1 = 1
         val pathKey2 = 2
+        val pathKey3 = 3
 
         val targetPrototypes = listOf(
-            TestUtil.pathTarget(listOf(DoubleVector(2.0, 0.0), DoubleVector(4.0, 0.0)), indexMapper = { pathKey1 }),
-            TestUtil.pathTarget(listOf(DoubleVector(1.0, 3.0), DoubleVector(3.0, 3.0)), indexMapper = { pathKey2 })
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 0.0), DoubleVector(3.0, 0.0)), indexMapper = { pathKey1 }),
+            TestUtil.pathTarget(listOf(DoubleVector(1.0, 1.0), DoubleVector(3.0, 1.0)), indexMapper = { pathKey2 }),
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 2.0), DoubleVector(2.0, 2.0)), indexMapper = { pathKey3 }),
         )
         val locator = createLocator(GeomKind.LINE, targetPrototypes)
+
         assertTargets(
-            findTargets(locator, cursor = DoubleVector(2.0, 0.0)),
-            pathKey1
+            findTargets(locator, cursor = DoubleVector(-0.5, 0.0))
+            // no targets
         )
         assertTargets(
-            findTargets(locator, cursor = DoubleVector(3.0, 3.0)),
+            findTargets(locator, cursor = DoubleVector(0.5, 0.0)),
+            pathKey1, pathKey3
+        )
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(1.5, 0.0)),
             pathKey2
+        )
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(2.0, 0.0)),
+            pathKey3
+        )
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(2.5, 0.0)),
+            pathKey1, pathKey2
         )
     }
 
@@ -56,7 +71,7 @@ class LocatedTargetsPickerFilterTargetsTest {
         }
 
         //  restriction for bar tooltips = 5:
-        //   - if more - choose the one closest target
+        //   - if more - choose the closest one
         //   - else - get all targets
 
         run {
@@ -75,7 +90,7 @@ class LocatedTargetsPickerFilterTargetsTest {
             )
         }
         run {
-            // targets is not more than the restriction value => use all targets
+            // targets no more than the restriction value => use all targets
             val locator = createLocator(GeomKind.BAR, targetPrototypes.take(5))
             assertTargets(
                 findTargets(locator, cursor = DoubleVector(0.0, 10.0)),
@@ -103,17 +118,18 @@ class LocatedTargetsPickerFilterTargetsTest {
     private fun findTargets(
         locator: GeomTargetLocator,
         cursor: DoubleVector
-    ): List<LookupResult> {
+    ): List<GeomTarget> {
         return LocatedTargetsPicker(flippedAxis = false, cursor)
             .apply { locator.search(cursor)?.let(::addLookupResult) }
             .picked
+            .singleOrNull()
+            ?.targets
+            ?: emptyList()
     }
 
-    private fun assertTargets(lookupResults: List<LookupResult>, vararg expected: Int) {
-        assertEquals(1, lookupResults.size)
-        val lookupResult = lookupResults.first()
-        assertEquals(expected.size, lookupResult.targets.size)
-        val actual = lookupResult.targets.map(GeomTarget::hitIndex)
+    private fun assertTargets(targets: List<GeomTarget>, vararg expected: Int) {
+        assertEquals(expected.size, targets.size)
+        val actual = targets.map(GeomTarget::hitIndex)
         assertEquals(expected.toList(), actual)
     }
 }
