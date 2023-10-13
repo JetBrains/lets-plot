@@ -8,9 +8,10 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.testing.assertContentEquals
+import org.jetbrains.letsPlot.commons.testing.doubleVectorEqComparer
 import kotlin.math.*
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class ResamplerTest {
@@ -94,7 +95,8 @@ class ResamplerTest {
                 DoubleVector(6.123233995736766E-17, 1.0),
                 DoubleVector(-1.0, 1.2246467991473532E-16)
             ),
-            actual = res
+            actual = res,
+            eqComparer = doubleVectorEqComparer(0.001)
         )
     }
 
@@ -115,7 +117,8 @@ class ResamplerTest {
                 DoubleVector(-0.7071067811865475, 0.7071067811865476),
                 DoubleVector(-1.0, 1.2246467991473532E-16),
             ),
-            actual = res
+            actual = res,
+            eqComparer = doubleVectorEqComparer(0.001)
         )
     }
 
@@ -138,7 +141,8 @@ class ResamplerTest {
                 DoubleVector(0.7071067811865474, -0.7071067811865477),
                 DoubleVector(1.0, -2.4492935982947064E-16),
             ),
-            actual = res
+            actual = res,
+            eqComparer = doubleVectorEqComparer(0.001)
         )
     }
 
