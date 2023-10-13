@@ -20,7 +20,7 @@ class NumericBreakFormatterTest {
     @Test
     fun formatExtremesTypeS() {
         assertEquals(
-            listOf("-100Y", "-75Y", "-50Y", "-25Y", "0"),
+            listOf("\\(-10^{26}\\)", "-75Y", "\\(-5·10^{25}\\)", "-25Y", "0"),
             formatRange(
                 min = -NumberFormat.TYPE_S_MAX,
                 max = 0.0,
@@ -29,7 +29,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("0", "25Y", "50Y", "75Y", "100Y"),
+            listOf("0", "25Y", "\\(5·10^{25}\\)", "75Y", "\\(10^{26}\\)"),
             formatRange(
                 min = 0.0,
                 max = NumberFormat.TYPE_S_MAX,
@@ -38,7 +38,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("-100Y", "-50Y", "0", "50Y", "100Y"),
+            listOf("\\(-10^{26}\\)", "\\(-5·10^{25}\\)", "0", "\\(5·10^{25}\\)", "\\(10^{26}\\)"),
             formatRange(
                 min = -NumberFormat.TYPE_S_MAX,
                 max = NumberFormat.TYPE_S_MAX,

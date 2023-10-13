@@ -7,19 +7,22 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.PowerFormat
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.log10
+import kotlin.math.*
 
 open class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
     base: Int = 10,
-    powerFormattingDegRange: IntRange? = PowerFormat.DEF_POWER_FORMATTING_DEG_RANGE
+    formattingDegRange: Int? = PowerFormat.DEF_FORMATTING_LOWER_LIMIT
 ) {
     private var numericFormatter: NumberFormat
-    private val powerFormatter = PowerFormat(base, powerFormattingDegRange)
+    private val powerFormatter = PowerFormat(
+        base,
+        min(POWER_FORMATTING_MAX_THRESHOLD, POWER_FORMATTING_THRESHOLD_COEFFICIENT * max(Double.MIN_VALUE, step.absoluteValue)),
+        formattingDegRange
+    )
+    private var type = "f"
 
     init {
         @Suppress("NAME_SHADOWING")
@@ -38,7 +41,6 @@ open class NumericBreakFormatter(
         }
 
 
-        var type = "f"
         var delimiter = ""
 
         val domain10Power = log10(abs(value))
@@ -77,10 +79,15 @@ open class NumericBreakFormatter(
     }
 
     open fun apply(value: Any): String {
-        return if (powerFormatter.isPowerDegreeLike(value as Number)) {
+        return if (powerFormatter.isPowerDegreeLike((value as Number).toDouble(), type == "e")) {
             powerFormatter.apply(value)
         } else {
             numericFormatter.apply(value)
         }
+    }
+
+    companion object {
+        private const val POWER_FORMATTING_MAX_THRESHOLD = 1e-9
+        private const val POWER_FORMATTING_THRESHOLD_COEFFICIENT = 1e-6
     }
 }

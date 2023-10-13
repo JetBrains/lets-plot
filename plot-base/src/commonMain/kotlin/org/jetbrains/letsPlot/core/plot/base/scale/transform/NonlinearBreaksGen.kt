@@ -100,7 +100,7 @@ internal class NonlinearBreaksGen(
         private fun createFormatter(domainValue: Double, step: Double, transform: ContinuousTransform): (Any) -> String {
             val formatter = when (transform) {
                 is Log10Transform,
-                is SymlogTransform -> NumericBreakFormatter(domainValue, step, true, powerFormattingDegRange = null)
+                is SymlogTransform -> NumericBreakFormatter(domainValue, step, true, formattingDegRange = null)
                 else -> NumericBreakFormatter(domainValue, step, true)
             }
             return formatter::apply

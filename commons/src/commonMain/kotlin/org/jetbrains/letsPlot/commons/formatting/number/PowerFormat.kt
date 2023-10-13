@@ -7,14 +7,17 @@ package org.jetbrains.letsPlot.commons.formatting.number
 
 import kotlin.math.*
 
-class PowerFormat(private val base: Int, private val powerFormattingDegRange: IntRange? = DEF_POWER_FORMATTING_DEG_RANGE) {
+class PowerFormat(
+    private val base: Int,
+    private val formattingThreshold: Double,
+    private val formattingLowerLimit: Int? = DEF_FORMATTING_LOWER_LIMIT
+) {
     fun apply(value: Number): String {
         val sign: String = if (value.toDouble() < 0) "-" else ""
-        val powerDegree = getPowerDegreeOrNull(value) ?: return value.toString()
+        val powerDegree = getPowerDegreeOrNull(value.toDouble(), true) ?: return value.toString()
         return when (powerDegree.degree) {
             0 -> "$sign${powerDegree.coefficient}"
             1 -> "$sign${base * powerDegree.coefficient}"
-            -1 -> "$sign${powerDegree.coefficient.toDouble() / base}"
             else -> {
                 val coefficient = if (powerDegree.coefficient > 1) {
                     "${powerDegree.coefficient}$MULTIPLICATION_SYMBOL"
@@ -26,20 +29,20 @@ class PowerFormat(private val base: Int, private val powerFormattingDegRange: In
         }
     }
 
-    fun isPowerDegreeLike(value: Number): Boolean {
-        return getPowerDegreeOrNull(value) != null
+    fun isPowerDegreeLike(value: Double, ignoreRange: Boolean): Boolean {
+        return getPowerDegreeOrNull(value, ignoreRange) != null
     }
 
-    private fun getPowerDegreeOrNull(value: Number): PowerDegree? {
-        if (value.toDouble() == 0.0) {
+    private fun getPowerDegreeOrNull(value: Double, ignoreRange: Boolean): PowerDegree? {
+        if (value == 0.0) {
             return null
         }
         for (coefficient in 1 until base) {
-            val deg = log(value.toDouble().absoluteValue / coefficient, base.toDouble())
-            if (powerFormattingDegRange != null && abs(deg).roundToInt() !in powerFormattingDegRange) {
+            val deg = log(value.absoluteValue / coefficient, base.toDouble())
+            if (!ignoreRange && formattingLowerLimit != null && deg.absoluteValue.roundToInt() < formattingLowerLimit) {
                 continue
             }
-            if (abs(deg - deg.roundToInt()) < POWER_FORMATTING_THRESHOLD) {
+            if (abs(deg - deg.roundToInt()) < formattingThreshold) {
                 return PowerDegree(coefficient, deg.roundToInt())
             }
         }
@@ -49,10 +52,7 @@ class PowerFormat(private val base: Int, private val powerFormattingDegRange: In
     data class PowerDegree(val coefficient: Int, val degree: Int)
 
     companion object {
-        val DEF_POWER_FORMATTING_DEG_RANGE = 2..15
-
+        const val DEF_FORMATTING_LOWER_LIMIT = 3
         const val MULTIPLICATION_SYMBOL = "·"
-
-        private const val POWER_FORMATTING_THRESHOLD = 1e-15
     }
 }
