@@ -207,7 +207,7 @@ def coord_polar(theta=None, start=None, direction=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 13
 
         import numpy as np
         from lets_plot import *
@@ -222,6 +222,7 @@ def coord_polar(theta=None, start=None, direction=None):
             scale_x_continuous(expand=[0, 0]) + \\
             scale_y_continuous(expand=[0, 0]) + \\
             coord_polar(theta='y')
+
     """
     return _coord('polar', theta=theta, start=start, direction=direction)
 
