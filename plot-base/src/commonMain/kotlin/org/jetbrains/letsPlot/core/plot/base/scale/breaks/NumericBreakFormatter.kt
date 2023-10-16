@@ -13,14 +13,12 @@ open class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
-    base: Int = 10,
-    formattingDegRange: Int? = PowerFormat.DEF_FORMATTING_LOWER_LIMIT
+    base: Int = 10
 ) {
     private var numericFormatter: NumberFormat
     private val powerFormatter = PowerFormat(
         base,
-        min(POWER_FORMATTING_MAX_THRESHOLD, POWER_FORMATTING_THRESHOLD_COEFFICIENT * max(Double.MIN_VALUE, step.absoluteValue)),
-        formattingDegRange
+        min(POWER_FORMATTING_MAX_THRESHOLD, POWER_FORMATTING_THRESHOLD_COEFFICIENT * max(Double.MIN_VALUE, step.absoluteValue))
     )
     private var type = "f"
 
@@ -79,7 +77,8 @@ open class NumericBreakFormatter(
     }
 
     open fun apply(value: Any): String {
-        return if (powerFormatter.isPowerDegreeLike((value as Number).toDouble(), type == "e")) {
+        value as Number
+        return if (type == "e" && powerFormatter.isPowerDegreeLike(value.toDouble())) {
             powerFormatter.apply(value)
         } else {
             numericFormatter.apply(value)
@@ -88,6 +87,6 @@ open class NumericBreakFormatter(
 
     companion object {
         private const val POWER_FORMATTING_MAX_THRESHOLD = 1e-9
-        private const val POWER_FORMATTING_THRESHOLD_COEFFICIENT = 1e-6
+        private const val POWER_FORMATTING_THRESHOLD_COEFFICIENT = 1e-3
     }
 }

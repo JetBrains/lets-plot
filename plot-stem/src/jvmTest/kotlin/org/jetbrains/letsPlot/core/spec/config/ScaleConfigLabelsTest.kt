@@ -84,8 +84,8 @@ class ScaleConfigLabelsTest {
             val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
             val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
-            assertEquals(listOf("0.4", "0.6", "1", "1.6", "2.5"), xLabels)
-            assertEquals(listOf("0.4", "0.6", "1", "1.6", "2.5"), yLabels)
+            assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), xLabels)
+            assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), yLabels)
         }
         run {
             val scaleMap = getScaleMap(

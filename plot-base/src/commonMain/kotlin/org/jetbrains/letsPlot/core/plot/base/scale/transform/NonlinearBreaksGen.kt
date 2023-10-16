@@ -23,7 +23,7 @@ internal class NonlinearBreaksGen(
         val breakFormatters = if (formatter != null) {
             List(breakValues.size) { formatter }
         } else {
-            createFormatters(breakValues, transform)
+            createFormatters(breakValues)
         }
 
         val labels = breakValues.mapIndexed() { i, v -> breakFormatters[i](v) }
@@ -35,7 +35,7 @@ internal class NonlinearBreaksGen(
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return createMultiFormatter(generateBreakValues(domain, targetCount, transform), transform)
+        return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
 
     companion object {
@@ -70,17 +70,17 @@ internal class NonlinearBreaksGen(
             }
         }
 
-        private fun createMultiFormatter(breakValues: List<Double>, transform: ContinuousTransform): (Any) -> String {
-            val breakFormatters = createFormatters(breakValues, transform)
+        private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
+            val breakFormatters = createFormatters(breakValues)
             return MultiFormatter(breakValues, breakFormatters)::apply
         }
 
-        private fun createFormatters(breakValues: List<Double>, transform: ContinuousTransform): List<(Any) -> String> {
+        private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
             if (breakValues.isEmpty()) return emptyList()
             if (breakValues.size == 1) {
                 val domainValue = breakValues[0]
                 val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step, transform))
+                return listOf(createFormatter(domainValue, step))
             }
 
             // format each tick with its own formatter
@@ -92,18 +92,13 @@ internal class NonlinearBreaksGen(
                         else -> currValue - breakValues[i - 1]
                     }
                 )
-                createFormatter(currValue, step, transform)
+                createFormatter(currValue, step)
             }
             return formatters
         }
 
-        private fun createFormatter(domainValue: Double, step: Double, transform: ContinuousTransform): (Any) -> String {
-            val formatter = when (transform) {
-                is Log10Transform,
-                is SymlogTransform -> NumericBreakFormatter(domainValue, step, true, formattingDegRange = null)
-                else -> NumericBreakFormatter(domainValue, step, true)
-            }
-            return formatter::apply
+        private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
+            return NumericBreakFormatter(domainValue, step, true)::apply
         }
     }
 

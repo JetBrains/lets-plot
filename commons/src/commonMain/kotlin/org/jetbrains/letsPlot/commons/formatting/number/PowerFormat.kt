@@ -9,12 +9,11 @@ import kotlin.math.*
 
 class PowerFormat(
     private val base: Int,
-    private val formattingThreshold: Double,
-    private val formattingLowerLimit: Int? = DEF_FORMATTING_LOWER_LIMIT
+    private val formattingThreshold: Double
 ) {
     fun apply(value: Number): String {
         val sign: String = if (value.toDouble() < 0) "-" else ""
-        val powerDegree = getPowerDegreeOrNull(value.toDouble(), true) ?: return value.toString()
+        val powerDegree = getPowerDegreeOrNull(value.toDouble()) ?: return value.toString()
         return when (powerDegree.degree) {
             0 -> "$sign${powerDegree.coefficient}"
             1 -> "$sign${base * powerDegree.coefficient}"
@@ -29,19 +28,16 @@ class PowerFormat(
         }
     }
 
-    fun isPowerDegreeLike(value: Double, ignoreRange: Boolean): Boolean {
-        return getPowerDegreeOrNull(value, ignoreRange) != null
+    fun isPowerDegreeLike(value: Double): Boolean {
+        return getPowerDegreeOrNull(value) != null
     }
 
-    private fun getPowerDegreeOrNull(value: Double, ignoreRange: Boolean): PowerDegree? {
+    private fun getPowerDegreeOrNull(value: Double): PowerDegree? {
         if (value == 0.0) {
             return null
         }
         for (coefficient in 1 until base) {
             val deg = log(value.absoluteValue / coefficient, base.toDouble())
-            if (!ignoreRange && formattingLowerLimit != null && deg.absoluteValue.roundToInt() < formattingLowerLimit) {
-                continue
-            }
             if (abs(deg - deg.roundToInt()) < formattingThreshold) {
                 return PowerDegree(coefficient, deg.roundToInt())
             }
@@ -52,7 +48,6 @@ class PowerFormat(
     data class PowerDegree(val coefficient: Int, val degree: Int)
 
     companion object {
-        const val DEF_FORMATTING_LOWER_LIMIT = 3
         const val MULTIPLICATION_SYMBOL = "·"
     }
 }

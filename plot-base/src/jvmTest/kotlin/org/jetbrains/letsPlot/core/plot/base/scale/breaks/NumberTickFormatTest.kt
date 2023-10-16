@@ -134,7 +134,7 @@ class NumberTickFormatTest {
     fun both_small() {
         val domainAndStep = doubleArrayOf(0.01, 0.0005)
         assertEquals(
-            "\\(5·10^{-3}\\)",
+            "0.0050",
             format(0.005, domainAndStep)
         )
         assertEquals(
@@ -171,7 +171,7 @@ class NumberTickFormatTest {
     fun domain_large() {
         val domainAndStep = doubleArrayOf(10000.0, 5.0)
         assertEquals(
-            "\\(5·10^{3}\\)",
+            "5,000",
             format(5000, domainAndStep)
         )
         assertEquals(
@@ -188,7 +188,7 @@ class NumberTickFormatTest {
     fun domain_ultraLarge() {
         val domainAndStep = doubleArrayOf(1e8, 5.0)
         assertEquals(
-            "\\(5·10^{7}\\)",
+            "50,000,000",
             format(5e7, domainAndStep)
         )
         assertEquals(
@@ -201,7 +201,7 @@ class NumberTickFormatTest {
     fun both_ultraLarge_metricPrefix() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals(
-            "\\(5·10^{7}\\)",
+            "50M",
             format(5e7, domainAndStep)
         )
         assertEquals(
