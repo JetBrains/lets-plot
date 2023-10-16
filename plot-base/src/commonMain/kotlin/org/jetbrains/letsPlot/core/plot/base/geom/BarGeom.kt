@@ -9,9 +9,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.AnnotationsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class BarGeom : GeomBase() {
@@ -27,11 +29,13 @@ open class BarGeom : GeomBase() {
     ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx))
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
+        val clientRectangles = mutableListOf<Pair<DataPointAesthetics, DoubleRectangle>>()
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
             helper.createRectangles { aes, svgNode, rect ->
                 rectangles.add(svgNode)
                 tooltipHelper.addTarget(aes, rect)
+                if (ctx.annotations != null) clientRectangles.add(aes to rect)
             }
         } else {
             helper.createNonLinearRectangles { aes, svgNode, polygon ->
@@ -41,6 +45,212 @@ open class BarGeom : GeomBase() {
         }
         rectangles.reverse() // TODO: why reverse?
         rectangles.forEach(root::add)
+
+        ctx.annotations?.let {
+            val viewPort = overallAesBounds(ctx).let(coord::toClient) ?: return@let
+            buildAnnotations(root, clientRectangles, viewPort, ctx)
+        }
+        //ctx.annotations?.let { if (coord.isLinear) buildAnnotations(root, helper, coord, ctx) }
+    }
+
+    private fun buildAnnotations(
+        root: SvgRoot,
+        //rectanglesHelper: RectanglesHelper,
+        //coord: CoordinateSystem,
+        rectangles: List<Pair<DataPointAesthetics, DoubleRectangle>>,
+        viewPort: DoubleRectangle,
+        ctx: GeomContext
+    ) {
+        val annotations = ctx.annotations ?: return
+
+        val padding = annotations.textStyle.size / 2
+        val isHorizontallyOriented = ctx.flipped
+        /*
+        val rectangles = mutableListOf<Pair<DataPointAesthetics, DoubleRectangle>>()
+        rectanglesHelper.iterateRectangleGeometry { p, rect ->
+            val clientRect = rectanglesHelper.toClient(rect, p) ?: return@iterateRectangleGeometry
+            rectangles.add(p to clientRect)
+        }*/
+
+        rectangles
+            .groupBy { (_, rect) ->
+                if (isHorizontallyOriented) rect.center.y else rect.center.x
+            }
+            .forEach { (_, bars) ->
+                val barsCount = bars.size
+                bars
+                    .sortedBy { (_, rect) ->
+                        if (isHorizontallyOriented) rect.center.x else rect.center.y
+                    }
+                    .forEachIndexed { index, (p, barRect) ->
+                        val text = annotations.getAnnotationText(p.index())
+                        val textSize = AnnotationsUtil.textSizeGetter(annotations.textStyle, ctx).invoke(text, p)
+
+                        val (hAlignment, textRect) = placeLabel(
+                            barRect,
+                            index,
+                            barsCount,
+                            textSize,
+                            padding,
+                            viewPort,
+                            isHorizontallyOriented
+                        )
+                            ?: return@forEachIndexed
+
+                        var alpha = 0.0
+                        var labelFill = ctx.backgroundColor
+                        val labelColor = when {
+                            barRect.contains(textRect) -> AnnotationsUtil.chooseColor(p.fill()!!)
+                            barRect.intersects(textRect) -> {
+                                alpha = 0.6
+                                labelFill = p.fill()!!
+                                AnnotationsUtil.chooseColor(p.fill()!!)
+                            }
+                            else -> {
+                                alpha = 0.6
+                                AnnotationsUtil.chooseColor(ctx.backgroundColor)
+                            }
+                        }
+
+                        val location = DoubleVector(
+                            x = when (hAlignment) {
+                                Text.HorizontalAnchor.LEFT -> textRect.left
+                                Text.HorizontalAnchor.RIGHT -> textRect.right
+                                Text.HorizontalAnchor.MIDDLE -> textRect.center.x
+                            },
+                            y = textRect.center.y
+                        )
+
+                        val g = AnnotationsUtil.createLabelElement(
+                            text,
+                            location,
+                            textParams = AnnotationsUtil.TextParams(
+                                style = annotations.textStyle,
+                                color = labelColor,
+                                hjust = hAlignment.toString().lowercase(),
+                                fill = labelFill,
+                                alpha = alpha
+                            ),
+                            geomContext = ctx,
+                            boundsCenter = viewPort.center
+                        )
+                        root.add(g)
+                    }
+            }
+    }
+
+    internal fun DoubleRectangle.contains(other: DoubleRectangle): Boolean {
+        return other.xRange() in xRange() && other.yRange() in yRange()
+    }
+
+    private fun placeLabel(
+        barRect: DoubleRectangle,
+        index: Int,
+        barsCount: Int,
+        textSize: DoubleVector,
+        padding: Double,
+        viewPort: DoubleRectangle,
+        isHorizontallyOriented: Boolean
+    ): Pair<Text.HorizontalAnchor, DoubleRectangle>? {
+
+        val coordSelector: (DoubleVector) -> Double =
+            if (isHorizontallyOriented) DoubleVector::x else DoubleVector::y
+
+        var location = when {
+            barsCount == 1 -> {
+                // use left (for horizontally orientated) or bottom (of the vertical bar)
+                if (isHorizontallyOriented) PlacementInsideBar.MIN else PlacementInsideBar.MAX
+            }
+            index == 0 -> PlacementInsideBar.MIN
+            index == barsCount - 1 -> PlacementInsideBar.MAX
+            else -> PlacementInsideBar.MIDDLE
+        }
+
+        fun place(location: PlacementInsideBar): Pair<Text.HorizontalAnchor, DoubleRectangle> {
+            val textRect = createLabelRect(
+                hPlacement = if (isHorizontallyOriented) location else PlacementInsideBar.MIDDLE,
+                vPlacement = if (isHorizontallyOriented) PlacementInsideBar.MIDDLE else location,
+                barRect,
+                textSize,
+                padding
+            )
+            val hAlignment =
+                if (isHorizontallyOriented) location.toHorizontalAnchor() else Text.HorizontalAnchor.MIDDLE
+            return hAlignment to textRect
+        }
+
+        var (hAlignment, textRect) = place(location)
+        if (barRect.contains(textRect)) {
+            return hAlignment to textRect
+        } else if (index != 0 && index != barsCount - 1) {
+            return null
+        }
+
+        // try to move outside the bar
+
+        if (barsCount == 1) {
+            // move to the right (for horizontally orientated) or to the top (of the vertical bar)
+            location = if (isHorizontallyOriented) PlacementInsideBar.MAX else PlacementInsideBar.MIN
+        }
+
+        fun DoubleRectangle.moveTo(value: Double): DoubleRectangle {
+            val newOrigin =
+                if (isHorizontallyOriented) DoubleVector(value, origin.y) else DoubleVector(origin.x, value)
+            return DoubleRectangle(newOrigin, this.dimension)
+        }
+        textRect = if (location == PlacementInsideBar.MAX) {
+            if (isHorizontallyOriented) hAlignment = Text.HorizontalAnchor.LEFT
+            val pos = coordSelector(barRect.origin) + coordSelector(barRect.dimension) + padding / 2
+            textRect.moveTo(pos)
+        } else {
+            if (isHorizontallyOriented) hAlignment = Text.HorizontalAnchor.RIGHT
+            val pos = coordSelector(barRect.origin) - coordSelector(textSize) - padding / 2
+            textRect.moveTo(pos)
+        }
+
+        if (viewPort.contains(textRect)) {
+            return hAlignment to textRect
+        } else if (coordSelector(textSize) + padding > coordSelector(barRect.dimension)) {
+            return null
+        }
+
+        // move it a little inward
+        return place(location)
+    }
+
+    private enum class PlacementInsideBar {
+        MIN, MAX, MIDDLE;
+
+        fun toHorizontalAnchor(): Text.HorizontalAnchor {
+            return when (this) {
+                MIN -> Text.HorizontalAnchor.LEFT
+                MAX -> Text.HorizontalAnchor.RIGHT
+                MIDDLE -> Text.HorizontalAnchor.MIDDLE
+            }
+        }
+    }
+
+    private fun createLabelRect(
+        hPlacement: PlacementInsideBar,
+        vPlacement: PlacementInsideBar,
+        barRect: DoubleRectangle,
+        textSize: DoubleVector,
+        padding: Double
+    ): DoubleRectangle {
+
+        fun getCoord(coordSelector: (DoubleVector) -> Double, align: PlacementInsideBar): Double {
+            return when (align) {
+                PlacementInsideBar.MIN -> coordSelector(barRect.origin) + padding
+                PlacementInsideBar.MAX -> coordSelector(barRect.origin) + coordSelector(barRect.dimension) -
+                        coordSelector(textSize) - padding
+
+                PlacementInsideBar.MIDDLE -> coordSelector(barRect.center) - coordSelector(textSize) / 2
+            }
+        }
+
+        val originX = getCoord(DoubleVector::x, hPlacement)
+        val originY = getCoord(DoubleVector::y, vPlacement)
+        return DoubleRectangle(originX, originY, textSize.x, textSize.y)
     }
 
     companion object {

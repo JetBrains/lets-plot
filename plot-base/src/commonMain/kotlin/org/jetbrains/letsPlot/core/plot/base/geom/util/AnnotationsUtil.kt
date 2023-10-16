@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.geom.LabelGeom
@@ -16,13 +17,17 @@ import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object AnnotationsUtil {
 
-    fun textSizeGetter(ctx: GeomContext): (String, DataPointAesthetics) -> DoubleVector = { text, p ->
-        requireNotNull(ctx.annotations)
+    fun textSizeGetter(textStyle: TextStyle, ctx: GeomContext): (String, DataPointAesthetics) -> DoubleVector = { text, p ->
         TextUtil.measure(
             text,
-            toTextDataPointAesthetics(TextParams(ctx.annotations!!.textStyle), p),
+            toTextDataPointAesthetics(TextParams(textStyle), p),
             ctx
         )
+    }
+
+    fun chooseColor(background: Color) = when {
+        Colors.luminance(background) < 0.5 -> Color.WHITE // if fill is dark
+        else -> Color.BLACK
     }
 
     data class TextParams(
@@ -79,6 +84,7 @@ object AnnotationsUtil {
         location: DoubleVector,
         textParams: TextParams,
         geomContext: GeomContext,
+        boundsCenter: DoubleVector?,
     ): SvgGElement {
         return LabelGeom()
             .apply { borderWidth = 0.0; paddingFactor = 0.0;  }
@@ -88,7 +94,7 @@ object AnnotationsUtil {
                 text,
                 sizeUnitRatio = 1.0,
                 geomContext,
-                boundsCenter = null
+                boundsCenter = boundsCenter
             )
     }
 }

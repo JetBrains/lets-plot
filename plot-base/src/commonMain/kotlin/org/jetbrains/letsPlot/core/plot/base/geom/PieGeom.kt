@@ -345,7 +345,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         sectors: List<Sector>,
         ctx: GeomContext
     ) {
-        if (ctx.annotations == null || sectors.isEmpty()) return
+        val annotations = ctx.annotations ?: return
+        if (sectors.isEmpty()) return
 
         val pieCenter = sectors.map(Sector::pieCenter).distinct().singleOrNull() ?: return
 
@@ -372,12 +373,17 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 sector in leftSectors -> leftMaxOffsetForOuter
                 else -> rightMaxOffsetForOuter
             }
-            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx), offsetForPointer, ctx.plotContext)
+            getAnnotationLabel(
+                sector, annotations,
+                AnnotationsUtil.textSizeGetter(annotations.textStyle, ctx),
+                offsetForPointer,
+                ctx.plotContext
+            )
         }
         createAnnotationElements(
             pieCenter,
             annotationLabels,
-            textStyle = ctx.annotations!!.textStyle,
+            textStyle = annotations.textStyle,
             xRange = DoubleSpan(leftBorder, rightBorder),
             ctx
         ).forEach(root::add)
