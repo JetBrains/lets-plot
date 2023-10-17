@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.AnnotationsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
@@ -29,13 +30,11 @@ open class BarGeom : GeomBase() {
     ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx))
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
-        val clientRectangles = mutableListOf<Pair<DataPointAesthetics, DoubleRectangle>>()
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
             helper.createRectangles { aes, svgNode, rect ->
                 rectangles.add(svgNode)
                 tooltipHelper.addTarget(aes, rect)
-                if (ctx.annotations != null) clientRectangles.add(aes to rect)
             }
         } else {
             helper.createNonLinearRectangles { aes, svgNode, polygon ->
@@ -47,30 +46,29 @@ open class BarGeom : GeomBase() {
         rectangles.forEach(root::add)
 
         ctx.annotations?.let {
-            val viewPort = overallAesBounds(ctx).let(coord::toClient) ?: return@let
-            buildAnnotations(root, clientRectangles, viewPort, ctx)
+            buildAnnotations(root, helper, coord, ctx)
         }
-        //ctx.annotations?.let { if (coord.isLinear) buildAnnotations(root, helper, coord, ctx) }
     }
 
     private fun buildAnnotations(
         root: SvgRoot,
-        //rectanglesHelper: RectanglesHelper,
-        //coord: CoordinateSystem,
-        rectangles: List<Pair<DataPointAesthetics, DoubleRectangle>>,
-        viewPort: DoubleRectangle,
+        rectanglesHelper: RectanglesHelper,
+        coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val annotations = ctx.annotations ?: return
+        val viewPort = overallAesBounds(ctx).let(coord::toClient) ?: return
 
         val padding = annotations.textStyle.size / 2
         val isHorizontallyOriented = ctx.flipped
-        /*
-        val rectangles = mutableListOf<Pair<DataPointAesthetics, DoubleRectangle>>()
+
+        val rectangles = mutableListOf<Triple<DataPointAesthetics, DoubleRectangle, Boolean>>()
         rectanglesHelper.iterateRectangleGeometry { p, rect ->
             val clientRect = rectanglesHelper.toClient(rect, p) ?: return@iterateRectangleGeometry
-            rectangles.add(p to clientRect)
-        }*/
+
+            val isNegative = rect.dimension.y < 0
+            rectangles.add(Triple(p, clientRect, isNegative))
+        }
 
         rectangles
             .groupBy { (_, rect) ->
@@ -82,7 +80,7 @@ open class BarGeom : GeomBase() {
                     .sortedBy { (_, rect) ->
                         if (isHorizontallyOriented) rect.center.x else rect.center.y
                     }
-                    .forEachIndexed { index, (p, barRect) ->
+                    .forEachIndexed { index, (p, barRect, isNegative) ->
                         val text = annotations.getAnnotationText(p.index())
                         val textSize = AnnotationsUtil.textSizeGetter(annotations.textStyle, ctx).invoke(text, p)
 
@@ -93,7 +91,8 @@ open class BarGeom : GeomBase() {
                             textSize,
                             padding,
                             viewPort,
-                            isHorizontallyOriented
+                            isHorizontallyOriented,
+                            isNegative
                         )
                             ?: return@forEachIndexed
 
@@ -150,13 +149,14 @@ open class BarGeom : GeomBase() {
         textSize: DoubleVector,
         padding: Double,
         viewPort: DoubleRectangle,
-        isHorizontallyOriented: Boolean
+        isHorizontallyOriented: Boolean,
+        isNegative: Boolean
     ): Pair<Text.HorizontalAnchor, DoubleRectangle>? {
 
         val coordSelector: (DoubleVector) -> Double =
             if (isHorizontallyOriented) DoubleVector::x else DoubleVector::y
 
-        var location = when {
+        var insideBar = when {
             barsCount == 1 -> {
                 // use left (for horizontally orientated) or bottom (of the vertical bar)
                 if (isHorizontallyOriented) PlacementInsideBar.MIN else PlacementInsideBar.MAX
@@ -166,20 +166,27 @@ open class BarGeom : GeomBase() {
             else -> PlacementInsideBar.MIDDLE
         }
 
-        fun place(location: PlacementInsideBar): Pair<Text.HorizontalAnchor, DoubleRectangle> {
+        fun place(placement: PlacementInsideBar): Pair<Text.HorizontalAnchor, DoubleRectangle> {
             val textRect = createLabelRect(
-                hPlacement = if (isHorizontallyOriented) location else PlacementInsideBar.MIDDLE,
-                vPlacement = if (isHorizontallyOriented) PlacementInsideBar.MIDDLE else location,
+                hPlacement = if (isHorizontallyOriented) placement else PlacementInsideBar.MIDDLE,
+                vPlacement = if (isHorizontallyOriented) PlacementInsideBar.MIDDLE else placement,
                 barRect,
                 textSize,
                 padding
             )
-            val hAlignment =
-                if (isHorizontallyOriented) location.toHorizontalAnchor() else Text.HorizontalAnchor.MIDDLE
+            val hAlignment = if (isHorizontallyOriented) {
+                when (placement) {
+                    PlacementInsideBar.MIN -> Text.HorizontalAnchor.LEFT
+                    PlacementInsideBar.MAX -> Text.HorizontalAnchor.RIGHT
+                    PlacementInsideBar.MIDDLE -> Text.HorizontalAnchor.MIDDLE
+                }
+            } else {
+                Text.HorizontalAnchor.MIDDLE
+            }
             return hAlignment to textRect
         }
 
-        var (hAlignment, textRect) = place(location)
+        var (hAlignment, textRect) = place(insideBar)
         if (barRect.contains(textRect)) {
             return hAlignment to textRect
         } else if (index != 0 && index != barsCount - 1) {
@@ -190,7 +197,8 @@ open class BarGeom : GeomBase() {
 
         if (barsCount == 1) {
             // move to the right (for horizontally orientated) or to the top (of the vertical bar)
-            location = if (isHorizontallyOriented) PlacementInsideBar.MAX else PlacementInsideBar.MIN
+            insideBar = if (isHorizontallyOriented) PlacementInsideBar.MAX else PlacementInsideBar.MIN
+            if (isNegative) insideBar = insideBar.flip()
         }
 
         fun DoubleRectangle.moveTo(value: Double): DoubleRectangle {
@@ -198,7 +206,7 @@ open class BarGeom : GeomBase() {
                 if (isHorizontallyOriented) DoubleVector(value, origin.y) else DoubleVector(origin.x, value)
             return DoubleRectangle(newOrigin, this.dimension)
         }
-        textRect = if (location == PlacementInsideBar.MAX) {
+        textRect = if (insideBar == PlacementInsideBar.MAX) {
             if (isHorizontallyOriented) hAlignment = Text.HorizontalAnchor.LEFT
             val pos = coordSelector(barRect.origin) + coordSelector(barRect.dimension) + padding / 2
             textRect.moveTo(pos)
@@ -215,18 +223,16 @@ open class BarGeom : GeomBase() {
         }
 
         // move it a little inward
-        return place(location)
+        return place(insideBar)
     }
 
     private enum class PlacementInsideBar {
         MIN, MAX, MIDDLE;
 
-        fun toHorizontalAnchor(): Text.HorizontalAnchor {
-            return when (this) {
-                MIN -> Text.HorizontalAnchor.LEFT
-                MAX -> Text.HorizontalAnchor.RIGHT
-                MIDDLE -> Text.HorizontalAnchor.MIDDLE
-            }
+        fun flip() = when (this) {
+            MIN -> MAX
+            MAX -> MIN
+            MIDDLE -> MIDDLE
         }
     }
 
