@@ -154,7 +154,7 @@ class NumberTickFormatTest {
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
         assertEquals(
-            "\\(5·10^{-4}\\)",
+            "\\(5\\cdot10^{-4}\\)",
             format(.0005, domainAndStep)
         )
         assertEquals(
@@ -222,7 +222,7 @@ class NumberTickFormatTest {
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals(
-            "\\(5·10^{7}\\)",
+            "\\(5\\cdot10^{7}\\)",
             formatScientific(
                 5e7,
                 domainAndStep

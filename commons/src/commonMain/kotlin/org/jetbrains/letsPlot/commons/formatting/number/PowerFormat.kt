@@ -19,7 +19,7 @@ class PowerFormat(
             1 -> "$sign${base * powerDegree.coefficient}"
             else -> {
                 val coefficient = if (powerDegree.coefficient > 1) {
-                    "${powerDegree.coefficient}$MULTIPLICATION_SYMBOL"
+                    "${powerDegree.coefficient}$MULTIPLICATION_OPERATOR"
                 } else {
                     ""
                 }
@@ -48,6 +48,6 @@ class PowerFormat(
     data class PowerDegree(val coefficient: Int, val degree: Int)
 
     companion object {
-        const val MULTIPLICATION_SYMBOL = "·"
+        const val MULTIPLICATION_OPERATOR = "\\cdot"
     }
 }
