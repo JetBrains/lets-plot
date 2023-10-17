@@ -34,6 +34,7 @@ object AnnotationsUtil {
         val style: TextStyle,
         val color: Color? = null,
         val hjust: String? = null,
+        val vjust: String? = null,
         val angle: Double? = null,
         val fill: Color? = null,
         val alpha: Double? = null,
@@ -51,7 +52,7 @@ object AnnotationsUtil {
                     Aes.FONTFACE -> textParams.style.face.toString()
                     Aes.COLOR -> textParams.color ?: textParams.style.color
                     Aes.HJUST -> textParams.hjust ?: "middle"
-                    Aes.VJUST -> "center"
+                    Aes.VJUST -> textParams.vjust ?: "center"
                     Aes.FILL -> textParams.fill ?: Color.TRANSPARENT
                     Aes.ANGLE -> textParams.angle ?: 0.0
                     Aes.ALPHA -> textParams.alpha ?: 1.0

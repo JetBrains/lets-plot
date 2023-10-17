@@ -111,29 +111,35 @@ open class BarGeom : GeomBase() {
                             }
                         }
 
-                        val location = DoubleVector(
+                        var location = DoubleVector(
                             x = when (hAlignment) {
                                 Text.HorizontalAnchor.LEFT -> textRect.left
                                 Text.HorizontalAnchor.RIGHT -> textRect.right
                                 Text.HorizontalAnchor.MIDDLE -> textRect.center.x
                             },
-                            y = textRect.center.y
+                            y = textRect.top
                         )
 
-                        val g = AnnotationsUtil.createLabelElement(
-                            text,
-                            location,
-                            textParams = AnnotationsUtil.TextParams(
-                                style = annotations.textStyle,
-                                color = labelColor,
-                                hjust = hAlignment.toString().lowercase(),
-                                fill = labelFill,
-                                alpha = alpha
-                            ),
-                            geomContext = ctx,
-                            boundsCenter = viewPort.center
-                        )
-                        root.add(g)
+                        // separate label for each line
+                        val labels = MultilineLabel.splitLines(text).map { line ->
+                            AnnotationsUtil.createLabelElement(
+                                line,
+                                location,
+                                textParams = AnnotationsUtil.TextParams(
+                                    style = annotations.textStyle,
+                                    color = labelColor,
+                                    hjust = hAlignment.toString().lowercase(),
+                                    vjust = "top",
+                                    fill = labelFill,
+                                    alpha = alpha
+                                ),
+                                geomContext = ctx,
+                                boundsCenter = viewPort.center
+                            ).also {
+                                location = location.add(DoubleVector(0.0, annotations.textStyle.size))
+                            }
+                        }
+                        labels.forEach(root::add)
                     }
             }
     }
