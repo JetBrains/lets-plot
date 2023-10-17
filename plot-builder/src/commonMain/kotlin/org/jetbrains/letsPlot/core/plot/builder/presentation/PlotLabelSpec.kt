@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.datamodel.PowerDegree
 
 class PlotLabelSpec(
     override val font: Font
@@ -18,11 +19,20 @@ class PlotLabelSpec(
     }
 
     override fun width(labelText: String): Double {
+        val powerDegree = PowerDegree.fromText(labelText)
+        return if (powerDegree == null) {
+            plainTextWidth(labelText)
+        } else {
+            plainTextWidth(powerDegree.toPlainText())
+        }
+    }
+
+    private fun plainTextWidth(text: String): Double {
         return if (font.isMonospased) {
             // ToDo: should take in account font family adjustment parameters.
-            monospacedWidth(labelText.length)
+            monospacedWidth(text.length)
         } else {
-            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidth(labelText, font)
+            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidth(text, font)
         }.let {
             it * font.family.widthFactor
         }
