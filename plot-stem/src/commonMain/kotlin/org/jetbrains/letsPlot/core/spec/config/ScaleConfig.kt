@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.BREAKS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.CHROMA
@@ -58,7 +59,6 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.Viridis
 import org.jetbrains.letsPlot.core.spec.Option.TransformName
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMappers
-import org.jetbrains.letsPlot.core.spec.Option
 
 /**
  * @param <T> - target aesthetic type of the configured scale
@@ -147,17 +147,18 @@ class ScaleConfig<T> constructor(
 
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
-                    getDoubleList(HUE_RANGE),
-                    getDouble(CHROMA),
-                    getDouble(LUMINANCE),
-                    getDouble(START_HUE),
-                    getDouble(DIRECTION), naValue as Color
+                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorHueMapperProvider.DEF_HUE_RANGE,
+                    chroma = (getDouble(CHROMA) ?: ColorHueMapperProvider.DEF_CHROMA),
+                    luminance = (getDouble(LUMINANCE) ?: ColorHueMapperProvider.DEF_LUMINANCE),
+                    startHue = getDouble(START_HUE) ?: ColorHueMapperProvider.DEF_START_HUE,
+                    reversed = getDouble(DIRECTION)?.let { it < 0 } ?: false,
+                    naValue = naValue as Color
                 )
 
             COLOR_GREY ->
                 mapperProvider = GreyscaleLightnessMapperProvider(
-                    getDouble(START),
-                    getDouble(END),
+                    getDouble(START) ?: GreyscaleLightnessMapperProvider.DEF_START,
+                    getDouble(END) ?: GreyscaleLightnessMapperProvider.DEF_END,
                     naValue as Color
                 )
 
