@@ -59,13 +59,6 @@ class LinePattern(
         }
     }
 
-    override fun getAnnotationText(index: Int): String? {
-        val dataValues = fields.map { dataValue ->
-            dataValue.getAnnotationText(index) ?: return null
-        }
-        return myLineFormatter.format(dataValues.map { it })
-    }
-
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): LinePattern = LinePattern(
             label = DEFAULT_LABEL_SPECIFIER,

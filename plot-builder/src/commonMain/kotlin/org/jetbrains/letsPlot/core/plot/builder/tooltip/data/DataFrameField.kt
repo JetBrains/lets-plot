@@ -55,9 +55,4 @@ class DataFrameField(
     fun getVariableName(): String {
         return name
     }
-
-    override fun getAnnotationText(index: Int): String? {
-        val originalValue = myDataFrame[myVariable][index] ?: return null
-        return myFormatter(originalValue)
-    }
 }
