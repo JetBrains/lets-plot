@@ -53,18 +53,18 @@ class LinePattern(
         }
     }
 
-    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
-        val dataValues = fields.map { dataValue ->
-            dataValue.getAnnotationText(index, defaultFormatter) ?: return null
-        }
-        return myLineFormatter.format(dataValues.map { it })
-    }
-
     private fun chooseLabel(dataLabel: String?): String? {
         return when (label) {
             DEFAULT_LABEL_SPECIFIER -> dataLabel    // use default label (from data)
             else -> label                     // use the given label (can be null)
         }
+    }
+
+    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
+        val dataValues = fields.map { dataValue ->
+            dataValue.getAnnotationText(index, defaultFormatter) ?: return null
+        }
+        return myLineFormatter.format(dataValues.map { it })
     }
 
     companion object {
