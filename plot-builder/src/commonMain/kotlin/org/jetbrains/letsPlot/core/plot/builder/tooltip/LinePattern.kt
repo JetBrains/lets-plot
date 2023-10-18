@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
 class LinePattern(
@@ -72,5 +73,20 @@ class LinePattern(
             fields = listOf(valueSource)
         )
         private const val DEFAULT_LABEL_SPECIFIER = "@"
+
+
+        fun prepareMappedLines(
+            linePatterns: List<LinePattern>,
+            dataAccess: MappedDataAccess,
+            dataFrame: DataFrame
+        ): List<LinePattern> {
+            val mappedLines = linePatterns.filter { line ->
+                val dataAesList = line.fields.filterIsInstance<MappingField>()
+                dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
+            }
+            mappedLines.forEach { it.initDataContext(dataFrame, dataAccess) }
+
+            return mappedLines
+        }
     }
 }
