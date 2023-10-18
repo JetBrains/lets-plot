@@ -372,7 +372,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 sector in leftSectors -> leftMaxOffsetForOuter
                 else -> rightMaxOffsetForOuter
             }
-            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx),offsetForPointer)
+            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx), offsetForPointer)
         }
         createAnnotationElements(
             pieCenter,

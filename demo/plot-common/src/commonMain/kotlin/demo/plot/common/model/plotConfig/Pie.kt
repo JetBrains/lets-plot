@@ -70,7 +70,7 @@ class Pie {
         }
         val tooltipContent = if (useCountStat) {
             "'lines': [ '@|^fill', 'count|@{..count..} (@{..prop..})', 'total|@{..sum..}' ]," +
-                    "'formats': [{'field': '@{..prop..}', 'format': '.0%'}]"
+            "'formats': [{'field': '@{..prop..}', 'format': '.0%'}]"
         } else ""
         val ordering = if (useCountStat && withOrdering) {
             """, 'data_meta': {
