@@ -150,7 +150,13 @@ class NumberFormat(private val spec: Spec) {
     ) {
         val fractionalLength =
             0.takeIf { fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
-        val fullLength = integerPart.length + fractionalLength + exponentialPart.length
+        val exponentialLength: Int
+            get() {
+                val match = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex().find(exponentialPart) ?: return exponentialPart.length
+                val matchGroups = match.groups as MatchNamedGroupCollection
+                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
+            }
+        val fullLength = integerPart.length + fractionalLength + exponentialLength
 
         override fun toString() =
             "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
@@ -218,7 +224,7 @@ class NumberFormat(private val spec: Spec) {
         var fullIntStr = zeroPadding + body.integerPart
         val commas = (ceil(fullIntStr.length / GROUP_SIZE.toDouble()) - 1).toInt()
 
-        val width = (spec.width - body.fractionalLength - body.exponentialPart.length)
+        val width = (spec.width - body.fractionalLength - body.exponentialLength)
             .coerceAtLeast(body.integerPart.length + commas)
 
         fullIntStr = group(fullIntStr)
@@ -320,8 +326,11 @@ class NumberFormat(private val spec: Spec) {
 
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
         val exponentString = if (numberInfo.exponent != null) {
-            val expSign = if (numberInfo.exponent.sign >= 0) "+" else ""
-            "e$expSign${numberInfo.exponent}"
+            when (numberInfo.exponent) {
+                0 -> "·1"
+                1 -> "·10"
+                else -> "·\\(10^{${numberInfo.exponent}}\\)"
+            }
         } else {
             ""
         }

@@ -30,17 +30,17 @@ class NumberFormatTypeNoneTest {
         assertEquals("1000", NumberFormat(".5").apply(1000))
         assertEquals("21010", NumberFormat(".5").apply(21010))
         assertEquals("1.1", NumberFormat(".5").apply(1.10001))
-        assertEquals("1.1e+6", NumberFormat(".5").apply(1.10001e6))
+        assertEquals("1.1·\\(10^{6}\\)", NumberFormat(".5").apply(1.10001e6))
         assertEquals("1.10001", NumberFormat(".6").apply(1.10001))
-        assertEquals("1.10001e+6", NumberFormat(".6").apply(1.10001e6))
+        assertEquals("1.10001·\\(10^{6}\\)", NumberFormat(".6").apply(1.10001e6))
     }
 
     @Test
     fun alsoTrimsDecimalPointIfThereAreOnlyInsignificantZeros() {
         assertEquals("1", NumberFormat(".5").apply(1.00001))
-        assertEquals("1e+6", NumberFormat(".5").apply(1.00001e6))
+        assertEquals("1·\\(10^{6}\\)", NumberFormat(".5").apply(1.00001e6))
         assertEquals("1.00001", NumberFormat(".6").apply(1.00001))
-        assertEquals("1.00001e+6", NumberFormat(".6").apply(1.00001e6))
+        assertEquals("1.00001·\\(10^{6}\\)", NumberFormat(".6").apply(1.00001e6))
     }
 
     @Test

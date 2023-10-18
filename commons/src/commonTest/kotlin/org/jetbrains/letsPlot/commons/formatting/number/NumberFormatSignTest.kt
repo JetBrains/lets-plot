@@ -18,7 +18,7 @@ class NumberFormatSignTest {
         assertEquals("+      0", NumberFormat("=+8,d").apply(0))
         assertEquals("+           0", NumberFormat("=+13,d").apply(0))
         assertEquals("+                   0", NumberFormat("=+21,d").apply(0))
-        assertEquals("+               1e+21", NumberFormat("=+21,d").apply(1e21))
+        assertEquals("+               1·\\(10^{21}\\)", NumberFormat("=+21,d").apply(1e21))
     }
 
     @Test

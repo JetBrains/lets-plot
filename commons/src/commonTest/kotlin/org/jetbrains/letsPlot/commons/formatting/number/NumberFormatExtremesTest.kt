@@ -25,14 +25,14 @@ class NumberFormatExtremesTest {
     fun typeE() {
         val f = NumberFormat(".2e")
 
-        assertEquals("1.00e-323", f.apply(NumberFormat.TYPE_E_MIN))
-        assertEquals("-1.00e-323", f.apply(-NumberFormat.TYPE_E_MIN))
+        assertEquals("1.00·\\(10^{-323}\\)", f.apply(NumberFormat.TYPE_E_MIN))
+        assertEquals("-1.00·\\(10^{-323}\\)", f.apply(-NumberFormat.TYPE_E_MIN))
 
-        assertEquals("2.00e-323", f.apply(1.9999999E-323))
-        assertEquals("-2.00e-323", f.apply(-1.9999999E-323))
+        assertEquals("2.00·\\(10^{-323}\\)", f.apply(1.9999999E-323))
+        assertEquals("-2.00·\\(10^{-323}\\)", f.apply(-1.9999999E-323))
 
-        assertEquals("1.80e+308", f.apply(Double.MAX_VALUE))
-        assertEquals("-1.80e+308", f.apply(-Double.MAX_VALUE))
+        assertEquals("1.80·\\(10^{308}\\)", f.apply(Double.MAX_VALUE))
+        assertEquals("-1.80·\\(10^{308}\\)", f.apply(-Double.MAX_VALUE))
 
         assertEquals("0.00", f.apply(Double.MIN_VALUE))
         assertEquals("0.00", f.apply(-Double.MIN_VALUE))

@@ -35,12 +35,8 @@ class Formula private constructor(private val terms: List<RichTerm>) {
         fun fromText(text: String): Formula {
             val powerDegreeTerms: List<RichTerm> = PowerDegree.POWER_DEGREE_PATTERN.toRegex().findAll(text).map { match ->
                 val groups = match.groups as MatchNamedGroupCollection
-                val sign = groups["sign"]?.value ?: ""
-                val coefficient = groups["coefficient"]?.value ?: ""
-                val base = groups["base"]!!.value
-                val degree = groups["degree"]!!.value
                 RichTerm(
-                    PowerDegree(sign, coefficient, base, degree),
+                    PowerDegree(groups["base"]!!.value, groups["degree"]!!.value),
                     match.range
                 )
             }.toList()
