@@ -20,7 +20,7 @@ class MyPlotComponentProviderBatik(
     computationMessagesHandler = computationMessagesHandler
 ) {
 
-    override fun createPlotErrorMessageComponent(errorMessage: String): JComponent {
-        return MyErrorMessageComponent(errorMessage)
+    override fun createErrorMessageComponent(message: String): JComponent {
+        return MyErrorMessageComponent(message)
     }
 }

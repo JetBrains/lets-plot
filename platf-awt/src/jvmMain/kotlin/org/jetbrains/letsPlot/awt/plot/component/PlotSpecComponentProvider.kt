@@ -25,7 +25,7 @@ abstract class PlotSpecComponentProvider(
 ) : PlotComponentProvider {
 
     private val errorMessageComponentFactory: (String) -> JComponent = { errorMessage: String ->
-        createPlotErrorMessageComponent(errorMessage)
+        createErrorMessageComponent(errorMessage)
     }
 
     override fun getPreferredSize(containerSize: Dimension): Dimension {
@@ -86,8 +86,8 @@ abstract class PlotSpecComponentProvider(
      *
      * Override this method if your application requires better "error message" component.
      */
-    protected open fun createPlotErrorMessageComponent(errorMessage: String): JComponent {
-        return DefaultErrorMessageComponent(errorMessage)
+    protected open fun createErrorMessageComponent(message: String): JComponent {
+        return DefaultErrorMessageComponent(message)
     }
 
     companion object {

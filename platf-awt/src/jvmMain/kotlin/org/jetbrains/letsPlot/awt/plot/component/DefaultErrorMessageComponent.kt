@@ -10,16 +10,16 @@ import javax.swing.JComponent
 import javax.swing.JTextArea
 
 internal class DefaultErrorMessageComponent(
-    errorMessage: String
+    message: String
 ) : JTextArea() {
     init {
         this.foreground = Color.RED
-        this.text = errorMessage.chunked(60).joinToString("\n")
+        this.text = message.chunked(60).joinToString("\n")
     }
 
     companion object {
-        val factory: (String) -> JComponent = { errorMessage ->
-            DefaultErrorMessageComponent(errorMessage)
+        val factory: (String) -> JComponent = { message ->
+            DefaultErrorMessageComponent(message)
         }
     }
 }

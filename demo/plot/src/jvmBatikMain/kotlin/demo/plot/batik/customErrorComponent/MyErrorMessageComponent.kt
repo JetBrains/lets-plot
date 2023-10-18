@@ -9,14 +9,14 @@ import java.awt.Color
 import javax.swing.*
 
 class MyErrorMessageComponent(
-    errorMessage: String
+    message: String
 ) : JPanel() {
     init {
         val icon = UIManager.getIcon("OptionPane.errorIcon") as Icon
         add(JLabel(icon))
 
         val text = JTextArea(
-            errorMessage.chunked(60).joinToString("\n")
+            message.chunked(60).joinToString("\n")
         ).also {
             it.foreground = Color.MAGENTA
         }
