@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.datamodel.PowerDegree
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.FILL
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.FILL_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE
@@ -19,6 +18,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_ANCHOR
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_DY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
+import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
 
 class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
     SvgTextContent {
@@ -134,12 +134,11 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         return container().getPeer()!!.applyTransform(this, point)
     }
 
-    fun asPowerDegreeFormula(): SvgTextElement {
+    fun asFormula(): SvgTextElement {
         if (children().isEmpty()) {
             return this
         }
         val text = (children()[0] as SvgTextNode).textContent().get()
-        val powerDegree = PowerDegree.fromText(text) ?: return this
-        return powerDegree.toSvgTextElement(this)
+        return Formula.fromText(text).toSvgTextElement(this)
     }
 }
