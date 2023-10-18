@@ -3,24 +3,24 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.batik.plot.component
+package demo.plot.batik.customErrorComponent
 
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 
-open class DefaultPlotPanelBatik(
+open class MyPlotPanelBatik(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,
     preferredSizeFromPlot: Boolean,
     repaintDelay: Int,  // ms,
     computationMessagesHandler: (List<String>) -> Unit
 ) : PlotPanel(
-    plotComponentProvider = DefaultPlotComponentProviderBatik(
+    plotComponentProvider = MyPlotComponentProviderBatik(
         processedSpec = processedSpec,
         preserveAspectRatio = preserveAspectRatio,
-        executor = DefaultSwingContextBatik.AWT_EDT_EXECUTOR,
+        executor = MY_AWT_EDT_EXECUTOR,
         computationMessagesHandler = computationMessagesHandler
     ),
     preferredSizeFromPlot = preferredSizeFromPlot,
     repaintDelay = repaintDelay,
-    applicationContext = DefaultSwingContextBatik()
+    applicationContext = MY_APP_CONTEXT
 )
