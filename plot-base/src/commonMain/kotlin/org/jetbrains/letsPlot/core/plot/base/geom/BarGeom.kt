@@ -96,17 +96,14 @@ open class BarGeom : GeomBase() {
                         )
                             ?: return@forEachIndexed
 
-                        var alpha = 0.0
-                        var labelFill = ctx.backgroundColor
+                        val alpha: Double
                         val labelColor = when {
-                            barRect.contains(textRect) -> AnnotationsUtil.chooseColor(p.fill()!!)
-                            barRect.intersects(textRect) -> {
-                                alpha = 0.6
-                                labelFill = p.fill()!!
+                            barRect.contains(textRect) -> {
+                                alpha = 0.0
                                 AnnotationsUtil.chooseColor(p.fill()!!)
                             }
                             else -> {
-                                alpha = 0.6
+                                alpha = 0.75
                                 AnnotationsUtil.chooseColor(ctx.backgroundColor)
                             }
                         }
@@ -130,7 +127,7 @@ open class BarGeom : GeomBase() {
                                     color = labelColor,
                                     hjust = hAlignment.toString().lowercase(),
                                     vjust = "top",
-                                    fill = labelFill,
+                                    fill = ctx.backgroundColor,
                                     alpha = alpha
                                 ),
                                 geomContext = ctx,
