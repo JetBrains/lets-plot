@@ -16,7 +16,6 @@ interface GeomContext {
     val targetCollector: GeomTargetCollector
     val annotations: Annotations?
     val backgroundColor: Color
-    val plotContext: PlotContext?
 
     // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
     fun getResolution(aes: Aes<Double>): Double

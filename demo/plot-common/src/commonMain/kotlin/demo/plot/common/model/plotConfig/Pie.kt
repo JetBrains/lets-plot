@@ -278,7 +278,15 @@ class Pie {
                        }
                     ]
                 },
-                'labels': { 'lines': ['@name', '^slice', 'size=^size'] },
+                'labels': { 
+                   'lines': 
+                      [
+                        'dfvar: @name',
+                        'mapping fld: ^slice', 
+                        'constant: ^size',
+                        '@{..count..} (@{..proppct..})'
+                      ] 
+                   },
                 'hole': 0.2,
                 'size': 15.0
               } 

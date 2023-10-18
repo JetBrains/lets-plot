@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
@@ -50,6 +51,13 @@ class LinePattern(
                 isSide = false
             )
         }
+    }
+
+    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
+        val dataValues = fields.map { dataValue ->
+            dataValue.getAnnotationText(index, defaultFormatter) ?: return null
+        }
+        return myLineFormatter.format(dataValues.map { it })
     }
 
     private fun chooseLabel(dataLabel: String?): String? {

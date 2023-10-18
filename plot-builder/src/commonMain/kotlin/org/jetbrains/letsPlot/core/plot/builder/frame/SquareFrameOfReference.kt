@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -17,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
+import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationFormatting
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -331,6 +333,7 @@ internal class SquareFrameOfReference(
             }
 
             val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap)
+            val formatterCreator = { aes: Aes<*> -> AnnotationFormatting.createFormatter(aes, plotContext) }
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
@@ -338,9 +341,8 @@ internal class SquareFrameOfReference(
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
-                .annotations(rendererData.annotations)
+                .annotations(rendererData.annotations?.initFormatter(formatterCreator))
                 .backgroundColor(backgroundColor)
-                .plotContext(plotContext)
                 .build()
 
             val pos = rendererData.pos

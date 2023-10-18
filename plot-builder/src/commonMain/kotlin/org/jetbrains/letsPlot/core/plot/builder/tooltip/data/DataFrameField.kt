@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -46,6 +47,11 @@ class DataFrameField(
             isAxis = false,
             isSide = false
         )
+    }
+
+    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
+        val originalValue = myDataFrame[myVariable][index] ?: return null
+        return myFormatter(originalValue)
     }
 
     override fun copy(): DataFrameField {

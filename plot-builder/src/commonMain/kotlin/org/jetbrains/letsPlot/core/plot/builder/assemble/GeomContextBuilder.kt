@@ -30,7 +30,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotations: Annotations? = null
     private var backgroundColor: Color = Color.WHITE
-    private var plotContext: PlotContext? = null
 
     constructor()
 
@@ -42,7 +41,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         geomTargetCollector = ctx.targetCollector
         annotations = ctx.annotations
         backgroundColor = ctx.backgroundColor
-        plotContext = ctx.plotContext
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -85,11 +83,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun plotContext(plotContext: PlotContext): ImmutableGeomContext.Builder {
-        this.plotContext = plotContext
-        return this
-    }
-
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -104,7 +97,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override val targetCollector = b.geomTargetCollector
         override val annotations = b.annotations
         override val backgroundColor = b.backgroundColor
-        override val plotContext: PlotContext? = b.plotContext
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 

@@ -372,7 +372,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 sector in leftSectors -> leftMaxOffsetForOuter
                 else -> rightMaxOffsetForOuter
             }
-            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx),offsetForPointer, ctx.plotContext)
+            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx),offsetForPointer)
         }
         createAnnotationElements(
             pieCenter,
@@ -387,10 +387,9 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         sector: Sector,
         annotations: Annotations,
         textSizeGetter: (String, DataPointAesthetics) -> DoubleVector,
-        offsetForPointer: Double,
-        plotContext: PlotContext?
+        offsetForPointer: Double
     ): AnnotationLabel {
-        val text = annotations.getAnnotationText(sector.p.index(), plotContext)
+        val text = annotations.getAnnotationText(sector.p.index())
         val textSize = textSizeGetter(text, sector.p)
 
         fun isPointInsideSector(pnt: DoubleVector): Boolean {

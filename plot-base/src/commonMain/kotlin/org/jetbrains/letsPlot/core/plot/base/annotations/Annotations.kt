@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.annotations
 
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
@@ -13,9 +13,21 @@ class Annotations(
     private val lines: List<LineSpec>,
     val textStyle: TextStyle
 ) {
-    fun getAnnotationText(index: Int, ctx: PlotContext?): String {
-        return lines.mapNotNull { line ->
-            ctx?.let { line.getDataPoint(index, it)?.value }
-        }.joinToString("\n")
+    private val myFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
+    private var myFormatterCreator: ((Aes<*>) -> ((Any?) -> String))? = null
+
+    fun initFormatter(creator:(Aes<*>) -> ((Any?) -> String)): Annotations {
+        myFormatterCreator = creator
+        return this
+    }
+
+    private fun getFormatter(aes: Aes<*>): (Any?) -> String {
+        return myFormatters.getOrPut(aes) {
+            myFormatterCreator?.let { creator -> creator(aes) } ?: Any?::toString
+        }
+    }
+
+    fun getAnnotationText(index: Int): String {
+        return lines.mapNotNull { it.getAnnotationText(index, ::getFormatter) }.joinToString("\n")
     }
 }

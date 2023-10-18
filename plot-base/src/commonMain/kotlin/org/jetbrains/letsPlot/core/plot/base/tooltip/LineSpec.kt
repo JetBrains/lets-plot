@@ -5,15 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
 interface LineSpec {
     fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
 
+    fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String?
+
     class DataPoint(
         val label: String?,
         val value: String,
-        val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>?,
+        val aes: Aes<*>?,
         val isAxis: Boolean,
         val isSide: Boolean
     )
