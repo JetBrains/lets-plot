@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ConstantField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
@@ -56,9 +56,9 @@ open class LineSpecConfigParser(
             }.toMutableMap()
 
         // Create lines from the given variable list
-        private val myLinesForVariableList: List<LineSpec> = variables.map { variableName ->
+        private val myLinesForVariableList: List<LinePattern> = variables.map { variableName ->
             val valueSource = getValueSource(varField(variableName))
-            LineSpec.defaultLineForValueSource(valueSource)
+            LinePattern.defaultLineForValueSource(valueSource)
         }
 
         internal fun parse(): LinesContentSpecification {
@@ -67,7 +67,7 @@ open class LineSpecConfigParser(
             return LinesContentSpecification(myValueSources.map { it.value }, allLines, title)
         }
 
-        private fun parseLines(): List<LineSpec>? {
+        private fun parseLines(): List<LinePattern>? {
             val lines = lines?.map(::parseLine)
             return when {
                 lines != null -> myLinesForVariableList + lines
@@ -76,7 +76,7 @@ open class LineSpecConfigParser(
             }
         }
 
-        private fun parseLine(line: String): LineSpec {
+        private fun parseLine(line: String): LinePattern {
             val label = detachLabel(line)
             val valueString = line.substringAfter(LABEL_SEPARATOR)
 
@@ -90,7 +90,7 @@ open class LineSpecConfigParser(
                     StringFormat.valueInLinePattern()
                 }
             }
-            return LineSpec(
+            return LinePattern(
                 label,
                 pattern,
                 fieldsInPattern
@@ -237,6 +237,6 @@ open class LineSpecConfigParser(
         private const val LABEL_SEPARATOR = "|"
 
         // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{(.*?)\})|\.{2}\w+\.{2})""")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
     }
 }

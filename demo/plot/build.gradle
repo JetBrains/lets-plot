@@ -9,7 +9,6 @@ plugins {
  */
 
 kotlin {
-    jvm()
     jvm("jvmBatik")
     jvm("jvmJfx")
     jvm("jvmBrowser")
@@ -39,14 +38,16 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
                 implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
+                implementation project(':canvas')
+                implementation project(':livemap')
+                implementation project(':plot-livemap')
+                implementation project(':gis')
+                implementation "io.ktor:ktor-client-cio:$ktor_version"
             }
         }
-        jvmMain {
-            dependsOn allJvm
-        }
+
         jvmBatikMain {
             dependsOn allJvm
-            dependsOn jvmMain
             dependencies {
                 implementation project(':demo-common-batik')
                 implementation project(':platf-awt')
@@ -55,9 +56,9 @@ kotlin {
                 implementation("org.apache.xmlgraphics:batik-codec:$batik_version")
             }
         }
+
         jvmJfxMain {
             dependsOn allJvm
-            dependsOn jvmMain
             dependencies {
                 implementation project(':canvas')
                 implementation project(':platf-awt')
@@ -69,6 +70,7 @@ kotlin {
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
+
         jvmBrowserMain {
             dependsOn allJvm
             dependencies {
@@ -92,9 +94,6 @@ kotlin {
 // Fix Gradle 7 error:
 // Execution failed for task ':plot-demo:jvm*Jar'.
 // Entry diamonds.csv is a duplicate but no duplicate handling strategy has been set.
-jvmJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
 
 jvmBatikJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

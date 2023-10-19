@@ -8,6 +8,9 @@ package org.jetbrains.letsPlot.commons.geometry
 import kotlin.math.*
 
 class DoubleVector(val x: Double, val y: Double) {
+    operator fun component1(): Double = x
+    operator fun component2(): Double = y
+
     val isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
     fun add(v: DoubleVector): DoubleVector {

@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.Option
@@ -70,6 +71,7 @@ object PlotConfigFrontendUtil {
         return buildPlotLayers(
             plotConfig.layerConfigs,
             plotConfig.facets,
+            plotConfig.coordProvider,
             plotConfig.scaleMap,
             plotConfig.mappersByAesNP,
             plotConfig.theme,
@@ -80,6 +82,7 @@ object PlotConfigFrontendUtil {
     private fun buildPlotLayers(
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
+        coordProvider: CoordProvider,
         commonScaleMap: Map<Aes<*>, Scale>,
         mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
         theme: Theme,
@@ -136,6 +139,7 @@ object PlotConfigFrontendUtil {
                     layerScaleMap,
                     otherLayerWithTooltips,
                     isLiveMap,
+                    coordProvider.isLinear,
                     theme
                 )
             }

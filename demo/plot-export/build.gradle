@@ -9,7 +9,6 @@ plugins {
 
 
 kotlin {
-    jvm()
     jvm("jvmBrowser")
 
     sourceSets {
@@ -24,20 +23,12 @@ kotlin {
             }
         }
 
-        allJvm {
+        jvmBrowserMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
-            }
-        }
-        jvmMain {
-            dependsOn allJvm
-        }
-        jvmBrowserMain {
-            dependsOn allJvm
-            dependencies {
                 implementation "org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinx_html_version}"
+                implementation "org.slf4j:slf4j-simple:$slf4j_version"  // Enable logging to console
             }
         }
     }

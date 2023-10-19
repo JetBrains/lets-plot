@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.mapper
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.commons.values.HSV
+import org.jetbrains.letsPlot.commons.values.HSL
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import kotlin.math.abs
 
@@ -39,29 +39,30 @@ object ColorMapper {
         naColor: Color,
         alpha: Double = 1.0
     ): (Double?) -> Color {
-        return gradientHSV(
+        return gradientHSL(
             domain,
-            Colors.hsvFromRgb(low),
-            Colors.hsvFromRgb(high),
-            true,
-            naColor, alpha
+            Colors.hslFromRgb(low),
+            Colors.hslFromRgb(high),
+            naColor,
+            alpha,
+            autoHueDirection = true
         )
     }
 
-    fun gradientHSV(
+    fun gradientHSL(
         domain: DoubleSpan,
-        lowHSV: HSV,
-        highHSV: HSV,
-        autoHueDirection: Boolean,
+        lowHSL: HSL,
+        highHSL: HSL,
         naColor: Color,
-        alpha: Double = 1.0
+        alpha: Double = 1.0,
+        autoHueDirection: Boolean = false
     ): (Double?) -> Color {
 
-        var lowHue = lowHSV.h
-        var highHue = highHSV.h
+        var lowHue = lowHSL.h
+        var highHue = highHSL.h
 
-        val lowS = lowHSV.s
-        val highS = highHSV.s
+        val lowS = lowHSL.s
+        val highS = highHSL.s
 
         // No hue if saturation is near zero
         if (lowS < 0.0001) {
@@ -84,17 +85,17 @@ object ColorMapper {
 
         val mapperH = Mappers.linear(domain, lowHue, highHue, null)
         val mapperS = Mappers.linear(domain, lowS, highS, null)
-        val mapperV = Mappers.linear(domain, lowHSV.v, highHSV.v, null)
+        val mapperL = Mappers.linear(domain, lowHSL.l, highHSL.l, null)
 
         return { input ->
             if (input == null || !domain.contains(input)) {
                 naColor
             } else {
                 val hue = mapperH(input)!! % 360
-                val H = if (hue >= 0) hue else 360 + hue
-                val S = mapperS(input)!!
-                val V = mapperV(input)!!
-                Colors.rgbFromHsv(H, S, V, alpha = alpha)
+                val h = if (hue >= 0) hue else 360 + hue
+                val s = mapperS(input)!!
+                val v = mapperL(input)!!
+                Colors.rgbFromHsl(h, s, v, alpha = alpha)
             }
         }
     }

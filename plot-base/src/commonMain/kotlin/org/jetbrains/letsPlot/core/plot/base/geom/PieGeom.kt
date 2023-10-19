@@ -7,14 +7,13 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
@@ -206,7 +205,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
             val segmentLength = startPoint.subtract(endPoint).length()
 
-            val arc = { p: DoubleVector ->
+            return resample(startPoint, endPoint, 2.0) { p: DoubleVector ->
                 val ratio = p.subtract(startPoint).length() / segmentLength
                 if (ratio.isFinite()) {
                     arcPoint(sector.startAngle + sector.angle * ratio)
@@ -214,8 +213,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                     p
                 }
             }
-
-            return AdaptiveResampler.forDoubleVector(arc, 2.0).resample(startPoint, endPoint)
         }
 
         targetCollector.addPolygon(
@@ -297,7 +294,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         )
 
         fun innerArcPointWithStroke(angle: Double) = arcPoint(
-            radius = when (strokeSide.hasInner && hasVisibleStroke && holeSize > 0 ){
+            radius = when (strokeSide.hasInner && hasVisibleStroke && holeSize > 0) {
                 true -> holeRadius - strokeWidth / 2
                 false -> holeRadius
             },
@@ -364,10 +361,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val leftBorder = leftSectors.minOf { it.pieCenter.x - it.radius } - expand
         val rightBorder = rightSectors.maxOf { it.pieCenter.x + it.radius } + expand
 
-        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector = { text, p ->
-            TextUtil.measure(text, toTextDataPointAesthetics(p, ctx.annotations!!.textStyle), ctx)
-        }
-
         // Use max radius of the largest sector on a given side
         val leftMaxOffsetForOuter =
             leftSectors.maxBy(Sector::radius).let { it.holeRadius + 1.2 * (it.radius - it.holeRadius) }
@@ -379,7 +372,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 sector in leftSectors -> leftMaxOffsetForOuter
                 else -> rightMaxOffsetForOuter
             }
-            getAnnotationLabel(sector, ctx.annotations!!, textSizeGetter, offsetForPointer)
+            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx), offsetForPointer)
         }
         createAnnotationElements(
             pieCenter,
@@ -476,29 +469,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         private const val INTERVAL_BETWEEN_ANNOTATIONS = 4.0
 
-        private fun toTextDataPointAesthetics(
-            p: DataPointAesthetics = AestheticsBuilder().build().dataPointAt(0),
-            textStyle: TextStyle,
-            color: Color? = null,
-            hjust: String? = null
-        ): DataPointAesthetics {
-            return object : DataPointAestheticsDelegate(p) {
-                override operator fun <T> get(aes: Aes<T>): T? {
-                    val value: Any? = when (aes) {
-                        Aes.SIZE -> textStyle.size / 2
-                        Aes.FAMILY -> textStyle.family
-                        Aes.FONTFACE -> textStyle.face.toString()
-                        Aes.COLOR -> color
-                        Aes.HJUST -> hjust ?: "middle"
-                        Aes.VJUST -> "center"
-                        else -> super.get(aes)
-                    }
-                    @Suppress("UNCHECKED_CAST")
-                    return value as T?
-                }
-            }
-        }
-
         /// side around pie to place annotation label
         private enum class Side {
             INSIDE {
@@ -581,19 +551,16 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             ctx: GeomContext
         ): SvgGElement {
 
-            val g = TextGeom().buildTextComponent(
-                toTextDataPointAesthetics(
-                    textStyle = textStyle,
-                    color = label.textColor,
-                    hjust = label.side.getHJust()
-                ),
-                textLocation,
+            val g = AnnotationsUtil.createTextElement(
                 label.text,
-                sizeUnitRatio = 1.0,
-                ctx,
-                boundsCenter = null
+                textLocation,
+                AnnotationsUtil.TextParams(
+                    style = textStyle,
+                    color = label.textColor,
+                    hjust = label.side.getHJust(),
+                ),
+                geomContext = ctx,
             )
-
             if (label.outerPointerCoord == null) return g
 
             // Add pointer line

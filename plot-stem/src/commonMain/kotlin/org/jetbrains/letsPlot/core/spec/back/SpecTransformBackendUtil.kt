@@ -19,7 +19,25 @@ object SpecTransformBackendUtil {
 
 
     fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+        return processTransform(plotSpecRaw, false)
+    }
+
+    internal fun processTransform(
+        plotSpecRaw: MutableMap<String, Any>,
+        simulateFailure: Boolean
+    ): MutableMap<String, Any> {
         return try {
+            // --> Testing
+            if (simulateFailure) {
+                val message = plotSpecRaw.getValue(Option.ErrorGen.MESSAGE) as String
+                val isInternal = plotSpecRaw.getValue(Option.ErrorGen.IS_INTERNAL) as Boolean
+                when (isInternal) {
+                    true -> throw IllegalStateException(message)
+                    false -> throw IllegalArgumentException(message)
+                }
+            }
+            // <-- Testing
+
             when (PlotConfig.figSpecKind(plotSpecRaw)) {
                 FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
                 FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)

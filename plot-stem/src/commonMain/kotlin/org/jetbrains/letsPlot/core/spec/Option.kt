@@ -21,6 +21,7 @@ object Option {
             const val PLOT = "plot"
             const val SUBPLOTS = "subplots"
             const val GG_BUNCH = "ggbunch"
+            const val ERROR_GEN = "error_gen" // for internal use: testing etc.
         }
 
         object PubSub {
@@ -71,6 +72,11 @@ object Option {
                 const val TIME_ZONE = "time_zone"
             }
         }
+    }
+
+    object ErrorGen {
+        const val MESSAGE = "message" // str
+        const val IS_INTERNAL = "is_internal" // bool
     }
 
     object GGBunch {
@@ -450,6 +456,7 @@ object Option {
         object Dodge {
             const val WIDTH = "width"
         }
+
         object DodgeV {
             const val HEIGHT = "height"
         }
@@ -790,6 +797,10 @@ object Option {
         const val EXPAND = "expand"  // todo
         const val ORIENTATION = "orientation" // Todo: see 'coord_map'
         const val PROJECTION = "projection"   // todo
+        const val THETA = "theta"
+        const val START = "start"
+        const val DIRECTION = "direction"
+        const val CLIP = "clip"
 
         object Projections {
             const val MERCATOR = "mercator"

@@ -5,18 +5,17 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
+import org.jetbrains.letsPlot.awt.plot.component.DefaultErrorMessageComponent
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.spec.FailureHandler
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import java.awt.Color
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.JComponent
-import javax.swing.JLabel
 
 private val LOG = PortableLogging.logger("MonolithicAwt")
 
@@ -27,6 +26,7 @@ object MonolithicAwt {
         plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
+        errorMessageComponentFactory: (String) -> JComponent = DefaultErrorMessageComponent.factory,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
 
@@ -39,10 +39,11 @@ object MonolithicAwt {
                 plotMaxWidth,
                 svgComponentFactory,
                 executor,
+                errorMessageComponentFactory = errorMessageComponentFactory,
                 computationMessagesHandler
             )
         } catch (e: RuntimeException) {
-            handleException(e)
+            handleException(e, errorMessageComponentFactory)
         }
     }
 
@@ -52,7 +53,8 @@ object MonolithicAwt {
         plotMaxWidth: Double?,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
-        computationMessagesHandler: ((List<String>) -> Unit)
+        errorMessageComponentFactory: (message: String) -> JComponent = DefaultErrorMessageComponent.factory,
+        computationMessagesHandler: (List<String>) -> Unit,
     ): JComponent {
 
         return try {
@@ -64,7 +66,7 @@ object MonolithicAwt {
             )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
-                return createErrorLabel(errorMessage)
+                return errorMessageComponentFactory(errorMessage)
             }
 
             val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
@@ -86,7 +88,7 @@ object MonolithicAwt {
             }
 
         } catch (e: RuntimeException) {
-            handleException(e)
+            handleException(e, errorMessageComponentFactory)
         }
     }
 
@@ -140,17 +142,14 @@ object MonolithicAwt {
         return bunchComponent
     }
 
-    private fun handleException(e: RuntimeException): JComponent {
+    private fun handleException(
+        e: RuntimeException,
+        errorMessageComponentFactory: (message: String) -> JComponent
+    ): JComponent {
         val failureInfo = FailureHandler.failureInfo(e)
         if (failureInfo.isInternalError) {
             LOG.error(e) { "Unexpected situation in 'MonolithicAwt'" }
         }
-        return createErrorLabel(failureInfo.message)
-    }
-
-    private fun createErrorLabel(s: String): JComponent {
-        val label = JLabel(s)
-        label.foreground = Color.RED
-        return label
+        return errorMessageComponentFactory(failureInfo.message)
     }
 }

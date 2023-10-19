@@ -5,10 +5,15 @@
 
 package demo.plot.shared.model.component
 
-import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import demo.plot.common.model.SimpleDemoBase
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
+import org.jetbrains.letsPlot.core.commons.color.ColorScheme
+import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -27,14 +32,10 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
-import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
-import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.jetbrains.letsPlot.core.commons.color.ColorPalette
-import org.jetbrains.letsPlot.core.commons.color.ColorScheme
-import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
-import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 
 open class ScatterDemo : SimpleDemoBase() {
 
@@ -109,12 +110,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(), /*mapperX,*/ coord,
                     flipAxis = false,
-                    horizontal = true
+                    horizontal = true,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeY,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeY,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                //gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -131,12 +133,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(), /*mapperY, */coord,
                     flipAxis = false,
-                    horizontal = false
+                    horizontal = false,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeX,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeX,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                //gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -293,12 +296,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(), /*mapperX, */coord,
                     flipAxis = false,
-                    horizontal = true
+                    horizontal = true,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeY,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeY,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                //gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -315,12 +319,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(), /*mapperY,*/ coord,
                     flipAxis = false,
-                    horizontal = false
+                    horizontal = false,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeX,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeX,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                //gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -419,12 +424,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(), /*mapperX,*/ coord,
                     flipAxis = false,
-                    horizontal = true
+                    horizontal = true,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeY,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeY,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                //gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -441,12 +447,13 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(), /*mapperY, */coord,
                     flipAxis = false,
-                    horizontal = false
+                    horizontal = false,
+                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
-                gridLineLength = rangeX,
-                gridLineDistance = 0.0,
+                //gridLineLength = rangeX,
+                //gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                //gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)

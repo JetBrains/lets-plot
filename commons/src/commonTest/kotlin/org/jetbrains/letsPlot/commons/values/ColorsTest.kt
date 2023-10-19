@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.values
 
-import kotlin.math.abs
 import kotlin.test.*
 
 class ColorsTest {
@@ -78,32 +77,28 @@ class ColorsTest {
     }
 
     @Test
-    fun hsvFromRgb() {
-        assertEquals(HSV(0.0, 0.0, 0.0), Colors.hsvFromRgb(Color.BLACK))
-        assertEquals(HSV(0.0, 0.0, 1.0), Colors.hsvFromRgb(Color.WHITE))
-        assertEquals(HSV(0.0, 1.0, 1.0), Colors.hsvFromRgb(Color.RED))
-        assertEquals(HSV(120.0, 1.0, 1.0), Colors.hsvFromRgb(Color.GREEN))
-        assertEquals(HSV(240.0, 1.0, 1.0), Colors.hsvFromRgb(Color.BLUE))
-        assertEquals(HSV(60.0, 1.0, 1.0), Colors.hsvFromRgb(Color.YELLOW), "YELLOW")
-        assertEquals(HSV(180.0, 1.0, 1.0), Colors.hsvFromRgb(Color.CYAN), "CYAN")
-        assertEquals(HSV(300.0, 1.0, 1.0), Colors.hsvFromRgb(Color.MAGENTA), "MAGENTA")
-        assertEquals(HSV(0.0, 0.0, 0.75), Colors.hsvFromRgb(Color(191, 191, 191)), "SILVER")
-        assertEquals(HSV(0.0, 0.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 127)), "GRAY")
-        assertEquals(HSV(0.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 0)), "MAROON")
-        assertEquals(HSV(60.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 0)), "OLIVE")
-        assertEquals(HSV(120.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 0)), "GREEN")
-        assertEquals(HSV(300.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 127)), "PURPLE")
-        assertEquals(HSV(180.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 127)), "TEAL")
-        assertEquals(HSV(240.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 0, 127)), "NAVY")
-    }
-
-    private fun assertContentEquals(expected: DoubleArray, actual: DoubleArray, message: String = "") {
-        val allEquals = expected.zip(actual).all { it -> abs(it.first - it.second) < 1.0e-2 }
-        if (!allEquals) {
-            throw AssertionError(
-                "$message expected:${expected.joinToString(",", "[", "]")} " +
-                        "but was ${actual.joinToString(",", "[", "]")}}"
-            )
+    fun hsl() {
+        fun assertColors(rgb: Color, hsl: HSL) {
+            assertEquals(hsl, Colors.hslFromRgb(rgb))
+            assertEquals(rgb, Colors.rgbFromHsl(hsl))
         }
+
+        assertColors(Color(0, 0, 0), HSL(0.0, 0.0, 0.0)) // black
+        assertColors(Color(255, 255, 255), HSL(0.0, 0.0, 1.0)) // white
+        assertColors(Color(255, 0, 0), HSL(0.0, 1.0, 0.5)) // red
+        assertColors(Color(0, 255, 0), HSL(120.0, 1.0, 0.5)) // lime
+        assertColors(Color(0, 0, 255), HSL(240.0, 1.0, 0.5)) // blue
+        assertColors(Color(255, 255, 0), HSL(60.0, 1.0, 0.5)) // yellow
+        assertColors(Color(0, 255, 255), HSL(180.0, 1.0, 0.5)) // cyan
+        assertColors(Color(255, 0, 255), HSL(300.0, 1.0, 0.5)) // magenta
+        assertColors(Color(191, 191, 191), HSL(0.0, 0.0, 0.75)) // silver
+        assertColors(Color(128, 128, 128), HSL(0.0, 0.0, 0.5)) // gray
+        assertColors(Color(128, 0, 0), HSL(0.0, 1.0, 0.25)) // maroon
+        assertColors(Color(128, 128, 0), HSL(60.0, 1.0, 0.25)) // olive
+        assertColors(Color(0, 128, 0), HSL(120.0, 1.0, 0.25)) // green
+        assertColors(Color(128, 0, 128), HSL(300.0, 1.0, 0.25)) // purple
+        assertColors(Color(0, 128, 128), HSL(180.0, 1.0, 0.25)) // teal
+        assertColors(Color(0, 0, 128), HSL(240.0, 1.0, 0.25)) // navy
     }
 }
+

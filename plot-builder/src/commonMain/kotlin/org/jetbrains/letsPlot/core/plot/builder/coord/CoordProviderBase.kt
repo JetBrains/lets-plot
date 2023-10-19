@@ -24,6 +24,8 @@ internal abstract class CoordProviderBase(
         require(yLim == null || yLim.length > 0.0) { "Coord y-limits range should be > 0.0" }
     }
 
+    override val isLinear: Boolean = !projection.nonlinear
+
     /**
      * Reshape and flip the domain if necessary.
      */
@@ -49,7 +51,7 @@ internal abstract class CoordProviderBase(
         }
     }
 
-    final override fun createCoordinateMapper(
+    override fun createCoordinateMapper(
         adjustedDomain: DoubleRectangle,
         clientSize: DoubleVector,
     ): CoordinatesMapper {

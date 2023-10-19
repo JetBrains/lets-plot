@@ -10,9 +10,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification.TooltipProperties
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
@@ -20,11 +19,11 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     private val myLocatorLookupSpace: LookupSpace = builder.locatorLookupSpace
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
-    private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
+    private val myTooltipLines: List<LinePattern> = builder.tooltipLines
     private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
     private val myIgnoreInvisibleTargets = builder.ignoreInvisibleTargets
     private val myIsCrosshairEnabled: Boolean = builder.isCrosshairEnabled
-    private val myTooltipTitle: TooltipLine? = builder.tooltipTitle
+    private val myTooltipTitle: LinePattern? = builder.tooltipTitle
 
     fun createLookupSpec(): LookupSpec {
         return LookupSpec(myLocatorLookupSpace, myLocatorLookupStrategy)
@@ -35,14 +34,14 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         dataFrame: DataFrame
     ): ContextualMapping {
         return createContextualMapping(
-            myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
+            myTooltipLines.map(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
             // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame,
             myTooltipProperties,
             myIgnoreInvisibleTargets,
             myIsCrosshairEnabled,
-            myTooltipTitle?.let(::TooltipLine)
+            myTooltipTitle?.let(::LinePattern)
         )
     }
 
@@ -74,20 +73,15 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         }
 
         private fun createContextualMapping(
-            tooltipLines: List<TooltipLine>,
+            tooltipLines: List<LinePattern>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
             tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
-            tooltipTitle: TooltipLine?
+            tooltipTitle: LinePattern?
         ): ContextualMapping {
-            val mappedTooltipLines = tooltipLines.filter { line ->
-                val dataAesList = line.fields.filterIsInstance<MappingField>()
-                dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
-            }
-            mappedTooltipLines.forEach { it.initDataContext(dataFrame, dataAccess) }
-
+            val mappedTooltipLines = LinePattern.prepareMappedLines(tooltipLines, dataAccess, dataFrame)
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
                 line.fields.none(ValueSource::isSide)
             }

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilderUtil.createTooltipLines
 
@@ -30,7 +30,7 @@ class GeomInteractionBuilder constructor(
     var isCrosshairEnabled: Boolean = false
         private set
 
-    val tooltipLines: List<TooltipLine>
+    val tooltipLines: List<LinePattern>
         get() = createTooltipLines(
             myUserTooltipSpec,
             tooltipAes = tooltipAes,
@@ -42,7 +42,7 @@ class GeomInteractionBuilder constructor(
     val tooltipProperties: TooltipSpecification.TooltipProperties
         get() = myUserTooltipSpec.tooltipProperties
 
-    val tooltipTitle: TooltipLine?
+    val tooltipTitle: LinePattern?
         get() = myUserTooltipSpec.tooltipTitle
 
 

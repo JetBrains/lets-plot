@@ -17,10 +17,10 @@ object BrowserDemoUtil {
 
     private const val ROOT_PROJECT = "lets-plot"
     private const val DEMO_PROJECT_PATH = "demo/livemap"
-    private const val JS_DIST_PATH = "js-package/build/distributions"
+    private const val JS_DIST_PATH = "js-package/build/dist/js/productionExecutable"
 
     fun openInBrowser(html: () -> String) {
-        val outputDir = "$DEMO_PROJECT_PATH/build/distributions"
+        val outputDir = "$DEMO_PROJECT_PATH/build/dist/js/productionExecutable"
 
         val projectRoot = getProjectRoot()
         println("Project root: $projectRoot")

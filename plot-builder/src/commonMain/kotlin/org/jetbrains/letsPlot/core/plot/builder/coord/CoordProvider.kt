@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 
 interface CoordProvider {
     val flipped: Boolean
+    val isLinear: Boolean
 
     fun with(
         xLim: DoubleSpan?,

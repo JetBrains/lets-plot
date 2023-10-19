@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.azimuthalEqualArea
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.conicEqualArea
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.spec.Option.Coord
@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.spec.Option.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.Option.CoordName.FIXED
 import org.jetbrains.letsPlot.core.spec.Option.CoordName.FLIP
 import org.jetbrains.letsPlot.core.spec.Option.CoordName.MAP
+import org.jetbrains.letsPlot.core.spec.Option.CoordName.POLAR
 
 internal object CoordProto {
 
@@ -42,6 +43,23 @@ internal object CoordProto {
 
                 CoordProviders.map(xLim, yLim, flipped, projection)
             }
+
+            POLAR -> CoordProviders.polar(
+                thetaFromX = when (val theta = options.getString(Coord.THETA.lowercase())) {
+                    "x" -> true
+                    "y" -> false
+                    null -> true
+                    else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
+                },
+                start = options.getDouble(Coord.START) ?: 0.0,
+                clockwise = when (val dir = options.getInteger(Coord.DIRECTION)) {
+                    1 -> true
+                    -1 -> false
+                    null -> true
+                    else -> error("Unsupported direction. Expected 1 or -1, but was `$dir`")
+                }
+            )
+
             FLIP -> throw IllegalStateException("Don't try to instantiate coord FLIP, it's only a flag.")
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }

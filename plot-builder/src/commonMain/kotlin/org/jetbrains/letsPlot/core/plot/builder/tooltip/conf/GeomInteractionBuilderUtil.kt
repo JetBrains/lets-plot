@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ConstantField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
@@ -19,7 +19,7 @@ internal object GeomInteractionBuilderUtil {
         tooltipAxisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
         sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
         tooltipConstantAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>?,
-    ): List<TooltipLine> {
+    ): List<LinePattern> {
 
         return when {
             userTooltipSpec.useDefaultTooltips() -> {
@@ -71,7 +71,7 @@ internal object GeomInteractionBuilderUtil {
 
                 userTooltipSpec.tooltipLinePatterns +
                         (axisValueSources + geomSideValueSources)
-                            .map(TooltipLine.Companion::defaultLineForValueSource)
+                            .map(LinePattern.Companion::defaultLineForValueSource)
             }
         }
     }
@@ -99,7 +99,7 @@ internal object GeomInteractionBuilderUtil {
         sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
         userDefinedValueSources: List<ValueSource>? = null,
         constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>? = null
-    ): List<TooltipLine> {
+    ): List<LinePattern> {
         val axisValueSources = axisAes.map { aes ->
             getMappingValueSource(aes, isSide = true, isAxis = true, userDefinedValueSources)
         }
@@ -125,7 +125,7 @@ internal object GeomInteractionBuilderUtil {
             userDefined?.withLabel(label) ?: ConstantField(aes, value, format = null, label = label)
         } ?: emptyList()
 
-        return (aesValueSources + axisValueSources + sideValueSources + constantFields).map(TooltipLine.Companion::defaultLineForValueSource)
+        return (aesValueSources + axisValueSources + sideValueSources + constantFields).map(LinePattern.Companion::defaultLineForValueSource)
     }
 
 }
