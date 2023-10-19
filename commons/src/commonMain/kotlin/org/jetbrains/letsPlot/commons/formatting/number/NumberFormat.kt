@@ -327,7 +327,7 @@ class NumberFormat(private val spec: Spec) {
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
         val exponentString = if (numberInfo.exponent != null) {
             when (numberInfo.exponent) {
-                0 -> "·1"
+                0 -> ""
                 1 -> "·10"
                 else -> "·\\(10^{${numberInfo.exponent}}\\)"
             }

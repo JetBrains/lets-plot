@@ -17,7 +17,7 @@ class NumberFormatTypeETest {
         assertEquals("4.200000·10", f.apply(42))
         assertEquals("4.200000·\\(10^{7}\\)", f.apply(42000000))
         assertEquals("4.200000·\\(10^{8}\\)", f.apply(420000000))
-        assertEquals("-4.000000·1", f.apply(-4))
+        assertEquals("-4.000000", f.apply(-4))
         assertEquals("-4.200000·10", f.apply(-42))
         assertEquals("-4.200000·\\(10^{6}\\)", f.apply(-4200000))
         assertEquals("-4.200000·\\(10^{7}\\)", f.apply(-42000000))
