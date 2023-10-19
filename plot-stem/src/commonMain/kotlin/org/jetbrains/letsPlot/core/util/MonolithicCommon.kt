@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.config.BunchConfig
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
@@ -289,6 +290,11 @@ object MonolithicCommon {
      * @param plotSpec: raw specifications of a single plot or GGBunch
      */
     fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+        // Internal use: testing
+        if (plotSpec["kind"]?.toString() == Option.Meta.Kind.ERROR_GEN) {
+            return SpecTransformBackendUtil.processTransform(plotSpec, simulateFailure = true)
+        }
+
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec

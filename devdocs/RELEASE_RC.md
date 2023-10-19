@@ -41,4 +41,4 @@ git add --all && git commit -m "Updated demo notebooks, add v1.2.3demos1 repo ta
 git tag v1.2.3demos1 && git push --tags
 ```
 
-In [docs/README.md](docs/README.md) update the Binder link with new "demo" tag (above).
+In [docs/README.md](../docs/README.md) update the Binder link with new "demo" tag (above).

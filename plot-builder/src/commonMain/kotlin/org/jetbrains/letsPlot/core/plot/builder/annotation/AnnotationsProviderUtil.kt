@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object AnnotationsProviderUtil {
@@ -23,15 +23,14 @@ object AnnotationsProviderUtil {
         dataFrame: DataFrame,
         themeTextStyle: ThemeTextStyle?
     ): Annotations? {
-        val mappedLines = spec.linePatterns.filter { line ->
-            val dataAesList = line.fields.filterIsInstance<MappingField>()
-            dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
-        }
+        val mappedLines = LinePattern.prepareMappedLines(
+            spec.linePatterns.map(::LinePattern),
+            dataAccess, dataFrame
+        )
         if (mappedLines.isEmpty()) {
             return null
         }
 
-        mappedLines.forEach { it.initDataContext(dataFrame, dataAccess) }
         return Annotations(
             mappedLines,
             textStyle = TextStyle(

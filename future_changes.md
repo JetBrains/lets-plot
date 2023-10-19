@@ -25,3 +25,4 @@
 - Inability to use the spelling "grey" for the color grey (via "gray" only).
 - `geom_crossbar`: an error occurs if the mapped values of aesthetics are not populated [[#886](https://github.com/JetBrains/lets-plot/issues/886)].
 - Husl palette equivalent [[#877](https://github.com/JetBrains/lets-plot/issues/876)].
+- Exception label is unresizeble, uncopyable and uncontrollable [[#902](https://github.com/JetBrains/lets-plot/issues/902)].

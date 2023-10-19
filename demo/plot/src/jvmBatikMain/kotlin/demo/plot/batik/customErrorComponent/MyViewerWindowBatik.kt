@@ -3,26 +3,28 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.batik.plot.component
+package demo.plot.batik.customErrorComponent
 
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
 import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
-import org.jetbrains.letsPlot.awt.plot.component.PlotViewerWindowBase
+import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import javax.swing.JComponent
 
-open class PlotViewerWindowBatik(
+class MyViewerWindowBatik(
     title: String,
     windowSize: Dimension? = null,
     private val rawSpec: MutableMap<String, Any>,
     private val preserveAspectRatio: Boolean = false,
     private val repaintDelay: Int = 300,  // ms,
-    private val applicationContext: ApplicationContext = DefaultSwingContextBatik()
-) : PlotViewerWindowBase(
-    title,
+) : PlotViewerWindowBatik(
+    title = title,
     windowSize = windowSize,
+    rawSpec = rawSpec,
+    preserveAspectRatio = preserveAspectRatio,
+    repaintDelay = repaintDelay,
 ) {
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
@@ -31,7 +33,7 @@ open class PlotViewerWindowBatik(
             processedSpec = processedSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
             repaintDelay = repaintDelay,
-            applicationContext = applicationContext
+            applicationContext = MY_APP_CONTEXT
         ) {
             override fun createPlotPanel(
                 processedSpec: MutableMap<String, Any>,
@@ -40,7 +42,7 @@ open class PlotViewerWindowBatik(
                 applicationContext: ApplicationContext,
                 computationMessagesHandler: (List<String>) -> Unit
             ): PlotPanel {
-                return DefaultPlotPanelBatik(
+                return MyPlotPanelBatik(
                     processedSpec = processedSpec,
                     preserveAspectRatio = preserveAspectRatio,
                     preferredSizeFromPlot = preferredSizeFromPlot,

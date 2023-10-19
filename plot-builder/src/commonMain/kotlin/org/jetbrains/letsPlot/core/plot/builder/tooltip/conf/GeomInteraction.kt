@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification.TooltipProperties
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
 class GeomInteraction(builder: GeomInteractionBuilder) :
@@ -82,12 +81,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             isCrosshairEnabled: Boolean,
             tooltipTitle: LinePattern?
         ): ContextualMapping {
-            val mappedTooltipLines = tooltipLines.filter { line ->
-                val dataAesList = line.fields.filterIsInstance<MappingField>()
-                dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
-            }
-            mappedTooltipLines.forEach { it.initDataContext(dataFrame, dataAccess) }
-
+            val mappedTooltipLines = LinePattern.prepareMappedLines(tooltipLines, dataAccess, dataFrame)
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
                 line.fields.none(ValueSource::isSide)
             }
