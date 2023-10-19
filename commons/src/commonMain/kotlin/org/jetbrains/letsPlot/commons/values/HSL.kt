@@ -8,39 +8,34 @@ package org.jetbrains.letsPlot.commons.values
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-/**
- * @param hue Normal range: [0, 360] degrees.
- * @param saturation [0, 1]
- * @param value [0, 1]
- */
-class HSV(hue: Double, saturation: Double, value: Double = 1.0) {
+class HSL(
+    hue: Double,
+    saturation: Double,
+    lightness: Double,
+) {
     val h: Double
     val s: Double
-    val v: Double
+    val l: Double
 
     init {
-        require(saturation >= -0.001 && saturation <= 1.001) { "HSV 'saturation' must be in range [0, 1] but was $saturation" }
-        require(value >= -0.001 && value <= 1.001) { "HSV 'value' must be in range [0, 1] but was $value" }
+        require(saturation >= -0.001 && saturation <= 1.001) { "HSL 'saturation' must be in range [0, 1] but was $saturation" }
+        require(lightness >= -0.001 && lightness <= 1.001) { "HSL 'lightness' must be in range [0, 1] but was $lightness" }
 
         // Trim precision
         h = (hue * 100).roundToInt() / 100.0
         s = abs((saturation * 100).roundToInt() / 100.0)
-        v = abs((value * 100).roundToInt() / 100.0)
-    }
-
-    override fun toString(): String {
-        return "HSV($h, $s, $v)"
+        l = abs((lightness * 100).roundToInt() / 100.0)
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as HSV
+        other as HSL
 
         if (h != other.h) return false
         if (s != other.s) return false
-        if (v != other.v) return false
+        if (l != other.l) return false
 
         return true
     }
@@ -48,7 +43,12 @@ class HSV(hue: Double, saturation: Double, value: Double = 1.0) {
     override fun hashCode(): Int {
         var result = h.hashCode()
         result = 31 * result + s.hashCode()
-        result = 31 * result + v.hashCode()
+        result = 31 * result + l.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "HSL(h=$h, s=$s, l=$l)"
+    }
+
 }

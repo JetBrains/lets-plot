@@ -1616,15 +1616,18 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for `fill` aesthetic.
+    The palette is computed using HSL (hue, saturation, luminance) color model.
 
     Parameters
     ----------
-    h : list
+    h : list, default=[15, 375]
         Range of hues (two numerics), in [0, 360].
-    c : int
+    c : int, default=65
         Chroma (intensity of color), maximum value varies depending on.
-    l : int
+    l : int, default=60
         Luminance (lightness), in [0, 100].
+    h_start : int, default=0
+        Hue starting point.
     direction : {1, -1}, default=1
         Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
     name : str
@@ -1674,7 +1677,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         x = list(range(50))
         ggplot({'x': x}, aes(x='x')) + \\
             geom_tile(aes(fill='x')) + \\
-            scale_fill_hue(c=50, l=80, h=[0, 50]) + \\
+            scale_fill_hue(c=85) + \\
             coord_cartesian() + \\
             ggsize(600, 200)
 
@@ -2004,7 +2007,7 @@ def scale_grey(aesthetic, *,
                na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for the specified aesthetics.
-    The palette is computed using HSV (hue, saturation, value) color model.
+    The palette is computed using HSL (hue, saturation, luminance) color model.
 
     Parameters
     ----------
@@ -2087,7 +2090,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
                     na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `fill` aesthetic.
-    The palette is computed using HSV (hue, saturation, value) color model.
+    The palette is computed using HSL (hue, saturation, luminance) color model.
 
     Parameters
     ----------
@@ -2163,7 +2166,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
                      na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `color` aesthetic.
-    The palette is computed using HSV (hue, saturation, value) color model.
+    The palette is computed using HSL (hue, saturation, luminance) color model.
 
     Parameters
     ----------

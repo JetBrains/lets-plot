@@ -27,26 +27,26 @@ object Colors {
         "very_light_yellow" to Color.VERY_LIGHT_YELLOW
     )
     private val namedColors = (
-        mapOf<String, Color>(
-            "white" to Color.WHITE,
-            "black" to Color.BLACK,
-            "gray" to Color.GRAY,
-            "red" to Color.RED,
-            "green" to Color.GREEN,
-            "blue" to Color.BLUE,
-            "yellow" to Color.YELLOW,
-            "magenta" to Color.MAGENTA,
-            "cyan" to Color.CYAN,
-            "orange" to Color.ORANGE,
-            "pink" to Color.PINK
-        ) +
-            // light_gray
-            variantColors +
-            // light-gray
-            variantColors.mapKeys { it.key.replace('_', '-') } +
-            // lightgray
-            variantColors.mapKeys { it.key.replace("_", "") }
-    )
+            mapOf<String, Color>(
+                "white" to Color.WHITE,
+                "black" to Color.BLACK,
+                "gray" to Color.GRAY,
+                "red" to Color.RED,
+                "green" to Color.GREEN,
+                "blue" to Color.BLUE,
+                "yellow" to Color.YELLOW,
+                "magenta" to Color.MAGENTA,
+                "cyan" to Color.CYAN,
+                "orange" to Color.ORANGE,
+                "pink" to Color.PINK
+            ) +
+                    // light_gray
+                    variantColors +
+                    // light-gray
+                    variantColors.mapKeys { it.key.replace('_', '-') } +
+                    // lightgray
+                    variantColors.mapKeys { it.key.replace("_", "") }
+            )
         .run {
             // ***grey
             this + mapKeys { it.key.replace("gray", "grey") }
@@ -107,22 +107,27 @@ object Colors {
                 r = c
                 g = x
             }
+
             hd < 2 -> {
                 r = x
                 g = c
             }
+
             hd < 3 -> {
                 g = c
                 b = x
             }
+
             hd < 4 -> {
                 g = x
                 b = c
             }
+
             hd < 5 -> {
                 r = x
                 b = c
             }
+
             else -> {
                 r = c
                 b = x
@@ -138,34 +143,69 @@ object Colors {
         )
     }
 
-    fun hsvFromRgb(color: Color): HSV {
-        val scale = 1.0 / 255
-        val r = color.red * scale
-        val g = color.green * scale
-        val b = color.blue * scale
-        val min = min(r, min(g, b))
-        val max = max(r, max(g, b))
+    fun hslFromRgb(color: Color): HSL {
+        // see https://www.rapidtables.com/convert/color/rgb-to-hsl.html for details
+        val r = color.red / 255.0
+        val g = color.green / 255.0
+        val b = color.blue / 255.0
 
-        val v = if (max == 0.0) 0.0 else 1 - min / max
-        val h: Double
-        val div = 1f / (6 * (max - min))
+        val max = maxOf(r, g, b)
+        val min = minOf(r, g, b)
 
-        h = if (max == min) {
-            0.0
-        } else if (max == r) {
-            if (g >= b) (g - b) * div else 1 + (g - b) * div
-        } else if (max == g) {
-            1f / 3 + (b - r) * div
-        } else {
-            2f / 3 + (r - g) * div
+        val delta = max - min
+
+        val l = (max + min) / 2.0
+
+        val s = when (delta) {
+            0.0 -> 0.0
+            else -> delta / (1.0 - abs(2.0 * l - 1.0))
         }
 
-        return HSV(
-            hue = 360 * h,
-            saturation = v,
-            value = max
+        val h = when (delta) {
+            0.0 -> 0.0
+            else -> when (max) {
+                r -> (g - b) / (max - min) % 6
+                g -> (b - r) / (max - min) + 2
+                b -> (r - g) / (max - min) + 4
+                else -> error("max value ($max) does not match any of r($r), g($g), b($b)")
+            }
+        } * 60.0
+
+        return HSL(
+            hue = if (h >= 0.0) h else h + 360.0,
+            saturation = s,
+            lightness = l
         )
     }
+
+    fun rgbFromHsl(hsl: HSL): Color {
+        return rgbFromHsl(hsl.h, hsl.s, hsl.l)
+    }
+
+    fun rgbFromHsl(h: Double, s: Double, l: Double, alpha: Double = 1.0): Color {
+        val c = (1.0 - abs(2 * l - 1.0)) * s
+        val h2 = h / 60
+        val x = c * (1 - abs(h2 % 2 - 1))
+
+        val (r1, g1, b1) = when (h2) {
+            in 0.0..1.0 -> Triple(c, x, 0.0)
+            in 1.0..2.0 -> Triple(x, c, 0.0)
+            in 2.0..3.0 -> Triple(0.0, c, x)
+            in 3.0..4.0 -> Triple(0.0, x, c)
+            in 4.0..5.0 -> Triple(x, 0.0, c)
+            in 5.0..6.0 -> Triple(c, 0.0, x)
+            else -> error("Unexpected h2 value: $h2")
+        }
+
+        val m = l - c / 2.0
+        return Color(
+            ((r1 + m) * 255).roundToInt(),
+            ((g1 + m) * 255).roundToInt(),
+            ((b1 + m) * 255).roundToInt(),
+            (255 * alpha).roundToInt()
+        )
+    }
+
 
     @JvmOverloads
     fun darker(c: Color?, factor: Double = DEFAULT_FACTOR): Color? {
