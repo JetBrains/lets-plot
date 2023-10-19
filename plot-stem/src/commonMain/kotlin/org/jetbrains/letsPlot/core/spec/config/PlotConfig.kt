@@ -83,10 +83,13 @@ abstract class PlotConfig(
             excludeStatVariables
         )
 
+        val zeroPositionalExpands = !CoordConfig.allowsDomainExpand(get(Option.Plot.COORD))
+
         scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
             layerConfigs,
             scaleConfigs,
-            excludeStatVariables
+            excludeStatVariables,
+            zeroPositionalExpands
         )
 
         transformByAes = PlotConfigTransforms.createTransforms(

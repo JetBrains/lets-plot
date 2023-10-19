@@ -45,9 +45,9 @@ internal object CoordProto {
             }
 
             POLAR -> CoordProviders.polar(
-                thetaFromX = when (val theta = options.getString(Coord.THETA.lowercase())) {
-                    "x" -> true
-                    "y" -> false
+                thetaFromX = when (val theta = options.getString(Coord.THETA)) {
+                    Coord.Theta.X -> true
+                    Coord.Theta.Y -> false
                     null -> true
                     else -> error("Unsupported theta: expected `x` or `y`, but was `$theta`")
                 },

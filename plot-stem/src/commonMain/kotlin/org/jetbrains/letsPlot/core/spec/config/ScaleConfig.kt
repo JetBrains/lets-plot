@@ -198,7 +198,7 @@ class ScaleConfig<T> constructor(
         return createScaleProviderBuilder().build()
     }
 
-    private fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
+    fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
         val discreteDomain = enforceDiscreteDomain()
         val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
 

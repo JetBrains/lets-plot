@@ -70,7 +70,7 @@ class PlotConfigFrontend private constructor(opts: Map<String, Any>) :
         }
 
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
-        val coordProvider = CoordConfig.create(
+        val coordProvider = CoordConfig.createCoordProvider(
             get(COORD),
             transformByAes.getValue(Aes.X),
             transformByAes.getValue(Aes.Y),
