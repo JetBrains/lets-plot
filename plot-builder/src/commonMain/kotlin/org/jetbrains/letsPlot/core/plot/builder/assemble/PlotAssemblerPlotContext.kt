@@ -25,8 +25,6 @@ internal class PlotAssemblerPlotContext(
 
     private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)
     private val transformedDomainByAes: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DoubleSpan> = HashMap()
-    private val tooltipFormatters: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> String> =
-        HashMap()
 
     override val layers: List<PlotContext.Layer> = stitchedPlotLayers.map(::ContextPlotLayer)
 
@@ -43,15 +41,6 @@ internal class PlotAssemblerPlotContext(
             computeOverallTransformedDomain(aes, stitchedPlotLayers, scaleMap)
         }
     }
-
-    override fun getTooltipFormatter(
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
-        defaultValue: () -> (Any?) -> String
-    ): (Any?) -> String {
-        checkPositionalAes(aes)
-        return tooltipFormatters.getOrPut(aes, defaultValue)
-    }
-
 
     private companion object {
         fun createStitchedLayers(

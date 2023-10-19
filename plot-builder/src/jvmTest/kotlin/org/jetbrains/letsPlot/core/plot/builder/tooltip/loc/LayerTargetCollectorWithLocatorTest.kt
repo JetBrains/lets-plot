@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
@@ -118,7 +119,8 @@ class LayerTargetCollectorWithLocatorTest {
             val builder = createGeomInteractionBuilder(area = geomKind == GeomKind.RECT)
             val contextualMapping = builder.createContextualMapping(
                 dataAccess = Mockito.mock(MappedDataAccess::class.java),
-                dataFrame = DataFrame.Builder().build()
+                dataFrame = DataFrame.Builder().build(),
+                formatterProvider = FormatterProvider.DUMMY
             )
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,

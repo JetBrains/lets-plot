@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig.Companion.MAP_JOIN_REQUIRED_MESSAGE
@@ -699,14 +700,14 @@ class GeoConfigTest {
     }
 
     private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
+        val actualGroups = createLayerRendererData(this, FormatterProvider.DUMMY/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
         assertEquals(expected, actualGroups, "Aes values didn't match")
         return this
     }
 
     private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
-        val actualGroups = createLayerRendererData(this/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
+        val actualGroups = createLayerRendererData(this, FormatterProvider.DUMMY/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
             .aesthetics.dataPoints().map { it.get(aes) }
         assertEquals(expected, actualGroups, "Aes values didn't match")
         return this

@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
@@ -69,7 +70,7 @@ class GeomLayerBuilder(
     private var colorByAes: Aes<Color> = Aes.COLOR
     private var fillByAes: Aes<Color> = Aes.FILL
 
-    private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
+    private var myAnnotationsProvider: ((MappedDataAccess, DataFrame, FormatterProvider) -> Annotations?)? = null
 
     private var myGeomTheme: GeomTheme = GeomTheme.NONE
 
@@ -139,8 +140,8 @@ class GeomLayerBuilder(
         annotationSpec: AnnotationSpecification,
         themeTextStyle: ThemeTextStyle
     ): GeomLayerBuilder {
-        myAnnotationsProvider = { dataAccess, dataFrame ->
-            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
+        myAnnotationsProvider = { dataAccess, dataFrame, formatterProvider ->
+            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle, formatterProvider)
         }
         return this
     }
@@ -271,7 +272,7 @@ class GeomLayerBuilder(
         override val fontFamilyRegistry: FontFamilyRegistry,
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
+        private val annotationsProvider: ((MappedDataAccess, DataFrame, FormatterProvider) -> Annotations?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
@@ -345,15 +346,15 @@ class GeomLayerBuilder(
             }
         }
 
-        override fun createContextualMapping(): ContextualMapping {
+        override fun createContextualMapping(formatterProvider: FormatterProvider): ContextualMapping {
             val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
-            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
+            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame, formatterProvider)
         }
 
-        override fun createAnnotations(): Annotations? {
+        override fun createAnnotations(formatterProvider: FormatterProvider): Annotations? {
             return annotationsProvider?.let { provider ->
                 val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
-                provider(dataAccess, dataFrame)
+                provider(dataAccess, dataFrame, formatterProvider)
             }
         }
     }

@@ -8,10 +8,9 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class ConstantField(
     val aes: Aes<*>,
@@ -38,8 +37,8 @@ class ConstantField(
         }
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
-        val presentation = formattedValue ?: initFormattedValue(ctx)
+    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint {
+        val presentation = formattedValue ?: initFormattedValue(formatterProvider)
         return DataPoint(
             label = myDataLabel,
             value = presentation,
@@ -49,7 +48,7 @@ class ConstantField(
         )
     }
 
-    private fun initFormattedValue(ctx: PlotContext): String {
+    private fun initFormattedValue(formatterProvider: FormatterProvider): String {
         formattedValue = format?.let {
             StringFormat.forOneArg(format).format(value)
         } ?: run {
@@ -61,6 +60,9 @@ class ConstantField(
                 else -> aes
             }
 
+            formatterProvider.getFormatter(tooltipAes).invoke(value)
+
+            /*
             if (ctx.hasScale(tooltipAes) && ctx.getScale(tooltipAes).isContinuousDomain && value is Number) {
                 ctx.getTooltipFormatter(tooltipAes) {
                     TooltipFormatting.createFormatter(tooltipAes, ctx)
@@ -68,18 +70,10 @@ class ConstantField(
             } else {
                 value.toString()
             }
+            */
         }
 
         return formattedValue!!
-    }
-
-    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
-        if (formattedValue == null) {
-            formattedValue = format?.let {
-                StringFormat.forOneArg(format).format(value)
-            } ?: defaultFormatter(aes).invoke(value)
-        }
-        return formattedValue
     }
 
     override fun copy(): ConstantField {

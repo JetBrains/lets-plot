@@ -6,13 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class DataFrameField(
     private val name: String,
@@ -21,7 +19,9 @@ class DataFrameField(
 
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private lateinit var myFormatter: (Any) -> String
+    private val myFormatter =  format?.let {
+        StringFormat.forOneArg(format, formatFor = name)
+    }
 
     override val isSide: Boolean = false
     override val isAxis: Boolean = false
@@ -31,27 +31,17 @@ class DataFrameField(
         myDataFrame = data
 
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
-
-        myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable)
-            else -> StringFormat.forOneArg(format, formatFor = name)::format
-        }
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
+    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint? {
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
-            value = myFormatter(originalValue),
+            value = myFormatter?.format(originalValue) ?: formatterProvider.getFormatter(myVariable).invoke(originalValue),
             aes = null,
             isAxis = false,
             isSide = false
         )
-    }
-
-    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
-        val originalValue = myDataFrame[myVariable][index] ?: return null
-        return myFormatter(originalValue)
     }
 
     override fun copy(): DataFrameField {

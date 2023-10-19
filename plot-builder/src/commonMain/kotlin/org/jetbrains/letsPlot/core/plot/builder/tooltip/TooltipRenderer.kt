@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
@@ -49,7 +48,6 @@ internal class TooltipRenderer constructor(
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
     private val plotBackground: Color,
-    private val plotContext: PlotContext,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -91,7 +89,7 @@ internal class TooltipRenderer constructor(
             return
         }
 
-        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin, plotContext)
+        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin)
         val geomBounds = tileInfo.geomBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
@@ -237,14 +235,13 @@ internal class TooltipRenderer constructor(
 
     private fun createTooltipSpecs(
         lookupResults: List<GeomTargetLocator.LookupResult>,
-        axisOrigin: DoubleVector,
-        ctx: PlotContext
+        axisOrigin: DoubleVector
     ): List<TooltipSpec> {
         val tooltipSpecs = ArrayList<TooltipSpec>()
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin, flippedAxis, xAxisTheme, yAxisTheme)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, ctx)) }
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
         }
 
         return tooltipSpecs

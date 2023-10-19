@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReference
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 
 object DemoAndTest {
     fun buildGeom(
@@ -19,7 +20,8 @@ object DemoAndTest {
         coord: CoordinateSystem,
         flippedAxis: Boolean,
         targetCollector: GeomTargetCollector,
-        plotBackground: Color
+        plotBackground: Color,
+        formatterProvider: FormatterProvider
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
             layer = layer,
@@ -27,7 +29,8 @@ object DemoAndTest {
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            backgroundColor = plotBackground
+            backgroundColor = plotBackground,
+            formatterProvider
         )
     }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MappedDataAccessMock
@@ -353,7 +354,8 @@ class LocatorByGeneralTooltipTest {
             .build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
-            DataFrame.Builder().build()
+            DataFrame.Builder().build(),
+            formatterProvider = FormatterProvider.DUMMY
         )
     }
 

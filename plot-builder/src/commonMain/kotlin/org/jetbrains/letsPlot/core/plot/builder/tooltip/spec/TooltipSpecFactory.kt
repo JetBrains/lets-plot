@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.spec
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
@@ -22,20 +21,19 @@ class TooltipSpecFactory(
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme
 ) {
-    fun create(geomTarget: GeomTarget, ctx: PlotContext): List<TooltipSpec> {
-        return ArrayList(Helper(geomTarget, flippedAxis, ctx).createTooltipSpecs())
+    fun create(geomTarget: GeomTarget): List<TooltipSpec> {
+        return ArrayList(Helper(geomTarget, flippedAxis).createTooltipSpecs())
     }
 
     private inner class Helper(
         private val myGeomTarget: GeomTarget,
         private val flippedAxis: Boolean,
-        ctx: PlotContext
     ) {
-        private val myDataPoints = contextualMapping.getDataPoints(hitIndex(), ctx)
+        private val myDataPoints = contextualMapping.getDataPoints(hitIndex())
         private val myTooltipAnchor = contextualMapping.tooltipAnchor
         private val myTooltipMinWidth = contextualMapping.tooltipMinWidth
         private val myIsCrosshairEnabled = contextualMapping.isCrosshairEnabled
-        private val myTooltipTitle = contextualMapping.getTitle(hitIndex(), ctx)
+        private val myTooltipTitle = contextualMapping.getTitle(hitIndex())
 
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()

@@ -36,6 +36,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
@@ -196,7 +197,8 @@ class PlotSvgComponent(
                 marginalLayers = marginalLayersByTile[tileIndex],
                 tilesOrigin, tileLayoutInfo, theme,
                 tileFrame,
-                marginalFrameByMargin
+                marginalFrameByMargin,
+                formatterProvider = TooltipFormatterProvider(plotContext)
             )
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)

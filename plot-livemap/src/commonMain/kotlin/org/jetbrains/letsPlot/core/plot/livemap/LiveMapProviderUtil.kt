@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
@@ -76,7 +77,12 @@ object LiveMapProviderUtil {
 
                 layers.first().setLiveMapProvider(
                     MyLiveMapProvider(
-                        layers.map(::createLayerRendererData),
+                        layers.map { geomLayer ->
+                            createLayerRendererData(
+                                geomLayer,
+                                TooltipFormatterProvider.createForLayer(geomLayer)
+                            )
+                        },
                         liveMapOptions,
                         cursorServiceConfig.cursorService
                     )

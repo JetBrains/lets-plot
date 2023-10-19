@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
@@ -31,7 +32,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
 
     override fun createContextualMapping(
         dataAccess: MappedDataAccess,
-        dataFrame: DataFrame
+        dataFrame: DataFrame,
+        formatterProvider: FormatterProvider
     ): ContextualMapping {
         return createContextualMapping(
             myTooltipLines.map(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
@@ -41,7 +43,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             myTooltipProperties,
             myIgnoreInvisibleTargets,
             myIsCrosshairEnabled,
-            myTooltipTitle?.let(::LinePattern)
+            myTooltipTitle?.let(::LinePattern),
+            formatterProvider
         )
     }
 
@@ -53,7 +56,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
-            userDefinedValueSources: List<ValueSource>? = null
+            userDefinedValueSources: List<ValueSource>? = null,
+            formatterProvider: FormatterProvider
         ): ContextualMapping {
             val defaultTooltipLines = GeomInteractionBuilderUtil.defaultValueSourceTooltipLines(
                 aesListForTooltip,
@@ -68,7 +72,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 TooltipProperties.NONE,
                 ignoreInvisibleTargets = false,
                 isCrosshairEnabled = false,
-                tooltipTitle = null
+                tooltipTitle = null,
+                formatterProvider
             )
         }
 
@@ -79,7 +84,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipProperties: TooltipProperties,
             ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
-            tooltipTitle: LinePattern?
+            tooltipTitle: LinePattern?,
+            formatterProvider: FormatterProvider
         ): ContextualMapping {
             val mappedTooltipLines = LinePattern.prepareMappedLines(tooltipLines, dataAccess, dataFrame)
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
@@ -99,7 +105,8 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 hasGeneralTooltip,
                 hasAxisTooltip,
                 isCrosshairEnabled,
-                tooltipTitle
+                tooltipTitle,
+                formatterProvider
             )
         }
     }

@@ -29,7 +29,7 @@ open class TooltipSpecTestHelper {
     private lateinit var nonTooltipAes: List<Aes<*>>
     private lateinit var axisAes: List<Aes<*>>
 
-    private val plotContext = TestingPlotContextWithTooltipFormatters()
+    private val formatterProvider = TestingTooltipFormatters()
 
     internal fun init() {
         geomTargetBuilder =
@@ -46,7 +46,7 @@ open class TooltipSpecTestHelper {
 
     internal fun <T> addMappedData(mapping: Mapping<T>): Mapping<T> {
         mappedDataAccessMock.add(mapping)
-        plotContext.addMappedData(mapping)
+        formatterProvider.addMappedData(mapping)
         return mapping
     }
 
@@ -105,13 +105,14 @@ open class TooltipSpecTestHelper {
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 sideTooltipAes = geomTarget.aesTipLayoutHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
-                DataFrame.Builder().build()
+                DataFrame.Builder().build(),
+                formatterProvider = formatterProvider
             ),
             DoubleVector.ZERO,
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget, plotContext)
+        ).create(geomTarget)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -125,13 +126,14 @@ open class TooltipSpecTestHelper {
                 geomTarget.aesTipLayoutHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build(),
-                valueSources
+                valueSources,
+                formatterProvider
             ),
             DoubleVector.ZERO,
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget, plotContext)
+        ).create(geomTarget)
     }
 
     internal fun buildTooltipSpecs() {

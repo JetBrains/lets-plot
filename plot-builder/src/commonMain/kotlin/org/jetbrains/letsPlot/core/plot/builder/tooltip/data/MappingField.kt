@@ -8,10 +8,9 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class MappingField(
     val aes: Aes<*>,
@@ -42,7 +41,7 @@ class MappingField(
         }
     }
 
-    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
+    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
             originalValue?.let {
@@ -55,9 +54,15 @@ class MappingField(
                     )
                     else -> aes
                 }
+
+                formatterProvider.getFormatter(tooltipAes).invoke(originalValue)
+
+                /*
                 ctx.getTooltipFormatter(tooltipAes) {
                     TooltipFormatting.createFormatter(tooltipAes, ctx)
-                }.invoke(originalValue)
+                }.invoke(originalValue
+                )
+                */
             }
         return DataPoint(
             label = myDataLabel,
@@ -66,12 +71,6 @@ class MappingField(
             isAxis = isAxis,
             isSide = isSide
         )
-    }
-
-    override fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String? {
-        val originalValue = myDataAccess.getOriginalValue(aes, index) ?: return null
-        return myFormatter?.format(originalValue)
-            ?: defaultFormatter(aes).invoke(originalValue)
     }
 
     override fun copy(): MappingField {

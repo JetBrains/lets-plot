@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.*
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
@@ -25,8 +24,7 @@ internal class PlotInteractor constructor(
     mouseEventPeer: MouseEventPeer,
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
-    theme: Theme,
-    plotContext: PlotContext
+    theme: Theme
 ) : ToolInteractor, Disposable {
     val eventsManager: EventsManager = EventsManager()
 
@@ -47,7 +45,6 @@ internal class PlotInteractor constructor(
             theme.verticalAxis(flippedAxis),
             theme.tooltips(),
             theme.plot().backgroundFill(),
-            plotContext,
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))

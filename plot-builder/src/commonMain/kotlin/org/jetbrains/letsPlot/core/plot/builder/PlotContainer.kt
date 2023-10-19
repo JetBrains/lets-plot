@@ -40,8 +40,7 @@ class PlotContainer constructor(
                 mouseEventPeer = mouseEventPeer,
                 plotSize = plot.figureSize,    // ToDo: svgRoot.bounds.dimension
                 flippedAxis = plot.flippedAxis,
-                theme = plot.theme,
-                plotContext = plot.plotContext
+                theme = plot.theme
             )
 
             if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {

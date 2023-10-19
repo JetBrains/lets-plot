@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
@@ -21,7 +22,8 @@ object AnnotationsProviderUtil {
         spec: AnnotationSpecification,
         dataAccess: MappedDataAccess,
         dataFrame: DataFrame,
-        themeTextStyle: ThemeTextStyle?
+        themeTextStyle: ThemeTextStyle?,
+        formatterProvider: FormatterProvider
     ): Annotations? {
         val mappedLines = LinePattern.prepareMappedLines(
             spec.linePatterns.map(::LinePattern),
@@ -38,7 +40,8 @@ object AnnotationsProviderUtil {
                 themeTextStyle?.face ?: DEFAULT_STYLE.face,
                 spec.textSize ?: themeTextStyle?.size ?: DEFAULT_STYLE.size,
                 themeTextStyle?.color ?: DEFAULT_STYLE.color
-            )
+            ),
+            formatterProvider
         )
     }
 

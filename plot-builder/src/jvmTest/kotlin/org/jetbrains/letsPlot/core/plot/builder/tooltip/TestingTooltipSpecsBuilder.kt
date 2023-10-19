@@ -27,14 +27,15 @@ internal class TestingTooltipSpecsBuilder private constructor(
     private val mockSettings = withSettings()
         .defaultAnswer(ReturnsNotNullValuesAnswer())
 
-    private val plotContext = TestingPlotContextWithTooltipFormatters()
+    private val formatterProvider = TestingTooltipFormatters()
 
     fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()
 
         val contextualMapping = contextualMappingProvider.createContextualMapping(
             mappedDataAccess,
-            DataFrame.Builder().build()
+            DataFrame.Builder().build(),
+            formatterProvider
         )
         val factory =
             TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
@@ -47,7 +48,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
 
-        return factory.create(geomTarget, plotContext)
+        return factory.create(geomTarget)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {
@@ -56,7 +57,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
     fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
         mappedDataAccessMock.add(mappedData)
-        plotContext.addMappedData(mappedData)
+        formatterProvider.addMappedData(mappedData)
         return this
     }
 

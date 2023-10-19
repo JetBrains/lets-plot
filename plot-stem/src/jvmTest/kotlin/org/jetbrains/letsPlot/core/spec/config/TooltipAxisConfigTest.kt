@@ -12,8 +12,8 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.FORMATS
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FIELD
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FORMAT
@@ -298,8 +298,8 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
+            val formatterProvider = TooltipFormatterProvider.createForLayer(geomLayer)
+            val dataPoints = geomLayer.createContextualMapping(formatterProvider).getDataPoints(index = 0)
             val generalTooltip = dataPoints
                 .filterNot(LineSpec.DataPoint::isSide)
                 .map(LineSpec.DataPoint::value)
@@ -308,8 +308,8 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
+            val formatterProvider = TooltipFormatterProvider.createForLayer(geomLayer)
+            val dataPoints = geomLayer.createContextualMapping(formatterProvider).getDataPoints(index = 0)
             val yAxisTooltip = dataPoints
                 .filter(LineSpec.DataPoint::isAxis)
                 .filter { it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y }

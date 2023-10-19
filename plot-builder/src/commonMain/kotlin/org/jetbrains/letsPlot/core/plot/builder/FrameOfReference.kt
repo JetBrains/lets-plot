@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface FrameOfReference {
@@ -13,5 +14,5 @@ interface FrameOfReference {
 
     fun drawAfterGeomLayer(parent: SvgComponent)
 
-    fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
+    fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector, formatterProvider: FormatterProvider): SvgComponent
 }

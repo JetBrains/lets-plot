@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
@@ -74,7 +75,7 @@ interface GeomLayer {
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
 
-    fun createContextualMapping(): ContextualMapping
+    fun createContextualMapping(formatterProvider: FormatterProvider): ContextualMapping
 
-    fun createAnnotations(): Annotations?
+    fun createAnnotations(formatterProvider: FormatterProvider): Annotations?
 }

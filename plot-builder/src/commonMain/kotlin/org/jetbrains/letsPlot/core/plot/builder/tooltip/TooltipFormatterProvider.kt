@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.builder.tooltip
+
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
+
+class TooltipFormatterProvider(private val plotContext: PlotContext): FormatterProvider {
+
+    private val myAesFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
+    private val myVarFormatters: MutableMap<DataFrame.Variable, (Any) -> String> = HashMap()
+
+    override fun getFormatter(aes: Aes<*>): (Any?) -> String {
+        return myAesFormatters.getOrPut(aes) { createFormatter(aes) }
+    }
+
+    private fun createFormatter(aes: Aes<*>): (Any?) -> String {
+        return if (plotContext.hasScale(aes)) {
+            TooltipFormatting.createFormatter(aes, plotContext)
+        } else {
+            Any?::toString
+        }
+    }
+
+    override fun getFormatter(variable: DataFrame.Variable): (Any) -> String {
+        return myVarFormatters.getOrPut(variable) { TooltipFormatting.createFormatter(variable) }
+    }
+
+    companion object {
+        fun createForLayer(geomLayer: GeomLayer): FormatterProvider {
+            return TooltipFormatterProvider(
+                PlotAssemblerPlotContext(
+                    layersByTile = listOf(listOf(geomLayer)),
+                    scaleMap = geomLayer.scaleMap
+                )
+            )
+        }
+    }
+}

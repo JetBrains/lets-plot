@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
-
 // `open` for Mockito tests
 open class ContextualMapping(
     private val tooltipLines: List<LineSpec>,
@@ -16,13 +14,14 @@ open class ContextualMapping(
     val hasGeneralTooltip: Boolean,
     val hasAxisTooltip: Boolean,
     val isCrosshairEnabled: Boolean,
-    private val tooltipTitle: LineSpec?
+    private val tooltipTitle: LineSpec?,
+    private val formatterProvider: FormatterProvider
 ) {
-    fun getDataPoints(index: Int, ctx: PlotContext): List<LineSpec.DataPoint> {
-        return tooltipLines.mapNotNull { it.getDataPoint(index, ctx) }
+    fun getDataPoints(index: Int): List<LineSpec.DataPoint> {
+        return tooltipLines.mapNotNull { it.getDataPoint(index, formatterProvider) }
     }
 
-    fun getTitle(index: Int, ctx: PlotContext): String? {
-        return tooltipTitle?.getDataPoint(index, ctx)?.value
+    fun getTitle(index: Int): String? {
+        return tooltipTitle?.getDataPoint(index, formatterProvider)?.value
     }
 }

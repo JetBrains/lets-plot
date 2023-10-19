@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -16,11 +15,10 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
-import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationFormatting
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
@@ -193,14 +191,15 @@ internal class SquareFrameOfReference(
         }
     }
 
-    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
+    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector, formatterProvider: FormatterProvider): SvgComponent {
         val layerComponent = buildGeom(
             layer,
             xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
             coord,
             flipAxis,
             targetCollector,
-            theme.plot().backgroundFill()
+            theme.plot().backgroundFill(),
+            formatterProvider
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -301,9 +300,10 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color
+            backgroundColor: Color,
+            formatterProvider: FormatterProvider
         ): SvgComponent {
-            val rendererData = LayerRendererUtil.createLayerRendererData(layer)
+            val rendererData = LayerRendererUtil.createLayerRendererData(layer, formatterProvider)
 
             @Suppress("NAME_SHADOWING")
             // val flippedAxis = layer.isYOrientation xor flippedAxis
@@ -332,8 +332,6 @@ internal class SquareFrameOfReference(
                 }
             }
 
-            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap)
-            val formatterCreator = { aes: Aes<*> -> AnnotationFormatting.createFormatter(aes, plotContext) }
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
@@ -341,7 +339,7 @@ internal class SquareFrameOfReference(
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
-                .annotations(rendererData.annotations?.initFormatter(formatterCreator))
+                .annotations(rendererData.annotations)
                 .backgroundColor(backgroundColor)
                 .build()
 

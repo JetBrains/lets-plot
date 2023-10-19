@@ -17,8 +17,6 @@ interface PlotContext {
     fun getScale(aes: Aes<*>): Scale
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
 
-    fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String
-
     interface Layer {
         val isLegendDisabled: Boolean
         val aestheticsDefaults: AestheticsDefaults

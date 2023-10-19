@@ -5,9 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
@@ -19,9 +18,7 @@ interface ValueSource {
 
     fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess)
 
-    fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
-
-    fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String?
+    fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint?
 
     fun copy(): ValueSource
 }

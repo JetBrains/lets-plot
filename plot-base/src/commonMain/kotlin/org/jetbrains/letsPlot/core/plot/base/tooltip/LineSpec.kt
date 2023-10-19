@@ -6,12 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
 interface LineSpec {
-    fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
-
-    fun getAnnotationText(index: Int, defaultFormatter: (Aes<*>) -> ((Any?) -> String)): String?
+    fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint?
 
     class DataPoint(
         val label: String?,

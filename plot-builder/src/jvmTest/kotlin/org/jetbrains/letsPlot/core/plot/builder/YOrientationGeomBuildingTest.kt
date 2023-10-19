@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
@@ -58,7 +59,8 @@ class YOrientationGeomBuildingTest {
             },
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector(),
-            plotBackground = Color.WHITE
+            plotBackground = Color.WHITE,
+            formatterProvider = FormatterProvider.DUMMY
         )
 
         // Do all checks inside the GeomStub.

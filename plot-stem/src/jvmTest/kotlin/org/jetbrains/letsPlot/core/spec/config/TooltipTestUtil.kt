@@ -9,12 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
 import org.jetbrains.letsPlot.core.plot.base.layout.Margins
@@ -22,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import kotlin.test.assertEquals
 
 object TooltipTestUtil {
@@ -61,7 +60,7 @@ object TooltipTestUtil {
 
     }
 
-    private fun createTooltipSpecs(contextualMapping: ContextualMapping, ctx: PlotContext): List<TooltipSpec> {
+    private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
         val factory =
             TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
         return factory.create(
@@ -69,8 +68,7 @@ object TooltipTestUtil {
                 hitIndex = 0,
                 tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO),
                 aesTipLayoutHints = emptyMap()
-            ),
-            ctx
+            )
         )
     }
 
@@ -85,8 +83,8 @@ object TooltipTestUtil {
     }
 
     internal fun assertGeneralTooltip(layer: GeomLayer, expectedLines: List<String>) {
-        val ctx = TestingPlotContext.create(layer)
-        val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping(), ctx)
+        val formatterProvider = TooltipFormatterProvider.createForLayer(layer)
+        val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping(formatterProvider))
         assertGeneralTooltip(
             tooltipSpecs,
             expectedLines
