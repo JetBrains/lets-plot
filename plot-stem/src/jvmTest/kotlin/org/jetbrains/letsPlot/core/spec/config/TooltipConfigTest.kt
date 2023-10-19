@@ -1029,8 +1029,7 @@ class TooltipConfigTest {
             org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.20",
             org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
-        val formatterProvider = TooltipFormatterProvider.createForLayer(geomLayer)
-        geomLayer.createContextualMapping(formatterProvider).getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
+        createContextualMapping(geomLayer).getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
