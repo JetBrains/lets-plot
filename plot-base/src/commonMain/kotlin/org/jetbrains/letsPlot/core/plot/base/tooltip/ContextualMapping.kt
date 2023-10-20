@@ -14,14 +14,13 @@ open class ContextualMapping(
     val hasGeneralTooltip: Boolean,
     val hasAxisTooltip: Boolean,
     val isCrosshairEnabled: Boolean,
-    private val tooltipTitle: LineSpec?,
-    private val formatterProvider: FormatterProvider
+    private val tooltipTitle: LineSpec?
 ) {
     fun getDataPoints(index: Int): List<LineSpec.DataPoint> {
-        return tooltipLines.mapNotNull { it.getDataPoint(index, formatterProvider) }
+        return tooltipLines.mapNotNull { it.getDataPoint(index) }
     }
 
     fun getTitle(index: Int): String? {
-        return tooltipTitle?.getDataPoint(index, formatterProvider)?.value
+        return tooltipTitle?.getDataPoint(index)?.value
     }
 }

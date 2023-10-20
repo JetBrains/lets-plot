@@ -6,10 +6,8 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
-import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.DISABLE_SPLITTING
@@ -1029,7 +1027,7 @@ class TooltipConfigTest {
             org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.20",
             org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
-        createContextualMapping(geomLayer).getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1059,7 +1057,7 @@ class TooltipConfigTest {
             org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.20",
             org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
-        createContextualMapping(geomLayer).getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1088,7 +1086,7 @@ class TooltipConfigTest {
             org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.34",
             org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
-        createContextualMapping(geomLayer).getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1114,13 +1112,9 @@ class TooltipConfigTest {
     }
 
     companion object {
-        private fun createContextualMapping(geomLayer: GeomLayer): ContextualMapping {
-            val formatterProvider = TooltipFormatterProvider.createForLayer(geomLayer)
-            return geomLayer.createContextualMapping(formatterProvider)
-        }
 
         private fun getTitleString(geomLayer: GeomLayer): String? {
-            return createContextualMapping(geomLayer).getTitle(index = 0)
+            return geomLayer.createContextualMapping().getTitle(index = 0)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
@@ -1128,17 +1122,17 @@ class TooltipConfigTest {
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
-            val dataPoints = createContextualMapping(geomLayer).getDataPoints(index = 0,)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0,)
             return dataPoints.filterNot(DataPoint::isSide).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
-            val dataPoints = createContextualMapping(geomLayer).getDataPoints(index = 0)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0)
             return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getSideTooltips(geomLayer: GeomLayer): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String> {
-            val dataPoints = createContextualMapping(geomLayer).getDataPoints(index = 0)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0)
             return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 

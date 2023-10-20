@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -15,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContex
 class TooltipFormatterProvider(private val plotContext: PlotContext): FormatterProvider {
 
     private val myAesFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
-    private val myVarFormatters: MutableMap<DataFrame.Variable, (Any) -> String> = HashMap()
 
     override fun getFormatter(aes: Aes<*>): (Any?) -> String {
         return myAesFormatters.getOrPut(aes) { createFormatter(aes) }
@@ -27,10 +25,6 @@ class TooltipFormatterProvider(private val plotContext: PlotContext): FormatterP
         } else {
             Any?::toString
         }
-    }
-
-    override fun getFormatter(variable: DataFrame.Variable): (Any) -> String {
-        return myVarFormatters.getOrPut(variable) { TooltipFormatting.createFormatter(variable) }
     }
 
     companion object {

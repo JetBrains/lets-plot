@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
@@ -24,6 +25,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLay
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLayouter
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotAssembler constructor(
@@ -66,6 +68,17 @@ class PlotAssembler constructor(
 
         // ToDo: transformed ranges by aes
         plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap)
+
+        coreLayersByTile.forEach { layers ->
+            layers.forEach {
+                it.initMappedDataAccess(TooltipFormatterProvider(plotContext))
+            }
+        }
+        marginalLayersByTile.forEach { layers ->
+            layers.forEach {
+                it.initMappedDataAccess(FormatterProvider.Companion.EmptyFormatterProvider())
+            }
+        }
 
         val legendBoxInfos: List<LegendBoxInfo> = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
@@ -130,16 +143,14 @@ class PlotAssembler constructor(
         return createPlot(
             frameProviderByTile = frameProviderByTile,
             figureLayoutInfo = figureLayoutInfo,
-            styleSheet = Style.fromTheme(theme, coordProvider.flipped),
-            plotContext = plotContext
+            styleSheet = Style.fromTheme(theme, coordProvider.flipped)
         )
     }
 
     private fun createPlot(
         frameProviderByTile: List<FrameOfReferenceProvider>,
         figureLayoutInfo: PlotFigureLayoutInfo,
-        styleSheet: StyleSheet,
-        plotContext: PlotContext
+        styleSheet: StyleSheet
     ): PlotSvgComponent {
         return PlotSvgComponent(
             title = title,
@@ -152,8 +163,7 @@ class PlotAssembler constructor(
             coordProvider = coordProvider,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
-            styleSheet = styleSheet,
-            plotContext = plotContext
+            styleSheet = styleSheet
         )
     }
 

@@ -10,14 +10,12 @@ import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 
 object LayerRendererUtil {
 
     fun createLayerRendererData(
-        layer: GeomLayer,
-        formatterProvider: FormatterProvider
+        layer: GeomLayer
     ): LayerRendererData {
 
         val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
@@ -54,9 +52,9 @@ object LayerRendererUtil {
             aesthetics = aestheticsAfterOrientation,
             aestheticMappers = aestheticMappersAfterOrientation,
             pos = pos,
-            contextualMapping = layer.createContextualMapping(formatterProvider),
+            contextualMapping = layer.createContextualMapping(),
             mappedAes = mappedAes,
-            annotations = layer.createAnnotations(formatterProvider)
+            annotations = layer.createAnnotations()
         )
     }
 

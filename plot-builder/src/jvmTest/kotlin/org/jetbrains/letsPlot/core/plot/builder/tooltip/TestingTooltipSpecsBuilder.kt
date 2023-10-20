@@ -27,15 +27,12 @@ internal class TestingTooltipSpecsBuilder private constructor(
     private val mockSettings = withSettings()
         .defaultAnswer(ReturnsNotNullValuesAnswer())
 
-    private val formatterProvider = TestingTooltipFormatters()
-
     fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()
 
         val contextualMapping = contextualMappingProvider.createContextualMapping(
             mappedDataAccess,
-            DataFrame.Builder().build(),
-            formatterProvider
+            DataFrame.Builder().build()
         )
         val factory =
             TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
@@ -57,7 +54,6 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
     fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
         mappedDataAccessMock.add(mappedData)
-        formatterProvider.addMappedData(mappedData)
         return this
     }
 

@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
@@ -41,7 +40,7 @@ class MappingField(
         }
     }
 
-    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint {
+    override fun getDataPoint(index: Int): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
             originalValue?.let {
@@ -55,7 +54,7 @@ class MappingField(
                     else -> aes
                 }
 
-                formatterProvider.getFormatter(tooltipAes).invoke(originalValue)
+                myDataAccess.getDefaultFormatter(tooltipAes).invoke(originalValue)
 
                 /*
                 ctx.getTooltipFormatter(tooltipAes) {

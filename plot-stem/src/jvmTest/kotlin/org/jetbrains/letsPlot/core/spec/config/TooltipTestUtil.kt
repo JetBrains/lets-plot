@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import kotlin.test.assertEquals
 
 object TooltipTestUtil {
@@ -83,8 +82,7 @@ object TooltipTestUtil {
     }
 
     internal fun assertGeneralTooltip(layer: GeomLayer, expectedLines: List<String>) {
-        val formatterProvider = TooltipFormatterProvider.createForLayer(layer)
-        val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping(formatterProvider))
+        val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping())
         assertGeneralTooltip(
             tooltipSpecs,
             expectedLines

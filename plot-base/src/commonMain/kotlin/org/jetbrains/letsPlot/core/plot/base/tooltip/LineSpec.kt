@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
 interface LineSpec {
-    fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint?
+    fun getDataPoint(index: Int): DataPoint?
 
     class DataPoint(
         val label: String?,

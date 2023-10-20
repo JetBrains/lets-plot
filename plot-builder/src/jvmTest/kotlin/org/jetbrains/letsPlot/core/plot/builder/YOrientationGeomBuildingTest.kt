@@ -59,8 +59,7 @@ class YOrientationGeomBuildingTest {
             },
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector(),
-            plotBackground = Color.WHITE,
-            formatterProvider = FormatterProvider.DUMMY
+            plotBackground = Color.WHITE
         )
 
         // Do all checks inside the GeomStub.

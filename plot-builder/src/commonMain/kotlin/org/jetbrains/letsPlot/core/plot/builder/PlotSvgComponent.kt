@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -36,7 +35,6 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatterProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
@@ -54,8 +52,7 @@ class PlotSvgComponent(
     private val coordProvider: CoordProvider,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    val styleSheet: StyleSheet,
-    val plotContext: PlotContext
+    val styleSheet: StyleSheet
 ) : SvgComponent() {
 
     val figureSize: DoubleVector = figureLayoutInfo.figureSize
@@ -197,8 +194,7 @@ class PlotSvgComponent(
                 marginalLayers = marginalLayersByTile[tileIndex],
                 tilesOrigin, tileLayoutInfo, theme,
                 tileFrame,
-                marginalFrameByMargin,
-                formatterProvider = TooltipFormatterProvider(plotContext)
+                marginalFrameByMargin
             )
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)

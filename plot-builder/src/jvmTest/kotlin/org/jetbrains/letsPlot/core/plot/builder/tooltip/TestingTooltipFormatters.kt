@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 
 class TestingTooltipFormatters : FormatterProvider {
@@ -14,10 +13,6 @@ class TestingTooltipFormatters : FormatterProvider {
 
     override fun getFormatter(aes: Aes<*>): (Any?) -> String {
         return mockFormatters.getValue(aes)
-    }
-
-    override fun getFormatter(variable: DataFrame.Variable): (Any) -> String {
-        return Any::toString
     }
 
     internal fun addMappedData(mapping: MappedDataAccessMock.Mapping<*>) {

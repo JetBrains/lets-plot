@@ -14,12 +14,15 @@ class MappedDataAccessMock {
 
     private val mappedAes = HashSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
     val mappedDataAccess: MappedDataAccess = mock(MappedDataAccess::class.java)
+    private val formatterProvider = TestingTooltipFormatters()
 
     fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
         return add(mapping, null)
     }
 
     fun <T> add(mapping: Mapping<T>, index: Int?): MappedDataAccessMock {
+        formatterProvider.addMappedData(mapping)
+
         val aes = mapping.aes
 
 //        if (index == null) {
@@ -34,6 +37,8 @@ class MappedDataAccessMock {
             .thenReturn(true)
         `when`(mappedDataAccess.getMappedDataLabel(eq(aes)))
             .thenReturn(mapping.label)
+        `when`(mappedDataAccess.getDefaultFormatter(eq(aes)))
+            .thenReturn(formatterProvider.getFormatter(aes))
 
         getMappedAes().add(aes)
 

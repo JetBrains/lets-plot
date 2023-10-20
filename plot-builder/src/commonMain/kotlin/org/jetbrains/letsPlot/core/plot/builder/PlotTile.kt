@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
@@ -36,8 +35,7 @@ internal class PlotTile(
     private val tileLayoutInfo: TileLayoutInfo,
     private val theme: Theme,
     private val frameOfReference: FrameOfReference,
-    private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>,
-    private val formatterProvider: FormatterProvider
+    private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()
@@ -85,11 +83,11 @@ internal class PlotTile(
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
                     layer.locatorLookupSpec,
-                    layer.createContextualMapping(formatterProvider),
+                    layer.createContextualMapping()
                 )
                 _targetLocators.add(collectorWithLocator)
 
-                val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator, formatterProvider)
+                val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
                 add(layerComponent)
             }
 
@@ -99,7 +97,7 @@ internal class PlotTile(
             for ((margin, layers) in marginalLayersByMargin) {
                 val marginFrame = marginalFrameByMargin.getValue(margin)
                 for (layer in layers) {
-                    val marginComponent = marginFrame.buildGeomComponent(layer, NullGeomTargetCollector(), formatterProvider)
+                    val marginComponent = marginFrame.buildGeomComponent(layer, NullGeomTargetCollector())
                     add(marginComponent)
                 }
             }

@@ -8,11 +8,11 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
 interface ContextualMappingProvider {
-    fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame, formatterProvider: FormatterProvider): ContextualMapping
+    fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping
 
     companion object {
         val NONE = object : ContextualMappingProvider {
-            override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame, formatterProvider: FormatterProvider): ContextualMapping {
+            override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
                 return ContextualMapping(
                     tooltipLines = emptyList(),
                     tooltipAnchor = null,
@@ -21,8 +21,7 @@ interface ContextualMappingProvider {
                     hasGeneralTooltip = false,
                     hasAxisTooltip = false,
                     isCrosshairEnabled = false,
-                    tooltipTitle = null,
-                    formatterProvider = FormatterProvider.DUMMY
+                    tooltipTitle = null
                 )
             }
         }

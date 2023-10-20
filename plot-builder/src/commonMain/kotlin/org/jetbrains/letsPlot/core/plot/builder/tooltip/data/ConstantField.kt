@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 
@@ -19,15 +18,18 @@ class ConstantField(
     label: String? = null
 ) : ValueSource {
 
-    private var formattedValue: String? = null
-    private var isYOrientation: Boolean? = null
+    private lateinit var formattedValue: String
     private var myDataLabel: String? = label
 
     override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
-        isYOrientation = mappedDataAccess.isYOrientation
+        formattedValue = initFormattedValue(
+            mappedDataAccess.isYOrientation,
+            mappedDataAccess::getDefaultFormatter
+        )
+
         if (myDataLabel == null) {
             myDataLabel = if (mappedDataAccess.isMapped(aes)) {
                 mappedDataAccess.getMappedDataLabel(aes)
@@ -37,30 +39,28 @@ class ConstantField(
         }
     }
 
-    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint {
-        val presentation = formattedValue ?: initFormattedValue(formatterProvider)
+    override fun getDataPoint(index: Int): DataPoint {
         return DataPoint(
             label = myDataLabel,
-            value = presentation,
+            value = formattedValue,
             aes = null,
             isAxis = false,
             isSide = false
         )
     }
 
-    private fun initFormattedValue(formatterProvider: FormatterProvider): String {
-        formattedValue = format?.let {
+    private fun initFormattedValue(isYOrientation: Boolean, formatterProvider: (Aes<*>) -> ((Any?) -> String)): String {
+        return format?.let {
             StringFormat.forOneArg(format).format(value)
         } ?: run {
             val tooltipAes = when {
                 Aes.isPositionalXY(aes) -> Aes.toAxisAes(
                     aes,
-                    isYOrientation!!
+                    isYOrientation
                 )
                 else -> aes
             }
-
-            formatterProvider.getFormatter(tooltipAes).invoke(value)
+            formatterProvider(tooltipAes).invoke(value)
 
             /*
             if (ctx.hasScale(tooltipAes) && ctx.getScale(tooltipAes).isContinuousDomain && value is Number) {
@@ -72,8 +72,6 @@ class ConstantField(
             }
             */
         }
-
-        return formattedValue!!
     }
 
     override fun copy(): ConstantField {

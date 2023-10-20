@@ -70,7 +70,7 @@ class GeomLayerBuilder(
     private var colorByAes: Aes<Color> = Aes.COLOR
     private var fillByAes: Aes<Color> = Aes.FILL
 
-    private var myAnnotationsProvider: ((MappedDataAccess, DataFrame, FormatterProvider) -> Annotations?)? = null
+    private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
     private var myGeomTheme: GeomTheme = GeomTheme.NONE
 
@@ -140,8 +140,8 @@ class GeomLayerBuilder(
         annotationSpec: AnnotationSpecification,
         themeTextStyle: ThemeTextStyle
     ): GeomLayerBuilder {
-        myAnnotationsProvider = { dataAccess, dataFrame, formatterProvider ->
-            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle, formatterProvider)
+        myAnnotationsProvider = { dataAccess, dataFrame ->
+            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
         }
         return this
     }
@@ -272,7 +272,7 @@ class GeomLayerBuilder(
         override val fontFamilyRegistry: FontFamilyRegistry,
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame, FormatterProvider) -> Annotations?)?
+        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
@@ -346,15 +346,20 @@ class GeomLayerBuilder(
             }
         }
 
-        override fun createContextualMapping(formatterProvider: FormatterProvider): ContextualMapping {
-            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
-            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame, formatterProvider)
+        private var dataAccess: MappedDataAccess? = null
+        override fun initMappedDataAccess(formatterProvider: FormatterProvider) {
+            dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation, formatterProvider)
         }
 
-        override fun createAnnotations(formatterProvider: FormatterProvider): Annotations? {
+        override fun createContextualMapping(): ContextualMapping {
+            requireNotNull(dataAccess) {"MappedDataAccess should be initialized"}
+            return contextualMappingProvider.createContextualMapping(dataAccess!!, dataFrame)
+        }
+
+        override fun createAnnotations(): Annotations? {
             return annotationsProvider?.let { provider ->
-                val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
-                provider(dataAccess, dataFrame, formatterProvider)
+                requireNotNull(dataAccess) {"MappedDataAccess should be initialized"}
+                provider(dataAccess!!, dataFrame)
             }
         }
     }

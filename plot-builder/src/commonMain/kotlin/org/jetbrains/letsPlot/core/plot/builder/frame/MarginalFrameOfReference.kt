@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -36,15 +35,14 @@ internal class MarginalFrameOfReference(
         }
     }
 
-    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector, formatterProvider: FormatterProvider): SvgComponent {
+    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = SquareFrameOfReference.buildGeom(
             layer,
             xyAesBounds = adjustedDomain,
             coord,
             flippedAxis = false,
             targetCollector,
-            plotBackground,
-            formatterProvider
+            plotBackground
         )
 
         layerComponent.moveTo(geomBounds.origin)

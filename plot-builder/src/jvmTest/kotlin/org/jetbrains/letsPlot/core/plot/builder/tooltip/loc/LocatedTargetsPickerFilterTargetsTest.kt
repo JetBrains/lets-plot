@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
@@ -106,8 +105,7 @@ class LocatedTargetsPickerFilterTargetsTest {
             .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,
-                DataFrame.Builder().build(),
-                formatterProvider = FormatterProvider.DUMMY
+                DataFrame.Builder().build()
             )
         return createLocator(
             lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),

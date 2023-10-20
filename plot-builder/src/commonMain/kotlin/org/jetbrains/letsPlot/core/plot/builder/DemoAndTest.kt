@@ -20,8 +20,7 @@ object DemoAndTest {
         coord: CoordinateSystem,
         flippedAxis: Boolean,
         targetCollector: GeomTargetCollector,
-        plotBackground: Color,
-        formatterProvider: FormatterProvider
+        plotBackground: Color
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
             layer = layer,
@@ -29,8 +28,7 @@ object DemoAndTest {
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            backgroundColor = plotBackground,
-            formatterProvider
+            backgroundColor = plotBackground
         )
     }
 }

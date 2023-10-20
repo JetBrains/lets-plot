@@ -75,7 +75,9 @@ interface GeomLayer {
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
 
-    fun createContextualMapping(formatterProvider: FormatterProvider): ContextualMapping
+    fun initMappedDataAccess(formatterProvider: FormatterProvider)
 
-    fun createAnnotations(formatterProvider: FormatterProvider): Annotations?
+    fun createContextualMapping(): ContextualMapping
+
+    fun createAnnotations(): Annotations?
 }

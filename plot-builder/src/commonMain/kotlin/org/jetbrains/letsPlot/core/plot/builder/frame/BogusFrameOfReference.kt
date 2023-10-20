@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -21,7 +20,7 @@ internal class BogusFrameOfReference : FrameOfReference {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 
-    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector, formatterProvider: FormatterProvider): SvgComponent {
+    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 }

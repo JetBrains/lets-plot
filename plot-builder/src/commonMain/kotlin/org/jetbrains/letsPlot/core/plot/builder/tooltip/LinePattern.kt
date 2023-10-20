@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
@@ -28,9 +27,9 @@ class LinePattern(
         fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 
-    override fun getDataPoint(index: Int, formatterProvider: FormatterProvider): DataPoint? {
+    override fun getDataPoint(index: Int): DataPoint? {
         val dataValues = fields.map { dataValue ->
-            dataValue.getDataPoint(index, formatterProvider) ?: return null
+            dataValue.getDataPoint(index) ?: return null
         }
         return if (dataValues.size == 1) {
             val dataValue = dataValues.single()

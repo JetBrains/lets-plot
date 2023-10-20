@@ -5,21 +5,15 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
-import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
 interface FormatterProvider {
     fun getFormatter(aes: Aes<*>): (Any?) -> String
-    fun getFormatter(variable: DataFrame.Variable): (Any) -> String
 
     companion object {
-        val DUMMY = object : FormatterProvider {
+        class EmptyFormatterProvider: FormatterProvider {
             override fun getFormatter(aes: Aes<*>): (Any?) -> String {
-                UNSUPPORTED("Dummy FormatterProvider")
-            }
-            override fun getFormatter(variable: DataFrame.Variable): (Any) -> String {
-                UNSUPPORTED("Dummy FormatterProvider")
+                return { "" }
             }
         }
     }

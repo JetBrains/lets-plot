@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
@@ -191,15 +190,14 @@ internal class SquareFrameOfReference(
         }
     }
 
-    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector, formatterProvider: FormatterProvider): SvgComponent {
+    override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = buildGeom(
             layer,
             xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
             coord,
             flipAxis,
             targetCollector,
-            theme.plot().backgroundFill(),
-            formatterProvider
+            theme.plot().backgroundFill()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -300,10 +298,9 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color,
-            formatterProvider: FormatterProvider
+            backgroundColor: Color
         ): SvgComponent {
-            val rendererData = LayerRendererUtil.createLayerRendererData(layer, formatterProvider)
+            val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
             @Suppress("NAME_SHADOWING")
             // val flippedAxis = layer.isYOrientation xor flippedAxis
