@@ -70,7 +70,7 @@ class ColorBarComponent(
             addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
             addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
 
-            val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+            val lineHeight = PlotLabelSpecFactory.legendItem(theme).height(brLabel)
             val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)

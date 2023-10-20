@@ -18,4 +18,8 @@ class Text(private val text: String) : Term {
             labelWidthCalculator(text, font)
         }
     }
+
+    override fun getHeight(labelHeight: Double): Double {
+        return labelHeight
+    }
 }

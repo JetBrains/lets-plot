@@ -50,11 +50,11 @@ internal object PlotLayoutUtil {
 
     private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
         if (text.isEmpty()) {
-            return DoubleVector(0.0, labelSpec.height())
+            return DoubleVector(0.0, labelSpec.height(null))
         }
         return DoubleVector(
             labelSpec.width(text),
-            labelSpec.height()
+            labelSpec.height(text)
         )
     }
 

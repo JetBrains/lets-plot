@@ -62,7 +62,7 @@ class LegendComponent(
 
         // add label at position as was layout
         val label = MultilineLabel(br.label)
-        val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+        val lineHeight = PlotLabelSpecFactory.legendItem(theme).height(br.label)
         label.addClassName(Style.LEGEND_ITEM)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setLineHeight(lineHeight)

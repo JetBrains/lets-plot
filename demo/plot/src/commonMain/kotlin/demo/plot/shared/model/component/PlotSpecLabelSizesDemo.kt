@@ -120,7 +120,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         } else {
             spec.plotLabelSpec.width(spec.text)
         }
-        return DoubleVector(width, spec.plotLabelSpec.height())
+        return DoubleVector(width, spec.plotLabelSpec.height(spec.text))
     }
 
     companion object {

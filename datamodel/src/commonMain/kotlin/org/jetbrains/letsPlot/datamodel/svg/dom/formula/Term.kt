@@ -12,4 +12,6 @@ interface Term {
     fun toSvg(): List<SvgTSpanElement>
 
     fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double
+
+    fun getHeight(labelHeight: Double): Double
 }

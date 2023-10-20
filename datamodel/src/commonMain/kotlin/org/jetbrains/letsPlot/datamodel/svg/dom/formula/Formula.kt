@@ -29,6 +29,12 @@ class Formula private constructor(private val terms: List<RichTerm>) {
         }
     }
 
+    fun getHeight(labelHeight: Double): Double {
+        return terms.maxOf { (term, _) ->
+            term.getHeight(labelHeight)
+        }
+    }
+
     data class RichTerm(val term: Term, val range: IntRange)
 
     companion object {

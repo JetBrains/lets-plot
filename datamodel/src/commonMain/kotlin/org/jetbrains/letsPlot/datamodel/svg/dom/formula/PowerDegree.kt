@@ -30,6 +30,10 @@ data class PowerDegree(
         }
     }
 
+    override fun getHeight(labelHeight: Double): Double {
+        return 3 * labelHeight / 2
+    }
+
     companion object {
         const val SUPERSCRIPT_SIZE_FACTOR = 0.75
         const val POWER_DEGREE_PATTERN = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)"""

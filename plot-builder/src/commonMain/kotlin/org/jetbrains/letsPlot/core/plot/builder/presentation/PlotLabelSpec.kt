@@ -15,7 +15,7 @@ class PlotLabelSpec(
 ) : LabelSpec {
 
     override fun dimensions(labelText: String): DoubleVector {
-        return DoubleVector(width(labelText), height())
+        return DoubleVector(width(labelText), height(labelText))
     }
 
     override fun width(labelText: String): Double {
@@ -46,8 +46,14 @@ class PlotLabelSpec(
         }
     }
 
-    override fun height(): Double {
-        return font.size + 2 * LABEL_PADDING
+    override fun height(labelText: String?): Double {
+        val height = if (labelText == null) {
+            font.size.toDouble()
+        } else {
+            val formula = Formula.fromText(labelText)
+            formula.getHeight(font.size.toDouble())
+        }
+        return height + 2 * LABEL_PADDING
     }
 
     companion object {
@@ -69,7 +75,7 @@ class PlotLabelSpec(
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun height(): Double {
+            override fun height(labelText: String?): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

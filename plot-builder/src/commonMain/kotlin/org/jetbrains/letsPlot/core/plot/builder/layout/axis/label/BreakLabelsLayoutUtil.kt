@@ -219,8 +219,8 @@ internal object BreakLabelsLayoutUtil {
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())
-            y1 -= tickLabelSpec.height() / 2
-            y2 += tickLabelSpec.height() / 2
+            y1 -= tickLabelSpec.height(null) / 2
+            y2 += tickLabelSpec.height(null) / 2
         }
 
         val origin = DoubleVector(0.0, y1)
