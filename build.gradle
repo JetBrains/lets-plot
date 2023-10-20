@@ -274,10 +274,10 @@ subprojects {
                 }
             }
 
-            // Configure artifacts signing process.
-            def publications_to_sign = []
-
+            // Configure artifacts signing process for release versions.
             if (!project.version.contains('SNAPSHOT')) {
+                def publications_to_sign = []
+
                 for (task in it.tasks.withType(PublishToMavenRepository)) {
                     if (task.getPublication().name in publications_to_publish) {
                         def repoName = task.repository.name
@@ -291,11 +291,11 @@ subprojects {
                         }
                     }
                 }
-            }
 
-            // Sign artifacts.
-            publications_to_sign.each {
-                signing.sign(it)
+                // Sign artifacts.
+                publications_to_sign.each {
+                    signing.sign(it)
+                }
             }
         }
     }
