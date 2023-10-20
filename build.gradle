@@ -276,19 +276,23 @@ subprojects {
 
             // Configure artifacts signing process.
             def publications_to_sign = []
-            for (task in it.tasks.withType(PublishToMavenRepository)) {
-                if (task.getPublication().name in publications_to_publish) {
-                    def repoName = task.repository.name
-                    if (repoName == "MavenLocal") {
-                        publishLetsPlotCoreModulesToMavenLocalRepository.dependsOn += task
-                    } else if (repoName == "maven") {
-                        publishLetsPlotCoreModulesToMavenRepository.dependsOn += task
-                        publications_to_sign += task.getPublication()
-                    } else {
-                        throw new IllegalStateException("Repository expected: 'MavenLocal' or 'maven' but was: '$repoName'.")
+
+            if (!project.version.contains('SNAPSHOT')) {
+                for (task in it.tasks.withType(PublishToMavenRepository)) {
+                    if (task.getPublication().name in publications_to_publish) {
+                        def repoName = task.repository.name
+                        if (repoName == "MavenLocal") {
+                            publishLetsPlotCoreModulesToMavenLocalRepository.dependsOn += task
+                        } else if (repoName == "maven") {
+                            publishLetsPlotCoreModulesToMavenRepository.dependsOn += task
+                            publications_to_sign += task.getPublication()
+                        } else {
+                            throw new IllegalStateException("Repository expected: 'MavenLocal' or 'maven' but was: '$repoName'.")
+                        }
                     }
                 }
             }
+
             // Sign artifacts.
             publications_to_sign.each {
                 signing.sign(it)

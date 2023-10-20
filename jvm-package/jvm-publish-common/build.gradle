@@ -90,5 +90,7 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.letsPlotJvmCommon
+    if (!project.version.contains('SNAPSHOT')) {
+        sign publishing.publications.letsPlotJvmCommon
+    }
 }
