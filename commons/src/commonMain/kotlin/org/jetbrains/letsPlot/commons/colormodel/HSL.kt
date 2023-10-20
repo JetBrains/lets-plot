@@ -3,11 +3,17 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.commons.values
+package org.jetbrains.letsPlot.commons.colormodel
 
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+/*
+    * Hue, Saturation, Lightness
+    * h: 0..360
+    * s: 0..1
+    *
+ */
 class HSL(
     hue: Double,
     saturation: Double,
@@ -50,5 +56,4 @@ class HSL(
     override fun toString(): String {
         return "HSL(h=$h, s=$s, l=$l)"
     }
-
 }

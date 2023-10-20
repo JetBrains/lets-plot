@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.values
 
+import org.jetbrains.letsPlot.commons.colormodel.*
 import kotlin.test.*
 
 class ColorsTest {
@@ -79,8 +80,8 @@ class ColorsTest {
     @Test
     fun hsl() {
         fun assertColors(rgb: Color, hsl: HSL) {
-            assertEquals(hsl, Colors.hslFromRgb(rgb))
-            assertEquals(rgb, Colors.rgbFromHsl(hsl))
+            assertEquals(hsl, hslFromRgb(rgb))
+            assertEquals(rgb, rgbFromHsl(hsl))
         }
 
         assertColors(Color(0, 0, 0), HSL(0.0, 0.0, 0.0)) // black
@@ -99,6 +100,21 @@ class ColorsTest {
         assertColors(Color(128, 0, 128), HSL(300.0, 1.0, 0.25)) // purple
         assertColors(Color(0, 128, 128), HSL(180.0, 1.0, 0.25)) // teal
         assertColors(Color(0, 0, 128), HSL(240.0, 1.0, 0.25)) // navy
+    }
+
+    @Test
+    fun hcl() {
+        fun assertHclToRgb(hcl: HCL, hexRgb: String) {
+            assertEquals(Color.parseHex(hexRgb), rgbFromHcl(hcl))
+        }
+
+        // ggplot2 palette
+        assertHclToRgb(HCL(15.0, 100.0, 65.0), "#F8766D")
+        assertHclToRgb(HCL(75.0, 100.0, 65.0), "#B79F00")
+        assertHclToRgb(HCL(135.0, 100.0, 65.0), "#00BA38")
+        assertHclToRgb(HCL(195.0, 100.0, 65.0), "#00BFC4")
+        assertHclToRgb(HCL(255.0, 100.0, 65.0), "#619CFF")
+        assertHclToRgb(HCL(315.0, 100.0, 65.0), "#F564E3")
     }
 }
 
