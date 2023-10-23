@@ -143,6 +143,7 @@ internal class SquareFrameOfReferenceProvider(
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         plotBackground: Color,
+        penColor: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
         if (domainByMargin.isEmpty()) {
@@ -207,6 +208,7 @@ internal class SquareFrameOfReferenceProvider(
                 adjustedDomain = adjustedDomain,
                 coord,
                 plotBackground,
+                penColor,
                 debugDrawing,
             )
         }

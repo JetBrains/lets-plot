@@ -104,7 +104,7 @@ open class BarGeom : GeomBase() {
                             }
                             else -> {
                                 alpha = 0.75
-                                AnnotationsUtil.chooseColor(ctx.backgroundColor)
+                                ctx.penColor
                             }
                         }
 

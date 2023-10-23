@@ -197,7 +197,8 @@ internal class SquareFrameOfReference(
             coord,
             flipAxis,
             targetCollector,
-            theme.plot().backgroundFill()
+            backgroundColor = theme.plot().backgroundFill(),
+            penColor = theme.colors().pen()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -308,7 +309,8 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color
+            backgroundColor: Color,
+            penColor: Color
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -349,6 +351,7 @@ internal class SquareFrameOfReference(
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
                 .annotations(rendererData.annotations)
                 .backgroundColor(backgroundColor)
+                .penColor(penColor)
                 .plotContext(plotContext)
                 .build()
 
