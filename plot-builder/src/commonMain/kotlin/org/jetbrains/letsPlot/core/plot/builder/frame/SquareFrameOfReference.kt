@@ -197,7 +197,7 @@ internal class SquareFrameOfReference(
             coord,
             flipAxis,
             targetCollector,
-            backgroundColor = theme.plot().backgroundFill(),
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
             penColor = theme.colors().pen()
         )
 

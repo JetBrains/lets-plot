@@ -264,8 +264,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         backgroundColor: Color
     ) {
         val angle = endAngle - startAngle
-        val strokeWidth = p.stroke() ?: 0.0
-        private val hasVisibleStroke = strokeWidth > 0.0 && p.color()?.alpha != 0 && p.color() != backgroundColor
+        val strokeWidth = p.stroke()?.takeIf { p.color()?.alpha != 0 && p.color() != backgroundColor } ?: 0.0
+        private val hasVisibleStroke = strokeWidth > 0.0
         val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
