@@ -108,10 +108,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(
-                    scaleX.getScaleBreaks(), /*mapperX,*/ coord,
+                    scaleX.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = true,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -131,10 +132,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(
-                    scaleY.getScaleBreaks(), /*mapperY, */coord,
+                    scaleY.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = false,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
@@ -294,10 +296,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(
-                    scaleX.getScaleBreaks(), /*mapperX, */coord,
+                    scaleX.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = true,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -317,10 +320,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(
-                    scaleY.getScaleBreaks(), /*mapperY,*/ coord,
+                    scaleY.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = false,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
@@ -422,10 +426,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(
-                    scaleX.getScaleBreaks(), /*mapperX,*/ coord,
+                    scaleX.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = true,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -445,10 +450,11 @@ open class ScatterDemo : SimpleDemoBase() {
                 length = rangeY,
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(
-                    scaleY.getScaleBreaks(), /*mapperY, */coord,
+                    scaleY.getScaleBreaks(),
+                    coord,
+                    domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     horizontal = false,
-                    domain = DoubleRectangle.hvRange(domainX, domainY)
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,

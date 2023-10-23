@@ -19,10 +19,10 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
@@ -146,11 +146,11 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 length = axisLength,
                 orientation = orientation,
                 breaksData = AxisUtil.breaksData(
-                    scale.getScaleBreaks(), /*scaleMapper, */
+                    scale.getScaleBreaks(),
                     coord,
                     DoubleRectangle.XYWH(0, 0, DEMO_BOX_SIZE.x, DEMO_BOX_SIZE.y),
                     flipAxis = false,
-                    orientation.isHorizontal
+                    orientation.isHorizontal,
                 ),
                 //gridLineLength = 100.0,
                 //gridLineDistance = 0.0,
