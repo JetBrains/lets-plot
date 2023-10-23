@@ -18,7 +18,7 @@ private const val referenceZ = 1.08883 * 100.0
 private const val cieE = 0.008856
 
 fun rgbFromHcl(hcl: HCL, alpha: Double = 1.0): Color {
-    val luv = luvFromHlc(hcl)
+    val luv = luvFromHcl(hcl)
     val xyz = xyzFromLuv(luv)
     val rgb = rgbFromXyz(xyz)
     return rgb.changeAlpha((255 * alpha).roundToInt())
@@ -51,8 +51,8 @@ fun rgbFromHsl(hsl: HSL, alpha: Double = 1.0): Color {
 fun hclFromRgb(rgb: Color): HCL {
     val xyz = xyzFromRgb(rgb)
     val luv = luvFromXyz(xyz)
-    val hlc = hlcFromLuv(luv)
-    return hlc
+    val hcl = hclFromLuv(luv)
+    return hcl
 }
 
 
@@ -96,7 +96,7 @@ fun hslFromRgb(rgb: Color): HSL {
 * https://en.wikipedia.org/wiki/CIELUV
 * https://www.easyrgb.com/en/math.php
  */
-fun hlcFromLuv(luv: LUV): HCL {
+fun hclFromLuv(luv: LUV): HCL {
     val c = sqrt(luv.u * luv.u + luv.v * luv.v)
     val h = toDegrees(atan2(luv.v, luv.u)) % 360.0
 
@@ -114,8 +114,8 @@ fun hlcFromLuv(luv: LUV): HCL {
 * https://observablehq.com/@mbostock/luv-and-hcl
 * https://www.easyrgb.com/en/math.php (CIE-L*CH° → CIE-L*ab)
  */
-fun luvFromHlc(hcl: HCL): LUV {
-    val hDegrees = if (hcl.h.isNaN()) 0.0 else toRadians(hcl.h)
+fun luvFromHcl(hcl: HCL): LUV {
+    val hDegrees = toRadians(hcl.h)
     val u = hcl.c * cos(hDegrees)
     val v = hcl.c * sin(hDegrees)
 
