@@ -31,12 +31,27 @@ internal class PolarCoordProvider(
         return PolarCoordProvider(thetaFromX, start, clockwise)
     }
 
-    override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
-        return if (geomSize.x < geomSize.y) {
-            DoubleVector(geomSize.x, geomSize.x)
-        } else {
-            DoubleVector(geomSize.y, geomSize.y)
+    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+        // Domain of a data withouth any adjustments (i.e. no expand).
+        // Keep lower end as is to avoid hole in the center and to keep correct start angle.
+        // Extend radius domain upper end with 5% to make space for labels and axis line.
+
+        val (rDomain, thetaDomain) = when (thetaFromX) {
+            true -> domain.yRange() to domain.xRange()
+            false -> domain.xRange() to domain.yRange()
+        }.let { (rDomain, thetaDomain) ->
+            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.05)
+            rDomainAdjusted to thetaDomain
         }
+
+        return when (thetaFromX) {
+            true -> DoubleRectangle(thetaDomain, rDomain)
+            false -> DoubleRectangle(rDomain, thetaDomain)
+        }
+    }
+
+    override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
+        return min(geomSize.x, geomSize.y).let { DoubleVector(it, it) }
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {

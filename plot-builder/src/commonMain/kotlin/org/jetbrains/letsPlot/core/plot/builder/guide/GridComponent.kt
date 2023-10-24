@@ -10,9 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 class GridComponent(
     private val majorGrid: List<List<DoubleVector>>,
@@ -20,42 +18,33 @@ class GridComponent(
     private val gridTheme: PanelGridTheme
 ) : SvgComponent() {
     override fun buildComponent() {
-        // TODO: With non-linear transforms it's easier to use SvgClipPathElement
-        /*
-        val gridLineMinPos = start + 6
-        val gridLineMaxPos = end - 6
-         */
 
         if (gridTheme.showMinor()) {
             for (lineString in minorGrid) {
-                //if (lineString >= gridLineMinPos && lineString <= gridLineMaxPos) {
                 val elem = buildGridLine(lineString, gridTheme.minorLineWidth(), gridTheme.minorLineColor())
                 rootGroup.children().add(elem)
-                //}
             }
         }
 
         // Major grid.
         if (gridTheme.showMajor()) {
             for (lineString in majorGrid) {
-                //if (lineString >= gridLineMinPos && lineString <= gridLineMaxPos) {
                 val elem = buildGridLine(lineString, gridTheme.majorLineWidth(), gridTheme.majorLineColor())
                 rootGroup.children().add(elem)
-                //}
             }
         }
     }
 
-    private fun buildGridLine(lineString: List<DoubleVector>, width: Double, color: Color): SvgPathElement {
-        if (lineString.size < 2) {
-            return SvgPathElement()
+    private fun buildGridLine(lineString: List<DoubleVector>, width: Double, color: Color): SvgNode {
+        val shapeElem: SvgShape = when {
+            lineString.size == 2 -> SvgLineElement(lineString[0].x, lineString[0].y, lineString[1].x, lineString[1].y )
+            lineString.size < 2 -> SvgPathElement()
+            else -> SvgPathElement(SvgPathDataBuilder().lineString(lineString).build())
         }
 
-        val elem = SvgPathElement()
-        elem.strokeColor().set(color)
-        elem.strokeWidth().set(width)
-        elem.fill().set(SvgColors.NONE)
-        elem.d().set(SvgPathDataBuilder().lineString(lineString).build())
-        return elem
+        shapeElem.strokeColor().set(color)
+        shapeElem.strokeWidth().set(width)
+        shapeElem.fill().set(SvgColors.NONE)
+        return shapeElem as SvgNode
     }
 }

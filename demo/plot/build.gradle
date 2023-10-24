@@ -65,9 +65,9 @@ kotlin {
                 implementation project(':platf-jfx-swing')
                 implementation project(':demo-common-jfx')
 
-                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
 

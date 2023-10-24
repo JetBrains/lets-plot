@@ -806,6 +806,11 @@ object Option {
             const val MERCATOR = "mercator"
             const val IDENTITY = "identity"
         }
+
+        object Theta {
+            const val X = "x"
+            const val Y = "y"
+        }
     }
 
     object CoordName {

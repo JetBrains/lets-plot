@@ -50,7 +50,6 @@ internal class SquareFrameOfReference(
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
         val geomBounds: DoubleRectangle = layoutInfo.geomInnerBounds
-        val geomOuterBounds: DoubleRectangle = layoutInfo.geomOuterBounds
         val panelTheme = theme.panel()
 
         // Flip theme
@@ -216,7 +215,13 @@ internal class SquareFrameOfReference(
             flipAxis: Boolean,
             gridTheme: PanelGridTheme,
         ): GridComponent {
-            val breaksData = AxisUtil.breaksData(scaleBreaks, coord, domain, flipAxis, info.orientation.isHorizontal)
+            val breaksData = AxisUtil.breaksData(
+                scaleBreaks = scaleBreaks,
+                coord = coord,
+                domain = domain,
+                flipAxis = flipAxis,
+                horizontal = info.orientation.isHorizontal
+            )
 
             return GridComponent(
                 majorGrid = breaksData.majorGrid,
@@ -236,9 +241,13 @@ internal class SquareFrameOfReference(
             axisTheme: AxisTheme,
             isDebugDrawing: Boolean
         ): AxisComponent {
-            //check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
-
-            val breaksData = AxisUtil.breaksData(scaleBreaks, coord, domain, flipAxis, info.orientation.isHorizontal)
+            val breaksData = AxisUtil.breaksData(
+                scaleBreaks = scaleBreaks,
+                coord = coord,
+                domain = domain,
+                flipAxis = flipAxis,
+                horizontal = info.orientation.isHorizontal
+            )
 
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = info.orientation,

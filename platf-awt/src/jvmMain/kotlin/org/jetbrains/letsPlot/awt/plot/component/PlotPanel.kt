@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.GridBagLayout
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.ContainerAdapter
@@ -26,11 +26,22 @@ open class PlotPanel(
 ) : JPanel(), Disposable {
     init {
         // Layout a single child component.
-        // GridBagLayout seem to work better than FlowLayout
-        // whan re-sizing component.
-        layout = GridBagLayout()
+        // 1. FlowLayout
+        // Works greate, at least in corretto-17 JRE.
+        // However, in some cases undesirable "animation" effects were noticed.
+        // This was happening because of continuous re-layouting after parent re-size.
+        // Not sure now what cases it were, maybe just in older JRE.
+//        layout = FlowLayout()
+        // 2. GridBagLayout
+        // Works fine but causes flickering during plot downsizing
+        // See issue #888: https://github.com/JetBrains/lets-plot/issues/888
+//        layout = GridBagLayout()
+        // 3. GridLayout, BorderLayout
+        // Almost as good as FlowLayout
+        layout = BorderLayout(0, 0)
 //        background = Color.WHITE
         isOpaque = false
+        border = null
 
         // Extra clean-up on 'dispose'.
         addContainerListener(object : ContainerAdapter() {
