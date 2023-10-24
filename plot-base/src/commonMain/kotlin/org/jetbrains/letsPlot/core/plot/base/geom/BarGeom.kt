@@ -81,7 +81,7 @@ open class BarGeom : GeomBase() {
                         if (isHorizontallyOriented) rect.center.x else rect.center.y
                     }
                     .forEachIndexed { index, (p, barRect, isNegative) ->
-                        val text = annotations.getAnnotationText(p.index())
+                        val text = annotations.getAnnotationText(p.index(), ctx.plotContext)
                         val textSize = AnnotationsUtil.textSizeGetter(annotations.textStyle, ctx).invoke(text, p)
 
                         val (hAlignment, textRect) = placeLabel(
