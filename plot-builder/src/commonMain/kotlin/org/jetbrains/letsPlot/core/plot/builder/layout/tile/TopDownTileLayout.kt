@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -46,14 +47,23 @@ internal class TopDownTileLayout(
 
         // Combine geom area and x/y-axis
         val (l, r, t, b) = axisInfos
-        val axisBounds = listOfNotNull(l, r, t, b)
-            .map {
-                it.axisBoundsAbsolute(geomBoundsAfterLayout)
-            }
+        // Only take in account:
+        //  - width of vertical axis
+        //  - height of horizontal axis
+//        val axisBounds = listOfNotNull(l, r, t, b)
+//            .map {
+//                it.axisBoundsAbsolute(geomBoundsAfterLayout)
+//            }
 
-        val geomWithAxisBounds = axisBounds.fold(geomBoundsAfterLayout) { a, e ->
-            a.union(e)
-        }
+//        val geomWithAxisBounds = axisBounds.fold(geomBoundsAfterLayout) { a, e ->
+//            a.union(e)
+//        }
+        val geomWithAxisBounds: DoubleRectangle = DoubleRectangle.LTRB(
+            left = l?.axisBoundsAbsolute(geomBoundsAfterLayout)?.left ?: geomBoundsAfterLayout.left,
+            top = t?.axisBoundsAbsolute(geomBoundsAfterLayout)?.top ?: geomBoundsAfterLayout.top,
+            right = r?.axisBoundsAbsolute(geomBoundsAfterLayout)?.right ?: geomBoundsAfterLayout.right,
+            bottom = b?.axisBoundsAbsolute(geomBoundsAfterLayout)?.bottom ?: geomBoundsAfterLayout.bottom,
+        )
 
         val geomInnerBounds = marginsLayout.toInnerBounds(geomBoundsAfterLayout)
 
