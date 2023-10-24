@@ -188,6 +188,7 @@ class PlotSvgComponent(
                     tileLayoutInfo,
                     coordProvider,
                     plotTheme.backgroundFill(),
+                    theme.colors().pen(),
                     DEBUG_DRAWING
                 )
 

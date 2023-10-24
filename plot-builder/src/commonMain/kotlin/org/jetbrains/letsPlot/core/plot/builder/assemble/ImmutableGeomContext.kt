@@ -37,6 +37,8 @@ interface ImmutableGeomContext : GeomContext {
 
         fun backgroundColor(color: Color): Builder
 
+        fun penColor(color: Color): Builder
+
         fun plotContext(plotContext: PlotContext): Builder
 
         fun build(): ImmutableGeomContext
