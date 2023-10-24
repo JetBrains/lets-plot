@@ -45,8 +45,8 @@ open class BarGeom : GeomBase() {
         rectangles.reverse() // TODO: why reverse?
         rectangles.forEach(root::add)
 
-        ctx.annotations?.let {
-            buildAnnotations(root, helper, coord, ctx)
+        if (coord.isLinear) {
+            ctx.annotations?.let { buildAnnotations(root, helper, coord, ctx) }
         }
     }
 
