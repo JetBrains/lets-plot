@@ -22,7 +22,7 @@ class TransformBreaks {
 
     private fun getData(
         x: List<Double> = (-10..10).map(Int::toDouble).toList(),
-        f: (Double) -> Double = { 3.0.pow(it) },
+        f: (Double) -> Double = { it * 10.0.pow(-5) },
     ): Map<String, List<Number>> = mapOf("x" to x, "y" to x.map(f))
 
     private fun getSpec(transform: String, data: Map<String, List<Number>>): MutableMap<String, Any> {
