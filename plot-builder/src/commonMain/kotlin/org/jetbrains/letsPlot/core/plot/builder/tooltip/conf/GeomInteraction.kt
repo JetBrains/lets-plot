@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern

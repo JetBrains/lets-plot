@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 object LayerRendererUtil {
 
     fun createLayerRendererData(
-        layer: GeomLayer
+        layer: GeomLayer,
     ): LayerRendererData {
 
         val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(

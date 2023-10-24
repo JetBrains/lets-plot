@@ -352,13 +352,13 @@ class GeomLayerBuilder(
         }
 
         override fun createContextualMapping(): ContextualMapping {
-            requireNotNull(dataAccess) {"MappedDataAccess should be initialized"}
+            requireNotNull(dataAccess) { "MappedDataAccess should be initialized" }
             return contextualMappingProvider.createContextualMapping(dataAccess!!, dataFrame)
         }
 
         override fun createAnnotations(): Annotations? {
             return annotationsProvider?.let { provider ->
-                requireNotNull(dataAccess) {"MappedDataAccess should be initialized"}
+                requireNotNull(dataAccess) { "MappedDataAccess should be initialized" }
                 provider(dataAccess!!, dataFrame)
             }
         }

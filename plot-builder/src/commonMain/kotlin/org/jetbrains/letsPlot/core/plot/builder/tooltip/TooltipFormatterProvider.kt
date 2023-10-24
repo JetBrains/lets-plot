@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 
 class TooltipFormatterProvider(private val plotContext: PlotContext): FormatterProvider {
 
@@ -24,17 +22,6 @@ class TooltipFormatterProvider(private val plotContext: PlotContext): FormatterP
             TooltipFormatting.createFormatter(aes, plotContext)
         } else {
             Any?::toString
-        }
-    }
-
-    companion object {
-        fun createForLayer(geomLayer: GeomLayer): FormatterProvider {
-            return TooltipFormatterProvider(
-                PlotAssemblerPlotContext(
-                    layersByTile = listOf(listOf(geomLayer)),
-                    scaleMap = geomLayer.scaleMap
-                )
-            )
         }
     }
 }

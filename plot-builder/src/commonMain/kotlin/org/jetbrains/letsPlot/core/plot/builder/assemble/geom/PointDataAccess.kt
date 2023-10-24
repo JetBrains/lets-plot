@@ -33,8 +33,7 @@ internal class PointDataAccess(
             .let { value -> scale.transform.applyInverse(value) }
     }
 
-    override fun getMappedDataLabel(aes: Aes<*>): String =
-        scaleMap.getValue(aes).name
+    override fun getMappedDataLabel(aes: Aes<*>): String = scaleMap.getValue(aes).name
 
     override fun getDefaultFormatter(aes: Aes<*>): (Any?) -> String = formatterProvider.getFormatter(aes)
 }

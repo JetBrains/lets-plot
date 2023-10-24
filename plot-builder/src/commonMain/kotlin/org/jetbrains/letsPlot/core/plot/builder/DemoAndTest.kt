@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReference
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.tooltip.FormatterProvider
 
 object DemoAndTest {
     fun buildGeom(
