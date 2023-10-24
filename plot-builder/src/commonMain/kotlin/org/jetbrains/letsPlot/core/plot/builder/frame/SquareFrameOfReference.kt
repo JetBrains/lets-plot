@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
@@ -196,7 +197,8 @@ internal class SquareFrameOfReference(
             coord,
             flipAxis,
             targetCollector,
-            theme.plot().backgroundFill()
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
+            penColor = theme.colors().pen()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -307,7 +309,8 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color
+            backgroundColor: Color,
+            penColor: Color
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -338,6 +341,7 @@ internal class SquareFrameOfReference(
                 }
             }
 
+            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap)
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
@@ -347,6 +351,8 @@ internal class SquareFrameOfReference(
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
                 .annotations(rendererData.annotations)
                 .backgroundColor(backgroundColor)
+                .penColor(penColor)
+                .plotContext(plotContext)
                 .build()
 
             val pos = rendererData.pos

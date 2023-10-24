@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 interface LineSpec {
     fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
 
-    fun getAnnotationText(index: Int): String?
-
     class DataPoint(
         val label: String?,
         val value: String,

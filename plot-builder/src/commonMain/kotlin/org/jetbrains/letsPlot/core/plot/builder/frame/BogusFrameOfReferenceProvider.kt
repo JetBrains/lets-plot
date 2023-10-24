@@ -35,6 +35,7 @@ internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         plotBackground: Color,
+        penColor: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
         return emptyMap()
