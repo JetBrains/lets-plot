@@ -5,9 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale.mapper
 
-import org.jetbrains.letsPlot.commons.colormodel.HCL
-import org.jetbrains.letsPlot.commons.colormodel.hclFromRgb
-import org.jetbrains.letsPlot.commons.colormodel.rgbFromHcl
+import org.jetbrains.letsPlot.commons.colorspace.*
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
@@ -40,14 +38,37 @@ object ColorMapper {
         naColor: Color,
         alpha: Double = 1.0
     ): (Double?) -> Color {
-        return gradientHCL(
+        return gradientLAB(
             domain,
-            hclFromRgb(low),
-            hclFromRgb(high),
+            labFromRgb(low),
+            labFromRgb(high),
             naColor,
-            alpha,
-            autoHueDirection = true
+            alpha
         )
+    }
+
+    private fun gradientLAB(
+        domain: DoubleSpan,
+        low: LAB,
+        high: LAB,
+        naColor: Color,
+        alpha: Double = 1.0
+    ): (Double?) -> Color {
+
+        val mapperA = Mappers.linear(domain, low.a, high.a, null)
+        val mapperB = Mappers.linear(domain, low.b, high.b, null)
+        val mapperL = Mappers.linear(domain, low.l, high.l, null)
+
+        return { input ->
+            if (input == null || !domain.contains(input)) {
+                naColor
+            } else {
+                val a = mapperA(input)!!
+                val b = mapperB(input)!!
+                val l = mapperL(input)!!
+                rgbFromLab(LAB(l, a, b), alpha = alpha)
+            }
+        }
     }
 
     fun gradientHCL(
