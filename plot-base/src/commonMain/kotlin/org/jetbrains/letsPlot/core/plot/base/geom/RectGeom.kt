@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class RectGeom : GeomBase() {
 
@@ -22,7 +23,7 @@ class RectGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, ::clientRectByDataPoint)
-        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP)
         if (coord.isLinear) {
             helper.createRectangles() { aes, svgNode, rect ->
                 root.add(svgNode)
