@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -39,11 +40,12 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Margins): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (insets.left + insets.right),
             preferredSize.y - (insets.top + insets.bottom)
         )
+            .subtract(DoubleVector(plotMargins.width(), plotMargins.height()))
 
         val facetTiles = facets.tileInfos()
 

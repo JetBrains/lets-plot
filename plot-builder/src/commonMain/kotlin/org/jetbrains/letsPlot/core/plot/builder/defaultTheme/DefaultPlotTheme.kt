@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MESSAGE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
@@ -30,6 +31,7 @@ internal class DefaultPlotTheme(
     internal val subtitleKey = listOf(PLOT_SUBTITLE, TITLE, TEXT)
     internal val captionKey = listOf(PLOT_CAPTION, TITLE, TEXT)
     internal val messagesKey = listOf(PLOT_MESSAGE)
+    private val marginKey = listOf(PLOT_MARGIN)
 
     override fun showBackground(): Boolean {
         return !isElemBlank(backgroundKey)
@@ -89,7 +91,9 @@ internal class DefaultPlotTheme(
 
     override fun captionMargins() = getMargins(getElemValue(captionKey))
 
+    override fun plotMargins() = getMargins(getElemValue(marginKey))
+
     override fun showMessage(): Boolean {
         return !isElemBlank(messagesKey)
-   }
+    }
 }

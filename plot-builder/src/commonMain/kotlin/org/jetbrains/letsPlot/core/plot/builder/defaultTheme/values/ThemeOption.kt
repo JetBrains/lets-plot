@@ -17,6 +17,7 @@ object ThemeOption {
     const val PLOT_SUBTITLE = "plot_subtitle"
     const val PLOT_CAPTION = "plot_caption"
     const val PLOT_MESSAGE = "plot_message"
+    const val PLOT_MARGIN = "plot_margin"
 
     // ToDo: "text_width_scale" is used Violin demo - update.
 //    const val TEXT_WIDTH_FACTOR = "text_width_scale"

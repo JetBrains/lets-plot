@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -79,21 +80,23 @@ internal class PlotFigureLayouter constructor(
 
         // Layout plot inners
         val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
+        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider, theme.plot().plotMargins())
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
-            plotLayoutInfo = layoutInfo
+            plotLayoutInfo = layoutInfo,
+            theme.plot().plotMargins()
         )
     }
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, theme.plot().plotMargins())
 
         return createFigureLayoutInfo(
             figurePreferredSize = null,
-            layoutInfo
+            layoutInfo,
+            theme.plot().plotMargins()
         )
     }
 
@@ -139,7 +142,8 @@ internal class PlotFigureLayouter constructor(
 
     private fun createFigureLayoutInfo(
         figurePreferredSize: DoubleVector?,
-        plotLayoutInfo: PlotLayoutInfo
+        plotLayoutInfo: PlotLayoutInfo,
+        plotMargins: Margins
     ): PlotFigureLayoutInfo {
         // Plot size includes geoms, axis and facet labels (no titles, legends).
         val plotSize = plotLayoutInfo.size
@@ -161,10 +165,16 @@ internal class PlotFigureLayouter constructor(
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
-            val delta = figurePreferredBounds.center.subtract(
-                DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
-            )
-            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            val deltaApplied = if (plotMargins.width() != 0.0 && plotMargins.height() != 0.0) {
+                // apply specified margins
+                DoubleVector(plotMargins.left, plotMargins.top)
+            } else {
+                // move to the center
+                val delta = figurePreferredBounds.center.subtract(
+                    DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
+                )
+                DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            }
             val plotOuterOrigin = figurePreferredBounds.origin.add(deltaApplied)
             DoubleRectangle(plotOuterOrigin, figureLayoutedSize)
         }

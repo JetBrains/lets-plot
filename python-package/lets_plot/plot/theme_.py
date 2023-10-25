@@ -59,6 +59,7 @@ def theme(*,
           plot_subtitle=None,
           plot_caption=None,
           plot_message=None,
+          plot_margin=None,
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -179,6 +180,8 @@ def theme(*,
         Plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank()` to show nothing.
         Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
+    plot_margin : `margin`
+        Margin around entire plot. See `margin()` for more details.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
