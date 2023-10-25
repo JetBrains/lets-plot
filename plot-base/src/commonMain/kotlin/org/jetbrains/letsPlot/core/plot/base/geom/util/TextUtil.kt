@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -131,7 +132,8 @@ object TextUtil {
         return max(0.1, d)
     }
 
-    fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
+    fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
+        Formula.fromText(text).getHeight(p.lineheight()!! * fontSize(p, scale))
 
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         label.textColor().set(p.color())
@@ -171,7 +173,8 @@ object TextUtil {
         }
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeight(lineheight(p, scale))
+        val maxLineHeight = MultilineLabel.splitLines(label.text).maxOf { lineText -> lineheight(lineText, p, scale) }
+        label.setLineHeight(maxLineHeight)
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -187,7 +190,7 @@ object TextUtil {
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
-        val lineHeight = lineheight(p, scale)
+        val lineHeight = lines.maxOf { lineText -> lineheight(lineText, p, scale) }
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
