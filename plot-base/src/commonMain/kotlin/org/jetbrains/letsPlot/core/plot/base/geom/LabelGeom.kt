@@ -82,10 +82,8 @@ class LabelGeom : TextGeom() {
     private fun calculateFontSize(p: DataPointAesthetics, sizeUnitRatio: Double): Double {
         val plainTextSize = TextUtil.fontSize(p, sizeUnitRatio)
         val fontSizeFor: (String) -> Double = { text ->
-            formatter?.let { format ->
-                val formula = Formula.fromText(format(text))
-                formula.getHeight(plainTextSize)
-            } ?: plainTextSize
+            val formattedText = formatter?.let { format -> format(text) } ?: text
+            Formula.fromText(formattedText).getHeight(plainTextSize)
         }
         return p.label()?.let {
             when (it) {
