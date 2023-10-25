@@ -25,9 +25,11 @@ fun length(v: Long): Int {
     return len
 }
 
-class NumberFormat(private val spec: Spec) {
+class NumberFormat(private val spec: Spec, private val useScientificNotation: Boolean = true) {
 
     constructor(spec: String) : this(create(spec))
+
+    constructor(spec: String, scientificNotation: Boolean) : this(create(spec), scientificNotation)
 
     data class Spec(
         val fill: String = " ",
@@ -325,15 +327,7 @@ class NumberFormat(private val spec: Spec) {
     }
 
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val exponentString = if (numberInfo.exponent != null) {
-            when (numberInfo.exponent) {
-                0 -> ""
-                1 -> "·10"
-                else -> "·\\(10^{${numberInfo.exponent}}\\)"
-            }
-        } else {
-            ""
-        }
+        val exponentString = buildExponentString(numberInfo.exponent)
 
         val expNumberInfo =
             createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE.toDouble())
@@ -346,6 +340,21 @@ class NumberFormat(private val spec: Spec) {
         val integerString = expNumberInfo.integerPart.toString()
         val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
         return FormattedNumber(integerString, fractionString, exponentString)
+    }
+
+    private fun buildExponentString(exponent: Int?): String {
+        if (exponent == null) {
+            return ""
+        }
+        if (!useScientificNotation) {
+            val expSign = if (exponent.sign >= 0) "+" else ""
+            return "e$expSign${exponent}"
+        }
+        return when (exponent) {
+            0 -> ""
+            1 -> "·10"
+            else -> "·\\(10^{${exponent}}\\)"
+        }
     }
 
     private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {

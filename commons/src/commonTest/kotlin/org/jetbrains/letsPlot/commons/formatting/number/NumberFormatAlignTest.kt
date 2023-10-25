@@ -9,40 +9,42 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatAlignTest {
+    private val format = { spec: String -> NumberFormat(spec, false) }
+
     @Test
     fun alignLeft() {
-        assertEquals("0", NumberFormat("<1,d").apply(0))
-        assertEquals("0 ", NumberFormat("<2,d").apply(0))
-        assertEquals("0  ", NumberFormat("<3,d").apply(0))
-        assertEquals("0    ", NumberFormat("<5,d").apply(0))
-        assertEquals("0       ", NumberFormat("<8,d").apply(0))
-        assertEquals("0            ", NumberFormat("<13,d").apply(0))
-        assertEquals("0                    ", NumberFormat("<21,d").apply(0))
+        assertEquals("0", format("<1,d").apply(0))
+        assertEquals("0 ", format("<2,d").apply(0))
+        assertEquals("0  ", format("<3,d").apply(0))
+        assertEquals("0    ", format("<5,d").apply(0))
+        assertEquals("0       ", format("<8,d").apply(0))
+        assertEquals("0            ", format("<13,d").apply(0))
+        assertEquals("0                    ", format("<21,d").apply(0))
     }
 
     @Test
     fun alignRight() {
-        assertEquals("0", NumberFormat(">1,d").apply(0))
-        assertEquals(" 0", NumberFormat(">2,d").apply(0))
-        assertEquals("  0", NumberFormat(">3,d").apply(0))
-        assertEquals("    0", NumberFormat(">5,d").apply(0))
-        assertEquals("       0", NumberFormat(">8,d").apply(0))
-        assertEquals("            0", NumberFormat(">13,d").apply(0))
-        assertEquals("                    0", NumberFormat(">21,d").apply(0))
-        assertEquals("                1,000", NumberFormat(">21,d").apply(1000))
-        assertEquals("                1·\\(10^{21}\\)", NumberFormat(">21,d").apply(1e21))
+        assertEquals("0", format(">1,d").apply(0))
+        assertEquals(" 0", format(">2,d").apply(0))
+        assertEquals("  0", format(">3,d").apply(0))
+        assertEquals("    0", format(">5,d").apply(0))
+        assertEquals("       0", format(">8,d").apply(0))
+        assertEquals("            0", format(">13,d").apply(0))
+        assertEquals("                    0", format(">21,d").apply(0))
+        assertEquals("                1,000", format(">21,d").apply(1000))
+        assertEquals("                1e+21", format(">21,d").apply(1e21))
     }
 
     @Test
     fun alignCenter() {
-        assertEquals("0", NumberFormat("^1,d").apply(0))
-        assertEquals("0 ", NumberFormat("^2,d").apply(0))
-        assertEquals(" 0 ", NumberFormat("^3,d").apply(0))
-        assertEquals("  0  ", NumberFormat("^5,d").apply(0))
-        assertEquals("   0    ", NumberFormat("^8,d").apply(0))
-        assertEquals("      0      ", NumberFormat("^13,d").apply(0))
-        assertEquals("          0          ", NumberFormat("^21,d").apply(0))
-        assertEquals("        1,000        ", NumberFormat("^21,d").apply(1000))
-        assertEquals("        1·\\(10^{21}\\)        ", NumberFormat("^21,d").apply(1e21))
+        assertEquals("0", format("^1,d").apply(0))
+        assertEquals("0 ", format("^2,d").apply(0))
+        assertEquals(" 0 ", format("^3,d").apply(0))
+        assertEquals("  0  ", format("^5,d").apply(0))
+        assertEquals("   0    ", format("^8,d").apply(0))
+        assertEquals("      0      ", format("^13,d").apply(0))
+        assertEquals("          0          ", format("^21,d").apply(0))
+        assertEquals("        1,000        ", format("^21,d").apply(1000))
+        assertEquals("        1e+21        ", format("^21,d").apply(1e21))
     }
 }

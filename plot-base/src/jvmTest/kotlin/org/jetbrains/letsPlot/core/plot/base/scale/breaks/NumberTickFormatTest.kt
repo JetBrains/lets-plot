@@ -154,15 +154,15 @@ class NumberTickFormatTest {
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
         assertEquals(
-            "5.000·\\(10^{-4}\\)",
+            "5.000e-4",
             format(.0005, domainAndStep)
         )
         assertEquals(
-            "5.050·\\(10^{-4}\\)",
+            "5.050e-4",
             format(.0005 + 5e-6, domainAndStep)
         )
         assertEquals(
-            "1.505·\\(10^{-3}\\)",
+            "1.505e-3",
             format(.0015 + 5e-6, domainAndStep)
         )
     }
@@ -222,28 +222,28 @@ class NumberTickFormatTest {
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals(
-            "5.00·\\(10^{7}\\)",
+            "5.00e+7",
             formatScientific(
                 5e7,
                 domainAndStep
             )
         )
         assertEquals(
-            "5.00·\\(10^{7}\\)",
+            "5.00e+7",
             formatScientific(
                 5e7 + 5,
                 domainAndStep
             )
         )
         assertEquals(
-            "5.50·\\(10^{7}\\)",
+            "5.50e+7",
             formatScientific(
                 5e7 + 5e6,
                 domainAndStep
             )
         )
         assertEquals(
-            "1.05·\\(10^{8}\\)",
+            "1.05e+8",
             formatScientific(
                 1e8 + 5e6,
                 domainAndStep
@@ -284,7 +284,8 @@ class NumberTickFormatTest {
             val formatter = NumericBreakFormatter(
                 domain,
                 step,
-                allowMetricPrefix = true
+                allowMetricPrefix = true,
+                useScientificNotation = false
             )
             return formatter.apply(number)
         }
@@ -293,7 +294,8 @@ class NumberTickFormatTest {
             val formatter = NumericBreakFormatter(
                 domainAndStep[0],
                 domainAndStep[1],
-                allowMetricPrefix = false
+                allowMetricPrefix = false,
+                useScientificNotation = false
             )
             return formatter.apply(number)
         }

@@ -11,7 +11,8 @@ import kotlin.math.*
 open class NumericBreakFormatter(
     value: Double,
     step: Double,
-    allowMetricPrefix: Boolean
+    allowMetricPrefix: Boolean,
+    useScientificNotation: Boolean = true
 ) {
     private var formatter: NumberFormat
 
@@ -67,7 +68,7 @@ open class NumericBreakFormatter(
             delimiter = ","
         }
 
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$type")
+        formatter = NumberFormat("$delimiter.${precision.toInt()}$type", useScientificNotation)
     }
 
     open fun apply(value: Any): String {
