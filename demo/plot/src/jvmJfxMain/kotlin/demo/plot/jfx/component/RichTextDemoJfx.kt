@@ -6,12 +6,12 @@
 package demo.plot.jfx.component
 
 import demo.common.jfx.demoUtils.SvgViewerDemoWindowJfx
-import demo.plot.shared.model.component.FormulaDemo
+import demo.plot.shared.model.component.RichTextDemo
 
 fun main() {
-    with(FormulaDemo()) {
+    with(RichTextDemo()) {
         SvgViewerDemoWindowJfx(
-            "Formula",
+            "Rich text",
             createSvgRoots(listOf(createModel()))
         ).open()
     }

@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
-import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
+import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
 
 
 class LabelGeom : TextGeom() {
@@ -83,7 +83,7 @@ class LabelGeom : TextGeom() {
         val plainTextSize = TextUtil.fontSize(p, sizeUnitRatio)
         val fontSizeFor: (String) -> Double = { text ->
             val formattedText = formatter?.let { format -> format(text) } ?: text
-            Formula.fromText(formattedText).getHeight(plainTextSize)
+            RichText.fromText(formattedText).getHeight(plainTextSize)
         }
         return p.label()?.let {
             when (it) {

@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
-class FormulaDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
+class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     fun createModel(): GroupComponent {
         val groupComponent = GroupComponent()
 

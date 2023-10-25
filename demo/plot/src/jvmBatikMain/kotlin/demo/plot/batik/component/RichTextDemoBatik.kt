@@ -6,12 +6,12 @@
 package demo.plot.batik.component
 
 import demo.common.batik.demoUtils.SvgViewerDemoWindowBatik
-import demo.plot.shared.model.component.FormulaDemo
+import demo.plot.shared.model.component.RichTextDemo
 
 fun main() {
-    with(FormulaDemo()) {
+    with(RichTextDemo()) {
         SvgViewerDemoWindowBatik(
-            "Formula",
+            "Rich text",
             createSvgRoots(listOf(createModel()))
         ).open()
     }

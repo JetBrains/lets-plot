@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_ANCHOR
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_DY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
-import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
+import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
 
 class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
     SvgTextContent {
@@ -134,11 +134,11 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         return container().getPeer()!!.applyTransform(this, point)
     }
 
-    fun asFormula(): SvgTextElement {
+    fun asRichText(): SvgTextElement {
         if (children().isEmpty()) {
             return this
         }
         val text = (children()[0] as SvgTextNode).textContent().get()
-        return Formula.fromText(text).toSvgTextElement(this)
+        return RichText.fromText(text).toSvgTextElement(this)
     }
 }

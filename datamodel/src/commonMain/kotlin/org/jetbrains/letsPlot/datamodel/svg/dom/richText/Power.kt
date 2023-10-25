@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.datamodel.svg.dom.formula
+package org.jetbrains.letsPlot.datamodel.svg.dom.richText
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.BaselineShift
@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement.Companion.BASELI
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement.Companion.FONT_SIZE
 import kotlin.math.roundToInt
 
-data class PowerDegree(
+data class Power(
     private val base: String,
     private val degree: String
 ) : Term {
@@ -39,6 +39,6 @@ data class PowerDegree(
 
     companion object {
         const val SUPERSCRIPT_SIZE_FACTOR = 0.75
-        const val POWER_DEGREE_PATTERN = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)"""
+        const val PATTERN = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)"""
     }
 }

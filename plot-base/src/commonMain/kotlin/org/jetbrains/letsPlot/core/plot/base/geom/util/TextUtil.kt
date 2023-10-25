@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
+import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -133,7 +133,7 @@ object TextUtil {
     }
 
     fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
-        Formula.fromText(text).getHeight(p.lineheight()!! * fontSize(p, scale))
+        RichText.fromText(text).getHeight(p.lineheight()!! * fontSize(p, scale))
 
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         label.textColor().set(p.color())

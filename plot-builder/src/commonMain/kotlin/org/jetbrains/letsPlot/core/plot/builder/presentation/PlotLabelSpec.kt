@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.datamodel.svg.dom.formula.Formula
+import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
 
 class PlotLabelSpec(
     override val font: Font
@@ -19,8 +19,8 @@ class PlotLabelSpec(
     }
 
     override fun width(labelText: String): Double {
-        val formula = Formula.fromText(labelText)
-        return formula.getWidthCalculator { text, font ->
+        val richText = RichText.fromText(labelText)
+        return richText.getWidthCalculator { text, font ->
             if (font.isMonospased) {
                 // ToDo: should take in account font family adjustment parameters.
                 monospacedWidth(text.length)
@@ -50,8 +50,8 @@ class PlotLabelSpec(
         val height = if (labelText == null) {
             font.size.toDouble()
         } else {
-            val formula = Formula.fromText(labelText)
-            formula.getHeight(font.size.toDouble())
+            val richText = RichText.fromText(labelText)
+            richText.getHeight(font.size.toDouble())
         }
         return height + 2 * LABEL_PADDING
     }
