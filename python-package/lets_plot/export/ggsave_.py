@@ -37,7 +37,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     iframe : bool, default=True
         Whether to wrap HTML page into a iFrame.
         Only applicable when exporting to HTML.
-        Character encoding may not display correctly in some browsers when using an iframe.
+        Safari may not display some UTF-8 characters correctly when setting iframe=True
     scale : float, default=2.0
         Scaling factor for raster output.
         Only applicable when exporting to PNG.
