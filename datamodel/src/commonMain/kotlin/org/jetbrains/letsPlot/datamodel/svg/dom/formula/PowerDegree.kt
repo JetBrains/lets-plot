@@ -6,7 +6,10 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom.formula
 
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.datamodel.svg.dom.BaselineShift
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement.Companion.BASELINE_SHIFT
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement.Companion.FONT_SIZE
 import kotlin.math.roundToInt
 
 data class PowerDegree(
@@ -16,8 +19,8 @@ data class PowerDegree(
     override fun toSvg(): List<SvgTSpanElement> {
         val baseTSpan = SvgTSpanElement(base)
         val degreeTSpan = SvgTSpanElement(degree)
-        degreeTSpan.setAttribute("baseline-shift", "super")
-        degreeTSpan.setAttribute("font-size", "${(SUPERSCRIPT_SIZE_FACTOR * 100).roundToInt()}%")
+        degreeTSpan.setAttribute(BASELINE_SHIFT, BaselineShift.SUPER.value)
+        degreeTSpan.setAttribute(FONT_SIZE, "${(SUPERSCRIPT_SIZE_FACTOR * 100).roundToInt()}%")
         return listOf(baseTSpan, degreeTSpan)
     }
 
