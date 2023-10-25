@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 abstract class ColorBarComponentLayout(
     title: String,
     domain: DoubleSpan,
-    breaks: ScaleBreaks,
+    protected val breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
     reverse: Boolean,
@@ -71,8 +71,6 @@ abstract class ColorBarComponentLayout(
         reverse,
         theme
     ) {
-        private val breaks = breaks
-
         override val graphSize: DoubleVector
         private val labelDistance: Double get() = breaks.labels.maxOf { label -> PlotLabelSpecFactory.legendItem(theme).height(label) } / 3
         override val guideBarLength: Double get() = guideBarSize.x
