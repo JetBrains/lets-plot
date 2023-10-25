@@ -39,6 +39,6 @@ data class Power(
 
     companion object {
         const val SUPERSCRIPT_SIZE_FACTOR = 0.75
-        const val PATTERN = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)"""
+        val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
     }
 }

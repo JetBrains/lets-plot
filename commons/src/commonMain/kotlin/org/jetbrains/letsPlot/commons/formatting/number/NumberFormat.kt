@@ -152,7 +152,7 @@ class NumberFormat(private val spec: Spec) {
             0.takeIf { fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
         val exponentialLength: Int
             get() {
-                val match = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex().find(exponentialPart) ?: return exponentialPart.length
+                val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
                 val matchGroups = match.groups as MatchNamedGroupCollection
                 return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
             }
@@ -457,6 +457,8 @@ class NumberFormat(private val spec: Spec) {
         private const val GROUP_SIZE = 3
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+
+        private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
 
         fun create(spec: String): Spec {
             return create(parse(spec))

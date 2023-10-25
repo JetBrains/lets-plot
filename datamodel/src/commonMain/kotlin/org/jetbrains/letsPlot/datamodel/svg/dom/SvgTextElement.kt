@@ -135,10 +135,11 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
     }
 
     fun asRichText(): SvgTextElement {
-        if (children().isEmpty()) {
+        // Process only the case when originally it was a plain text
+        if (children().size != 1) {
             return this
         }
-        val text = (children()[0] as SvgTextNode).textContent().get()
+        val text = (children()[0] as? SvgTextNode)?.textContent()?.get() ?: return this
         return RichText.fromText(text).toSvgTextElement(this)
     }
 }

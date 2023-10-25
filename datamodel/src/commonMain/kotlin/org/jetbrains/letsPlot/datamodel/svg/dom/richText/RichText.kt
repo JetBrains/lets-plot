@@ -53,7 +53,7 @@ class RichText private constructor(private val terms: List<Term>) {
         }
 
         private fun extractPowerTerms(text: String): List<PositionedTerm> {
-            return Power.PATTERN.toRegex().findAll(text).map { match ->
+            return Power.REGEX.findAll(text).map { match ->
                 val groups = match.groups as MatchNamedGroupCollection
                 PositionedTerm(
                     Power(groups["base"]!!.value, groups["degree"]!!.value),
