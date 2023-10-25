@@ -112,7 +112,7 @@ class Corr {
               "kind": "plot",
               "bistro": {
                   "name": "corr",
-                  "show_legend": false,
+                  "show_legend": true,
                   "flip": false,
                   "point_params": {"type": "upper", "diag": false},
                   "tile_params": {"type": "lower", "diag": false},

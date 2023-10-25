@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
-import org.jetbrains.letsPlot.commons.colormodel.HCL
+import org.jetbrains.letsPlot.commons.colorspace.HCL
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform

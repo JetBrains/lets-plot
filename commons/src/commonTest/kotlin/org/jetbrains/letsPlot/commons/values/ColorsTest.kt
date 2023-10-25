@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.values
 
-import org.jetbrains.letsPlot.commons.colormodel.*
+import org.jetbrains.letsPlot.commons.colorspace.*
 import kotlin.test.*
 
 class ColorsTest {
@@ -80,8 +80,12 @@ class ColorsTest {
     @Test
     fun hsl() {
         fun assertColors(rgb: Color, hsl: HSL) {
-            assertEquals(hsl, hslFromRgb(rgb))
             assertEquals(rgb, rgbFromHsl(hsl))
+            hslFromRgb(rgb).let {
+                assertEquals(hsl.h, it.h, 0.1)
+                assertEquals(hsl.s, it.s, 0.1)
+                assertEquals(hsl.l, it.l, 0.1)
+            }
         }
 
         assertColors(Color(0, 0, 0), HSL(0.0, 0.0, 0.0)) // black
@@ -116,5 +120,23 @@ class ColorsTest {
         assertHclToRgb(HCL(255.0, 100.0, 65.0), "#619CFF")
         assertHclToRgb(HCL(315.0, 100.0, 65.0), "#F564E3")
     }
-}
 
+    @Test
+    fun lab() {
+        fun assertColors(lab: LAB, hexRgb: String) {
+            assertEquals(Color.parseHex(hexRgb), rgbFromLab(lab))
+            labFromRgb(Color.parseHex(hexRgb)).let {
+                assertEquals(lab.l, it.l, 0.1)
+                assertEquals(lab.a, it.a, 0.1)
+                assertEquals(lab.b, it.b, 0.1)
+            }
+        }
+
+        assertColors(LAB(l = 43.579, a = 45.164, b = 36.823), "#B3412C")
+        assertColors(LAB(l = 93.748, a = 0.0, b = 0.0), "#EDEDED")
+        assertColors(LAB(l = 42.744, a = -12.241, b = -17.327), "#326C81")
+
+        assertColors(LAB(l = 100.0, a = 0.0, b = 0.0), "#FFFFFF")
+        assertColors(LAB(l = 0.0, a = 0.0, b = 0.0), "#000000")
+    }
+}

@@ -661,7 +661,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+             tooltips=None, labels=None,
              orientation=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -696,6 +697,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -797,12 +801,14 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  orientation=orientation,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+                   tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
                    binwidth=None,
@@ -841,6 +847,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specify style and content of the annotations.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -942,6 +951,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  orientation=orientation,
                  bins=bins,
                  binwidth=binwidth,

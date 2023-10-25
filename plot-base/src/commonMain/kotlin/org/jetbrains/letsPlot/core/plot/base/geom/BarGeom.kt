@@ -28,14 +28,15 @@ open class BarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx))
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, visualRectByDataPoint(ctx))
         val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
-            helper.createRectangles { aes, svgNode, rect ->
-                rectangles.add(svgNode)
-                tooltipHelper.addTarget(aes, rect)
-            }
+            helper.createRectangles { _, svgNode, _ -> rectangles.add(svgNode) }
+
+            // Snap tooltips to the proper side (e.g. bottom for negative values, right for coord_flip)
+            val hintHelper = RectanglesHelper(aesthetics, pos, coord, ctx, hintRectByDataPoint(ctx))
+            hintHelper.createRectangles { aes, _, rect -> tooltipHelper.addTarget(aes, rect) }
         } else {
             helper.createNonLinearRectangles { aes, svgNode, polygon ->
                 rectangles.add(svgNode)
@@ -264,16 +265,40 @@ open class BarGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+        private fun xyw(p: DataPointAesthetics, ctx: GeomContext): Triple<Double, Double, Double>? {
+            val x = finiteOrNull(p.x()) ?: return null
+            val y = finiteOrNull(p.y()) ?: return null
+            val w = finiteOrNull(p.width()) ?: return null
 
-        private fun clientRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+            return Triple(x, y, w * ctx.getResolution(Aes.X))
+        }
+
+        private fun hintRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val x = finiteOrNull(p.x()) ?: return null
-                val y = finiteOrNull(p.y()) ?: return null
-                val w = finiteOrNull(p.width()) ?: return null
+                val (x, y, w) = xyw(p, ctx) ?: return null
+                val origin = DoubleVector(x - w / 2, y)
+                val dimension = DoubleVector(w, 0.0)
+                return DoubleRectangle(origin, dimension)
+            }
 
-                val width = w * ctx.getResolution(Aes.X)
-                val origin = DoubleVector(x - width / 2, 0.0)
-                val dimension = DoubleVector(width, y)
+            return ::factory
+        }
+
+        private fun visualRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+            fun factory(p: DataPointAesthetics): DoubleRectangle? {
+                val (x, y, w) = xyw(p, ctx) ?: return null
+
+                val origin: DoubleVector
+                val dimension: DoubleVector
+
+                if (y >= 0) {
+                    origin = DoubleVector(x - w / 2, 0.0)
+                    dimension = DoubleVector(w, y)
+                } else {
+                    origin = DoubleVector(x - w / 2, y)
+                    dimension = DoubleVector(w, -y)
+                }
+
                 return DoubleRectangle(origin, dimension)
             }
 

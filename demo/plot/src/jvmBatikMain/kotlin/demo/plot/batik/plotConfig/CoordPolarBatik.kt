@@ -13,7 +13,8 @@ fun main() {
     with(CoordPolarPlotSpecs()) {
         PlotSpecsDemoWindowBatik(
             "coord_polar()",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 2
         ).open()
     }
 }
