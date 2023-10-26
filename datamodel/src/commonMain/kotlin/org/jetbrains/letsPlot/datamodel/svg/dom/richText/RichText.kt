@@ -30,9 +30,9 @@ class RichText private constructor(private val terms: List<Term>) {
     }
 
     fun getHeight(labelHeight: Double): Double {
-        return terms.maxOf { term ->
+        return terms.maxOfOrNull { term ->
             term.getHeight(labelHeight)
-        }
+        } ?: 0.0
     }
 
     data class PositionedTerm(val term: Term, val range: IntRange)
