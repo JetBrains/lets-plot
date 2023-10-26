@@ -32,7 +32,7 @@ kotlin {
 }
 
 def prod_js_exec_dist_dir = "${project.buildDir}/dist/js/productionExecutable/"
-def dev_js_exec_dist_dir = "${project.buildDir}/dist/js/devExecutable/"
+def dev_js_exec_dist_dir = "${project.buildDir}/dist/js/developmentExecutable/"
 def artifact_name = "js-package.js"
 
 tasks.register('renameProdJsArtifact') {
