@@ -19,8 +19,7 @@ class PlotLabelSpec(
     }
 
     override fun width(labelText: String): Double {
-        val richText = RichText.fromText(labelText)
-        return richText.getWidthCalculator { text, font ->
+        return RichText.getWidthCalculator(labelText) { text, font ->
             if (font.isMonospased) {
                 // ToDo: should take in account font family adjustment parameters.
                 monospacedWidth(text.length)
@@ -47,8 +46,7 @@ class PlotLabelSpec(
     }
 
     override fun height(labelText: String): Double {
-        val richText = RichText.fromText(labelText)
-        val height = richText.getHeight(font.size.toDouble())
+        val height = RichText.getHeight(labelText, font.size.toDouble())
         return height + 2 * LABEL_PADDING
     }
 

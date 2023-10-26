@@ -139,7 +139,6 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         if (children().size != 1) {
             return this
         }
-        val text = (children()[0] as? SvgTextNode)?.textContent()?.get() ?: return this
-        return RichText.fromText(text).toSvgTextElement(this)
+        return RichText.enrichText(this)
     }
 }
