@@ -55,7 +55,7 @@ internal class PlotFigureLayouter constructor(
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
-        val figureBaseSize = if (containsLiveMap) {
+        val figureBaseSize = if (containsLiveMap && !theme.plot().applyPlotMargins()) {
             val figBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
             PlotLayoutUtil.liveMapBounds(figBounds).dimension
         } else {
@@ -84,8 +84,7 @@ internal class PlotFigureLayouter constructor(
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
-            plotLayoutInfo = layoutInfo,
-            theme.plot().plotMargins()
+            plotLayoutInfo = layoutInfo
         )
     }
 
@@ -95,8 +94,7 @@ internal class PlotFigureLayouter constructor(
 
         return createFigureLayoutInfo(
             figurePreferredSize = null,
-            layoutInfo,
-            theme.plot().plotMargins()
+            layoutInfo
         )
     }
 
@@ -142,8 +140,7 @@ internal class PlotFigureLayouter constructor(
 
     private fun createFigureLayoutInfo(
         figurePreferredSize: DoubleVector?,
-        plotLayoutInfo: PlotLayoutInfo,
-        plotMargins: Margins
+        plotLayoutInfo: PlotLayoutInfo
     ): PlotFigureLayoutInfo {
         // Plot size includes geoms, axis and facet labels (no titles, legends).
         val plotSize = plotLayoutInfo.size
@@ -165,8 +162,9 @@ internal class PlotFigureLayouter constructor(
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
-            val deltaApplied = if (plotMargins.width() != 0.0 && plotMargins.height() != 0.0) {
+            val deltaApplied = if (theme.plot().applyPlotMargins()) {
                 // apply specified margins
+                val plotMargins = theme.plot().plotMargins()
                 DoubleVector(plotMargins.left, plotMargins.top)
             } else {
                 // move to the center
