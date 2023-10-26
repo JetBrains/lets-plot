@@ -208,6 +208,7 @@ internal object BreakLabelsLayoutUtil {
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
         val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
+        val maxLabelHeight = breaks.labels.maxOfOrNull(tickLabelSpec::height) ?: tickLabelSpec.height("")
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
@@ -219,8 +220,8 @@ internal object BreakLabelsLayoutUtil {
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())
-            y1 -= tickLabelSpec.height(null) / 2
-            y2 += tickLabelSpec.height(null) / 2
+            y1 -= maxLabelHeight / 2
+            y2 += maxLabelHeight / 2
         }
 
         val origin = DoubleVector(0.0, y1)

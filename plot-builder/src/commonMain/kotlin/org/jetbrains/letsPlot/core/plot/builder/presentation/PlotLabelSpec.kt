@@ -46,13 +46,9 @@ class PlotLabelSpec(
         }
     }
 
-    override fun height(labelText: String?): Double {
-        val height = if (labelText == null) {
-            font.size.toDouble()
-        } else {
-            val richText = RichText.fromText(labelText)
-            richText.getHeight(font.size.toDouble())
-        }
+    override fun height(labelText: String): Double {
+        val richText = RichText.fromText(labelText)
+        val height = richText.getHeight(font.size.toDouble())
         return height + 2 * LABEL_PADDING
     }
 
@@ -75,7 +71,7 @@ class PlotLabelSpec(
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun height(labelText: String?): Double {
+            override fun height(labelText: String): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

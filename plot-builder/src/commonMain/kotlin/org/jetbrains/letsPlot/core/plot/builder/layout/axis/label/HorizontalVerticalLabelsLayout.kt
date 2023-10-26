@@ -37,7 +37,7 @@ internal class HorizontalVerticalLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        val height = breaks.labels.maxOf { label -> labelSpec.height(label) }
+        val height = breaks.labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size >= 2) {
