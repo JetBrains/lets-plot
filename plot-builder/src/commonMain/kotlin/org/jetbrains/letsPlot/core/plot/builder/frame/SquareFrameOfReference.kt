@@ -92,8 +92,8 @@ internal class SquareFrameOfReference(
                         gridTheme = hGridTheme,
                     )
 
-                    val gridBounds = marginsLayout.toOuterBounds(geomBounds)
-                    gridComponent.moveTo(gridBounds.origin)
+                    val gridBounds = geomBounds.origin
+                    gridComponent.moveTo(gridBounds)
                     parent.add(gridComponent)
                 }
 
@@ -129,8 +129,8 @@ internal class SquareFrameOfReference(
                         gridTheme = vGridTheme,
                     )
 
-                    val gridBounds = marginsLayout.toOuterBounds(geomBounds)
-                    gridComponent.moveTo(gridBounds.origin)
+                    val gridBounds = geomBounds.origin
+                    gridComponent.moveTo(gridBounds)
                     parent.add(gridComponent)
                 }
 
