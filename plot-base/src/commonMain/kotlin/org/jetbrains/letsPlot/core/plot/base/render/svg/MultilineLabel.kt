@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
-class MultilineLabel(val text: String) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = splitLines(text).map(::SvgTextElement).map { it.asRichText() }
+class MultilineLabel(val text: String) : SvgLabel() {
+    private val myLines: List<SvgTextElement> = splitLines(text).map(::SvgTextElement).map(this::enrichText)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -33,7 +33,7 @@ class MultilineLabel(val text: String) : SvgComponent() {
         myLines.forEach { it.addClass(className) }
     }
 
-    fun textColor(): WritableProperty<Color?> {
+    override fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
                 // set attribute for svg->canvas mapping to work
@@ -46,13 +46,13 @@ class MultilineLabel(val text: String) : SvgComponent() {
         }
     }
 
-    fun setHorizontalAnchor(anchor: HorizontalAnchor) {
+    override fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myLines.forEach {
             it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
     }
 
-    fun setFontSize(px: Double) {
+    override fun setFontSize(px: Double) {
         myFontSize = px
         updateStyleAttribute()
     }
@@ -60,7 +60,7 @@ class MultilineLabel(val text: String) : SvgComponent() {
     /**
      * @param cssName : normal, bold, bolder, lighter
      */
-    fun setFontWeight(cssName: String?) {
+    override fun setFontWeight(cssName: String?) {
         myFontWeight = cssName
         updateStyleAttribute()
     }
@@ -68,7 +68,7 @@ class MultilineLabel(val text: String) : SvgComponent() {
     /**
      * @param cssName : normal, italic, oblique
      */
-    fun setFontStyle(cssName: String?) {
+    override fun setFontStyle(cssName: String?) {
         myFontStyle = cssName
         updateStyleAttribute()
     }
@@ -76,7 +76,7 @@ class MultilineLabel(val text: String) : SvgComponent() {
     /**
      * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
      */
-    fun setFontFamily(fontFamily: String?) {
+    override fun setFontFamily(fontFamily: String?) {
         myFontFamily = fontFamily
         updateStyleAttribute()
     }

@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_ANCHOR
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_DY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
-import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
 
 class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
     SvgTextContent {
@@ -132,13 +131,5 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
 
     override fun pointToAbsoluteCoordinates(point: DoubleVector): DoubleVector {
         return container().getPeer()!!.applyTransform(this, point)
-    }
-
-    fun asRichText(): SvgTextElement {
-        // Process only the case when originally it was a plain text
-        if (children().size != 1) {
-            return this
-        }
-        return RichText.enrichText(this)
     }
 }
