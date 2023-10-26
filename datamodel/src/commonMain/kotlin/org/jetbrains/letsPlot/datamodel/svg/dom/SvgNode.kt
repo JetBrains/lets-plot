@@ -40,15 +40,6 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
         return myContainer!!
     }
 
-    // Useful for debugging
-    fun root(): SvgNode {
-        var root: SvgNode = this
-        while (root.parent().get() != null) {
-            root = root.parent().get()!!
-        }
-        return root
-    }
-
     open fun children(): ObservableList<SvgNode> {
         if (myChildren == null) {
             myChildren = SvgChildList(this)
