@@ -59,7 +59,7 @@ class SupPlotsSpec(FeatureSpec):
             # nothing
             return self
 
-        elif isinstance(other, FeatureSpec) and other.kind == "ggsize":
+        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme"]:
 
             supplots = SupPlotsSpec.duplicate(self)
             if isinstance(other, FeatureSpecArray):

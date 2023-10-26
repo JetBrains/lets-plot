@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 class DefaultFontFamilyRegistry constructor(
     private val defaultWidthFactor: Double = 1.0

@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -161,7 +160,10 @@ object MonolithicCommon {
         compositeFigureComputationMessages: MutableList<String>? = null
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
-        val config = PlotConfigFrontend.create(plotSpec) {
+        val config = PlotConfigFrontend.create(
+            plotSpec,
+            containerTheme = null
+        ) {
             computationMessages.addAll(it)
         }
 
@@ -196,7 +198,7 @@ object MonolithicCommon {
             config.containsLiveMap
         )
 
-        val assembler = createPlotAssembler(config)
+        val assembler = PlotConfigFrontendUtil.createPlotAssembler(config)
         return PlotFigureBuildInfo(
             assembler,
             config.toMap(),
@@ -212,7 +214,7 @@ object MonolithicCommon {
         plotPreferredWidth: Double?
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
-        val compositeFigureConfig = CompositeFigureConfig(plotSpec) {
+        val compositeFigureConfig = CompositeFigureConfig(plotSpec, containerTheme = null) {
             computationMessages.addAll(it)
         }
 
@@ -231,29 +233,25 @@ object MonolithicCommon {
     }
 
     private fun buildCompositeFigure(
-        compositeFigureConfig: CompositeFigureConfig,
+        config: CompositeFigureConfig,
         preferredSize: DoubleVector,
         computationMessages: MutableList<String>,
     ): CompositeFigureBuildInfo {
 
-        val elements: List<FigureBuildInfo?> = compositeFigureConfig.elementConfigs.map {
+        val elements: List<FigureBuildInfo?> = config.elementConfigs.map {
             it?.let {
                 when (PlotConfig.figSpecKind(it)) {
-//                    FigKind.PLOT_SPEC -> buildSinglePlotFromProcessedSpecs(
-//                        plotSpec = it.toMap(),
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
                         plotSize = null,           // Will be updateed by sub-plots layout.
                         plotMaxWidth = null,
                         plotPreferredWidth = null,
-//                        compositeFigureComputationMessages = computationMessages
                         computationMessages = emptyList()  // No "own messages" when a part of a composite.
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
-                        val gridOptions = it as CompositeFigureConfig
                         buildCompositeFigure(
-                            gridOptions,
+                            config = it as CompositeFigureConfig,
                             preferredSize = DoubleVector.ZERO, // Will be updateed by sub-plots layout.
                             computationMessages
                         )
@@ -266,14 +264,11 @@ object MonolithicCommon {
 
         return CompositeFigureBuildInfo(
             elements = elements,
-            layout = compositeFigureConfig.createLayout(),
-            DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            layout = config.createLayout(),
+            bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            theme = config.theme,
             computationMessages
         )
-    }
-
-    private fun createPlotAssembler(config: PlotConfigFrontend): PlotAssembler {
-        return PlotConfigFrontendUtil.createPlotAssembler(config)
     }
 
     private fun throwTestingErrors() {

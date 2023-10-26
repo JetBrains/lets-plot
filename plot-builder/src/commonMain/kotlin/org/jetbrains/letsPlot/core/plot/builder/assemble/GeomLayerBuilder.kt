@@ -39,7 +39,7 @@ import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.StatInput
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder(

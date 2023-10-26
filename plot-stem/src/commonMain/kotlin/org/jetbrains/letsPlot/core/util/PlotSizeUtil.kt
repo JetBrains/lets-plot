@@ -33,7 +33,7 @@ object PlotSizeUtil {
                     return containerSize
                 }
 
-                val compositeFigureConfig = CompositeFigureConfig(figureSpec) {
+                val compositeFigureConfig = CompositeFigureConfig(figureSpec, containerTheme = null) {
                     // ignore message when computing a figure size.
                 }
 
@@ -52,7 +52,7 @@ object PlotSizeUtil {
                     return containerSize
                 }
 
-                val config = PlotConfigFrontend.create(figureSpec) { /*ignore messages*/ }
+                val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
                 val defaultSize = PlotSizeHelper.singlePlotSize(
                     figureSpec,
                     plotSize = null,

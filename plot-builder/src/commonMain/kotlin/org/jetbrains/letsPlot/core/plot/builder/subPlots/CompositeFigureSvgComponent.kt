@@ -5,15 +5,31 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.subPlots
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureSvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
-class CompositeFigureSvgComponent(
+class CompositeFigureSvgComponent constructor(
     val elements: List<FigureSvgRoot>,
+    val size: DoubleVector,
+    val theme: Theme,
+//    val styleSheet: StyleSheet,
 ) : SvgComponent() {
 
     override fun buildComponent() {
         // ToDo: add title, subtitle, caption
+        val plotTheme = theme.plot()
+        if (plotTheme.showBackground()) {
+            val r = DoubleRectangle(DoubleVector.ZERO, size)
+            add(SvgRectElement(r).apply {
+                fillColor().set(plotTheme.backgroundFill())
+                strokeColor().set(plotTheme.backgroundColor())
+                strokeWidth().set(plotTheme.backgroundStrokeWidth())
+            })
+        }
     }
 
     override fun clear() {

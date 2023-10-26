@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
 
 internal class FontFamilyRegistryConfig(private val plotOptions: OptionsAccessor) {
