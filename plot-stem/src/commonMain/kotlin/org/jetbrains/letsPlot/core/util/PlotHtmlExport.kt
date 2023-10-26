@@ -41,7 +41,8 @@ object PlotHtmlExport {
         }
         val html = """
             |<html lang="en">
-            |   <head>$style
+            |   <head>
+            |       <meta charset="UTF-8">$style
             |       $configureHtml
             |   </head>
             |   <body>
