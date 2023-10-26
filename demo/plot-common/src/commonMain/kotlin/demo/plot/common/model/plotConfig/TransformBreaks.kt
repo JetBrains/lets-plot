@@ -9,23 +9,22 @@ import demoAndTestShared.parsePlotSpec
 import kotlin.math.pow
 
 class TransformBreaks {
+    private val xValues = (-10..10).map(Int::toDouble).toList()
+    private val yValues = xValues.map { it * 10.0.pow(-5) }
+    private val data = mapOf("x" to xValues, "y" to yValues)
+
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            getSpec("identity", getData()),
-            getSpec("log10", getData()),
-            getSpec("log2", getData()),
-            getSpec("symlog", getData()),
-            getSpec("sqrt", getData()),
-            getSpec("reverse", getData()),
+            getSpec("identity"),
+            getSpec("log10"),
+            getSpec("log2"),
+            getSpec("symlog"),
+            getSpec("sqrt"),
+            getSpec("reverse"),
         )
     }
 
-    private fun getData(
-        x: List<Double> = (-10..10).map(Int::toDouble).toList(),
-        f: (Double) -> Double = { it * 10.0.pow(-5) },
-    ): Map<String, List<Number>> = mapOf("x" to x, "y" to x.map(f))
-
-    private fun getSpec(transform: String, data: Map<String, List<Number>>): MutableMap<String, Any> {
+    private fun getSpec(transform: String): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
