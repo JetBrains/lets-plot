@@ -83,7 +83,7 @@ class LabelGeom : TextGeom() {
         val plainTextSize = TextUtil.fontSize(p, sizeUnitRatio)
         val fontSizeFor: (String) -> Double = { text ->
             val formattedText = formatter?.let { format -> format(text) } ?: text
-            RichText.getHeight(formattedText, plainTextSize)
+            plainTextSize * RichText.getHeightStretchFactor(formattedText)
         }
         return p.label()?.let {
             when (it) {

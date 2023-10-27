@@ -133,7 +133,7 @@ object TextUtil {
     }
 
     fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
-        RichText.getHeight(text, p.lineheight()!! * fontSize(p, scale))
+        p.lineheight()!! * fontSize(p, scale) * RichText.getHeightStretchFactor(text)
 
     private fun linesMaxHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
         lines.maxOfOrNull { lineheight(it, p, scale) } ?: lineheight("", p, scale)

@@ -15,25 +15,26 @@ object RichText {
         val richTextElement = SvgTextElement()
         SvgUtils.copyAttributes(origin, richTextElement)
         allTerms.forEach { term ->
-            term.toSvg().forEach { tSpan ->
+            term.toSvgElements().forEach { tSpan ->
                 richTextElement.addTSpan(tSpan)
             }
         }
         return richTextElement
     }
 
-    fun getWidthCalculator(text: String, labelWidthCalculator: (String, Font) -> Double): (Font) -> Double {
-        return { font ->
-            extractTerms(text).sumOf { term ->
-                term.getWidthCalculator(labelWidthCalculator)(font)
+    fun enrichWidthCalculator(widthCalculator: (String, Font) -> Double): (String, Font) -> Double {
+        fun enrichedWidthCalculator(text: String, font: Font): Double {
+            return extractTerms(text).sumOf { term ->
+                term.calculateWidth(widthCalculator, font)
             }
         }
+        return ::enrichedWidthCalculator
     }
 
-    fun getHeight(text: String, labelHeight: Double): Double {
+    fun getHeightStretchFactor(text: String): Double {
         return extractTerms(text).maxOfOrNull { term ->
-            term.getHeight(labelHeight)
-        } ?: 0.0
+            term.heightStretchFactor
+        } ?: 1.0
     }
 
     private fun extractTerms(text: String): List<Term> {
@@ -80,18 +81,14 @@ object RichText {
     }
 
     private class Text(private val text: String) : Term {
-        override fun toSvg(): List<SvgTSpanElement> {
+        override val heightStretchFactor = 1.0
+
+        override fun toSvgElements(): List<SvgTSpanElement> {
             return listOf(SvgTSpanElement(text))
         }
 
-        override fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double {
-            return { font ->
-                labelWidthCalculator(text, font)
-            }
-        }
-
-        override fun getHeight(labelHeight: Double): Double {
-            return labelHeight
+        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+            return widthCalculator(text, font)
         }
     }
 
@@ -99,7 +96,9 @@ object RichText {
         private val base: String,
         private val degree: String
     ) : Term {
-        override fun toSvg(): List<SvgTSpanElement> {
+        override val heightStretchFactor = 1.0 + SUPERSCRIPT_SIZE_FACTOR / 2.0
+
+        override fun toSvgElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
             val degreeTSpan = SvgTSpanElement(degree)
             degreeTSpan.setAttribute(SvgTSpanElement.BASELINE_SHIFT, BaselineShift.SUPER.value)
@@ -107,17 +106,11 @@ object RichText {
             return listOf(baseTSpan, degreeTSpan)
         }
 
-        override fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double {
-            return { font ->
-                val baseWidth = labelWidthCalculator(base, font)
-                val superscriptFont = Font(font.family, (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt(), font.isBold, font.isItalic)
-                val degreeWidth = labelWidthCalculator(degree, superscriptFont)
-                baseWidth + degreeWidth
-            }
-        }
-
-        override fun getHeight(labelHeight: Double): Double {
-            return 3 * labelHeight / 2
+        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+            val baseWidth = widthCalculator(base, font)
+            val superscriptFont = Font(font.family, (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt(), font.isBold, font.isItalic)
+            val degreeWidth = widthCalculator(degree, superscriptFont)
+            return baseWidth + degreeWidth
         }
 
         companion object {
@@ -127,11 +120,11 @@ object RichText {
     }
 
     private interface Term {
-        fun toSvg(): List<SvgTSpanElement>
+        val heightStretchFactor: Double
 
-        fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double
+        fun toSvgElements(): List<SvgTSpanElement>
 
-        fun getHeight(labelHeight: Double): Double
+        fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double
     }
 
     private data class PositionedTerm(val term: Term, val range: IntRange)
