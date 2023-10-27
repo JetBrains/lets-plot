@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.RichText
 
 abstract class SvgLabel : SvgComponent() {
     abstract fun textColor(): WritableProperty<Color?>

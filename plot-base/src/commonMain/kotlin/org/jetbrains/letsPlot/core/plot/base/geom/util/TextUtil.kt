@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.RichText
 import kotlin.math.abs
 import kotlin.math.max
 

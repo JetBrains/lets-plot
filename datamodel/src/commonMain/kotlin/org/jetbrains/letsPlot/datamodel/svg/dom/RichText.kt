@@ -3,12 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.datamodel.svg.dom.richText
+package org.jetbrains.letsPlot.datamodel.svg.dom
 
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
+import kotlin.math.roundToInt
 
 object RichText {
     fun enrichText(origin: SvgTextElement): SvgTextElement {
@@ -79,6 +77,61 @@ object RichText {
 
         return (listOf(prefixTextTerm) + infixTextTerms + listOf(postfixTextTerm))
             .filter { !it.range.isEmpty() }
+    }
+
+    private class Text(private val text: String) : Term {
+        override fun toSvg(): List<SvgTSpanElement> {
+            return listOf(SvgTSpanElement(text))
+        }
+
+        override fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double {
+            return { font ->
+                labelWidthCalculator(text, font)
+            }
+        }
+
+        override fun getHeight(labelHeight: Double): Double {
+            return labelHeight
+        }
+    }
+
+    private class Power(
+        private val base: String,
+        private val degree: String
+    ) : Term {
+        override fun toSvg(): List<SvgTSpanElement> {
+            val baseTSpan = SvgTSpanElement(base)
+            val degreeTSpan = SvgTSpanElement(degree)
+            degreeTSpan.setAttribute(SvgTSpanElement.BASELINE_SHIFT, BaselineShift.SUPER.value)
+            degreeTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${(SUPERSCRIPT_SIZE_FACTOR * 100).roundToInt()}%")
+            return listOf(baseTSpan, degreeTSpan)
+        }
+
+        override fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double {
+            return { font ->
+                val baseWidth = labelWidthCalculator(base, font)
+                val superscriptFont = Font(font.family, (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt(), font.isBold, font.isItalic)
+                val degreeWidth = labelWidthCalculator(degree, superscriptFont)
+                baseWidth + degreeWidth
+            }
+        }
+
+        override fun getHeight(labelHeight: Double): Double {
+            return 3 * labelHeight / 2
+        }
+
+        companion object {
+            const val SUPERSCRIPT_SIZE_FACTOR = 0.75
+            val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
+        }
+    }
+
+    private interface Term {
+        fun toSvg(): List<SvgTSpanElement>
+
+        fun getWidthCalculator(labelWidthCalculator: (String, Font) -> Double): (Font) -> Double
+
+        fun getHeight(labelHeight: Double): Double
     }
 
     private data class PositionedTerm(val term: Term, val range: IntRange)

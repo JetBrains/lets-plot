@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
-import org.jetbrains.letsPlot.datamodel.svg.dom.richText.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.RichText
 
 
 class LabelGeom : TextGeom() {
