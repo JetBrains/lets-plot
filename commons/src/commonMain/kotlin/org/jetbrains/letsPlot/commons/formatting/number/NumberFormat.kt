@@ -25,7 +25,7 @@ fun length(v: Long): Int {
     return len
 }
 
-class NumberFormat(private val spec: Spec, private val useScientificNotation: Boolean = true) {
+class NumberFormat(private val spec: Spec, private val scientificNotationIsPower: Boolean = true) {
 
     constructor(spec: String) : this(create(spec))
 
@@ -346,7 +346,7 @@ class NumberFormat(private val spec: Spec, private val useScientificNotation: Bo
         if (exponent == null) {
             return ""
         }
-        if (!useScientificNotation) {
+        if (!scientificNotationIsPower) {
             val expSign = if (exponent.sign >= 0) "+" else ""
             return "e$expSign${exponent}"
         }

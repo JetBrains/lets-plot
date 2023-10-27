@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class NumericBreakFormatterTest {
     @Test
     fun formatZero() {
-        val formatter = NumericBreakFormatter(0.0, 0.0, allowMetricPrefix = true, useScientificNotation = false)
+        val formatter = NumericBreakFormatter(0.0, 0.0, true)
         assertEquals("0.0", formatter.apply(0))
     }
 
@@ -50,7 +50,7 @@ class NumericBreakFormatterTest {
     @Test
     fun formatExtremesTypeE() {
         assertEquals(
-            listOf("-1.80e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
+            listOf("-1.80·\\(10^{308}\\)", "-1.35·\\(10^{308}\\)", "-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0"),
             formatRange(
                 min = -Double.MAX_VALUE,
                 max = 0.0,
@@ -59,7 +59,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.80e+308"),
+            listOf("0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)", "1.35·\\(10^{308}\\)", "1.80·\\(10^{308}\\)"),
             formatRange(
                 min = 0.0,
                 max = Double.MAX_VALUE,
@@ -68,7 +68,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("-8.99e+307", "-4.49e+307", "0", "4.49e+307", "8.99e+307"),
+            listOf("-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)"),
             formatRange(
                 min = -Double.MAX_VALUE / 2,
                 max = Double.MAX_VALUE / 2,
@@ -83,7 +83,7 @@ class NumericBreakFormatterTest {
         val values = List(n) { i -> min(min + i * step, Double.MAX_VALUE) }
         val formatterStep = (max - min) / 100
         val formatters = values.map {
-            NumericBreakFormatter(it, formatterStep, metricPrefix, false)
+            NumericBreakFormatter(it, formatterStep, metricPrefix)
         }
         return values.mapIndexed { i, v -> formatters[i].apply(v) }
     }
