@@ -32,11 +32,5 @@ abstract class SvgLabel : SvgComponent() {
      */
     abstract fun setFontFamily(fontFamily: String?)
 
-    protected fun enrichText(textElement: SvgTextElement): SvgTextElement {
-        // Process only the case when originally it was a plain text
-        if (textElement.children().size != 1) {
-            return textElement
-        }
-        return RichText.enrichText(textElement)
-    }
+    protected fun enrichText(textElement: SvgTextElement): SvgTextElement = RichText.enrichText(textElement)
 }

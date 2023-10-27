@@ -10,14 +10,16 @@ import kotlin.math.roundToInt
 
 object RichText {
     fun enrichText(origin: SvgTextElement): SvgTextElement {
+        // Process only the case when originally it was a plain text
+        if (origin.children().size != 1) {
+            return origin
+        }
         val text = (origin.children()[0] as? SvgTextNode)?.textContent()?.get() ?: return origin
         val allTerms = extractTerms(text)
         val richTextElement = SvgTextElement()
         SvgUtils.copyAttributes(origin, richTextElement)
         allTerms.forEach { term ->
-            term.toSvgElements().forEach { tSpan ->
-                richTextElement.addTSpan(tSpan)
-            }
+            term.toSvgElements().forEach(richTextElement::addTSpan)
         }
         return richTextElement
     }
@@ -31,11 +33,7 @@ object RichText {
         return ::enrichedWidthCalculator
     }
 
-    fun getHeightStretchFactor(text: String): Double {
-        return extractTerms(text).maxOfOrNull { term ->
-            term.heightStretchFactor
-        } ?: 1.0
-    }
+    fun getHeightStretchFactor(text: String): Double = extractTerms(text).maxOfOrNull(Term::heightStretchFactor) ?: 1.0
 
     private fun extractTerms(text: String): List<Term> {
         val powerTerms = extractPowerTerms(text)
@@ -108,13 +106,14 @@ object RichText {
 
         override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
             val baseWidth = widthCalculator(base, font)
-            val superscriptFont = Font(font.family, (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt(), font.isBold, font.isItalic)
+            val degreeFontSize = (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt()
+            val superscriptFont = Font(font.family, degreeFontSize, font.isBold, font.isItalic)
             val degreeWidth = widthCalculator(degree, superscriptFont)
             return baseWidth + degreeWidth
         }
 
         companion object {
-            const val SUPERSCRIPT_SIZE_FACTOR = 0.75
+            private const val SUPERSCRIPT_SIZE_FACTOR = 0.75
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
         }
     }
