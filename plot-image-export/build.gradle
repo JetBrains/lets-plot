@@ -150,5 +150,7 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.letsPlotImageExport
+    if (!project.version.contains('SNAPSHOT')) {
+        sign publishing.publications.letsPlotImageExport
+    }
 }
