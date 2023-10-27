@@ -35,11 +35,15 @@ class PlotAssembler constructor(
     private val xAxisPosition: AxisPosition,
     private val yAxisPosition: AxisPosition,
     private val theme: Theme,
-    private val title: String? = null,
-    private val subtitle: String? = null,
-    private val caption: String? = null,
+    title: String? = null,
+    subtitle: String? = null,
+    caption: String? = null,
     private val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions> = HashMap(),
 ) {
+
+    private val plotTitle = title?.takeIf { theme.plot().showTitle() }
+    private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
+    private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
 
     private val scaleXProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X)
     private val scaleYProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
@@ -108,9 +112,9 @@ class PlotAssembler constructor(
             vAxisPosition = vAxisPosition,
             theme = theme,
             legendBoxInfos = legendBoxInfos,
-            title = title,
-            subtitle = subtitle,
-            caption = caption
+            title = plotTitle,
+            subtitle = plotSubtitle,
+            caption = plotCaption
         )
     }
 
@@ -142,9 +146,9 @@ class PlotAssembler constructor(
         plotContext: PlotContext
     ): PlotSvgComponent {
         return PlotSvgComponent(
-            title = title,
-            subtitle = subtitle,
-            caption = caption,
+            title = plotTitle,
+            subtitle = plotSubtitle,
+            caption = plotCaption,
             coreLayersByTile = coreLayersByTile,
             marginalLayersByTile = marginalLayersByTile,
             figureLayoutInfo = figureLayoutInfo,

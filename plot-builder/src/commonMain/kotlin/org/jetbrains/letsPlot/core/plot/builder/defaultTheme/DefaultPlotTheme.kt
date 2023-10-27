@@ -67,6 +67,10 @@ internal class DefaultPlotTheme(
         return getTextStyle(getElemValue(listOf(TEXT)))
     }
 
+    override fun showTitle() = !isElemBlank(titleKey)
+    override fun showSubtitle() = !isElemBlank(subtitleKey)
+    override fun showCaption() = !isElemBlank(captionKey)
+
     override fun titleJustification(): TextJustification {
         return getTextJustification(getElemValue(titleKey))
     }
