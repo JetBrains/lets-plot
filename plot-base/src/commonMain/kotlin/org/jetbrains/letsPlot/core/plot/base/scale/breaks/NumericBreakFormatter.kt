@@ -6,13 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log10
 
-open class NumericBreakFormatter(
-    value: Double,
-    step: Double,
-    allowMetricPrefix: Boolean
-) {
+class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) {
     private var formatter: NumberFormat
 
     init {
@@ -70,7 +68,5 @@ open class NumericBreakFormatter(
         formatter = NumberFormat("$delimiter.${precision.toInt()}$type")
     }
 
-    open fun apply(value: Any): String {
-        return formatter.apply(value as Number)
-    }
+    fun apply(value: Any): String = formatter.apply(value as Number)
 }

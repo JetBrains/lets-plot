@@ -47,8 +47,7 @@ class PlotLabelSpec(
     }
 
     override fun height(labelText: String): Double {
-        val height = font.size.toDouble() * RichText.getHeightStretchFactor(labelText)
-        return height + 2 * LABEL_PADDING
+        return font.size.toDouble() * RichText.getHeightStretchFactor(labelText) + 2 * LABEL_PADDING
     }
 
     companion object {

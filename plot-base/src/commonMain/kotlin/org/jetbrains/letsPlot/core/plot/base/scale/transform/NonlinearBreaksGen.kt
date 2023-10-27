@@ -98,7 +98,11 @@ internal class NonlinearBreaksGen(
         }
 
         private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
-            return NumericBreakFormatter(domainValue, step, true)::apply
+            return NumericBreakFormatter(
+                domainValue,
+                step,
+                true
+            )::apply
         }
     }
 
