@@ -24,6 +24,8 @@
 
 - [BREAKING] `stat_summary()` and `stat_summary_bin` no longer supports computing of additional variables through the specifying of mappings.
 
+- Scientific notation is formatted as powers of 10 instead of e-notation.
+
 ### Fixed
 
 - Tooltips are trimmed and not visible on a very narrow chart [[#837](https://github.com/JetBrains/lets-plot/issues/837)].
@@ -34,6 +36,7 @@
 - Flickering during plot downsizing [[#888](https://github.com/JetBrains/lets-plot/issues/888)].
 - Bad default formatting of numeric values in annotations [[#905](https://github.com/JetBrains/lets-plot/issues/905)].
 - corr_plot: unexpected whitespace between the "geometry area" and the legend [[#877](https://github.com/JetBrains/lets-plot/issues/877)].
+- scale_log: an option to generate only breaks which are integer powers of 10 needed [[#850](https://github.com/JetBrains/lets-plot/issues/850)].
 - Trimmed legend when bounds of the rightmost X-axis tick label exceeds the axis length [[#851](https://github.com/JetBrains/lets-plot/issues/851)].
 - HTML files exported using ggsave() are missing the encoding specification [[#900](https://github.com/JetBrains/lets-plot/issues/900)].
 - Subplot themes not inherited by parent [[LPK-#197](https://github.com/JetBrains/lets-plot-kotlin/issues/197)].
