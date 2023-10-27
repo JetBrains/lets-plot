@@ -132,12 +132,6 @@ object TextUtil {
         return max(0.1, d)
     }
 
-    fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
-        p.lineheight()!! * fontSize(p, scale) * RichText.getHeightStretchFactor(text)
-
-    private fun linesMaxHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
-        lines.maxOfOrNull { lineheight(it, p, scale) } ?: lineheight("", p, scale)
-
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         label.textColor().set(p.color())
         if (applyAlpha) {
@@ -197,16 +191,19 @@ object TextUtil {
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
-        val estimated = lines.map { line ->
+        return lines.map { line ->
             ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
         }.fold(DoubleVector.ZERO) { acc, sz ->
             DoubleVector(
                 x = max(acc.x, sz.x),
-                y = acc.y + sz.y
+                y = acc.y + lineHeight
             )
         }
-        val lineInterval = lineHeight - fontSize
-        val textHeight = estimated.y + lineInterval * (lines.size - 1)
-        return DoubleVector(estimated.x, textHeight)
     }
+
+    private fun linesMaxHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
+        lines.maxOfOrNull { lineheight(it, p, scale) } ?: lineheight("", p, scale)
+
+    private fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
+        p.lineheight()!! * fontSize(p, scale) * RichText.getHeightStretchFactor(text)
 }

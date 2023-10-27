@@ -41,7 +41,7 @@ class LabelGeom : TextGeom() {
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
 
         // Background rectangle
-        val fontSize = calculateFontSize(p, sizeUnitRatio)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio) * RichText.getHeightStretchFactor(text)
         val padding = fontSize * paddingFactor
         val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
@@ -77,21 +77,6 @@ class LabelGeom : TextGeom() {
         SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
 
         return g
-    }
-
-    private fun calculateFontSize(p: DataPointAesthetics, sizeUnitRatio: Double): Double {
-        val plainTextSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val fontSizeFor: (String) -> Double = { text ->
-            val formattedText = formatter?.let { format -> format(text) } ?: text
-            plainTextSize * RichText.getHeightStretchFactor(formattedText)
-        }
-        return p.label()?.let {
-            when (it) {
-                is String -> fontSizeFor(it)
-                is Iterable<*> -> it.mapNotNull { label -> (label as? String)?.let(fontSizeFor) }.maxOrNull()
-                else -> plainTextSize
-            }
-        } ?: plainTextSize
     }
 
     private fun rectangleForText(
