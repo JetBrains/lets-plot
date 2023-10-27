@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultAxisTheme(
     override val axis: String,

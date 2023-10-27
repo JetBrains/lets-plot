@@ -10,6 +10,7 @@ from lets_plot.plot.core import DummySpec
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import FeatureSpecArray
 from lets_plot.plot.core import _specs_to_dict
+from lets_plot.plot.core import _theme_dicts_merge
 
 __all__ = ['SupPlotsSpec']
 
@@ -59,12 +60,29 @@ class SupPlotsSpec(FeatureSpec):
             # nothing
             return self
 
-        elif isinstance(other, FeatureSpec) and other.kind == "ggsize":
+        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme"]:
 
             supplots = SupPlotsSpec.duplicate(self)
             if isinstance(other, FeatureSpecArray):
                 for spec in other.elements():
                     supplots = supplots.__add__(spec)
+                return supplots
+
+            # ToDo: duplication! 
+            if other.kind == 'theme':
+                new_theme_options = {k: v for k, v in other.props().items() if v is not None}
+                if 'name' in new_theme_options:
+                    # keep the previously specified flavor
+                    if supplots.props().get('theme', {}).get('flavor', None) is not None:
+                        new_theme_options.update({'flavor': supplots.props()['theme']['flavor']})
+
+                    # pre-configured theme overrides existing theme altogether.
+                    supplots.props()['theme'] = new_theme_options
+                else:
+                    # merge themes
+                    old_theme_options = supplots.props().get('theme', {})
+                    supplots.props()['theme'] = _theme_dicts_merge(old_theme_options, new_theme_options)
+
                 return supplots
 
             # add feature to properties

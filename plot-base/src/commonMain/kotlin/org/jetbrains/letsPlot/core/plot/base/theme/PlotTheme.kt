@@ -22,6 +22,10 @@ interface PlotTheme {
     fun textColor(): Color
     fun textStyle(): ThemeTextStyle
 
+    fun showTitle(): Boolean
+    fun showSubtitle(): Boolean
+    fun showCaption(): Boolean
+
     fun titleJustification(): TextJustification
     fun subtitleJustification(): TextJustification
     fun captionJustification(): TextJustification

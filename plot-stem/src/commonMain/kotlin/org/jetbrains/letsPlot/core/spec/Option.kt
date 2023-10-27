@@ -91,6 +91,9 @@ object Option {
         }
     }
 
+    // Unlisted supported features:
+    // - Plot.SIZE (a.k.a. "ggsize")
+    // - Plot.THEME
     object SubPlots {
         const val FIGURES = "figures"
         const val LAYOUT = "layout"

@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultPanelTheme(
     options: Map<String, Any>,

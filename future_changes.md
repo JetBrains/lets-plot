@@ -29,9 +29,13 @@
 - Tooltips are trimmed and not visible on a very narrow chart [[#837](https://github.com/JetBrains/lets-plot/issues/837)].
 - Inability to use the spelling "grey" for the color grey (via "gray" only).
 - `geom_crossbar`: an error occurs if the mapped values of aesthetics are not populated [[#886](https://github.com/JetBrains/lets-plot/issues/886)].
-- Husl palette equivalent [[#877](https://github.com/JetBrains/lets-plot/issues/876)].
+- Husl palette equivalent [[#876](https://github.com/JetBrains/lets-plot/issues/876)].
 - Exception label is unresizeble, uncopyable and uncontrollable [[#902](https://github.com/JetBrains/lets-plot/issues/902)].
 - Flickering during plot downsizing [[#888](https://github.com/JetBrains/lets-plot/issues/888)].
 - Bad default formatting of numeric values in annotations [[#905](https://github.com/JetBrains/lets-plot/issues/905)].
 - corr_plot: unexpected whitespace between the "geometry area" and the legend [[#877](https://github.com/JetBrains/lets-plot/issues/877)].
 - Trimmed legend when bounds of the rightmost X-axis tick label exceeds the axis length [[#851](https://github.com/JetBrains/lets-plot/issues/851)].
+- HTML files exported using ggsave() are missing the encoding specification [[#900](https://github.com/JetBrains/lets-plot/issues/900)].
+- Subplot themes not inherited by parent [[LPK-#197](https://github.com/JetBrains/lets-plot-kotlin/issues/197)].
+- Saving plots in PDF format using ggsave() [[#710](https://github.com/JetBrains/lets-plot/issues/710)].
+- `element_blank()` has no effect on plot title/subtitle/caption in `theme()` [[#913](https://github.com/JetBrains/lets-plot/issues/913)].

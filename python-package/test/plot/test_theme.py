@@ -49,8 +49,19 @@ def test_named_theme_is_modified_by_theme():
     assert 'bottom' == spec.as_dict()['theme']['legend_position']
 
 
-def test_element_values_merged():
+def test_plot_theme_element_values_merged():
     spec = (gg.ggplot() + _geom('foo')
+            + theme(panel_background=element_rect(color='a', fill='b'))
+            + theme(panel_background=element_rect(color='c', size=1)))
+
+    rect = spec.props()['theme']['panel_background']
+    assert isinstance(rect, dict)
+    assert 'c' == rect['color']
+    assert 'b' == rect['fill']
+    assert 1 == rect['size']
+
+def test_gggrid_theme_element_values_merged():
+    spec = (gg.gggrid(plots=[gg.ggplot() + _geom('foo')])
             + theme(panel_background=element_rect(color='a', fill='b'))
             + theme(panel_background=element_rect(color='c', size=1)))
 
