@@ -91,7 +91,7 @@ open class GGGridTheme {
 
             return subplotsGrid(
                 elements = listOf(
-                    firstElem, BLANK,
+                    firstElem, simplePie(),
                     scatterSpec, densitySpec
                 ),
                 ncols = 2,
@@ -210,6 +210,21 @@ open class GGGridTheme {
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = Iris.df
             return plotSpec
+        }
+
+        private fun simplePie(): MutableMap<String, Any> {
+            val spec = """
+                {
+                 'data': {'name': ['rock', 'paper', 'scissors'], 'slice': [1, 3, 3]},
+                 'kind': 'plot',
+                 'layers': [{'geom': 'pie',
+                   'stat': 'identity',
+                   'mapping': {'fill': 'name', 'slice': 'slice'},
+                   'size_unit': 'x',
+                   'size': 0.5}]
+                 }
+             """.trimIndent()
+            return parsePlotSpec(spec)
         }
     }
 }

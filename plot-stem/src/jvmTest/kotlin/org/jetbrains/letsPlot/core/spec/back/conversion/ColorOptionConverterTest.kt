@@ -27,8 +27,8 @@ class ColorOptionConverterTest {
         assertColor(Color.BLACK, `val`)
     }
 
-    private fun assertColor(expected: Color, `val`: Any) {
-        assertEquals(expected, ColorOptionConverter().apply(`val`))
+    private fun assertColor(expected: Color, value: Any) {
+        assertEquals(expected, ColorOptionConverter.demoAndTest.apply(value))
     }
 
     @Test

@@ -151,7 +151,7 @@ object SpecTransformBackendUtil {
         var plotSpec = PlotConfigBackendTransforms.migrationTransform().apply(plotSpecRaw)
         plotSpec = PlotConfigBackendTransforms.bistroTransform().apply(plotSpec)
         plotSpec = PlotConfigBackendTransforms.entryTransform().apply(plotSpec)
-        val plotConfig = PlotConfigBackend(plotSpec)
+        val plotConfig = PlotConfigBackend(plotSpec, containerTheme = null)
         plotConfig.updatePlotSpec()
         return Pair(plotSpec, plotConfig)
     }

@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 internal object PlotConfigUtil {
 
@@ -168,7 +169,10 @@ internal object PlotConfigUtil {
         }
     }
 
-    internal fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
+    internal fun createScaleConfigs(
+        scaleOptionsList: List<*>,
+        aopConversion: AesOptionConversion
+    ): List<ScaleConfig<Any>> {
         // merge options by 'aes'
         val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
@@ -185,7 +189,7 @@ internal object PlotConfigUtil {
         }
 
         return mergedOpts.map { (aes, options) ->
-            ScaleConfig(aes, options)
+            ScaleConfig(aes, options, aopConversion)
         }
     }
 }

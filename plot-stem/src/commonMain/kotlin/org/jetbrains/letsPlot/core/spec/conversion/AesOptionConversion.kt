@@ -5,15 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.conversion
 
-import org.jetbrains.letsPlot.commons.intern.function.Function
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
-object AesOptionConversion {
-    private val CONVERTERS_MAP = TypedOptionConverterMap()
+class AesOptionConversion(colorConverter: ColorOptionConverter) {
+    private val converterMap = TypedOptionConverterMap(colorConverter)
 
     fun <T> getConverter(aes: Aes<T>): (Any?) -> T? {
-        return CONVERTERS_MAP[aes]
+        return converterMap[aes]
     }
 
     fun <T> apply(aes: Aes<T>, optionValue: Any): T? {
@@ -30,19 +28,11 @@ object AesOptionConversion {
         return result
     }
 
-    /**
-     * For tests
-     */
     fun has(aes: Aes<*>): Boolean {
-        return CONVERTERS_MAP.containsKey(aes)
+        return converterMap.containsKey(aes)
     }
 
-    fun updateWith(converter: Function<Any?, Color?>) {
-        val cnv = { o: Any? -> converter.apply(o) }
-        CONVERTERS_MAP.put(Aes.COLOR, cnv)
-        CONVERTERS_MAP.put(Aes.FILL, cnv)
-        CONVERTERS_MAP.put(Aes.PAINT_A, cnv)
-        CONVERTERS_MAP.put(Aes.PAINT_B, cnv)
-        CONVERTERS_MAP.put(Aes.PAINT_C, cnv)
+    companion object {
+        val demoAndTest: AesOptionConversion = AesOptionConversion(ColorOptionConverter.demoAndTest)
     }
 }

@@ -37,6 +37,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class LayerConfig(
     layerOptions: Map<String, Any>,
@@ -45,6 +46,7 @@ class LayerConfig(
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
+    val aopConversion: AesOptionConversion,
     private val clientSide: Boolean,
     isMapPlot: Boolean
 ) : OptionsAccessor(
@@ -192,7 +194,8 @@ class LayerConfig(
         // init AES constants excluding mapped AES
         constantsMap = LayerConfigUtil.initConstants(
             layerOptions = this,
-            consumedAesSet = consumedAesSet - aesMappings.keys
+            consumedAesSet = consumedAesSet - aesMappings.keys,
+            aopConversion = aopConversion
         )
 
         // grouping

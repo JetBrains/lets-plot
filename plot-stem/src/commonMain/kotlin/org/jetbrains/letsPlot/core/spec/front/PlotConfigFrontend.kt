@@ -12,18 +12,13 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.COORD
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
-import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
-import org.jetbrains.letsPlot.core.spec.config.FontFamilyRegistryConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
 import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
 import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
@@ -31,14 +26,12 @@ import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesTo
 class PlotConfigFrontend private constructor(
     opts: Map<String, Any>,
     containerTheme: Theme?
-) :
-    PlotConfig(
-        opts,
-        isClientSide = true
-    ) {
+) : PlotConfig(
+    opts,
+    containerTheme,
+    isClientSide = true
+) {
 
-//    internal val fontFamilyRegistry: FontFamilyRegistry
-    internal val theme: Theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
@@ -49,15 +42,6 @@ class PlotConfigFrontend private constructor(
     internal val yAxisPosition: AxisPosition
 
     init {
-        val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
-//        theme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
-        val ownTheme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
-        theme = if (containerTheme == null || hasOwn(THEME)) {
-            ownTheme
-        } else {
-            ownTheme.toInherited(containerTheme)
-        }
-
         val mappersByAes = PlotConfigScaleMappers.createMappers(
             layerConfigs,
             transformByAes,

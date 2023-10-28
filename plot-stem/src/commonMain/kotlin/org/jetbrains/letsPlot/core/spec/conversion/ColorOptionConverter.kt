@@ -9,7 +9,11 @@ import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 
-open class ColorOptionConverter : Function<Any?, Color?> {
+class ColorOptionConverter constructor(
+    private val pen: Color,
+    private val paper: Color,
+    private val brush: Color,
+) : Function<Any?, Color?> {
     override fun apply(value: Any?): Color? {
         if (value == null) {
             return null
@@ -21,19 +25,23 @@ open class ColorOptionConverter : Function<Any?, Color?> {
             return TypedContinuousIdentityMappers.COLOR(value.toDouble())
         }
 
+        val str = value.toString()
+        if (SystemColor.canParse(str)) {
+            return when (SystemColor.parse(str)) {
+                SystemColor.PEN -> pen
+                SystemColor.PAPER -> paper
+                SystemColor.BRUSH -> brush
+            }
+        }
+
         try {
-            return Colors.parseColor(value.toString())
+            return Colors.parseColor(str)
         } catch (ignored: RuntimeException) {
             throw IllegalArgumentException("Can't convert to color: '$value' (${value::class.simpleName})")
         }
     }
-}
 
-class NamedSystemColorOptionConverter(private val namedSystemColors: NamedSystemColors): ColorOptionConverter() {
-    override fun apply(value: Any?): Color? {
-        if (value is String && NamedSystemColors.isSystemColorName(value)) {
-            return namedSystemColors.getColor(value)
-        }
-        return super.apply(value)
+    companion object {
+        val demoAndTest: ColorOptionConverter = ColorOptionConverter(Color.CYAN, Color.CYAN, Color.CYAN)
     }
 }

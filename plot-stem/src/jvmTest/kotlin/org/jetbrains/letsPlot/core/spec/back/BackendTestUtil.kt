@@ -59,7 +59,7 @@ object BackendTestUtil {
             throw IllegalStateException(errorMessage)
         }
 
-        return PlotConfigBackend(plotSpec).layerConfigs
+        return PlotConfigBackend(plotSpec, containerTheme = null).layerConfigs
     }
 
     internal fun geomPolygonSpec(
