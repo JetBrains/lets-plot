@@ -91,10 +91,6 @@ internal class DefaultPlotTheme(
 
     override fun captionMargins() = getMargins(getElemValue(captionKey))
 
-    override fun applyPlotMargins(): Boolean {
-        val plotMargins = plotMargins()
-        return plotMargins.width() != 0.0 || plotMargins.height() != 0.0
-    }
     override fun plotMargins() = getMargins(getElemValue(marginKey))
 
     override fun showMessage(): Boolean {

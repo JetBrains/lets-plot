@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_MARGIN
+import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
@@ -97,7 +98,7 @@ internal object PlotLayoutUtil {
 
     fun liveMapBounds(container: DoubleRectangle): DoubleRectangle {
         return DoubleRectangle(
-            container.origin,
+            container.origin.add(LIVE_MAP_PLOT_PADDING),
             container.dimension.subtract(LIVE_MAP_PLOT_MARGIN)
         )
     }

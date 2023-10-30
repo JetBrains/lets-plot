@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -55,7 +54,7 @@ internal class PlotFigureLayouter constructor(
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
-        val figureBaseSize = if (containsLiveMap && !theme.plot().applyPlotMargins()) {
+        val figureBaseSize = if (containsLiveMap) {
             val figBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
             PlotLayoutUtil.liveMapBounds(figBounds).dimension
         } else {
