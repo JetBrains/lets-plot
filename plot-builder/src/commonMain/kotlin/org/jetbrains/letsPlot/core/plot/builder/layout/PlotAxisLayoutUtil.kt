@@ -13,6 +13,9 @@ internal object PlotAxisLayoutUtil {
 
     private const val INITIAL_TICK_LABEL_IN_CHARS = "_"
 
+    fun maxLabelHeight(labels: List<String>, labelSpec: LabelSpec): Double =
+        labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
+
     fun initialThickness(
         orientation: Orientation,
         theme: AxisTheme,

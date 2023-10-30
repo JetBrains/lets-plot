@@ -346,14 +346,15 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         if (exponent == null) {
             return ""
         }
-        if (!scientificNotationIsPower) {
+        return if (scientificNotationIsPower) {
+            when (exponent) {
+                0 -> ""
+                1 -> "·10"
+                else -> "·\\(10^{${exponent}}\\)"
+            }
+        } else {
             val expSign = if (exponent.sign >= 0) "+" else ""
-            return "e$expSign${exponent}"
-        }
-        return when (exponent) {
-            0 -> ""
-            1 -> "·10"
-            else -> "·\\(10^{${exponent}}\\)"
+            "e$expSign${exponent}"
         }
     }
 

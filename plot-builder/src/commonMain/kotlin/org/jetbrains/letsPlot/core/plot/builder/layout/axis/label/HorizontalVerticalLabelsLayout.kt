@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import kotlin.math.abs
 
 internal class HorizontalVerticalLabelsLayout(
@@ -37,7 +38,7 @@ internal class HorizontalVerticalLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        val height = breaks.labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
+        val height = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, labelSpec)
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size >= 2) {

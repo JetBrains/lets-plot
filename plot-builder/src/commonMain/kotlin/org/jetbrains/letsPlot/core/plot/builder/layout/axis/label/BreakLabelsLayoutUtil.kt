@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.*
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import kotlin.math.*
@@ -208,7 +209,7 @@ internal object BreakLabelsLayoutUtil {
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
         val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
-        val maxLabelHeight = breaks.labels.maxOfOrNull(tickLabelSpec::height) ?: tickLabelSpec.height("")
+        val maxLabelHeight = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, tickLabelSpec)
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {

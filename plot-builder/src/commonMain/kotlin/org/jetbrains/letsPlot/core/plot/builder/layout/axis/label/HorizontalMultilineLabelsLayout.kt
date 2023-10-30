@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal class HorizontalMultilineLabelsLayout(
@@ -66,8 +67,7 @@ internal class HorizontalMultilineLabelsLayout(
             DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
         else
             boundsByShelfIndex[0]!!
-        val maxLabelHeight = breaks.labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
-        val h = maxLabelHeight * LINE_HEIGHT
+        val h = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, labelSpec) * LINE_HEIGHT
         for (i in 0 until boundsByShelfIndex.size) {
             val shelfBounds = boundsByShelfIndex[i]!!
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, i * h)))
@@ -115,8 +115,7 @@ internal class HorizontalMultilineLabelsLayout(
             breaks: ScaleBreaks,
             shelfIndexForTickIndex: List<Int>
         ): List<DoubleVector> {
-            val maxLabelHeight = breaks.labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
-            val h = maxLabelHeight * LINE_HEIGHT
+            val h = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, labelSpec) * LINE_HEIGHT
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
                 result.add(DoubleVector(0.0, shelfIndexForTickIndex[i] * h))

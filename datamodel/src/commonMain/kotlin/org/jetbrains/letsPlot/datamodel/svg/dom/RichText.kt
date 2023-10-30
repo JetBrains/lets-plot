@@ -59,23 +59,15 @@ object RichText {
     }
 
     private fun extractTextTerms(text: String, formulaTerms: List<PositionedTerm>): List<PositionedTerm> {
-        val prefixTextTerm = PositionedTerm(
-            Text(text.substring(0, formulaTerms.first().range.first)),
-            0 until formulaTerms.first().range.first
-        )
-        val infixTextTerms = formulaTerms.windowed(2).map { (term1, term2) ->
-            PositionedTerm(
-                Text(text.substring(term1.range.last + 1, term2.range.first)),
-                term1.range.last + 1 until term2.range.first
-            )
+        val prefixPosition = IntRange(0, formulaTerms.first().range.first - 1)
+        val infixPositions = formulaTerms.windowed(2).map { (term1, term2) ->
+            IntRange(term1.range.last + 1, term2.range.first - 1)
         }
-        val postfixTextTerm = PositionedTerm(
-            Text(text.substring(formulaTerms.last().range.last + 1, text.length)),
-            formulaTerms.last().range.last + 1 until text.length
-        )
+        val postfixPosition = IntRange(formulaTerms.last().range.last + 1, text.length - 1)
 
-        return (listOf(prefixTextTerm) + infixTextTerms + listOf(postfixTextTerm))
-            .filter { !it.range.isEmpty() }
+        return (listOf(prefixPosition) + infixPositions + listOf(postfixPosition))
+            .filter { !it.isEmpty() }
+            .map { position -> PositionedTerm(Text(text.substring(position)), position) }
     }
 
     private class Text(private val text: String) : Term {

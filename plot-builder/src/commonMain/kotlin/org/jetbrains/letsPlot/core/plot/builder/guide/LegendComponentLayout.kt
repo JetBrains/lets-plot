@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import kotlin.math.max
@@ -65,9 +66,8 @@ abstract class LegendComponentLayout(
     private fun doLayout() {
         val labelLeftMargin =
             PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
-        val calculateHeight = PlotLabelSpecFactory.legendItem(theme)::height
-        val maxLabelHeight = breaks.map(LegendBreak::label).maxOfOrNull(calculateHeight) ?: calculateHeight("")
-        val intervalBetweenLabels = maxLabelHeight / 3
+        val labels = breaks.map(LegendBreak::label)
+        val intervalBetweenLabels = PlotAxisLayoutUtil.maxLabelHeight(labels, PlotLabelSpecFactory.legendItem(theme)) / 3
 
         val contentOrigin = DoubleVector.ZERO
         var breakBoxBounds: DoubleRectangle? = null
