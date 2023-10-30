@@ -5,11 +5,11 @@
 
 package demo.plot.jfx.plotConfig
 
-import demo.plot.common.model.plotConfig.PlotGrid
+import demo.plot.common.model.plotConfig.GGGrid
 import demo.common.jfx.demoUtils.PlotSpecsDemoWindowJfx
 
 fun main() {
-    with(PlotGrid()) {
+    with(GGGrid()) {
         PlotSpecsDemoWindowJfx(
             "Plot Grid (JFX)",
             plotSpecList(),

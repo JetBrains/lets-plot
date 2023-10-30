@@ -65,7 +65,8 @@ import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMapper
  */
 class ScaleConfig<T> constructor(
     val aes: Aes<T>,
-    options: Map<String, Any>
+    options: Map<String, Any>,
+    private val aopConversion: AesOptionConversion
 ) : OptionsAccessor(options) {
 
     private fun enforceDiscreteDomain(): Boolean {
@@ -79,14 +80,14 @@ class ScaleConfig<T> constructor(
         var mapperProvider: MapperProvider<*> = DefaultMapperProvider[aes]
 
         val naValue: T = when {
-            has(NA_VALUE) -> getValue(aes, NA_VALUE)!!
+            has(NA_VALUE) -> getValue(aes, NA_VALUE, aopConversion)!!
             else -> DefaultNaValue[aes]
         }
 
         // all 'manual' scales
         if (has(OUTPUT_VALUES)) {
             val outputValues = getList(OUTPUT_VALUES)
-            val mapperOutputValues = AesOptionConversion.applyToList(aes, outputValues)
+            val mapperOutputValues = aopConversion.applyToList(aes, outputValues)
             mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
         }
 
@@ -122,20 +123,20 @@ class ScaleConfig<T> constructor(
         when (scaleMapperKind) {
             null -> {} // Nothing
             IDENTITY ->
-                mapperProvider = createIdentityMapperProvider(aes, naValue)
+                mapperProvider = createIdentityMapperProvider(aes, naValue, aopConversion)
 
             COLOR_GRADIENT ->
                 mapperProvider = ColorGradientMapperProvider(
-                    getColor(LOW),
-                    getColor(HIGH),
+                    getColor(LOW, aopConversion),
+                    getColor(HIGH, aopConversion),
                     (naValue as Color)
                 )
 
             COLOR_GRADIENT2 ->
                 mapperProvider = ColorGradient2MapperProvider(
-                    getColor(LOW),
-                    getColor(MID),
-                    getColor(HIGH),
+                    getColor(LOW, aopConversion),
+                    getColor(MID, aopConversion),
+                    getColor(HIGH, aopConversion),
                     getDouble(MIDPOINT), naValue as Color
                 )
 
@@ -309,11 +310,14 @@ class ScaleConfig<T> constructor(
             return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
-        fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {
+        fun <T> createIdentityMapperProvider(
+            aes: Aes<T>,
+            naValue: T,
+            aopConversion: AesOptionConversion
+        ): MapperProvider<T> {
             // There is an option value converter for every AES (which can be used as discrete identity mapper)
-            val cvt = AesOptionConversion.getConverter(aes)
             val discreteMapperProvider =
-                IdentityDiscreteMapperProvider(cvt/*, naValue*/)
+                IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
 
             // For some AES there is also a continuous identity mapper
             if (TypedContinuousIdentityMappers.contain(aes)) {

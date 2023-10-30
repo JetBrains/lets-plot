@@ -210,7 +210,7 @@ object PlotConfigFrontendUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(

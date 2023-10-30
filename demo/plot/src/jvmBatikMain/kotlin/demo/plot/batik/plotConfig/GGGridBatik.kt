@@ -5,11 +5,11 @@
 
 package demo.plot.batik.plotConfig
 
-import demo.plot.common.model.plotConfig.PlotGrid
+import demo.plot.common.model.plotConfig.GGGrid
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(PlotGrid()) {
+    with(GGGrid()) {
         PlotSpecsDemoWindowBatik(
             "Plot Grid (Batik)",
             plotSpecList(),
