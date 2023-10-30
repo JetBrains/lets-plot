@@ -9,15 +9,9 @@ import org.jetbrains.letsPlot.commons.values.Font
 import kotlin.math.roundToInt
 
 object RichText {
-    fun enrichText(origin: SvgTextElement): SvgTextElement {
-        // Process only the case when originally it was a plain text
-        if (origin.children().size != 1) {
-            return origin
-        }
-        val text = (origin.children()[0] as? SvgTextNode)?.textContent()?.get() ?: return origin
+    fun toSvg(text: String): SvgTextElement {
         val allTerms = extractTerms(text)
         val richTextElement = SvgTextElement()
-        SvgUtils.copyAttributes(origin, richTextElement)
         allTerms.forEach { term ->
             term.toSvgElements().forEach(richTextElement::addTSpan)
         }
