@@ -26,6 +26,8 @@
 
 - Scientific notation is formatted as powers of 10 instead of e-notation.
 
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/scientific_notation.ipynb).
+
 ### Fixed
 
 - Tooltips are trimmed and not visible on a very narrow chart [[#837](https://github.com/JetBrains/lets-plot/issues/837)].
