@@ -161,20 +161,25 @@ internal class PlotFigureLayouter constructor(
         val figureLayoutedBounds = if (figurePreferredSize == null) {
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
+            val plotMargins = theme.plot().plotMargins()
+
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
-            val deltaApplied = if (theme.plot().applyPlotMargins()) {
-                // apply specified margins
-                val plotMargins = theme.plot().plotMargins()
-                DoubleVector(plotMargins.left, plotMargins.top)
-            } else {
-                // move to the center
-                val delta = figurePreferredBounds.center.subtract(
-                    DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
-                )
-                DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            }
-            val plotOuterOrigin = figurePreferredBounds.origin.add(deltaApplied)
-            DoubleRectangle(plotOuterOrigin, figureLayoutedSize)
+            // center the overall rect (without margins)
+            val figureOverallSize = figureLayoutedSize.add(
+                DoubleVector(plotMargins.width(), plotMargins.height())
+            )
+            val delta = figurePreferredBounds.center.subtract(
+                DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center
+            )
+            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            val plotOuterOrigin = figurePreferredBounds.origin
+                .add(deltaApplied)
+                .add(DoubleVector(plotMargins.left, plotMargins.top)) // apply margins inside the overall rect
+
+            DoubleRectangle(
+                plotOuterOrigin,
+                figureLayoutedSize
+            )
         }
 
         val figureBoundsWithoutTitleAndCaption = let {
