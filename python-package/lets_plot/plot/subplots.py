@@ -60,15 +60,16 @@ class SupPlotsSpec(FeatureSpec):
             # nothing
             return self
 
+        elif isinstance(other, FeatureSpecArray):
+            supplots = SupPlotsSpec.duplicate(self)
+            for spec in other.elements():
+                supplots = supplots.__add__(spec)
+            return supplots
+
         elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme"]:
 
             supplots = SupPlotsSpec.duplicate(self)
-            if isinstance(other, FeatureSpecArray):
-                for spec in other.elements():
-                    supplots = supplots.__add__(spec)
-                return supplots
-
-            # ToDo: duplication! 
+            # ToDo: duplication!
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.props().items() if v is not None}
                 if 'name' in new_theme_options:

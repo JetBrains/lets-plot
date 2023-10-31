@@ -16,3 +16,14 @@ def test_gggrid_flavor():
     spec = gg.gggrid([gg.ggplot()]) + gg.flavor_darcula()
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'flavor': 'darcula'}
+
+def test_gggrid_theme_flavor():
+    spec = gg.gggrid([gg.ggplot()]) + gg.theme_grey() + gg.flavor_darcula()
+    assert 'theme' in spec.as_dict()
+    assert spec.as_dict()['theme'] == {'name': 'grey', 'flavor': 'darcula'}
+
+def test_gggrid_theme_flavor_as_array():
+    spec = gg.gggrid([gg.ggplot()]) + (gg.theme_grey() + gg.flavor_darcula())
+    assert 'theme' in spec.as_dict()
+    assert spec.as_dict()['theme'] == {'name': 'grey', 'flavor': 'darcula'}
+

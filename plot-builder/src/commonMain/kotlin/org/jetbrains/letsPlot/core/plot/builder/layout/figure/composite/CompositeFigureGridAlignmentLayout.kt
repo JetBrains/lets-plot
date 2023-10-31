@@ -34,8 +34,8 @@ class CompositeFigureGridAlignmentLayout(
     fitCellAspectRatio = fitCellAspectRatio,
     elementsDefaultSizes = elementsDefaultSizes,
 ), CompositeFigureLayout {
-    override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
-        val elementsWithBounds = toElelemtsWithInitialBounds(size, elements)
+    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+        val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)
 
         val elementsLayoutedByBounds = elementsWithBounds.map {
             it?.layoutedByOuterSize()
@@ -77,11 +77,11 @@ class CompositeFigureGridAlignmentLayout(
             } else {
                 val row = indexToRow(index, ncols)
                 val col = indexToCol(index, ncols)
-                val bounds = DoubleRectangle.hvRange(
+                val r = DoubleRectangle.hvRange(
                     hGeomSpanByCol[col]!!,
                     vGeomSpanByRow[row]!!
                 )
-                buildInfo.layoutedByGeomBounds(bounds)
+                buildInfo.layoutedByGeomBounds(r)
             }
         }
 

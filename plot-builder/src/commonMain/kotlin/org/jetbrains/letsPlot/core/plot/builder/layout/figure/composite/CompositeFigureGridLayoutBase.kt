@@ -22,7 +22,7 @@ abstract class CompositeFigureGridLayoutBase(
     private val elementsDefaultSizes: List<DoubleVector?>,
 ) {
     protected fun toElelemtsWithInitialBounds(
-        size: DoubleVector,
+        bounds: DoubleRectangle,
         elements: List<FigureBuildInfo?>
     ): List<FigureBuildInfo?> {
         check(ncols > 0)
@@ -35,13 +35,13 @@ abstract class CompositeFigureGridLayoutBase(
         val vSpaceSum = vSpace * (nrows - 1)
 
         val cellWidthByCol = cellSizeList(
-            totalSize = size.x - hSpaceSum,
+            totalSize = bounds.width - hSpaceSum,
             n = ncols,
             colWidths
         )
 
         val cellHeightByRow = cellSizeList(
-            totalSize = size.y - vSpaceSum,
+            totalSize = bounds.height - vSpaceSum,
             n = nrows,
             rowHeights
         )
@@ -56,9 +56,6 @@ abstract class CompositeFigureGridLayoutBase(
                 h = cellHeightByRow[row]
             )
 
-
-//            buildInfo?.withBounds(cellBounds)
-
             buildInfo?.let {
                 val figureBounds = if (fitCellAspectRatio) {
                     cellBounds
@@ -67,8 +64,7 @@ abstract class CompositeFigureGridLayoutBase(
                     cellBounds.srinkToAspectRatio(figureDefaultSize)
                 }
 
-//                it.withBounds(cellBounds)
-                it.withBounds(figureBounds)
+                it.withBounds(figureBounds.add(bounds.origin))
             }
         }
     }

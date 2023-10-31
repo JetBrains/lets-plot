@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.figure
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 
 interface CompositeFigureLayout {
-    fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?>
+    fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?>
 }
