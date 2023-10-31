@@ -8,7 +8,7 @@ set -e -x
 
 working_dir="/tmp/python-package/"
 dist_dir="dist/"
-python_bin_version="cp3[7-9,10,11]*"
+python_bin_version="cp3[7-9,10-12]*"
 
 if [[ ${ARCH} = "arm64" ]]
 then

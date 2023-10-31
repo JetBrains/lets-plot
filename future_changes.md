@@ -22,6 +22,8 @@
 -  `plot_margin` parameter in `theme()` ([[#856](https://github.com/JetBrains/lets-plot/issues/856)]):
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/theme_plot_margin.ipynb).
 
+ - Python 3.12 support [[#907](https://github.com/JetBrains/lets-plot/issues/907)].
+
 
 ### Changed
 
