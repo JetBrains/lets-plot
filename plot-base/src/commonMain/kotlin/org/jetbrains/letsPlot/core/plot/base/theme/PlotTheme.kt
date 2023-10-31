@@ -33,4 +33,5 @@ interface PlotTheme {
     fun titleMargins(): Margins
     fun subtitleMargins(): Margins
     fun captionMargins(): Margins
+    fun plotMargins(): Margins
 }

@@ -79,7 +79,7 @@ internal class PlotFigureLayouter constructor(
 
         // Layout plot inners
         val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
+        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider, theme.plot().plotMargins())
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
@@ -89,7 +89,7 @@ internal class PlotFigureLayouter constructor(
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, theme.plot().plotMargins())
 
         return createFigureLayoutInfo(
             figurePreferredSize = null,
@@ -160,13 +160,25 @@ internal class PlotFigureLayouter constructor(
         val figureLayoutedBounds = if (figurePreferredSize == null) {
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
+            val plotMargins = theme.plot().plotMargins()
+
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
+            // center the overall rect (without margins)
+            val figureOverallSize = figureLayoutedSize.add(
+                DoubleVector(plotMargins.width(), plotMargins.height())
+            )
             val delta = figurePreferredBounds.center.subtract(
-                DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
+                DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center
             )
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = figurePreferredBounds.origin.add(deltaApplied)
-            DoubleRectangle(plotOuterOrigin, figureLayoutedSize)
+            val plotOuterOrigin = figurePreferredBounds.origin
+                .add(deltaApplied)
+                .add(DoubleVector(plotMargins.left, plotMargins.top)) // apply margins inside the overall rect
+
+            DoubleRectangle(
+                plotOuterOrigin,
+                figureLayoutedSize
+            )
         }
 
         val figureBoundsWithoutTitleAndCaption = let {
