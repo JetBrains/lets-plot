@@ -1549,7 +1549,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Notes
     -----
     `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-     or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_errorbar()` understands the following aesthetics mappings:
 
@@ -1684,15 +1684,16 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Notes
     -----
-    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
-    The mean is represented by horizontal line.
+    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    The mean is represented by horizontal (vertical) line.
 
     `geom_crossbar()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for error bar.
-    - y : position of median bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal bar, respectively.
+    - y or x : position of median bar for vertical or horizontal bar, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal bar, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
@@ -1813,15 +1814,16 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Notes
     -----
-    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
-    The mid-point is defined by `y`.
+    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    The mid-point is defined by `y` or `x`, respectively.
 
     `geom_pointrange()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - y : position of mid-point.
-    - ymin : lower bound for error bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal interval, respectively.
+    - y or x : position of mid-point for vertical or horizontal interval, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal interval, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal interval, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
@@ -1933,13 +1935,14 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_linerange()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for line range.
-    - ymax : upper bound for line range.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal line range, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal line range, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal line range, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
@@ -3770,13 +3773,13 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
-    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`.
+    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`, or a vertical ribbon, bounded by `xmin`, `xmax`.
 
     `geom_ribbon()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : y-axis coordinates of the lower bound.
-    - ymax : y-axis coordinates of the upper bound.
+    - x or y: x-axis or y-axis coordinates for horizontal or vertical ribbon, respectively.
+    - ymin or xmin: y-axis or x-axis coordinates of the lower bound for horizontal or vertical ribbon, respectively.
+    - ymax or xmax: y-axis or x-axis coordinates of the upper bound for horizontal or vertical ribbon, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").

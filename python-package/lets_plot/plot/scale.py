@@ -109,9 +109,7 @@ def scale_manual(aesthetic, values, *,
         The name(s) of the aesthetic(s) that this scale works with.
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -184,9 +182,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -255,9 +251,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -326,9 +320,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -397,9 +389,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -468,9 +458,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -540,9 +528,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     ----------
     values : list of str
         A set of aesthetic values to map data values to.
-        If this is a named vector, then the values will be matched based on the names.
-        If unnamed, values will be matched in order (usually alphabetical)
-        with the limits of the scale.
+        The values will be matched in order (usually alphabetical) with the limits of the scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
