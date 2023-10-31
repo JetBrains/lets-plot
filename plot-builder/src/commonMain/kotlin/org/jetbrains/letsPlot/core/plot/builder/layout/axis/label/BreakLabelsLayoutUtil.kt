@@ -209,7 +209,7 @@ internal object BreakLabelsLayoutUtil {
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
         val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
-        val maxLabelHeight = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, tickLabelSpec)
+        val maxLabelHeight = PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, tickLabelSpec)
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {

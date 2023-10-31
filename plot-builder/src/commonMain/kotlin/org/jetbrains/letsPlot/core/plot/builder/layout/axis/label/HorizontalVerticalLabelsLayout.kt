@@ -38,7 +38,7 @@ internal class HorizontalVerticalLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        val height = PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, labelSpec)
+        val height = PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, labelSpec)
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size >= 2) {

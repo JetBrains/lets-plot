@@ -74,7 +74,7 @@ abstract class ColorBarComponentLayout(
     ) {
         override val graphSize: DoubleVector
         private val labelDistance: Double get() =
-            PlotAxisLayoutUtil.maxLabelHeight(breaks.labels, PlotLabelSpecFactory.legendItem(theme)) / 3
+            PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, PlotLabelSpecFactory.legendItem(theme)) / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {

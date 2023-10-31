@@ -170,8 +170,8 @@ object TextUtil {
         }
 
         label.setFontSize(fontSize(p, scale))
-        val maxLineHeight = linesMaxHeight(MultilineLabel.splitLines(label.text), p, scale)
-        label.setLineHeight(maxLineHeight)
+        val lineHeight = estimateLineHeight(MultilineLabel.splitLines(label.text), p, scale)
+        label.setLineHeight(lineHeight)
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -187,7 +187,7 @@ object TextUtil {
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
-        val lineHeight = linesMaxHeight(lines, p, scale)
+        val lineHeight = estimateLineHeight(lines, p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
@@ -201,9 +201,9 @@ object TextUtil {
         }
     }
 
-    private fun linesMaxHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
-        lines.maxOfOrNull { lineheight(it, p, scale) } ?: lineheight("", p, scale)
+    private fun estimateLineHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
+        lines.maxOfOrNull { lineHeight(it, p, scale) } ?: lineHeight("", p, scale)
 
-    private fun lineheight(text: String, p: DataPointAesthetics, scale: Double) =
+    private fun lineHeight(text: String, p: DataPointAesthetics, scale: Double) =
         p.lineheight()!! * fontSize(p, scale) * RichText.getHeightStretchFactor(text)
 }
