@@ -1816,7 +1816,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     -----
     `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
     or a horizontal interval, defined by `y`, `xmin`, `xmax`.
-    The mid-point is defined by `y`.
+    The mid-point is defined by `y` or `x`, respectively.
 
     `geom_pointrange()` understands the following aesthetics mappings:
 
