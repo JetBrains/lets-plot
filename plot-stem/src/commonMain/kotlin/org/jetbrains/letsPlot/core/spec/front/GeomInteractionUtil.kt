@@ -165,7 +165,9 @@ object GeomInteractionUtil {
         isLinearCoordSystem: Boolean,
         definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
-        if (!isLinearCoordSystem) {
+        if (!isLinearCoordSystem
+            && geomKind != GeomKind.MAP // FIXME: mercator is also non linear, but tooltips strategy should not be changed
+            ) {
             return GeomTooltipSetup.bivariateFunction(
                 GeomTooltipSetup.AREA_GEOM,
                 axisTooltipVisibilityFromConfig = true
