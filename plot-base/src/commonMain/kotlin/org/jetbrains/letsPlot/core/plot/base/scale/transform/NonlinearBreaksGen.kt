@@ -11,8 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
-import kotlin.math.abs
-import kotlin.math.min
+import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
@@ -20,7 +19,7 @@ internal class NonlinearBreaksGen(
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
-        val breakValues = generateBreakValues(domain, targetCount, transform)
+        val breakValues = generateBreakValues(domain, recalculateBreaksCount(targetCount, domain, transform), transform)
         val breakFormatters = if (formatter != null) {
             List(breakValues.size) { formatter }
         } else {
@@ -40,6 +39,8 @@ internal class NonlinearBreaksGen(
     }
 
     companion object {
+        private const val MIN_BREAKS_COUNT = 3
+
         private fun generateBreakValues(
             domain: DoubleSpan,
             targetCount: Int,
@@ -51,6 +52,22 @@ internal class NonlinearBreaksGen(
 
             // Transform back to data space.
             return transform.applyInverse(transformedBreakValues).filterNotNull()
+        }
+
+        private fun recalculateBreaksCount(breaksCount: Int, domain: DoubleSpan, transform: ContinuousTransform): Int {
+            return when (transform) {
+                is Log10Transform,
+                is SymlogTransform -> {
+                    val transformedDomain = ScaleUtil.applyTransform(domain, transform)
+                    val recalculatedBreaksCount = (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
+                    if (recalculatedBreaksCount in MIN_BREAKS_COUNT..breaksCount) {
+                        recalculatedBreaksCount
+                    } else {
+                        breaksCount
+                    }
+                }
+                else -> breaksCount
+            }
         }
 
         private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
