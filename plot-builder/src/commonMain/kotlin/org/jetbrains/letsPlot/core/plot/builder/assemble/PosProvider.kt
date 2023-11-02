@@ -85,10 +85,10 @@ abstract class PosProvider {
             }
         }
 
-        fun jitter(width: Double?, height: Double?): PosProvider {
+        fun jitter(width: Double?, height: Double?, seed: Long?): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.jitter(width, height)
+                    return PositionAdjustments.jitter(width, height, seed)
                 }
 
                 override fun handlesGroups(): Boolean {

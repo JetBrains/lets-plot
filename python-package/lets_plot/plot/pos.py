@@ -96,7 +96,7 @@ def position_dodgev(height=None):
     return _pos('dodgev', height=height)
 
 
-def position_jitter(width=None, height=None):
+def position_jitter(width=None, height=None, seed=None):
     """
     Adjust position by assigning random noise to points. Better for discrete values.
 
@@ -110,6 +110,9 @@ def position_jitter(width=None, height=None):
         Jittering height.
         The value of height is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
 
     Returns
     -------
@@ -137,10 +140,10 @@ def position_jitter(width=None, height=None):
         ggplot({'x': x, 'y': y, 'c': c}, aes('x', 'y')) + \\
             geom_point(aes(fill='c'), show_legend=False, \\
                        size=8, alpha=.5, shape=21, color='black', \\
-                       position=position_jitter(width=.2, height=.2))
+                       position=position_jitter(width=.2, height=.2, seed=42))
 
     """
-    return _pos('jitter', width=width, height=height)
+    return _pos('jitter', width=width, height=height, seed=seed)
 
 
 def position_nudge(x=None, y=None):

@@ -51,8 +51,8 @@ object PositionAdjustments {
         return FillPos(aesthetics, vjust, stackingMode)
     }
 
-    fun jitter(width: Double?, height: Double?): PositionAdjustment {
-        return JitterPos(width, height)
+    fun jitter(width: Double?, height: Double?, seed: Long?): PositionAdjustment {
+        return JitterPos(width, height, seed)
     }
 
     fun nudge(width: Double?, height: Double?): PositionAdjustment {

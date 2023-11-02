@@ -113,6 +113,7 @@ class GeomProto(val geomKind: GeomKind) {
                 Meta.NAME to PosProto.JITTER,
                 Pos.Jitter.WIDTH to layerOptions.getDouble(Geom.Jitter.WIDTH),
                 Pos.Jitter.HEIGHT to layerOptions.getDouble(Geom.Jitter.HEIGHT),
+                Pos.Jitter.SEED to layerOptions.getLong(Geom.Jitter.SEED)
             )
 
             Y_DOT_PLOT -> if (layerOptions.hasOwn(Geom.YDotplot.STACKGROUPS) &&

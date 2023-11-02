@@ -17,7 +17,7 @@ class JitterDodgePos(aesthetics: Aesthetics, groupCount: Int, width: Double?, ji
     private val myDodgePosHelper: PositionAdjustment
 
     init {
-        myJitterPosHelper = JitterPos(jitterWidth, jitterHeight)
+        myJitterPosHelper = JitterPos(jitterWidth, jitterHeight, seed = null)
         myDodgePosHelper = DodgePos(aesthetics, groupCount, width)
     }
 
