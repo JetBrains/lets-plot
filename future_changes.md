@@ -2,7 +2,7 @@
 
 ### Added
 
-- Annotations in Barchert
+- Annotations in Barchart
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/bar_annotations.ipynb).
 
