@@ -6509,6 +6509,12 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
+    Computed variables:
+
+    - ..n.. : number of points with same x-axis and y-axis coordinates.
+    - ..prop.. : proportion of points with same x-axis and y-axis coordinates.
+    - ..proppct.. : proportion of points with same x-axis and y-axis coordinates in percent.
+
     `geom_count()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
