@@ -27,13 +27,12 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/theme_plot_margin.ipynb).
 
 
-
-- Horizontal orientation by assigning y, xmin, xmax aesthetics of geoms:
-  - `geom_errorbar()`;
-  - `geom_crossbar()`;
-  - `geom_pointrange()`;
-  - `geom_linerange()`;
-  - `geom_ribbon()`.
+- Dual orientation for geometries:
+  - `geom_errorbar()`
+  - `geom_crossbar()`
+  - `geom_pointrange()`
+  - `geom_linerange()`
+  - `geom_ribbon()`
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/horizontal_geoms.ipynb).
 
