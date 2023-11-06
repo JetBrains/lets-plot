@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import kotlin.random.Random
 
-internal class JitterPos(width: Double?, height: Double?, seed: Long?) : PositionAdjustment {
+internal class JitterPos(width: Double?, height: Double?, seed: Long? = null) : PositionAdjustment {
 
     //uniform distribution
     private val myWidth: Double

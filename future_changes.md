@@ -5,4 +5,4 @@
 ### Changed
 
 ### Fixed
-
+- Jitter reproducibility in geom_jitter [[#911](https://github.com/JetBrains/lets-plot/issues/911)].
