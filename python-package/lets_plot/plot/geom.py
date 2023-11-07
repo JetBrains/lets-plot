@@ -2667,6 +2667,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
+     Unlike most other geoms, this geom does not affect the x and y scales.
+
     `geom_abline()` understands the following aesthetics mappings:
 
     - slope : line slope.
