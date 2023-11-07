@@ -35,7 +35,6 @@ internal class JitterPos(width: Double?, height: Double?, seed: Long? = null) : 
     }
 
     companion object {
-
         val DEF_JITTER_WIDTH = 0.4
         val DEF_JITTER_HEIGHT = 0.4
     }

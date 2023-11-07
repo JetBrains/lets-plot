@@ -48,7 +48,8 @@ internal object PosProto {
             JITTER_DODGE -> PosProvider.jitterDodge(
                 opts.getDouble(Pos.JitterDodge.DODGE_WIDTH),
                 opts.getDouble(Pos.JitterDodge.JITTER_WIDTH),
-                opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT)
+                opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT),
+                opts.getLong(Pos.JitterDodge.JITTER_SEED)
             )
 
             else -> throw IllegalArgumentException("Unknown position adjustments name: '$posName'")

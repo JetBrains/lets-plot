@@ -480,6 +480,7 @@ object Option {
             const val DODGE_WIDTH = "dodge_width"
             const val JITTER_WIDTH = "jitter_width"
             const val JITTER_HEIGHT = "jitter_height"
+            const val JITTER_SEED = "jitter_seed"
         }
 
         object Stack {

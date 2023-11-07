@@ -115,12 +115,19 @@ abstract class PosProvider {
   }
   */
 
-        fun jitterDodge(width: Double?, jitterWidth: Double?, jitterHeight: Double?): PosProvider {
+        fun jitterDodge(width: Double?, jitterWidth: Double?, jitterHeight: Double?, jitterSeed: Long?): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
                     val aesthetics = ctx.aesthetics
                     val groupCount = ctx.groupCount
-                    return PositionAdjustments.jitterDodge(aesthetics, groupCount, width, jitterWidth, jitterHeight)
+                    return PositionAdjustments.jitterDodge(
+                        aesthetics,
+                        groupCount,
+                        width,
+                        jitterWidth,
+                        jitterHeight,
+                        jitterSeed
+                    )
                 }
 
                 override fun handlesGroups(): Boolean {

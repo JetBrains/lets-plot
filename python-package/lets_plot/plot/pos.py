@@ -188,7 +188,7 @@ def position_nudge(x=None, y=None):
     return _pos('nudge', x=x, y=y)
 
 
-def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None):
+def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None, jitter_seed=None):
     """
     This is primarily used for aligning points generated through `geom_point()`
     with dodged boxplots (e.g., a `geom_boxplot()` with a fill aesthetic supplied).
@@ -207,6 +207,9 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
         Jittering height.
         The value of `jitter_height` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
+    jitter_seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
 
     Returns
     -------
@@ -235,10 +238,11 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
                           stat='boxplot') + \\
             geom_point(aes(x='c', y='x', color='c'), \\
                        size=4, shape=21, fill='white',
-                       position=position_jitterdodge())
+                       position=position_jitterdodge(jitter_seed=42))
 
     """
-    return _pos('jitterdodge', dodge_width=dodge_width, jitter_width=jitter_width, jitter_height=jitter_height)
+    return _pos('jitterdodge', dodge_width=dodge_width, jitter_width=jitter_width, jitter_height=jitter_height,
+                jitter_seed=jitter_seed)
 
 
 def position_stack(vjust=None, mode=None):
