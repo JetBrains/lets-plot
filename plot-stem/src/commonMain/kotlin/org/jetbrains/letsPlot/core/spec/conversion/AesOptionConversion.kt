@@ -14,22 +14,13 @@ class AesOptionConversion(colorConverter: ColorOptionConverter) {
         return converterMap[aes]
     }
 
-    fun <T> apply(aes: Aes<T>, optionValue: Any): T? {
+    fun <T> apply(aes: Aes<T>, optionValue: Any?): T? {
         val converter = getConverter(aes)
         return converter(optionValue)
     }
 
     fun <T> applyToList(aes: Aes<T>, optionValues: List<*>): List<T?> {
-        val converter = getConverter(aes)
-        val result = ArrayList<T?>()
-        for (optionValue in optionValues) {
-            result.add(converter(optionValue!!))
-        }
-        return result
-    }
-
-    fun has(aes: Aes<*>): Boolean {
-        return converterMap.containsKey(aes)
+        return optionValues.map { apply(aes, it) }
     }
 
     companion object {
