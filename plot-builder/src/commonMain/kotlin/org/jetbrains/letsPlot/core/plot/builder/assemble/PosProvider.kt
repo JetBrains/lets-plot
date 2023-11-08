@@ -115,7 +115,7 @@ abstract class PosProvider {
   }
   */
 
-        fun jitterDodge(width: Double?, jitterWidth: Double?, jitterHeight: Double?, jitterSeed: Long?): PosProvider {
+        fun jitterDodge(width: Double?, jitterWidth: Double?, jitterHeight: Double?, seed: Long?): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
                     val aesthetics = ctx.aesthetics
@@ -126,7 +126,7 @@ abstract class PosProvider {
                         width,
                         jitterWidth,
                         jitterHeight,
-                        jitterSeed
+                        seed
                     )
                 }
 

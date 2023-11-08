@@ -65,9 +65,9 @@ object PositionAdjustments {
         width: Double?,
         jitterWidth: Double?,
         jitterHeight: Double?,
-        jitterSeed: Long?
+        seed: Long?
     ): PositionAdjustment {
-        return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight, jitterSeed)
+        return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight, seed)
     }
 
     enum class Meta(private val handlesGroups: Boolean) {
