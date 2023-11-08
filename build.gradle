@@ -144,7 +144,7 @@ nexusPublishing {
 // "JavaDoc" artifact for all publications.
 task jarJavaDocs(type: Jar) {
     group project.letsPlotTaskGroup
-    classifier 'javadoc'
+    archiveClassifier.set("javadoc")
     from("$rootDir/README.md")
 }
 
