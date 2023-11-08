@@ -8,13 +8,17 @@ package org.jetbrains.letsPlot.core.spec.config.conversion
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class AesOptionConversionTest {
     @Test
     fun everyAesHasOptionValueConverter() {
         for (aes in Aes.values()) {
-            assertTrue(AesOptionConversion.demoAndTest.has(aes), "Aes ${aes.name} has option value converter")
+            try {
+                AesOptionConversion.demoAndTest.getConverter(aes)
+            } catch (e: Throwable) {
+                fail("Aes '${aes.name}' has no option value converter")
+            }
         }
     }
 }

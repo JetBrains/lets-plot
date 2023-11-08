@@ -28,10 +28,6 @@ class AesOptionConversion(colorConverter: ColorOptionConverter) {
         return result
     }
 
-    fun has(aes: Aes<*>): Boolean {
-        return converterMap.containsKey(aes)
-    }
-
     companion object {
         val demoAndTest: AesOptionConversion = AesOptionConversion(ColorOptionConverter.demoAndTest)
     }
