@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 
 object Option {
 
@@ -667,11 +667,128 @@ object Option {
     }
 
     object Theme {
-        // All other options were moved to
-        // org.jetbrains.letsPlot.core.plot.builder.theme2.values.ThemeOption
+        // Common
+        const val TITLE = ThemeOption.TITLE
+        const val TEXT = ThemeOption.TEXT
+        const val LINE = ThemeOption.LINE
+        const val RECT = ThemeOption.RECT
+
+        const val PLOT_BKGR_RECT = ThemeOption.PLOT_BKGR_RECT
+        const val PLOT_TITLE = ThemeOption.PLOT_TITLE
+        const val PLOT_SUBTITLE = ThemeOption.PLOT_SUBTITLE
+        const val PLOT_CAPTION = ThemeOption.PLOT_CAPTION
+        const val PLOT_MESSAGE = ThemeOption.PLOT_MESSAGE
+        const val PLOT_MARGIN = ThemeOption.PLOT_MARGIN
+
+        // Axis
+        const val AXIS = ThemeOption.AXIS
+
+        const val AXIS_ONTOP = ThemeOption.AXIS_ONTOP
+        const val AXIS_ONTOP_X = ThemeOption.AXIS_ONTOP_X
+        const val AXIS_ONTOP_Y = ThemeOption.AXIS_ONTOP_Y
+
+        const val AXIS_TITLE = ThemeOption.AXIS_TITLE
+        const val AXIS_TITLE_X = ThemeOption.AXIS_TITLE_X
+        const val AXIS_TITLE_Y = ThemeOption.AXIS_TITLE_Y
+
+        const val AXIS_TEXT = ThemeOption.AXIS_TEXT
+        const val AXIS_TEXT_X = ThemeOption.AXIS_TEXT_X
+        const val AXIS_TEXT_Y = ThemeOption.AXIS_TEXT_Y
+
+        const val AXIS_TICKS = ThemeOption.AXIS_TICKS
+        const val AXIS_TICKS_X = ThemeOption.AXIS_TICKS_X
+        const val AXIS_TICKS_Y = ThemeOption.AXIS_TICKS_Y
+
+        const val AXIS_TICKS_LENGTH = ThemeOption.AXIS_TICKS_LENGTH
+        const val AXIS_TICKS_LENGTH_X = ThemeOption.AXIS_TICKS_LENGTH_X
+        const val AXIS_TICKS_LENGTH_Y = ThemeOption.AXIS_TICKS_LENGTH_Y
+
+        const val AXIS_LINE = ThemeOption.AXIS_LINE
+        const val AXIS_LINE_X = ThemeOption.AXIS_LINE_X
+        const val AXIS_LINE_Y = ThemeOption.AXIS_LINE_Y
+
+        const val AXIS_TOOLTIP = ThemeOption.AXIS_TOOLTIP
+        const val AXIS_TOOLTIP_X = ThemeOption.AXIS_TOOLTIP_X
+        const val AXIS_TOOLTIP_Y = ThemeOption.AXIS_TOOLTIP_Y
+
+        const val AXIS_TOOLTIP_TEXT = ThemeOption.AXIS_TOOLTIP_TEXT
+        const val AXIS_TOOLTIP_TEXT_X = ThemeOption.AXIS_TOOLTIP_TEXT_X
+        const val AXIS_TOOLTIP_TEXT_Y = ThemeOption.AXIS_TOOLTIP_TEXT_Y
+
+        // Panel
+        const val PANEL_BKGR_RECT = ThemeOption.PANEL_BKGR_RECT
+        const val PANEL_BORDER_RECT = ThemeOption.PANEL_BORDER_RECT
+
+        // Panel grid
+        const val PANEL_GRID = ThemeOption.PANEL_GRID
+        const val PANEL_GRID_MAJOR = ThemeOption.PANEL_GRID_MAJOR
+        const val PANEL_GRID_MINOR = ThemeOption.PANEL_GRID_MINOR
+        const val PANEL_GRID_MAJOR_X = ThemeOption.PANEL_GRID_MAJOR_X
+        const val PANEL_GRID_MINOR_X = ThemeOption.PANEL_GRID_MINOR_X
+        const val PANEL_GRID_MAJOR_Y = ThemeOption.PANEL_GRID_MAJOR_Y
+        const val PANEL_GRID_MINOR_Y = ThemeOption.PANEL_GRID_MINOR_Y
+
+        // Facet
+        const val FACET_STRIP_BGR_RECT = ThemeOption.FACET_STRIP_BGR_RECT
+        const val FACET_STRIP_TEXT = ThemeOption.FACET_STRIP_TEXT
+
+        // Legend
+        const val LEGEND_BKGR_RECT = ThemeOption.LEGEND_BKGR_RECT
+        const val LEGEND_TEXT = ThemeOption.LEGEND_TEXT
+        const val LEGEND_TITLE = ThemeOption.LEGEND_TITLE
+        const val LEGEND_POSITION = ThemeOption.LEGEND_POSITION
+        const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
+        const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
+
+        // Tooltip
+        const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
+        const val TOOLTIP_TEXT = ThemeOption.TOOLTIP_TEXT
+        const val TOOLTIP_TITLE_TEXT = ThemeOption.TOOLTIP_TITLE_TEXT
+
+        const val GEOM = ThemeOption.GEOM
+        const val FLAVOR = ThemeOption.FLAVOR
 
         // view element
-        const val ELEMENT_BLANK = ELEMENT_BLANK_SHORTHAND
+        const val ELEMENT_BLANK = ThemeOption.ELEMENT_BLANK_SHORTHAND
+        object Elem {
+            const val BLANK = ThemeOption.Elem.BLANK
+            const val FILL = ThemeOption.Elem.FILL
+            const val COLOR = ThemeOption.Elem.COLOR
+            const val SIZE = ThemeOption.Elem.SIZE
+            const val FONT_FAMILY = ThemeOption.Elem.FONT_FAMILY
+            const val FONT_FACE = ThemeOption.Elem.FONT_FACE
+            const val HJUST = ThemeOption.Elem.HJUST
+            const val VJUST = ThemeOption.Elem.VJUST
+            const val ANGLE = ThemeOption.Elem.ANGLE
+            const val MARGIN = ThemeOption.Elem.MARGIN
+        }
+
+        object Name {
+            // ggplot2 themes
+            const val R_GREY = ThemeOption.Name.R_GREY
+            const val R_LIGHT = ThemeOption.Name.R_LIGHT
+            const val R_CLASSIC = ThemeOption.Name.R_CLASSIC
+            const val R_MINIMAL = ThemeOption.Name.R_MINIMAL
+            const val R_BW = ThemeOption.Name.R_BW
+
+            // lets-plot themes
+            const val LP_MINIMAL = ThemeOption.Name.LP_MINIMAL
+            const val LP_NONE = ThemeOption.Name.LP_NONE
+        }
+
+        object Flavor {
+            const val DARCULA = ThemeOption.Flavor.DARCULA
+            const val SOLARIZED_LIGHT = ThemeOption.Flavor.SOLARIZED_LIGHT
+            const val SOLARIZED_DARK = ThemeOption.Flavor.SOLARIZED_DARK
+            const val HIGH_CONTRAST_LIGHT = ThemeOption.Flavor.HIGH_CONTRAST_LIGHT
+            const val HIGH_CONTRAST_DARK = ThemeOption.Flavor.HIGH_CONTRAST_DARK
+        }
+
+        object Geom {
+            const val PEN = ThemeOption.Geom.PEN
+            const val PAPER = ThemeOption.Geom.PAPER
+            const val BRUSH = ThemeOption.Geom.BRUSH
+        }
     }
 
     object GeomName {
