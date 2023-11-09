@@ -10,9 +10,11 @@
 Run tne next gradle tasks from the project root:
 
 ```shell
-./gradlew publishLetsPlotJvmJfxPublicationToMavenRepository \
+./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+          publishLetsPlotJvmJfxPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotImageExportPublicationToMavenRepository \
+          publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository
 ```
 
