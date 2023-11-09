@@ -6,3 +6,4 @@
 
 ### Fixed
 
+- geom_livemap: fix missing styles (e.g. road outline on high zooms)
