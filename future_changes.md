@@ -6,4 +6,4 @@
 
 ### Fixed
 
-- geom_livemap: fix missing styles (e.g. road outline on high zooms)
+- geom_livemap: fix missing styles (e.g. road outline on high zooms) [[#926](https://github.com/JetBrains/lets-plot/issues/926)].
