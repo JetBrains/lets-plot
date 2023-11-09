@@ -4595,9 +4595,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
 
 def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                width=None,
-                height=None,
+                width=None, height=None,
                 color_by=None, fill_by=None,
+                seed=None,
                 **other_args):
     """
     Display jittered points, especially for discrete plots or dense plots.
@@ -4639,6 +4639,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4699,6 +4702,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_jitter(aes(color='x', size='y'), \\
                         sampling=sampling_random(n=600, seed=60), \\
+                        seed=37, + \\
                         show_legend=False, width=.25) + \\
             scale_color_grey(start=.75, end=0) + \\
             scale_size(range=[1, 3])
@@ -4714,6 +4718,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  width=width, height=height,
                  color_by=color_by, fill_by=fill_by,
+                 seed=seed,
                  **other_args)
 
 

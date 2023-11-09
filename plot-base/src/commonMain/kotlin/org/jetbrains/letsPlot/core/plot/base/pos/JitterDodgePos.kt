@@ -11,13 +11,20 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 
-class JitterDodgePos(aesthetics: Aesthetics, groupCount: Int, width: Double?, jitterWidth: Double?, jitterHeight: Double?) :
+class JitterDodgePos(
+    aesthetics: Aesthetics,
+    groupCount: Int,
+    width: Double?,
+    jitterWidth: Double?,
+    jitterHeight: Double?,
+    seed: Long? = null
+) :
     PositionAdjustment {
     private val myJitterPosHelper: PositionAdjustment
     private val myDodgePosHelper: PositionAdjustment
 
     init {
-        myJitterPosHelper = JitterPos(jitterWidth, jitterHeight)
+        myJitterPosHelper = JitterPos(jitterWidth, jitterHeight, seed)
         myDodgePosHelper = DodgePos(aesthetics, groupCount, width)
     }
 

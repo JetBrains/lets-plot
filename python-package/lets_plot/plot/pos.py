@@ -96,7 +96,7 @@ def position_dodgev(height=None):
     return _pos('dodgev', height=height)
 
 
-def position_jitter(width=None, height=None):
+def position_jitter(width=None, height=None, seed=None):
     """
     Adjust position by assigning random noise to points. Better for discrete values.
 
@@ -110,6 +110,9 @@ def position_jitter(width=None, height=None):
         Jittering height.
         The value of height is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
 
     Returns
     -------
@@ -137,10 +140,10 @@ def position_jitter(width=None, height=None):
         ggplot({'x': x, 'y': y, 'c': c}, aes('x', 'y')) + \\
             geom_point(aes(fill='c'), show_legend=False, \\
                        size=8, alpha=.5, shape=21, color='black', \\
-                       position=position_jitter(width=.2, height=.2))
+                       position=position_jitter(width=.2, height=.2, seed=42))
 
     """
-    return _pos('jitter', width=width, height=height)
+    return _pos('jitter', width=width, height=height, seed=seed)
 
 
 def position_nudge(x=None, y=None):
@@ -185,7 +188,7 @@ def position_nudge(x=None, y=None):
     return _pos('nudge', x=x, y=y)
 
 
-def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None):
+def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None, seed=None):
     """
     This is primarily used for aligning points generated through `geom_point()`
     with dodged boxplots (e.g., a `geom_boxplot()` with a fill aesthetic supplied).
@@ -204,6 +207,9 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
         Jittering height.
         The value of `jitter_height` is relative and typically ranges between 0 and 0.5.
         Values that are greater than 0.5 lead to overlapping of the points.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
 
     Returns
     -------
@@ -232,10 +238,11 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
                           stat='boxplot') + \\
             geom_point(aes(x='c', y='x', color='c'), \\
                        size=4, shape=21, fill='white',
-                       position=position_jitterdodge())
+                       position=position_jitterdodge(seed=42))
 
     """
-    return _pos('jitterdodge', dodge_width=dodge_width, jitter_width=jitter_width, jitter_height=jitter_height)
+    return _pos('jitterdodge', dodge_width=dodge_width, jitter_width=jitter_width, jitter_height=jitter_height,
+                seed=seed)
 
 
 def position_stack(vjust=None, mode=None):

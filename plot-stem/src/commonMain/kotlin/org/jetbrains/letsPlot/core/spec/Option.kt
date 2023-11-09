@@ -247,6 +247,7 @@ object Option {
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
+            const val SEED = "seed"
         }
 
         object Step {
@@ -467,6 +468,7 @@ object Option {
         object Jitter {
             const val WIDTH = "width"
             const val HEIGHT = "height"
+            const val SEED = "seed"
         }
 
         object Nudge {
@@ -478,6 +480,7 @@ object Option {
             const val DODGE_WIDTH = "dodge_width"
             const val JITTER_WIDTH = "jitter_width"
             const val JITTER_HEIGHT = "jitter_height"
+            const val SEED = "seed"
         }
 
         object Stack {
