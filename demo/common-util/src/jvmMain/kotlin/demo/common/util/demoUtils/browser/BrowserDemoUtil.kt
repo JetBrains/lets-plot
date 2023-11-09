@@ -78,7 +78,7 @@ object BrowserDemoUtil {
     }
 
     private fun projectJs(projectPath: String, projectName: String) =
-        "${getRootPath()}/$projectPath/build/distributions/$projectName.js"
+        "${getRootPath()}/$projectPath/build/dist/js/productionExecutable/$projectName.js"
 
     fun mapperDemoHtml(demoProjectPath: String, demoProject: String, callFun: String, title: String): String {
         return mapperDemoHtml(demoProjectPath, demoProject, callFun, null, title)

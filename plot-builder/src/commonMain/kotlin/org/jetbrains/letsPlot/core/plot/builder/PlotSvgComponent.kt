@@ -42,7 +42,7 @@ import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
-class PlotSvgComponent(
+class PlotSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
@@ -188,6 +188,7 @@ class PlotSvgComponent(
                     tileLayoutInfo,
                     coordProvider,
                     plotTheme.backgroundFill(),
+                    theme.colors().pen(),
                     DEBUG_DRAWING
                 )
 

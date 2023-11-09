@@ -8,10 +8,19 @@ plugins {
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+// KT-55751. MPP / Gradle: Consumable configurations must have unique attributes.
+// https://youtrack.jetbrains.com/issue/KT-55751/MPP-Gradle-Consumable-configurations-must-have-unique-attributes
+//
+def dummyAttribute = Attribute.of("dummyAttribute", String)
+
 kotlin {
     jvm("jvmBatik")
-    jvm("jvmJfx")
-    jvm("jvmBrowser")
+    jvm("jvmJfx") {
+        attributes.attribute(dummyAttribute, "jvmJfx")
+    }
+    jvm("jvmBrowser") {
+        attributes.attribute(dummyAttribute, "jvmBrowser")
+    }
     js() {
         browser()
         binaries.executable()
@@ -65,9 +74,9 @@ kotlin {
                 implementation project(':platf-jfx-swing')
                 implementation project(':demo-common-jfx')
 
-                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-                compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+                implementation("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
             }
         }
 

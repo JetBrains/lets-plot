@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.LineTypeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.ColorBrewerMapperProvider
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test
@@ -31,7 +32,11 @@ class ScaleConfigTest {
 
     private fun checkRGBMapping(aes: Aes<*>, input: List<*>) {
         @Suppress("UNCHECKED_CAST")
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes as Aes<Any>, Color.TRANSPARENT)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(
+            aes as Aes<Any>,
+            Color.TRANSPARENT,
+            AesOptionConversion.demoAndTest
+        )
         val expected = listOf(RED, GREEN, BLUE)
         checkMappingDiscrete(expected, input, mapperProvider)
     }
@@ -47,7 +52,11 @@ class ScaleConfigTest {
     }
 
     private fun checkIdentityMappingNumeric(aes: Aes<Double>, input: List<Double>) {
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(aes, Double.NaN)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(
+            aes,
+            Double.NaN,
+            AesOptionConversion.demoAndTest
+        )
         checkMappingDiscrete(input, input, mapperProvider)
         checkIdentityMappingContinuous(input, mapperProvider)
     }
@@ -92,7 +101,11 @@ class ScaleConfigTest {
     fun shapeIdentityMapper() {
         val input = listOf(14.0)
         val expected = listOf(STICK_SQUARE_TRIANGLE_UP)
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(Aes.SHAPE, ShapeMapper.NA_VALUE)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(
+            Aes.SHAPE,
+            ShapeMapper.NA_VALUE,
+            AesOptionConversion.demoAndTest
+        )
         checkMappingDiscrete(expected, input, mapperProvider)
     }
 
@@ -101,7 +114,11 @@ class ScaleConfigTest {
         @Suppress("SpellCheckingInspection")
         val input = listOf(2.0, "longdash", 5.0, "twodash")
         val expected = listOf(DASHED, LONGDASH, LONGDASH, TWODASH)
-        val mapperProvider = ScaleConfig.createIdentityMapperProvider(Aes.LINETYPE, LineTypeMapper.NA_VALUE)
+        val mapperProvider = ScaleConfig.createIdentityMapperProvider(
+            Aes.LINETYPE,
+            LineTypeMapper.NA_VALUE,
+            AesOptionConversion.demoAndTest
+        )
         checkMappingDiscrete(expected, input, mapperProvider)
     }
 
@@ -125,9 +142,7 @@ class ScaleConfigTest {
                 "aesthetic" to toOption(aes)
             )
 
-            val scaleMapper = ScaleConfig<Color>(aes, scaleSpec)
-//                .createScaleProvider()
-//                .mapperProvider
+            val scaleMapper = ScaleConfig<Color>(aes, scaleSpec, AesOptionConversion.demoAndTest)
                 .createMapperProvider()
                 .createDiscreteMapper(DiscreteTransform(listOf(1.0, 2.0, 3.0, 4.0), emptyList()))
 

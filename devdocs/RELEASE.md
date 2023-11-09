@@ -6,7 +6,7 @@
  - Linux Ubuntu 20.04+
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
- - Python 3.7-3.11
+ - Python 3.7-3.12
  - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](tools%2FREADME.md)   
@@ -60,8 +60,8 @@ For `RC` skip this step.
 ### 2. Prepare config file with Python paths for release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.7 to 3.11.     
-For **Mac arm64**: from 3.8 to 3.11.   
+each Python version: from 3.7 to 3.12.     
+For **Mac arm64**: from 3.8 to 3.12.   
 For **Linux**, it is enough to point one Python version.
 
 **Example:**
@@ -98,9 +98,9 @@ python .\build_release.py ..\release_pythons.yml
 ### 4. Check Python artifacts
 
 The directory `python-package/dist` must contain Python release wheels:
- - Windows: `x64` wheels for Python versions 3.7-3.11
- - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.7-3.11
- - Mac: `x64` wheels for Python versions 3.7-3.11 and `arm64` wheel for 3.8-3.11
+ - Windows: `x64` wheels for Python versions 3.7-3.12
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.7-3.12
+ - Mac: `x64` wheels for Python versions 3.7-3.12 and `arm64` wheel for 3.8-3.12
 
 
 ## Publish artifacts

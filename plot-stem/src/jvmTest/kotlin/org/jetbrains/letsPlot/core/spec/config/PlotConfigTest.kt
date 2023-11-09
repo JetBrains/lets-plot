@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.CONTINUOUS_TRANSFORM
 import org.jetbrains.letsPlot.core.spec.Option.Scale.NAME
-import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import kotlin.test.Test
@@ -35,7 +35,10 @@ class PlotConfigTest {
         val opts = parsePlotSpec(spec)
         val plotConfig = PlotConfigFrontend.create(opts) {}
 
-        val scaleConfigs = PlotConfigUtil.createScaleConfigs(plotConfig.getList(SCALES))
+        val scaleConfigs = PlotConfigUtil.createScaleConfigs(
+            plotConfig.getList(SCALES),
+            plotConfig.aopConversion
+        )
         assertEquals(1, scaleConfigs.size.toLong())
         assertEquals("name_test", scaleConfigs[0].getString(NAME))
         assertEquals("log10", scaleConfigs[0].getString(CONTINUOUS_TRANSFORM))

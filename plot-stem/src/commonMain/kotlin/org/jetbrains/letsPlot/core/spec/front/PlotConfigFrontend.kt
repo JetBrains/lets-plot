@@ -12,29 +12,26 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option.Plot.COORD
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
-import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
-import org.jetbrains.letsPlot.core.spec.config.FontFamilyRegistryConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
 import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
 import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 
-class PlotConfigFrontend private constructor(opts: Map<String, Any>) :
-    PlotConfig(
-        opts,
-        isClientSide = true
-    ) {
+class PlotConfigFrontend private constructor(
+    opts: Map<String, Any>,
+    containerTheme: Theme?
+) : PlotConfig(
+    opts,
+    containerTheme,
+    isClientSide = true
+) {
 
-    internal val fontFamilyRegistry: FontFamilyRegistry
-    internal val theme: Theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
@@ -45,9 +42,6 @@ class PlotConfigFrontend private constructor(opts: Map<String, Any>) :
     internal val yAxisPosition: AxisPosition
 
     init {
-        fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
-        theme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
-
         val mappersByAes = PlotConfigScaleMappers.createMappers(
             layerConfigs,
             transformByAes,
@@ -110,13 +104,14 @@ class PlotConfigFrontend private constructor(opts: Map<String, Any>) :
 
         fun create(
             plotSpec: Map<String, Any>,
+            containerTheme: Theme? = null,
             computationMessagesHandler: ((List<String>) -> Unit)
         ): PlotConfigFrontend {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (computationMessages.isNotEmpty()) {
                 computationMessagesHandler(computationMessages)
             }
-            return PlotConfigFrontend(plotSpec)
+            return PlotConfigFrontend(plotSpec, containerTheme)
         }
     }
 }

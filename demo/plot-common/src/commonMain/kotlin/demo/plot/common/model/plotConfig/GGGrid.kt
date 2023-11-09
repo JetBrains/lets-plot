@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.SUBPLOTS_GRID
 import demoAndTestShared.parsePlotSpec
 import demo.plot.common.data.Iris
 
-open class PlotGrid {
+open class GGGrid {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
 //            simple(),

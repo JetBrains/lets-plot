@@ -5,13 +5,12 @@
 
 package demo.plot.browser.plotSvg
 
-import demo.plot.common.model.plotConfig.Area
-import demo.plot.common.model.plotConfig.PlotGrid
+import demo.plot.common.model.plotConfig.GGGrid
 
-object PlotGridSvg {
+object GGGridSvg {
     @JvmStatic
     fun main(args: Array<String>) {
-        with(PlotGrid()) {
+        with(GGGrid()) {
             @Suppress("UNCHECKED_CAST")
             (PlotSvgDemoUtil.show(
                 "Plot Grid",

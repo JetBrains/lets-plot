@@ -64,7 +64,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
                 val toLocation = { p: DataPointAesthetics -> geomHelper.toClient(point, p) }
-                val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio, ctx.backgroundColor)
+                val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
                 root.appendNodes(pieSectors.map(::buildSvgArcs))
@@ -229,8 +229,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     private fun computeSectors(
         dataPoints: List<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
-        sizeUnitRatio: Double,
-        backgroundColor: Color
+        sizeUnitRatio: Double
     ): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
         fun angle(p: DataPointAesthetics) = when (sum) {
@@ -249,8 +248,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 pieCenter = pieCenter,
                 startAngle = currentAngle,
                 endAngle = currentAngle + angle(p),
-                sizeUnitRatio = sizeUnitRatio,
-                backgroundColor = backgroundColor
+                sizeUnitRatio = sizeUnitRatio
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
@@ -260,12 +258,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val p: DataPointAesthetics,
         val startAngle: Double,
         val endAngle: Double,
-        sizeUnitRatio: Double,
-        backgroundColor: Color
+        sizeUnitRatio: Double
     ) {
         val angle = endAngle - startAngle
-        val strokeWidth = p.stroke() ?: 0.0
-        private val hasVisibleStroke = strokeWidth > 0.0 && p.color()?.alpha != 0 && p.color() != backgroundColor
+        val strokeWidth = p.stroke()?.takeIf { p.color()?.alpha != 0 } ?: 0.0
+        private val hasVisibleStroke = strokeWidth > 0.0
         val radius: Double = sizeUnitRatio * AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
@@ -345,7 +342,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         sectors: List<Sector>,
         ctx: GeomContext
     ) {
-        if (ctx.annotations == null || sectors.isEmpty()) return
+        val annotations = ctx.annotations ?: return
+        if (sectors.isEmpty()) return
 
         val pieCenter = sectors.map(Sector::pieCenter).distinct().singleOrNull() ?: return
 
@@ -372,12 +370,17 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 sector in leftSectors -> leftMaxOffsetForOuter
                 else -> rightMaxOffsetForOuter
             }
-            getAnnotationLabel(sector, ctx.annotations!!, AnnotationsUtil.textSizeGetter(ctx), offsetForPointer)
+            getAnnotationLabel(
+                sector, annotations,
+                AnnotationsUtil.textSizeGetter(annotations.textStyle, ctx),
+                offsetForPointer,
+                ctx.plotContext
+            )
         }
         createAnnotationElements(
             pieCenter,
             annotationLabels,
-            textStyle = ctx.annotations!!.textStyle,
+            textStyle = annotations.textStyle,
             xRange = DoubleSpan(leftBorder, rightBorder),
             ctx
         ).forEach(root::add)
@@ -387,9 +390,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         sector: Sector,
         annotations: Annotations,
         textSizeGetter: (String, DataPointAesthetics) -> DoubleVector,
-        offsetForPointer: Double
+        offsetForPointer: Double,
+        plotContext: PlotContext?
     ): AnnotationLabel {
-        val text = annotations.getAnnotationText(sector.p.index())
+        val text = annotations.getAnnotationText(sector.p.index(), plotContext)
         val textSize = textSizeGetter(text, sector.p)
 
         fun isPointInsideSector(pnt: DoubleVector): Boolean {

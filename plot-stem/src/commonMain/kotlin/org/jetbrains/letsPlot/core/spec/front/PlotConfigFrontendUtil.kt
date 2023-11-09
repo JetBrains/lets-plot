@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
@@ -19,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
@@ -75,7 +75,7 @@ object PlotConfigFrontendUtil {
             plotConfig.scaleMap,
             plotConfig.mappersByAesNP,
             plotConfig.theme,
-            plotConfig.fontFamilyRegistry,
+            plotConfig.theme.fontFamilyRegistry,
         )
     }
 
@@ -210,7 +210,7 @@ object PlotConfigFrontendUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(

@@ -16,10 +16,10 @@ def export_svg(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str) -> s
     
     Parameters
     ----------
-    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
-            Plot specification to export.
-    filename: str
-            Filename to save SVG under.
+    plot : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    filename : str
+        Filename to save SVG under.
 
     Returns
     -------
@@ -45,12 +45,12 @@ def export_html(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, ifr
 
     Parameters
     ----------
-    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
-            Plot specification to export.
-    filename: str
-            Filename to save HTML page under.
-    iframe: bool
-            Whether to wrap HTML page into a iFrame. Default value is False.
+    plot : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    filename : str
+        Filename to save HTML page under.
+    iframe : bool, default=False
+        Whether to wrap HTML page into a iFrame.
 
     Returns
     -------
@@ -76,10 +76,10 @@ def export_png(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scal
 
     Parameters
     ----------
-    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
-            Plot specification to export.
-    filename: str
-            Filename to save PNG under.
+    plot : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    filename : str
+        Filename to save PNG under.
     scale : float, default=2.0
         Scaling factor for raster output.
 
@@ -90,7 +90,6 @@ def export_png(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scal
 
     Notes
     -----
-
     Export to PNG file uses the CairoSVG library.
     CairoSVG is free and distributed under the LGPL-3.0 license.
     For more details visit: https://cairosvg.org/documentation/
@@ -116,5 +115,54 @@ def export_png(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scal
     svg = _kbridge._generate_svg(plot.as_dict(), use_css_pixelated_image_rendering=False)
 
     cairosvg.svg2png(bytestring=svg, write_to=filename, scale=scale)
+
+    return abspath(filename)
+
+
+def export_pdf(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scale: float = 2.0) -> str:
+    """
+    Export plot or `bunch` to a file in PDF format.
+
+    Parameters
+    ----------
+    plot : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    filename : str
+        Filename to save PDF under.
+    scale : float, default=2.0
+        Scaling factor for raster output.
+
+    Returns
+    -------
+    str
+        Absolute pathname of created PDF file.
+
+    Notes
+    -----
+    Export to PDF file uses the CairoSVG library.
+    CairoSVG is free and distributed under the LGPL-3.0 license.
+    For more details visit: https://cairosvg.org/documentation/
+
+    """
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, SupPlotsSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(plot)))
+
+    try:
+        import cairosvg
+
+
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(plot.as_dict(), use_css_pixelated_image_rendering=False)
+
+    cairosvg.svg2pdf(bytestring=svg, write_to=filename, scale=scale)
 
     return abspath(filename)

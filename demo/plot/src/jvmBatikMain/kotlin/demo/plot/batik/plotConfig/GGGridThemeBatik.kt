@@ -5,15 +5,15 @@
 
 package demo.plot.batik.plotConfig
 
-import demo.plot.common.model.plotConfig.PlotGrid
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
+import demo.plot.common.model.plotConfig.GGGridTheme
 
 fun main() {
-    with(PlotGrid()) {
+    with(GGGridTheme()) {
         PlotSpecsDemoWindowBatik(
-            "Plot Grid (Batik)",
+            "Plot Grid with Theme/Flavor (Batik)",
             plotSpecList(),
-            maxCol = 2
+            maxCol = 3
         ).open()
     }
 }

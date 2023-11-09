@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
-import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.GeomProto
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 internal object LayerConfigUtil {
 
@@ -45,7 +45,11 @@ internal object LayerConfigUtil {
         }
     }
 
-    fun initConstants(layerOptions: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
+    fun initConstants(
+        layerOptions: OptionsAccessor,
+        consumedAesSet: Set<Aes<*>>,
+        aopConversion: AesOptionConversion
+    ): Map<Aes<*>, Any> {
         val result = HashMap<Aes<*>, Any>()
         Option.Mapping.REAL_AES_OPTION_NAMES
             .filter(layerOptions::has)
@@ -53,7 +57,7 @@ internal object LayerConfigUtil {
             .filterValues { aes -> aes in consumedAesSet }
             .forEach { (option, aes) ->
                 val optionValue = layerOptions.getSafe(option)
-                val constantValue = AesOptionConversion.apply(aes, optionValue)
+                val constantValue = aopConversion.apply(aes, optionValue)
                     ?: throw IllegalArgumentException("Can't convert to '$option' value: $optionValue")
                 result[aes] = constantValue
             }

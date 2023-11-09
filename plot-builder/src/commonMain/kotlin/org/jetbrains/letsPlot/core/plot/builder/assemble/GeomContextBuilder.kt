@@ -11,11 +11,12 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
@@ -29,6 +30,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotations: Annotations? = null
     private var backgroundColor: Color = Color.WHITE
+    private var penColor: Color = Color.BLACK
+    private var plotContext: PlotContext? = null
 
     constructor()
 
@@ -40,6 +43,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         geomTargetCollector = ctx.targetCollector
         annotations = ctx.annotations
         backgroundColor = ctx.backgroundColor
+        penColor = ctx.penColor
+        plotContext = ctx.plotContext
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -82,6 +87,16 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun penColor(color: Color): ImmutableGeomContext.Builder {
+        this.penColor = color
+        return this
+    }
+
+    override fun plotContext(plotContext: PlotContext): ImmutableGeomContext.Builder {
+        this.plotContext = plotContext
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -96,6 +111,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override val targetCollector = b.geomTargetCollector
         override val annotations = b.annotations
         override val backgroundColor = b.backgroundColor
+        override val penColor = b.penColor
+        override val plotContext: PlotContext? = b.plotContext
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 

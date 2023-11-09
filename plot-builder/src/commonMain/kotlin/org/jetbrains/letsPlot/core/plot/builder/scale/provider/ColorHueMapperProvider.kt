@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
+import org.jetbrains.letsPlot.commons.colorspace.HCL
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.HSL
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -21,15 +21,13 @@ class ColorHueMapperProvider(
     startHue: Double,
     private val reversed: Boolean,
     naValue: Color
-) : HSLColorMapperProvider(
+) : HclColorMapperProvider(
     naValue = naValue,
 ) {
     private val hueRange = DoubleSpan(hueRange.lowerEnd + startHue, hueRange.upperEnd + startHue)
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val n = discreteTransform.effectiveDomain.size
-        val s = chroma / 100.0
-        val l = luminance / 100.0
 
         // if full circle prevent first and last colors to be the same
         val hueRange = hueRange.takeUnless { it.length % 360 < 1.0 }
@@ -37,8 +35,8 @@ class ColorHueMapperProvider(
 
         val step = hueRange.length / (n - 1)
 
-        val from = HSL(hueRange.lowerEnd, s, l)
-        val to = HSL(hueRange.lowerEnd + step * (n - 1), s, l)
+        val from = HCL(hueRange.lowerEnd, chroma, luminance)
+        val to = HCL(hueRange.lowerEnd + step * (n - 1), chroma, luminance)
 
         return createDiscreteMapper(
             transformedDomain = discreteTransform.effectiveDomainTransformed,
@@ -51,11 +49,8 @@ class ColorHueMapperProvider(
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
 
-        val s = chroma / 100.0
-        val l = luminance / 100.0
-
-        val from = HSL(hueRange.lowerEnd, s, l)
-        val to = HSL(hueRange.upperEnd, s, l)
+        val from = HCL(hueRange.lowerEnd, chroma, luminance)
+        val to = HCL(hueRange.upperEnd, chroma, luminance)
 
         return createContinuousMapper(
             domain = domain,
@@ -65,9 +60,9 @@ class ColorHueMapperProvider(
     }
 
     companion object {
-        // hsl palette defaults from seaborn
-        const val DEF_CHROMA = 65.0
-        const val DEF_LUMINANCE = 60.0
+        // defaults from ggplot2
+        const val DEF_CHROMA = 100.0
+        const val DEF_LUMINANCE = 65.0
         const val DEF_START_HUE = 0.0
         val DEF_HUE_RANGE = DoubleSpan(15.0, 375.0)
     }

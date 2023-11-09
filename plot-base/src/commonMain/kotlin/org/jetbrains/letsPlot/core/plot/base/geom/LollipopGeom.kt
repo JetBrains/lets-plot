@@ -32,7 +32,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var direction: Direction = DEF_DIRECTION
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = LollipopLegendKeyElementFactory(fatten)
+        get() = LollipopLegendKeyElementFactory()
 
     override fun rangeIncludesZero(aes: Aes<*>): Boolean {
         // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it

@@ -153,6 +153,13 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return DoubleRectangle(newOrigin, newSize)
     }
 
+    fun inflate(delta: Double): DoubleRectangle {
+        return DoubleRectangle(
+            origin.subtract(DoubleVector(delta, delta)),
+            dimension.add(DoubleVector(delta * 2, delta * 2))
+        )
+    }
+
     override fun hashCode(): Int {
         return origin.hashCode() * 31 + dimension.hashCode()
     }

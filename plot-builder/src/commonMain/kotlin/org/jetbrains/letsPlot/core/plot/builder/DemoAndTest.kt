@@ -18,8 +18,7 @@ object DemoAndTest {
         xyAesBounds: DoubleRectangle,
         coord: CoordinateSystem,
         flippedAxis: Boolean,
-        targetCollector: GeomTargetCollector,
-        plotBackground: Color
+        targetCollector: GeomTargetCollector
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
             layer = layer,
@@ -27,7 +26,8 @@ object DemoAndTest {
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            backgroundColor = plotBackground
+            backgroundColor = Color.WHITE,
+            penColor = Color.BLACK
         )
     }
 }

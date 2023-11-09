@@ -2,6 +2,10 @@
 # Copyright (c) 2023. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import json
+
+from lets_plot._global_settings import has_global_value, get_global_val, PLOT_THEME
+from lets_plot.plot.core import FeatureSpec
 from .subplots import SupPlotsLayoutSpec
 from .subplots import SupPlotsSpec
 
@@ -94,7 +98,11 @@ def gggrid(plots: list, ncol: int = None, *,
         align=align
     )
 
-    return SupPlotsSpec(
-        figures=plots,
-        layout=layout
-    )
+    figure_spec = SupPlotsSpec(figures=plots, layout=layout)
+
+    if has_global_value(PLOT_THEME):
+        theme_options = json.loads(get_global_val(PLOT_THEME))
+        theme_name = theme_options.pop('name', None)
+        figure_spec += FeatureSpec('theme', theme_name, **theme_options)
+
+    return figure_spec

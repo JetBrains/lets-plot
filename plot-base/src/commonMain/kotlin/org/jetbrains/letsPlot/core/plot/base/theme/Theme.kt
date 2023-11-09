@@ -9,6 +9,8 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 
 interface Theme {
+    val fontFamilyRegistry: FontFamilyRegistry
+
     fun horizontalAxis(flipAxis: Boolean): AxisTheme
 
     fun verticalAxis(flipAxis: Boolean): AxisTheme
@@ -26,4 +28,6 @@ interface Theme {
     fun geometries(geomKind: GeomKind): GeomTheme
 
     fun colors(): ColorTheme
+
+    fun toInherited(containerTheme: Theme): Theme
 }

@@ -22,22 +22,22 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LOWER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -55,7 +55,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMAX
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMIN
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Z
 
-internal class TypedOptionConverterMap {
+internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
+
+    private val colorCvt = { o: Any? -> colorConverter.apply(o) }
 
     private val myMap = HashMap<Aes<*>, (Any?) -> Any?>()
 
@@ -66,11 +68,11 @@ internal class TypedOptionConverterMap {
         this.put(Z, DOUBLE_CVT)
         this.put(YMIN, DOUBLE_CVT)
         this.put(YMAX, DOUBLE_CVT)
-        this.put(COLOR, COLOR_CVT)
-        this.put(FILL, COLOR_CVT)
-        this.put(PAINT_A, COLOR_CVT)
-        this.put(PAINT_B, COLOR_CVT)
-        this.put(PAINT_C, COLOR_CVT)
+        this.put(COLOR, colorCvt)
+        this.put(FILL, colorCvt)
+        this.put(PAINT_A, colorCvt)
+        this.put(PAINT_B, colorCvt)
+        this.put(PAINT_C, colorCvt)
         this.put(ALPHA, DOUBLE_CVT)
         this.put(SHAPE, SHAPE_CVT)
         this.put(LINETYPE, LINETYPE_CVT)
@@ -109,8 +111,14 @@ internal class TypedOptionConverterMap {
         this.put(FAMILY, IDENTITY_S_CVT)
         this.put(FONTFACE, IDENTITY_S_CVT)
         this.put(LINEHEIGHT, DOUBLE_CVT)
-        this.put(HJUST, IDENTITY_O_CVT)   // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
-        this.put(VJUST, IDENTITY_O_CVT)   // text vertical justification (numbers [0..1] or predefined strings, not positional)
+        this.put(
+            HJUST,
+            IDENTITY_O_CVT
+        )   // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
+        this.put(
+            VJUST,
+            IDENTITY_O_CVT
+        )   // text vertical justification (numbers [0..1] or predefined strings, not positional)
         this.put(ANGLE, DOUBLE_CVT)
         this.put(SLICE, DOUBLE_CVT)
         this.put(EXPLODE, DOUBLE_CVT)
@@ -134,7 +142,6 @@ internal class TypedOptionConverterMap {
         private val IDENTITY_O_CVT = { o: Any? -> o }
         private val IDENTITY_S_CVT = { o: Any? -> o?.toString() }
         private val DOUBLE_CVT = { o: Any? -> NumericOptionConverter().apply(o) }
-        private val COLOR_CVT = { o: Any? -> ColorOptionConverter().apply(o) }
         private val SHAPE_CVT = { o: Any? -> ShapeOptionConverter().apply(o) }
         private val LINETYPE_CVT = { o: Any? -> LineTypeOptionConverter().apply(o) }
     }

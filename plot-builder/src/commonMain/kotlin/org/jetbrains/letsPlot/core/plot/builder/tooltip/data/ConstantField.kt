@@ -90,8 +90,4 @@ class ConstantField(
             label
         )
     }
-
-    override fun getAnnotationText(index: Int): String? {
-        return formattedValue
-    }
 }

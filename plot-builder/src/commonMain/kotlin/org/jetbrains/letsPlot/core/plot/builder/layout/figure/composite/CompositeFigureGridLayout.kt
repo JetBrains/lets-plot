@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
@@ -28,8 +29,8 @@ class CompositeFigureGridLayout(
     fitCellAspectRatio = fitCellAspectRatio,
     elementsDefaultSizes = elementsDefaultSizes,
 ), CompositeFigureLayout {
-    override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
-        val elementsWithBounds = toElelemtsWithInitialBounds(size, elements)
+    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+        val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)
 
         return elementsWithBounds.map {
             it?.layoutedByOuterSize()
