@@ -74,6 +74,8 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.letsPlotJvmJfx
+    if (!project.version.contains('SNAPSHOT')) {
+        sign publishing.publications.letsPlotJvmJfx
+    }
 }
 
