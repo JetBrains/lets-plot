@@ -48,13 +48,16 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 
         named("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
+
+                // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' build error (Kotlin 1.9.xx versions):
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }
