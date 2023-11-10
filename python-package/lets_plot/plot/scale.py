@@ -3240,6 +3240,25 @@ def _scale(aesthetic, *,
     args = locals().copy()
     args.pop('other')
 
+    # 'labels' - dict of breaks as keys and labels as values
+    if isinstance(labels, dict):
+        keys = list(labels.keys())
+        values = list(labels.values())
+        if breaks is None:
+            args['breaks'] = keys
+            args['labels'] = values
+        else:
+            # todo - leave the intersection of breaks-list and labels-dict ?
+            new_labels = []
+            new_breaks = []
+            for br_value in breaks:
+                index = None if br_value not in keys else keys.index(br_value)
+                if index is not None and index < len(values):
+                    new_breaks.append(br_value)
+                    new_labels.append(values[index])
+            args['breaks'] = new_breaks
+            args['labels'] = new_labels
+
     specs = []
     if isinstance(aesthetic, list):
         args.pop('aesthetic')
