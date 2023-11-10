@@ -27,6 +27,8 @@ kotlin {
                 compileOnly(project(":datamodel"))
                 compileOnly(project(":canvas"))
                 compileOnly(project(":gis"))
+
+                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
             }
         }
 
@@ -57,7 +59,6 @@ kotlin {
         named("jsMain") {
             dependencies {
                 compileOnly("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }

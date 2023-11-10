@@ -54,7 +54,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
