@@ -159,6 +159,24 @@ def scale_manual(aesthetic, values, *,
                          breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
 
     """
+
+    if isinstance(values, dict):
+        keys = list(values.keys())
+        values = list(values.values())
+        if breaks is None:
+            breaks = keys
+            values = values
+        else:
+            new_values = []
+            new_breaks = []
+            for br_value in values:
+                index = None if br_value not in keys else keys.index(br_value)
+                if index is not None and index < len(values):
+                    new_breaks.append(br_value)
+                    new_values.append(values[index])
+            breaks = new_breaks
+            values = new_values
+
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
