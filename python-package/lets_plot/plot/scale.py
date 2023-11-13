@@ -161,21 +161,21 @@ def scale_manual(aesthetic, values, *,
     """
 
     if isinstance(values, dict):
-        keys = list(values.keys())
-        values = list(values.values())
+        dict_keys = list(values.keys())
+        dict_values = list(values.values())
         if breaks is None:
-            breaks = keys
-            values = values
+            breaks = dict_keys
+            values = dict_values
         else:
             new_values = []
             new_breaks = []
-            for br_value in values:
-                index = None if br_value not in keys else keys.index(br_value)
-                if index is not None and index < len(values):
-                    new_breaks.append(br_value)
-                    new_values.append(values[index])
+            for break_value in breaks:
+                index = None if break_value not in dict_keys else dict_keys.index(break_value)
+                if index is not None and index < len(dict_values):
+                    new_breaks.append(break_value)
+                    new_values.append(dict_values[index])
             breaks = new_breaks
-            values = new_values
+            values = None if not new_values else new_values
 
     return _scale(aesthetic,
                   name=name,
@@ -3267,20 +3267,19 @@ def _scale(aesthetic, *,
 
     # 'labels' - dict of breaks as keys and labels as values
     if isinstance(labels, dict):
-        keys = list(labels.keys())
-        values = list(labels.values())
+        dict_keys = list(labels.keys())
+        dict_values = list(labels.values())
         if breaks is None:
-            args['breaks'] = keys
-            args['labels'] = values
+            args['breaks'] = dict_keys
+            args['labels'] = dict_values
         else:
-            # todo - leave the intersection of breaks-list and labels-dict ?
             new_labels = []
             new_breaks = []
-            for br_value in breaks:
-                index = None if br_value not in keys else keys.index(br_value)
-                if index is not None and index < len(values):
-                    new_breaks.append(br_value)
-                    new_labels.append(values[index])
+            for break_value in breaks:
+                index = None if break_value not in dict_keys else dict_keys.index(break_value)
+                if index is not None and index < len(dict_values):
+                    new_breaks.append(break_value)
+                    new_labels.append(dict_values[index])
             args['breaks'] = new_breaks
             args['labels'] = new_labels
 
