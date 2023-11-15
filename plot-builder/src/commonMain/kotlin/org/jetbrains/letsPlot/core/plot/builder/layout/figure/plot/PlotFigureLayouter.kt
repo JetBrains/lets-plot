@@ -54,16 +54,9 @@ internal class PlotFigureLayouter constructor(
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
-        val figureBaseSize = if (containsLiveMap) {
-            val figBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
-            PlotLayoutUtil.liveMapBounds(figBounds).dimension
-        } else {
-            outerSize
-        }
 
-        // -------------
         val plotPreferredSize = PlotLayoutUtil.subtractTitlesAndLegends(
-            baseSize = figureBaseSize,
+            baseSize = outerSize,
             title,
             subtitle,
             caption,

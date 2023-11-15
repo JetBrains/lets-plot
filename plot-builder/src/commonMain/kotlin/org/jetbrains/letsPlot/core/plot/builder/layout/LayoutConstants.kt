@@ -13,10 +13,6 @@ internal object LayoutConstants {
 
     const val GEOM_AREA_PADDING = 10.0
 
-    // todo remove it:
-    val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
-    val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
-
     // Horizontal axis labels
     const val H_AXIS_LABELS_EXPAND = 10.0  // Value by which labels can go beyond the axis bounds (px).
 
