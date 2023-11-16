@@ -9,10 +9,11 @@ import demoAndTestShared.parsePlotSpec
 import kotlin.math.PI
 import kotlin.math.sin
 
-class Line {
+@Suppress("ClassName")
+class Issue_points_50K_932 {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            n(5_000),
+            n(50_000),
         )
     }
 
@@ -34,7 +35,7 @@ class Line {
               },
               'layers': [
                 {
-                  'geom': 'line',
+                  'geom': 'point',
                   'sampling': 'none'
                 }
               ]

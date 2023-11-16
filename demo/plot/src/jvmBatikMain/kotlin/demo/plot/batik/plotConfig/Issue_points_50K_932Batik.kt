@@ -6,12 +6,12 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.Line
+import demo.plot.common.model.plotConfig.Issue_points_50K_932
 
 fun main() {
-    with(Line()) {
+    with(Issue_points_50K_932()) {
         PlotSpecsDemoWindowBatik(
-            "Line plot",
+            "50K points",
             plotSpecList()
         ).open()
     }
