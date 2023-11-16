@@ -161,12 +161,24 @@ def scale_manual(aesthetic, values, *,
     """
 
     if isinstance(values, dict):
-        if breaks is not None:
-            raise ValueError("Parameters 'breaks' and 'values' conflict: "
-                             "'breaks' is specified at the same time as the 'values', "
-                             "which defines the correspondence between break and value.")
-        breaks = list(values.keys())
-        values = list(values.values())
+        keys = list(values.keys())
+        values_from_dict = list(values.values())
+        if breaks is None:
+            breaks = keys
+            values = values_from_dict
+        else:
+            new_values = []
+            new_breaks = []
+            tail_values = values_from_dict.copy()
+            for break_value in breaks:
+                index = None if break_value not in keys else keys.index(break_value)
+                if index is not None and index < len(values_from_dict):
+                    new_breaks.append(break_value)
+                    value = values_from_dict[index]
+                    new_values.append(value)
+                    tail_values.remove(value)
+            breaks = new_breaks
+            values = new_values + tail_values if new_breaks else None
 
     return _scale(aesthetic,
                   name=name,
@@ -3251,12 +3263,29 @@ def _scale(aesthetic, *,
 
     # 'labels' - dict of breaks as keys and labels as values
     if isinstance(labels, dict):
-        if breaks is not None:
-            raise ValueError("Parameters 'breaks' and 'labels' conflict: "
-                             "'breaks' is specified at the same time as the 'labels', "
-                             "which defines the correspondence between break and label.")
-        args['breaks'] = list(labels.keys())
-        args['labels'] = list(labels.values())
+        keys = list(labels.keys())
+        values = list(labels.values())
+        if breaks is None:
+            args['breaks'] = keys
+            args['labels'] = values
+        else:
+            # combining the original breaks-list and the list of keys from labels-dict
+            # - create labels-list for original breaks
+            new_labels = []
+            new_breaks = breaks
+            for break_value in breaks:
+                index = None if break_value not in keys else keys.index(break_value)
+                if index is not None and index < len(values):
+                    new_labels.append(values[index])
+                    labels.pop(break_value)
+                else:
+                    new_labels.append(str(break_value))
+            # - append breaks from labels-dict
+            new_breaks += list(labels.keys())
+            new_labels += list(labels.values())
+
+            args['breaks'] = new_breaks
+            args['labels'] = new_labels
 
     specs = []
     if isinstance(aesthetic, list):
