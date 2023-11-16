@@ -34,6 +34,14 @@ internal class HorizontalSimpleLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
+        // Don't run when num of breaks is too large. (minor optimization)
+        if(breaks.size > 400) {
+            return AxisLabelsLayoutInfo.Builder()
+//                .breaks(breaks)
+                .overlap(true)
+                .build()
+        }
+
         var bounds: DoubleRectangle? = null
         var overlap = false
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
