@@ -104,19 +104,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
+            val axisTheme = theme.horizontalAxis(flipAxis = false)
+            val orientation = Orientation.BOTTOM
             val axis = AxisComponent(
                 length = rangeX,
-                orientation = Orientation.BOTTOM,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = true,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.horizontalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridX()
             )
 
@@ -128,19 +131,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
+            val orientation = Orientation.LEFT
+            val axisTheme = theme.verticalAxis(flipAxis = false)
             val axis = AxisComponent(
                 length = rangeY,
-                orientation = Orientation.LEFT,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = false,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.verticalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridY()
             )
 
@@ -292,19 +298,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
+            val orientation = Orientation.BOTTOM
+            val axisTheme = theme.horizontalAxis(flipAxis = false)
             val axis = AxisComponent(
                 length = rangeX,
-                orientation = Orientation.BOTTOM,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = true,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.horizontalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridX()
             )
 
@@ -316,19 +325,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
+            val orientation = Orientation.LEFT
+            val axisTheme = theme.verticalAxis(flipAxis = false)
             val axis = AxisComponent(
                 length = rangeY,
-                orientation = Orientation.LEFT,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = false,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.verticalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridY()
             )
 
@@ -422,19 +434,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // X axis
+            val orientation = Orientation.BOTTOM
+            val axisTheme = theme.horizontalAxis(flipAxis = false)
             val axis = AxisComponent(
                 length = rangeX,
-                orientation = Orientation.BOTTOM,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = true,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.horizontalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridX()
             )
 
@@ -446,19 +461,22 @@ open class ScatterDemo : SimpleDemoBase() {
 
         run {
             // Y axis
+            val orientation = Orientation.LEFT
+            val axisTheme = theme.verticalAxis(flipAxis = false)
             val axis = AxisComponent(
                 length = rangeY,
-                orientation = Orientation.LEFT,
+                orientation = orientation,
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
-                    horizontal = false,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
-                axisTheme = theme.verticalAxis(flipAxis = false),
+                axisTheme = axisTheme,
                 //gridTheme = theme.panel().gridY()
             )
 
