@@ -163,22 +163,21 @@ def scale_manual(aesthetic, values, *,
     if isinstance(values, dict):
         keys = list(values.keys())
         values_from_dict = list(values.values())
-        if breaks is None:
+        if breaks is None and limits is None:
             breaks = keys
             values = values_from_dict
         else:
+            # ensure the correct order in values-list
+            original_order = breaks if limits is None else limits
             new_values = []
-            new_breaks = []
             tail_values = values_from_dict.copy()
-            for break_value in breaks:
+            for break_value in original_order:
                 index = None if break_value not in keys else keys.index(break_value)
                 if index is not None and index < len(values_from_dict):
-                    new_breaks.append(break_value)
                     value = values_from_dict[index]
                     new_values.append(value)
                     tail_values.remove(value)
-            breaks = new_breaks
-            values = new_values + tail_values if new_breaks else None
+            values = new_values + tail_values if new_values else None
 
     return _scale(aesthetic,
                   name=name,
@@ -3269,22 +3268,13 @@ def _scale(aesthetic, *,
             args['breaks'] = keys
             args['labels'] = values
         else:
-            # combining the original breaks-list and the list of keys from labels-dict
-            # - create labels-list for original breaks
             new_labels = []
-            new_breaks = breaks
             for break_value in breaks:
                 index = None if break_value not in keys else keys.index(break_value)
                 if index is not None and index < len(values):
                     new_labels.append(values[index])
-                    labels.pop(break_value)
                 else:
-                    new_labels.append(str(break_value))
-            # - append breaks from labels-dict
-            new_breaks += list(labels.keys())
-            new_labels += list(labels.values())
-
-            args['breaks'] = new_breaks
+                    new_labels.append('')
             args['labels'] = new_labels
 
     specs = []
