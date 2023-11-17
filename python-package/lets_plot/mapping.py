@@ -3,7 +3,7 @@
 
 
 class MappingMeta:
-    def __init__(self, variable, annotation, **parameters):
+    def __init__(self, variable, annotation, levels, **parameters):
         if variable is None:
             raise ValueError("variable can't be none")
 
@@ -12,10 +12,11 @@ class MappingMeta:
 
         self.variable = variable
         self.annotation = annotation
+        self.levels = levels
         self.parameters = parameters
 
 
-def as_discrete(variable, label=None, order_by=None, order=None):
+def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     """
     The function is used to annotate a numeric data series as categorical data with the possibility of its ordering for the purposes of given visualization.
 
@@ -29,6 +30,8 @@ def as_discrete(variable, label=None, order_by=None, order=None):
         The variable name to order by.
     order : int
         The ordering direction. 1 for ascending, -1 for descending.
+    levels : list
+        The list of values that the variable can take.
 
     Returns
     -------
@@ -108,6 +111,6 @@ def as_discrete(variable, label=None, order_by=None, order=None):
     """
     if isinstance(variable, str):
         label = variable if label is None else label
-        return MappingMeta(variable, 'as_discrete', label=label, order_by=order_by, order=order)
+        return MappingMeta(variable, 'as_discrete', levels=levels, label=label, order_by=order_by, order=order)
     # aes(x=as_discrete([1, 2, 3])) - pass as is
     return variable

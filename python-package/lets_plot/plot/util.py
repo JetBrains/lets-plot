@@ -35,6 +35,8 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # mapping
     mapping = {}
     mapping_meta = []
+    # series annotations
+    series_meta = []
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -42,6 +44,12 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
                 continue
 
             if isinstance(variable, MappingMeta):
+                if variable.levels is not None:
+                    series_meta.append({
+                        'column': variable.variable,
+                        'factor_levels': variable.levels
+                    })
+
                 mapping[aesthetic] = variable.variable
                 mapping_meta.append({
                     'aes': aesthetic,
@@ -53,9 +61,6 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
             if len(mapping_meta) > 0:
                 data_meta.update({'mapping_annotations': mapping_meta})
-
-    # series annotations
-    series_meta = []
 
     if is_dict_or_dataframe(data):
         for column_name, values in data.items():
