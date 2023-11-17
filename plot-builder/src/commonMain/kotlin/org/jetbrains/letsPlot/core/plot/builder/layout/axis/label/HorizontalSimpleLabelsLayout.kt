@@ -34,14 +34,6 @@ internal class HorizontalSimpleLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
-        // Don't run when num of breaks is too large. (minor optimization)
-        if(breaks.size > 400) {
-            return AxisLabelsLayoutInfo.Builder()
-//                .breaks(breaks)
-                .overlap(true)
-                .build()
-        }
-
         var bounds: DoubleRectangle? = null
         var overlap = false
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
@@ -52,7 +44,6 @@ internal class HorizontalSimpleLabelsLayout(
         )
         for (labelBounds in boundsList) {
             overlap = overlap || bounds != null && bounds.xRange().connected(
-//                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
                 labelBounds.xRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
             )
             bounds = GeometryUtil.union(labelBounds, bounds)

@@ -41,14 +41,6 @@ internal class HorizontalTiltedLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        // Don't run when num of breaks is too large. (minor optimization)
-        if(breaks.size > 400) {
-            return AxisLabelsLayoutInfo.Builder()
-//                .breaks(breaks)
-                .overlap(true)
-                .build()
-        }
-
         val height = labelSpec.height()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false

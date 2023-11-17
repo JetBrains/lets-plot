@@ -29,14 +29,6 @@ internal class HorizontalMultilineLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        // Don't run this expensive code when num of breaks is too large.
-        if (breaks.size > 400) {
-            return AxisLabelsLayoutInfo.Builder()
-//                .breaks(breaks)
-                .overlap(true)
-                .build()
-        }
-
         val boundsByShelfIndex = ArrayList<DoubleRectangle>()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         val boundsList = labelBoundsList(
