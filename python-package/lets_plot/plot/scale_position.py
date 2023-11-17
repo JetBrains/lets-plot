@@ -13,6 +13,7 @@ __all__ = ['scale_x_discrete', 'scale_y_discrete',
            'scale_x_discrete_reversed', 'scale_y_discrete_reversed',
            'scale_x_continuous', 'scale_y_continuous',
            'scale_x_log10', 'scale_y_log10',
+           'scale_x_log2', 'scale_y_log2',
            'scale_x_reverse', 'scale_y_reverse',
            'scale_x_datetime', 'scale_y_datetime',
            'scale_x_time', 'scale_y_time',
@@ -320,6 +321,149 @@ def scale_y_log10(name=None, *,
                               expand=expand,
                               na_value=na_value,
                               trans='log10',
+                              format=format,
+                              position=position,
+                              )
+
+def scale_x_log2(name=None, *,
+                  breaks=None, labels=None,
+                  limits=None,
+                  expand=None,
+                  na_value=None,
+                  format=None,
+                  position=None
+                  ):
+    """
+    Continuous position scale x where trans='log2'.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
+    na_value
+        Missing values will be replaced with this value.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+    position : str
+        The position of the axis:
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.power(2, np.random.randint(9, size=100))
+        ggplot({'x': x}, aes(x='x')) + geom_bar() + scale_x_log2()
+
+    """
+    return scale_x_continuous(name,
+                              breaks=breaks,
+                              labels=labels,
+                              limits=limits,
+                              expand=expand,
+                              na_value=na_value,
+                              trans='log2',
+                              format=format,
+                              position=position,
+                              )
+
+
+def scale_y_log2(name=None, *,
+                  breaks=None, labels=None,
+                  limits=None,
+                  expand=None,
+                  na_value=None,
+                  format=None,
+                  position=None
+                  ):
+    """
+    Continuous position scales y where trans='log2'.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    expand : list
+        A numeric vector of length two giving multiplicative and additive expansion constants.
+        The vector size == 1 => only multiplicative expand (and additive expand by default).
+        Defaults: multiplicative = 0.05, additive = 0.
+    na_value
+        Missing values will be replaced with this value.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+    position : str
+        The position of the axis:
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x = np.random.poisson(size=100)
+        ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log2()
+
+    """
+    return scale_y_continuous(name,
+                              breaks=breaks,
+                              labels=labels,
+                              limits=limits,
+                              expand=expand,
+                              na_value=na_value,
+                              trans='log2',
                               format=format,
                               position=position,
                               )
