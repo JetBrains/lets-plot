@@ -16,7 +16,8 @@ class AsDiscrete {
             fillFactorWithScaleColor(),
             layerData_DiscreteGroup(),
             smoothStatAsDiscrete(),
-            smoothStatWithGroup()
+            smoothStatWithGroup(),
+            factorLevels()
         )
     }
 
@@ -226,4 +227,45 @@ class AsDiscrete {
         return parsePlotSpec(spec)
     }
 
+    private fun factorLevels(): MutableMap<String, Any> {
+        val spec = """{
+            'data': { 
+                'name' : ['c', 'c', 'a', 'a', 'd', 'b', 'b', 'a'],
+                'value': [1,   2,   3,    2,   2,   1,   4,  1]    
+            },
+            'kind': 'plot',
+            'layers': [
+                { 
+                    'geom': 'bar',
+                    'stat': 'identity',
+                    'mapping': {'x': 'name', 'y': 'value', 'fill': 'value'},
+                    'data_meta': {
+                        'series_annotations': [
+                            {   
+                                'column': 'name',
+                                'factor_levels': ['a','c','b']
+                            },
+                            {   
+                                'column': 'value',
+                                'factor_levels': [4,1,2]
+                            }                            
+                        ],
+                        'mapping_annotations': [
+                            { 
+                                'aes': 'x',
+                                'annotation': 'as_discrete',
+                                'parameters': {'label': 'Name'}
+                            },
+                            { 
+                                'aes': 'fill',
+                                'annotation': 'as_discrete',
+                                'parameters': {'label': 'Value'}
+                            }
+                        ]
+                    }        
+                }
+            ]
+        }""".trimIndent()
+        return parsePlotSpec(spec)
+    }
 }
