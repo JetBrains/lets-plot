@@ -473,6 +473,117 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
+    def to_svg(self, path):
+        """
+        Save a plot in SVG format.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
+                geom_jitter()
+            file_like = io.BytesIO()
+            p.to_svg(file_like)
+            with open("out.svg", "wb") as f:
+                f.write(file_like.getbuffer())
+        """
+        from ..frontend_context._configuration import to_svg
+        to_svg(self, path)
+
+    def to_html(self, path, iframe=False, scale=2.0):
+        """
+        Save a plot in HTML format.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
+                geom_jitter()
+            file_like = io.BytesIO()
+            p.to_html(file_like)
+            with open("out.html", "wb") as f:
+                f.write(file_like.getbuffer())
+        """
+        from ..frontend_context._configuration import to_html
+        to_html(self, path, iframe, scale)
+
+    def to_png(self, path, scale=2.0):
+        """
+        Save a plot in PNG format.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
+                geom_jitter()
+            file_like = io.BytesIO()
+            p.to_png(file_like)
+            with open("out.html", "wb") as f:
+                f.write(file_like.getbuffer())
+        """
+        from ..frontend_context._configuration import to_png
+        to_png(self, path, scale)
+
+    def to_pdf(self, path, scale=2.0):
+        """
+        Save a plot in PDF format.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
+                geom_jitter()
+            file_like = io.BytesIO()
+            p.to_pdf(file_like)
+            with open("out.html", "wb") as f:
+                f.write(file_like.getbuffer())
+        """
+        from ..frontend_context._configuration import to_pdf
+        to_pdf(self, path, scale)
 
 class LayerSpec(FeatureSpec):
     """

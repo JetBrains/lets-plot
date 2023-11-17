@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import io
 from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
@@ -119,3 +120,138 @@ def _as_html(plot_spec: Dict) -> str:
                 """
 
     return _frontend_contexts[TEXT_HTML].as_str(plot_spec)
+
+
+def to_svg(spec: Any, path):
+    """
+    Export plot or `bunch` to a file in SVG format.
+
+    Parameters
+    ----------
+    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    path : file-like object
+        File-like object to write SVG to.
+    """
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+
+    from .. import _kbridge as kbr
+
+    svg = kbr._generate_svg(spec.as_dict())
+    if isinstance(path, str):
+        with io.open(path, mode="w", encoding="utf-8") as f:
+            f.write(svg)
+    else:
+        path.write(svg.encode())
+
+
+def to_html(spec: Any, path, iframe: bool = False):
+    """
+    Export plot or `bunch` to a file in SVG format.
+
+    Parameters
+    ----------
+    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    path : str, file-like object
+        Filename to save HTML under,
+        or file-like object to write HTML to.
+    iframe : bool, default=False
+        Whether to wrap HTML page into a iFrame.
+    """
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+
+    from .. import _kbridge as kbr
+
+    html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
+    if isinstance(path, str):
+        with io.open(path, mode="w", encoding="utf-8") as f:
+            f.write(html_page)
+    else:
+        path.write(html_page.encode())
+
+def to_png(spec: Any, path, scale: float = 2.0):
+    """
+    Export plot or `bunch` to a file in PNG format.
+
+    Parameters
+    ----------
+    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    path : str, file-like object
+        Filename to save PNG under,
+        or file-like object to write PNG to.
+    scale : float, default=2.0
+        Scaling factor for raster output.
+
+    Notes
+    -----
+    Export to PNG file uses the CairoSVG library.
+    CairoSVG is free and distributed under the LGPL-3.0 license.
+    For more details visit: https://cairosvg.org/documentation/
+
+    """
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+
+    try:
+        import cairosvg
+
+
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+
+    cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
+
+def to_pdf(spec: Any, path, scale: float = 2.0):
+    """
+    Export plot or `bunch` to a file in PDF format.
+
+    Parameters
+    ----------
+    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+        Plot specification to export.
+    path : str, file-like object
+        Filename to save PDF under,
+        or file-like object to write PDF to.
+    scale : float, default=2.0
+        Scaling factor for raster output.
+
+    Notes
+    -----
+    Export to PDF file uses the CairoSVG library.
+    CairoSVG is free and distributed under the LGPL-3.0 license.
+    For more details visit: https://cairosvg.org/documentation/
+
+    """
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+
+    try:
+        import cairosvg
+
+
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+
+    cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)

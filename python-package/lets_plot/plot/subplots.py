@@ -113,3 +113,31 @@ class SupPlotsSpec(FeatureSpec):
         """
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
+
+    def to_svg(self, path):
+        """
+        Save all plots currently in SVG.
+        """
+        from ..frontend_context._configuration import to_svg
+        to_svg(self, path)
+
+    def to_html(self, path, iframe=False, scale=2.0):
+        """
+        Save all plots currently in SVG.
+        """
+        from ..frontend_context._configuration import to_html
+        to_html(self, path, iframe, scale)
+
+    def to_png(self, path, scale=2.0):
+        """
+        Save all plots currently in SVG.
+        """
+        from ..frontend_context._configuration import to_png
+        to_png(self, path, scale)
+
+    def to_pdf(self, path, scale=2.0):
+        """
+        Save all plots currently in SVG.
+        """
+        from ..frontend_context._configuration import to_pdf
+        to_pdf(self, path, scale)
