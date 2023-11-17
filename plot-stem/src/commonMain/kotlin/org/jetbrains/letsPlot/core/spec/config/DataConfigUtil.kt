@@ -143,6 +143,7 @@ internal object DataConfigUtil {
         asDiscreteAesSet: Set<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: (List<Double?>) -> Double?,
+        combinedMappingOptions: Map<String, String>,
         clientSide: Boolean
     ): DataFrame {
 
@@ -176,6 +177,24 @@ internal object DataConfigUtil {
                 val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
                     .mapKeys { (varName, _) -> variables.find { it.name == varName } }
                     .filterNotNullKeys()
+
+                val plotFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(plotDataMeta)
+                val layerFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
+                val factorLevelsByVar = (plotFactorLevelsByVar + layerFactorLevelsByVar)
+                    .flatMap { (varName, levels) ->
+                        val variablesWithLevels: MutableList<DataFrame.Variable> = combinedMappingOptions
+                            .filterValues { it == varName }
+                            .keys
+                            .mapNotNull { aesName ->
+                                varBindings.find { it.aes.name == aesName }?.variable
+                            }
+                            .toMutableList()
+                        if (variablesWithLevels.isEmpty()) {
+                            variables.find { it.name == varName }?.let { variablesWithLevels += it }
+                        }
+                        variablesWithLevels.map { it to levels }
+                    }
+                    .toMap()
 
                 this
                     .addOrderSpecs(orderSpecs)
