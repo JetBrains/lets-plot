@@ -124,17 +124,17 @@ def _as_html(plot_spec: Dict) -> str:
 
 def to_svg(spec: Any, path):
     """
-    Export plot or `bunch` to a file in SVG format.
+    Export plot to a file in SVG format.
 
     Parameters
     ----------
-    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+    spec : `PlotSpec` or `SupPlotsSpec`
         Plot specification to export.
     path : file-like object
         File-like object to write SVG to.
     """
-    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
-        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec)):
+        raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     from .. import _kbridge as kbr
 
@@ -146,13 +146,13 @@ def to_svg(spec: Any, path):
         path.write(svg.encode())
 
 
-def to_html(spec: Any, path, iframe: bool = False):
+def to_html(spec: Any, path, iframe: bool):
     """
-    Export plot or `bunch` to a file in SVG format.
+    Export plot to a file in HTML format.
 
     Parameters
     ----------
-    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+    spec : `PlotSpec` or `SupPlotsSpec`
         Plot specification to export.
     path : str, file-like object
         Filename to save HTML under,
@@ -160,8 +160,10 @@ def to_html(spec: Any, path, iframe: bool = False):
     iframe : bool, default=False
         Whether to wrap HTML page into a iFrame.
     """
-    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
-        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+    if iframe is None:
+        iframe = False
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec)):
+        raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     from .. import _kbridge as kbr
 
@@ -172,13 +174,14 @@ def to_html(spec: Any, path, iframe: bool = False):
     else:
         path.write(html_page.encode())
 
-def to_png(spec: Any, path, scale: float = 2.0):
+
+def to_png(spec: Any, path, scale: float):
     """
-    Export plot or `bunch` to a file in PNG format.
+    Export plot to a file in PNG format.
 
     Parameters
     ----------
-    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+    spec : `PlotSpec` or `SupPlotsSpec`
         Plot specification to export.
     path : str, file-like object
         Filename to save PNG under,
@@ -193,8 +196,10 @@ def to_png(spec: Any, path, scale: float = 2.0):
     For more details visit: https://cairosvg.org/documentation/
 
     """
-    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
-        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+    if scale is None:
+        scale = 2.0
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec)):
+        raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     try:
         import cairosvg
@@ -214,13 +219,14 @@ def to_png(spec: Any, path, scale: float = 2.0):
 
     cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
 
-def to_pdf(spec: Any, path, scale: float = 2.0):
+
+def to_pdf(spec: Any, path, scale: float):
     """
-    Export plot or `bunch` to a file in PDF format.
+    Export plot to a file in PDF format.
 
     Parameters
     ----------
-    spec : `PlotSpec` or `SupPlotsSpec` or `GGBunch`
+    spec : `PlotSpec` or `SupPlotsSpec`
         Plot specification to export.
     path : str, file-like object
         Filename to save PDF under,
@@ -235,8 +241,10 @@ def to_pdf(spec: Any, path, scale: float = 2.0):
     For more details visit: https://cairosvg.org/documentation/
 
     """
-    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
-        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
+    if scale is None:
+        scale = 2.0
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec)):
+        raise ValueError("PlotSpec or SupPlotsSpec expected but was: {}".format(type(spec)))
 
     try:
         import cairosvg

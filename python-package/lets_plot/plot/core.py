@@ -481,27 +481,27 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 4
+            :emphasize-lines: 13
 
             import numpy as np
             import io
+            import os
             from lets_plot import *
+            from IPython import display
             LetsPlot.setup_html()
             n = 60
             np.random.seed(42)
             x = np.random.choice(list('abcde'), size=n)
             y = np.random.normal(size=n)
-            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
-                geom_jitter()
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
             file_like = io.BytesIO()
             p.to_svg(file_like)
-            with open("out.svg", "wb") as f:
-                f.write(file_like.getbuffer())
+            display.SVG(file_like.getvalue())
         """
         from ..frontend_context._configuration import to_svg
         to_svg(self, path)
 
-    def to_html(self, path, iframe=False, scale=2.0):
+    def to_html(self, path, iframe: bool):
         """
         Save a plot in HTML format.
 
@@ -527,9 +527,9 @@ class PlotSpec(FeatureSpec):
                 f.write(file_like.getbuffer())
         """
         from ..frontend_context._configuration import to_html
-        to_html(self, path, iframe, scale)
+        to_html(self, path, iframe)
 
-    def to_png(self, path, scale=2.0):
+    def to_png(self, path, scale: float):
         """
         Save a plot in PNG format.
 
@@ -537,7 +537,7 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 4
+            :emphasize-lines: 12
 
             import numpy as np
             import io
@@ -557,7 +557,7 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import to_png
         to_png(self, path, scale)
 
-    def to_pdf(self, path, scale=2.0):
+    def to_pdf(self, path, scale: float):
         """
         Save a plot in PDF format.
 
@@ -565,7 +565,7 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 4
+            :emphasize-lines: 12
 
             import numpy as np
             import io
