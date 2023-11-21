@@ -35,8 +35,9 @@ def scale_identity(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -102,8 +103,9 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -170,8 +172,9 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -238,8 +241,9 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -306,8 +310,9 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -377,8 +382,9 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -442,8 +448,9 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -507,8 +514,9 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -570,8 +578,9 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale

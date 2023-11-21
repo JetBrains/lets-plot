@@ -37,8 +37,9 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         The name of the scale - used as the axis label or the legend title.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -107,17 +108,19 @@ def scale_manual(aesthetic, values, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -200,17 +203,19 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -269,17 +274,19 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -338,17 +345,19 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -407,17 +416,19 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -476,17 +487,19 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -546,17 +559,19 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -630,8 +645,9 @@ def scale_continuous(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -709,8 +725,9 @@ def scale_gradient(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -785,8 +802,9 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -860,8 +878,9 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -933,8 +952,9 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1008,8 +1028,9 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -1082,8 +1103,9 @@ def scale_gradient2(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1165,8 +1187,9 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1245,8 +1268,9 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1322,8 +1346,9 @@ def scale_gradientn(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1399,8 +1424,9 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1473,8 +1499,9 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1556,8 +1583,9 @@ def scale_hue(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1641,8 +1669,9 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1722,8 +1751,9 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1802,8 +1832,9 @@ def scale_discrete(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1878,8 +1909,9 @@ def scale_fill_discrete(direction=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1951,8 +1983,9 @@ def scale_color_discrete(direction=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2027,8 +2060,9 @@ def scale_grey(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2107,8 +2141,9 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2182,8 +2217,9 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2285,8 +2321,9 @@ def scale_brewer(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2383,8 +2420,9 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2478,8 +2516,9 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2590,8 +2629,9 @@ def scale_viridis(aesthetic, *,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2694,8 +2734,9 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2793,8 +2834,9 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2870,8 +2912,9 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2939,8 +2982,9 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3009,8 +3053,9 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3084,8 +3129,9 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3153,8 +3199,9 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3229,8 +3276,9 @@ def _scale(aesthetic, *,
         The name of the scale - used as the axis label or the legend title
     breaks : list
         A numeric vector of positions (of ticks)
-    labels : list
-        A vector of labels (on ticks)
+    labels : list of str or dict
+        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
+        and the corresponding values are used as labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
