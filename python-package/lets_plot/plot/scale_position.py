@@ -325,14 +325,15 @@ def scale_y_log10(name=None, *,
                               position=position,
                               )
 
+
 def scale_x_log2(name=None, *,
-                  breaks=None, labels=None,
-                  limits=None,
-                  expand=None,
-                  na_value=None,
-                  format=None,
-                  position=None
-                  ):
+                 breaks=None, labels=None,
+                 limits=None,
+                 expand=None,
+                 na_value=None,
+                 format=None,
+                 position=None
+                 ):
     """
     Continuous position scale x where trans='log2'.
 
@@ -398,13 +399,13 @@ def scale_x_log2(name=None, *,
 
 
 def scale_y_log2(name=None, *,
-                  breaks=None, labels=None,
-                  limits=None,
-                  expand=None,
-                  na_value=None,
-                  format=None,
-                  position=None
-                  ):
+                 breaks=None, labels=None,
+                 limits=None,
+                 expand=None,
+                 na_value=None,
+                 format=None,
+                 position=None
+                 ):
     """
     Continuous position scales y where trans='log2'.
 
