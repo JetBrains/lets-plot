@@ -113,4 +113,3 @@ class SupPlotsSpec(FeatureSpec):
         """
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
-
