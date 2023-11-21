@@ -3269,13 +3269,17 @@ def _scale(aesthetic, *,
             args['labels'] = values
         else:
             new_labels = []
+            new_breaks = []
+            breaks_without_label = []
             for break_value in breaks:
                 index = None if break_value not in keys else keys.index(break_value)
                 if index is not None and index < len(values):
                     new_labels.append(values[index])
+                    new_breaks.append(break_value)
                 else:
-                    new_labels.append('')
+                    breaks_without_label.append(break_value)
             args['labels'] = new_labels
+            args['breaks'] = new_breaks + breaks_without_label
 
     specs = []
     if isinstance(aesthetic, list):
