@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import io
 import json
 
 __all__ = ['aes', 'layer']
@@ -473,117 +474,76 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path):
-        """
-        Save a plot in SVG format.
+    def _to_svg(self, path):
+        if not isinstance(self, PlotSpec):
+            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
 
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 13
+        from .. import _kbridge as kbr
 
-            import numpy as np
-            import io
-            import os
-            from lets_plot import *
-            from IPython import display
-            LetsPlot.setup_html()
-            n = 60
-            np.random.seed(42)
-            x = np.random.choice(list('abcde'), size=n)
-            y = np.random.normal(size=n)
-            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
-            file_like = io.BytesIO()
-            p.to_svg(file_like)
-            display.SVG(file_like.getvalue())
-        """
-        from ..frontend_context._configuration import to_svg
-        to_svg(self, path)
+        svg = kbr._generate_svg(self.as_dict())
+        if isinstance(path, str):
+            with io.open(path, mode="w", encoding="utf-8") as f:
+                f.write(svg)
+        else:
+            path.write(svg.encode())
 
-    def to_html(self, path, iframe: bool):
-        """
-        Save a plot in HTML format.
+    def _to_html(self, path, iframe: bool):
+        if iframe is None:
+            iframe = False
+        if not isinstance(self, PlotSpec):
+            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
 
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 4
+        from .. import _kbridge as kbr
 
-            import numpy as np
-            import io
-            from lets_plot import *
-            LetsPlot.setup_html()
-            n = 60
-            np.random.seed(42)
-            x = np.random.choice(list('abcde'), size=n)
-            y = np.random.normal(size=n)
-            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
-                geom_jitter()
-            file_like = io.BytesIO()
-            p.to_html(file_like)
-            with open("out.html", "wb") as f:
-                f.write(file_like.getbuffer())
-        """
-        from ..frontend_context._configuration import to_html
-        to_html(self, path, iframe)
+        html_page = kbr._generate_static_html_page(self.as_dict(), iframe)
+        if isinstance(path, str):
+            with io.open(path, mode="w", encoding="utf-8") as f:
+                f.write(html_page)
+        else:
+            path.write(html_page.encode())
 
-    def to_png(self, path, scale: float):
-        """
-        Save a plot in PNG format.
+    def _to_png(self, path, scale: float):
+        if scale is None:
+            scale = 2.0
+        if not isinstance(self, PlotSpec):
+            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
 
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 12
+        try:
+            import cairosvg
+        except ImportError:
+            import sys
+            print("\n"
+                  "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
+                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+            return None
 
-            import numpy as np
-            import io
-            from lets_plot import *
-            LetsPlot.setup_html()
-            n = 60
-            np.random.seed(42)
-            x = np.random.choice(list('abcde'), size=n)
-            y = np.random.normal(size=n)
-            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
-                geom_jitter()
-            file_like = io.BytesIO()
-            p.to_png(file_like)
-            with open("out.html", "wb") as f:
-                f.write(file_like.getbuffer())
-        """
-        from ..frontend_context._configuration import to_png
-        to_png(self, path, scale)
+        from .. import _kbridge
+        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+        svg = _kbridge._generate_svg(self.as_dict(), use_css_pixelated_image_rendering=False)
+        cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
 
-    def to_pdf(self, path, scale: float):
-        """
-        Save a plot in PDF format.
+    def _to_pdf(self, path, scale: float):
+        if scale is None:
+            scale = 2.0
+        if not isinstance(self, PlotSpec):
+            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
 
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 12
+        try:
+            import cairosvg
+        except ImportError:
+            import sys
+            print("\n"
+                  "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
+                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+            return None
 
-            import numpy as np
-            import io
-            from lets_plot import *
-            LetsPlot.setup_html()
-            n = 60
-            np.random.seed(42)
-            x = np.random.choice(list('abcde'), size=n)
-            y = np.random.normal(size=n)
-            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \
-                geom_jitter()
-            file_like = io.BytesIO()
-            p.to_pdf(file_like)
-            with open("out.html", "wb") as f:
-                f.write(file_like.getbuffer())
-        """
-        from ..frontend_context._configuration import to_pdf
-        to_pdf(self, path, scale)
+        from .. import _kbridge
+        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+        svg = _kbridge._generate_svg(self.as_dict(), use_css_pixelated_image_rendering=False)
+        cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
+
 
 class LayerSpec(FeatureSpec):
     """
