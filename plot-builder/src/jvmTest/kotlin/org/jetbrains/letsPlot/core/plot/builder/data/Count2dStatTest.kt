@@ -20,7 +20,7 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT)
+            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
 
         assertThat(statDf.rowCount()).isZero()
     }
@@ -34,7 +34,7 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT)
+            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
 
         assertThat(statDf[Stats.X]).containsExactly("0")
         assertThat(statDf[Stats.Y]).containsExactly("0")
@@ -42,6 +42,8 @@ class Count2dStatTest {
         assertThat(statDf[Stats.COUNT]).containsExactly(1.0)
         assertThat(statDf[Stats.PROP]).containsExactly(1.0)
         assertThat(statDf[Stats.PROPPCT]).containsExactly(100.0)
+        assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
+        assertThat(statDf[Stats.SUMPCT]).containsExactly(100.0)
     }
 
     @Test
@@ -55,6 +57,7 @@ class Count2dStatTest {
         assertThat(statDf[Stats.SUM]).containsExactly(1.0, 1.0)
         assertThat(statDf[Stats.COUNT]).containsExactly(1.0, 1.0)
         assertThat(statDf[Stats.PROP]).containsExactly(1.0, 1.0)
+        assertThat(statDf[Stats.SUMPROP]).containsExactly(0.5, 0.5)
     }
 
     @Test
@@ -68,6 +71,7 @@ class Count2dStatTest {
         assertThat(statDf[Stats.SUM]).containsExactly(2.0)
         assertThat(statDf[Stats.COUNT]).containsExactly(2.0)
         assertThat(statDf[Stats.PROP]).containsExactly(1.0)
+        assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
     }
 
     @Test
@@ -82,6 +86,7 @@ class Count2dStatTest {
         assertThat(statDf[Stats.SUM]).containsExactly(4.0)
         assertThat(statDf[Stats.COUNT]).containsExactly(4.0)
         assertThat(statDf[Stats.PROP]).containsExactly(1.0)
+        assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
     }
 
     @Test
@@ -98,6 +103,7 @@ class Count2dStatTest {
         assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
         assertThat(statDf[Stats.COUNT]).containsExactly(1.0, 3.0)
         assertThat(statDf[Stats.PROP]).containsExactly(0.25, 0.75)
+        assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0, 1.0)
     }
 
     @Test
@@ -113,6 +119,7 @@ class Count2dStatTest {
             assertThat(statDf[Stats.SUM]).containsExactly(4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(4.0)
             assertThat(statDf[Stats.PROP]).containsExactly(1.0)
+            assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
         }
 
         dataProcessor.groupingVarName = "g"
@@ -120,6 +127,7 @@ class Count2dStatTest {
             assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(1.0, 3.0)
             assertThat(statDf[Stats.PROP]).containsExactly(0.25, 0.75)
+            assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0, 1.0)
         }
     }
 }
