@@ -31,8 +31,10 @@ internal object TooltipFormatting {
 
     fun createFormatter(variable: DataFrame.Variable): (Any) -> String {
         return when (variable) {
-            Stats.PROP -> StringFormat.forOneArg(".2f", formatFor = variable.name)::format
-            Stats.PROPPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name)::format
+            Stats.PROP,
+            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name)::format
+            Stats.PROPPCT,
+            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name)::format
             else -> { value -> value.toString() }
         }
     }
