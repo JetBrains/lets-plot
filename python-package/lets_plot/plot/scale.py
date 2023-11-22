@@ -172,7 +172,7 @@ def scale_manual(aesthetic, values, *,
             base_order = breaks if limits is None else limits
             new_values = [values[break_value] for break_value in base_order if break_value in values]
             if new_values:
-                no_match_values = [item for item in values.values() if item not in new_values]
+                no_match_values = list(set(values.values()) - set(new_values))  # doesn't preserve order
                 values = new_values + no_match_values
             else:
                 values = None
@@ -3316,7 +3316,7 @@ def _scale(aesthetic, *,
                     new_labels.append(labels[break_value])
                     new_breaks.append(break_value)
 
-            breaks_without_label = [item for item in breaks if item not in new_breaks]
+            breaks_without_label = list(set(breaks) - set(new_breaks))  # doesn't preserve order
             args['breaks'] = new_breaks + breaks_without_label
             args['labels'] = new_labels
 
