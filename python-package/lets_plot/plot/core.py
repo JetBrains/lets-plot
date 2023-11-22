@@ -474,75 +474,148 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def _to_svg(self, path):
-        if not isinstance(self, PlotSpec):
-            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
+    def to_svg(self, path):
+        """
+        Write a plot to a file or to a file-like object in SVG format.
 
-        from .. import _kbridge as kbr
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the SVG image is written to a file with that name.
 
-        svg = kbr._generate_svg(self.as_dict())
-        if isinstance(path, str):
-            with io.open(path, mode="w", encoding="utf-8") as f:
-                f.write(svg)
-        else:
-            path.write(svg.encode())
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 9
 
-    def _to_html(self, path, iframe: bool):
-        if iframe is None:
-            iframe = False
-        if not isinstance(self, PlotSpec):
-            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
+            import numpy as np
+            import io
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_svg(file_like)
+            display.SVG(file_like.getvalue())
+        """
+        _to_svg(self, path)
 
-        from .. import _kbridge as kbr
+    def to_html(self, path, iframe: bool = None):
+        """
+        Write a plot to a file or to a file-like object in HTML format.
 
-        html_page = kbr._generate_static_html_page(self.as_dict(), iframe)
-        if isinstance(path, str):
-            with io.open(path, mode="w", encoding="utf-8") as f:
-                f.write(html_page)
-        else:
-            path.write(html_page.encode())
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the HTML page is written to a file with that name.
+        iframe : bool, default=False
+            Whether to wrap HTML page into a iFrame.
 
-    def _to_png(self, path, scale: float):
-        if scale is None:
-            scale = 2.0
-        if not isinstance(self, PlotSpec):
-            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8
 
-        try:
-            import cairosvg
-        except ImportError:
-            import sys
-            print("\n"
-                  "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
-                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
-                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-            return None
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_html(file_like)
+        """
+        _to_html(self, path, iframe)
 
-        from .. import _kbridge
-        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-        svg = _kbridge._generate_svg(self.as_dict(), use_css_pixelated_image_rendering=False)
-        cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
+    def to_png(self, path, scale: float = None):
+        """
+        Write a plot to a file or to a file-like object in PNG format.
 
-    def _to_pdf(self, path, scale: float):
-        if scale is None:
-            scale = 2.0
-        if not isinstance(self, PlotSpec):
-            raise ValueError("PlotSpec expected but was: {}".format(type(self)))
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the PNG image is written to a file with that name.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
 
-        try:
-            import cairosvg
-        except ImportError:
-            import sys
-            print("\n"
-                  "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
-                  "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
-                  "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-            return None
+        Notes
+        -----
+        Export to PNG file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
 
-        from .. import _kbridge
-        # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-        svg = _kbridge._generate_svg(self.as_dict(), use_css_pixelated_image_rendering=False)
-        cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 9
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_png(file_like)
+            display.Image(file_like.getvalue())
+        """
+        _to_png(self, path, scale)
+
+    def to_pdf(self, path, scale: float = None):
+        """
+        Write a plot to a file or to a file-like object in PDF format.
+
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the PDF is written to a file with that name.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
+
+        Notes
+        -----
+        Export to PDF file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 13
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_pdf(file_like)
+        """
+        _to_pdf(self, path, scale)
 
 
 class LayerSpec(FeatureSpec):
@@ -692,3 +765,68 @@ def _theme_dicts_merge(x, y):
     overlapping_keys = x.keys() & y.keys()
     z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
     return {**x, **y, **z}
+
+
+def _to_svg(spec, path):
+    from .. import _kbridge as kbr
+
+    svg = kbr._generate_svg(spec.as_dict())
+    if isinstance(path, str):
+        with io.open(path, mode="w", encoding="utf-8") as f:
+            f.write(svg)
+    else:
+        path.write(svg.encode())
+
+
+def _to_html(spec, path, iframe: bool):
+    if iframe is None:
+        iframe = False
+
+    from .. import _kbridge as kbr
+    html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
+
+    if isinstance(path, str):
+        with io.open(path, mode="w", encoding="utf-8") as f:
+            f.write(html_page)
+    else:
+        path.write(html_page.encode())
+
+
+def _to_png(spec, path, scale: float):
+    if scale is None:
+        scale = 2.0
+
+    try:
+        import cairosvg
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+    cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
+
+
+def _to_pdf(spec, path, scale: float):
+    if scale is None:
+        scale = 2.0
+
+    try:
+        import cairosvg
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+    cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)

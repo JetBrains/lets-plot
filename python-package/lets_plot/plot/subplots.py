@@ -113,3 +113,161 @@ class SupPlotsSpec(FeatureSpec):
         """
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
+
+    def to_svg(self, path):
+        """
+        Write all plots currently in this 'bunch' to a file or file-like object in SVG format.
+
+        Parameters
+        ----------
+        self : `SupPlotsSpec`
+           Subplots specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the SVG image is written to a file with that name.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 13
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_svg(file_like)
+            display.SVG(file_like.getvalue())
+        """
+        from ..plot.core import _to_svg
+        _to_svg(self, path)
+
+    def to_html(self, path, iframe: bool = None):
+        """
+        Write all plots currently in this 'bunch' to a file or file-like object in HTML format.
+
+        Parameters
+        ----------
+        self : `SupPlotsSpec`
+            Subplots specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the HTML page is written to a file with that name.
+        iframe : bool, default=False
+            Whether to wrap HTML page into a iFrame.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 12
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_html(file_like)
+        """
+        from ..plot.core import _to_html
+        _to_html(self, path, iframe)
+
+    def to_png(self, path, scale=None):
+        """
+        Write all plots currently in this 'bunch' to a file or file-like object in PNG format.
+
+        Parameters
+        ----------
+        self : `SupPlotsSpec`
+            Subplots specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the PNG image is written to a file with that name.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
+
+        Notes
+        -----
+        Export to PNG file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 13
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_png(file_like)
+            display.Image(file_like.getvalue())
+        """
+        from ..plot.core import _to_png
+        _to_png(self, path, scale)
+
+    def to_pdf(self, path, scale=None):
+        """
+        Write all plots currently in this 'bunch' to a file or file-like object in PDF format.
+
+        Parameters
+        ----------
+        self : `SupPlotsSpec`
+            Subplots specification to export.
+        path : str, file-like object
+            String or file-like object implementing a binary write() function.
+            When path is a string, the PDF is written to a file with that name.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
+
+        Notes
+        -----
+        Export to PDF file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 12
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_pdf(file_like)
+        """
+        from ..plot.core import _to_pdf
+        _to_pdf(self, path, scale)
