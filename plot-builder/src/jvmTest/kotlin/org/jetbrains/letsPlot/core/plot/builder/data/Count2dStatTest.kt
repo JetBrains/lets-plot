@@ -20,7 +20,7 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT)
+            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
 
         assertThat(statDf.rowCount()).isZero()
     }
@@ -34,7 +34,7 @@ class Count2dStatTest {
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT)
+            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
 
         assertThat(statDf[Stats.X]).containsExactly("0")
         assertThat(statDf[Stats.Y]).containsExactly("0")
