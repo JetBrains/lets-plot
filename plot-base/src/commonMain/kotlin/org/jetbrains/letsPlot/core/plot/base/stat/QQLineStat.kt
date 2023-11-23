@@ -50,15 +50,15 @@ class QQLineStat(
             QQStatUtil.getEstimatedQuantile(sortedSample, lineQuantiles.first),
             QQStatUtil.getEstimatedQuantile(sortedSample, lineQuantiles.second)
         )
-        val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
+        val quantileFunction = QQStatUtil.getQuantileFunction(distribution, distributionParameters)
         // Use min/max to avoid an infinity
         val quantilesTheoretical = Pair(
-            dist.inverseCumulativeProbability(max(0.5 / sortedSample.size, lineQuantiles.first)),
-            dist.inverseCumulativeProbability(min(1.0 - 0.5 / sortedSample.size, lineQuantiles.second))
+            quantileFunction(max(0.5 / sortedSample.size, lineQuantiles.first)),
+            quantileFunction(min(1.0 - 0.5 / sortedSample.size, lineQuantiles.second))
         )
         val endpointsTheoretical = listOf(
-            dist.inverseCumulativeProbability(0.5 / sortedSample.size),
-            dist.inverseCumulativeProbability(1.0 - 0.5 / sortedSample.size)
+            quantileFunction(0.5 / sortedSample.size),
+            quantileFunction(1.0 - 0.5 / sortedSample.size)
         )
         if (quantilesTheoretical.first == quantilesTheoretical.second) {
             return mutableMapOf(

@@ -5,40 +5,38 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.*
+import org.jetbrains.letsPlot.core.stat.*
 import kotlin.math.*
 
 object QQStatUtil {
-    fun getDistribution(
+    fun getQuantileFunction(
         distribution: QQStat.Distribution,
         distributionParameters: List<Double>
-    ): AbstractRealDistribution {
+    ): (Double) -> Double {
         return when (distribution) {
             QQStat.Distribution.NORM -> {
                 val mean = distributionParameters.getOrNull(0) ?: DEF_NORMAL_MEAN
                 val standardDeviation = distributionParameters.getOrNull(1) ?: DEF_NORMAL_STD
-                NormalDistribution(mean, standardDeviation)
+                normalQuantile(mean, standardDeviation)
             }
             QQStat.Distribution.UNIFORM -> {
                 val a = distributionParameters.getOrNull(0) ?: DEF_UNIFORM_A
                 val b = distributionParameters.getOrNull(1) ?: DEF_UNIFORM_B
-                UniformDistribution(a, b)
+                uniformQuantile(a, b)
             }
-            QQStat.Distribution.T -> TDistribution(
-                distributionParameters.getOrNull(0) ?: DEF_T_DEGREES_OF_FREEDOM
-            )
+            QQStat.Distribution.T -> tQuantile(distributionParameters.getOrNull(0) ?: DEF_T_DEGREES_OF_FREEDOM)
             QQStat.Distribution.GAMMA -> {
                 val alpha = distributionParameters.getOrNull(0) ?: DEF_GAMMA_ALPHA
                 val beta = distributionParameters.getOrNull(1) ?: DEF_GAMMA_BETA
-                GammaDistribution(alpha, beta)
+                gammaQuantile(alpha, beta)
             }
             QQStat.Distribution.EXP -> {
                 val lambda = distributionParameters.getOrNull(0) ?: DEF_EXP_LAMBDA
-                GammaDistribution(1.0, lambda)
+                gammaQuantile(1.0, lambda)
             }
             QQStat.Distribution.CHI2 -> {
                 val k = distributionParameters.getOrNull(0) ?: DEF_CHI2_K
-                GammaDistribution(k / 2.0, 0.5)
+                gammaQuantile(k / 2.0, 0.5)
             }
         }
     }
@@ -71,14 +69,4 @@ object QQStatUtil {
 
         return { x -> slope * x + intercept }
     }
-
-    private const val DEF_NORMAL_MEAN = 0.0
-    private const val DEF_NORMAL_STD = 1.0
-    private const val DEF_UNIFORM_A = 0.0
-    private const val DEF_UNIFORM_B = 1.0
-    private const val DEF_T_DEGREES_OF_FREEDOM = 1.0
-    private const val DEF_GAMMA_ALPHA = 1.0
-    private const val DEF_GAMMA_BETA = 1.0
-    private const val DEF_EXP_LAMBDA = 1.0
-    private const val DEF_CHI2_K = 1.0
 }

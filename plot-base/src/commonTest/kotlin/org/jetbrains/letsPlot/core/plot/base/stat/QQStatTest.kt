@@ -23,9 +23,9 @@ class QQStatTest : BaseStatTest() {
         val stat = Stats.qq()
         val statDf = stat.apply(df, statContext(df))
 
-        val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
+        val quantileFunction = QQStatUtil.getQuantileFunction(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
         checkStatVarValues(statDf, Stats.SAMPLE, listOf(sampleValue))
-        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(dist.inverseCumulativeProbability(0.5)))
+        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(quantileFunction(0.5)))
     }
 
     @Test
@@ -49,11 +49,11 @@ class QQStatTest : BaseStatTest() {
         val stat = Stats.qq()
         val statDf = stat.apply(df, statContext(df))
 
-        val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
+        val quantileFunction = QQStatUtil.getQuantileFunction(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
         checkStatVarValues(statDf, Stats.SAMPLE, listOf(-1.0, 1.0))
         checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
-            dist.inverseCumulativeProbability(0.25),
-            dist.inverseCumulativeProbability(0.75),
+            quantileFunction(0.25),
+            quantileFunction(0.75),
         ))
     }
 
@@ -71,11 +71,11 @@ class QQStatTest : BaseStatTest() {
         val stat = Stats.qqline()
         val statDf = stat.apply(df, statContext(df))
 
-        val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
+        val quantileFunction = QQStatUtil.getQuantileFunction(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
         checkStatVarValues(statDf, Stats.SAMPLE, listOf(sampleValue, sampleValue))
         checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
-            dist.inverseCumulativeProbability(0.5),
-            dist.inverseCumulativeProbability(0.5),
+            quantileFunction(0.5),
+            quantileFunction(0.5),
         ))
     }
 
@@ -101,11 +101,11 @@ class QQStatTest : BaseStatTest() {
         val stat = Stats.qqline()
         val statDf = stat.apply(df, statContext(df))
 
-        val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
+        val quantileFunction = QQStatUtil.getQuantileFunction(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
         checkStatVarValues(statDf, Stats.SAMPLE, listOf(0.0, 0.0))
         checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
-            dist.inverseCumulativeProbability(0.25),
-            dist.inverseCumulativeProbability(0.75)
+            quantileFunction(0.25),
+            quantileFunction(0.75)
         ))
     }
 
