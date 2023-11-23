@@ -91,6 +91,12 @@ def test_scale_labels_dict_no_matches_with_specified_breaks():
     assert as_dict['labels'] == []
 
 
+def test_scale_breaks_dict():
+    spec = gg.scale_x_discrete(breaks=dict(A="a", B="b", C="c"))
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['a', 'b', 'c']
+    assert as_dict['labels'] == ['A', 'B', 'C']
+
 # Use dictionary in scale_manual(values)
 
 def test_scale_manual_values_dict():

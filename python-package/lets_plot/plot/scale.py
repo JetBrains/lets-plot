@@ -170,6 +170,8 @@ def scale_manual(aesthetic, values, *,
             values = list(values.values())
         else:
             base_order = breaks if limits is None else limits
+            if isinstance(base_order, dict):
+                base_order = list(base_order.values())
             new_values = [values[break_value] for break_value in base_order if break_value in values]
             if new_values:
                 no_match_values = list(set(values.values()) - set(new_values))  # doesn't preserve order
@@ -3302,6 +3304,13 @@ def _scale(aesthetic, *,
     # flatten the 'other' sub-dictionary
     args = locals().copy()
     args.pop('other')
+
+    # 'breaks' - dict of labels as keys and breaks as values
+    if isinstance(breaks, dict):
+        if labels is None:
+            args['labels'] = list(breaks.keys())
+        breaks = list(breaks.values())
+        args['breaks'] = breaks
 
     # 'labels' - dict of breaks as keys and labels as values
     if isinstance(labels, dict):
