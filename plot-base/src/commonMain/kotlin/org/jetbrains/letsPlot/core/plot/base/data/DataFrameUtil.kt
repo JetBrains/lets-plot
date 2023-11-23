@@ -29,11 +29,7 @@ object DataFrameUtil {
         transformVar: DataFrame.Variable,
         transform: Transform
     ): DataFrame {
-        val transformed = ScaleUtil.applyTransform(
-            // todo to avoid error: value is not in the domain
-            data[variable].map { value -> value.takeIf { it in data.distinctValues(variable) } },
-            transform
-        )
+        val transformed = ScaleUtil.applyTransform(data[variable], transform)
         return data.builder()
             .putNumeric(transformVar, transformed)
             .build()

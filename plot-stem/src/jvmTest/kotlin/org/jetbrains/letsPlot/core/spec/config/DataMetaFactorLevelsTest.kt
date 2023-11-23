@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.*
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
@@ -100,14 +101,14 @@ class DataMetaFactorLevelsTest {
             seriesAnnotations = seriesAnnotationsSpec(
                 mapOf(
                     "name" to listOf("c", "b", "a"),
-                    //"c" to listOf(2.0, 3.0, 1.0)
+                    "c" to listOf(2.0, 3.0, 1.0)
                 )
             ),
             mappingAnnotations = null
         )
         transformToClientPlotConfig(spec)
             .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-        //.assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
+            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0)) // not to apply levels to non-discrete
     }
 
     private fun checkWithMappingAndSeriesAnnotations(
@@ -126,8 +127,8 @@ class DataMetaFactorLevelsTest {
             mappingStorage
         )
         transformToClientPlotConfig(spec)
-            //.assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            // .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
+            .assertDistinctValues("name", listOf("c", "b", "a", "d"))
+            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
             .assertDistinctValues("x.name", listOf("c", "b", "a", "d"))
             .assertDistinctValues("fill.c", listOf(2.0, 3.0, 1.0, 4.0))
     }
@@ -164,6 +165,27 @@ class DataMetaFactorLevelsTest {
             dataStorage = Storage.LAYER,
             mappingStorage = Storage.PLOT
         )
+    }
+
+    @Test
+    fun test_series_annotations() {
+        val spec = """{
+            'kind': 'plot',
+            'data': {'name': ['a', 'b', 'c']},
+            'mapping': {'x': 'name' },
+            'data_meta': {
+                'series_annotations': [
+                    {
+                        'column': 'name', 
+                        'factor_levels': ['a', 'c', 'b']
+                    }
+                ]
+           },
+          'layers': [ { 'geom': 'bar' } ]
+        }""".trimIndent()
+
+        transformToClientPlotConfig(parsePlotSpec(spec))
+            .assertDistinctValues("name", listOf("a", "c", "b"))
     }
 
     companion object {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -49,6 +50,15 @@ open class PlotConfigBackend(
             }
         }
 
+        // match the specified 'factor_levels' to the actual contents of the data set (on combined df before stat)
+        val specifiedFactorLeversByLayers = layerConfigs.map { layerConfig ->
+            prepareLayerFactorLevelsByVariable(
+                layerConfig.combinedData,
+                plotDataMeta = getMap(DATA_META),
+                layerDataMeta = layerConfig.getMap(DATA_META)
+            )
+        }
+
         // replace layer data with data after stat
         layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
             // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
@@ -62,11 +72,12 @@ open class PlotConfigBackend(
         dropUnusedDataBeforeEncoding(layerConfigs)
 
         // Re-create the "natural order" existed before faceting.
-        if (facets.isDefined) {
+        // if (facets.isDefined) {
             // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
-            layerConfigs.forEach { layerConfig ->
+            layerConfigs.forEachIndexed { layerIndex, layerConfig ->
                 val layerData = layerConfig.ownData
-                if (facets.isFacettable(layerData)) {
+                val factorLevels = specifiedFactorLeversByLayers[layerIndex]
+                if (facets.isFacettable(layerData) || factorLevels.isNotEmpty()) {
                     val layerDataMetaUpdated = addFactorLevelsDataMeta(
                         layerData = layerData,
                         layerDataMeta = layerConfig.getMap(DATA_META),
@@ -74,12 +85,13 @@ open class PlotConfigBackend(
                         varBindings = layerConfig.varBindings,
                         transformByAes = transformByAes,
                         orderOptions = layerConfig.orderOptions,
-                        yOrientation = layerConfig.isYOrientation
+                        yOrientation = layerConfig.isYOrientation,
+                        specifiedLayerFactorLevers = factorLevels
                     )
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
-                }
-            }
-        }
+               }
+           }
+        // }
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
@@ -273,6 +285,7 @@ open class PlotConfigBackend(
             transformByAes: Map<Aes<*>, Transform>,
             orderOptions: List<OrderOption>,
             yOrientation: Boolean,
+            specifiedLayerFactorLevers: Map<String, List<Any>>
         ): Map<String, Any> {
 
             // Use "discrete transforms" to re-create the "natural order" existed before faceting.
@@ -304,7 +317,30 @@ open class PlotConfigBackend(
                 levelsByVariable[variable.name] = orderedDistinctValues
             }
 
+            // specified factors
+            levelsByVariable += specifiedLayerFactorLevers
+
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
+        }
+
+        private fun prepareLayerFactorLevelsByVariable(
+            data: DataFrame,
+            plotDataMeta: Map<*, *>,
+            layerDataMeta: Map<*, *>
+        ): Map<String, List<Any>> {
+            val plotFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(plotDataMeta)
+            val layerFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(layerDataMeta)
+            val factorLevelsByVar = (plotFactorLevelsByVar + layerFactorLevelsByVar)
+                .mapKeys { (varName, _) -> data.variables().find { it.name == varName } }
+                .filterNotNullKeys()
+
+            return factorLevelsByVar.map { (variable, levels) ->
+                // append missed values to the tail of specified levels
+                val distinctValues = data.distinctValues(variable)
+                val tail = distinctValues - levels.toSet()
+                val factors = levels + tail
+                variable.name to factors
+            }.toMap()
         }
     }
 }

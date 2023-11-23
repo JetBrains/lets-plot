@@ -173,25 +173,20 @@ internal object DataConfigUtil {
 
             if (clientSide) {
                 val variables = rawCombinedData.variables()
+                val discreteVariables = (variables.filter(rawCombinedData::isDiscrete) + variablesToMarkAsDiscrete).toSet()
                 val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
-                val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
-                    .mapKeys { (varName, _) -> variables.find { it.name == varName } }
-                    .filterNotNullKeys()
 
-                val plotFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(plotDataMeta)
                 val layerFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
-                val factorLevelsByVar = (plotFactorLevelsByVar + layerFactorLevelsByVar)
+                val factorLevelsByVar = layerFactorLevelsByVar
                     .flatMap { (varName, levels) ->
-                        val variablesWithLevels: MutableList<DataFrame.Variable> = combinedMappingOptions
+                        val variable = variables.find { it.name == varName }
+                        val mappedVariables = combinedMappingOptions
                             .filterValues { it == varName }
                             .keys
-                            .mapNotNull { aesName ->
-                                varBindings.find { it.aes.name == aesName }?.variable
-                            }
-                            .toMutableList()
-                        if (variablesWithLevels.isEmpty()) {
-                            variables.find { it.name == varName }?.let { variablesWithLevels += it }
-                        }
+                            .mapNotNull { aesName -> varBindings.find { it.aes.name == aesName }?.variable }
+                        val variablesWithLevels = (mappedVariables + variable)
+                            .filterNotNull()
+                            .filter { it in discreteVariables }
                         variablesWithLevels.map { it to levels }
                     }
                     .toMap()
