@@ -23,7 +23,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
-           'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
+           'geom_freqpoly', 'geom_step', 'geom_rect',
+           'geom_segment', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
            'geom_count']
 
@@ -5697,6 +5698,20 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  arrow=arrow,
                  flat=flat,
                  geodesic=geodesic,
+                 color_by=color_by,
+                 **other_args)
+
+
+def geom_spoke(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               color_by=None, **other_args):
+    return _geom('spoke',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
