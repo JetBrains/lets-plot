@@ -11,7 +11,9 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import kotlin.math.*
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
@@ -22,7 +24,9 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
 
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.angle(), p.radius())) {
@@ -35,6 +39,16 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
                     GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
                     root.add(line)
                 }
+                targetCollector.addPath(
+                    listOf(
+                        coord.toClient(start)!!,
+                        coord.toClient(end)!!
+                    ),
+                    { p.index() },
+                    GeomTargetCollector.TooltipParams(
+                        markerColors = colorsByDataPoint(p)
+                    )
+                )
             }
         }
     }
