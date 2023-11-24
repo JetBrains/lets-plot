@@ -44,9 +44,9 @@ open class GGGridTheme {
 
         private fun theme(name: String?, flavor: String?, plotMargin: Int? = null): Map<String, Any> {
             return HashMap<String, Any>().also { m ->
-                name?.let { m["name"] = name }
-                flavor?.let { m["flavor"] = flavor }
-                plotMargin?.let { m["plot_margin"] = plotMargin }
+                name?.let { m["name"] = it }
+                flavor?.let { m["flavor"] = it }
+                plotMargin?.let { m["plot_margin"] = it }
             }
         }
 

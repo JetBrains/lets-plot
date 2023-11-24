@@ -13,7 +13,7 @@
   - a number or list of one number - the same margin it applied to **all four sides**;
   - a list of two numbers - the first margin applies to the **top and bottom**, the second - to the **left and right**;
   - a list of three numbers -  the first margin applies to the **top**, the second - to the **right and left**,
-  the third - to the bottom;
+  the third - to the **bottom**;
   - a list of four numbers - the margins are applied to the **top, right, bottom and left** in that order.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).

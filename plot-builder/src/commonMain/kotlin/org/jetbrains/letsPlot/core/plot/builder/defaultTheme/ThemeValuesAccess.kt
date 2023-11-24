@@ -120,7 +120,7 @@ internal open class ThemeValuesAccess(
     }
 
     protected fun getMargins(value: Any): Margins {
-        val sidesList: List<Double> = when (value) {
+        val margins: List<Double> = when (value) {
             is Number -> listOf(value.toDouble())
             is List<*> -> {
                 require(value.all { it is Number }) {
@@ -138,41 +138,37 @@ internal open class ThemeValuesAccess(
         val bottom: Double
         val left: Double
 
-        when (sidesList.size) {
+        when (margins.size) {
             1 -> {
-                sidesList.first().let {
-                    top = it
-                    right = it
-                    left = it
-                    bottom = it
-                }
+                val margin = margins.single()
+                top = margin
+                right = margin
+                left = margin
+                bottom = margin
             }
             2 -> {
-                sidesList[0].let {
-                    top = it
-                    bottom = it
-                }
-                sidesList[1].let {
-                    right = it
-                    left = it
-                }
+                val (vMargin, hMargin) = margins
+                top = vMargin
+                bottom = vMargin
+                right = hMargin
+                left = hMargin
             }
             3 -> {
-                top = sidesList[0]
-                sidesList[1].let {
-                    right = it
-                    left = it
-                }
-                bottom = sidesList[2]
+                top = margins[0]
+                right = margins[1]
+                left = margins[1]
+                bottom = margins[2]
             }
             4 -> {
-                top = sidesList[0]
-                right = sidesList[1]
-                bottom = sidesList[2]
-                left = sidesList[3]
+                top = margins[0]
+                right = margins[1]
+                bottom = margins[2]
+                left = margins[3]
             }
             else -> {
-                throw IllegalStateException("There are too many numbers in the list defining the margins: $value.")
+                throw IllegalStateException(
+                    "The margins accept a number or a list of one, two, three or four numbers, but was: $value."
+                )
             }
         }
 
