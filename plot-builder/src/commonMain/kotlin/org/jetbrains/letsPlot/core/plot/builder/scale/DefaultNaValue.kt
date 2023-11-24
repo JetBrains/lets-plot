@@ -32,6 +32,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
@@ -110,6 +111,7 @@ object DefaultNaValue {
         VALUE_MAP.put(HJUST, 0.5)  // 'middle'
         VALUE_MAP.put(VJUST, 0.5)  // 'middle'
         VALUE_MAP.put(ANGLE, 0.0)
+        VALUE_MAP.put(RADIUS, 0.0)
         VALUE_MAP.put(SLICE, 0.0)
         VALUE_MAP.put(EXPLODE, 0.0)
     }

@@ -192,6 +192,10 @@ abstract class DataPointAesthetics {
         return get(Aes.ANGLE)
     }
 
+    fun radius(): Double? {
+        return get(Aes.RADIUS)
+    }
+
     fun slice(): Double? {
         return get(Aes.SLICE)
     }

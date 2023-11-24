@@ -57,6 +57,7 @@ object TransformVar {
     val HJUST = DataFrame.Variable("transform.HJUST", TRANSFORM)
     val VJUST = DataFrame.Variable("transform.VJUST", TRANSFORM)
     val ANGLE = DataFrame.Variable("transform.ANGLE", TRANSFORM)
+    val RADIUS = DataFrame.Variable("transform.RADIUS", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
 
@@ -276,6 +277,10 @@ object TransformVar {
 
         override fun angle(): DataFrame.Variable {
             return ANGLE
+        }
+
+        override fun radius(): DataFrame.Variable {
+            return RADIUS
         }
 
         override fun slice(): DataFrame.Variable {
