@@ -97,6 +97,11 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
                 .updateInLegend(Aes.COLOR, geomTheme.pen())
         }
 
+        private fun spoke(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
+                .update(Aes.LINEWIDTH, 0.5)
+        }
+
         private fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {
             return point(geomTheme)
                 .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
@@ -128,6 +133,8 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
                 GeomKind.LABEL -> text(geomTheme)
 
                 GeomKind.PIE -> pie(geomTheme)
+
+                GeomKind.SPOKE -> spoke(geomTheme)
 
                 GeomKind.LOLLIPOP -> lollipop(geomTheme)
 

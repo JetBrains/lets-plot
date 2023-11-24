@@ -46,6 +46,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.Q_Q_2_LINE] = GeomProvider.qq2line()
         PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
         PROVIDER[GeomKind.RECT] = GeomProvider.rect()
+        PROVIDER[GeomKind.SPOKE] = GeomProvider.spoke()
         PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }

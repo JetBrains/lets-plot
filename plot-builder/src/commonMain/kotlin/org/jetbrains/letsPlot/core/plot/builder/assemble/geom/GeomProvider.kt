@@ -313,6 +313,13 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun spoke(): GeomProvider {
+            return GeomProvider(
+                GeomKind.SPOKE,
+                RasterGeom.HANDLES_GROUPS
+            ) { SpokeGeom() }
+        }
+
         fun text(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TEXT,
