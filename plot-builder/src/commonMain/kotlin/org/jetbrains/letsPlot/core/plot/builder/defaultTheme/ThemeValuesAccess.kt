@@ -119,12 +119,65 @@ internal open class ThemeValuesAccess(
         return TextJustification(hjust, vjust)
     }
 
-    protected fun getMargins(elem: Map<String, Any>): Margins {
-        return Margins(
-            top = getNumber(elem, Elem.Margin.TOP),
-            right = getNumber(elem, Elem.Margin.RIGHT),
-            bottom = getNumber(elem, Elem.Margin.BOTTOM),
-            left = getNumber(elem, Elem.Margin.LEFT),
-        )
+    protected fun getMargins(value: Any): Margins {
+        val sidesList: List<Double> = when (value) {
+            is Number -> listOf(value.toDouble())
+            is List<*> -> {
+                require(value.all { it is Number }) {
+                    "The margins option requires a list of numbers, but was: $value."
+                }
+                value.map { (it as Number).toDouble() }
+            }
+            else -> throw IllegalStateException(
+                "The margins option should be specified using number or list of numbers, but was: $value."
+            )
+        }
+
+        val top: Double
+        val right: Double
+        val bottom: Double
+        val left: Double
+
+        when (sidesList.size) {
+            1 -> {
+                sidesList.first().let {
+                    top = it
+                    right = it
+                    left = it
+                    bottom = it
+                }
+            }
+            2 -> {
+                sidesList[0].let {
+                    top = it
+                    bottom = it
+                }
+                sidesList[1].let {
+                    right = it
+                    left = it
+                }
+            }
+            3 -> {
+                top = sidesList[0]
+                sidesList[1].let {
+                    right = it
+                    left = it
+                }
+                bottom = sidesList[2]
+            }
+            4 -> {
+                top = sidesList[0]
+                right = sidesList[1]
+                bottom = sidesList[2]
+                left = sidesList[3]
+            }
+            else -> {
+                throw IllegalStateException("There are too many numbers in the list defining the margins: $value.")
+            }
+        }
+
+        return Margins(top, right, bottom, left)
     }
+
+    protected fun getTextElemMargins(elem: Map<String, Any>) = getMargins(elem.getValue(Elem.MARGIN))
 }

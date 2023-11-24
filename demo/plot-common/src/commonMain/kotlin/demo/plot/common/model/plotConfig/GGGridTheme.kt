@@ -46,14 +46,7 @@ open class GGGridTheme {
             return HashMap<String, Any>().also { m ->
                 name?.let { m["name"] = name }
                 flavor?.let { m["flavor"] = flavor }
-                plotMargin?.let {
-                    m["plot_margin"] = mapOf(
-                        "t" to plotMargin,
-                        "r" to plotMargin,
-                        "b" to plotMargin,
-                        "l" to plotMargin,
-                    )
-                }
+                plotMargin?.let { m["plot_margin"] = plotMargin }
             }
         }
 

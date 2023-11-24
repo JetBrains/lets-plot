@@ -10,7 +10,6 @@ __all__ = [
     "element_line",
     'element_rect',
     'element_text',
-    'margin',
     'element_geom',
 ]
 
@@ -180,8 +179,14 @@ def theme(*,
         Plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank()` to show nothing.
         Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
-    plot_margin : `margin`
-        Margin around entire plot. See `margin()` for more details.
+    plot_margin : number or list of numbers
+        Margin around entire plot.
+        The margin may be specified using a number or a list of numbers:
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
+        the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -437,8 +442,14 @@ def element_text(
         1 - top-justified
         0.5 - middle-justified
         Can be used with values out of range, but behaviour is not specified.
-    margin : `margin`
-        Margins around the text. See `margin()` for more details.
+    margin : number or list of numbers
+        Margins around the text.
+        The margin may be specified using a number or a list of numbers:
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
+        the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -460,44 +471,6 @@ def element_text(
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
             theme(axis_text=element_text(color='#bdbdbd'))
-
-    """
-    return locals()
-
-
-def margin(t=None, r=None, b=None, l=None) -> dict:
-    """
-    Dimensions of each margin.
-
-    Parameters
-    ----------
-    t : float
-        Top margin.
-    r : float
-        Right margin.
-    b : float
-        Bottom margin.
-    l : float
-        Left margin.
-
-    Returns
-    -------
-    `dict`
-        Margins specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 7
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
 
     """
     return locals()

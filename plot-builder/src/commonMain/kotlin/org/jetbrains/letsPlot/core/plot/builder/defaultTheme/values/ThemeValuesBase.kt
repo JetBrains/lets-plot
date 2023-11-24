@@ -61,10 +61,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
-                Elem.Margin.TOP to 4.0,
-                Elem.Margin.RIGHT to 0.0,
-                Elem.Margin.BOTTOM to 4.0,
-                Elem.Margin.LEFT to 0.0
+                Elem.MARGIN to listOf(4.0, 0.0) // top=bottom=4, right=left=0
             ),
             PLOT_TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_LARGE
@@ -93,13 +90,8 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_TICKS_LENGTH to 4.0,
 
             AXIS_TEXT to mapOf(
-                Elem.Margin.TOP to 3.0,
-                Elem.Margin.RIGHT to 3.0,
-//                Elem.Margin.BOTTOM to 0.0,
-//                Elem.Margin.LEFT to 0.0
-// All around equal default margins because axis text can appear on either side of a plot tile. (See scale x/y "position")
-                Elem.Margin.BOTTOM to 3.0,
-                Elem.Margin.LEFT to 3.0,
+                // All around equal default margins because axis text can appear on either side of a plot tile. (See scale x/y "position")
+                Elem.MARGIN to 3.0,
                 // Currently 'angle' is supported for AXIS_TEXT only: NaN means no rotation.
                 Elem.ANGLE to Double.NaN
             ),
@@ -107,10 +99,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
                 Elem.HJUST to 0.5,
-                Elem.Margin.TOP to 4.0,
-                Elem.Margin.RIGHT to 4.0,
-                Elem.Margin.BOTTOM to 4.0,
-                Elem.Margin.LEFT to 4.0
+                Elem.MARGIN to 4.0
             ),
 
             PANEL_GRID_MINOR to mapOf(
@@ -134,12 +123,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FONT_FACE to FontFace.BOLD,
             ),
 
-            PLOT_MARGIN to mapOf(
-                Elem.Margin.TOP to 0.0,
-                Elem.Margin.RIGHT to 0.0,
-                Elem.Margin.BOTTOM to 0.0,
-                Elem.Margin.LEFT to 0.0
-            ),
+            PLOT_MARGIN to 0.0
         )
     }
 }
