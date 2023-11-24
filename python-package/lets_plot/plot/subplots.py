@@ -11,6 +11,7 @@ from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import FeatureSpecArray
 from lets_plot.plot.core import _specs_to_dict
 from lets_plot.plot.core import _theme_dicts_merge
+from lets_plot.plot.core import _to_svg, _to_html, _to_png, _to_pdf
 
 __all__ = ['SupPlotsSpec']
 
@@ -147,7 +148,6 @@ class SupPlotsSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        from ..plot.core import _to_svg
         _to_svg(self, path)
 
     def to_html(self, path, iframe: bool = None):
@@ -183,7 +183,6 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_html(file_like)
         """
-        from ..plot.core import _to_html
         _to_html(self, path, iframe)
 
     def to_png(self, path, scale=None):
@@ -227,7 +226,6 @@ class SupPlotsSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        from ..plot.core import _to_png
         _to_png(self, path, scale)
 
     def to_pdf(self, path, scale=None):
@@ -269,5 +267,4 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        from ..plot.core import _to_pdf
         _to_pdf(self, path, scale)
