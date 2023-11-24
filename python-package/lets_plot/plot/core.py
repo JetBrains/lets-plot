@@ -483,8 +483,9 @@ class PlotSpec(FeatureSpec):
         self : `PlotSpec`
             Plot specification to export.
         path : str, file-like object
-            String or file-like object implementing a binary write() function.
-            When path is a string, the SVG image is written to a file with that name.
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
 
         Examples
         --------
@@ -514,8 +515,9 @@ class PlotSpec(FeatureSpec):
         self : `PlotSpec`
             Plot specification to export.
         path : str, file-like object
-            String or file-like object implementing a binary write() function.
-            When path is a string, the HTML page is written to a file with that name.
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
         iframe : bool, default=False
             Whether to wrap HTML page into a iFrame.
 
@@ -545,8 +547,9 @@ class PlotSpec(FeatureSpec):
         self : `PlotSpec`
             Plot specification to export.
         path : str, file-like object
-            String or file-like object implementing a binary write() function.
-            When path is a string, the PNG image is written to a file with that name.
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
 
@@ -584,8 +587,9 @@ class PlotSpec(FeatureSpec):
         self : `PlotSpec`
             Plot specification to export.
         path : str, file-like object
-            String or file-like object implementing a binary write() function.
-            When path is a string, the PDF is written to a file with that name.
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
 
