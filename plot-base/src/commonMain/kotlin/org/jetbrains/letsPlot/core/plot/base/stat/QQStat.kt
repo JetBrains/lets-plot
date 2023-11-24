@@ -38,8 +38,8 @@ class QQStat(
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val statSample = sampleSeries.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
         val t = (1..statSample.size).map { (it - 0.5) / statSample.size }
-        val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
-        val statTheoretical = t.map { dist.inverseCumulativeProbability(it) }
+        val quantileFunction = QQStatUtil.getQuantileFunction(distribution, distributionParameters)
+        val statTheoretical = t.map(quantileFunction)
 
         return mutableMapOf(
             Stats.THEORETICAL to statTheoretical,

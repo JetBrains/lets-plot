@@ -28,7 +28,7 @@ import kotlin.jvm.JvmOverloads
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class GammaDistribution
+internal class GammaDistribution
 @JvmOverloads constructor(
     private val alpha: Double,
     private val beta: Double,
