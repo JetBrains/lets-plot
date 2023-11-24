@@ -11,8 +11,9 @@ import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.text.*
 
+// Manually positions text runs along the x-axis, supports super/subscript.
+
 // Limitations:
-// Manually positions text runs along the x-axis with exception for super/subscript.
 // Supports only a single line of text.
 // Does not allow tspan elements to have their own styles.
 internal class TextLine : Region() {
@@ -128,7 +129,6 @@ internal class TextLine : Region() {
     }
 
     private fun rebuild() {
-        // Style
         val texts = content.map(::textRunToTextFx)
 
         val width = texts.sumOf { it.boundsInLocal.width }
@@ -138,7 +138,7 @@ internal class TextLine : Region() {
             else -> 0.0
         }
 
-        // Layout runs
+        // Arrange runs one after another
         var currentRunPosX = x
         texts.forEach { text ->
             text.x = currentRunPosX + dx
