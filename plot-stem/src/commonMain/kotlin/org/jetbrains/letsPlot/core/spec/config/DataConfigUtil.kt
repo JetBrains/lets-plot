@@ -176,8 +176,7 @@ internal object DataConfigUtil {
                 val discreteVariables = (variables.filter(rawCombinedData::isDiscrete) + variablesToMarkAsDiscrete).toSet()
                 val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
 
-                val layerFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
-                val factorLevelsByVar = layerFactorLevelsByVar
+                val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
                     .flatMap { (varName, levels) ->
                         val variable = variables.find { it.name == varName }
                         val mappedVariables = combinedMappingOptions
