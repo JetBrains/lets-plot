@@ -9,11 +9,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
-import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object DemoModelA {
 
@@ -34,9 +34,23 @@ object DemoModelA {
                 face = FontFace.BOLD,
                 size = 20.0,
                 color = Color.RED
-            )
+            ),
+            "EMC2" to TextStyle(FontFamily.HELVETICA.name, face = FontFace.BOLD, size = 22.0, color = Color.BLUE),
+
         )
         svgRoot.children().add(createStyleElement(textStyles))
+
+        svgRoot.children().add(
+            SvgTextElement().apply {
+                addClass("EMC2")
+                transform().set(SvgTransformBuilder().translate(300.0, 150.0).build())
+                addTSpan(SvgTSpanElement("E=mc"))
+                addTSpan(SvgTSpanElement("2").apply {
+                    setAttribute("baseline-shift", "super")
+                    setAttribute("font-size", "75%")
+                })
+            }
+        )
 
         var text = SvgTextElement(30.0, 85.0, "Slim elements")
         text.addClass("TEXT1")
