@@ -25,7 +25,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
-        val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val svgElementHelper = geomHelper.createSvgElementHelper()
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
 
         for (p in aesthetics.dataPoints()) {
@@ -35,14 +36,14 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
                 val start = DoubleVector(x, y)
                 val spoke = Spoke(p.radius()!!, p.angle()!!)
                 val end = getEnd(start, spoke)
-                helper.createLine(start, end, p)?.let { line ->
+                svgElementHelper.createLine(start, end, p)?.let { line ->
                     GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
                     root.add(line)
                 }
                 targetCollector.addPath(
                     listOf(
-                        coord.toClient(start)!!,
-                        coord.toClient(end)!!
+                        geomHelper.toClient(start, p)!!,
+                        geomHelper.toClient(end, p)!!
                     ),
                     { p.index() },
                     GeomTargetCollector.TooltipParams(
