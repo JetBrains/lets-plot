@@ -5,9 +5,9 @@
 
 package demo.common.batik.demoUtils
 
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import demo.common.util.demoUtils.swing.PlotSpecsDemoWindowBase
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension
@@ -20,7 +20,7 @@ class PlotSpecsDemoWindowBatik(
     plotSize: Dimension? = null,
     background: Color = Color.WHITE
 ) : PlotSpecsDemoWindowBase(
-    title,
+    "$title (Batik)",
     specList = specList,
     maxCol = maxCol,
     plotSize = plotSize,
