@@ -10,13 +10,18 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import kotlin.math.*
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = HLineLegendKeyElementFactory(AesScaling::lineWidth)
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

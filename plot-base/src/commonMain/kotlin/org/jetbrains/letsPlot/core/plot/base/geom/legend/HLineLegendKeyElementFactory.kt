@@ -13,12 +13,13 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
-internal class HLineLegendKeyElementFactory :
-    LegendKeyElementFactory {
+internal class HLineLegendKeyElementFactory(
+    private val strokeScaler: (DataPointAesthetics) -> Double
+) : LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val line = SvgLineElement(0.0, size.y / 2, size.x, size.y / 2)
-        GeomHelper.decorate(line, p)
+        GeomHelper.decorate(line, p, strokeScaler = strokeScaler)
         val g = SvgGElement()
         g.children().add(line)
         return g
