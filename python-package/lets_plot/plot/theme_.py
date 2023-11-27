@@ -10,6 +10,7 @@ __all__ = [
     "element_line",
     'element_rect',
     'element_text',
+    'margin',
     'element_geom',
 ]
 
@@ -474,6 +475,21 @@ def element_text(
 
     """
     return locals()
+
+
+def margin(t=None, r=None, b=None, l=None):
+    """
+    Function `margin()` is deprecated.
+    Please, use a number or list of numbers to specify margins (see description of the parameter used).
+
+    """
+    print("WARN: The margin() is deprecated and will be removed in future releases.\n"
+          "      Please, use a number or list of numbers to specify margins (see description of the parameter used).")
+
+    margins = [t, r, b, l]
+    if None in margins:
+        print("WARN: For unspecified sides, the margin will be set to 0.")
+    return [0 if v is None else v for v in margins]
 
 
 def element_geom(
