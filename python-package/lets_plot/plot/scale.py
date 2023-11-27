@@ -35,8 +35,9 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         Are the shapes solid (default) True, or hollow (False).
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -116,8 +117,9 @@ def scale_manual(aesthetic, values, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -208,8 +210,9 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -279,8 +282,9 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -350,8 +354,9 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -421,8 +426,9 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -492,8 +498,9 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -564,8 +571,9 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -640,8 +648,9 @@ def scale_continuous(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -720,8 +729,9 @@ def scale_gradient(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -797,8 +807,9 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -873,8 +884,9 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -947,8 +959,9 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1023,8 +1036,9 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1098,8 +1112,9 @@ def scale_gradient2(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1182,8 +1197,9 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1263,8 +1279,9 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1341,8 +1358,9 @@ def scale_gradientn(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1419,8 +1437,9 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1494,8 +1513,9 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1578,8 +1598,9 @@ def scale_hue(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1664,8 +1685,9 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1746,8 +1768,9 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1827,8 +1850,9 @@ def scale_discrete(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1904,8 +1928,9 @@ def scale_fill_discrete(direction=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1978,8 +2003,9 @@ def scale_color_discrete(direction=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2055,8 +2081,9 @@ def scale_grey(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2136,8 +2163,9 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2212,8 +2240,9 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2316,8 +2345,9 @@ def scale_brewer(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2415,8 +2445,9 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2511,8 +2542,9 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2624,8 +2656,9 @@ def scale_viridis(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2729,8 +2762,9 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2829,8 +2863,9 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2907,8 +2942,9 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -2977,8 +3013,9 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -3048,8 +3085,9 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -3124,8 +3162,9 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -3194,8 +3233,9 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -3271,8 +3311,9 @@ def _scale(aesthetic, *,
         The name(s) of the aesthetic(s) that this scale works with.
     name : str
         The name of the scale - used as the axis label or the legend title
-    breaks : list
-        A numeric vector of positions (of ticks)
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.

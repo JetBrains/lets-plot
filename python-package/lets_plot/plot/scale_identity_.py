@@ -33,8 +33,9 @@ def scale_identity(aesthetic, *,
         The name(s) of the aesthetic(s) that this scale works with.
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -101,8 +102,9 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -170,8 +172,9 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -239,8 +242,9 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -308,8 +312,9 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -380,8 +385,9 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -446,8 +452,9 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -512,8 +519,9 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -576,8 +584,9 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
+    breaks : list or dict
+        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
+        to display on the corresponding breaks.
     labels : list of str or dict
         A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
