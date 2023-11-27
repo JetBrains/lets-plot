@@ -30,6 +30,11 @@ class Spoke {
                 'angle': 'angle',
                 'radius': 'radius'
               },
+              'coord': {
+                'name': 'fixed',
+                'ratio': 1.0,
+                'flip': true
+              },
               'layers': [
                 {
                   'geom': 'spoke',

@@ -35,27 +35,26 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            if (SeriesUtil.allFinite(p.x(), p.y(), p.angle(), p.radius())) {
-                val x = p.x()!!
-                val y = p.y()!!
-                val start = DoubleVector(x, y)
-                val spoke = Spoke(p.radius()!!, p.angle()!!)
-                val end = getEnd(start, spoke)
-                svgElementHelper.createLine(start, end, p)?.let { line ->
-                    GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
-                    root.add(line)
-                }
-                targetCollector.addPath(
-                    listOf(
-                        geomHelper.toClient(start, p)!!,
-                        geomHelper.toClient(end, p)!!
-                    ),
-                    { p.index() },
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
-                    )
-                )
+            val x = p.x() ?: continue
+            val y = p.y() ?: continue
+            val start = DoubleVector(x, y)
+            val radius = p.radius() ?: continue
+            val angle = p.angle() ?: continue
+            val spoke = Spoke(radius, angle)
+            val end = getEnd(start, spoke)
+            svgElementHelper.createLine(start, end, p)?.let { line ->
+                GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
+                root.add(line)
             }
+            val clientStart = geomHelper.toClient(start, p) ?: continue
+            val clientEnd = geomHelper.toClient(end, p) ?: continue
+            targetCollector.addPath(
+                listOf(clientStart, clientEnd),
+                { p.index() },
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(p)
+                )
+            )
         }
     }
 
