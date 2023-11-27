@@ -18,7 +18,7 @@ class SvgViewerDemoWindowJfx(
     private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 2,
 ) : SvgViewerDemoWindowBase(
-    title,
+    "$title (JFX)",
     svgRoots = svgRoots,
     maxCol = maxCol,
 ) {
