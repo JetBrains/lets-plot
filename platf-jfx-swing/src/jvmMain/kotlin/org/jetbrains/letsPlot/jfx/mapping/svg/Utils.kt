@@ -15,16 +15,10 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.*
-import javafx.scene.text.Text
 import org.jetbrains.letsPlot.commons.event.Button
 import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.jfx.mapping.svg.attr.*
-import org.jetbrains.letsPlot.jfx.mapping.svg.attr.SvgAttrMapping
-import org.jetbrains.letsPlot.jfx.mapping.svg.attr.SvgCircleAttrMapping
-import org.jetbrains.letsPlot.jfx.mapping.svg.attr.SvgEllipseAttrMapping
-import org.jetbrains.letsPlot.jfx.mapping.svg.attr.SvgGAttrMapping
-import org.jetbrains.letsPlot.jfx.mapping.svg.attr.SvgImageAttrMapping
 import kotlin.reflect.KClass
 
 
@@ -37,7 +31,7 @@ private val ATTR_MAPPINGS: Map<KClass<out Node>, SvgAttrMapping<Node>> = mapOf(
     Line::class to (SvgLineAttrMapping as SvgAttrMapping<Node>),
     Ellipse::class to (SvgEllipseAttrMapping as SvgAttrMapping<Node>),
     Circle::class to (SvgCircleAttrMapping as SvgAttrMapping<Node>),
-    Text::class to (SvgTextElementAttrMapping as SvgAttrMapping<Node>),
+    TextLine::class to (SvgTextElementAttrMapping as SvgAttrMapping<Node>),
     SVGPath::class to (SvgPathAttrMapping as SvgAttrMapping<Node>),
     ImageView::class to (SvgImageAttrMapping as SvgAttrMapping<Node>)
 )
@@ -85,7 +79,7 @@ internal object Utils {
             is SvgEllipseElement -> Ellipse()
             is SvgCircleElement -> Circle()
             is SvgRectElement -> Rectangle()
-            is SvgTextElement -> Text()
+            is SvgTextElement -> TextLine()
             is SvgPathElement -> SVGPath()
             is SvgLineElement -> Line()
             is SvgSvgElement -> Rectangle()
