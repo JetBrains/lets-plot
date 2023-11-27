@@ -46,11 +46,11 @@ internal class FigureToPlainSvg(
             elementSvg.x().set(elementOrigin.x)
             elementSvg.y().set(elementOrigin.y)
 
+            topSvgSvg.children().add(elementSvg)
+
             if (element is CompositeFigureSvgRoot) {
                 processCompositeFigure(element, elementOrigin, topSvgSvg)
             }
-
-            topSvgSvg.children().add(elementSvg)
         }
     }
 }
