@@ -156,6 +156,11 @@ internal object DataConfigUtil {
         val asDiscreteVariables = varBindings.filter { it.aes.name in asDiscreteAesSet }.map { it.variable.name }
         val variablesToMarkAsDiscrete = rawCombinedData.variables().filter { it.name in asDiscreteVariables }
 
+        // categorical variables
+        val categoricalVariables =  DataMetaUtil.getCategoricalVariables(ownDataMeta).let { categoricalVarNames ->
+            rawCombinedData.variables().filter { it.name in categoricalVarNames }
+        }
+
         fun DataFrame.Builder.addVariables(
             variables: List<DataFrame.Variable>,
             put: (DataFrame.Builder, DataFrame.Variable, List<*>) -> DataFrame.Builder
@@ -170,10 +175,10 @@ internal object DataConfigUtil {
 
             addVariables(variablesToMarkAsDateTime, DataFrame.Builder::putDateTime)
             addVariables(variablesToMarkAsDiscrete, DataFrame.Builder::putDiscrete)
+            addVariables(categoricalVariables, DataFrame.Builder::putDiscrete)
 
             if (clientSide) {
                 val variables = rawCombinedData.variables()
-                val discreteVariables = (variables.filter(rawCombinedData::isDiscrete) + variablesToMarkAsDiscrete).toSet()
                 val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
 
                 val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
@@ -185,7 +190,6 @@ internal object DataConfigUtil {
                             .mapNotNull { aesName -> varBindings.find { it.aes.name == aesName }?.variable }
                         val variablesWithLevels = (mappedVariables + variable)
                             .filterNotNull()
-                            .filter { it in discreteVariables }
                         variablesWithLevels.map { it to levels }
                     }
                     .toMap()

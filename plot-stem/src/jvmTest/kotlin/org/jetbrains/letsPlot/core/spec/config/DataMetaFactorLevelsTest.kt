@@ -107,8 +107,10 @@ class DataMetaFactorLevelsTest {
             mappingAnnotations = null
         )
         transformToClientPlotConfig(spec)
+            .assertVariable("name", isDiscrete = true)
+            .assertVariable("c", isDiscrete = true) // specified levels (in series_annotations) make variable discrete
             .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0)) // not to apply levels to non-discrete
+            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
     }
 
     private fun checkWithMappingAndSeriesAnnotations(
@@ -127,9 +129,14 @@ class DataMetaFactorLevelsTest {
             mappingStorage
         )
         transformToClientPlotConfig(spec)
+            .assertVariable("name", isDiscrete = true)
+            .assertVariable("x.name", isDiscrete = true)
             .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
             .assertDistinctValues("x.name", listOf("c", "b", "a", "d"))
+
+            .assertVariable("c", isDiscrete = true)
+            .assertVariable("fill.c", isDiscrete = true)
+            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
             .assertDistinctValues("fill.c", listOf(2.0, 3.0, 1.0, 4.0))
     }
 
@@ -198,7 +205,8 @@ class DataMetaFactorLevelsTest {
             val actual = layer.combinedData.distinctValues(variable).toList()
             assertEquals(expectedFactors.size, actual.size, "Wrong number of factors")
             for (index in expectedFactors.indices) {
-                assertEquals(expectedFactors[index], actual[index], "expected: $expectedFactors, actual: $actual")
+                assertEquals(expectedFactors[index], actual[index],
+                    "variable '$varName', expected: $expectedFactors, actual: $actual\n")
             }
             return this
         }
