@@ -115,7 +115,7 @@ class SupPlotsSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path):
+    def to_svg(self, path) -> str:
         """
         Write all plots currently in this 'bunch' to a file or file-like object in SVG format.
 
@@ -127,6 +127,11 @@ class SupPlotsSpec(FeatureSpec):
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Examples
         --------
@@ -149,9 +154,9 @@ class SupPlotsSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        _to_svg(self, path)
+        return _to_svg(self, path)
 
-    def to_html(self, path, iframe: bool = None):
+    def to_html(self, path, iframe: bool = None) -> str:
         """
         Write all plots currently in this 'bunch' to a file or file-like object in HTML format.
 
@@ -165,6 +170,11 @@ class SupPlotsSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         iframe : bool, default=False
             Whether to wrap HTML page into a iFrame.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Examples
         --------
@@ -185,9 +195,9 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_html(file_like)
         """
-        _to_html(self, path, iframe)
+        return _to_html(self, path, iframe)
 
-    def to_png(self, path, scale=None):
+    def to_png(self, path, scale=None) -> str:
         """
         Write all plots currently in this 'bunch' to a file or file-like object in PNG format.
 
@@ -201,6 +211,11 @@ class SupPlotsSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Notes
         -----
@@ -229,9 +244,9 @@ class SupPlotsSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        _to_png(self, path, scale)
+        return _to_png(self, path, scale)
 
-    def to_pdf(self, path, scale=None):
+    def to_pdf(self, path, scale=None) -> str:
         """
         Write all plots currently in this 'bunch' to a file or file-like object in PDF format.
 
@@ -245,6 +260,11 @@ class SupPlotsSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Notes
         -----
@@ -271,4 +291,4 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        _to_pdf(self, path, scale)
+        return _to_pdf(self, path, scale)

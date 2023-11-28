@@ -74,22 +74,18 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     if not path:
         path = join(os.getcwd(), _DEF_EXPORT_DIR)
 
-    if not os.path.exists(path):
-        os.makedirs(path)
-
     pathname = join(path, filename)
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        _to_svg(plot, pathname)
+        return _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
-        _to_html(plot, pathname, iframe=iframe)
+        return _to_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        _to_png(plot, pathname, scale)
+        return _to_png(plot, pathname, scale)
     elif ext == 'pdf':
-        _to_pdf(plot, pathname, scale)
+        return _to_pdf(plot, pathname, scale)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
         )
-    return abspath(pathname)

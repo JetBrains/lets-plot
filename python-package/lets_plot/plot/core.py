@@ -2,8 +2,11 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from typing import Any
+
 import io
 import json
+import os
 
 __all__ = ['aes', 'layer']
 
@@ -474,7 +477,7 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path):
+    def to_svg(self, path) -> str:
         """
         Write a plot to a file or to a file-like object in SVG format.
 
@@ -486,6 +489,11 @@ class PlotSpec(FeatureSpec):
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Examples
         --------
@@ -504,9 +512,9 @@ class PlotSpec(FeatureSpec):
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
         """
-        _to_svg(self, path)
+        return _to_svg(self, path)
 
-    def to_html(self, path, iframe: bool = None):
+    def to_html(self, path, iframe: bool = None) -> str:
         """
         Write a plot to a file or to a file-like object in HTML format.
 
@@ -520,6 +528,11 @@ class PlotSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         iframe : bool, default=False
             Whether to wrap HTML page into a iFrame.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Examples
         --------
@@ -536,9 +549,9 @@ class PlotSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_html(file_like)
         """
-        _to_html(self, path, iframe)
+        return _to_html(self, path, iframe)
 
-    def to_png(self, path, scale: float = None):
+    def to_png(self, path, scale: float = None) -> str:
         """
         Write a plot to a file or to a file-like object in PNG format.
 
@@ -552,6 +565,11 @@ class PlotSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Notes
         -----
@@ -576,9 +594,9 @@ class PlotSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        _to_png(self, path, scale)
+        return _to_png(self, path, scale)
 
-    def to_pdf(self, path, scale: float = None):
+    def to_pdf(self, path, scale: float = None) -> str:
         """
         Write a plot to a file or to a file-like object in PDF format.
 
@@ -592,6 +610,11 @@ class PlotSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
 
         Notes
         -----
@@ -619,7 +642,7 @@ class PlotSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        _to_pdf(self, path, scale)
+        return _to_pdf(self, path, scale)
 
 
 class LayerSpec(FeatureSpec):
@@ -771,18 +794,20 @@ def _theme_dicts_merge(x, y):
     return {**x, **y, **z}
 
 
-def _to_svg(spec, path):
+def _to_svg(spec, path) -> str:
     from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(spec.as_dict())
     if isinstance(path, str):
+        _makedirs(path)
         with io.open(path, mode="w", encoding="utf-8") as f:
             f.write(svg)
     else:
         path.write(svg.encode())
+    return _abspath(path)
 
 
-def _to_html(spec, path, iframe: bool):
+def _to_html(spec, path, iframe: bool) -> str:
     if iframe is None:
         iframe = False
 
@@ -790,13 +815,15 @@ def _to_html(spec, path, iframe: bool):
     html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
 
     if isinstance(path, str):
+        _makedirs(path)
         with io.open(path, mode="w", encoding="utf-8") as f:
             f.write(html_page)
     else:
         path.write(html_page.encode())
+    return _abspath(path)
 
 
-def _to_png(spec, path, scale: float):
+def _to_png(spec, path, scale: float) -> str:
     if scale is None:
         scale = 2.0
 
@@ -813,10 +840,12 @@ def _to_png(spec, path, scale: float):
     from .. import _kbridge
     # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
     svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+    _makedirs(path)
     cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
+    return _abspath(path)
 
 
-def _to_pdf(spec, path, scale: float):
+def _to_pdf(spec, path, scale: float) -> str:
     if scale is None:
         scale = 2.0
 
@@ -833,4 +862,18 @@ def _to_pdf(spec, path, scale: float):
     from .. import _kbridge
     # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
     svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+    _makedirs(path)
     cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
+    return _abspath(path)
+
+
+def _makedirs(path):
+    if isinstance(path, str):
+        dirname = os.path.dirname(path) or '.'
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+
+
+def _abspath(path) -> str | None:
+    if isinstance(path, str):
+        return os.path.abspath(path)
