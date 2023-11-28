@@ -93,5 +93,7 @@ publishing {
 }
 
 signing {
-    sign publishing.publications.letsPlotJvmBatik
+    if (!project.version.contains('SNAPSHOT')) {
+        sign publishing.publications.letsPlotJvmBatik
+    }
 }

@@ -9,8 +9,8 @@ import demoAndTestShared.parsePlotSpec
 import kotlin.math.pow
 
 class TransformBreaks {
-    private val xValues = (-10..10).map(Int::toDouble).toList()
-    private val yValues = xValues.map { it * 10.0.pow(-5) }
+    private val xValues = (-3..3).map(Int::toDouble).toList()
+    private val yValues = xValues.map { 3.0.pow(it) }
     private val data = mapOf("x" to xValues, "y" to yValues)
 
     fun plotSpecList(): List<MutableMap<String, Any>> {

@@ -36,7 +36,7 @@ import kotlin.math.ln
  * @see "[Student's t-distribution
  * @version $Id: TDistribution.java 1244107 2012-02-14 16:17:55Z erans $
 ](mathworld.wolfram.com/Studentst-Distribution.html)](https://en.wikipedia.org/wiki/Student&apos;s_t-distribution) */
-class TDistribution
+internal class TDistribution
 /**
  * Create a t distribution using the given degrees of freedom and the
  * specified inverse cumulative probability absolute accuracy.

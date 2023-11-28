@@ -67,5 +67,12 @@ kotlin {
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
+
+        // Fix for 'Could not find "io.ktor:ktor-client-js"...'build error (Kotlin 1.9.xx versions):
+        named("jsTest") {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+            }
+        }
     }
 }

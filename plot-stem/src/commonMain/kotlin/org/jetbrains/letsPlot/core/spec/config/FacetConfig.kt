@@ -81,7 +81,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
 
         val facetLevels = ArrayList<List<Any>>()
         for (name in facets) {
-            val levels = HashSet<Any>()
+            val levels = LinkedHashSet<Any>()
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, name)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, name)

@@ -54,8 +54,17 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-js:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+            }
+        }
+
+        // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' and
+        // 'Could not find "io.ktor:ktor-client-js"...'build errors (Kotlin 1.9.xx versions):
+        named("jsTest") {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

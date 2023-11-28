@@ -731,6 +731,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - ..sum.. : total number of points with same x-axis coordinate.
     - ..prop.. : groupwise proportion.
     - ..proppct.. : groupwise proportion in percent.
+    - ..sumprop.. : proportion of points with same x-axis coordinate among all points in the dataset.
+    - ..sumpct.. : proportion of points with same x-axis coordinate among all points in the dataset in percent.
 
     `geom_bar()` understands the following aesthetics mappings:
 
@@ -1549,7 +1551,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     Notes
     -----
     `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
-     or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_errorbar()` understands the following aesthetics mappings:
 
@@ -1684,15 +1686,16 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Notes
     -----
-    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
-    The mean is represented by horizontal line.
+    `geom_crossbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    The mean is represented by horizontal (vertical) line.
 
     `geom_crossbar()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for error bar.
-    - y : position of median bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal bar, respectively.
+    - y or x : position of median bar for vertical or horizontal bar, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal bar, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
@@ -1813,15 +1816,16 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Notes
     -----
-    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
-    The mid-point is defined by `y`.
+    `geom_pointrange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
+    The mid-point is defined by `y` or `x`, respectively.
 
     `geom_pointrange()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - y : position of mid-point.
-    - ymin : lower bound for error bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal interval, respectively.
+    - y or x : position of mid-point for vertical or horizontal interval, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal interval, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal interval, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
@@ -1933,13 +1937,14 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    `geom_linerange()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+    or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_linerange()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for line range.
-    - ymax : upper bound for line range.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal line range, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal line range, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal line range, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
@@ -2664,6 +2669,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
+     Unlike most other geoms, this geom does not affect the x and y scales.
+
     `geom_abline()` understands the following aesthetics mappings:
 
     - slope : line slope.
@@ -3770,13 +3777,13 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
-    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`.
+    `geom_ribbon()` draws a ribbon bounded by `ymin` and `ymax`, or a vertical ribbon, bounded by `xmin`, `xmax`.
 
     `geom_ribbon()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : y-axis coordinates of the lower bound.
-    - ymax : y-axis coordinates of the upper bound.
+    - x or y: x-axis or y-axis coordinates for horizontal or vertical ribbon, respectively.
+    - ymin or xmin: y-axis or x-axis coordinates of the lower bound for horizontal or vertical ribbon, respectively.
+    - ymax or xmax: y-axis or x-axis coordinates of the upper bound for horizontal or vertical ribbon, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
@@ -4590,9 +4597,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
 
 def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                width=None,
-                height=None,
+                width=None, height=None,
                 color_by=None, fill_by=None,
+                seed=None,
                 **other_args):
     """
     Display jittered points, especially for discrete plots or dense plots.
@@ -4634,6 +4641,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    seed : int
+        A random seed to make the jitter reproducible.
+        If None (the default value), the seed is initialised with a random value.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4694,6 +4704,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_jitter(aes(color='x', size='y'), \\
                         sampling=sampling_random(n=600, seed=60), \\
+                        seed=37, + \\
                         show_legend=False, width=.25) + \\
             scale_color_grey(start=.75, end=0) + \\
             scale_size(range=[1, 3])
@@ -4709,6 +4720,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  width=width, height=height,
                  color_by=color_by, fill_by=fill_by,
+                 seed=seed,
                  **other_args)
 
 
@@ -6162,6 +6174,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - ..sum.. : total number of points with same (x,y) coordinate.
     - ..prop.. : groupwise proportion.
     - ..proppct.. : groupwise proportion in percent.
+    - ..sumprop.. : proportion of points with same (x,y) coordinate among all points in the dataset.
+    - ..sumpct.. : proportion of points with same (x,y) coordinate among all points in the dataset in percent.
 
     `geom_pie()` understands the following aesthetics mappings:
 
@@ -6506,6 +6520,12 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
+    Computed variables:
+
+    - ..n.. : number of points with same x-axis and y-axis coordinates.
+    - ..prop.. : proportion of points with same x-axis and y-axis coordinates.
+    - ..proppct.. : proportion of points with same x-axis and y-axis coordinates in percent.
+
     `geom_count()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.

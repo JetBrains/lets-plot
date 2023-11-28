@@ -27,7 +27,7 @@ package org.jetbrains.letsPlot.core.plot.base.stat.math3
 import kotlin.jvm.JvmOverloads
 import kotlin.math.*
 
-class NormalDistribution
+internal class NormalDistribution
 @JvmOverloads constructor(
     private val mean: Double,
     private val standardDeviation: Double

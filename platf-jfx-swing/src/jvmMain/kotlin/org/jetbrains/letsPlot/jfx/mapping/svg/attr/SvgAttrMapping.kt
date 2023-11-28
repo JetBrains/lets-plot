@@ -19,7 +19,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Rectangle(left, top, width, height) }
             SvgGraphicsElement.CLIP_PATH.name -> Unit // TODO: ignored
 
-            SvgConstants.SVG_STYLE_ATTRIBUTE -> setStyle(value as? String ?: "", target)
+            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
@@ -40,9 +40,8 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
     }
 
     companion object {
-        private fun setStyle(value: String, target: Node) {
-            val valueFx = value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
-            target.style = valueFx
+        internal fun svgStyleToFx(value: String): String {
+            return value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
         }
 
         private fun setStyleClass(value: String?, target: Node) {

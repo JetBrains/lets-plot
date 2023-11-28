@@ -168,7 +168,10 @@ internal object BreakLabelsLayoutUtil {
         return bounds.add(offsetVector)
     }
 
-    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle {
+    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle? {
+        if (elementRect.width == 0.0 || elementRect.height == 0.0) {
+            return null
+        }
         return when {
             orientation.isHorizontal -> {
                 DoubleRectangle(

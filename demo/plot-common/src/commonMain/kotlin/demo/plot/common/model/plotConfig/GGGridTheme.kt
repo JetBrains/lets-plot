@@ -10,7 +10,6 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.FIGURES
-import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.COL_WIDTHS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.INNER_ALIGNMENT
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NCOLS
@@ -24,7 +23,7 @@ open class GGGridTheme {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             irisTriple(firstElemTheme = theme("bw", "solarized_light")),
-            irisTriple(theme = theme("grey", "darcula")),
+            irisTriple(theme = theme("grey", "darcula", plotMargin = 40)),
             irisTriple(theme = theme("grey", "darcula"), firstElemTheme = theme("bw", "solarized_light")),
             irisTriple_compositeCell(),
             irisTriple_compositeCell(theme = theme("bw", "darcula")),
@@ -43,10 +42,18 @@ open class GGGridTheme {
             return map
         }
 
-        private fun theme(name: String?, flavor: String?): Map<String, Any> {
+        private fun theme(name: String?, flavor: String?, plotMargin: Int? = null): Map<String, Any> {
             return HashMap<String, Any>().also { m ->
                 name?.let { m["name"] = name }
                 flavor?.let { m["flavor"] = flavor }
+                plotMargin?.let {
+                    m["plot_margin"] = mapOf(
+                        "t" to plotMargin,
+                        "r" to plotMargin,
+                        "b" to plotMargin,
+                        "l" to plotMargin,
+                    )
+                }
             }
         }
 

@@ -7,10 +7,19 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
 }
 
+// KT-55751. MPP / Gradle: Consumable configurations must have unique attributes.
+// https://youtrack.jetbrains.com/issue/KT-55751/MPP-Gradle-Consumable-configurations-must-have-unique-attributes
+//
+def dummyAttribute = Attribute.of("dummyAttribute", String)
+
 kotlin {
     jvm("jvmBatik")
-    jvm("jvmJfx")
-    jvm("jvmBrowser")   // generates index.html and opens it in browser
+    jvm("jvmJfx") {
+        attributes.attribute(dummyAttribute, "jvmJfx")
+    }
+    jvm("jvmBrowser") { // generates index.html and opens it in browser
+        attributes.attribute(dummyAttribute, "jvmBrowser")
+    }
     js() {
         browser()
         binaries.executable()

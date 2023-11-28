@@ -142,6 +142,11 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 )
             )
 
+            val axisTheme = when (orientation.isHorizontal) {
+                true -> theme.horizontalAxis(flipAxis = false)
+                false -> theme.verticalAxis(flipAxis = false)
+            }
+
             val axis = AxisComponent(
                 length = axisLength,
                 orientation = orientation,
@@ -150,13 +155,12 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     coord,
                     DoubleRectangle.XYWH(0, 0, DEMO_BOX_SIZE.x, DEMO_BOX_SIZE.y),
                     flipAxis = false,
-                    orientation.isHorizontal,
+                    orientation,
+                    axisTheme
                 ),
                 //gridLineLength = 100.0,
                 //gridLineDistance = 0.0,
-                axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(
-                    flipAxis = false
-                ),
+                axisTheme = axisTheme,
                 //gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
             )
 

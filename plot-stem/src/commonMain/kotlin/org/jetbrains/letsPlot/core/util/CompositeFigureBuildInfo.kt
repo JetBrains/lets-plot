@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
@@ -66,8 +67,18 @@ internal class CompositeFigureBuildInfo constructor(
     }
 
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
+        val plotMargins = theme.plot().plotMargins()
+        val leftTop = DoubleVector(
+            plotMargins.left,
+            plotMargins.top,
+        )
+        val marginsSize = DoubleVector(
+            plotMargins.width(),
+            plotMargins.height(),
+        )
         val outerSize = bounds.dimension
-        val layoutedElements = layout.doLayout(outerSize, elements)
+        val elementsBounts = DoubleRectangle(leftTop, outerSize.subtract(marginsSize))
+        val layoutedElements = layout.doLayout(elementsBounts, elements)
 
         val geomBounds = layoutedElements.filterNotNull().map {
             it.layoutInfo.geomAreaBounds

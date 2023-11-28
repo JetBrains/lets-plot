@@ -19,7 +19,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
            scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file.
-    Supported formats: PNG, SVG, HTML.
+    Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
     if not specified otherwise (see the `path` parameter).
@@ -30,7 +30,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library).
+        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library), PDF.
     path : str
         Path to a directory to save image files in.
         By default it is ${user.dir}/lets-plot-images.

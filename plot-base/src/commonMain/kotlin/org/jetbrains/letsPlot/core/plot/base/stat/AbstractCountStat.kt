@@ -80,14 +80,19 @@ abstract class AbstractCountStat(
         // compute total location weights on the whole data
         val summary = groupAndSum(locations, weights)
         val totalWeights = locations.map { summary[it]!! }
+        val totalWeightsSum = summary.values.sum()
 
         val prop = weights.zip(totalWeights).map { (groupWeight, totalWeight) -> groupWeight / totalWeight }
         val propPercent = prop.map { it * 100 }
+        val sumProp = totalWeights.map { it / totalWeightsSum }
+        val sumPropPercent = sumProp.map { it * 100 }
 
         val statDf = dataAfterStat.builder()
         statDf.putNumeric(Stats.SUM, totalWeights)
         statDf.putNumeric(Stats.PROP, prop)
         statDf.putNumeric(Stats.PROPPCT, propPercent)
+        statDf.putNumeric(Stats.SUMPROP, sumProp)
+        statDf.putNumeric(Stats.SUMPCT, sumPropPercent)
         return statDf.build()
     }
 

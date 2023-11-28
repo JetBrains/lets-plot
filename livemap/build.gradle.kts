@@ -22,11 +22,12 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-
                 compileOnly(project(":commons"))
                 compileOnly(project(":datamodel"))
                 compileOnly(project(":canvas"))
                 compileOnly(project(":gis"))
+
+                compileOnly("io.ktor:ktor-client-websockets:$ktorVersion")
             }
         }
 
@@ -57,8 +58,20 @@ kotlin {
         named("jsMain") {
             dependencies {
                 compileOnly("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
                 compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+            }
+        }
+
+/*      Fix for build errors:
+         - 'Could not find "io.github.microutils:kotlin-logging"...'
+         - 'Could not find "io.ktor:ktor-client-websockets"...'
+         - 'Could not find "io.ktor:ktor-client-js"...'
+        (Kotlin 1.9.xx versions): */
+        named("jsTest") {
+            dependencies {
+                implementation("io.ktor:ktor-client-js:$ktorVersion")
+                implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

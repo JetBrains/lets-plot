@@ -17,7 +17,7 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "4.0.2-SNAPSHOT"
+    version = "4.1.1-SNAPSHOT"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
@@ -144,7 +144,7 @@ nexusPublishing {
 // "JavaDoc" artifact for all publications.
 task jarJavaDocs(type: Jar) {
     group project.letsPlotTaskGroup
-    classifier 'javadoc'
+    archiveClassifier.set("javadoc")
     from("$rootDir/README.md")
 }
 
@@ -274,8 +274,9 @@ subprojects {
                 }
             }
 
-            // Configure artifacts signing process.
+            // Configure artifacts signing process for release versions.
             def publications_to_sign = []
+
             for (task in it.tasks.withType(PublishToMavenRepository)) {
                 if (task.getPublication().name in publications_to_publish) {
                     def repoName = task.repository.name
@@ -289,9 +290,12 @@ subprojects {
                     }
                 }
             }
+
             // Sign artifacts.
             publications_to_sign.each {
-                signing.sign(it)
+                if (!project.version.contains('SNAPSHOT')) {
+                    signing.sign(it)
+                }
             }
         }
     }
