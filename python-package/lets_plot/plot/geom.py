@@ -5793,7 +5793,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
     return _geom('spoke',
                  mapping=mapping,
                  data=data,
-                 stat=stat,
+                 stat=None,
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
