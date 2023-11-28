@@ -2,10 +2,10 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import os
-from os.path import join
+from os.path import join, abspath
 from typing import Union
 
-from .simple import export_svg, export_html, export_png, export_pdf
+from ..plot.core import _to_svg, _to_html, _to_png, _to_pdf
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 from ..plot.subplots import SupPlotsSpec
@@ -81,14 +81,15 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return export_svg(plot, pathname)
+        _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
-        return export_html(plot, pathname, iframe=iframe)
+        _to_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        return export_png(plot, pathname, scale)
+        _to_png(plot, pathname, scale)
     elif ext == 'pdf':
-        return export_pdf(plot, pathname, scale)
+        _to_pdf(plot, pathname, scale)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
         )
+    return abspath(pathname)
