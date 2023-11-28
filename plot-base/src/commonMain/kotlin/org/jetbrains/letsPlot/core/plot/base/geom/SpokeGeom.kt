@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -64,9 +65,10 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == Aes.Y
-        val start = xyVec(p, flip) ?: return null
-        val spoke = spoke(p) ?: return null
+        val start = GeomUtil.TO_LOCATION_X_Y(p)?.also {
+            if (coordAes == Aes.Y) it.flip()
+        } ?: return null
+        val spoke = toSpoke(p) ?: return null
         val end = getEnd(start, spoke)
         return DoubleSpan(start.x, end.x)
     }
@@ -77,24 +79,15 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == Aes.X
-        val start = xyVec(p, flip) ?: return null
-        val spoke = spoke(p) ?: return null
+        val start = GeomUtil.TO_LOCATION_X_Y(p)?.also {
+            if (coordAes == Aes.X) it.flip()
+        } ?: return null
+        val spoke = toSpoke(p) ?: return null
         val end = getEnd(start, spoke)
         return DoubleSpan(start.y, end.y)
     }
 
-    private fun xyVec(p: DataPointAesthetics, flip: Boolean): DoubleVector? {
-        val x = p.x().takeUnless { flip } ?: p.y()
-        val y = p.y().takeUnless { flip } ?: p.x()
-        if (!SeriesUtil.allFinite(x, y)) {
-            return null
-        }
-
-        return DoubleVector(x!!, y!!)
-    }
-
-    private fun spoke(p: DataPointAesthetics): Spoke? {
+    private fun toSpoke(p: DataPointAesthetics): Spoke? {
         val angle = p.angle()
         val radius = p.radius()
         if (!SeriesUtil.allFinite(angle, radius)) {

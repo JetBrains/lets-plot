@@ -33,7 +33,7 @@ class Spoke {
               'coord': {
                 'name': 'fixed',
                 'ratio': 1.0,
-                'flip': true
+                'flip': false
               },
               'layers': [
                 {
