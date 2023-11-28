@@ -31,6 +31,7 @@ internal class DefaultPlotTheme(
     internal val subtitleKey = listOf(PLOT_SUBTITLE, TITLE, TEXT)
     internal val captionKey = listOf(PLOT_CAPTION, TITLE, TEXT)
     internal val messagesKey = listOf(PLOT_MESSAGE)
+    private val marginKey = listOf(PLOT_MARGIN)
 
     override fun showBackground(): Boolean {
         return !isElemBlank(backgroundKey)
@@ -84,13 +85,13 @@ internal class DefaultPlotTheme(
         return getTextJustification(getElemValue(captionKey))
     }
 
-    override fun titleMargins() = getTextElemMargins(getElemValue(titleKey))
+    override fun titleMargins() = getMargins(getElemValue(titleKey))
 
-    override fun subtitleMargins() = getTextElemMargins(getElemValue(subtitleKey))
+    override fun subtitleMargins() = getMargins(getElemValue(subtitleKey))
 
-    override fun captionMargins() = getTextElemMargins(getElemValue(captionKey))
+    override fun captionMargins() = getMargins(getElemValue(captionKey))
 
-    override fun plotMargins() = getMargins(getValue(PLOT_MARGIN))
+    override fun plotMargins() = getMargins(getElemValue(marginKey))
 
     override fun showMessage(): Boolean {
         return !isElemBlank(messagesKey)

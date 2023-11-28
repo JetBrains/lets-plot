@@ -119,61 +119,12 @@ internal open class ThemeValuesAccess(
         return TextJustification(hjust, vjust)
     }
 
-    protected fun getMargins(value: Any): Margins {
-        val margins: List<Double> = when (value) {
-            is Number -> listOf(value.toDouble())
-            is List<*> -> {
-                require(value.all { it is Number }) {
-                    "The margins option requires a list of numbers, but was: $value."
-                }
-                value.map { (it as Number).toDouble() }
-            }
-            else -> throw IllegalStateException(
-                "The margins option should be specified using number or list of numbers, but was: $value."
-            )
-        }
-
-        val top: Double
-        val right: Double
-        val bottom: Double
-        val left: Double
-
-        when (margins.size) {
-            1 -> {
-                val margin = margins.single()
-                top = margin
-                right = margin
-                left = margin
-                bottom = margin
-            }
-            2 -> {
-                val (vMargin, hMargin) = margins
-                top = vMargin
-                bottom = vMargin
-                right = hMargin
-                left = hMargin
-            }
-            3 -> {
-                top = margins[0]
-                right = margins[1]
-                left = margins[1]
-                bottom = margins[2]
-            }
-            4 -> {
-                top = margins[0]
-                right = margins[1]
-                bottom = margins[2]
-                left = margins[3]
-            }
-            else -> {
-                throw IllegalStateException(
-                    "The margins accept a number or a list of one, two, three or four numbers, but was: $value."
-                )
-            }
-        }
-
-        return Margins(top, right, bottom, left)
+    protected fun getMargins(elem: Map<String, Any>): Margins {
+        return Margins(
+            top = getNumber(elem, Elem.Margin.TOP),
+            right = getNumber(elem, Elem.Margin.RIGHT),
+            bottom = getNumber(elem, Elem.Margin.BOTTOM),
+            left = getNumber(elem, Elem.Margin.LEFT),
+        )
     }
-
-    protected fun getTextElemMargins(elem: Map<String, Any>) = getMargins(elem.getValue(Elem.MARGIN))
 }

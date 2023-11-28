@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.Margin
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 
@@ -65,7 +66,12 @@ class DefaultTheme internal constructor(
                 }
 
                 ThemeOption.PLOT_MARGIN -> with (this.plot.plotMargins()) {
-                    listOf(top, right, bottom, left)
+                    mapOf(
+                        Margin.TOP to top,
+                        Margin.RIGHT to right,
+                        Margin.BOTTOM to bottom,
+                        Margin.LEFT to left
+                    )
                 }
 
                 else -> v

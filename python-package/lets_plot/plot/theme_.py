@@ -188,6 +188,7 @@ def theme(*,
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
         the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+        It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -451,6 +452,7 @@ def element_text(
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
         the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+        It is acceptable to use None for any side; in this case, the default side value for this element will be used.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -486,10 +488,7 @@ def margin(t=None, r=None, b=None, l=None):
     print("WARN: The margin() is deprecated and will be removed in future releases.\n"
           "      Please, use a number or list of numbers to specify margins (see description of the parameter used).")
 
-    margins = [t, r, b, l]
-    if None in margins:
-        print("WARN: For unspecified sides, the margin will be set to 0.")
-    return [0 if v is None else v for v in margins]
+    return [t, r, b, l]
 
 
 def element_geom(
