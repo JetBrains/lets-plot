@@ -97,6 +97,7 @@ def test_scale_breaks_dict():
     assert as_dict['breaks'] == ['a', 'b', 'c']
     assert as_dict['labels'] == ['A', 'B', 'C']
 
+
 # Use dictionary in scale_manual(values)
 
 def test_scale_manual_values_dict():

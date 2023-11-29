@@ -3366,7 +3366,7 @@ def _scale(aesthetic, *,
                     new_labels.append(labels[break_value])
                     new_breaks.append(break_value)
 
-            breaks_without_label = list(set(breaks) - set(new_breaks))  # doesn't preserve order
+            breaks_without_label = [item for item in breaks if item not in new_breaks]  # keeps order
             args['breaks'] = new_breaks + breaks_without_label
             args['labels'] = new_labels
 
