@@ -71,8 +71,9 @@ open class PlotConfigBackend(
         // Clean-up data before sending it to the front-end.
         dropUnusedDataBeforeEncoding(layerConfigs)
 
-        // Re-create the "natural order" existed before faceting.
-        // if (facets.isDefined) {
+        // Re-create the "natural order" existed before faceting
+        // or apply the specified order
+        if (facets.isDefined || specifiedFactorLeversByLayers.any { it.isNotEmpty() }) {
             // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
             layerConfigs.forEachIndexed { layerIndex, layerConfig ->
                 val layerData = layerConfig.ownData
@@ -91,7 +92,7 @@ open class PlotConfigBackend(
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                }
            }
-        // }
+        }
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {

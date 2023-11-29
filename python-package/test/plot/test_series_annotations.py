@@ -66,11 +66,10 @@ data_dict2 = {
     'v2': [1, 2],
     # add pandas Categorical
 }
-factor_levels = ['foo', 'bar']
 
 
 def test_factor_levels():
-    mapping = aes(x=as_discrete('v1', levels=factor_levels), y='v2')
+    mapping = aes(as_discrete('v1', levels=['foo', 'bar']))
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
         {'column': 'v1', 'factor_levels': ['foo', 'bar']}
@@ -78,13 +77,17 @@ def test_factor_levels():
     assert expected_factor_levels == data_meta['series_annotations']
 
 
-def test_factor_levels_with_ordering():
-    x = as_discrete("v1", order=-1)
-    fill = as_discrete("v1", levels=factor_levels)
-    data_meta = get_data_meta(data_dict2, mapping=aes(x=x, y='v2', fill=fill))
+def test_skip_mapping_annotations_for_variable_with_levels():
+    mapping = aes(
+        as_discrete("v1", order=-1),
+        'v2',
+        a=as_discrete("v1", levels=['foo', 'bar']),
+        b=as_discrete("v2", levels=[2, 1])
+    )
+    data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
-        {'column': 'v1', 'factor_levels': ['foo', 'bar']}
+        {'column': 'v1', 'factor_levels': ['foo', 'bar']},
+        {'column': 'v2', 'factor_levels': [2, 1]}
     ]
     assert expected_factor_levels == data_meta['series_annotations']
-    # skip creation of 'mapping_annotations'
     assert 'mapping_annotations' not in data_meta

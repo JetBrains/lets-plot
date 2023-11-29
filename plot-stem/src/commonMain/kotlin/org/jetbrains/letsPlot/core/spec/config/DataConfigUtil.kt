@@ -179,10 +179,10 @@ internal object DataConfigUtil {
             if (clientSide) {
                 val variables = rawCombinedData.variables()
                 val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
-
                 val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
                     .mapKeys { (varName, _) -> variables.find { it.name == varName } }
                     .filterNotNullKeys()
+
                 this
                     .addOrderSpecs(orderSpecs)
                     .addFactorLevels(factorLevelsByVar)
