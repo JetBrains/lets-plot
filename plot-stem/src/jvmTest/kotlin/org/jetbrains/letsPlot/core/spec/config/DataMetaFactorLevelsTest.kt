@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.config.AsDiscreteTest.*
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
@@ -14,9 +13,94 @@ import kotlin.test.assertEquals
 
 class DataMetaFactorLevelsTest {
 
+    private val myData = """{
+        'name': ['b', 'c', 'a', 'd'],
+        'c': [4, 1, 3, 2]
+    }""".trimIndent()
+
+    private val myMapping = "{'x': 'name', 'y': 'c'}"
+
+    @Test
+    fun default() {
+        val spec = makePlotSpec(seriesAnnotations = null)
+        transformToClientPlotConfig(spec)
+            .assertDistinctValues("name", listOf("b", "c", "a", "d"))
+            .assertDistinctValues("c", listOf(4.0, 1.0, 3.0, 2.0))
+    }
+
+    private fun withSeriesAnnotations(
+        dataStorage: Storage,
+        mappingStorage: Storage
+    ) {
+        val spec = makePlotSpec(
+            seriesAnnotations = withFactorLevels(
+                mapOf(
+                    "name" to listOf("c", "b", "a", "d"),
+                    "c" to listOf(2.0, 3.0, 1.0, 4.0)
+                )
+            ),
+            dataStorage,
+            mappingStorage
+        )
+        transformToClientPlotConfig(spec)
+            .assertVariable("name", isDiscrete = true)
+            .assertVariable("c", isDiscrete = true)
+            .assertDistinctValues("name", listOf("c", "b", "a", "d"))
+            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
+    }
+
+    // settings in plot/layer spec
+
+    @Test
+    fun plot_LayerDataMapping() {
+        withSeriesAnnotations(
+            dataStorage = Storage.LAYER,
+            mappingStorage = Storage.LAYER
+        )
+    }
+
+    @Test
+    fun plotDataMapping_Layer() {
+        withSeriesAnnotations(
+            dataStorage = Storage.PLOT,
+            mappingStorage = Storage.PLOT
+        )
+    }
+
+    @Test
+    fun plotData_LayerMapping() {
+        withSeriesAnnotations(
+            dataStorage = Storage.PLOT,
+            mappingStorage = Storage.LAYER
+        )
+    }
+
+    @Test
+    fun plotMapping_LayerData() {
+        withSeriesAnnotations(
+            dataStorage = Storage.LAYER,
+            mappingStorage = Storage.PLOT
+        )
+    }
+
+    @Test
+    fun `should extend levels with missing values`() {
+        val spec = makePlotSpec(
+            seriesAnnotations = withFactorLevels(
+                mapOf(
+                    "name" to listOf("c", "a"),
+                    "c" to listOf(2.0, 3.0)
+                )
+            )
+        )
+
+        transformToClientPlotConfig(spec)
+            .assertDistinctValues("name", listOf("c", "a", "b", "d"))
+            .assertDistinctValues("c", listOf(2.0, 3.0, 4.0, 1.0))
+    }
+
     private fun makePlotSpec(
         seriesAnnotations: String?,
-        mappingAnnotations: String?,
         dataStorage: Storage = Storage.LAYER,
         mappingStorage: Storage = Storage.LAYER,
         data: String = myData,
@@ -24,8 +108,7 @@ class DataMetaFactorLevelsTest {
     ): String {
         val dataSpec = "\'data\': $data,"
         val mappingSpec = "\'mapping\': $mapping,"
-        val annotations = listOfNotNull(seriesAnnotations, mappingAnnotations).joinToString()
-        val annotation = """'data_meta': { $annotations },"""
+        val annotation = seriesAnnotations?.let { """'data_meta': { $seriesAnnotations },""" } ?: ""
         return """{
               'kind': 'plot',
               ${dataSpec.takeIf { dataStorage == Storage.PLOT } ?: ""}
@@ -42,17 +125,7 @@ class DataMetaFactorLevelsTest {
             }""".trimIndent()
     }
 
-    private fun mappingAnnotationsSpec(aesList: List<String>): String {
-        val asDiscreteAnnotationsSpec = aesList.joinToString { aes ->
-            """{
-                'aes': '$aes',
-                'annotation': 'as_discrete'
-            }""".trimIndent()
-        }
-        return "'mapping_annotations': [$asDiscreteAnnotationsSpec]"
-    }
-
-    private fun seriesAnnotationsSpec(varListWithLevels: Map<String, List<Any>>): String {
+    private fun withFactorLevels(varListWithLevels: Map<String, List<Any>>): String {
         val seriesAnnotations = varListWithLevels.toList().joinToString { (variable, factorLevels) ->
             val factorStringList = factorLevels.joinToString { if (it is String) "\'$it\'" else "$it" }
             """{
@@ -61,138 +134,6 @@ class DataMetaFactorLevelsTest {
             }""".trimIndent()
         }
         return "'series_annotations': [$seriesAnnotations]"
-    }
-
-    private val myData = """{
-        'name': ['a', 'b', 'c', 'd'],
-        'c': [1, 2, 3, 4]
-    }""".trimIndent()
-
-    private val myMapping = "{'x': 'name', 'y': 'c', 'fill': 'c'}"
-
-    @Test
-    fun default() {
-        val spec = makePlotSpec(
-            seriesAnnotations = null,
-            mappingAnnotations = null
-        )
-        transformToClientPlotConfig(spec)
-            .assertDistinctValues("name", listOf("a", "b", "c", "d"))
-            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
-    }
-
-    @Test
-    fun setupAsDiscreteAnnotations() {
-        val spec = makePlotSpec(
-            seriesAnnotations = null,
-            mappingAnnotations = mappingAnnotationsSpec(listOf("x", "fill"))
-        )
-        transformToClientPlotConfig(spec)
-            .assertDistinctValues("name", listOf("a", "b", "c", "d"))
-            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
-            // + 'as_discrete' variables:
-            .assertDistinctValues("x.name", listOf("a", "b", "c", "d"))
-            .assertDistinctValues("fill.c", listOf(1.0, 2.0, 3.0, 4.0))
-    }
-
-    @Test
-    fun setupSeriesAnnotations() {
-        val spec = makePlotSpec(
-            seriesAnnotations = seriesAnnotationsSpec(
-                mapOf(
-                    "name" to listOf("c", "b", "a"),
-                    "c" to listOf(2.0, 3.0, 1.0)
-                )
-            ),
-            mappingAnnotations = null
-        )
-        transformToClientPlotConfig(spec)
-            .assertVariable("name", isDiscrete = true)
-            .assertVariable("c", isDiscrete = true) // specified levels (in series_annotations) make variable discrete
-            .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
-    }
-
-    private fun checkWithMappingAndSeriesAnnotations(
-        dataStorage: Storage,
-        mappingStorage: Storage
-    ) {
-        val spec = makePlotSpec(
-            seriesAnnotations = seriesAnnotationsSpec(
-                mapOf(
-                    "name" to listOf("c", "b", "a"),
-                    "c" to listOf(2.0, 3.0, 1.0)
-                )
-            ),
-            mappingAnnotations = mappingAnnotationsSpec(listOf("x", "fill")),
-            dataStorage,
-            mappingStorage
-        )
-        transformToClientPlotConfig(spec)
-            .assertVariable("name", isDiscrete = true)
-            .assertVariable("x.name", isDiscrete = true)
-            .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            .assertDistinctValues("x.name", listOf("c", "b", "a", "d"))
-
-            .assertVariable("c", isDiscrete = true)
-            .assertVariable("fill.c", isDiscrete = true)
-            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
-            .assertDistinctValues("fill.c", listOf(2.0, 3.0, 1.0, 4.0))
-    }
-
-    // settings in plot/layer spec
-
-    @Test
-    fun plot_LayerDataMapping() {
-        checkWithMappingAndSeriesAnnotations(
-            dataStorage = Storage.LAYER,
-            mappingStorage = Storage.LAYER
-        )
-    }
-
-    @Test
-    fun plotDataMapping_Layer() {
-        checkWithMappingAndSeriesAnnotations(
-            dataStorage = Storage.PLOT,
-            mappingStorage = Storage.PLOT
-        )
-    }
-
-    @Test
-    fun plotData_LayerMapping() {
-        checkWithMappingAndSeriesAnnotations(
-            dataStorage = Storage.PLOT,
-            mappingStorage = Storage.LAYER
-        )
-    }
-
-    @Test
-    fun plotMapping_LayerData() {
-        checkWithMappingAndSeriesAnnotations(
-            dataStorage = Storage.LAYER,
-            mappingStorage = Storage.PLOT
-        )
-    }
-
-    @Test
-    fun test_series_annotations() {
-        val spec = """{
-            'kind': 'plot',
-            'data': {'name': ['a', 'b', 'c']},
-            'mapping': {'x': 'name' },
-            'data_meta': {
-                'series_annotations': [
-                    {
-                        'column': 'name', 
-                        'factor_levels': ['a', 'c', 'b']
-                    }
-                ]
-           },
-          'layers': [ { 'geom': 'bar' } ]
-        }""".trimIndent()
-
-        transformToClientPlotConfig(parsePlotSpec(spec))
-            .assertDistinctValues("name", listOf("a", "c", "b"))
     }
 
     companion object {

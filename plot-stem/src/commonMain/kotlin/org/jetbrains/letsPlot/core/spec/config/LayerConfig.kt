@@ -240,7 +240,6 @@ class LayerConfig(
             asDiscreteAesSet = combinedDiscreteMappings.keys,
             orderOptions = orderOptions,
             aggregateOperation = aggregateOperation,
-            combinedMappingOptions = consumedAesMappings,
             clientSide = clientSide
         )
     }

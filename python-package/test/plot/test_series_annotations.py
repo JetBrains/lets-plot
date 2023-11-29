@@ -3,6 +3,8 @@
 
 from datetime import datetime
 from pandas import DataFrame
+from lets_plot import aes
+from lets_plot.mapping import as_discrete
 from lets_plot.plot.util import as_annotated_data
 
 dt_value = datetime(2020, 1, 1)
@@ -47,11 +49,42 @@ def test_df_with_empty_series():
     assert {} == get_data_meta(data)
 
 
-def get_data_meta(data):
-    _, _, data_meta = as_annotated_data(data, None)
+def get_data_meta(data, mapping=None):
+    _, _, data_meta = as_annotated_data(data, mapping)
     return data_meta['data_meta']
 
 
 def assert_series_annotations(data, expected):
-    data_meta = get_data_meta(data)
+    data_meta = get_data_meta(data, None)
     assert expected == data_meta['series_annotations']
+
+
+# factor levels
+
+data_dict2 = {
+    'v1': ['foo', 'bar'],
+    'v2': [1, 2],
+    # add pandas Categorical
+}
+factor_levels = ['foo', 'bar']
+
+
+def test_factor_levels():
+    mapping = aes(x=as_discrete('v1', levels=factor_levels), y='v2')
+    data_meta = get_data_meta(data_dict2, mapping)
+    expected_factor_levels = [
+        {'column': 'v1', 'factor_levels': ['foo', 'bar']}
+    ]
+    assert expected_factor_levels == data_meta['series_annotations']
+
+
+def test_factor_levels_with_ordering():
+    x = as_discrete("v1", order=-1)
+    fill = as_discrete("v1", levels=factor_levels)
+    data_meta = get_data_meta(data_dict2, mapping=aes(x=x, y='v2', fill=fill))
+    expected_factor_levels = [
+        {'column': 'v1', 'factor_levels': ['foo', 'bar']}
+    ]
+    assert expected_factor_levels == data_meta['series_annotations']
+    # skip creation of 'mapping_annotations'
+    assert 'mapping_annotations' not in data_meta

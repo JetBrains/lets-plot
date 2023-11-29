@@ -249,18 +249,6 @@ class AsDiscrete {
                                 'column': 'value',
                                 'factor_levels': [4,1,2]
                             }                            
-                        ],
-                        'mapping_annotations': [
-                            { 
-                                'aes': 'x',
-                                'annotation': 'as_discrete',
-                                'parameters': {'label': 'Name'}
-                            },
-                            { 
-                                'aes': 'fill',
-                                'annotation': 'as_discrete',
-                                'parameters': {'label': 'Value'}
-                            }
                         ]
                     }        
                 }

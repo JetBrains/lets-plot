@@ -38,24 +38,33 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # series annotations
     series_meta = []
 
-    if raw_mapping is not None:
-        for aesthetic, variable in raw_mapping.as_dict().items():
-            if aesthetic == 'name':  # ignore FeatureSpec.name property
-                continue
+    categorical_variables = []
+    # todo add pandas Categorical
 
+    if raw_mapping is not None:
+        # series annotations
+        for variable in raw_mapping.as_dict().values():
             if isinstance(variable, MappingMeta):
                 if variable.levels is not None:
+                    categorical_variables.append(variable.variable)
                     series_meta.append({
                         'column': variable.variable,
                         'factor_levels': variable.levels
                     })
 
+        # mapping_annotations
+        for aesthetic, variable in raw_mapping.as_dict().items():
+            if aesthetic == 'name':  # ignore FeatureSpec.name property
+                continue
+
+            if isinstance(variable, MappingMeta):
                 mapping[aesthetic] = variable.variable
-                mapping_meta.append({
-                    'aes': aesthetic,
-                    'annotation': variable.annotation,
-                    'parameters': variable.parameters
-                })
+                if variable.variable not in categorical_variables:
+                    mapping_meta.append({
+                        'aes': aesthetic,
+                        'annotation': variable.annotation,
+                        'parameters': variable.parameters
+                    })
             else:
                 mapping[aesthetic] = variable
 

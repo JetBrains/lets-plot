@@ -143,7 +143,6 @@ internal object DataConfigUtil {
         asDiscreteAesSet: Set<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: (List<Double?>) -> Double?,
-        combinedMappingOptions: Map<String, String>,
         clientSide: Boolean
     ): DataFrame {
 
@@ -182,18 +181,8 @@ internal object DataConfigUtil {
                 val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
 
                 val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
-                    .flatMap { (varName, levels) ->
-                        val variable = variables.find { it.name == varName }
-                        val mappedVariables = combinedMappingOptions
-                            .filterValues { it == varName }
-                            .keys
-                            .mapNotNull { aesName -> varBindings.find { it.aes.name == aesName }?.variable }
-                        val variablesWithLevels = (mappedVariables + variable)
-                            .filterNotNull()
-                        variablesWithLevels.map { it to levels }
-                    }
-                    .toMap()
-
+                    .mapKeys { (varName, _) -> variables.find { it.name == varName } }
+                    .filterNotNullKeys()
                 this
                     .addOrderSpecs(orderSpecs)
                     .addFactorLevels(factorLevelsByVar)
