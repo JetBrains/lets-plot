@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import os
-from os.path import join, abspath
+from os.path import join
 from typing import Union
 
 from ..plot.core import _to_svg, _to_html, _to_png, _to_pdf
