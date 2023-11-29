@@ -11,15 +11,33 @@ class ThemeOptions {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             // use predefined themes
-           withTheme("none"),
-           withTheme("minimal"),
-           withTheme("minimal2"),
-           withTheme("classic"),
-           withTheme("light"),
-           withTheme("grey"),
-           withTheme("bw"),
+            withTheme("none"),
+            withTheme("minimal"),
+            withTheme("minimal2"),
+            withTheme("classic"),
+            withTheme("light"),
+            withTheme("grey"),
+            withTheme("bw"),
 
-           setThemeOptions()
+            setThemeOptions(),
+            margins(),
+        )
+    }
+
+    private fun margins(): MutableMap<String, Any> {
+        val theme = """
+            'theme': {
+                'plot_background': {'size': 6, 'blank': false},
+                'legend_position': 'none',
+                'axis_title': {'margin': [ null, null, 0, 0 ], 'size': 15, 'blank': false},
+                'axis_text_x': {'margin': [ 20, null, null, null ], 'size': 15, 'blank': false},
+                'plot_margin': [80, 10, null]
+            }
+        """.trimIndent()
+
+        return plot(
+            plotTitle = "Margins for axis_title, axis_text_x and plot_margin",
+            theme = theme
         )
     }
 

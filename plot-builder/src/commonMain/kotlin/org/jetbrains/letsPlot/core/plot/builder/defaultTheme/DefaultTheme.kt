@@ -65,12 +65,12 @@ class DefaultTheme internal constructor(
                     )
                 }
 
-                ThemeOption.PLOT_MARGIN -> {
+                ThemeOption.PLOT_MARGIN -> with (this.plot.plotMargins()) {
                     mapOf(
-                        Margin.TOP to this.plot.plotMargins().top,
-                        Margin.RIGHT to this.plot.plotMargins().right,
-                        Margin.BOTTOM to this.plot.plotMargins().bottom,
-                        Margin.LEFT to this.plot.plotMargins().left
+                        Margin.TOP to top,
+                        Margin.RIGHT to right,
+                        Margin.BOTTOM to bottom,
+                        Margin.LEFT to left
                     )
                 }
 
