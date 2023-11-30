@@ -343,13 +343,8 @@ open class PlotConfigBackend(
                 // append missed values to the tail of specified levels
                 val distinctValues = data.distinctValues(variable)
                 val tail = distinctValues - levels.toSet()
-                val factors = (levels + tail).let {
-                    if (orderDirectionsByVar.containsKey(variable.name) && orderDirectionsByVar[variable.name]!! < 0) {
-                        it.reversed()
-                    } else {
-                        it
-                    }
-                }
+                val order = orderDirectionsByVar.getOrElse(variable.name) { 0 }
+                val factors = (levels + tail).let { if (order >= 0) it else it.reversed() }
                 variable.name to factors
             }.toMap()
         }

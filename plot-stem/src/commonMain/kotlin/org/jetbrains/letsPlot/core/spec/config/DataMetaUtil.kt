@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Meta.MappingAnnotation
@@ -104,8 +105,8 @@ object DataMetaUtil {
         return (dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
-            ?.filterValues { factorLevels -> factorLevels?.isNotEmpty() ?: false }
-            ?.mapValues { (_, factorLevels) -> factorLevels!!.map { v -> v as Any } }
+            ?.filterNotNullValues()
+            ?.mapValues { (_, factorLevels) -> factorLevels.map { v -> v as Any } }
             ?: emptyMap())
     }
 
@@ -113,8 +114,8 @@ object DataMetaUtil {
         return (dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.getNumber(SeriesAnnotation.ORDER) }
-            ?.filterValues { order -> order != null }
-            ?.mapValues { (_, order) -> order!!.toInt() }
+            ?.filterNotNullValues()
+            ?.mapValues { (_, order) -> order.toInt() }
             ?: emptyMap())
     }
 
