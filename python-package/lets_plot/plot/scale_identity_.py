@@ -47,9 +47,11 @@ def scale_identity(aesthetic, *,
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -112,9 +114,11 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -180,9 +184,11 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -248,9 +254,11 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -316,9 +324,11 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -387,9 +397,11 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -452,9 +464,11 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -517,9 +531,11 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -580,9 +596,11 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
         Guide to use for this scale.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns

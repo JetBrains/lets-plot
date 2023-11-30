@@ -49,9 +49,11 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -130,9 +132,11 @@ def scale_manual(aesthetic, values, *,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -203,9 +207,11 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -272,9 +278,11 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -339,9 +347,11 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -408,9 +418,11 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -477,9 +489,11 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -547,9 +561,11 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -624,9 +640,11 @@ def scale_continuous(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -705,9 +723,11 @@ def scale_gradient(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -781,9 +801,11 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -854,9 +876,11 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -929,9 +953,11 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1002,9 +1028,11 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1078,9 +1106,11 @@ def scale_gradient2(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1161,9 +1191,11 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1241,9 +1273,11 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1318,9 +1352,11 @@ def scale_gradientn(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1395,9 +1431,11 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1469,9 +1507,11 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1552,9 +1592,11 @@ def scale_hue(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1637,9 +1679,11 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1718,9 +1762,11 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1795,9 +1841,11 @@ def scale_discrete(aesthetic, *,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1871,9 +1919,11 @@ def scale_fill_discrete(direction=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1944,9 +1994,11 @@ def scale_color_discrete(direction=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2023,9 +2075,11 @@ def scale_grey(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2103,9 +2157,11 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2178,9 +2234,11 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2281,9 +2339,11 @@ def scale_brewer(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2379,9 +2439,11 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2474,9 +2536,11 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2586,9 +2650,11 @@ def scale_viridis(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2690,9 +2756,11 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2789,9 +2857,11 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2863,9 +2933,11 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2932,9 +3004,11 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3002,9 +3076,11 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3077,9 +3153,11 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3146,9 +3224,11 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
