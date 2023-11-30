@@ -38,8 +38,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -119,8 +118,7 @@ def scale_manual(aesthetic, values, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -211,8 +209,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -282,8 +279,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -353,8 +349,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -424,8 +419,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -495,8 +489,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -567,8 +560,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -643,8 +635,7 @@ def scale_continuous(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -723,8 +714,7 @@ def scale_gradient(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -800,8 +790,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -876,8 +865,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -950,8 +938,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1026,8 +1013,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -1101,8 +1087,7 @@ def scale_gradient2(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1185,8 +1170,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1266,8 +1250,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1344,8 +1327,7 @@ def scale_gradientn(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1422,8 +1404,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1497,8 +1478,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1581,8 +1561,7 @@ def scale_hue(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1667,8 +1646,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1749,8 +1727,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1830,8 +1807,7 @@ def scale_discrete(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1907,8 +1883,7 @@ def scale_fill_discrete(direction=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1981,8 +1956,7 @@ def scale_color_discrete(direction=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2058,8 +2032,7 @@ def scale_grey(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2139,8 +2112,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2215,8 +2187,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2319,8 +2290,7 @@ def scale_brewer(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2418,8 +2388,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2514,8 +2483,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2627,8 +2595,7 @@ def scale_viridis(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2732,8 +2699,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2832,8 +2798,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2910,8 +2875,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2980,8 +2944,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3051,8 +3014,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3127,8 +3089,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3197,8 +3158,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3274,8 +3234,7 @@ def _scale(aesthetic, *,
     breaks : list or dict
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
-        A vector of labels (on breaks), or a dictionary, where the keys are treated as the original values (breaks)
-        and the corresponding values are used as labels.
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
