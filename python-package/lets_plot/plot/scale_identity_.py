@@ -33,10 +33,10 @@ def scale_identity(aesthetic, *,
         The name(s) of the aesthetic(s) that this scale works with.
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -102,10 +102,10 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -172,10 +172,10 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -242,10 +242,10 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -312,10 +312,10 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -385,10 +385,10 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -452,10 +452,10 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -519,10 +519,10 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -584,10 +584,10 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
     ----------
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list of float
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale

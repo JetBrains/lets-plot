@@ -42,10 +42,10 @@ def scale_x_continuous(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -123,10 +123,10 @@ def scale_y_continuous(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -203,10 +203,10 @@ def scale_x_log10(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -277,10 +277,10 @@ def scale_y_log10(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -351,10 +351,10 @@ def scale_x_log2(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -425,10 +425,10 @@ def scale_y_log2(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -499,10 +499,10 @@ def scale_x_reverse(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -573,10 +573,10 @@ def scale_y_reverse(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -652,10 +652,10 @@ def scale_x_discrete(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -736,10 +736,10 @@ def scale_x_discrete_reversed(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -815,10 +815,10 @@ def scale_y_discrete(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -899,10 +899,10 @@ def scale_y_discrete_reversed(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list of two numbers
@@ -983,10 +983,10 @@ def scale_x_datetime(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector of length two providing limits of the scale.
     expand : list
@@ -1067,10 +1067,10 @@ def scale_y_datetime(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A vector of length two providing limits of the scale.
     expand : list of two numbers
@@ -1152,10 +1152,10 @@ def scale_x_time(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -1228,10 +1228,10 @@ def scale_y_time(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
