@@ -97,20 +97,15 @@ object DataMetaUtil {
     }
 
     fun getCategoricalVariables(dataMeta: Map<*, *>): Set<String> {
-        return dataMeta
-            .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
-            ?.filterValues { list -> list?.isNotEmpty() ?: false }
-            ?.keys
-            ?: emptySet()
-        }
+        return getFactorLevelsByVariable(dataMeta).keys
+    }
 
     fun getFactorLevelsByVariable(dataMeta: Map<*, *>): Map<String, List<Any>> {
         return (dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
-            ?.filterValues { list -> list?.isNotEmpty() ?: false }
-            ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
+            ?.filterValues { factorLevels -> factorLevels?.isNotEmpty() ?: false }
+            ?.mapValues { (_, factorLevels) -> factorLevels!!.map { v -> v as Any } }
             ?: emptyMap())
     }
 

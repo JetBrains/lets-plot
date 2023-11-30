@@ -51,7 +51,7 @@ open class PlotConfigBackend(
         }
 
         // match the specified 'factor_levels' to the actual contents of the data set (on combined df before stat)
-        val specifiedFactorLeversByLayers = layerConfigs.map { layerConfig ->
+        val specifiedFactorLevelsByLayers = layerConfigs.map { layerConfig ->
             prepareLayerFactorLevelsByVariable(
                 layerConfig.combinedData,
                 plotDataMeta = getMap(DATA_META),
@@ -73,14 +73,16 @@ open class PlotConfigBackend(
 
         // Re-create the "natural order" existed before faceting
         // or apply the specified order
-        if (facets.isDefined || specifiedFactorLeversByLayers.any { it.isNotEmpty() }) {
-            // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
-            layerConfigs.forEachIndexed { layerIndex, layerConfig ->
-                val layerData = layerConfig.ownData
-                val factorLevels = specifiedFactorLeversByLayers[layerIndex]
-                if (facets.isFacettable(layerData) || factorLevels.isNotEmpty()) {
+        if (facets.isDefined || specifiedFactorLevelsByLayers.any { it.isNotEmpty() }) {
+            layerConfigs.zip(specifiedFactorLevelsByLayers)
+                .filter { (layerConfig, factorLevels) ->
+                    // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
+                    facets.isFacettable(layerConfig.ownData)
+                            || factorLevels.isNotEmpty()
+                }
+                .forEach { (layerConfig, factorLevels) ->
                     val layerDataMetaUpdated = addFactorLevelsDataMeta(
-                        layerData = layerData,
+                        layerData = layerConfig.ownData,
                         layerDataMeta = layerConfig.getMap(DATA_META),
                         stat = layerConfig.stat,
                         varBindings = layerConfig.varBindings,
@@ -90,8 +92,7 @@ open class PlotConfigBackend(
                         specifiedLayerFactorLevers = factorLevels
                     )
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
-               }
-           }
+                }
         }
     }
 
@@ -318,7 +319,7 @@ open class PlotConfigBackend(
                 levelsByVariable[variable.name] = orderedDistinctValues
             }
 
-            // specified factors
+            // apply specified factors
             levelsByVariable += specifiedLayerFactorLevers
 
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
