@@ -43,8 +43,7 @@ def scale_x_continuous(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -124,8 +123,7 @@ def scale_y_continuous(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -204,8 +202,7 @@ def scale_x_log10(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -278,8 +275,7 @@ def scale_y_log10(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -352,8 +348,7 @@ def scale_x_log2(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -426,8 +421,7 @@ def scale_y_log2(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -500,8 +494,7 @@ def scale_x_reverse(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -574,8 +567,7 @@ def scale_y_reverse(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -653,8 +645,7 @@ def scale_x_discrete(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -737,8 +728,7 @@ def scale_x_discrete_reversed(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -816,8 +806,7 @@ def scale_y_discrete(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -900,8 +889,7 @@ def scale_y_discrete_reversed(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -984,8 +972,7 @@ def scale_x_datetime(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1068,8 +1055,7 @@ def scale_y_datetime(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1153,8 +1139,7 @@ def scale_x_time(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
@@ -1231,8 +1216,7 @@ def scale_y_time(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list or dict
-        A vector specifying the values of positions (of ticks), or a dictionary, where the keys are treated as labels
-        to display on the corresponding breaks.
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A vector of labels (on ticks), or a dictionary, where the keys are treated as the original values (breaks)
         and the corresponding values are used as labels.
