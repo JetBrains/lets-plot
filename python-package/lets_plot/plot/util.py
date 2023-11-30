@@ -43,14 +43,23 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
     if raw_mapping is not None:
         # series annotations
+        settings_by_variable = {}
         for variable in raw_mapping.as_dict().values():
             if isinstance(variable, MappingMeta):
-                if variable.levels is not None:
-                    categorical_variables.append(variable.variable)
-                    series_meta.append({
-                        'column': variable.variable,
-                        'factor_levels': variable.levels
-                    })
+                current = {
+                    'factor_levels': variable.levels,
+                    'order': None if 'order' not in variable.parameters else variable.parameters['order']
+                }
+                if variable.variable not in settings_by_variable:
+                    settings_by_variable[variable.variable] = {}
+                settings_by_variable[variable.variable].update((k, v) for k, v in current.items() if v is not None)
+
+        for variable, settings in settings_by_variable.items():
+            if 'factor_levels' in settings:
+                series_meta.append(
+                    {**{'column': variable}, **settings}
+                )
+                categorical_variables.append(variable)
 
         # mapping_annotations
         for aesthetic, variable in raw_mapping.as_dict().items():

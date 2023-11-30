@@ -77,7 +77,7 @@ def test_factor_levels():
     assert expected_factor_levels == data_meta['series_annotations']
 
 
-def test_skip_mapping_annotations_for_variable_with_levels():
+def test_factor_levels_with_ordering():
     mapping = aes(
         as_discrete("v1", order=-1),
         'v2',
@@ -86,7 +86,7 @@ def test_skip_mapping_annotations_for_variable_with_levels():
     )
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
-        {'column': 'v1', 'factor_levels': ['foo', 'bar']},
+        {'column': 'v1', 'factor_levels': ['foo', 'bar'], 'order': -1},
         {'column': 'v2', 'factor_levels': [2, 1]}
     ]
     assert expected_factor_levels == data_meta['series_annotations']

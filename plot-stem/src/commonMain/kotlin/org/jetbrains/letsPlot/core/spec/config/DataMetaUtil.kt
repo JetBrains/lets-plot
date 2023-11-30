@@ -109,6 +109,15 @@ object DataMetaUtil {
             ?: emptyMap())
     }
 
+    fun getFactorLevelsOrderByVariable(dataMeta: Map<*, *>): Map<String, Int> {
+        return (dataMeta
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(COLUMN)!! to it.getNumber(SeriesAnnotation.ORDER) }
+            ?.filterValues { order -> order != null }
+            ?.mapValues { (_, order) -> order!!.toInt() }
+            ?: emptyMap())
+    }
+
     fun updateFactorLevelsByVariable(
         dataMeta: Map<String, Any>,
         levelsByVariable: Map<String, List<Any>>

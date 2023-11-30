@@ -336,11 +336,20 @@ open class PlotConfigBackend(
                 .mapKeys { (varName, _) -> data.variables().find { it.name == varName } }
                 .filterNotNullKeys()
 
+            val orderDirectionsByVar = DataMetaUtil.getFactorLevelsOrderByVariable(plotDataMeta) +
+                    DataMetaUtil.getFactorLevelsOrderByVariable(layerDataMeta)
+
             return factorLevelsByVar.map { (variable, levels) ->
                 // append missed values to the tail of specified levels
                 val distinctValues = data.distinctValues(variable)
                 val tail = distinctValues - levels.toSet()
-                val factors = levels + tail
+                val factors = (levels + tail).let {
+                    if (orderDirectionsByVar.containsKey(variable.name) && orderDirectionsByVar[variable.name]!! < 0) {
+                        it.reversed()
+                    } else {
+                        it
+                    }
+                }
                 variable.name to factors
             }.toMap()
         }

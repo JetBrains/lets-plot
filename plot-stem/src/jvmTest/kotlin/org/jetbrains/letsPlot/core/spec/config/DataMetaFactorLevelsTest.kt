@@ -35,8 +35,8 @@ class DataMetaFactorLevelsTest {
         val spec = makePlotSpec(
             seriesAnnotations = withFactorLevels(
                 mapOf(
-                    "name" to listOf("c", "b", "a", "d"),
-                    "c" to listOf(2.0, 3.0, 1.0, 4.0)
+                    "name" to listOf("a", "b", "c", "d"),
+                    "c" to listOf(1.0, 2.0, 3.0, 4.0)
                 )
             ),
             dataStorage,
@@ -45,8 +45,8 @@ class DataMetaFactorLevelsTest {
         transformToClientPlotConfig(spec)
             .assertVariable("name", isDiscrete = true)
             .assertVariable("c", isDiscrete = true)
-            .assertDistinctValues("name", listOf("c", "b", "a", "d"))
-            .assertDistinctValues("c", listOf(2.0, 3.0, 1.0, 4.0))
+            .assertDistinctValues("name", listOf("a", "b", "c", "d"))
+            .assertDistinctValues("c", listOf(1.0, 2.0, 3.0, 4.0))
     }
 
     // settings in plot/layer spec
@@ -88,15 +88,49 @@ class DataMetaFactorLevelsTest {
         val spec = makePlotSpec(
             seriesAnnotations = withFactorLevels(
                 mapOf(
-                    "name" to listOf("c", "a"),
-                    "c" to listOf(2.0, 3.0)
+                    "name" to listOf("a", "b"),
+                    "c" to listOf(1.0, 2.0)
                 )
             )
         )
 
         transformToClientPlotConfig(spec)
-            .assertDistinctValues("name", listOf("c", "a", "b", "d"))
-            .assertDistinctValues("c", listOf(2.0, 3.0, 4.0, 1.0))
+            .assertDistinctValues("name", listOf("a", "b", "c", "d"))
+            .assertDistinctValues("c", listOf(1.0, 2.0, 4.0, 3.0))
+    }
+
+    @Test
+    fun `with reverse ordering`() {
+        val spec = makePlotSpec(
+            seriesAnnotations = withFactorLevels(
+                mapOf(
+                    "name" to listOf("a", "b", "c", "d"),
+                    "c" to listOf(1.0, 2.0, 3.0, 4.0)
+                ),
+                order = -1
+            )
+        )
+
+        transformToClientPlotConfig(spec)
+            .assertDistinctValues("name", listOf("d", "c", "b", "a"))
+            .assertDistinctValues("c", listOf(4.0, 3.0, 2.0, 1.0))
+    }
+
+    @Test
+    fun `should extend levels with missing values - with reverse ordering`() {
+        val spec = makePlotSpec(
+            seriesAnnotations = withFactorLevels(
+                mapOf(
+                    "name" to listOf("a", "b"),
+                    "c" to listOf(1.0, 2.0)
+                ),
+                order = -1
+            )
+        )
+
+        transformToClientPlotConfig(spec)
+            .assertDistinctValues("name", listOf("d", "c", "b", "a"))
+            .assertDistinctValues("c", listOf(3.0, 4.0, 2.0, 1.0))
     }
 
     private fun makePlotSpec(
@@ -125,12 +159,13 @@ class DataMetaFactorLevelsTest {
             }""".trimIndent()
     }
 
-    private fun withFactorLevels(varListWithLevels: Map<String, List<Any>>): String {
+    private fun withFactorLevels(varListWithLevels: Map<String, List<Any>>, order: Int = 1): String {
         val seriesAnnotations = varListWithLevels.toList().joinToString { (variable, factorLevels) ->
             val factorStringList = factorLevels.joinToString { if (it is String) "\'$it\'" else "$it" }
             """{
                 'column': '$variable',
-                'factor_levels': [ $factorStringList ]
+                'factor_levels': [ $factorStringList ],
+                'order': $order
             }""".trimIndent()
         }
         return "'series_annotations': [$seriesAnnotations]"
