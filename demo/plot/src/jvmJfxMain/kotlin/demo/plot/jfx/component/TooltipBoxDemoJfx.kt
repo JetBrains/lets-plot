@@ -5,9 +5,9 @@
 
 package demo.plot.jfx.component
 
-import javafx.application.Platform.runLater
-import demo.plot.shared.model.component.TooltipBoxDemo
 import demo.common.jfx.demoUtils.SvgViewerDemoWindowJfx
+import demo.plot.shared.model.component.TooltipBoxDemo
+import javafx.application.Platform.runLater
 import org.jetbrains.letsPlot.jfx.util.runOnFxThread
 import java.awt.EventQueue.invokeLater
 
@@ -23,7 +23,7 @@ fun main() {
         runOnFxThread {
             invokeLater {
                 runLater {
-                    models.forEach { it.second() }
+                    models.forEach { runLater { it.second() } }
                 }
             }
         }

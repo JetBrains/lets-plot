@@ -51,25 +51,71 @@ class ThemeConfig constructor(
         }
 
         private fun convertMargins(key: String, value: Any): Any {
-            fun toMargin(value: Any?) = when (value) {
-                    "t" -> ThemeOption.Elem.Margin.TOP
-                    "r" -> ThemeOption.Elem.Margin.RIGHT
-                    "b" -> ThemeOption.Elem.Margin.BOTTOM
-                    "l" -> ThemeOption.Elem.Margin.LEFT
-                    else -> throw IllegalArgumentException(
-                        "Illegal value: '$value'.\n${ThemeOption.Elem.MARGIN} " +
-                                "Expected values are: value is either a string: t|r|b|l."
-                    )
+
+            fun toMarginSpec(value: Any?): Map<String, Any> {
+                val margins: List<Double?> = when (value) {
+                    is Number -> listOf(value.toDouble())
+                    is List<*> -> {
+                        require(value.all { it == null || it is Number }) {
+                            "The margins option requires a list of numbers, but was: $value."
+                        }
+                        value.map { (it as? Number)?.toDouble() }
+                    }
+                    else -> error("The margins option should be specified using number or list of numbers, but was: $value.")
                 }
 
-            return when {
-                key == PLOT_MARGIN && value is Map<*, *> -> {
-                    value.map { (k, v) -> toMargin(k) to v }.toMap()
+                val top: Double?
+                val right: Double?
+                val bottom: Double?
+                val left: Double?
+
+                when (margins.size) {
+                    1 -> {
+                        val margin = margins.single()
+                        top = margin
+                        right = margin
+                        left = margin
+                        bottom = margin
+                    }
+                    2 -> {
+                        val (vMargin, hMargin) = margins
+                        top = vMargin
+                        bottom = vMargin
+                        right = hMargin
+                        left = hMargin
+                    }
+                    3 -> {
+                        top = margins[0]
+                        right = margins[1]
+                        left = margins[1]
+                        bottom = margins[2]
+                    }
+                    4 -> {
+                        top = margins[0]
+                        right = margins[1]
+                        bottom = margins[2]
+                        left = margins[3]
+                    }
+                    else -> {
+                        error("The margins accept a number or a list of one, two, three or four numbers, but was: $value.")
+                    }
                 }
+                return mapOf(
+                    ThemeOption.Elem.Margin.TOP to top,
+                    ThemeOption.Elem.Margin.RIGHT to right,
+                    ThemeOption.Elem.Margin.BOTTOM to bottom,
+                    ThemeOption.Elem.Margin.LEFT to left
+                )
+                    .filterValues { it != null }
+                    .mapValues { (_, v) -> v as Any }
+            }
+
+            return when {
+                key == PLOT_MARGIN -> toMarginSpec(value)
                 value is Map<*, *> && value.containsKey(ThemeOption.Elem.MARGIN) -> {
-                    val oldMargins = value[ThemeOption.Elem.MARGIN] as Map<*, *>
-                    val newMargins = oldMargins.map { (k, v) -> toMargin(k) to v }
-                    value - ThemeOption.Elem.MARGIN + newMargins
+                    val margins = toMarginSpec(value[ThemeOption.Elem.MARGIN])
+                    // to keep other options
+                    value - ThemeOption.Elem.MARGIN + margins
                 }
                 else -> {
                     value

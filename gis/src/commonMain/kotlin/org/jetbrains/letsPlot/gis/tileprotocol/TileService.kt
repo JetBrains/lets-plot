@@ -5,6 +5,10 @@
 
 package org.jetbrains.letsPlot.gis.tileprotocol
 
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.formatJson
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
@@ -19,17 +23,14 @@ import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.MapConfig
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SafeSocketHandler
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketBuilder
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.SocketHandler
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
-import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
-import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 
 
 open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme) {
     enum class Theme {
         COLOR,
         LIGHT,
-        DARK
+        DARK,
+        BW
     }
 
     private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler()))
