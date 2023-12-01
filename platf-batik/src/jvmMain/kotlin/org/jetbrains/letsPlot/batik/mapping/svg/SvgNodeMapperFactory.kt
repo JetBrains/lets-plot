@@ -9,8 +9,11 @@ import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.dom.AbstractDocument
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.jetbrains.letsPlot.awt.util.RGBEncoderAwt
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.w3c.dom.Node
 import org.w3c.dom.Text
 
