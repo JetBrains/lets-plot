@@ -13,9 +13,6 @@ internal object PlotAxisLayoutUtil {
 
     private const val INITIAL_TICK_LABEL_IN_CHARS = "_"
 
-    fun estimateLabelHeight(labels: List<String>, labelSpec: LabelSpec): Double =
-        labels.maxOfOrNull(labelSpec::height) ?: labelSpec.height("")
-
     fun initialThickness(
         orientation: Orientation,
         theme: AxisTheme,
@@ -33,7 +30,7 @@ internal object PlotAxisLayoutUtil {
 
     private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
         return if (orientation.isHorizontal)
-            tickLabelSpec.height(INITIAL_TICK_LABEL_IN_CHARS)
+            tickLabelSpec.height()
         else
             tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
     }

@@ -27,8 +27,6 @@ object RichText {
         return ::enrichedWidthCalculator
     }
 
-    fun getHeightStretchFactor(text: String): Double = extractTerms(text).maxOfOrNull(Term::heightStretchFactor) ?: 1.0
-
     private fun extractTerms(text: String): List<Term> {
         val powerTerms = extractPowerTerms(text)
         // If there will be another formula terms (like fractionTerms),
@@ -65,8 +63,6 @@ object RichText {
     }
 
     private class Text(private val text: String) : Term {
-        override val heightStretchFactor = 1.0
-
         override fun toSvgElements(): List<SvgTSpanElement> {
             return listOf(SvgTSpanElement(text))
         }
@@ -80,8 +76,6 @@ object RichText {
         private val base: String,
         private val degree: String
     ) : Term {
-        override val heightStretchFactor = 1.0 + SUPERSCRIPT_SIZE_FACTOR / 2.0
-
         override fun toSvgElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
             val degreeTSpan = SvgTSpanElement(degree)
@@ -105,8 +99,6 @@ object RichText {
     }
 
     private interface Term {
-        val heightStretchFactor: Double
-
         fun toSvgElements(): List<SvgTSpanElement>
 
         fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double

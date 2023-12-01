@@ -115,7 +115,7 @@ abstract class LegendBox : SvgComponent() {
         titleSize: DoubleVector,
         justification: TextJustification
     ): MultilineLabel {
-        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height(title)
+        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
 
         val label = MultilineLabel(title)
         val (pos, hAnchor) = applyJustification(

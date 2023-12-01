@@ -582,7 +582,7 @@ class PlotSvgComponent constructor(
     ) {
         if (title == null) return
 
-        val lineHeight = labelSpec.height(title)
+        val lineHeight = labelSpec.height()
         val titleLabel = MultilineLabel(title)
         titleLabel.addClassName(className)
         val (position, hAnchor) = applyJustification(

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import org.jetbrains.letsPlot.datamodel.svg.dom.RichText
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -132,6 +131,8 @@ object TextUtil {
         return max(0.1, d)
     }
 
+    private fun lineHeight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
+
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         label.textColor().set(p.color())
         if (applyAlpha) {
@@ -170,8 +171,7 @@ object TextUtil {
         }
 
         label.setFontSize(fontSize(p, scale))
-        val lineHeight = estimateLineHeight(MultilineLabel.splitLines(label.text), p, scale)
-        label.setLineHeight(lineHeight)
+        label.setLineHeight(lineHeight(p, scale))
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -187,23 +187,20 @@ object TextUtil {
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
-        val lineHeight = estimateLineHeight(lines, p, scale)
+        val lineHeight = lineHeight(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
-        return lines.map { line ->
+        val estimated = lines.map { line ->
             ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
         }.fold(DoubleVector.ZERO) { acc, sz ->
             DoubleVector(
                 x = max(acc.x, sz.x),
-                y = acc.y + lineHeight
+                y = acc.y + sz.y
             )
         }
+        val lineInterval = lineHeight - fontSize
+        val textHeight = estimated.y + lineInterval * (lines.size - 1)
+        return DoubleVector(estimated.x, textHeight)
     }
-
-    private fun estimateLineHeight(lines: Iterable<String>, p: DataPointAesthetics, scale: Double) =
-        lines.maxOfOrNull { lineHeight(it, p, scale) } ?: lineHeight("", p, scale)
-
-    private fun lineHeight(text: String, p: DataPointAesthetics, scale: Double) =
-        p.lineheight()!! * fontSize(p, scale) * RichText.getHeightStretchFactor(text)
 }

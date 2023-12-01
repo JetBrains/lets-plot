@@ -15,15 +15,15 @@ class PlotLabelSpec(
 ) : LabelSpec {
 
     override fun dimensions(labelText: String): DoubleVector {
-        return DoubleVector(width(labelText), height(labelText))
+        return DoubleVector(width(labelText), height())
     }
 
     override fun width(labelText: String): Double {
         return RichText.enrichWidthCalculator(::widthCalculator)(labelText, font)
     }
 
-    override fun height(labelText: String): Double {
-        return font.size.toDouble() * RichText.getHeightStretchFactor(labelText) + 2 * LABEL_PADDING
+    override fun height(): Double {
+        return font.size + 2 * LABEL_PADDING
     }
 
     companion object {
@@ -70,7 +70,7 @@ class PlotLabelSpec(
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun height(labelText: String): Double {
+            override fun height(): Double {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

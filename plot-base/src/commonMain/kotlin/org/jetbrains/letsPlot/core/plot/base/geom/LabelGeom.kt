@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
-import org.jetbrains.letsPlot.datamodel.svg.dom.RichText
 
 
 class LabelGeom : TextGeom() {
@@ -41,7 +40,7 @@ class LabelGeom : TextGeom() {
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
 
         // Background rectangle
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio) * RichText.getHeightStretchFactor(text)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val padding = fontSize * paddingFactor
         val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {

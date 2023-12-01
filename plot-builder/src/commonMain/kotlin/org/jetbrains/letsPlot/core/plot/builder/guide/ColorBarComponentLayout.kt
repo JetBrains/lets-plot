@@ -13,14 +13,13 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 
 abstract class ColorBarComponentLayout(
     title: String,
     domain: DoubleSpan,
-    protected val breaks: ScaleBreaks,
+    breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
     reverse: Boolean,
@@ -73,8 +72,7 @@ abstract class ColorBarComponentLayout(
         theme
     ) {
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() =
-            PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, PlotLabelSpecFactory.legendItem(theme)) / 3
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).height() / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {

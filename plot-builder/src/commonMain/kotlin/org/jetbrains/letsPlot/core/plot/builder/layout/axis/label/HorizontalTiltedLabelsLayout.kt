@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -42,7 +41,7 @@ internal class HorizontalTiltedLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        val height = PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, labelSpec)
+        val height = labelSpec.height()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         var overlap = false
         if (breaks.size >= 2) {

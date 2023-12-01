@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal class HorizontalMultilineLabelsLayout(
@@ -68,7 +67,7 @@ internal class HorizontalMultilineLabelsLayout(
         } else {
             boundsByShelfIndex[0]
         }
-        val h = PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, labelSpec) * LINE_HEIGHT
+        val h = labelSpec.height() * LINE_HEIGHT
         for ((i, shelfBounds) in boundsByShelfIndex.withIndex()) {
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, i * h)))
         }
@@ -115,7 +114,7 @@ internal class HorizontalMultilineLabelsLayout(
             breaks: ScaleBreaks,
             shelfIndexForTickIndex: List<Int>
         ): List<DoubleVector> {
-            val h = PlotAxisLayoutUtil.estimateLabelHeight(breaks.labels, labelSpec) * LINE_HEIGHT
+            val h = labelSpec.height() * LINE_HEIGHT
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
                 result.add(DoubleVector(0.0, shelfIndexForTickIndex[i] * h))

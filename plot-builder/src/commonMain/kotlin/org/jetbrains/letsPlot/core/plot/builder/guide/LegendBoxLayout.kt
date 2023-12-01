@@ -39,7 +39,7 @@ abstract class LegendBoxLayout(
             else -> DoubleVector(
                 0.0,
                 // make some space between title and the rest of the content.
-                titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height(title) / 2
+                titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
             )
         }
 
