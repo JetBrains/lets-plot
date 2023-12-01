@@ -38,13 +38,13 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # series annotations
     series_meta = []
 
-    class AnnotationSettings:
+    class VariableMeta:
         def __init__(self):
             self.levels = None
             self.aesthetics = []
             self.order = None
 
-    annotated_variables: Dict[str, AnnotationSettings] = {}
+    variables_meta: Dict[str, VariableMeta] = {}
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -53,20 +53,21 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
             if isinstance(variable, MappingMeta):
                 mapping[aesthetic] = variable.variable
-                if variable.variable in annotated_variables:
-                    current = annotated_variables[variable.variable]
+                if variable.variable in variables_meta:
+                    var_meta = variables_meta[variable.variable]
                 else:
-                    current = AnnotationSettings()
-                current.aesthetics.append(aesthetic)
+                    var_meta = VariableMeta()
+                var_meta.aesthetics.append(aesthetic)
                 if variable.levels is not None:
-                    current.levels = variable.levels
-                if variable.parameters['order']:
-                    current.order = variable.parameters['order']
-                annotated_variables[variable.variable] = current
+                    var_meta.levels = variable.levels
+                order = variable.parameters.get('order')
+                if order is not None:
+                    var_meta.order = order
+                variables_meta[variable.variable] = var_meta
             else:
                 mapping[aesthetic] = variable
 
-    for variableName, settings in annotated_variables.items():
+    for variableName, settings in variables_meta.items():
         if settings.levels is not None:
             # series annotations
             series_meta.append({
