@@ -117,7 +117,7 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_svg(self, path) -> str:
         """
-        Write all plots currently in this 'bunch' to a file or file-like object in SVG format.
+        Export all plots currently in this 'bunch' to a file or file-like object in SVG format.
 
         Parameters
         ----------
@@ -158,7 +158,7 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_html(self, path, iframe: bool = None) -> str:
         """
-        Write all plots currently in this 'bunch' to a file or file-like object in HTML format.
+        Export all plots currently in this 'bunch' to a file or file-like object in HTML format.
 
         Parameters
         ----------
@@ -199,7 +199,7 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_png(self, path, scale=None) -> str:
         """
-        Write all plots currently in this 'bunch' to a file or file-like object in PNG format.
+        Export all plots currently in this 'bunch' to a file or file-like object in PNG format.
 
         Parameters
         ----------
@@ -248,7 +248,7 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_pdf(self, path, scale=None) -> str:
         """
-        Write all plots currently in this 'bunch' to a file or file-like object in PDF format.
+        Export all plots currently in this 'bunch' to a file or file-like object in PDF format.
 
         Parameters
         ----------

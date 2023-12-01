@@ -477,7 +477,7 @@ class PlotSpec(FeatureSpec):
 
     def to_svg(self, path) -> str:
         """
-        Write a plot to a file or to a file-like object in SVG format.
+        Export a plot to a file or to a file-like object in SVG format.
 
         Parameters
         ----------
@@ -514,7 +514,7 @@ class PlotSpec(FeatureSpec):
 
     def to_html(self, path, iframe: bool = None) -> str:
         """
-        Write a plot to a file or to a file-like object in HTML format.
+        Export a plot to a file or to a file-like object in HTML format.
 
         Parameters
         ----------
@@ -551,7 +551,7 @@ class PlotSpec(FeatureSpec):
 
     def to_png(self, path, scale: float = None) -> str:
         """
-        Write a plot to a file or to a file-like object in PNG format.
+        Export a plot to a file or to a file-like object in PNG format.
 
         Parameters
         ----------
@@ -596,7 +596,7 @@ class PlotSpec(FeatureSpec):
 
     def to_pdf(self, path, scale: float = None) -> str:
         """
-        Write a plot to a file or to a file-like object in PDF format.
+        Export a plot to a file or to a file-like object in PDF format.
 
         Parameters
         ----------
@@ -792,7 +792,7 @@ def _theme_dicts_merge(x, y):
     return {**x, **y, **z}
 
 
-def _to_svg(spec, path) -> str:
+def _to_svg(spec, path) -> str | None:
     from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(spec.as_dict())
@@ -805,7 +805,7 @@ def _to_svg(spec, path) -> str:
     return _abspath(path)
 
 
-def _to_html(spec, path, iframe: bool) -> str:
+def _to_html(spec, path, iframe: bool) -> str | None:
     if iframe is None:
         iframe = False
 
@@ -821,7 +821,7 @@ def _to_html(spec, path, iframe: bool) -> str:
     return _abspath(path)
 
 
-def _to_png(spec, path, scale: float) -> str:
+def _to_png(spec, path, scale: float) -> str | None:
     if scale is None:
         scale = 2.0
 
@@ -843,7 +843,7 @@ def _to_png(spec, path, scale: float) -> str:
     return _abspath(path)
 
 
-def _to_pdf(spec, path, scale: float) -> str:
+def _to_pdf(spec, path, scale: float) -> str | None:
     if scale is None:
         scale = 2.0
 
@@ -867,11 +867,13 @@ def _to_pdf(spec, path, scale: float) -> str:
 
 def _makedirs(path):
     if isinstance(path, str):
-        dirname = os.path.dirname(path) or '.'
-        if not os.path.exists(dirname):
+        dirname = os.path.dirname(path)
+        if dirname and not os.path.exists(dirname):
             os.makedirs(dirname)
 
 
 def _abspath(path) -> str | None:
     if isinstance(path, str):
         return os.path.abspath(path)
+    else:
+        return None
