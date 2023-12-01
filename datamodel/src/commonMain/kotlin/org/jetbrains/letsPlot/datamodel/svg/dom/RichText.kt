@@ -93,7 +93,7 @@ object RichText {
         }
 
         companion object {
-            private const val SUPERSCRIPT_SIZE_FACTOR = 0.75
+            private const val SUPERSCRIPT_SIZE_FACTOR = 0.6
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
         }
     }
