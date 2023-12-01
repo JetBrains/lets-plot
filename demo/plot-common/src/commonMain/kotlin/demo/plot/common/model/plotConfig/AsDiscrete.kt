@@ -247,7 +247,8 @@ class AsDiscrete {
                             },
                             {   
                                 'column': 'value',
-                                'factor_levels': [4,1,2]
+                                'factor_levels': [1,2,3],
+                                'order': -1
                             }                            
                         ]
                     }        

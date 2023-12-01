@@ -159,7 +159,7 @@ class DataMetaFactorLevelsTest {
             }""".trimIndent()
     }
 
-    private fun withFactorLevels(varListWithLevels: Map<String, List<Any>>, order: Int = 1): String {
+    private fun withFactorLevels(varListWithLevels: Map<String, List<Any>>, order: Int? = null): String {
         val seriesAnnotations = varListWithLevels.toList().joinToString { (variable, factorLevels) ->
             val factorStringList = factorLevels.joinToString { if (it is String) "\'$it\'" else "$it" }
             """{
