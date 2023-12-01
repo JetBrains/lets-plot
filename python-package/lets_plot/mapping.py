@@ -31,7 +31,7 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     order : int
         The ordering direction. 1 for ascending, -1 for descending.
     levels : list
-        The list defines a specific order of distinct values of the variable.
+        The list of values that defines a specific order of categories.
 
     Returns
     -------

@@ -72,22 +72,41 @@ def test_factor_levels():
     mapping = aes(as_discrete('v1', levels=['foo', 'bar']))
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
-        {'column': 'v1', 'factor_levels': ['foo', 'bar']}
+        {'column': 'v1', 'factor_levels': ['foo', 'bar'], 'order': None}
     ]
     assert expected_factor_levels == data_meta['series_annotations']
 
 
 def test_factor_levels_with_ordering():
     mapping = aes(
-        as_discrete("v1", order=-1),
+        as_discrete('v1', order=-1),
         'v2',
-        a=as_discrete("v1", levels=['foo', 'bar']),
-        b=as_discrete("v2", levels=[2, 1])
+        a=as_discrete('v1', levels=['foo', 'bar']),
+        b=as_discrete('v2', levels=[2, 1])
     )
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
         {'column': 'v1', 'factor_levels': ['foo', 'bar'], 'order': -1},
-        {'column': 'v2', 'factor_levels': [2, 1]}
+        {'column': 'v2', 'factor_levels': [2, 1], 'order': None}
     ]
     assert expected_factor_levels == data_meta['series_annotations']
     assert 'mapping_annotations' not in data_meta
+
+
+def test_with_mapping_annotations():
+    mapping = aes(
+        x=as_discrete('v1', order_by='v2'),
+        y=as_discrete('v2', order_by='v1'),
+        a=as_discrete('v1', order=-1),
+        b=as_discrete('v2', levels=[2, 1])
+    )
+    data_meta = get_data_meta(data_dict2, mapping)
+    expected_mapping_annotations = [
+        {'aes': 'x', 'annotation': 'as_discrete', 'parameters': {'label': 'v1', 'order_by': 'v2', 'order': None}},
+        {'aes': 'a', 'annotation': 'as_discrete', 'parameters': {'label': 'v1', 'order_by': None, 'order': -1}}
+    ]
+    expected_factor_levels = [
+        {'column': 'v2', 'factor_levels': [2, 1], 'order': None}
+    ]
+    assert expected_factor_levels == data_meta['series_annotations']
+    assert expected_mapping_annotations == data_meta['mapping_annotations']

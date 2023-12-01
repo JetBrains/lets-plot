@@ -4,7 +4,7 @@
 #
 from collections.abc import Iterable
 from datetime import datetime
-from typing import Any, Tuple, Sequence, Optional
+from typing import Any, Tuple, Sequence, Optional, Dict
 
 from lets_plot._type_utils import is_dict_or_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
@@ -38,47 +38,52 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     # series annotations
     series_meta = []
 
-    categorical_variables = []
-    # todo add pandas Categorical
+    class AnnotationSettings:
+        def __init__(self):
+            self.levels = None
+            self.aesthetics = []
+            self.order = None
+
+    annotated_variables: Dict[str, AnnotationSettings] = {}
 
     if raw_mapping is not None:
-        # series annotations
-        settings_by_variable = {}
-        for variable in raw_mapping.as_dict().values():
-            if isinstance(variable, MappingMeta):
-                current = {
-                    'factor_levels': variable.levels,
-                    'order': None if 'order' not in variable.parameters else variable.parameters['order']
-                }
-                if variable.variable not in settings_by_variable:
-                    settings_by_variable[variable.variable] = {}
-                settings_by_variable[variable.variable].update((k, v) for k, v in current.items() if v is not None)
-
-        for variable, settings in settings_by_variable.items():
-            if 'factor_levels' in settings:
-                series_meta.append(
-                    {**{'column': variable}, **settings}
-                )
-                categorical_variables.append(variable)
-
-        # mapping_annotations
         for aesthetic, variable in raw_mapping.as_dict().items():
             if aesthetic == 'name':  # ignore FeatureSpec.name property
                 continue
 
             if isinstance(variable, MappingMeta):
                 mapping[aesthetic] = variable.variable
-                if variable.variable not in categorical_variables:
-                    mapping_meta.append({
-                        'aes': aesthetic,
-                        'annotation': variable.annotation,
-                        'parameters': variable.parameters
-                    })
+                if variable.variable in annotated_variables:
+                    current = annotated_variables[variable.variable]
+                else:
+                    current = AnnotationSettings()
+                current.aesthetics.append(aesthetic)
+                if variable.levels is not None:
+                    current.levels = variable.levels
+                if variable.parameters['order']:
+                    current.order = variable.parameters['order']
+                annotated_variables[variable.variable] = current
             else:
                 mapping[aesthetic] = variable
 
-            if len(mapping_meta) > 0:
-                data_meta.update({'mapping_annotations': mapping_meta})
+    for variableName, settings in annotated_variables.items():
+        if settings.levels is not None:
+            # series annotations
+            series_meta.append({
+                'column': variableName,
+                'factor_levels': settings.levels,
+                'order': settings.order
+            })
+        else:
+            # mapping annotations
+            for aesthetic in settings.aesthetics:
+                value = raw_mapping.as_dict().get(aesthetic)
+                if value is not None and isinstance(value, MappingMeta):
+                    mapping_meta.append({
+                        'aes': aesthetic,
+                        'annotation': value.annotation,
+                        'parameters': value.parameters
+                    })
 
     if is_dict_or_dataframe(data):
         for column_name, values in data.items():
@@ -92,6 +97,9 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
     if len(series_meta) > 0:
         data_meta.update({'series_annotations': series_meta})
+
+    if len(mapping_meta) > 0:
+        data_meta.update({'mapping_annotations': mapping_meta})
 
     return data, aes(**mapping), {'data_meta': data_meta}
 
