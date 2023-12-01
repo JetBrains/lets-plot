@@ -111,6 +111,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2DF,
                 GeomKind.DOT_PLOT,
+                GeomKind.RASTER,
                 GeomKind.Y_DOT_PLOT -> colorTheme.brush()
 
                 GeomKind.HISTOGRAM,
