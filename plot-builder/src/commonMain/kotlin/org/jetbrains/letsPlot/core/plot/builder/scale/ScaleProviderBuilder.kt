@@ -17,6 +17,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myName: String? = null
     private var myBreaks: List<Any>? = null
     private var myLabels: List<String>? = null
+    private var myLabelWidthLimit: Int? = null
     private var myLabelFormat: String? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -53,6 +54,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     fun labels(labels: List<String>): ScaleProviderBuilder<T> {
         myLabels = ArrayList(labels)
+        return this
+    }
+
+    fun labelWidthLimit(v: Int): ScaleProviderBuilder<T> {
+        myLabelWidthLimit = v
         return this
     }
 
@@ -129,6 +135,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myName: String? = b.myName
 
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(it) }
+        private val myLabelWidthLimit: Int? = b.myLabelWidthLimit
         private val myLabelFormat: String? = b.myLabelFormat
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
@@ -215,6 +222,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             }
             if (myLabels != null) {
                 with.labels(myLabels)
+            }
+            if (myLabelWidthLimit != null) {
+                with.labelWidthLimit(myLabelWidthLimit)
             }
             if (myLabelFormat != null) {
                 with.labelFormatter(StringFormat.forOneArg(myLabelFormat)::format)

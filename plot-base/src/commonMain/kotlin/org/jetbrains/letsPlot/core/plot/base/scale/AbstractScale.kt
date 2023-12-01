@@ -11,6 +11,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
     private val definedBreaks: List<DomainT>?
     private val definedLabels: List<String>?
+    private val labelWidthLimit: Int
 
     final override val name: String
 
@@ -23,6 +24,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected constructor(name: String, breaks: List<DomainT>? = null) {
         this.name = name
         this.definedBreaks = breaks
+        labelWidthLimit = 0
         definedLabels = null
         labelFormatter = null
     }
@@ -31,6 +33,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         name = b.myName
         definedBreaks = b.myBreaks
         definedLabels = b.myLabels
+        labelWidthLimit = b.myLabelWidthLimit
         labelFormatter = b.myLabelFormatter
 
         multiplicativeExpand = b.myMultiplicativeExpand
@@ -54,12 +57,20 @@ internal abstract class AbstractScale<DomainT> : Scale {
     }
 
     override fun getScaleBreaks(): ScaleBreaks {
+        return createScaleBreaks(shortenLabels = false)
+    }
+
+    override fun getShortenedScaleBreaks(): ScaleBreaks {
+        return createScaleBreaks(shortenLabels = true)
+    }
+
+    private fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks {
         if (!hasBreaks()) {
             return ScaleBreaks.EMPTY
         }
 
         val breakValuesIntern = getBreaksIntern()
-        val labels = getLabels(breakValuesIntern)
+        val labels = getLabels(breakValuesIntern).map { if (shortenLabels) shorten(it) else it }
         val transformCore = transform.unwrap() // make sure 'original' transform is used.
         val transformed = ScaleUtil.applyTransform(breakValuesIntern, transformCore)
 
@@ -75,6 +86,14 @@ internal abstract class AbstractScale<DomainT> : Scale {
             transformedValues = transformed.filterNotNull(),
             labels = labels.filterIndexed { i, _ -> i in keepIndices }
         )
+    }
+
+    private fun shorten(str: String): String {
+        return if (labelWidthLimit > 0 && str.length > labelWidthLimit) {
+            str.substring(0, labelWidthLimit) + "..."
+        } else {
+            str
+        }
     }
 
     private fun getLabels(breaks: List<DomainT>): List<String> {
@@ -97,6 +116,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
+        internal var myLabelWidthLimit: Int = scale.labelWidthLimit
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -117,6 +137,11 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         override fun labels(l: List<String>): Scale.Builder {
             myLabels = l
+            return this
+        }
+
+        override fun labelWidthLimit(v: Int): Scale.Builder {
+            myLabelWidthLimit = v
             return this
         }
 

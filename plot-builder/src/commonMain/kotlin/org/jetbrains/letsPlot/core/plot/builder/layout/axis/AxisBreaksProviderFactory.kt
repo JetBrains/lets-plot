@@ -15,7 +15,7 @@ abstract class AxisBreaksProviderFactory {
     companion object {
         fun forScale(scale: Scale): AxisBreaksProviderFactory {
             return if (scale.hasBreaks()) {
-                FixedBreaksProviderFactory(FixedAxisBreaksProvider(scale.getScaleBreaks()))
+                FixedBreaksProviderFactory(FixedAxisBreaksProvider(scale.getShortenedScaleBreaks()))
             } else {
                 AdaptableBreaksProviderFactory(scale.getBreaksGenerator())
             }

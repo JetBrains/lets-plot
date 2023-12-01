@@ -21,7 +21,7 @@ __all__ = ['scale_identity',
 
 
 def scale_identity(aesthetic, *,
-                   name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None, **other):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None, **other):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -37,6 +37,8 @@ def scale_identity(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -81,6 +83,7 @@ def scale_identity(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -92,7 +95,7 @@ def scale_identity(aesthetic, *,
                   **other)
 
 
-def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -106,6 +109,8 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -156,13 +161,14 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
                           format=format)
 
 
-def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -176,6 +182,8 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -226,13 +234,14 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
                           format=format)
 
 
-def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -246,6 +255,8 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -293,6 +304,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -302,7 +314,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
                           discrete=True)
 
 
-def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -316,6 +328,8 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -367,6 +381,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -375,7 +390,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
                           discrete=True)
 
 
-def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -389,6 +404,8 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -436,13 +453,14 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
                           format=format)
 
 
-def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that the library can handle directly.
@@ -456,6 +474,8 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -503,13 +523,14 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
                           format=format)
 
 
-def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that can be handled directly.
@@ -523,6 +544,8 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -568,13 +591,14 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
                           format=format)
 
 
-def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide='none', format=None):
     """
     Use this scale when your data has already been scaled.
     I.e. it already represents aesthetic values that can be handled directly.
@@ -588,6 +612,8 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -633,6 +659,7 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,

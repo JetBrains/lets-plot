@@ -499,6 +499,7 @@ object Option {
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
         const val LABELS = "labels"
+        const val LABLIM = "lablim"
         const val EXPAND = "expand"
         const val LIMITS = "limits"
         const val DISCRETE_DOMAIN = "discrete"

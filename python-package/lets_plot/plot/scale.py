@@ -25,7 +25,7 @@ __all__ = ['scale_shape',
            ]
 
 
-def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Scale for shapes.
 
@@ -39,6 +39,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -86,6 +88,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -101,7 +104,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 #
 
 def scale_manual(aesthetic, values, *,
-                 name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                 name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for the specified aesthetics.
 
@@ -121,6 +124,8 @@ def scale_manual(aesthetic, values, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -185,6 +190,7 @@ def scale_manual(aesthetic, values, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -195,7 +201,7 @@ def scale_manual(aesthetic, values, *,
                   values=values)
 
 
-def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `color` aesthetic.
@@ -214,6 +220,8 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -262,13 +270,14 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for `fill` aesthetic.
 
@@ -286,6 +295,8 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -334,13 +345,14 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for `size` aesthetic.
 
@@ -358,6 +370,8 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -405,13 +419,14 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `shape` aesthetic.
@@ -430,6 +445,8 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -477,13 +494,14 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                           format=None):
     """
     Create your own discrete scale for line type aesthetic.
@@ -502,6 +520,8 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -550,13 +570,14 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `alpha` (transparency) aesthetic.
@@ -575,6 +596,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -621,6 +644,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -631,7 +655,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 # Gradient (continuous) Color Scales
 #
 def scale_continuous(aesthetic, *,
-                     low=None, high=None, name=None, breaks=None, labels=None,
+                     low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     General purpose scale for continuous data.
@@ -653,6 +677,8 @@ def scale_continuous(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -701,6 +727,7 @@ def scale_continuous(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -713,7 +740,7 @@ def scale_continuous(aesthetic, *,
 
 
 def scale_gradient(aesthetic, *,
-                   low=None, high=None, name=None, breaks=None, labels=None,
+                   low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for the specified aesthetics.
@@ -734,6 +761,8 @@ def scale_gradient(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -786,6 +815,7 @@ def scale_gradient(aesthetic, *,
                             name=name,
                             breaks=breaks,
                             labels=labels,
+                            lablim=lablim,
                             limits=limits,
                             na_value=na_value,
                             guide=guide,
@@ -793,7 +823,7 @@ def scale_gradient(aesthetic, *,
                             format=format)
 
 
-def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
+def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                         limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `fill` aesthetic.
@@ -812,6 +842,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -863,6 +895,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -870,7 +903,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
                           format=format)
 
 
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
+def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                           limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `fill` aesthetic.
@@ -889,6 +922,8 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -938,6 +973,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
                             name=name,
                             breaks=breaks,
                             labels=labels,
+                            lablim=lablim,
                             limits=limits,
                             na_value=na_value,
                             guide=guide,
@@ -945,7 +981,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
                             format=format)
 
 
-def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `color` aesthetic.
@@ -964,6 +1000,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1015,6 +1053,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -1022,7 +1061,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
                           format=format)
 
 
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                            na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `color` aesthetic.
@@ -1041,6 +1080,8 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -1084,6 +1125,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
                             name=name,
                             breaks=breaks,
                             labels=labels,
+                            lablim=lablim,
                             limits=limits,
                             na_value=na_value,
                             guide=guide,
@@ -1092,7 +1134,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 
 
 def scale_gradient2(aesthetic, *,
-                    low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+                    low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for the specified aesthetics.
@@ -1117,6 +1159,8 @@ def scale_gradient2(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1167,6 +1211,7 @@ def scale_gradient2(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1179,7 +1224,7 @@ def scale_gradient2(aesthetic, *,
                   scale_mapper_kind='color_gradient2')
 
 
-def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for `fill` aesthetic.
@@ -1202,6 +1247,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1254,6 +1301,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1261,8 +1309,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
                            format=format)
 
 
-def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
-                          na_value=None, guide=None, trans=None, format=None):
+def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for `color` aesthetic.
 
@@ -1284,6 +1332,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1336,6 +1386,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1344,7 +1395,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
 
 def scale_gradientn(aesthetic, *,
-                    colors=None, name=None, breaks=None, labels=None, limits=None,
+                    colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for the specified aesthetics.
@@ -1367,6 +1418,8 @@ def scale_gradientn(aesthetic, *,
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
         and the default order of their display in guides.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -1414,6 +1467,7 @@ def scale_gradientn(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1425,7 +1479,7 @@ def scale_gradientn(aesthetic, *,
                   scale_mapper_kind='color_gradientn')
 
 
-def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                           na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for `color` aesthetic.
@@ -1442,6 +1496,8 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1494,6 +1550,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1501,7 +1558,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
                            format=format)
 
 
-def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for `fill` aesthetic.
@@ -1518,6 +1575,8 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1570,6 +1629,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1578,7 +1638,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
 
 
 def scale_hue(aesthetic, *,
-              h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+              h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
               limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for the specified aesthetics.
@@ -1603,6 +1663,8 @@ def scale_hue(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1653,6 +1715,7 @@ def scale_hue(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1665,7 +1728,7 @@ def scale_hue(aesthetic, *,
                   scale_mapper_kind='color_hue')
 
 
-def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for `fill` aesthetic.
@@ -1690,6 +1753,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1743,6 +1808,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                      name=name,
                      breaks=breaks,
                      labels=labels,
+                     lablim=lablim,
                      limits=limits,
                      na_value=na_value,
                      guide=guide,
@@ -1750,7 +1816,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                      format=format)
 
 
-def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                     limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for `color` aesthetic.
@@ -1773,6 +1839,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1826,6 +1894,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
                      name=name,
                      breaks=breaks,
                      labels=labels,
+                     lablim=lablim,
                      limits=limits,
                      na_value=na_value,
                      guide=guide,
@@ -1835,7 +1904,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_discrete(aesthetic, *,
                    direction=None,
-                   name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     General purpose scale for discrete data.
     Use it to adjust most common properties of a default scale for given aesthetic.
@@ -1855,6 +1924,8 @@ def scale_discrete(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1904,6 +1975,7 @@ def scale_discrete(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1915,7 +1987,7 @@ def scale_discrete(aesthetic, *,
 
 
 def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
@@ -1933,6 +2005,8 @@ def scale_fill_discrete(direction=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1990,7 +2064,7 @@ def scale_fill_discrete(direction=None,
 
 
 def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
@@ -2008,6 +2082,8 @@ def scale_color_discrete(direction=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2058,6 +2134,7 @@ def scale_color_discrete(direction=None,
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -2065,7 +2142,7 @@ def scale_color_discrete(direction=None,
 
 
 def scale_grey(aesthetic, *,
-               start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+               start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for the specified aesthetics.
@@ -2086,6 +2163,8 @@ def scale_grey(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2138,6 +2217,7 @@ def scale_grey(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2149,7 +2229,7 @@ def scale_grey(aesthetic, *,
                   scale_mapper_kind='color_grey')
 
 
-def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `fill` aesthetic.
@@ -2168,6 +2248,8 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2219,6 +2301,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
                       name=name,
                       breaks=breaks,
                       labels=labels,
+                      lablim=lablim,
                       limits=limits,
                       na_value=na_value,
                       guide=guide,
@@ -2226,7 +2309,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
                       format=format)
 
 
-def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `color` aesthetic.
@@ -2245,6 +2328,8 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2296,6 +2381,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
                       name=name,
                       breaks=breaks,
                       labels=labels,
+                      lablim=lablim,
                       limits=limits,
                       na_value=na_value,
                       guide=guide,
@@ -2324,7 +2410,7 @@ def _greyscale_check_parameters(start=None, end=None):
 
 
 def scale_brewer(aesthetic, *,
-                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
@@ -2350,6 +2436,8 @@ def scale_brewer(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2413,6 +2501,7 @@ def scale_brewer(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2426,7 +2515,7 @@ def scale_brewer(aesthetic, *,
                   scale_mapper_kind='color_brewer')
 
 
-def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for `fill` aesthetic.
@@ -2450,6 +2539,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2516,6 +2607,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -2523,7 +2615,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         format=format)
 
 
-def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
@@ -2547,6 +2639,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2611,6 +2705,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -2620,7 +2715,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
 def scale_viridis(aesthetic, *,
                   alpha=None, begin=None, end=None, direction=None, option=None,
-                  name=None, breaks=None, labels=None, limits=None,
+                  name=None, breaks=None, labels=None, lablim=None, limits=None,
                   na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2661,6 +2756,8 @@ def scale_viridis(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2712,6 +2809,7 @@ def scale_viridis(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2728,7 +2826,7 @@ def scale_viridis(aesthetic, *,
 
 
 def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
-                       name=None, breaks=None, labels=None, limits=None,
+                       name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2767,6 +2865,8 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2821,6 +2921,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
                          name=name,
                          breaks=breaks,
                          labels=labels,
+                         lablim=lablim,
                          limits=limits,
                          na_value=na_value,
                          guide=guide,
@@ -2829,7 +2930,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
 
 def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
-                        name=None, breaks=None, labels=None, limits=None,
+                        name=None, breaks=None, labels=None, lablim=None, limits=None,
                         na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2868,6 +2969,8 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2920,6 +3023,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
                          name=name,
                          breaks=breaks,
                          labels=labels,
+                         lablim=lablim,
                          limits=limits,
                          na_value=na_value,
                          guide=guide,
@@ -2930,7 +3034,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 # Range Scale (alpha and size)
 #
 
-def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, trans=None,
                 format=None):
     """
     Scale for alpha.
@@ -2947,6 +3051,8 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2991,6 +3097,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3001,7 +3108,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
                   range=range)
 
 
-def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, trans=None,
                format=None):
     """
     Scale for size.
@@ -3018,6 +3125,8 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3063,6 +3172,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3073,7 +3183,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
                   range=range)
 
 
-def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None,
+def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Continuous scale for size that maps 0 to 0.
@@ -3090,6 +3200,8 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3139,6 +3251,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3150,7 +3263,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None,
+def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Scale for linewidth.
@@ -3167,6 +3280,8 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3211,6 +3326,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3221,7 +3337,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
                   range=range)
 
 
-def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
+def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Scale for stroke.
@@ -3238,6 +3354,8 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3282,6 +3400,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3295,6 +3414,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
 def _scale(aesthetic, *,
            name=None,
            breaks=None, labels=None,
+           lablim=None,
            limits=None,
            expand=None,
            na_value=None,
@@ -3316,6 +3436,8 @@ def _scale(aesthetic, *,
         A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
     labels : list of str or dict
         A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
