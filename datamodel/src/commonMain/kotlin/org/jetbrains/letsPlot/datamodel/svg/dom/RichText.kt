@@ -13,7 +13,7 @@ object RichText {
         val allTerms = extractTerms(text)
         val richTextElement = SvgTextElement()
         allTerms.forEach { term ->
-            term.toSvgElements().forEach(richTextElement::addTSpan)
+            term.toTSpanElements().forEach(richTextElement::addTSpan)
         }
         return richTextElement
     }
@@ -28,7 +28,7 @@ object RichText {
     }
 
     private fun extractTerms(text: String): List<Term> {
-        val powerTerms = extractPowerTerms(text)
+        val powerTerms = Power.toPowerTerms(text)
         // If there will be another formula terms (like fractionTerms),
         // then join  all of them to the val formulaTerms,
         // sort it by PositionedTerm::range.first and use it further instead of powerTerms
@@ -38,16 +38,6 @@ object RichText {
             val textTerms = extractTextTerms(text, powerTerms)
             (powerTerms + textTerms).sortedBy { it.range.first }.map(PositionedTerm::term)
         }
-    }
-
-    private fun extractPowerTerms(text: String): List<PositionedTerm> {
-        return Power.REGEX.findAll(text).map { match ->
-            val groups = match.groups as MatchNamedGroupCollection
-            PositionedTerm(
-                Power(groups["base"]!!.value, groups["degree"]!!.value),
-                match.range
-            )
-        }.toList()
     }
 
     private fun extractTextTerms(text: String, formulaTerms: List<PositionedTerm>): List<PositionedTerm> {
@@ -63,7 +53,7 @@ object RichText {
     }
 
     private class Text(private val text: String) : Term {
-        override fun toSvgElements(): List<SvgTSpanElement> {
+        override fun toTSpanElements(): List<SvgTSpanElement> {
             return listOf(SvgTSpanElement(text))
         }
 
@@ -76,7 +66,7 @@ object RichText {
         private val base: String,
         private val degree: String
     ) : Term {
-        override fun toSvgElements(): List<SvgTSpanElement> {
+        override fun toTSpanElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
             val degreeTSpan = SvgTSpanElement(degree)
             degreeTSpan.setAttribute(SvgTSpanElement.BASELINE_SHIFT, BaselineShift.SUPER.value)
@@ -95,11 +85,21 @@ object RichText {
         companion object {
             private const val SUPERSCRIPT_SIZE_FACTOR = 0.6
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
+
+            fun toPowerTerms(text: String): List<PositionedTerm> {
+                return REGEX.findAll(text).map { match ->
+                    val groups = match.groups as MatchNamedGroupCollection
+                    PositionedTerm(
+                        Power(groups["base"]!!.value, groups["degree"]!!.value),
+                        match.range
+                    )
+                }.toList()
+            }
         }
     }
 
     private interface Term {
-        fun toSvgElements(): List<SvgTSpanElement>
+        fun toTSpanElements(): List<SvgTSpanElement>
 
         fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double
     }
