@@ -634,7 +634,8 @@ def scale_continuous(aesthetic, *,
                      low=None, high=None, name=None, breaks=None, labels=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for the specified aesthetics.
+    General purpose scale for continuous data.
+    Use it to adjust most common properties of a default scale for given aesthetic.
 
     Parameters
     ----------
@@ -1836,8 +1837,8 @@ def scale_discrete(aesthetic, *,
                    direction=None,
                    name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
+    General purpose scale for discrete data.
+    Use it to adjust most common properties of a default scale for given aesthetic.
 
     Parameters
     ----------
