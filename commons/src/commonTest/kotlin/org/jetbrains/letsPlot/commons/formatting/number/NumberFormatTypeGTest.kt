@@ -9,20 +9,22 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeGTest {
+    private fun format(spec: String): NumberFormat = NumberFormat(spec)
+
     @Test
     fun canOutputGeneralNotation() {
-        assertEquals("0.00026986", NumberFormat("g").apply(2.6985974025974023E-4))
-        assertEquals("0.05", NumberFormat(".1g").apply(0.049))
-        assertEquals("0.5", NumberFormat(".1g").apply(0.49))
-        assertEquals("0.45", NumberFormat(".2g").apply(0.449))
-        assertEquals("0.445", NumberFormat(".3g").apply(0.4449))
-        assertEquals("0.44445", NumberFormat(".5g").apply(0.444449))
-        assertEquals("1e+2", NumberFormat(".1g").apply(100))
-        assertEquals("1e+2", NumberFormat(".2g").apply(100))
-        assertEquals("100", NumberFormat(".3g").apply(100))
-        assertEquals("100", NumberFormat(".5g").apply(100))
-        assertEquals("100.2", NumberFormat(".5g").apply(100.2))
-        assertEquals("0.002", NumberFormat(".2g").apply(0.002))
+        assertEquals("0.00026986", format("g").apply(2.6985974025974023E-4))
+        assertEquals("0.05", format(".1g").apply(0.049))
+        assertEquals("0.5", format(".1g").apply(0.49))
+        assertEquals("0.45", format(".2g").apply(0.449))
+        assertEquals("0.445", format(".3g").apply(0.4449))
+        assertEquals("0.44445", format(".5g").apply(0.444449))
+        assertEquals("1e+2", format(".1g").apply(100))
+        assertEquals("1e+2", format(".2g").apply(100))
+        assertEquals("100", format(".3g").apply(100))
+        assertEquals("100", format(".5g").apply(100))
+        assertEquals("100.2", format(".5g").apply(100.2))
+        assertEquals("0.002", format(".2g").apply(0.002))
     }
 
     @Test
