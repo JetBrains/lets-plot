@@ -3,9 +3,12 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.datamodel.svg.dom
+package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.datamodel.svg.dom.BaselineShift
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
 object RichText {
