@@ -11,7 +11,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
     private val definedBreaks: List<DomainT>?
     private val definedLabels: List<String>?
-    private val labelWidthLimit: Int
+    private val labelLengthLimit: Int
 
     final override val name: String
 
@@ -24,7 +24,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected constructor(name: String, breaks: List<DomainT>? = null) {
         this.name = name
         this.definedBreaks = breaks
-        labelWidthLimit = 0
+        labelLengthLimit = 0
         definedLabels = null
         labelFormatter = null
     }
@@ -33,7 +33,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         name = b.myName
         definedBreaks = b.myBreaks
         definedLabels = b.myLabels
-        labelWidthLimit = b.myLabelWidthLimit
+        labelLengthLimit = b.myLabelLengthLimit
         labelFormatter = b.myLabelFormatter
 
         multiplicativeExpand = b.myMultiplicativeExpand
@@ -89,8 +89,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
     }
 
     private fun shorten(str: String): String {
-        return if (labelWidthLimit > 0 && str.length > labelWidthLimit) {
-            str.substring(0, labelWidthLimit) + "..."
+        return if (labelLengthLimit > 0 && str.length > labelLengthLimit) {
+            str.take(labelLengthLimit) + "..."
         } else {
             str
         }
@@ -116,7 +116,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
-        internal var myLabelWidthLimit: Int = scale.labelWidthLimit
+        internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -140,8 +140,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
             return this
         }
 
-        override fun labelWidthLimit(v: Int): Scale.Builder {
-            myLabelWidthLimit = v
+        override fun labelLengthLimit(v: Int): Scale.Builder {
+            myLabelLengthLimit = v
             return this
         }
 

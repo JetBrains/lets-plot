@@ -265,7 +265,7 @@ class ScaleConfig<T> constructor(
         }
 
         if (has(LABLIM)) {
-            b.labelWidthLimit(getInteger(LABLIM)!!)
+            b.labelLengthLimit(getInteger(LABLIM)!!)
         }
 
         if (has(EXPAND)) {
