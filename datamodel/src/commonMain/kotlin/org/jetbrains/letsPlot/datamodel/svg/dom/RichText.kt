@@ -34,22 +34,21 @@ object RichText {
         return if (powerTerms.isEmpty()) {
             listOf(Text(text))
         } else {
-            val textTerms = extractTextTerms(text, powerTerms.map { it.range })
+            val textTerms = subtractRange(IntRange(0, text.length - 1), powerTerms.map { it.range })
+                .map { position -> PositionedTerm(Text(text.substring(position)), position) }
             (powerTerms + textTerms).sortedBy { it.range.first }.map(PositionedTerm::term)
         }
     }
 
-    private fun extractTextTerms(text: String, gaps: List<IntRange>): List<PositionedTerm> {
-        val firstTextTermPosition = IntRange(0, gaps.first().first - 1)
-        val intermediateTextTermPositions = gaps.windowed(2).map { (prevGap, nextGap) ->
-            IntRange(prevGap.last + 1, nextGap.first - 1)
+    private fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
+        val sortedToSubtract = toSubtract.sortedBy(IntRange::first)
+        val firstRange = IntRange(0, sortedToSubtract.first().first - 1)
+        val intermediateRanges = sortedToSubtract.windowed(2).map { (prevRange, nextRange) ->
+            IntRange(prevRange.last + 1, nextRange.first - 1)
         }
-        val lastTextTermPosition = IntRange(gaps.last().last + 1, text.length - 1)
-        val textTermPositions = listOf(firstTextTermPosition) + intermediateTextTermPositions + listOf(lastTextTermPosition)
+        val lastRange = IntRange(sortedToSubtract.last().last + 1, range.last)
 
-        return textTermPositions
-            .filter { !it.isEmpty() }
-            .map { position -> PositionedTerm(Text(text.substring(position)), position) }
+        return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
     }
 
     private class Text(private val text: String) : Term {
