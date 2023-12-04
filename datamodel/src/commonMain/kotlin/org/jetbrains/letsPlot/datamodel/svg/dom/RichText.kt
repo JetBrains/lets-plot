@@ -10,11 +10,10 @@ import kotlin.math.roundToInt
 
 object RichText {
     fun toSvg(text: String): SvgTextElement {
-        val allTerms = extractTerms(text)
         val richTextElement = SvgTextElement()
-        allTerms.forEach { term ->
-            term.toTSpanElements().forEach(richTextElement::addTSpan)
-        }
+        extractTerms(text)
+            .flatMap(Term::toTSpanElements)
+            .forEach(richTextElement::addTSpan)
         return richTextElement
     }
 
