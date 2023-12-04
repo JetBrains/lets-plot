@@ -131,7 +131,7 @@ object TextUtil {
         return max(0.1, d)
     }
 
-    private fun lineHeight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
+    fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         label.textColor().set(p.color())
@@ -171,7 +171,7 @@ object TextUtil {
         }
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeight(lineHeight(p, scale))
+        label.setLineHeight(lineheight(p, scale))
 
         // family
         label.setFontFamily(fontFamily(p))
@@ -187,7 +187,7 @@ object TextUtil {
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
-        val lineHeight = lineHeight(p, scale)
+        val lineHeight = lineheight(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
