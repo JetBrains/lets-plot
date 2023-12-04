@@ -40,6 +40,10 @@ internal class BogusScale : Scale {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
+    override fun getShortenedScaleBreaks(): ScaleBreaks {
+        throw IllegalStateException("Bogus scale is not supposed to be used.")
+    }
+
     override fun getBreaksGenerator(): BreaksGenerator {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
