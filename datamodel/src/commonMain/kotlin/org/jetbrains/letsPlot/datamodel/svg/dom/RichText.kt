@@ -35,19 +35,20 @@ object RichText {
         return if (powerTerms.isEmpty()) {
             listOf(Text(text))
         } else {
-            val textTerms = extractTextTerms(text, powerTerms)
+            val textTerms = extractTextTerms(text, powerTerms.map { it.range })
             (powerTerms + textTerms).sortedBy { it.range.first }.map(PositionedTerm::term)
         }
     }
 
-    private fun extractTextTerms(text: String, formulaTerms: List<PositionedTerm>): List<PositionedTerm> {
-        val prefixPosition = IntRange(0, formulaTerms.first().range.first - 1)
-        val infixPositions = formulaTerms.windowed(2).map { (term1, term2) ->
-            IntRange(term1.range.last + 1, term2.range.first - 1)
+    private fun extractTextTerms(text: String, gaps: List<IntRange>): List<PositionedTerm> {
+        val firstTextTermPosition = IntRange(0, gaps.first().first - 1)
+        val intermediateTextTermPositions = gaps.windowed(2).map { (prevGap, nextGap) ->
+            IntRange(prevGap.last + 1, nextGap.first - 1)
         }
-        val postfixPosition = IntRange(formulaTerms.last().range.last + 1, text.length - 1)
+        val lastTextTermPosition = IntRange(gaps.last().last + 1, text.length - 1)
+        val textTermPositions = listOf(firstTextTermPosition) + intermediateTextTermPositions + listOf(lastTextTermPosition)
 
-        return (listOf(prefixPosition) + infixPositions + listOf(postfixPosition))
+        return textTermPositions
             .filter { !it.isEmpty() }
             .map { position -> PositionedTerm(Text(text.substring(position)), position) }
     }
