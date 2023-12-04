@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatFillTest {
+class NumberFormatFillTest : NumberFormatTest {
     @Test
     fun zeroFill() {
-        val f = NumberFormat("08d")
+        val f = format("08d")
         assertEquals("00000000", f.apply(0))
         assertEquals("00000042", f.apply(42))
         assertEquals("42000000", f.apply(42000000))
@@ -25,7 +25,7 @@ class NumberFormatFillTest {
 
     @Test
     fun spaceFill() {
-        val f = NumberFormat("8d")
+        val f = format("8d")
         assertEquals("       0", f.apply(0))
         assertEquals("      42", f.apply(42))
         assertEquals("42000000", f.apply(42000000))

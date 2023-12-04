@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatNonNumberTest {
+class NumberFormatNonNumberTest : NumberFormatTest {
     @Test
     fun nonNumber() {
-        val f = NumberFormat("d")
+        val f = format("d")
         assertEquals("NaN", f.apply(Double.NaN))
         assertEquals("+Infinity", f.apply(Double.POSITIVE_INFINITY))
         assertEquals("-Infinity", f.apply(Double.NEGATIVE_INFINITY))

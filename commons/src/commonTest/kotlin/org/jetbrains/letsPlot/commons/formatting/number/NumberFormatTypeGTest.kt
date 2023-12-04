@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatTypeGTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
+class NumberFormatTypeGTest : NumberFormatTest {
     @Test
     fun canOutputGeneralNotation() {
         assertEquals("0.00026986", format("g").apply(2.6985974025974023E-4))

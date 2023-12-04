@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatTypeNoneTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
+class NumberFormatTypeNoneTest : NumberFormatTest {
     @Test
     fun usesSignificantPrecisionAndTrimsInsignificantZeros() {
         //assertEquals("5", Format(".1").apply(4.9))

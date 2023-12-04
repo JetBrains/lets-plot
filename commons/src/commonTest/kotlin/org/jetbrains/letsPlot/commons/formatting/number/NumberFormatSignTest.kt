@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatSignTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
+class NumberFormatSignTest : NumberFormatTest {
     @Test
     fun padAfterSign() {
         assertEquals("+0", format("=+1,d").apply(0))

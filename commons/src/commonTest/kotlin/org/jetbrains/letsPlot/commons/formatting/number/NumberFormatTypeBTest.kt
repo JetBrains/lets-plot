@@ -8,14 +8,14 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatTypeBTest {
+class NumberFormatTypeBTest : NumberFormatTest {
     @Test
     fun binary() {
-        assertEquals("1010", NumberFormat("b").apply(10))
+        assertEquals("1010", format("b").apply(10))
     }
 
     @Test
     fun binaryWithPrefix() {
-        assertEquals("0b1010", NumberFormat("#b").apply(10))
+        assertEquals("0b1010", format("#b").apply(10))
     }
 }

@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatExtremesTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
+class NumberFormatExtremesTest : NumberFormatTest {
     @Test
     fun typeS() {
         val f = format(".3s")

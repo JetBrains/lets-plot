@@ -8,9 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NumberFormatTypeDTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
+class NumberFormatTypeDTest : NumberFormatTest {
     @Test
     fun alwaysUsesZeroPrecision() {
         val f = format(".2d")
