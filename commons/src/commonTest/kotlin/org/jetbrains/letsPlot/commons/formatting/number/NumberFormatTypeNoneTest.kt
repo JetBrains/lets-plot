@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeNoneTest {
-    private val format = { spec: String -> NumberFormat(spec, false) }
+    private fun format(spec: String): NumberFormat = NumberFormat(spec, false)
 
     @Test
     fun usesSignificantPrecisionAndTrimsInsignificantZeros() {
