@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeNoneTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
+    private fun format(spec: String): NumberFormat = NumberFormat(spec, false)
 
     @Test
     fun usesSignificantPrecisionAndTrimsInsignificantZeros() {
@@ -47,7 +47,7 @@ class NumberFormatTypeNoneTest {
 
     @Test
     fun canOutputCurrency() {
-        val f = NumberFormat("$")
+        val f = format("$")
         assertEquals("$0", f.apply(0))
         assertEquals("$0.042", f.apply(.042))
         assertEquals("$0.42", f.apply(.42))

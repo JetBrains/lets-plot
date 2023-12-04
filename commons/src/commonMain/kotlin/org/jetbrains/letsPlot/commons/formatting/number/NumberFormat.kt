@@ -25,9 +25,11 @@ fun length(v: Long): Int {
     return len
 }
 
-class NumberFormat(private val spec: Spec) {
+class NumberFormat(private val spec: Spec, private val scientificNotationIsPower: Boolean = true) {
 
     constructor(spec: String) : this(create(spec))
+
+    constructor(spec: String, scientificNotation: Boolean) : this(create(spec), scientificNotation)
 
     data class Spec(
         val fill: String = " ",
@@ -150,7 +152,13 @@ class NumberFormat(private val spec: Spec) {
     ) {
         val fractionalLength =
             0.takeIf { fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
-        val fullLength = integerPart.length + fractionalLength + exponentialPart.length
+        val exponentialLength: Int
+            get() {
+                val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
+                val matchGroups = match.groups as MatchNamedGroupCollection
+                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
+            }
+        val fullLength = integerPart.length + fractionalLength + exponentialLength
 
         override fun toString() =
             "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
@@ -218,7 +226,7 @@ class NumberFormat(private val spec: Spec) {
         var fullIntStr = zeroPadding + body.integerPart
         val commas = (ceil(fullIntStr.length / GROUP_SIZE.toDouble()) - 1).toInt()
 
-        val width = (spec.width - body.fractionalLength - body.exponentialPart.length)
+        val width = (spec.width - body.fractionalLength - body.exponentialLength)
             .coerceAtLeast(body.integerPart.length + commas)
 
         fullIntStr = group(fullIntStr)
@@ -319,12 +327,7 @@ class NumberFormat(private val spec: Spec) {
     }
 
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val exponentString = if (numberInfo.exponent != null) {
-            val expSign = if (numberInfo.exponent.sign >= 0) "+" else ""
-            "e$expSign${numberInfo.exponent}"
-        } else {
-            ""
-        }
+        val exponentString = buildExponentString(numberInfo.exponent)
 
         val expNumberInfo =
             createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE.toDouble())
@@ -337,6 +340,22 @@ class NumberFormat(private val spec: Spec) {
         val integerString = expNumberInfo.integerPart.toString()
         val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
         return FormattedNumber(integerString, fractionString, exponentString)
+    }
+
+    private fun buildExponentString(exponent: Int?): String {
+        if (exponent == null) {
+            return ""
+        }
+        return if (scientificNotationIsPower) {
+            when (exponent) {
+                0 -> ""
+                1 -> "·10"
+                else -> "·\\(10^{${exponent}}\\)"
+            }
+        } else {
+            val expSign = if (exponent.sign >= 0) "+" else ""
+            "e$expSign${exponent}"
+        }
     }
 
     private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
@@ -448,6 +467,8 @@ class NumberFormat(private val spec: Spec) {
         private const val GROUP_SIZE = 3
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+
+        private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
 
         fun create(spec: String): Spec {
             return create(parse(spec))

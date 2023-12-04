@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeGTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
+    private fun format(spec: String): NumberFormat = NumberFormat(spec, false)
 
     @Test
     fun canOutputGeneralNotation() {
@@ -29,7 +29,7 @@ class NumberFormatTypeGTest {
 
     @Test
     fun canGroupThousandsWithGeneralNotation() {
-        val f = NumberFormat(",.12g")
+        val f = format(",.12g")
         assertEquals("0", f.apply(0))
         assertEquals("42", f.apply(42))
         assertEquals("42,000,000", f.apply(42000000))
