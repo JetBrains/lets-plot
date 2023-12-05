@@ -797,12 +797,10 @@ def _to_svg(spec, path) -> str | None:
 
     svg = kbr._generate_svg(spec.as_dict())
     if isinstance(path, str):
-        dirname = os.path.dirname(path)
-        if dirname and not os.path.exists(dirname):
-            os.makedirs(dirname)
-        with io.open(path, mode="w", encoding="utf-8") as f:
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
             f.write(svg)
-        return os.path.abspath(path)
+            return abspath
     else:
         path.write(svg.encode())
         return None
@@ -816,12 +814,10 @@ def _to_html(spec, path, iframe: bool) -> str | None:
     html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
 
     if isinstance(path, str):
-        dirname = os.path.dirname(path)
-        if dirname and not os.path.exists(dirname):
-            os.makedirs(dirname)
-        with io.open(path, mode="w", encoding="utf-8") as f:
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
             f.write(html_page)
-        return os.path.abspath(path)
+            return abspath
     else:
         path.write(html_page.encode())
         return None
@@ -844,12 +840,11 @@ def _to_png(spec, path, scale: float) -> str | None:
     from .. import _kbridge
     # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
     svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+
     if isinstance(path, str):
-        dirname = os.path.dirname(path)
-        if dirname and not os.path.exists(dirname):
-            os.makedirs(dirname)
-        cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
-        return os.path.abspath(path)
+        abspath = _makedirs(path)
+        cairosvg.svg2png(bytestring=svg, write_to=abspath, scale=scale)
+        return abspath
     else:
         cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
         return None
@@ -872,12 +867,20 @@ def _to_pdf(spec, path, scale: float) -> str | None:
     from .. import _kbridge
     # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
     svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+
     if isinstance(path, str):
-        dirname = os.path.dirname(path)
-        if dirname and not os.path.exists(dirname):
-            os.makedirs(dirname)
-        cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
-        return os.path.abspath(path)
+        abspath = _makedirs(path)
+        cairosvg.svg2pdf(bytestring=svg, write_to=abspath, scale=scale)
+        return abspath
     else:
         cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
         return None
+
+
+def _makedirs(path: str) -> str:
+    """Return absolute path to a file after creating all directories in the path."""
+    abspath = os.path.abspath(path)
+    dirname = os.path.dirname(abspath)
+    if dirname and not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return abspath
