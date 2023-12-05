@@ -10,7 +10,6 @@
 
 Edit `build_settings.yml` in the project root:
 
-* `build_python_extension` - set to `yes` for building native Python extension from `python-extension`.
 * `enable_python_package` - set to `yes` for working with Python package.
 * `python.include_path` - path to Python include directory where Python.h located. 
 To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.

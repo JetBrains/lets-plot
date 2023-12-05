@@ -53,26 +53,20 @@ allprojects {
 // Read build settings from commandline parameters (for build_release.py script):
 def readSettingsFromParameters() {
     def settings = [
-            build_python_extension: false,
             enable_python_package : false,
             python                : [bin_path: "", include_path: ""],
             pypi                  : [test: [username: null, password: null],
                                      prod: [username: null, password: null]]
     ]
-    if (project.hasProperty("build_python_extension")) {
-        settings.build_python_extension = project.getProperty("build_python_extension")
-        assert settings.build_python_extension != null
-    }
     if (project.hasProperty("enable_python_package")) {
         settings.enable_python_package = project.getProperty("enable_python_package")
         assert settings.enable_python_package != null
     }
-    if (settings.build_python_extension) {
-        settings.python.bin_path = project.getProperty("python_bin_path")
-        settings.python.include_path = project.getProperty("python_include_path")
-        assert !settings.python.bin_path.isEmpty()
-        assert !settings.python.include_path.isEmpty()
-    }
+    settings.python.bin_path = project.getProperty("python_bin_path")
+    settings.python.include_path = project.getProperty("python_include_path")
+    assert !settings.python.bin_path.isEmpty()
+    assert !settings.python.include_path.isEmpty()
+
     return settings
 }
 
@@ -83,13 +77,10 @@ def readSettingsFromYaml() {
         throw new GradleException("Couldn't read build_settings.yml")
     }
     def settings = new Yaml().load(build_settings_file.newInputStream())
-    if (settings.build_python_extension) {
-        assert settings.python.include_path != null
-    }
-    if (settings.enable_python_package) {
-        assert settings.build_python_extension
-        assert settings.python.bin_path != null
-    }
+
+    assert settings.python.bin_path != null
+    assert settings.python.include_path != null
+
     return settings
 }
 
@@ -119,7 +110,7 @@ if (project.hasProperty("build_release")) {
 if (project.hasProperty("build_arch")) {
     project.ext.pythonArch = project.getProperty("build_arch")
     assert !project.pythonArch.isEmpty()
-} else if (project.buildSettings.build_python_extension) {
+} else {
     project.ext.pythonArch = getPythonArch()
 }
 
@@ -173,28 +164,26 @@ subprojects {
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
         kotlin {
-            if (project.buildSettings.build_python_extension) {
-                if (currentOs.macOsX & project.pythonArch == "x86_64") {
+            if (currentOs.macOsX & project.pythonArch == "x86_64") {
+                macosX64()
+            } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+                if (project.hasProperty("build_release")) {
                     macosX64()
-                } else if (currentOs.macOsX & project.pythonArch == "arm64") {
-                    if (project.hasProperty("build_release")) {
-                        macosX64()
-                        macosArm64()
-                    } else {
-                        macosArm64()
-                    }
-                } else if (currentOs.linux) {
-                    if (project.hasProperty("build_release")) {
-                        linuxX64()
-                        linuxArm64()
-                    } else if (project.pythonArch == "x86_64") {
-                        linuxX64()
-                    }
-                } else if (currentOs.windows) {
-                    mingwX64()
+                    macosArm64()
                 } else {
-                    throw new Exception("Unsupported platform.")
+                    macosArm64()
                 }
+            } else if (currentOs.linux) {
+                if (project.hasProperty("build_release")) {
+                    linuxX64()
+                    linuxArm64()
+                } else if (project.pythonArch == "x86_64") {
+                    linuxX64()
+                }
+            } else if (currentOs.windows) {
+                mingwX64()
+            } else {
+                throw new Exception("Unsupported platform.")
             }
         }
     }

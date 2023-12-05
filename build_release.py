@@ -122,16 +122,12 @@ if system == "Linux":
     # And Python package build by Gradle is disabled due the same reason.
     enable_python_package = "false"
 
-    # Enable Python Extension. Native artifacts from here are used for Python packages.
-    build_python_extension = "true"
-
     # Collect all predefined parameters:
     build_parameters = [
         "-Pbuild_release=true",
         "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
         "-Ppython_include_path=%s" % (python_paths["include_path"]),
-        f"-Penable_python_package={enable_python_package}",
-        f"-Pbuild_python_extension={build_python_extension}"
+        f"-Penable_python_package={enable_python_package}"
     ]
 
     # Run JS artifact build first:
@@ -153,7 +149,6 @@ elif system == "Darwin" or system == "Windows":
     # for all Python binaries, defined in the settings file.
     # Enable Python Extension and packages build by Gradle:
     enable_python_package = "true"
-    build_python_extension = "true"
 
     # Define Gradle command for Python packages build:
     python_package_build_command = [gradle_script_name, "python-package-build:build"]
@@ -165,8 +160,7 @@ elif system == "Darwin" or system == "Windows":
             "-Pbuild_release=true",
             "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython_include_path=%s" % (python_paths["include_path"]),
-            f"-Penable_python_package={enable_python_package}",
-            f"-Pbuild_python_extension={build_python_extension}"
+            f"-Penable_python_package={enable_python_package}"
         ]
 
         # Run Python package build:

@@ -12,38 +12,31 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
-//    // Enable the default target hierarchy:
-//    targetHierarchy.default()
 
-    if (project.buildSettings.build_python_extension) {
-
-        def target
-        if (currentOs.macOsX & project.pythonArch == "x86_64") {
-            target = macosX64("native")
-        } else if (currentOs.macOsX & project.pythonArch == "arm64") {
-            target = macosArm64("native")
-        } else if (currentOs.linux & project.pythonArch == "x86_64") {
-            target = linuxX64("native")
-        } else if (currentOs.linux & project.pythonArch == "arm64") {
-            target = linuxArm64("native")
-        } else if (currentOs.windows) {
-            target = mingwX64("native")
-        } else {
-            throw new Exception("Unsupported platform.")
-        }
-
-        target.binaries {
-            staticLib {
-                baseName = "lets-plot-${project.name}"
-            }
-        }
-        target.compilations.main.cinterops {
-            python {
-                compilerOpts "-I${project.buildSettings.python.include_path}"
-            }
-        }
+    def target
+    if (currentOs.macOsX & project.pythonArch == "x86_64") {
+        target = macosX64("native")
+    } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+        target = macosArm64("native")
+    } else if (currentOs.linux & project.pythonArch == "x86_64") {
+        target = linuxX64("native")
+    } else if (currentOs.linux & project.pythonArch == "arm64") {
+        target = linuxArm64("native")
+    } else if (currentOs.windows) {
+        target = mingwX64("native")
     } else {
-        jvm() // at least one target is required by MPP - dummy jvm target will work just fine
+        throw new Exception("Unsupported platform.")
+    }
+
+    target.binaries {
+        staticLib {
+            baseName = "lets-plot-${project.name}"
+        }
+    }
+    target.compilations.main.cinterops {
+        python {
+            compilerOpts "-I${project.buildSettings.python.include_path}"
+        }
     }
 
     sourceSets {

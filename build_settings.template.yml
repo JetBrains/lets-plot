@@ -1,8 +1,5 @@
 ---
 
-# option to exclude python extension from build
-build_python_extension: no
-
 # enable tasks responsible for building and publishing of lets-plot python package
 enable_python_package: no
 
