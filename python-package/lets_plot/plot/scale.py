@@ -656,7 +656,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 #
 
 def scale_continuous(aesthetic, *,
-                     name=None, breaks=None, labels=None, lablim=None,
+                     low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     General purpose scale for continuous data.
@@ -666,6 +666,10 @@ def scale_continuous(aesthetic, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
+    low : str
+        Color for low end of gradient (actually `scale_gradient()` is used).
+    high : str
+        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -703,6 +707,7 @@ def scale_continuous(aesthetic, *,
     Notes
     -----
     Define most common properties of a continuous scale for the specified aesthetics.
+    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()`.
 
     Examples
     --------
@@ -720,6 +725,18 @@ def scale_continuous(aesthetic, *,
             ggsize(600, 200)
 
     """
+    if low is not None or high is not None:
+        return scale_gradient(aesthetic,
+                              low=low, high=high,
+                              name=name,
+                              breaks=breaks,
+                              labels=labels,
+                              lablim=lablim,
+                              limits=limits,
+                              na_value=na_value,
+                              guide=guide,
+                              trans=trans,
+                              format=format)
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -733,13 +750,17 @@ def scale_continuous(aesthetic, *,
                   format=format)
 
 
-def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
+def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                           limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Default color scale for `fill` aesthetic and continuous data.
 
     Parameters
     ----------
+    low : str
+        Color for low end of gradient (actually `scale_gradient()` is used).
+    high : str
+        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -777,6 +798,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
     Notes
     -----
     Define most common properties of a continuous scale for `fill` aesthetic.
+    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()` for `fill` aesthetic.
 
     Examples
     --------
@@ -795,6 +817,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
 
     """
     return scale_continuous('fill',
+                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -806,13 +829,17 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
                             format=format)
 
 
-def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                            na_value=None, guide=None, trans=None, format=None):
     """
     Default color scale for `color` aesthetic and continuous data.
 
     Parameters
     ----------
+    low : str
+        Color for low end of gradient (actually `scale_gradient()` is used).
+    high : str
+        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -850,6 +877,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
     Notes
     -----
     Define most common properties of a continuous scale for `color` aesthetic.
+    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()` for `color` aesthetic.
 
     Examples
     --------
@@ -866,6 +894,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
 
     """
     return scale_continuous('color',
+                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
