@@ -1,4 +1,6 @@
 ---
+# Set project architecture. Available values: 'arm64', 'x86_64'"
+architecture: arm64
 
 # enable tasks responsible for building and publishing of lets-plot python package
 enable_python_package: no

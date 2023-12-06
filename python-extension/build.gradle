@@ -13,30 +13,35 @@ def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
 
-    def target
-    if (currentOs.macOsX & project.pythonArch == "x86_64") {
-        target = macosX64("native")
-    } else if (currentOs.macOsX & project.pythonArch == "arm64") {
-        target = macosArm64("native")
-    } else if (currentOs.linux & project.pythonArch == "x86_64") {
-        target = linuxX64("native")
-    } else if (currentOs.linux & project.pythonArch == "arm64") {
-        target = linuxArm64("native")
-    } else if (currentOs.windows) {
-        target = mingwX64("native")
-    } else {
-        throw new Exception("Unsupported platform.")
-    }
+    if (project.buildSettings.enable_python_package) {
 
-    target.binaries {
-        staticLib {
-            baseName = "lets-plot-${project.name}"
+        def target
+        if (currentOs.macOsX & project.buildSettings.architecture == "x86_64") {
+            target = macosX64("native")
+        } else if (currentOs.macOsX & project.buildSettings.architecture == "arm64") {
+            target = macosArm64("native")
+        } else if (currentOs.linux & project.buildSettings.architecture == "x86_64") {
+            target = linuxX64("native")
+        } else if (currentOs.linux & project.buildSettings.architecture == "arm64") {
+            target = linuxArm64("native")
+        } else if (currentOs.windows) {
+            target = mingwX64("native")
+        } else {
+            throw new Exception("Unsupported platform! Check project settings.")
         }
-    }
-    target.compilations.main.cinterops {
-        python {
-            compilerOpts "-I${project.buildSettings.python.include_path}"
+
+        target.binaries {
+            staticLib {
+                baseName = "lets-plot-${project.name}"
+            }
         }
+        target.compilations.main.cinterops {
+            python {
+                compilerOpts "-I${project.buildSettings.python.include_path}"
+            }
+        }
+    } else {
+        jvm() // at least one target is required by MPP - dummy jvm target will work just fine
     }
 
     sourceSets {

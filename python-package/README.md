@@ -10,6 +10,7 @@
 
 Edit `build_settings.yml` in the project root:
 
+* `architecture` - set to `arm64` or `x86_64` depending on your Python architecture.
 * `enable_python_package` - set to `yes` for working with Python package.
 * `python.include_path` - path to Python include directory where Python.h located. 
 To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.

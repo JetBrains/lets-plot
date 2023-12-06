@@ -54,6 +54,7 @@ allprojects {
 def readSettingsFromParameters() {
     def settings = [
             enable_python_package : false,
+            architecture          : "",
             python                : [bin_path: "", include_path: ""],
             pypi                  : [test: [username: null, password: null],
                                      prod: [username: null, password: null]]
@@ -62,10 +63,13 @@ def readSettingsFromParameters() {
         settings.enable_python_package = project.getProperty("enable_python_package")
         assert settings.enable_python_package != null
     }
-    settings.python.bin_path = project.getProperty("python_bin_path")
-    settings.python.include_path = project.getProperty("python_include_path")
-    assert !settings.python.bin_path.isEmpty()
-    assert !settings.python.include_path.isEmpty()
+    if (settings.enable_python_package) {
+        settings.python.bin_path = project.getProperty("python_bin_path")
+        settings.python.include_path = project.getProperty("python_include_path")
+        assert !settings.python.bin_path.isEmpty()
+        assert !settings.python.include_path.isEmpty()
+    }
+    settings.architecture = project.getProperty("architecture")
 
     return settings
 }
@@ -77,41 +81,39 @@ def readSettingsFromYaml() {
         throw new GradleException("Couldn't read build_settings.yml")
     }
     def settings = new Yaml().load(build_settings_file.newInputStream())
+    assert settings.architecture != null
 
-    assert settings.python.bin_path != null
-    assert settings.python.include_path != null
-
+    if (settings.enable_python_package) {
+        assert settings.python.bin_path != null
+        assert settings.python.include_path != null
+    }
     return settings
 }
 
-// Get Python's arch to define Kotlin targets:
-def getPythonArch() {
-    def python_bin_path = project.buildSettings.python.bin_path
-    def getArchOutput = new ByteArrayOutputStream()
-    exec {
-        commandLine "${python_bin_path}/python",
-                "-c",
-                "import platform; print(platform.machine())"
-        standardOutput = getArchOutput
-    }
-    return getArchOutput.toString().trim()
-}
-
-
 // For build_release.py settings will be read from commandline parameters.
-// If not, settings will be read from build_settings.yml.
+// In other cases, settings will be read from build_settings.yml.
 if (project.hasProperty("build_release")) {
     project.ext.buildSettings = readSettingsFromParameters()
 } else {
     project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
 }
 
-// Read Python arch from commandline parameter if used:
-if (project.hasProperty("build_arch")) {
-    project.ext.pythonArch = project.getProperty("build_arch")
-    assert !project.pythonArch.isEmpty()
-} else {
-    project.ext.pythonArch = getPythonArch()
+// Check architecture parameter, if python-package has been enabled:
+if (project.buildSettings.enable_python_package) {
+    def getArchOutput = new ByteArrayOutputStream()
+    exec {
+        commandLine "${project.buildSettings.python.bin_path}/python",
+                "-c",
+                "import platform; print(platform.machine())"
+        standardOutput = getArchOutput
+    }
+    def currentPythonArch = getArchOutput.toString().trim()
+
+    if (currentPythonArch != project.buildSettings.architecture) {
+        throw new Exception("Project and Python architectures don't match!\n" +
+                "You have enabled python-package and your architecture from project settings\n" +
+                "doesn't match your Python architecture. Check these settings in your 'build_settings.yml' file.")
+    }
 }
 
 // Maven publication settings
@@ -164,9 +166,9 @@ subprojects {
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
         kotlin {
-            if (currentOs.macOsX & project.pythonArch == "x86_64") {
+            if (currentOs.macOsX & project.buildSettings.architecture == "x86_64") {
                 macosX64()
-            } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+            } else if (currentOs.macOsX & project.buildSettings.architecture == "arm64") {
                 if (project.hasProperty("build_release")) {
                     macosX64()
                     macosArm64()
@@ -177,13 +179,13 @@ subprojects {
                 if (project.hasProperty("build_release")) {
                     linuxX64()
                     linuxArm64()
-                } else if (project.pythonArch == "x86_64") {
+                } else if (project.buildSettings.architecture == "x86_64") {
                     linuxX64()
                 }
             } else if (currentOs.windows) {
                 mingwX64()
             } else {
-                throw new Exception("Unsupported platform.")
+                throw new Exception("Unsupported platform! Check project settings.")
             }
         }
     }
