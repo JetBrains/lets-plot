@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.datamodel.svg.dom.BaselineShift
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
@@ -71,9 +70,15 @@ object RichText {
         override fun toTSpanElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
             val degreeTSpan = SvgTSpanElement(degree)
-            degreeTSpan.setAttribute(SvgTSpanElement.BASELINE_SHIFT, BaselineShift.SUPER.value)
-            degreeTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${(SUPERSCRIPT_SIZE_FACTOR * 100).roundToInt()}%")
-            return listOf(baseTSpan, degreeTSpan)
+            // The following tspan element is used to restore the baseline after the degree
+            // Restoring works only if there is some symbol after the degree, so we use ZERO_WIDTH_SPACE_SYMBOL
+            // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
+            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL)
+            degreeTSpan.setAttribute(SvgTSpanElement.DY, "-${SUPERSCRIPT_RELATIVE_SHIFT}em")
+            degreeTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
+            restoreBaselineTSpan.setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
+            restoreBaselineTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
+            return listOf(baseTSpan, degreeTSpan, restoreBaselineTSpan)
         }
 
         override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
@@ -85,7 +90,9 @@ object RichText {
         }
 
         companion object {
+            private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
             private const val SUPERSCRIPT_SIZE_FACTOR = 0.6
+            private const val SUPERSCRIPT_RELATIVE_SHIFT = 0.66
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
 
             fun toPowerTerms(text: String): List<PositionedTerm> {

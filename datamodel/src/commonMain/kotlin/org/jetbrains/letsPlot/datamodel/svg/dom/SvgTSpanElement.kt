@@ -23,8 +23,8 @@ class SvgTSpanElement() : SvgElement(), SvgTextContent {
             SvgAttributeSpec.createSpec("x")
         private val Y: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("y")
-        val BASELINE_SHIFT: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("baseline-shift")
+        val DY: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("dy")
         val FONT_SIZE: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("font-size")
     }
@@ -98,9 +98,4 @@ class SvgTSpanElement() : SvgElement(), SvgTextContent {
     override fun textDy(): Property<String?> {
         return getAttribute(TEXT_DY)
     }
-}
-
-enum class BaselineShift(val value: String) {
-    SUPER("super"),
-    SUB("sub"),
 }
