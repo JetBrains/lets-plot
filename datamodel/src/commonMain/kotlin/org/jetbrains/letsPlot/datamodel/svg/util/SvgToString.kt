@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.util
 
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
@@ -21,10 +21,11 @@ class SvgToString(
         return buffer.toString()
     }
 
-    private fun renderElement(svgElement: SvgElement, buffer: StringBuilder, level: Int) {
-        if (level > 0) {
+    private fun renderElement(svgElement: SvgElement, buffer: StringBuilder, level: Int?) {
+        if (level != null && level > 0) {
             crlf(buffer, level)
         }
+
         buffer.append('<').append(svgElement.elementName)
         if (svgElement.elementName == "svg") {
             buffer.append(" xmlns").append("=\"").append(SVG_NAMESPACE_URI).append('"')
@@ -41,25 +42,37 @@ class SvgToString(
             buffer.append(name).append("=\"").append(value).append('"')
         }
         buffer.append('>')
+
+        val nextLevel = if (level == null ) null else level + 1
+
+        // Make sure SvgTextElement children are rendered without line breaks, indentation and whitespace (in one line)
+        // Otherwise, tspans have extra space between them
+        val childrenLevel = if (svgElement is SvgTextElement) null else nextLevel
+
         // children
         if (svgElement.isPrebuiltSubtree) {
             for (childNode in svgElement.children()) {
-                crlf(buffer, level + 1)
-                val subtree =
-                    PrebuiltSvgSubtree(childNode, level + 1)
+                val subtree = PrebuiltSvgSubtree(childNode, childrenLevel ?: 0) // childrenLevel can be null only if within SvgTextElement (what is unlikely)
                 buffer.append(subtree.asString)
             }
         } else {
+
+            // Start new line for tspan line
+            // This allows the following output:
+            // <text>
+            //   <tspan/><tspan/><tspan/>
+            // </text>
+            if (svgElement is SvgTextElement) {
+                crlf(buffer, nextLevel)
+            }
+
             for (childNode in svgElement.children()) {
                 @Suppress("NAME_SHADOWING")
                 var childNode = childNode
                 when (childNode) {
                     is SvgTextNode -> {
-                        renderTextNode(
-                            childNode,
-                            buffer,
-                            level
-                        )
+                        crlf(buffer, level)
+                        renderTextNode(childNode, buffer)
                     }
 
                     is SvgElement -> {
@@ -75,16 +88,10 @@ class SvgToString(
                             childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
                         }
 
-                        renderElement(
-                            childNode as SvgElement,
-                            buffer,
-                            level + 1
-                        )
+                        renderElement(childNode as SvgElement, buffer, childrenLevel)
                     }
 
-                    else -> {
-                        throw IllegalStateException("Can't render unsupported svg node: $childNode")
-                    }
+                    else -> throw IllegalStateException("Can't render unsupported svg node: $childNode")
                 }
             }
         }
@@ -92,8 +99,7 @@ class SvgToString(
         buffer.append("</").append(svgElement.elementName).append('>')
     }
 
-    private fun renderTextNode(node: SvgTextNode, buffer: StringBuilder, level: Int) {
-        crlf(buffer, level)
+    private fun renderTextNode(node: SvgTextNode, buffer: StringBuilder) {
         buffer.append(htmlEscape(node.textContent().get()))
     }
 
@@ -117,8 +123,13 @@ class SvgToString(
             return escaped.toString()
         }
 
-        fun crlf(buffer: StringBuilder, level: Int) {
+        fun crlf(buffer: StringBuilder, level: Int?) {
+            if (level == null) {
+                return
+            }
+
             buffer.append('\n')
+
             for (i in 0 until level * TAB) {
                 buffer.append(' ')
             }
