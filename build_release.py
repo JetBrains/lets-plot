@@ -79,7 +79,7 @@ def build_python_packages(build_command, arch=None):
     # Runs Python artifacts build commands. If 'arch' argument was passed, adds it to shell command.
     python_extension_build_command = [gradle_script_name, "python-extension:build"]
     if arch is not None:
-        python_extension_build_command += [f"-Pbuild_arch={arch}"]
+        python_extension_build_command += [f"-Parchitecture={arch}"]
         command = build_command + [arch]
     else:
         command = build_command
@@ -87,6 +87,17 @@ def build_python_packages(build_command, arch=None):
     run_command(python_extension_build_command + build_parameters)
     print_message(f"Building Python Package...")
     run_command(command)
+
+
+def get_python_arch(python_bin_path):
+    get_python_arch_command = [f"{python_bin_path}/python", "-c", "import platform; print(platform.machine())"]
+    process = subprocess.check_output(get_python_arch_command, stderr=None)
+    current_python_arch = process.decode().strip()
+    if current_python_arch == "arm64" or current_python_arch == "x86_64":
+        return current_python_arch
+    else:
+        print_error_and_exit(f"Got wrong Python architecture for {python_bin_path}!\n"
+                             f"Check your settings file or Python installation.")
 
 
 # Read Python settings file from script argument.
@@ -125,6 +136,7 @@ if system == "Linux":
     # Collect all predefined parameters:
     build_parameters = [
         "-Pbuild_release=true",
+        "-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"])),
         "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
         "-Ppython_include_path=%s" % (python_paths["include_path"]),
         f"-Penable_python_package={enable_python_package}"
@@ -158,6 +170,7 @@ elif system == "Darwin" or system == "Windows":
         # Collect all predefined parameters:
         build_parameters = [
             "-Pbuild_release=true",
+            "-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"])),
             "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython_include_path=%s" % (python_paths["include_path"]),
             f"-Penable_python_package={enable_python_package}"
