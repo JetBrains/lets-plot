@@ -259,7 +259,7 @@ object PlotConfigFrontendUtil {
                 .contextualMappingProvider(it)
         }
         // annotations
-        layerBuilder.annotationSpecification(layerConfig.annotations, theme.plot().textStyle())
+        layerBuilder.annotationSpecification(layerConfig.annotations, theme.annotations().textStyle())
 
         return layerBuilder
     }

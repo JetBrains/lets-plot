@@ -85,6 +85,8 @@ object ThemeOption {
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
 
+    const val ANNOTATION_TEXT = "label_text"
+
     const val GEOM = "geom"
     const val FLAVOR = "flavor"
 
@@ -180,7 +182,7 @@ object ThemeOption {
             PANEL_GRID_MAJOR_Y,
             PANEL_GRID_MINOR_Y,
             FACET_STRIP_BGR_RECT,
-            TOOLTIP_RECT
+            TOOLTIP_RECT,
         )
 
         // Actually, text sizes are defined in "theme values".
@@ -199,6 +201,7 @@ object ThemeOption {
             LEGEND_TITLE,
             TOOLTIP_TEXT,
             TOOLTIP_TITLE_TEXT,
+            ANNOTATION_TEXT
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
@@ -230,6 +233,7 @@ object ThemeOption {
             LEGEND_TITLE,
             TOOLTIP_TEXT,
             TOOLTIP_TITLE_TEXT,
+            ANNOTATION_TEXT
         )
     }
 }

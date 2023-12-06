@@ -71,6 +71,8 @@ def theme(*,
           tooltip=None,
           tooltip_text=None, tooltip_title_text=None,
 
+          label_text=None,
+
           geom=None
           ):
     """
@@ -218,6 +220,9 @@ def theme(*,
     tooltip_title_text: str or dict
         Tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
+    label_text : str or dict
+        Annotation text.
+        Set `element_text()` to specify annotation text parameters.
     geom: dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.
