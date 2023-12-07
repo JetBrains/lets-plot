@@ -94,8 +94,8 @@ object RichText {
 
         companion object {
             private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-            private const val SUPERSCRIPT_SIZE_FACTOR = 0.6
-            private const val SUPERSCRIPT_RELATIVE_SHIFT = 0.66
+            private const val SUPERSCRIPT_SIZE_FACTOR = 0.7
+            private const val SUPERSCRIPT_RELATIVE_SHIFT = 0.4
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
 
             fun toPowerTerms(text: String): List<PositionedTerm> {
