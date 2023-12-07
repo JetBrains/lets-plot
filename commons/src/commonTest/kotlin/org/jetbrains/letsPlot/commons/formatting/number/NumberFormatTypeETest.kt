@@ -45,4 +45,10 @@ class NumberFormatTypeETest {
         assertEquals("-1.500000·\\(10^{16}\\)", f.apply(-1.5e16))
         assertEquals("-1.500000·\\(10^{-16}\\)", f.apply(-1.5e-16))
     }
+
+    @Test
+    fun trim() {
+        assertEquals("1.000000", NumberFormat("e", true).apply(1.0))
+        assertEquals("1", NumberFormat("~e", true).apply(1.0))
+    }
 }
