@@ -69,6 +69,7 @@ object RichText {
     ) : Term {
         override fun toTSpanElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
+            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL)
             val degreeTSpan = SvgTSpanElement(degree)
             // The following tspan element is used to restore the baseline after the degree
             // Restoring works only if there is some symbol after the degree, so we use ZERO_WIDTH_SPACE_SYMBOL
@@ -77,11 +78,12 @@ object RichText {
             // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
             // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
             val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL)
+            indentTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
             degreeTSpan.setAttribute(SvgTSpanElement.DY, "-${SUPERSCRIPT_RELATIVE_SHIFT}em")
             degreeTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
             restoreBaselineTSpan.setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
             restoreBaselineTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
-            return listOf(baseTSpan, degreeTSpan, restoreBaselineTSpan)
+            return listOf(baseTSpan, indentTSpan, degreeTSpan, restoreBaselineTSpan)
         }
 
         override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
@@ -94,6 +96,8 @@ object RichText {
 
         companion object {
             private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
+            private const val INDENT_SYMBOL = " "
+            private const val INDENT_SIZE_FACTOR = 0.1
             private const val SUPERSCRIPT_SIZE_FACTOR = 0.7
             private const val SUPERSCRIPT_RELATIVE_SHIFT = 0.4
             val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
