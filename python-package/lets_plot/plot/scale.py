@@ -666,10 +666,6 @@ def scale_continuous(aesthetic, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
-    low : str
-        Color for low end of gradient (actually `scale_gradient()` is used).
-    high : str
-        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -726,8 +722,19 @@ def scale_continuous(aesthetic, *,
 
     """
     if low is not None or high is not None:
+        print("WARN: using 'low' and 'high' parameters in `scale_continuous()` is deprecated.\n"
+              "      Please, use `scale_gradient()` for gradient color scales.")
+
+    is_color_scale = False
+    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
+    if isinstance(aesthetic, str):
+        is_color_scale = aesthetic in color_aesthetics
+    elif isinstance(aesthetic, list):
+        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+
+    if is_color_scale:
         return scale_gradient(aesthetic,
-                              low=low, high=high,
+                              low=None, high=None,
                               name=name,
                               breaks=breaks,
                               labels=labels,
@@ -737,6 +744,7 @@ def scale_continuous(aesthetic, *,
                               guide=guide,
                               trans=trans,
                               format=format)
+
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -757,10 +765,6 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient (actually `scale_gradient()` is used).
-    high : str
-        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -836,10 +840,6 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient (actually `scale_gradient()` is used).
-    high : str
-        Color for high end of gradient (actually `scale_gradient()` is used).
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
