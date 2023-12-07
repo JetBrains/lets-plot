@@ -12,6 +12,26 @@ class NumberFormatTypeGTest {
     private fun format(spec: String): NumberFormat = NumberFormat(spec, false)
 
     @Test
+    fun gToE() {
+        // Not yet enough digits to use exponential notation
+        assertEquals("0.000001", format("g").apply(1.0e-6))
+        assertEquals("123456", format("g").apply(123456))
+
+        // Enough digits to use exponential notation
+        assertEquals("1e-7", format("g").apply(1.0e-7))
+        assertEquals("1.23457e+6", format("g").apply(1234567))
+
+        // Rounding
+        assertEquals("1.23457e+8", format("g").apply(123456789))
+        assertEquals("1.456e-7", format("g").apply(1.456e-7))
+
+        // Rounding with precision
+        assertEquals("1.23e+8", format(".3g").apply(123456789))
+        assertEquals("1.23e-7", format(".3g").apply(1.23456789e-7))
+        assertEquals("1.2346e-7", format(".5g").apply(1.23456789e-7))
+    }
+
+    @Test
     fun canOutputGeneralNotation() {
         assertEquals("0.00026986", format("g").apply(2.6985974025974023E-4))
         assertEquals("0.05", format(".1g").apply(0.049))

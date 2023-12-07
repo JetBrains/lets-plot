@@ -294,6 +294,10 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
+            } else if (numberInfo.fractionLeadingZeros >= 6) {
+                // 6 is a magic number that triggers exponential notation (too long to be formatted as a simple number)
+                // Same as in JS (see toPrecision) and D3.format
+                return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
