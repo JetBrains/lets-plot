@@ -703,7 +703,6 @@ def scale_continuous(aesthetic, *,
     Notes
     -----
     Define most common properties of a continuous scale for the specified aesthetics.
-    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()`.
 
     Examples
     --------
@@ -725,12 +724,13 @@ def scale_continuous(aesthetic, *,
         print("WARN: using 'low' and 'high' parameters in `scale_continuous()` is deprecated.\n"
               "      Please, use `scale_gradient()` for gradient color scales.")
 
-    is_color_scale = False
     color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
     if isinstance(aesthetic, str):
         is_color_scale = aesthetic in color_aesthetics
     elif isinstance(aesthetic, list):
         is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    else:
+        is_color_scale = False
 
     if is_color_scale:
         return scale_gradient(aesthetic,
@@ -802,7 +802,6 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     Notes
     -----
     Define most common properties of a continuous scale for `fill` aesthetic.
-    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()` for `fill` aesthetic.
 
     Examples
     --------
@@ -877,7 +876,6 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     Notes
     -----
     Define most common properties of a continuous scale for `color` aesthetic.
-    If `low` or `high` parameters are specified, the actual scale function used is `scale_gradient()` for `color` aesthetic.
 
     Examples
     --------
