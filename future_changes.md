@@ -48,3 +48,4 @@
 - scale manual: "values" parameter should accept dictionary as a value [[#882](https://github.com/JetBrains/lets-plot/issues/882)].
 - as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
 - Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
+- `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].
