@@ -294,6 +294,10 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
+            } else if (numberInfo.fractionLeadingZeros >= 6) {
+                // 6 is a magic number that triggers exponential notation (too long to be formatted as a simple number)
+                // Same as in JS (see toPrecision) and D3.format
+                return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
@@ -477,7 +481,7 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         fun create(spec: Spec): Spec {
             var precision = spec.precision
             var type = spec.type
-            var trim = false
+            var trim = spec.trim
             if (type == "") {
                 if (precision == -1) {
                     precision = 12
@@ -502,7 +506,7 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         }
 
         private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?([%bcdefgosXx])?$""".toRegex()
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?$""".toRegex()
 
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
@@ -518,7 +522,8 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
                 width = (matchResult.groups[6]?.value ?: "-1").toInt(),
                 comma = matchResult.groups[7] != null,
                 precision = (matchResult.groups[8]?.value ?: "6").toInt(),
-                type = matchResult.groups[9]?.value ?: ""
+                trim = matchResult.groups[9] != null,
+                type = matchResult.groups[10]?.value ?: ""
             )
         }
 
