@@ -69,20 +69,23 @@ object RichText {
     ) : Term {
         override fun toTSpanElements(): List<SvgTSpanElement> {
             val baseTSpan = SvgTSpanElement(base)
-            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL)
-            val degreeTSpan = SvgTSpanElement(degree)
+            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
+            }
+            val degreeTSpan = SvgTSpanElement(degree).apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.DY, "-${SUPERSCRIPT_RELATIVE_SHIFT}em")
+            }
             // The following tspan element is used to restore the baseline after the degree
             // Restoring works only if there is some symbol after the degree, so we use ZERO_WIDTH_SPACE_SYMBOL
             // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
             // Attribute 'baseline-shift' is better suited for such usecase -
             // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
             // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL)
-            indentTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-            degreeTSpan.setAttribute(SvgTSpanElement.DY, "-${SUPERSCRIPT_RELATIVE_SHIFT}em")
-            degreeTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
-            restoreBaselineTSpan.setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
-            restoreBaselineTSpan.setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
+            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
+            }
             return listOf(baseTSpan, indentTSpan, degreeTSpan, restoreBaselineTSpan)
         }
 
