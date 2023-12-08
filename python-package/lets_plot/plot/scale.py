@@ -652,23 +652,20 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
 
 #
-# Gradient (continuous) Color Scales
+# Scale for continuous data
 #
+
 def scale_continuous(aesthetic, *,
-                     low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
+                     name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     General purpose scale for continuous data.
-    Use it to adjust most common properties of a default scale for given aesthetic.
+    Use it to adjust most common properties of a default scale for given aesthetics.
 
     Parameters
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -705,7 +702,7 @@ def scale_continuous(aesthetic, *,
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for the specified aesthetics.
+    Define most common properties of a continuous scale for the specified aesthetics.
 
     Examples
     --------
@@ -718,11 +715,21 @@ def scale_continuous(aesthetic, *,
         x = list(range(50))
         ggplot({'x': x}, aes(x='x')) + \\
             geom_tile(aes(color='x', fill='x')) + \\
-            scale_continuous(aesthetic=['color', 'fill'], low='#1a9641', high='#d7191c') + \\
+            scale_continuous(aesthetic=['color', 'fill'], breaks=[5, 25, 45]) + \\
             coord_cartesian() + \\
             ggsize(600, 200)
 
     """
+    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
+    if isinstance(aesthetic, str):
+        is_color_scale = aesthetic in color_aesthetics
+    elif isinstance(aesthetic, list):
+        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    else:
+        is_color_scale = False
+
+    scale_mapper_kind = 'color_gradient' if is_color_scale else None
+
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -735,9 +742,156 @@ def scale_continuous(aesthetic, *,
                   trans=trans,
                   format=format,
                   #
-                  low=low, high=high,
-                  scale_mapper_kind='color_gradient')
+                  scale_mapper_kind=scale_mapper_kind)
 
+
+def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None):
+    """
+    Default color scale for `fill` aesthetic and continuous data.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define most common properties of a continuous scale for `fill` aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_continuous(breaks=[5, 25, 45]) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
+    return scale_continuous('fill',
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            lablim=lablim,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format)
+
+
+def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None):
+    """
+    Default color scale for `color` aesthetic and continuous data.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define most common properties of a continuous scale for `color` aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_continuous(breaks=[0, 3, 6, 9])
+
+    """
+    return scale_continuous('color',
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            lablim=lablim,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format)
+
+
+#
+# Gradient Color Scales
+#
 
 def scale_gradient(aesthetic, *,
                    low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
@@ -809,18 +963,20 @@ def scale_gradient(aesthetic, *,
             ggsize(600, 200)
 
     """
-
-    return scale_continuous(aesthetic,
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            lablim=lablim,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
+    return _scale(aesthetic,
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  low=low, high=high,
+                  scale_mapper_kind='color_gradient')
 
 
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
@@ -872,7 +1028,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for filling color.
+    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
 
     Examples
     --------
@@ -901,84 +1057,6 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
                           guide=guide,
                           trans=trans,
                           format=format)
-
-
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None):
-    """
-    Define smooth color gradient between two colors for `fill` aesthetic.
-
-    Parameters
-    ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list or dict
-        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
-    labels : list of str or dict
-        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
-    lablim : int, default=None
-        The maximum label length (in characters) before trimming is applied.
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    na_value
-        Missing values will be replaced with this value.
-    guide
-        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Define the format for labels on the scale. The syntax resembles Python's:
-
-        - '.2f' -> '12.45'
-        - 'Num {}' -> 'Num 12.456789'
-        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
-
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for filling color.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(50))
-        ggplot({'x': x}, aes(x='x')) + \\
-            geom_tile(aes(fill='x')) + \\
-            scale_fill_continuous(low='#1a9641', high='#d7191c') + \\
-            coord_cartesian() + \\
-            ggsize(600, 200)
-
-    """
-    return scale_continuous('fill',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            lablim=lablim,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
 
 
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
@@ -1059,78 +1137,6 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
                           guide=guide,
                           trans=trans,
                           format=format)
-
-
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
-    """
-    Define smooth color gradient between two colors for `color` aesthetic.
-
-    Parameters
-    ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list or dict
-        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
-    labels : list of str or dict
-        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
-    lablim : int, default=None
-        The maximum label length (in characters) before trimming is applied.
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    na_value
-        Missing values will be replaced with this value.
-    guide
-        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Define the format for labels on the scale. The syntax resembles Python's:
-
-        - '.2f' -> '12.45'
-        - 'Num {}' -> 'Num 12.456789'
-        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
-
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(10))
-        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
-            geom_point(aes(color='x'), shape=1, size=5) + \\
-            scale_color_continuous(low='#1a9641', high='#d7191c')
-
-    """
-    return scale_continuous('color',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            lablim=lablim,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
 
 
 def scale_gradient2(aesthetic, *,
@@ -1277,7 +1283,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 
     Notes
     -----
-    Define diverging color gradient for filling color. Default mid point is set to white color.
+    Define diverging color gradient for `fill` aesthetic. Default mid point is set to white color.
 
     Examples
     --------
@@ -1783,7 +1789,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -1907,7 +1913,7 @@ def scale_discrete(aesthetic, *,
                    name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     General purpose scale for discrete data.
-    Use it to adjust most common properties of a default scale for given aesthetic.
+    Use it to adjust most common properties of a default scale for given aesthetics.
 
     Parameters
     ----------
@@ -1951,7 +1957,7 @@ def scale_discrete(aesthetic, *,
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for the specified aesthetics.
+    Define scale for discrete data to adjust properties for the specified aesthetics.
 
     Examples
     --------
@@ -1989,7 +1995,7 @@ def scale_discrete(aesthetic, *,
 def scale_fill_discrete(direction=None,
                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
+    Qualitative colors scale for `fill` aesthetic.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
@@ -2032,7 +2038,7 @@ def scale_fill_discrete(direction=None,
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -2057,6 +2063,7 @@ def scale_fill_discrete(direction=None,
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -2066,7 +2073,7 @@ def scale_fill_discrete(direction=None,
 def scale_color_discrete(direction=None,
                          name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
+    Qualitative colors for `color` aesthetic.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
@@ -2278,7 +2285,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
 
     Notes
     -----
-    Define sequential grey color scale for filling color aesthetic.
+    Define sequential grey color scale for `fill` aesthetic.
 
     Examples
     --------

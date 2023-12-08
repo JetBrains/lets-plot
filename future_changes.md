@@ -39,6 +39,9 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).
 
 
+- [BREAKING] `scale_continuous()`, `scale_color_continuous()`, `scale_fill_continuous()` no longer support `low` and `high` parameters.
+
+
 ### Fixed
 - Jitter reproducibility in geom_jitter, position_jitter, position_jitterdodge [[#911](https://github.com/JetBrains/lets-plot/issues/911)].
 - Facets: order = 0 doesn't work as expected [[#923](https://github.com/JetBrains/lets-plot/issues/923)].
@@ -52,3 +55,4 @@
 - scale manual: "values" parameter should accept dictionary as a value [[#882](https://github.com/JetBrains/lets-plot/issues/882)].
 - as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
 - Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
+- `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].
