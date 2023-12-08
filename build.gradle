@@ -50,6 +50,8 @@ allprojects {
     }
 }
 
+project.ext.currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
 // Read build settings from commandline parameters (for build_release.py script):
 def readSettingsFromParameters() {
     def settings = [
@@ -69,7 +71,9 @@ def readSettingsFromParameters() {
         assert !settings.python.bin_path.isEmpty()
         assert !settings.python.include_path.isEmpty()
     }
-    settings.architecture = project.getProperty("architecture")
+    if (!project.currentOs.windows) {
+        settings.architecture = project.getProperty("architecture")
+    }
 
     return settings
 }
@@ -81,7 +85,9 @@ def readSettingsFromYaml() {
         throw new GradleException("Couldn't read build_settings.yml")
     }
     def settings = new Yaml().load(build_settings_file.newInputStream())
-    assert settings.architecture != null
+    if (!project.currentOs.windows) {
+        assert settings.architecture != null // Skip architecture property for Windows systems.
+    }
 
     if (settings.enable_python_package) {
         assert settings.python.bin_path != null
@@ -98,8 +104,8 @@ if (project.hasProperty("build_release")) {
     project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
 }
 
-// Check architecture parameter, if python-package has been enabled:
-if (project.buildSettings.enable_python_package) {
+// Check architecture parameter, if python-package has been enabled (skipped for Windows):
+if (project.buildSettings.enable_python_package && !project.currentOs.windows) {
     def getArchOutput = new ByteArrayOutputStream()
     exec {
         commandLine "${project.buildSettings.python.bin_path}/python",
@@ -111,8 +117,8 @@ if (project.buildSettings.enable_python_package) {
 
     if (currentPythonArch != project.buildSettings.architecture) {
         throw new Exception("Project and Python architectures don't match!\n" +
-                "You have enabled python-package and your architecture from project settings\n" +
-                "doesn't match your Python architecture. Check these settings in your 'build_settings.yml' file.")
+                "You have enabled python-package and your architecture value from project settings doesn't match\n" +
+                "your Python architecture. Check these settings in your 'build_settings.yml' file.")
     }
 }
 
@@ -163,26 +169,24 @@ subprojects {
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
-        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
-
         kotlin {
-            if (currentOs.macOsX & project.buildSettings.architecture == "x86_64") {
+            if (project.currentOs.macOsX & project.buildSettings.architecture == "x86_64") {
                 macosX64()
-            } else if (currentOs.macOsX & project.buildSettings.architecture == "arm64") {
+            } else if (project.currentOs.macOsX & project.buildSettings.architecture == "arm64") {
                 if (project.hasProperty("build_release")) {
                     macosX64()
                     macosArm64()
                 } else {
                     macosArm64()
                 }
-            } else if (currentOs.linux) {
+            } else if (project.currentOs.linux) {
                 if (project.hasProperty("build_release")) {
                     linuxX64()
                     linuxArm64()
                 } else if (project.buildSettings.architecture == "x86_64") {
                     linuxX64()
                 }
-            } else if (currentOs.windows) {
+            } else if (project.currentOs.windows) {
                 mingwX64()
             } else {
                 throw new Exception("Unsupported platform! Check project settings.")

@@ -1,5 +1,6 @@
 ---
-# Set project architecture. Available values: 'arm64', 'x86_64'"
+# Set project architecture for Linux or Mac. Windows users can skip this parameter.
+# Available values: 'arm64', 'x86_64'"
 architecture: arm64
 
 # enable tasks responsible for building and publishing of lets-plot python package
