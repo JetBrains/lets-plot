@@ -136,7 +136,6 @@ if system == "Linux":
     # Collect all predefined parameters:
     build_parameters = [
         "-Pbuild_release=true",
-        "-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"])),
         "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
         "-Ppython_include_path=%s" % (python_paths["include_path"]),
         f"-Penable_python_package={enable_python_package}"
@@ -170,11 +169,13 @@ elif system == "Darwin" or system == "Windows":
         # Collect all predefined parameters:
         build_parameters = [
             "-Pbuild_release=true",
-            "-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"])),
             "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
             "-Ppython_include_path=%s" % (python_paths["include_path"]),
             f"-Penable_python_package={enable_python_package}"
         ]
+        # Add architecture parameter for Mac:
+        if system == "Darwin":
+            build_parameters += ["-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"]))]
 
         # Run Python package build:
         build_python_packages(python_package_build_command + build_parameters)
