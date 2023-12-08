@@ -83,6 +83,7 @@ object RichText {
             // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
             // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
             val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                // Size of shift depends on the font size, and it should be equal to the superscript shift size
                 setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
                 setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
             }
