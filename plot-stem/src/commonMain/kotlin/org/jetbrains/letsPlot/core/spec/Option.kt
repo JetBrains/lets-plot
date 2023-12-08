@@ -65,6 +65,7 @@ object Option {
             const val COLUMN = "column"   // a.k.a. variable name
             const val TYPE = "type"
             const val FACTOR_LEVELS = "factor_levels" // annotation for discrete variables
+            const val ORDER = "order"
 
             // Values of the "TYPE" property
             object DateTime {

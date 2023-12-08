@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -49,6 +50,15 @@ open class PlotConfigBackend(
             }
         }
 
+        // match the specified 'factor_levels' to the actual contents of the data set (on combined df before stat)
+        val specifiedFactorLevelsByLayers = layerConfigs.map { layerConfig ->
+            prepareLayerFactorLevelsByVariable(
+                layerConfig.combinedData,
+                plotDataMeta = getMap(DATA_META),
+                layerDataMeta = layerConfig.getMap(DATA_META)
+            )
+        }
+
         // replace layer data with data after stat
         layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
             // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
@@ -61,24 +71,28 @@ open class PlotConfigBackend(
         // Clean-up data before sending it to the front-end.
         dropUnusedDataBeforeEncoding(layerConfigs)
 
-        // Re-create the "natural order" existed before faceting.
-        if (facets.isDefined) {
-            // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
-            layerConfigs.forEach { layerConfig ->
-                val layerData = layerConfig.ownData
-                if (facets.isFacettable(layerData)) {
+        // Re-create the "natural order" existed before faceting
+        // or apply the specified order
+        if (facets.isDefined || specifiedFactorLevelsByLayers.any { it.isNotEmpty() }) {
+            layerConfigs.zip(specifiedFactorLevelsByLayers)
+                .filter { (layerConfig, factorLevels) ->
+                    // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
+                    facets.isFacettable(layerConfig.ownData)
+                            || factorLevels.isNotEmpty()
+                }
+                .forEach { (layerConfig, factorLevels) ->
                     val layerDataMetaUpdated = addFactorLevelsDataMeta(
-                        layerData = layerData,
+                        layerData = layerConfig.ownData,
                         layerDataMeta = layerConfig.getMap(DATA_META),
                         stat = layerConfig.stat,
                         varBindings = layerConfig.varBindings,
                         transformByAes = transformByAes,
                         orderOptions = layerConfig.orderOptions,
-                        yOrientation = layerConfig.isYOrientation
+                        yOrientation = layerConfig.isYOrientation,
+                        specifiedLayerFactorLevers = factorLevels
                     )
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                 }
-            }
         }
     }
 
@@ -273,6 +287,7 @@ open class PlotConfigBackend(
             transformByAes: Map<Aes<*>, Transform>,
             orderOptions: List<OrderOption>,
             yOrientation: Boolean,
+            specifiedLayerFactorLevers: Map<String, List<Any>>
         ): Map<String, Any> {
 
             // Use "discrete transforms" to re-create the "natural order" existed before faceting.
@@ -304,7 +319,34 @@ open class PlotConfigBackend(
                 levelsByVariable[variable.name] = orderedDistinctValues
             }
 
+            // apply specified factors
+            levelsByVariable += specifiedLayerFactorLevers
+
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
+        }
+
+        private fun prepareLayerFactorLevelsByVariable(
+            data: DataFrame,
+            plotDataMeta: Map<*, *>,
+            layerDataMeta: Map<*, *>
+        ): Map<String, List<Any>> {
+            val plotFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(plotDataMeta)
+            val layerFactorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(layerDataMeta)
+            val factorLevelsByVar = (plotFactorLevelsByVar + layerFactorLevelsByVar)
+                .mapKeys { (varName, _) -> data.variables().find { it.name == varName } }
+                .filterNotNullKeys()
+
+            val orderDirectionsByVar = DataMetaUtil.getFactorLevelsOrderByVariable(plotDataMeta) +
+                    DataMetaUtil.getFactorLevelsOrderByVariable(layerDataMeta)
+
+            return factorLevelsByVar.map { (variable, levels) ->
+                // append missed values to the tail of specified levels
+                val distinctValues = data.distinctValues(variable)
+                val tail = distinctValues - levels.toSet()
+                val order = orderDirectionsByVar.getOrElse(variable.name) { 0 }
+                val factors = (levels + tail).let { if (order >= 0) it else it.reversed() }
+                variable.name to factors
+            }.toMap()
         }
     }
 }

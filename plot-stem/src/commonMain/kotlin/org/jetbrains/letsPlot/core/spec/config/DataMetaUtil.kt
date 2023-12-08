@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Meta.MappingAnnotation
@@ -96,12 +97,25 @@ object DataMetaUtil {
             ?: emptySet()
     }
 
+    fun getCategoricalVariables(dataMeta: Map<*, *>): Set<String> {
+        return getFactorLevelsByVariable(dataMeta).keys
+    }
+
     fun getFactorLevelsByVariable(dataMeta: Map<*, *>): Map<String, List<Any>> {
         return (dataMeta
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
-            ?.filterValues { list -> list?.isNotEmpty() ?: false }
-            ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
+            ?.filterNotNullValues()
+            ?.mapValues { (_, factorLevels) -> factorLevels.map { v -> v as Any } }
+            ?: emptyMap())
+    }
+
+    fun getFactorLevelsOrderByVariable(dataMeta: Map<*, *>): Map<String, Int> {
+        return (dataMeta
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(COLUMN)!! to it.getNumber(SeriesAnnotation.ORDER) }
+            ?.filterNotNullValues()
+            ?.mapValues { (_, order) -> order.toInt() }
             ?: emptyMap())
     }
 
