@@ -10,7 +10,7 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as platform
 import org.yaml.snakeyaml.Yaml
 
 project.ext.letsPlotTaskGroup = 'lets-plot'
@@ -69,7 +69,8 @@ def readSettingsFromParameters() {
         assert !settings.python.bin_path.isEmpty()
         assert !settings.python.include_path.isEmpty()
     }
-    if (!project.currentOs.windows) {
+    def os = platform.getCurrentOperatingSystem()
+    if (!os.windows) {
         settings.architecture = project.getProperty("architecture")
     }
 
@@ -79,18 +80,19 @@ def readSettingsFromParameters() {
 // Read build settings from build_settings.yml:
 def readSettingsFromYaml() {
     def build_settings_file = new File(rootDir, "build_settings.yml")
+    def os = platform.getCurrentOperatingSystem()
     if (!build_settings_file.canRead()) {
         throw new GradleException("Couldn't read build_settings.yml")
     }
     def settings = new Yaml().load(build_settings_file.newInputStream())
-    if (!DefaultNativePlatform.getCurrentOperatingSystem().windows) {
-        assert settings.architecture != null // Windows only 64bit version can be builе, so the arch parameter is not needed and may not be set.
+    if (!os.windows) {
+        assert settings.architecture != null // Windows only 64bit version can be built, so the arch parameter is not needed and may not be set.
     }
     if (settings.enable_python_package) {
         assert settings.python.bin_path != null
         assert settings.python.include_path != null
 
-        if (!DefaultNativePlatform.getCurrentOperatingSystem().windows) {
+        if (!os.windows) {
             def getArchOutput = new ByteArrayOutputStream()
             exec {
                 commandLine "${settings.python.bin_path}/python",
@@ -167,24 +169,26 @@ subprojects {
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
+        def os = platform.getCurrentOperatingSystem()
+
         kotlin {
-            if (DefaultNativePlatform.getCurrentOperatingSystem().macOsX & project.buildSettings.architecture == "x86_64") {
+            if (os.macOsX & project.buildSettings.architecture == "x86_64") {
                 macosX64()
-            } else if (DefaultNativePlatform.getCurrentOperatingSystem().macOsX & project.buildSettings.architecture == "arm64") {
+            } else if (os.macOsX & project.buildSettings.architecture == "arm64") {
                 if (project.hasProperty("build_release")) {
                     macosX64()
                     macosArm64()
                 } else {
                     macosArm64()
                 }
-            } else if (DefaultNativePlatform.getCurrentOperatingSystem().linux) {
+            } else if (os.linux) {
                 if (project.hasProperty("build_release")) {
                     linuxX64()
                     linuxArm64()
                 } else if (project.buildSettings.architecture == "x86_64") {
                     linuxX64()
                 }
-            } else if (DefaultNativePlatform.getCurrentOperatingSystem().windows) {
+            } else if (os.windows) {
                 mingwX64()
             } else {
                 throw new Exception("Unsupported platform! Check project settings.")

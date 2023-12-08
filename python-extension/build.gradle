@@ -7,22 +7,23 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
 }
 
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as platform
 
 kotlin {
 
     if (project.buildSettings.enable_python_package) {
 
+        def os = platform.getCurrentOperatingSystem()
         def target
-        if (DefaultNativePlatform.getCurrentOperatingSystem().macOsX & project.buildSettings.architecture == "x86_64") {
+        if (os.macOsX & project.buildSettings.architecture == "x86_64") {
             target = macosX64("native")
-        } else if (DefaultNativePlatform.getCurrentOperatingSystem().macOsX & project.buildSettings.architecture == "arm64") {
+        } else if (os.macOsX & project.buildSettings.architecture == "arm64") {
             target = macosArm64("native")
-        } else if (DefaultNativePlatform.getCurrentOperatingSystem().linux & project.buildSettings.architecture == "x86_64") {
+        } else if (os.linux & project.buildSettings.architecture == "x86_64") {
             target = linuxX64("native")
-        } else if (DefaultNativePlatform.getCurrentOperatingSystem().linux & project.buildSettings.architecture == "arm64") {
+        } else if (os.linux & project.buildSettings.architecture == "arm64") {
             target = linuxArm64("native")
-        } else if (DefaultNativePlatform.getCurrentOperatingSystem().windows) {
+        } else if (os.windows) {
             target = mingwX64("native")
         } else {
             throw new Exception("Unsupported platform! Check project settings.")
