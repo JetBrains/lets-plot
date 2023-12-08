@@ -142,7 +142,7 @@ if system == "Linux":
     ]
 
     # Run JS artifact build first:
-    gradle_js_build_command = [gradle_script_name, "js-package:jsBrowserProductionWebpack"]
+    gradle_js_build_command = [gradle_script_name, "js-package:jsBrowserProductionWebpack", "-Parchitecture=x86_64"]
     run_command(gradle_js_build_command + build_parameters)
 
     # Run Python 'manylinux' packages build for x64 arch:
