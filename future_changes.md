@@ -46,3 +46,5 @@
 - gggrid: composite plot is not visible if saved with ggsave [[#942](https://github.com/JetBrains/lets-plot/issues/942)].
 - Make scale's 'breaks' / 'labels' parameters understand dict of breaks as keys and labels as values [[#169](https://github.com/JetBrains/lets-plot/issues/169)].
 - scale manual: "values" parameter should accept dictionary as a value [[#882](https://github.com/JetBrains/lets-plot/issues/882)].
+- as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
+- Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].

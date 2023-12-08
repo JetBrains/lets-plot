@@ -46,6 +46,14 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
 
     variables_meta: Dict[str, VariableMeta] = {}
 
+    if is_data_frame(data):
+        dtypes = data.dtypes.to_dict().items()
+        for column_name, dtype in dtypes:
+            if dtype.name == 'category' and dtype.ordered:
+                var_meta = VariableMeta()
+                var_meta.levels = dtype.categories.to_list()
+                variables_meta[column_name] = var_meta
+
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
             if aesthetic == 'name':  # ignore FeatureSpec.name property

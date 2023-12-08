@@ -2,7 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from datetime import datetime
-from pandas import DataFrame
+from pandas import DataFrame, Categorical
 from lets_plot import aes
 from lets_plot.mapping import as_discrete
 from lets_plot.plot.util import as_annotated_data
@@ -110,3 +110,31 @@ def test_with_mapping_annotations():
     ]
     assert expected_factor_levels == data_meta['series_annotations']
     assert expected_mapping_annotations == data_meta['mapping_annotations']
+
+
+def test_pd_categorical_variable():
+    x_order = ['ch5', 'ch4', 'ch2', 'ch1']
+    x = ['ch4', 'ch5', 'ch1', 'ch2']
+    df = DataFrame({'v': x})
+    df['v'] = Categorical(df.v, categories=x_order, ordered=True)
+    data_meta = get_data_meta(df)
+    expected_factor_levels = [
+        {'column': 'v', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1'], 'order': None}
+    ]
+    assert expected_factor_levels == data_meta['series_annotations']
+
+
+def test_pd_categorical_variable_with_order_from_mapping():
+    x_order = ['ch5', 'ch4', 'ch2', 'ch1']
+    x = ['ch4', 'ch5', 'ch1', 'ch2']
+    df = DataFrame({'v': x})
+    df['v'] = Categorical(df.v, categories=x_order, ordered=True)
+    mapping = aes(
+        x=as_discrete('v', order=-1)
+    )
+    data_meta = get_data_meta(df, mapping)
+
+    expected_factor_levels = [
+        {'column': 'v', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1'], 'order': -1}
+    ]
+    assert expected_factor_levels == data_meta['series_annotations']
