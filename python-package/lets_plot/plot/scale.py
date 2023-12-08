@@ -656,7 +656,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 #
 
 def scale_continuous(aesthetic, *,
-                     low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
+                     name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     General purpose scale for continuous data.
@@ -720,10 +720,6 @@ def scale_continuous(aesthetic, *,
             ggsize(600, 200)
 
     """
-    if low is not None or high is not None:
-        print("WARN: using 'low' and 'high' parameters in `scale_continuous()` is deprecated.\n"
-              "      Please, use `scale_gradient()` for gradient color scales.")
-
     color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
     if isinstance(aesthetic, str):
         is_color_scale = aesthetic in color_aesthetics
@@ -732,18 +728,7 @@ def scale_continuous(aesthetic, *,
     else:
         is_color_scale = False
 
-    if is_color_scale:
-        return scale_gradient(aesthetic,
-                              low=None, high=None,
-                              name=name,
-                              breaks=breaks,
-                              labels=labels,
-                              lablim=lablim,
-                              limits=limits,
-                              na_value=na_value,
-                              guide=guide,
-                              trans=trans,
-                              format=format)
+    scale_mapper_kind = 'color_gradient' if is_color_scale else None
 
     return _scale(aesthetic,
                   name=name,
@@ -755,10 +740,12 @@ def scale_continuous(aesthetic, *,
                   na_value=na_value,
                   guide=guide,
                   trans=trans,
-                  format=format)
+                  format=format,
+                  #
+                  scale_mapper_kind=scale_mapper_kind)
 
 
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
+def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
                           limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Default color scale for `fill` aesthetic and continuous data.
@@ -820,7 +807,6 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 
     """
     return scale_continuous('fill',
-                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -832,7 +818,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
                             format=format)
 
 
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
                            na_value=None, guide=None, trans=None, format=None):
     """
     Default color scale for `color` aesthetic and continuous data.
@@ -892,7 +878,6 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 
     """
     return scale_continuous('color',
-                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
