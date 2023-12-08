@@ -222,7 +222,9 @@ def theme(*,
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
     label_text : str or dict
         Annotation text.
-        Set `element_text()` to specify annotation text parameters.
+        Currently, there is support for annotations for pie and bar charts.
+        Set `element_text()` to specify annotation text parameters: font family and face, text size,
+        text color (is relevant for a pie chart - for those annotations that are outside the pie).
     geom: dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.
