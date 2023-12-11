@@ -1,31 +1,32 @@
----
+#
+# Copyright (c) 2023. JetBrains s.r.o.
+# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+#
+
 # Set project architecture for Linux or Mac. Windows users can skip this parameter.
 # Available values: 'arm64', 'x86_64'"
-architecture: arm64
+architecture=x86_64
 
-# enable tasks responsible for building and publishing of lets-plot python package
-enable_python_package: no
+# Enable tasks responsible for building and publishing of lets-plot python package.
+# Comment the next line to disable python package build.
+enable_python_package=yes
 
 # -------------------------------------------------------------------
 # Python settings
-# -------------------------------------------------------------------
-python:
-  bin_path: /anaconda3/bin
-  include_path: /anaconda3/include/python3.8
-
+# ---------
+#python.bin_path=
+#python.include_path=
 
 # -------------------------------------------------------------------
 # PyPI settings
 # -------------------------------------------------------------------
-pypi:
-  # credentials on test.pypi.org
-  test:
-    username:
-    password:
-  # credentials on pypi.org
-  prod:
-    username:
-    password:
+# credentials for test.pypi.org
+#pypi.test.username=
+#pypi.test.password=
+# credentials on pypi.org
+#pypi.prod.username=
+#pypi.prod.password=
+
 
 
 # -------------------------------------------------------------------
@@ -39,6 +40,5 @@ pypi:
 #   signing.password=your_password_here
 #   signing.secretKeyRingFile=/Users/you/.gnupg/secring.kbx
 # -------------------------------------------------------------------
-sonatype:
-  username:
-  password:
+#sonatype.username=
+#password.password=

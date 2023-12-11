@@ -51,74 +51,77 @@ allprojects {
 }
 
 // Read build settings from commandline parameters (for build_release.py script):
-def readSettingsFromParameters() {
-    def settings = [
-            enable_python_package : false,
-            architecture          : "",
-            python                : [bin_path: "", include_path: ""],
-            pypi                  : [test: [username: null, password: null],
-                                     prod: [username: null, password: null]]
-    ]
+def readPropertiesFromParameters() {
+    def properties = new Properties()
     if (project.hasProperty("enable_python_package")) {
-        settings.enable_python_package = project.getProperty("enable_python_package")
-        assert settings.enable_python_package != null
+        properties."enable_python_package" = project.getProperty("enable_python_package")
     }
-    if (settings.enable_python_package) {
-        settings.python.bin_path = project.getProperty("python_bin_path")
-        settings.python.include_path = project.getProperty("python_include_path")
-        assert !settings.python.bin_path.isEmpty()
-        assert !settings.python.include_path.isEmpty()
+    if (properties.enable_python_package) {
+        properties."python.bin_path" = project.getProperty("python.bin_path")
+        properties."python.include_path" = project.getProperty("python.include_path")
     }
     def os = platform.getCurrentOperatingSystem()
     if (!os.windows) {
-        settings.architecture = project.getProperty("architecture")
+        properties."architecture" = project.getProperty("architecture")
     }
-
-    return settings
+    return properties
 }
 
-// Read build settings from build_settings.yml:
-def readSettingsFromYaml() {
-    def build_settings_file = new File(rootDir, "build_settings.yml")
+// Read build settings from local.properties:
+def readPropertiesFromFile() {
     def os = platform.getCurrentOperatingSystem()
-    if (!build_settings_file.canRead()) {
-        throw new GradleException("Couldn't read build_settings.yml")
+    def properties = new Properties()
+    def localPropsFileName = "local.properties"
+
+    if (project.file(localPropsFileName).exists()) {
+        properties.load(project.file(localPropsFileName).newInputStream())
+    } else {
+        throw new FileNotFoundException("${localPropsFileName} file not found!\n" +
+                "Check ${localPropsFileName}_template file for the template.")
     }
-    def settings = new Yaml().load(build_settings_file.newInputStream())
+
     if (!os.windows) {
-        assert settings.architecture != null // Windows only 64bit version can be built, so the arch parameter is not needed and may not be set.
+        assert properties."architecture" != null // Windows only 64bit version can be built, so the arch parameter is not needed and may not be set.
     }
-    if (settings.enable_python_package) {
-        assert settings.python.bin_path != null
-        assert settings.python.include_path != null
+
+    if (properties."enable_python_package") {
+
+        def pythonBinPath = properties."python.bin_path" as String
+        def pythonIncludePath = properties."python.include_path" as String
+
+        assert (pythonBinPath != null) && (pythonBinPath != "")
+        assert (pythonIncludePath != null) && (pythonIncludePath != "")
 
         if (!os.windows) {
             def getArchOutput = new ByteArrayOutputStream()
             exec {
-                commandLine "${settings.python.bin_path}/python",
+                commandLine "${pythonBinPath}/python",
                         "-c",
                         "import platform; print(platform.machine())"
                 standardOutput = getArchOutput
             }
             def currentPythonArch = getArchOutput.toString().trim()
 
-            if (currentPythonArch != settings.architecture) {
+            println(properties."enable_python_package" as Boolean)
+
+            if (currentPythonArch != properties."architecture" as String) {
                 throw new IllegalArgumentException("Project and Python architectures don't match!\n" +
-                        " - Value, from your 'build_settings.yml' file: ${settings.architecture}\n" +
+                        " - Value, from your '${localPropsFileName}' file: ${properties.architecture}\n" +
                         " - Your Python architecture: ${currentPythonArch}\n" +
-                        "Check your 'build_settings.yml' file.")
+                        "Check your '${localPropsFileName}' file.")
             }
         }
     }
-    return settings
+    return properties
 }
 
 // For build_release.py settings will be read from commandline parameters.
-// In other cases, settings will be read from build_settings.yml.
+// In other cases, settings will be read from local.properties.
+//Properties localProps = new Properties()
 if (project.hasProperty("build_release")) {
-    project.ext.buildSettings = readSettingsFromParameters()
+    ext.localProps = readPropertiesFromParameters()
 } else {
-    project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
+    ext.localProps = readPropertiesFromFile()
 }
 
 
@@ -127,14 +130,19 @@ if (project.hasProperty("build_release")) {
 project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 
 // define Sonatype nexus repository manager settings:
-nexusPublishing {
-    repositories {
-        maven {
-            username = project.buildSettings?.sonatype?.username
-            password = project.buildSettings?.sonatype?.password
-            stagingProfileId = "11c25ff9a87b89"
-            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+def sonatypeUsername = localProps."sonatype.username" as String
+def sonatypePassword = localProps."sonatype.password" as String
+
+if (sonatypeUsername != null && sonatypePassword != null) {
+    nexusPublishing {
+        repositories {
+            maven {
+                username = sonatypeUsername
+                password = sonatypePassword
+                stagingProfileId = "11c25ff9a87b89"
+                nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+                snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+            }
         }
     }
 }
@@ -172,9 +180,9 @@ subprojects {
         def os = platform.getCurrentOperatingSystem()
 
         kotlin {
-            if (os.macOsX & project.buildSettings.architecture == "x86_64") {
+            if (os.macOsX & localProps."architecture" as String == "x86_64") {
                 macosX64()
-            } else if (os.macOsX & project.buildSettings.architecture == "arm64") {
+            } else if (os.macOsX & localProps."architecture" as String == "arm64") {
                 if (project.hasProperty("build_release")) {
                     macosX64()
                     macosArm64()
@@ -185,7 +193,7 @@ subprojects {
                 if (project.hasProperty("build_release")) {
                     linuxX64()
                     linuxArm64()
-                } else if (project.buildSettings.architecture == "x86_64") {
+                } else if (project.localProps."architecture" as String == "x86_64") {
                     linuxX64()
                 }
             } else if (os.windows) {

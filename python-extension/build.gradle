@@ -11,17 +11,17 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as plat
 
 kotlin {
 
-    if (project.buildSettings.enable_python_package) {
+    if (localProps.enable_python_package) {
 
         def os = platform.getCurrentOperatingSystem()
         def target
-        if (os.macOsX & project.buildSettings.architecture == "x86_64") {
+        if (os.macOsX & localProps.architecture as String == "x86_64") {
             target = macosX64("native")
-        } else if (os.macOsX & project.buildSettings.architecture == "arm64") {
+        } else if (os.macOsX & localProps."architecture" == "arm64") {
             target = macosArm64("native")
-        } else if (os.linux & project.buildSettings.architecture == "x86_64") {
+        } else if (os.linux & localProps."architecture" == "x86_64") {
             target = linuxX64("native")
-        } else if (os.linux & project.buildSettings.architecture == "arm64") {
+        } else if (os.linux & localProps."architecture" == "arm64") {
             target = linuxArm64("native")
         } else if (os.windows) {
             target = mingwX64("native")
@@ -36,7 +36,7 @@ kotlin {
         }
         target.compilations.main.cinterops {
             python {
-                compilerOpts "-I${project.buildSettings.python.include_path}"
+                compilerOpts "-I${localProps."python.include_path"}"
             }
         }
     } else {

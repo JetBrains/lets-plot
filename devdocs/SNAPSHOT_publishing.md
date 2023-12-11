@@ -3,7 +3,7 @@
 ### 1. Prepare for publishing:
 
  - Check `version` in the root `build.gradle` file: version must be like `X.X.X-SNAPSHOT`.
- - Add token to the `sonatype` section of the `build_settings.yml` file.
+ - Add token to the `sonatype` section of the `local.properties` file.
 
 ### 2. Publish:
 
