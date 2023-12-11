@@ -79,7 +79,8 @@ internal abstract class AxisLayouter(
                     }
                 }
 
-            return VerticalAxisLayouter(orientation, axisDomain, labelsLayout)
+            val axisLayouter = if (orientation.isHorizontal) ::HorizontalAxisLayouter else ::VerticalAxisLayouter
+            return axisLayouter(orientation, axisDomain, labelsLayout)
         }
     }
 }
