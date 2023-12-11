@@ -31,7 +31,7 @@ allprojects {
     }
 
     project.ext.jfx_platform = { -> //getJfxPlatform()
-        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        def os = platform.currentOperatingSystem
         if (os.isWindows()) {
             return "win"
         } else if (os.isLinux()) {
