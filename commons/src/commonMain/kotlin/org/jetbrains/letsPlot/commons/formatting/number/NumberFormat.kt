@@ -8,22 +8,6 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.NumberInfo.Companion.createNumberInfo
 import kotlin.math.*
 
-fun length(v: Long): Int {
-    // log10 doesn't work for values 10^17 + 1, returning 17.0 instead of 17.00001
-
-    if (v == 0L) {
-        return 1
-    }
-
-    var len = 0
-    var rem = v
-    while (rem > 0) {
-        len++
-        rem /= 10
-    }
-
-    return len
-}
 
 class NumberFormat(spec: Spec) {
     constructor(spec: String) : this(parseSpec(spec))
@@ -43,126 +27,6 @@ class NumberFormat(spec: Spec) {
         val trim: Boolean = false,
         val richOutput: Boolean = false
     )
-
-
-    data class NumberInfo(
-        val number: Double = 0.0,
-        val negative: Boolean = false,
-        val integerPart: Long = 0,
-        val fractionalPart: Long = 0,
-        val exponent: Int? = null
-    ) {
-        constructor(
-            number: Number,
-            integerPart: Long = 0,
-            fractionalPart: Long = 0,
-            exponent: Int? = null
-        ) : this(number.toDouble().absoluteValue, number.toDouble() < 0.0, integerPart, fractionalPart, exponent)
-
-        val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
-        val integerLength = length(integerPart)
-        val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
-
-        companion object {
-            /**
-             * max fraction length we can format (as any other format library does)
-             */
-            private const val MAX_DECIMALS = 18
-            internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
-
-            internal fun createNumberInfo(num: Number): NumberInfo {
-                // frac: "123", exp: 8, double: 0.00000123
-                //   -> long: 000_001_230_000_000_000 (extended to max decimal digits)
-                val encodeFraction = { frac: String, exp: Int ->
-                    var fraction = frac
-                    // cutting the fraction if it longer than max decimal digits
-                    if (exp > MAX_DECIMALS) {
-                        fraction = frac.substring(0 until (frac.length - (exp - MAX_DECIMALS)))
-                    }
-                    fraction.toLong() * 10.0.pow((MAX_DECIMALS - exp).coerceAtLeast(0)).toLong()
-                }
-
-                val (intStr, fracStr, exponentString) =
-                    "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
-                        .toRegex()
-                        .find(num.toDouble().absoluteValue.toString().lowercase())
-                        ?.destructured
-                        ?: error("Wrong number: $num")
-
-                val exponent: Int = exponentString.toIntOrNull() ?: 0
-
-                // number = 1.23456E+55
-                if (exponent.absoluteValue >= MAX_DECIMALS) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" -> 1
-                        integerPart = intStr.toLong(),
-                        // fraction part ignored intentionally
-                        fractionalPart = 0,
-                        // 55
-                        exponent = exponent
-                    )
-                }
-
-                check(exponent < MAX_DECIMALS)
-                // number = 1.23E-4. double: 0.000123
-                if (exponent < 0) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" + "23" -> 000_123_000_000_000_000L
-                        fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length)
-                    )
-                }
-
-                check(exponent >= 0 && exponent <= MAX_DECIMALS)
-                // number = 1.234E+5, double: 123400.0
-                if (exponent >= fracStr.length) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" + "234" + "00" -> 123400
-                        integerPart = (intStr + fracStr + "0".repeat(exponent - fracStr.length)).toLong()
-                    )
-                }
-
-                check(exponent >= 0 && exponent < fracStr.length)
-                // number = 1.234567E+3, double: 1234.567
-                return NumberInfo(
-                    number = num,
-                    // "1" + "[234]567" -> 1234
-                    integerPart = (intStr + fracStr.substring(0 until exponent)).toLong(),
-                    // "234[567]" -> 567_000_000_000_000_000
-                    fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }
-                )
-            }
-        }
-    }
-
-    data class Output(
-        val body: FormattedNumber = FormattedNumber(),
-        val sign: String = "",
-        val prefix: String = "",
-        val suffix: String = "",
-        val padding: String = ""
-    )
-
-    data class FormattedNumber(
-        val integerPart: String = "",
-        val fractionalPart: String = "",
-        val exponentialPart: String = ""
-    ) {
-        val fractionalLength =
-            0.takeIf { fractionalPart.isEmpty() } ?: FRACTION_DELIMITER_LENGTH + fractionalPart.length
-        val exponentialLength: Int
-            get() {
-                val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
-                val matchGroups = match.groups as MatchNamedGroupCollection
-                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
-            }
-        val fullLength = integerPart.length + fractionalLength + exponentialLength
-
-        override fun toString() =
-            "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
-    }
 
     fun apply(num: Number): String {
         val nonNumberString = handleNonNumbers(num)
@@ -203,7 +67,6 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-
     private fun getAlignedString(output: Output): String {
         with(output) {
             return when (spec.align) {
@@ -213,6 +76,7 @@ class NumberFormat(spec: Spec) {
                     val stop = padding.length / 2
                     "${padding.slice(0 until stop)}$sign$prefix$body$suffix${padding.slice(stop until output.padding.length)}"
                 }
+
                 else -> "$padding$sign$prefix$body$suffix"
             }
         }
@@ -458,24 +322,153 @@ class NumberFormat(spec: Spec) {
         return output.copy(padding = padding)
     }
 
+    private data class Output(
+        val body: FormattedNumber = FormattedNumber(),
+        val sign: String = "",
+        val prefix: String = "",
+        val suffix: String = "",
+        val padding: String = ""
+    )
+
+    private data class FormattedNumber(
+        val integerPart: String = "",
+        val fractionalPart: String = "",
+        val exponentialPart: String = ""
+    ) {
+        val fractionalLength = if (fractionalPart.isEmpty()) 0 else fractionalPart.length + FRACTION_DELIMITER.length
+
+        val exponentialLength: Int
+            get() {
+                val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
+                val matchGroups = match.groups as MatchNamedGroupCollection
+                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
+            }
+        val fullLength = integerPart.length + fractionalLength + exponentialLength
+
+        override fun toString() =
+            "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
+
+        companion object {
+            @Suppress("RegExpRedundantEscape") // breaks tests
+            private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
+        }
+    }
+
+    internal data class NumberInfo(
+        val number: Double = 0.0,
+        val negative: Boolean = false,
+        val integerPart: Long = 0,
+        val fractionalPart: Long = 0,
+        val exponent: Int? = null
+    ) {
+        constructor(
+            number: Number,
+            integerPart: Long = 0,
+            fractionalPart: Long = 0,
+            exponent: Int? = null
+        ) : this(number.toDouble().absoluteValue, number.toDouble() < 0.0, integerPart, fractionalPart, exponent)
+
+        val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
+        val integerLength = length(integerPart)
+        val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
+
+        companion object {
+            /**
+             * max fraction length we can format (as any other format library does)
+             */
+            private const val MAX_DECIMALS = 18
+            internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
+
+            internal fun createNumberInfo(num: Number): NumberInfo {
+                // frac: "123", exp: 8, double: 0.00000123
+                //   -> long: 000_001_230_000_000_000 (extended to max decimal digits)
+                val encodeFraction = { frac: String, exp: Int ->
+                    var fraction = frac
+                    // cutting the fraction if it longer than max decimal digits
+                    if (exp > MAX_DECIMALS) {
+                        fraction = frac.substring(0 until (frac.length - (exp - MAX_DECIMALS)))
+                    }
+                    fraction.toLong() * 10.0.pow((MAX_DECIMALS - exp).coerceAtLeast(0)).toLong()
+                }
+
+                val (intStr, fracStr, exponentString) =
+                    "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
+                        .toRegex()
+                        .find(num.toDouble().absoluteValue.toString().lowercase())
+                        ?.destructured
+                        ?: error("Wrong number: $num")
+
+                val exponent: Int = exponentString.toIntOrNull() ?: 0
+
+                // number = 1.23456E+55
+                if (exponent.absoluteValue >= MAX_DECIMALS) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" -> 1
+                        integerPart = intStr.toLong(),
+                        // fraction part ignored intentionally
+                        fractionalPart = 0,
+                        // 55
+                        exponent = exponent
+                    )
+                }
+
+                check(exponent < MAX_DECIMALS)
+                // number = 1.23E-4. double: 0.000123
+                if (exponent < 0) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" + "23" -> 000_123_000_000_000_000L
+                        fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length)
+                    )
+                }
+
+                check(exponent in 0..MAX_DECIMALS)
+                // number = 1.234E+5, double: 123400.0
+                if (exponent >= fracStr.length) {
+                    return NumberInfo(
+                        number = num,
+                        // "1" + "234" + "00" -> 123400
+                        integerPart = (intStr + fracStr + "0".repeat(exponent - fracStr.length)).toLong()
+                    )
+                }
+
+                check(exponent >= 0 && exponent < fracStr.length)
+                // number = 1.234567E+3, double: 1234.567
+                return NumberInfo(
+                    number = num,
+                    // "1" + "[234]567" -> 1234
+                    integerPart = (intStr + fracStr.substring(0 until exponent)).toLong(),
+                    // "234[567]" -> 567_000_000_000_000_000
+                    fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }
+                )
+            }
+
+            private fun length(v: Long): Int {
+                // log10 doesn't work for values 10^17 + 1, returning 17.0 instead of 17.00001
+
+                if (v == 0L) {
+                    return 1
+                }
+
+                var len = 0
+                var rem = v
+                while (rem > 0) {
+                    len++
+                    rem /= 10
+                }
+
+                return len
+            }
+        }
+    }
+
     companion object {
-        const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
-        const val TYPE_S_UPPER_LIMiT = 1E40  // Will likely crash on bigger numbers.
-        const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
-
-        private const val CURRENCY = "$"
-        private const val PERCENT = "%"
-        private const val COMMA = ","
-        private const val FRACTION_DELIMITER = "."
-        private const val FRACTION_DELIMITER_LENGTH = FRACTION_DELIMITER.length
-        private const val GROUP_SIZE = 3
-        private val SI_SUFFIXES =
-            arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
-
-        private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
+        fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
         fun parseSpec(spec: String): Spec {
-            val matchResult = NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
+            val matchResult =
+                NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
             val formatSpec = Spec(
                 fill = matchResult.groups[1]?.value ?: " ",
                 align = matchResult.groups[2]?.value ?: ">",
@@ -492,6 +485,20 @@ class NumberFormat(spec: Spec) {
 
             return normalizeSpec(formatSpec)
         }
+
+        internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
+        internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
+
+        private const val CURRENCY = "$"
+        private const val PERCENT = "%"
+        private const val COMMA = ","
+        private const val FRACTION_DELIMITER = "."
+        private const val GROUP_SIZE = 3
+        private val SI_SUFFIXES =
+            arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+        private val NUMBER_REGEX =
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?$""".toRegex()
+
 
         internal fun normalizeSpec(spec: Spec): Spec {
             var precision = spec.precision
@@ -519,11 +526,6 @@ class NumberFormat(spec: Spec) {
 
             return spec.copy(type = type, precision = precision, zero = zero, fill = fill, align = align, trim = trim)
         }
-
-        private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?$""".toRegex()
-
-        fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
         private fun group(str: String) = str
             .reversed() // 1234 -> 4321

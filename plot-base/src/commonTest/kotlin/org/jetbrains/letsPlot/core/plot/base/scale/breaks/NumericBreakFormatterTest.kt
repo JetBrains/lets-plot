@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import kotlin.math.min
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumericBreakFormatterTest {
+    @Suppress("PrivatePropertyName")
+    private val TYPE_S_MAX = 1e26 // see NumberFormat.TYPE_S_MAX
+
     @Test
     fun formatZero() {
         val formatter = NumericBreakFormatter(0.0, 0.0, true)
@@ -22,7 +24,7 @@ class NumericBreakFormatterTest {
         assertEquals(
             listOf("-100Y", "-75Y", "-50Y", "-25Y", "0"),
             formatRange(
-                min = -NumberFormat.TYPE_S_MAX,
+                min = -TYPE_S_MAX,
                 max = 0.0,
                 metricPrefix = true
             )
@@ -32,7 +34,7 @@ class NumericBreakFormatterTest {
             listOf("0", "25Y", "50Y", "75Y", "100Y"),
             formatRange(
                 min = 0.0,
-                max = NumberFormat.TYPE_S_MAX,
+                max = TYPE_S_MAX,
                 metricPrefix = true
             )
         )
@@ -40,8 +42,8 @@ class NumericBreakFormatterTest {
         assertEquals(
             listOf("-100Y", "-50Y", "0", "50Y", "100Y"),
             formatRange(
-                min = -NumberFormat.TYPE_S_MAX,
-                max = NumberFormat.TYPE_S_MAX,
+                min = -TYPE_S_MAX,
+                max = TYPE_S_MAX,
                 metricPrefix = true
             )
         )
