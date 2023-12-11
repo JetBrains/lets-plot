@@ -657,7 +657,8 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 
 def scale_continuous(aesthetic, *,
                      name=None, breaks=None, labels=None, lablim=None,
-                     limits=None, na_value=None, guide=None, trans=None, format=None):
+                     limits=None, na_value=None, guide=None, trans=None, format=None,
+                     **kwargs):
     """
     General purpose scale for continuous data.
     Use it to adjust most common properties of a default scale for given aesthetics.
@@ -742,11 +743,13 @@ def scale_continuous(aesthetic, *,
                   trans=trans,
                   format=format,
                   #
-                  scale_mapper_kind=scale_mapper_kind)
+                  scale_mapper_kind=scale_mapper_kind,
+                  **kwargs)
 
 
 def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None):
+                          limits=None, na_value=None, guide=None, trans=None, format=None,
+                          **kwargs):
     """
     Default color scale for `fill` aesthetic and continuous data.
 
@@ -815,11 +818,13 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format)
+                            format=format,
+                            **kwargs)
 
 
 def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
+                           na_value=None, guide=None, trans=None, format=None,
+                           **kwargs):
     """
     Default color scale for `color` aesthetic and continuous data.
 
@@ -886,7 +891,8 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format)
+                            format=format,
+                            **kwargs)
 
 
 #
@@ -3429,7 +3435,7 @@ def _scale(aesthetic, *,
            guide=None,
            format=None,
            position=None,
-           **other):
+           **kwargs):
     """
     Create a scale (discrete or continuous)
 
@@ -3472,7 +3478,7 @@ def _scale(aesthetic, *,
 
     # flatten the 'other' sub-dictionary
     args = locals().copy()
-    args.pop('other')
+    args.pop('kwargs')
 
     # 'breaks' - dict of labels as keys and breaks as values
     if isinstance(breaks, dict):
@@ -3502,9 +3508,9 @@ def _scale(aesthetic, *,
     if isinstance(aesthetic, list):
         args.pop('aesthetic')
         for aes in aesthetic:
-            specs.append(FeatureSpec('scale', aesthetic=aes, **args, **other))
+            specs.append(FeatureSpec('scale', aesthetic=aes, **args, **kwargs))
     else:
-        specs.append(FeatureSpec('scale', **args, **other))
+        specs.append(FeatureSpec('scale', **args, **kwargs))
 
     if len(specs) == 1:
         return specs[0]

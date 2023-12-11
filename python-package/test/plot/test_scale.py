@@ -129,3 +129,21 @@ def test_scale_manual_values_dict_no_matches_with_specified_breaks():
     as_dict = spec.as_dict()
     assert as_dict['breaks'] == ['d', 'e']
     assert 'values' not in as_dict
+
+
+# scale continuous
+
+def test_scale_continuous_with_color_aesthetic():
+    spec = gg.scale_color_continuous(low='red', high='blue')
+    as_dict = spec.as_dict()
+    assert as_dict['aesthetic'] == 'color'
+    assert as_dict['scale_mapper_kind'] == 'color_gradient'
+    assert as_dict['low'] == 'red'
+    assert as_dict['high'] == 'blue'
+
+
+def test_scale_continuous_with_non_color_aesthetic():
+    spec = gg.scale_continuous('x')
+    as_dict = spec.as_dict()
+    assert as_dict['aesthetic'] == 'x'
+    assert 'scale_mapper_kind' not in as_dict
