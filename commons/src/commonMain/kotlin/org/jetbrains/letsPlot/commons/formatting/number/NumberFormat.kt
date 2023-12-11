@@ -25,23 +25,23 @@ fun length(v: Long): Int {
     return len
 }
 
-class NumberFormat(private val spec: Spec, private val scientificNotationIsPower: Boolean = true) {
+class NumberFormat(spec: Spec) {
+    constructor(spec: String) : this(parseSpec(spec))
 
-    constructor(spec: String) : this(create(spec))
-
-    constructor(spec: String, scientificNotation: Boolean) : this(create(spec), scientificNotation)
+    private val spec: Spec = normalizeSpec(spec)
 
     data class Spec(
         val fill: String = " ",
         val align: String = ">",
         val sign: String = "-",
-        val symbol: String,
-        val zero: Boolean,
+        val symbol: String = "",
+        val zero: Boolean = false,
         val width: Int = -1,
-        val comma: Boolean,
+        val comma: Boolean = false,
         val precision: Int = 6,
         val type: String = "",
-        val trim: Boolean = false
+        val trim: Boolean = false,
+        val richOutput: Boolean = false
     )
 
 
@@ -350,7 +350,7 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         if (exponent == null) {
             return ""
         }
-        return if (scientificNotationIsPower) {
+        return if (spec.richOutput) {
             when (exponent) {
                 0 -> ""
                 1 -> "·10"
@@ -474,11 +474,26 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
 
         private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
 
-        fun create(spec: String): Spec {
-            return create(parse(spec))
+        fun parseSpec(spec: String): Spec {
+            val matchResult = NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
+            val formatSpec = Spec(
+                fill = matchResult.groups[1]?.value ?: " ",
+                align = matchResult.groups[2]?.value ?: ">",
+                sign = matchResult.groups[3]?.value ?: "-",
+                symbol = matchResult.groups[4]?.value ?: "",
+                zero = matchResult.groups[5] != null,
+                width = (matchResult.groups[6]?.value ?: "-1").toInt(),
+                comma = matchResult.groups[7] != null,
+                precision = (matchResult.groups[8]?.value ?: "6").toInt(),
+                trim = matchResult.groups[9] != null,
+                type = matchResult.groups[10]?.value ?: "",
+                richOutput = matchResult.groups[11] != null
+            )
+
+            return normalizeSpec(formatSpec)
         }
 
-        fun create(spec: Spec): Spec {
+        internal fun normalizeSpec(spec: Spec): Spec {
             var precision = spec.precision
             var type = spec.type
             var trim = spec.trim
@@ -506,26 +521,9 @@ class NumberFormat(private val spec: Spec, private val scientificNotationIsPower
         }
 
         private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?$""".toRegex()
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?$""".toRegex()
 
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
-
-        private fun parse(spec: String): Spec {
-            val matchResult = NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
-
-            return Spec(
-                fill = matchResult.groups[1]?.value ?: " ",
-                align = matchResult.groups[2]?.value ?: ">",
-                sign = matchResult.groups[3]?.value ?: "-",
-                symbol = matchResult.groups[4]?.value ?: "",
-                zero = matchResult.groups[5] != null,
-                width = (matchResult.groups[6]?.value ?: "-1").toInt(),
-                comma = matchResult.groups[7] != null,
-                precision = (matchResult.groups[8]?.value ?: "6").toInt(),
-                trim = matchResult.groups[9] != null,
-                type = matchResult.groups[10]?.value ?: ""
-            )
-        }
 
         private fun group(str: String) = str
             .reversed() // 1234 -> 4321

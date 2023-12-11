@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeGTest {
-    private fun format(spec: String): NumberFormat = NumberFormat(spec, false)
+    private fun format(spec: String): NumberFormat = NumberFormat(spec)
 
     @Test
     fun gToE() {

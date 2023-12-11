@@ -65,7 +65,8 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
             delimiter = ","
         }
 
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$type")
+        val richOutput = if (type == "e") "&" else ""
+        formatter = NumberFormat("$delimiter.${precision.toInt()}$type$richOutput")
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)

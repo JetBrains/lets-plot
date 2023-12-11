@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 class NumberFormatTypeETest {
     @Test
     fun canOutputExponentNotation() {
-        val f = NumberFormat("e", false)
+        val f = NumberFormat("e")
         assertEquals("0.000000", f.apply(0))
         assertEquals("4.200000e+1", f.apply(42))
         assertEquals("4.200000e+7", f.apply(42000000))
@@ -21,19 +21,19 @@ class NumberFormatTypeETest {
         assertEquals("-4.200000e+6", f.apply(-4200000))
         assertEquals("-4.200000e+7", f.apply(-42000000))
 
-        assertEquals("4e+1", NumberFormat(".0e", false).apply(42))
-        assertEquals("4.200e+1", NumberFormat(".3e", false).apply(42))
+        assertEquals("4e+1", NumberFormat(".0e").apply(42))
+        assertEquals("4.200e+1", NumberFormat(".3e").apply(42))
     }
 
     @Test
     fun canFormatNegativeZeroAsZero() {
-        assertEquals("0.000000", NumberFormat("1e", false).apply(-0))
-        assertEquals("-1.000000e-12", NumberFormat("1e", false).apply(-1e-12))
+        assertEquals("0.000000", NumberFormat("1e").apply(-0))
+        assertEquals("-1.000000e-12", NumberFormat("1e").apply(-1e-12))
     }
 
     @Test
     fun canOutputScientificExponentNotation() {
-        val f = NumberFormat("e", true)
+        val f = NumberFormat("e&")
         assertEquals("0.000000", f.apply(0))
         assertEquals("1.500000", f.apply(1.5e0))
         assertEquals("1.500000·10", f.apply(1.5e1))
@@ -48,7 +48,7 @@ class NumberFormatTypeETest {
 
     @Test
     fun trim() {
-        assertEquals("1.000000", NumberFormat("e", true).apply(1.0))
-        assertEquals("1", NumberFormat("~e", true).apply(1.0))
+        assertEquals("1.000000", NumberFormat("e&").apply(1.0))
+        assertEquals("1", NumberFormat("~e&").apply(1.0))
     }
 }
