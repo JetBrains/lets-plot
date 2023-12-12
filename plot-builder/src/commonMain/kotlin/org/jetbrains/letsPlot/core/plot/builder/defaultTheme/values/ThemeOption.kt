@@ -182,7 +182,7 @@ object ThemeOption {
             PANEL_GRID_MAJOR_Y,
             PANEL_GRID_MINOR_Y,
             FACET_STRIP_BGR_RECT,
-            TOOLTIP_RECT,
+            TOOLTIP_RECT
         )
 
         // Actually, text sizes are defined in "theme values".
