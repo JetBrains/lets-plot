@@ -6,14 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class ConstantField(
-    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+    val aes: Aes<*>,
     private val value: Any,
     private val format: String? = null,
     label: String? = null
@@ -53,11 +54,7 @@ class ConstantField(
             StringFormat.forOneArg(format).format(value)
         } ?: run {
             val tooltipAes = when {
-                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(
-                    aes,
-                    isYOrientation!!
-                )
-
+                Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, isYOrientation!!)
                 else -> aes
             }
 

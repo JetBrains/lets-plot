@@ -6,14 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class MappingField(
-    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+    val aes: Aes<*>,
     override val isSide: Boolean = false,
     override val isAxis: Boolean = false,
     private val format: String? = null,
@@ -48,11 +49,7 @@ class MappingField(
                 myFormatter?.format(it)
             } ?: run {
                 val tooltipAes = when {
-                    org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(
-                        aes,
-                        myDataAccess.isYOrientation
-                    )
-
+                    Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, myDataAccess.isYOrientation)
                     else -> aes
                 }
                 ctx.getTooltipFormatter(tooltipAes) {
