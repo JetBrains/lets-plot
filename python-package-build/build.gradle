@@ -32,11 +32,11 @@ clean {
 if (localProps.enable_python_package) {
     def os = platform.getCurrentOperatingSystem()
 
-    def pypiTestUsername = localProps."pypi.test.username" as String
-    def pypiTestPassword = localProps."pypi.test.password" as String
+    def pypiTestUsername = localProps."pypi.test.username"
+    def pypiTestPassword = localProps."pypi.test.password"
 
-    def pypiProdUsername = localProps."pypi.prod.username" as String
-    def pypiProdPassword = localProps."pypi.prod.password" as String
+    def pypiProdUsername = localProps."pypi.prod.username"
+    def pypiProdPassword = localProps."pypi.prod.password"
 
     def pythonBinPath = localProps."python.bin_path"
     def pythonTwineCommand = "${pythonBinPath}/twine"

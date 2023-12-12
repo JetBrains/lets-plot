@@ -15,7 +15,7 @@ kotlin {
 
         def os = platform.getCurrentOperatingSystem()
         def target
-        if (os.macOsX & localProps.architecture as String == "x86_64") {
+        if (os.macOsX & localProps.architecture == "x86_64") {
             target = macosX64("native")
         } else if (os.macOsX & localProps."architecture" == "arm64") {
             target = macosArm64("native")

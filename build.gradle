@@ -54,7 +54,7 @@ allprojects {
 def readPropertiesFromParameters() {
     def properties = new Properties()
     if (project.hasProperty("enable_python_package")) {
-        properties."enable_python_package" = project.getProperty("enable_python_package")
+        properties."enable_python_package" = project.getProperty("enable_python_package").toBoolean()
     }
     if (properties.enable_python_package) {
         properties."python.bin_path" = project.getProperty("python.bin_path")
@@ -79,6 +79,7 @@ def readPropertiesFromFile() {
         throw new FileNotFoundException("${localPropsFileName} file not found!\n" +
                 "Check ${localPropsFileName}_template file for the template.")
     }
+    properties."enable_python_package" = properties."enable_python_package".toBoolean()
 
     if (!os.windows) {
         assert properties."architecture" != null // Windows only 64bit version can be built, so the arch parameter is not needed and may not be set.
@@ -86,11 +87,11 @@ def readPropertiesFromFile() {
 
     if (properties."enable_python_package") {
 
-        def pythonBinPath = properties."python.bin_path" as String
-        def pythonIncludePath = properties."python.include_path" as String
+        def pythonBinPath = properties."python.bin_path"
+        def pythonIncludePath = properties."python.include_path"
 
-        assert (pythonBinPath != null) && (pythonBinPath != "")
-        assert (pythonIncludePath != null) && (pythonIncludePath != "")
+        assert pythonBinPath != null
+        assert pythonIncludePath != null
 
         if (!os.windows) {
             def getArchOutput = new ByteArrayOutputStream()
@@ -102,9 +103,7 @@ def readPropertiesFromFile() {
             }
             def currentPythonArch = getArchOutput.toString().trim()
 
-            println(properties."enable_python_package" as Boolean)
-
-            if (currentPythonArch != properties."architecture" as String) {
+            if (currentPythonArch != properties."architecture") {
                 throw new IllegalArgumentException("Project and Python architectures don't match!\n" +
                         " - Value, from your '${localPropsFileName}' file: ${properties.architecture}\n" +
                         " - Your Python architecture: ${currentPythonArch}\n" +
@@ -117,7 +116,6 @@ def readPropertiesFromFile() {
 
 // For build_release.py settings will be read from commandline parameters.
 // In other cases, settings will be read from local.properties.
-//Properties localProps = new Properties()
 if (project.hasProperty("build_release")) {
     ext.localProps = readPropertiesFromParameters()
 } else {
@@ -132,17 +130,14 @@ project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 // define Sonatype nexus repository manager settings:
 def sonatypeUsername = localProps."sonatype.username" as String
 def sonatypePassword = localProps."sonatype.password" as String
-
-if (sonatypeUsername != null && sonatypePassword != null) {
-    nexusPublishing {
-        repositories {
-            maven {
-                username = sonatypeUsername
-                password = sonatypePassword
-                stagingProfileId = "11c25ff9a87b89"
-                nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
-            }
+nexusPublishing {
+    repositories {
+        maven {
+            username = sonatypeUsername
+            password = sonatypePassword
+            stagingProfileId = "11c25ff9a87b89"
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
         }
     }
 }
@@ -180,9 +175,9 @@ subprojects {
         def os = platform.getCurrentOperatingSystem()
 
         kotlin {
-            if (os.macOsX & localProps."architecture" as String == "x86_64") {
+            if (os.macOsX & localProps."architecture" == "x86_64") {
                 macosX64()
-            } else if (os.macOsX & localProps."architecture" as String == "arm64") {
+            } else if (os.macOsX & localProps."architecture" == "arm64") {
                 if (project.hasProperty("build_release")) {
                     macosX64()
                     macosArm64()
@@ -193,7 +188,7 @@ subprojects {
                 if (project.hasProperty("build_release")) {
                     linuxX64()
                     linuxArm64()
-                } else if (project.localProps."architecture" as String == "x86_64") {
+                } else if (project.localProps."architecture" == "x86_64") {
                     linuxX64()
                 }
             } else if (os.windows) {

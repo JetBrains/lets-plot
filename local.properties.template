@@ -8,8 +8,8 @@
 architecture=x86_64
 
 # Enable tasks responsible for building and publishing of lets-plot python package.
-# Comment the next line to disable python package build.
-enable_python_package=yes
+# Set 'true' or 'false' here:
+enable_python_package=false
 
 # -------------------------------------------------------------------
 # Python settings

@@ -11,7 +11,7 @@
 Edit `local.properties` in the project root:
 
 * `architecture` - set to `arm64` or `x86_64` depending on your Python architecture.
-* `enable_python_package=yes` - uncomment this line for working with Python package.
+* `enable_python_package` - set to `true` for working with Python package.
 * `python.include_path` - path to Python include directory where Python.h located. 
 To get this path you can run `python -c "from sysconfig import get_paths as gp; print(gp()['include'])"`.
 * `python.bin_path` - path to your Python bin directory. 
