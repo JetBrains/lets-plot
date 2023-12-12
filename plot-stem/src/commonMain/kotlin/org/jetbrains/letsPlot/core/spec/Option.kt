@@ -315,6 +315,10 @@ object Option {
             const val DIRECTION = "dir"
         }
 
+        object Spoke {
+            const val PIVOT = "pivot"
+        }
+
         object LiveMap {
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"

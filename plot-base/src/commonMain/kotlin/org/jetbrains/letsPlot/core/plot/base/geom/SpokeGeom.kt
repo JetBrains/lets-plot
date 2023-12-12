@@ -20,6 +20,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import kotlin.math.*
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
+    var pivot: Pivot = DEF_PIVOT
+
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineLegendKeyElementFactory(AesScaling::lineWidth)
 
@@ -38,11 +40,12 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         for (p in aesthetics.dataPoints()) {
             val x = p.x() ?: continue
             val y = p.y() ?: continue
-            val start = DoubleVector(x, y)
+            val base = DoubleVector(x, y)
             val radius = p.radius() ?: continue
             val angle = p.angle() ?: continue
             val spoke = Spoke(radius, angle)
-            val end = getEnd(start, spoke)
+            val start = getStart(base, spoke)
+            val end = getEnd(base, spoke)
             svgElementHelper.createLine(start, end, p)?.let { line ->
                 GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
                 root.add(line)
@@ -66,11 +69,12 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val start = GeomUtil.TO_LOCATION_X_Y(p)?.also {
+        val base = GeomUtil.TO_LOCATION_X_Y(p)?.also {
             if (coordAes == Aes.Y) it.flip()
         } ?: return null
         val spoke = toSpoke(p) ?: return null
-        val end = getEnd(start, spoke)
+        val start = getStart(base, spoke)
+        val end = getEnd(base, spoke)
         return DoubleSpan(start.x, end.x)
     }
 
@@ -80,11 +84,12 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val start = GeomUtil.TO_LOCATION_X_Y(p)?.also {
+        val base = GeomUtil.TO_LOCATION_X_Y(p)?.also {
             if (coordAes == Aes.X) it.flip()
         } ?: return null
         val spoke = toSpoke(p) ?: return null
-        val end = getEnd(start, spoke)
+        val start = getStart(base, spoke)
+        val end = getEnd(base, spoke)
         return DoubleSpan(start.y, end.y)
     }
 
@@ -98,8 +103,20 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         return Spoke(radius!!, angle!!)
     }
 
-    private fun getEnd(start: DoubleVector, spoke: Spoke): DoubleVector {
-        return DoubleVector(start.x + spoke.dx, start.y + spoke.dy)
+    private fun getStart(base: DoubleVector, spoke: Spoke): DoubleVector {
+        return when (pivot) {
+            Pivot.TAIL -> base
+            Pivot.MIDDLE -> DoubleVector(base.x - spoke.dx / 2, base.y - spoke.dy / 2)
+            Pivot.TIP -> DoubleVector(base.x - spoke.dx, base.y - spoke.dy)
+        }
+    }
+
+    private fun getEnd(base: DoubleVector, spoke: Spoke): DoubleVector {
+        return when (pivot) {
+            Pivot.TAIL -> DoubleVector(base.x + spoke.dx, base.y + spoke.dy)
+            Pivot.MIDDLE -> DoubleVector(base.x + spoke.dx / 2, base.y + spoke.dy / 2)
+            Pivot.TIP -> base
+        }
     }
 
     private data class Spoke(val radius: Double, val angle: Double) {
@@ -107,7 +124,13 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val dy = radius * sin(angle)
     }
 
+    enum class Pivot {
+        TAIL, MIDDLE, TIP
+    }
+
     companion object {
+        val DEF_PIVOT = Pivot.TAIL
+
         const val HANDLES_GROUPS = false
     }
 }

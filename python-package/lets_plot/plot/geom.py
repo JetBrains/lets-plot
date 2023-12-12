@@ -5703,6 +5703,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 
 def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               pivot=None,
                color_by=None, **other_args):
     """
     Draw a straight line segment with given length and angle from the starting point.
@@ -5727,6 +5728,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    pivot : {'tail', 'middle', 'mid', 'tip'}, default='tail'
+        The part of the segment that is anchored to the plane. The segment rotates about this point.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -5798,6 +5801,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 pivot=pivot,
                  color_by=color_by,
                  **other_args)
 
