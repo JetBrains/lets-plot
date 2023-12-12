@@ -6,15 +6,16 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object TooltipFormatting {
-    fun createFormatter(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, ctx: PlotContext): (Any?) -> String {
+    fun createFormatter(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
         // expect only X,Y or not positional
-        check(!org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) || aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y) {
+        check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
             "Positional aesthetic should be either X or Y but was $aes"
         }
 
