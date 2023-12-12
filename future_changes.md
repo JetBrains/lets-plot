@@ -27,6 +27,12 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).
 
 
+- `label_text` parameter in `theme()` for annotation text settings [[#930](https://github.com/JetBrains/lets-plot/issues/930)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/theme_label_text.ipynb).
+
+
+
 ### Changed
 
 - The `plot_margin` parameter in `theme()` and the `margin` parameter in `element_text()` accept a number or a list of numbers:

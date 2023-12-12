@@ -25,6 +25,8 @@ interface Theme {
 
     fun tooltips(): TooltipsTheme
 
+    fun annotations(): AnnotationsTheme
+
     fun geometries(geomKind: GeomKind): GeomTheme
 
     fun colors(): ColorTheme

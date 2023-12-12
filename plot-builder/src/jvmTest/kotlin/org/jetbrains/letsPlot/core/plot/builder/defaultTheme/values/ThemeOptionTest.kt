@@ -141,6 +141,8 @@ internal class ThemeOptionTest {
             ThemeOption.TOOLTIP_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).textKey
             ThemeOption.TOOLTIP_TITLE_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).titleTextKey
 
+            ThemeOption.ANNOTATION_TEXT -> (theme.annotations() as DefaultAnnotationsTheme).annotationTextKey
+
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
