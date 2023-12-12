@@ -11,7 +11,7 @@ from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import FeatureSpecArray
 from lets_plot.plot.core import _specs_to_dict
 from lets_plot.plot.core import _theme_dicts_merge
-from lets_plot.plot.core import _to_svg, _to_html, _to_png, _to_pdf
+from lets_plot.plot.core import _to_svg, _to_html, _export_as_raster
 
 __all__ = ['SupPlotsSpec']
 
@@ -244,7 +244,7 @@ class SupPlotsSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        return _to_png(self, path, scale)
+        return _export_as_raster(self, path, scale, 'png')
 
     def to_pdf(self, path, scale=None) -> str:
         """
@@ -291,4 +291,4 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        return _to_pdf(self, path, scale)
+        return _export_as_raster(self, path, scale, 'pdf')

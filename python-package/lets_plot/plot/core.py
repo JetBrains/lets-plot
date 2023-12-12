@@ -592,7 +592,7 @@ class PlotSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        return _to_png(self, path, scale)
+        return _export_as_raster(self, path, scale, 'png')
 
     def to_pdf(self, path, scale: float = None) -> str:
         """
@@ -640,7 +640,7 @@ class PlotSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        return _to_pdf(self, path, scale)
+        return _export_as_raster(self, path, scale, 'pdf')
 
 
 class LayerSpec(FeatureSpec):
@@ -823,7 +823,7 @@ def _to_html(spec, path, iframe: bool) -> str | None:
         return None
 
 
-def _to_png(spec, path, scale: float) -> str | None:
+def _export_as_raster(spec, path, scale: float, export_format: str) -> str | None:
     if scale is None:
         scale = 2.0
 
@@ -832,10 +832,18 @@ def _to_png(spec, path, scale: float) -> str | None:
     except ImportError:
         import sys
         print("\n"
-              "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
+              "To export Lets-Plot figure to a PNG or PDF file please install CairoSVG library"
+              "to your Python environment.\n"
               "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
               "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
         return None
+
+    if export_format.lower() == 'png':
+        export_function = cairosvg.svg2png
+    elif export_format.lower() == 'pdf':
+        export_function = cairosvg.svg2pdf
+    else:
+        raise ValueError("Unknown export format: {}".format(export_format))
 
     from .. import _kbridge
     # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
@@ -843,38 +851,11 @@ def _to_png(spec, path, scale: float) -> str | None:
 
     if isinstance(path, str):
         abspath = _makedirs(path)
-        cairosvg.svg2png(bytestring=svg, write_to=abspath, scale=scale)
-        return abspath
+        result = abspath
     else:
-        cairosvg.svg2png(bytestring=svg, write_to=path, scale=scale)
-        return None
-
-
-def _to_pdf(spec, path, scale: float) -> str | None:
-    if scale is None:
-        scale = 2.0
-
-    try:
-        import cairosvg
-    except ImportError:
-        import sys
-        print("\n"
-              "To export Lets-Plot figure to a PDF file please install CairoSVG library to your Python environment.\n"
-              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
-              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-        return None
-
-    from .. import _kbridge
-    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
-    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
-
-    if isinstance(path, str):
-        abspath = _makedirs(path)
-        cairosvg.svg2pdf(bytestring=svg, write_to=abspath, scale=scale)
-        return abspath
-    else:
-        cairosvg.svg2pdf(bytestring=svg, write_to=path, scale=scale)
-        return None
+        result = None  # file-like object is provided. No path to return.
+    export_function(bytestring=svg, write_to=path, scale=scale)
+    return result
 
 
 def _makedirs(path: str) -> str:
