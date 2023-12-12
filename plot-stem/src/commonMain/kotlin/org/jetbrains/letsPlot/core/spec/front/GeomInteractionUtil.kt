@@ -194,7 +194,6 @@ object GeomInteractionUtil {
             GeomKind.AREA,
             GeomKind.BAR,
             GeomKind.SEGMENT,
-            GeomKind.SPOKE,
             GeomKind.STEP,
             GeomKind.V_LINE -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
@@ -245,7 +244,8 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
-            GeomKind.LOLLIPOP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.LOLLIPOP,
+            GeomKind.SPOKE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,

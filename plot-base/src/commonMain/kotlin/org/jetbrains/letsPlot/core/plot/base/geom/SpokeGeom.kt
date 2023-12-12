@@ -46,16 +46,17 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
             svgElementHelper.createLine(start, end, p)?.let { line ->
                 GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
                 root.add(line)
-            }
-            val clientStart = geomHelper.toClient(start, p) ?: continue
-            val clientEnd = geomHelper.toClient(end, p) ?: continue
-            targetCollector.addPath(
-                listOf(clientStart, clientEnd),
-                { p.index() },
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
+
+                val clientStart = DoubleVector(line.x1().get()!!, line.y1().get()!!)
+                val clientEnd = DoubleVector(line.x2().get()!!, line.y2().get()!!)
+                targetCollector.addPath(
+                    listOf(clientStart, clientEnd),
+                    { p.index() },
+                    GeomTargetCollector.TooltipParams(
+                        markerColors = colorsByDataPoint(p)
+                    )
                 )
-            )
+            }
         }
     }
 

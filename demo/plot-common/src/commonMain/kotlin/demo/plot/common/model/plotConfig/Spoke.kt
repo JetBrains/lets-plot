@@ -40,7 +40,8 @@ class Spoke {
                   'geom': 'spoke',
                   'linewidth': 5,
                   'color': 'blue',
-                  'alpha': 0.5
+                  'alpha': 0.5,
+                  'tooltips': {'formats': [], 'variables': ['x']}
                 }
               ]
             }
