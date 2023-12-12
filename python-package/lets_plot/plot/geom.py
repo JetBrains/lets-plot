@@ -5753,7 +5753,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
     - radius : segment length.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linewidth : line width.
+    - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples

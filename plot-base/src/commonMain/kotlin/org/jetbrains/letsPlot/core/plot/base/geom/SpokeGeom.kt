@@ -23,7 +23,7 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
     var pivot: Pivot = DEF_PIVOT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = HLineLegendKeyElementFactory(AesScaling::lineWidth)
+        get() = HLineLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
@@ -34,7 +34,9 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
     ) {
         val targetCollector = getGeomTargetCollector(ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val svgElementHelper = geomHelper.createSvgElementHelper()
+        val svgElementHelper = geomHelper.createSvgElementHelper().also {
+            it.setStrokeAlphaEnabled(true)
+        }
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
 
         for (p in aesthetics.dataPoints()) {
@@ -47,7 +49,6 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
             val start = getStart(base, spoke)
             val end = getEnd(base, spoke)
             svgElementHelper.createLine(start, end, p)?.let { line ->
-                GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
                 root.add(line)
 
                 val clientStart = DoubleVector(line.x1().get()!!, line.y1().get()!!)

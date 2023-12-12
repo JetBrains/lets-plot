@@ -73,6 +73,6 @@ class HLineGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = HLineLegendKeyElementFactory(AesScaling::strokeWidth)
+        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = HLineLegendKeyElementFactory()
     }
 }

@@ -366,7 +366,7 @@ object GeomMeta {
             GeomKind.SPOKE -> listOf(
                 Aes.X, Aes.Y,
                 Aes.ANGLE, Aes.RADIUS,
-                Aes.LINEWIDTH,
+                Aes.SIZE,
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.ALPHA,
