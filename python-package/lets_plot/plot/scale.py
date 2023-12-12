@@ -25,7 +25,7 @@ __all__ = ['scale_shape',
            ]
 
 
-def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Scale for shapes.
 
@@ -35,10 +35,12 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         Are the shapes solid (default) True, or hollow (False).
     name : str
         The name of the scale - used as the axis label or the legend title.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -49,9 +51,11 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -84,6 +88,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -99,7 +104,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 #
 
 def scale_manual(aesthetic, values, *,
-                 name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                 name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for the specified aesthetics.
 
@@ -107,17 +112,20 @@ def scale_manual(aesthetic, values, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -130,9 +138,11 @@ def scale_manual(aesthetic, values, *,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -159,10 +169,28 @@ def scale_manual(aesthetic, values, *,
                          breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
 
     """
+
+    # 'values' - dict of limits or breaks as keys and values as values
+    if isinstance(values, dict):
+        if breaks is None and limits is None:
+            breaks = list(values.keys())
+            values = list(values.values())
+        else:
+            base_order = breaks if limits is None else limits
+            if isinstance(base_order, dict):
+                base_order = list(base_order.values())
+            new_values = [values[break_value] for break_value in base_order if break_value in values]
+            if new_values:
+                no_match_values = list(set(values.values()) - set(new_values))  # doesn't preserve order
+                values = new_values + no_match_values
+            else:
+                values = None
+
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -173,24 +201,27 @@ def scale_manual(aesthetic, values, *,
                   values=values)
 
 
-def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `color` aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -203,9 +234,11 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -237,29 +270,33 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for `fill` aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -272,9 +309,11 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -306,29 +345,33 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Create your own discrete scale for `size` aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -339,9 +382,11 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -374,30 +419,34 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `shape` aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -408,9 +457,11 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -443,30 +494,34 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                           format=None):
     """
     Create your own discrete scale for line type aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -477,9 +532,11 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -513,30 +570,34 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
                         format=format)
 
 
-def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
+def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
     Create your own discrete scale for `alpha` (transparency) aesthetic.
 
     Parameters
     ----------
-    values : list of str
+    values : list of str or dict
         A set of aesthetic values to map data values to.
-        The values will be matched in order (usually alphabetical) with the limits of the scale.
+        If this is a list, the values will be matched in order (usually alphabetical) with the limits of the scale.
+        If a dictionary, then the values will be matched based on the names.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -547,9 +608,11 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -581,6 +644,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -588,30 +652,31 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 
 
 #
-# Gradient (continuous) Color Scales
+# Scale for continuous data
 #
+
 def scale_continuous(aesthetic, *,
-                     low=None, high=None, name=None, breaks=None, labels=None,
-                     limits=None, na_value=None, guide=None, trans=None, format=None):
+                     name=None, breaks=None, labels=None, lablim=None,
+                     limits=None, na_value=None, guide=None, trans=None, format=None,
+                     **kwargs):
     """
-    Define smooth color gradient between two colors for the specified aesthetics.
+    General purpose scale for continuous data.
+    Use it to adjust most common properties of a default scale for given aesthetics.
 
     Parameters
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     na_value
@@ -624,9 +689,11 @@ def scale_continuous(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -636,7 +703,7 @@ def scale_continuous(aesthetic, *,
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for the specified aesthetics.
+    Define most common properties of a continuous scale for the specified aesthetics.
 
     Examples
     --------
@@ -649,15 +716,26 @@ def scale_continuous(aesthetic, *,
         x = list(range(50))
         ggplot({'x': x}, aes(x='x')) + \\
             geom_tile(aes(color='x', fill='x')) + \\
-            scale_continuous(aesthetic=['color', 'fill'], low='#1a9641', high='#d7191c') + \\
+            scale_continuous(aesthetic=['color', 'fill'], breaks=[5, 25, 45]) + \\
             coord_cartesian() + \\
             ggsize(600, 200)
 
     """
+    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
+    if isinstance(aesthetic, str):
+        is_color_scale = aesthetic in color_aesthetics
+    elif isinstance(aesthetic, list):
+        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    else:
+        is_color_scale = False
+
+    scale_mapper_kind = 'color_gradient' if is_color_scale else None
+
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -665,12 +743,164 @@ def scale_continuous(aesthetic, *,
                   trans=trans,
                   format=format,
                   #
-                  low=low, high=high,
-                  scale_mapper_kind='color_gradient')
+                  scale_mapper_kind=scale_mapper_kind,
+                  **kwargs)
 
+
+def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None,
+                          **kwargs):
+    """
+    Default color scale for `fill` aesthetic and continuous data.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define most common properties of a continuous scale for `fill` aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_continuous(breaks=[5, 25, 45]) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
+    return scale_continuous('fill',
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            lablim=lablim,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format,
+                            **kwargs)
+
+
+def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None,
+                           **kwargs):
+    """
+    Default color scale for `color` aesthetic and continuous data.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define most common properties of a continuous scale for `color` aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=1, size=5) + \\
+            scale_color_continuous(breaks=[0, 3, 6, 9])
+
+    """
+    return scale_continuous('color',
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            lablim=lablim,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format,
+                            **kwargs)
+
+
+#
+# Gradient Color Scales
+#
 
 def scale_gradient(aesthetic, *,
-                   low=None, high=None, name=None, breaks=None, labels=None,
+                   low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for the specified aesthetics.
@@ -687,10 +917,12 @@ def scale_gradient(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -705,9 +937,11 @@ def scale_gradient(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -735,20 +969,23 @@ def scale_gradient(aesthetic, *,
             ggsize(600, 200)
 
     """
+    return _scale(aesthetic,
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  low=low, high=high,
+                  scale_mapper_kind='color_gradient')
 
-    return scale_continuous(aesthetic,
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
 
-
-def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
+def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
                         limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `fill` aesthetic.
@@ -763,10 +1000,12 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -781,9 +1020,11 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -793,7 +1034,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for filling color.
+    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
 
     Examples
     --------
@@ -816,6 +1057,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -823,80 +1065,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
                           format=format)
 
 
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None):
-    """
-    Define smooth color gradient between two colors for `fill` aesthetic.
-
-    Parameters
-    ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    na_value
-        Missing values will be replaced with this value.
-    guide
-        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for filling color.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(50))
-        ggplot({'x': x}, aes(x='x')) + \\
-            geom_tile(aes(fill='x')) + \\
-            scale_fill_continuous(low='#1a9641', high='#d7191c') + \\
-            coord_cartesian() + \\
-            ggsize(600, 200)
-
-    """
-    return scale_continuous('fill',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
-
-
-def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between two colors for `color` aesthetic.
@@ -911,10 +1080,12 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -929,9 +1100,11 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -964,6 +1137,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -971,75 +1145,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
                           format=format)
 
 
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
-    """
-    Define smooth color gradient between two colors for `color` aesthetic.
-
-    Parameters
-    ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    na_value
-        Missing values will be replaced with this value.
-    guide
-        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments. 'none' will hide the guide.
-    trans : {'identity', 'log10', 'log2', 'symlog', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(10))
-        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
-            geom_point(aes(color='x'), shape=1, size=5) + \\
-            scale_color_continuous(low='#1a9641', high='#d7191c')
-
-    """
-    return scale_continuous('color',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
-
-
 def scale_gradient2(aesthetic, *,
-                    low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+                    low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for the specified aesthetics.
@@ -1060,10 +1167,12 @@ def scale_gradient2(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1078,9 +1187,11 @@ def scale_gradient2(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1112,6 +1223,7 @@ def scale_gradient2(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1124,7 +1236,7 @@ def scale_gradient2(aesthetic, *,
                   scale_mapper_kind='color_gradient2')
 
 
-def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for `fill` aesthetic.
@@ -1143,10 +1255,12 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1161,9 +1275,11 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1173,7 +1289,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 
     Notes
     -----
-    Define diverging color gradient for filling color. Default mid point is set to white color.
+    Define diverging color gradient for `fill` aesthetic. Default mid point is set to white color.
 
     Examples
     --------
@@ -1197,6 +1313,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1204,8 +1321,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
                            format=format)
 
 
-def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
-                          na_value=None, guide=None, trans=None, format=None):
+def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Define diverging color gradient for `color` aesthetic.
 
@@ -1223,10 +1340,12 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1241,9 +1360,11 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1277,6 +1398,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1285,7 +1407,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
 
 def scale_gradientn(aesthetic, *,
-                    colors=None, name=None, breaks=None, labels=None, limits=None,
+                    colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for the specified aesthetics.
@@ -1300,14 +1422,16 @@ def scale_gradientn(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
         and the default order of their display in guides.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     na_value
         Missing values will be replaced with this value.
     guide
@@ -1318,9 +1442,11 @@ def scale_gradientn(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1353,6 +1479,7 @@ def scale_gradientn(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1364,7 +1491,7 @@ def scale_gradientn(aesthetic, *,
                   scale_mapper_kind='color_gradientn')
 
 
-def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                           na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for `color` aesthetic.
@@ -1377,10 +1504,12 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1395,9 +1524,11 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1431,6 +1562,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1438,7 +1570,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
                            format=format)
 
 
-def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for `fill` aesthetic.
@@ -1451,10 +1583,12 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1469,9 +1603,11 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1505,6 +1641,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
                            name=name,
                            breaks=breaks,
                            labels=labels,
+                           lablim=lablim,
                            limits=limits,
                            na_value=na_value,
                            guide=guide,
@@ -1513,7 +1650,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
 
 
 def scale_hue(aesthetic, *,
-              h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+              h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
               limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for the specified aesthetics.
@@ -1534,10 +1671,12 @@ def scale_hue(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1552,9 +1691,11 @@ def scale_hue(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1586,6 +1727,7 @@ def scale_hue(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1598,7 +1740,7 @@ def scale_hue(aesthetic, *,
                   scale_mapper_kind='color_hue')
 
 
-def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for `fill` aesthetic.
@@ -1619,10 +1761,12 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1637,9 +1781,11 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1649,7 +1795,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -1674,6 +1820,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                      name=name,
                      breaks=breaks,
                      labels=labels,
+                     lablim=lablim,
                      limits=limits,
                      na_value=na_value,
                      guide=guide,
@@ -1681,7 +1828,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
                      format=format)
 
 
-def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None, lablim=None,
                     limits=None, na_value=None, guide=None, trans=None, format=None):
     """
     Qualitative color scale with evenly spaced hues for `color` aesthetic.
@@ -1700,10 +1847,12 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -1718,9 +1867,11 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1755,6 +1906,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
                      name=name,
                      breaks=breaks,
                      labels=labels,
+                     lablim=lablim,
                      limits=limits,
                      na_value=na_value,
                      guide=guide,
@@ -1764,10 +1916,10 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_discrete(aesthetic, *,
                    direction=None,
-                   name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
+    General purpose scale for discrete data.
+    Use it to adjust most common properties of a default scale for given aesthetics.
 
     Parameters
     ----------
@@ -1780,10 +1932,12 @@ def scale_discrete(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1795,9 +1949,11 @@ def scale_discrete(aesthetic, *,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1807,7 +1963,7 @@ def scale_discrete(aesthetic, *,
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for the specified aesthetics.
+    Define scale for discrete data to adjust properties for the specified aesthetics.
 
     Examples
     --------
@@ -1831,6 +1987,7 @@ def scale_discrete(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -1842,9 +1999,9 @@ def scale_discrete(aesthetic, *,
 
 
 def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
+    Qualitative colors scale for `fill` aesthetic.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
@@ -1856,10 +2013,12 @@ def scale_fill_discrete(direction=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1871,9 +2030,11 @@ def scale_fill_discrete(direction=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1883,7 +2044,7 @@ def scale_fill_discrete(direction=None,
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for filling color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -1908,6 +2069,7 @@ def scale_fill_discrete(direction=None,
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -1915,9 +2077,9 @@ def scale_fill_discrete(direction=None,
 
 
 def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Qualitative colors.
+    Qualitative colors for `color` aesthetic.
     Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
     Parameters
@@ -1929,10 +2091,12 @@ def scale_color_discrete(direction=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -1944,9 +2108,11 @@ def scale_color_discrete(direction=None,
         specifying additional arguments. 'none' will hide the guide.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -1981,6 +2147,7 @@ def scale_color_discrete(direction=None,
                           name=name,
                           breaks=breaks,
                           labels=labels,
+                          lablim=lablim,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
@@ -1988,7 +2155,7 @@ def scale_color_discrete(direction=None,
 
 
 def scale_grey(aesthetic, *,
-               start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+               start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for the specified aesthetics.
@@ -2005,10 +2172,12 @@ def scale_grey(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2023,9 +2192,11 @@ def scale_grey(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2059,6 +2230,7 @@ def scale_grey(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2070,7 +2242,7 @@ def scale_grey(aesthetic, *,
                   scale_mapper_kind='color_grey')
 
 
-def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `fill` aesthetic.
@@ -2085,10 +2257,12 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2103,9 +2277,11 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2115,7 +2291,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
 
     Notes
     -----
-    Define sequential grey color scale for filling color aesthetic.
+    Define sequential grey color scale for `fill` aesthetic.
 
     Examples
     --------
@@ -2138,6 +2314,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
                       name=name,
                       breaks=breaks,
                       labels=labels,
+                      lablim=lablim,
                       limits=limits,
                       na_value=na_value,
                       guide=guide,
@@ -2145,7 +2322,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
                       format=format)
 
 
-def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `color` aesthetic.
@@ -2160,10 +2337,12 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2178,9 +2357,11 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2213,6 +2394,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
                       name=name,
                       breaks=breaks,
                       labels=labels,
+                      lablim=lablim,
                       limits=limits,
                       na_value=na_value,
                       guide=guide,
@@ -2241,7 +2423,7 @@ def _greyscale_check_parameters(start=None, end=None):
 
 
 def scale_brewer(aesthetic, *,
-                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
@@ -2263,10 +2445,12 @@ def scale_brewer(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2281,9 +2465,11 @@ def scale_brewer(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2328,6 +2514,7 @@ def scale_brewer(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2341,7 +2528,7 @@ def scale_brewer(aesthetic, *,
                   scale_mapper_kind='color_brewer')
 
 
-def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for `fill` aesthetic.
@@ -2361,10 +2548,12 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2379,9 +2568,11 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2429,6 +2620,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -2436,7 +2628,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         format=format)
 
 
-def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
@@ -2456,10 +2648,12 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2474,9 +2668,11 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2522,6 +2718,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                         name=name,
                         breaks=breaks,
                         labels=labels,
+                        lablim=lablim,
                         limits=limits,
                         na_value=na_value,
                         guide=guide,
@@ -2531,7 +2728,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
 def scale_viridis(aesthetic, *,
                   alpha=None, begin=None, end=None, direction=None, option=None,
-                  name=None, breaks=None, labels=None, limits=None,
+                  name=None, breaks=None, labels=None, lablim=None, limits=None,
                   na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2568,10 +2765,12 @@ def scale_viridis(aesthetic, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2586,9 +2785,11 @@ def scale_viridis(aesthetic, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2621,6 +2822,7 @@ def scale_viridis(aesthetic, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2637,7 +2839,7 @@ def scale_viridis(aesthetic, *,
 
 
 def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
-                       name=None, breaks=None, labels=None, limits=None,
+                       name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2672,10 +2874,12 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2690,9 +2894,11 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2728,6 +2934,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
                          name=name,
                          breaks=breaks,
                          labels=labels,
+                         lablim=lablim,
                          limits=limits,
                          na_value=na_value,
                          guide=guide,
@@ -2736,7 +2943,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
 
 def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
-                        name=None, breaks=None, labels=None, limits=None,
+                        name=None, breaks=None, labels=None, lablim=None, limits=None,
                         na_value=None, guide=None, trans=None, format=None):
     """
     The `viridis` color maps are designed to be perceptually-uniform,
@@ -2771,10 +2978,12 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
         Discrete scale: a vector specifying the data range for the scale
@@ -2789,9 +2998,11 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2825,6 +3036,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
                          name=name,
                          breaks=breaks,
                          labels=labels,
+                         lablim=lablim,
                          limits=limits,
                          na_value=na_value,
                          guide=guide,
@@ -2835,7 +3047,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 # Range Scale (alpha and size)
 #
 
-def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, trans=None,
                 format=None):
     """
     Scale for alpha.
@@ -2848,10 +3060,12 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2863,9 +3077,11 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2894,6 +3110,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2904,7 +3121,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
                   range=range)
 
 
-def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, trans=None,
+def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, trans=None,
                format=None):
     """
     Scale for size.
@@ -2917,10 +3134,12 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -2932,9 +3151,11 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -2964,6 +3185,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -2974,7 +3196,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
                   range=range)
 
 
-def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=None,
+def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Continuous scale for size that maps 0 to 0.
@@ -2987,10 +3209,12 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3002,9 +3226,11 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3038,6 +3264,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3049,7 +3276,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None,
+def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Scale for linewidth.
@@ -3062,10 +3289,12 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3077,9 +3306,11 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3108,6 +3339,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3118,7 +3350,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
                   range=range)
 
 
-def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
+def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Scale for stroke.
@@ -3131,10 +3363,12 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale
         and the default order of their display in guides.
@@ -3146,9 +3380,11 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
 
     Returns
@@ -3177,6 +3413,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=None,
                   na_value=na_value,
@@ -3190,6 +3427,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
 def _scale(aesthetic, *,
            name=None,
            breaks=None, labels=None,
+           lablim=None,
            limits=None,
            expand=None,
            na_value=None,
@@ -3197,7 +3435,7 @@ def _scale(aesthetic, *,
            guide=None,
            format=None,
            position=None,
-           **other):
+           **kwargs):
     """
     Create a scale (discrete or continuous)
 
@@ -3207,10 +3445,12 @@ def _scale(aesthetic, *,
         The name(s) of the aesthetic(s) that this scale works with.
     name : str
         The name of the scale - used as the axis label or the legend title
-    breaks : list
-        A numeric vector of positions (of ticks)
-    labels : list
-        A vector of labels (on ticks)
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -3238,15 +3478,39 @@ def _scale(aesthetic, *,
 
     # flatten the 'other' sub-dictionary
     args = locals().copy()
-    args.pop('other')
+    args.pop('kwargs')
+
+    # 'breaks' - dict of labels as keys and breaks as values
+    if isinstance(breaks, dict):
+        if labels is None:
+            args['labels'] = list(breaks.keys())
+        breaks = list(breaks.values())
+        args['breaks'] = breaks
+
+    # 'labels' - dict of breaks as keys and labels as values
+    if isinstance(labels, dict):
+        if breaks is None:
+            args['breaks'] = list(labels.keys())
+            args['labels'] = list(labels.values())
+        else:
+            new_labels = []
+            new_breaks = []
+            for break_value in breaks:
+                if break_value in labels:
+                    new_labels.append(labels[break_value])
+                    new_breaks.append(break_value)
+
+            breaks_without_label = [item for item in breaks if item not in new_breaks]  # keeps order
+            args['breaks'] = new_breaks + breaks_without_label
+            args['labels'] = new_labels
 
     specs = []
     if isinstance(aesthetic, list):
         args.pop('aesthetic')
         for aes in aesthetic:
-            specs.append(FeatureSpec('scale', aesthetic=aes, **args, **other))
+            specs.append(FeatureSpec('scale', aesthetic=aes, **args, **kwargs))
     else:
-        specs.append(FeatureSpec('scale', **args, **other))
+        specs.append(FeatureSpec('scale', **args, **kwargs))
 
     if len(specs) == 1:
         return specs[0]

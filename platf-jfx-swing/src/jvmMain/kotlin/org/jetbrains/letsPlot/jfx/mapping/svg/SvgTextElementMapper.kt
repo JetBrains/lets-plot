@@ -85,12 +85,11 @@ internal class SvgTextElementMapper(
                         is SvgTSpanElement -> node.children().map { child ->
                             require(child is SvgTextNode)
                             val fontScale = node.getAttribute("font-size").get()?.let {
-                                require(it is String) { "font-size: only string value is supported" }
-                                require(it.endsWith("%")) { "font-size: only percent value is supported" }
-                                it.removeSuffix("%").toFloat() / 100.0
+                                require(it is String) { "font-size: only string value is supported, but was $it" }
+                                require(it.endsWith("em")) { "font-size: only `em` value is supported, but was $it" }
+                                it.removeSuffix("em").toDouble()
                             }
 
-                            // TODO: replace with Specs from LP
                             val baselineShift = node.getAttribute("baseline-shift").get()?.let {
                                 when (it) {
                                     "sub" -> TextLine.BaselineShift.SUB
@@ -99,10 +98,17 @@ internal class SvgTextElementMapper(
                                 }
                             }
 
+                            val dy = node.getAttribute("dy").get()?.let {
+                                require(it is String) { "dy: only string value is supported, but was $it" }
+                                require(it.endsWith("em")) { "dy: only `em` value is supported, but was $it" }
+                                it.removeSuffix("em").toDouble()
+                            }
+
                             TextLine.TextRun(
                                 text = child.textContent().get(),
                                 baselineShift = baselineShift,
-                                fontScale = fontScale
+                                fontScale = fontScale,
+                                dy = dy
                             )
                         }
 

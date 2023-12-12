@@ -25,7 +25,7 @@ __all__ = ['scale_x_discrete', 'scale_y_discrete',
 #
 
 def scale_x_continuous(name=None, *,
-                       breaks=None, labels=None,
+                       breaks=None, labels=None, lablim=None,
                        limits=None,
                        expand=None,
                        na_value=None,
@@ -42,10 +42,12 @@ def scale_x_continuous(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -58,9 +60,11 @@ def scale_x_continuous(name=None, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -93,6 +97,7 @@ def scale_x_continuous(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -104,7 +109,7 @@ def scale_x_continuous(name=None, *,
 
 
 def scale_y_continuous(name=None, *,
-                       breaks=None, labels=None,
+                       breaks=None, labels=None, lablim=None,
                        limits=None,
                        expand=None,
                        na_value=None,
@@ -121,10 +126,12 @@ def scale_y_continuous(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -137,9 +144,11 @@ def scale_y_continuous(name=None, *,
         Name of built-in transformation.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -172,6 +181,7 @@ def scale_y_continuous(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -183,7 +193,7 @@ def scale_y_continuous(name=None, *,
 
 
 def scale_x_log10(name=None, *,
-                  breaks=None, labels=None,
+                  breaks=None, labels=None, lablim=None,
                   limits=None,
                   expand=None,
                   na_value=None,
@@ -199,10 +209,12 @@ def scale_x_log10(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -213,9 +225,11 @@ def scale_x_log10(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -245,6 +259,7 @@ def scale_x_log10(name=None, *,
     return scale_x_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -255,7 +270,7 @@ def scale_x_log10(name=None, *,
 
 
 def scale_y_log10(name=None, *,
-                  breaks=None, labels=None,
+                  breaks=None, labels=None, lablim=None,
                   limits=None,
                   expand=None,
                   na_value=None,
@@ -271,10 +286,12 @@ def scale_y_log10(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -285,9 +302,11 @@ def scale_y_log10(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -317,6 +336,7 @@ def scale_y_log10(name=None, *,
     return scale_y_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -327,7 +347,7 @@ def scale_y_log10(name=None, *,
 
 
 def scale_x_log2(name=None, *,
-                 breaks=None, labels=None,
+                 breaks=None, labels=None, lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -343,10 +363,12 @@ def scale_x_log2(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -357,9 +379,11 @@ def scale_x_log2(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -389,6 +413,7 @@ def scale_x_log2(name=None, *,
     return scale_x_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -399,7 +424,7 @@ def scale_x_log2(name=None, *,
 
 
 def scale_y_log2(name=None, *,
-                 breaks=None, labels=None,
+                 breaks=None, labels=None, lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -415,10 +440,12 @@ def scale_y_log2(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -429,9 +456,11 @@ def scale_y_log2(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -461,6 +490,7 @@ def scale_y_log2(name=None, *,
     return scale_y_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -471,7 +501,7 @@ def scale_y_log2(name=None, *,
 
 
 def scale_x_reverse(name=None, *,
-                    breaks=None, labels=None,
+                    breaks=None, labels=None, lablim=None,
                     limits=None,
                     expand=None,
                     na_value=None,
@@ -487,10 +517,12 @@ def scale_x_reverse(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -501,9 +533,11 @@ def scale_x_reverse(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -533,6 +567,7 @@ def scale_x_reverse(name=None, *,
     return scale_x_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -543,7 +578,7 @@ def scale_x_reverse(name=None, *,
 
 
 def scale_y_reverse(name=None, *,
-                    breaks=None, labels=None,
+                    breaks=None, labels=None, lablim=None,
                     limits=None,
                     expand=None,
                     na_value=None,
@@ -559,10 +594,12 @@ def scale_y_reverse(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -573,9 +610,11 @@ def scale_y_reverse(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -605,6 +644,7 @@ def scale_y_reverse(name=None, *,
     return scale_y_continuous(name,
                               breaks=breaks,
                               labels=labels,
+                              lablim=lablim,
                               limits=limits,
                               expand=expand,
                               na_value=na_value,
@@ -619,7 +659,7 @@ def scale_y_reverse(name=None, *,
 #
 
 def scale_x_discrete(name=None, *,
-                     breaks=None, labels=None,
+                     breaks=None, labels=None, lablim=None,
                      limits=None,
                      expand=None,
                      na_value=None,
@@ -636,10 +676,12 @@ def scale_x_discrete(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -652,9 +694,11 @@ def scale_x_discrete(name=None, *,
         When True the scale is reversed.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -688,6 +732,7 @@ def scale_x_discrete(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -702,7 +747,7 @@ def scale_x_discrete(name=None, *,
 
 
 def scale_x_discrete_reversed(name=None, *,
-                              breaks=None, labels=None,
+                              breaks=None, labels=None, lablim=None,
                               limits=None,
                               expand=None,
                               na_value=None,
@@ -718,10 +763,12 @@ def scale_x_discrete_reversed(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -732,9 +779,11 @@ def scale_x_discrete_reversed(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -767,6 +816,7 @@ def scale_x_discrete_reversed(name=None, *,
     return scale_x_discrete(name,
                             breaks=breaks,
                             labels=labels,
+                            lablim=lablim,
                             limits=limits,
                             expand=expand,
                             na_value=na_value,
@@ -778,7 +828,7 @@ def scale_x_discrete_reversed(name=None, *,
 
 
 def scale_y_discrete(name=None, *,
-                     breaks=None, labels=None,
+                     breaks=None, labels=None, lablim=None,
                      limits=None,
                      expand=None,
                      na_value=None,
@@ -795,10 +845,12 @@ def scale_y_discrete(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
@@ -811,9 +863,11 @@ def scale_y_discrete(name=None, *,
         When True the scale is reversed.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -847,6 +901,7 @@ def scale_y_discrete(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -861,7 +916,7 @@ def scale_y_discrete(name=None, *,
 
 
 def scale_y_discrete_reversed(name=None, *,
-                              breaks=None, labels=None,
+                              breaks=None, labels=None, lablim=None,
                               limits=None,
                               expand=None,
                               na_value=None,
@@ -877,10 +932,12 @@ def scale_y_discrete_reversed(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list of two numbers
@@ -891,9 +948,11 @@ def scale_y_discrete_reversed(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -926,6 +985,7 @@ def scale_y_discrete_reversed(name=None, *,
     return scale_y_discrete(name,
                             breaks=breaks,
                             labels=labels,
+                            lablim=lablim,
                             limits=limits,
                             expand=expand,
                             na_value=na_value,
@@ -944,6 +1004,7 @@ def scale_y_discrete_reversed(name=None, *,
 def scale_x_datetime(name=None, *,
                      breaks=None,
                      labels=None,
+                     lablim=None,
                      limits=None,
                      expand=None,
                      na_value=None,
@@ -959,10 +1020,12 @@ def scale_x_datetime(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector of length two providing limits of the scale.
     expand : list
@@ -973,9 +1036,11 @@ def scale_x_datetime(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '%d.%m.%y' -> '06.08.19'
-        '%B %Y' -> 'August 2019'
-        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+
+        - '%d.%m.%y' -> '06.08.19'
+        - '%B %Y' -> 'August 2019'
+        - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -1013,6 +1078,7 @@ def scale_x_datetime(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -1025,7 +1091,7 @@ def scale_x_datetime(name=None, *,
 
 
 def scale_y_datetime(name=None, *,
-                     breaks=None, labels=None,
+                     breaks=None, labels=None, lablim=None,
                      limits=None,
                      expand=None,
                      na_value=None,
@@ -1041,10 +1107,12 @@ def scale_y_datetime(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A vector of length two providing limits of the scale.
     expand : list of two numbers
@@ -1055,9 +1123,11 @@ def scale_y_datetime(name=None, *,
         Missing values will be replaced with this value.
     format : str
         Define the format for labels on the scale. The syntax resembles Python's:
-        '%d.%m.%y' -> '06.08.19'
-        '%B %Y' -> 'August 2019'
-        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+
+        - '%d.%m.%y' -> '06.08.19'
+        - '%B %Y' -> 'August 2019'
+        - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
@@ -1096,6 +1166,7 @@ def scale_y_datetime(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -1108,7 +1179,7 @@ def scale_y_datetime(name=None, *,
 
 
 def scale_x_time(name=None, *,
-                 breaks=None, labels=None,
+                 breaks=None, labels=None, lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -1124,10 +1195,12 @@ def scale_x_time(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -1172,6 +1245,7 @@ def scale_x_time(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,
@@ -1184,7 +1258,7 @@ def scale_x_time(name=None, *,
 
 
 def scale_y_time(name=None, *,
-                 breaks=None, labels=None,
+                 breaks=None, labels=None, lablim=None,
                  limits=None,
                  expand=None,
                  na_value=None,
@@ -1200,10 +1274,12 @@ def scale_y_time(name=None, *,
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
+    breaks : list or dict
+        A list of data values specifying the positions of ticks, or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict
+        A list of labels on ticks, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, default=None
+        The maximum label length (in characters) before trimming is applied.
     limits : list
         A numeric vector of length two providing limits of the scale.
     expand : list
@@ -1248,6 +1324,7 @@ def scale_y_time(name=None, *,
                   name=name,
                   breaks=breaks,
                   labels=labels,
+                  lablim=lablim,
                   limits=limits,
                   expand=expand,
                   na_value=na_value,

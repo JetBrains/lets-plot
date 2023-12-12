@@ -65,3 +65,85 @@ def test_scale_x_discrete():
     assert as_dict['aesthetic'] == 'x'
     assert as_dict['name'] == 'N'
     assert as_dict['discrete']
+
+
+# Use dictionary in scale_xxx(labels)
+
+def test_scale_labels_dict():
+    spec = gg.scale_x_discrete(labels=dict(a="A", b="B", c="C"))
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['a', 'b', 'c']
+    assert as_dict['labels'] == ['A', 'B', 'C']
+
+
+def test_scale_labels_dict_with_specified_breaks():
+    spec = gg.scale_x_discrete(labels=dict(a="A", b="B", c="C"), breaks=['a', 'd', 'c'])
+    as_dict = spec.as_dict()
+    # use the order as in original 'breaks' + correct 'breaks' (without label - to the end of the list)
+    assert as_dict['breaks'] == ['a', 'c', 'd']
+    assert as_dict['labels'] == ['A', 'C']
+
+
+def test_scale_labels_dict_no_matches_with_specified_breaks():
+    spec = gg.scale_x_discrete(labels=dict(a="A", b="B", c="C"), breaks=['d', 'e'])
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['d', 'e']
+    assert as_dict['labels'] == []
+
+
+def test_scale_breaks_dict():
+    spec = gg.scale_x_discrete(breaks=dict(A="a", B="b", C="c"))
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['a', 'b', 'c']
+    assert as_dict['labels'] == ['A', 'B', 'C']
+
+
+# Use dictionary in scale_manual(values)
+
+def test_scale_manual_values_dict():
+    spec = gg.scale_fill_manual(values=dict(a="A", b="B", c="C"))
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['a', 'b', 'c']
+    assert as_dict['values'] == ['A', 'B', 'C']
+
+
+def test_scale_manual_values_dict_with_specified_breaks():
+    spec = gg.scale_fill_manual(values=dict(a="A", b="B", c="C"), breaks=['a', 'c'])
+    as_dict = spec.as_dict()
+    # order as in original 'breaks', missing breaks - to the end of the list
+    assert as_dict['breaks'] == ['a', 'c']
+    assert as_dict['values'] == ['A', 'C', 'B']
+
+
+def test_scale_manual_values_dict_with_specified_breaks_and_limits():
+    spec = gg.scale_fill_manual(values=dict(a="A", b="B", c="C"), breaks=['a', 'c'], limits=['b', 'c'])
+    as_dict = spec.as_dict()
+    # priority to 'limits' as a base list to choose the order of values
+    assert as_dict['breaks'] == ['a', 'c']
+    assert as_dict['limits'] == ['b', 'c']
+    assert as_dict['values'] == ['B', 'C', 'A']
+
+
+def test_scale_manual_values_dict_no_matches_with_specified_breaks():
+    spec = gg.scale_fill_manual(values=dict(a="A", b="B", c="C"), breaks=['d', 'e'])
+    as_dict = spec.as_dict()
+    assert as_dict['breaks'] == ['d', 'e']
+    assert 'values' not in as_dict
+
+
+# scale continuous
+
+def test_scale_continuous_with_color_aesthetic():
+    spec = gg.scale_color_continuous(low='red', high='blue')
+    as_dict = spec.as_dict()
+    assert as_dict['aesthetic'] == 'color'
+    assert as_dict['scale_mapper_kind'] == 'color_gradient'
+    assert as_dict['low'] == 'red'
+    assert as_dict['high'] == 'blue'
+
+
+def test_scale_continuous_with_non_color_aesthetic():
+    spec = gg.scale_continuous('x')
+    as_dict = spec.as_dict()
+    assert as_dict['aesthetic'] == 'x'
+    assert 'scale_mapper_kind' not in as_dict

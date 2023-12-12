@@ -65,6 +65,7 @@ object Option {
             const val COLUMN = "column"   // a.k.a. variable name
             const val TYPE = "type"
             const val FACTOR_LEVELS = "factor_levels" // annotation for discrete variables
+            const val ORDER = "order"
 
             // Values of the "TYPE" property
             object DateTime {
@@ -499,6 +500,7 @@ object Option {
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
         const val LABELS = "labels"
+        const val LABLIM = "lablim"
         const val EXPAND = "expand"
         const val LIMITS = "limits"
         const val DISCRETE_DOMAIN = "discrete"

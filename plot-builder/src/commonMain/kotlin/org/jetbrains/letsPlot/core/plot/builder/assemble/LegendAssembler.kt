@@ -143,7 +143,7 @@ class LegendAssembler(
                 }
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
-                val scaleBreaks = scale.getScaleBreaks()
+                val scaleBreaks = scale.getShortenedScaleBreaks()
                 val aesValues = scaleBreaks.transformedValues.map {
                     scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                 }

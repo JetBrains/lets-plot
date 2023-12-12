@@ -30,6 +30,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.GUIDE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.HIGH
 import org.jetbrains.letsPlot.core.spec.Option.Scale.HUE_RANGE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LABELS
+import org.jetbrains.letsPlot.core.spec.Option.Scale.LABLIM
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LIMITS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LOW
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LUMINANCE
@@ -251,24 +252,31 @@ class ScaleConfig<T> constructor(
         if (has(NAME)) {
             b.name(getString(NAME)!!)
         }
+
         if (has(BREAKS)) {
             b.breaks(getList(BREAKS).mapNotNull { it })
         }
+
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))
         } else {
             // Skip format is labels are defined
             b.labelFormat(getString(FORMAT))
         }
+
+        if (has(LABLIM)) {
+            b.labelLengthLimit(getInteger(LABLIM)!!)
+        }
+
         if (has(EXPAND)) {
-            val list = getList(EXPAND)
-            if (list.isNotEmpty()) {
-                val multiplicativeExpand = list[0] as Number
-                b.multiplicativeExpand(multiplicativeExpand.toDouble())
-                if (list.size > 1) {
-                    val additiveExpand = list[1] as Number
-                    b.additiveExpand(additiveExpand.toDouble())
-                }
+            val expandList = getDoubleList(EXPAND)
+
+            expandList.getOrNull(0)?.let {
+                b.multiplicativeExpand(it)
+            }
+
+            expandList.getOrNull(1)?.let {
+                b.additiveExpand(it)
             }
         }
         if (has(LIMITS)) {

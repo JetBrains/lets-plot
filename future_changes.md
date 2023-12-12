@@ -11,6 +11,32 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_stat_count_vars.ipynb).
 
 
+- Using a dictionary as a value of `'labels'`, `'breaks'` ([[#169](https://github.com/JetBrains/lets-plot/issues/169)])
+  and `'values'` ([[#882](https://github.com/JetBrains/lets-plot/issues/882)]) parameters in scaling functions:
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_params_with_dict.ipynb).
+
+
+- The `lablim` parameter for `scale_xxx()` functions [[#939](https://github.com/JetBrains/lets-plot/issues/939), [#946](https://github.com/JetBrains/lets-plot/issues/946)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_lablim.ipynb).
+
+
+- The `levels` parameter in `as_discrete` function [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
+
+- `geom_livemap()`: new tiles - `bw`.
+ 
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).
+
+
+- `label_text` parameter in `theme()` for annotation text settings [[#930](https://github.com/JetBrains/lets-plot/issues/930)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/theme_label_text.ipynb).
+
+
+
 ### Changed
 
 - The `plot_margin` parameter in `theme()` and the `margin` parameter in `element_text()` accept a number or a list of numbers:
@@ -32,3 +58,8 @@
 - scale_x_log2(), scale_y_log2() as a shortcut for trans='log2' [[#922](https://github.com/JetBrains/lets-plot/issues/922)].
 - How to calculate proportion of points with same coordinate [[#936](https://github.com/JetBrains/lets-plot/issues/936)].
 - gggrid: composite plot is not visible if saved with ggsave [[#942](https://github.com/JetBrains/lets-plot/issues/942)].
+- Make scale's 'breaks' / 'labels' parameters understand dict of breaks as keys and labels as values [[#169](https://github.com/JetBrains/lets-plot/issues/169)].
+- scale manual: "values" parameter should accept dictionary as a value [[#882](https://github.com/JetBrains/lets-plot/issues/882)].
+- as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
+- Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
+- `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].

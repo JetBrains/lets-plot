@@ -5853,9 +5853,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
-        '.2f' -> '12.45',
-        'Num {}' -> 'Num 12.456789',
-        'TTL: {.2f}$' -> 'TTL: 12.45$'.
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     na_text : str, default='n/a'
         Text to show for missing values.
@@ -6041,9 +6043,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
-        '.2f' -> '12.45',
-        'Num {}' -> 'Num 12.456789',
-        'TTL: {.2f}$' -> 'TTL: 12.45$'.
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
         For more info see https://lets-plot.org/pages/formats.html.
     nudge_x : float
         Horizontal adjustment to nudge labels by.

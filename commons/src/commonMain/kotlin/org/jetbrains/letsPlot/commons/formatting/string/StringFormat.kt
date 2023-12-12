@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.commons.formatting.string
 
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
-import org.jetbrains.letsPlot.commons.intern.datetime.Instant
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
@@ -74,7 +74,8 @@ class StringFormat private constructor(
         }
         when (formatType) {
             NUMBER_FORMAT -> {
-                val numberFormatter = NumberFormat(formatPattern)
+                val formatSpec = NumberFormat.parseSpec(formatPattern).copy(richOutput = true) // force use of superscript exponent
+                val numberFormatter = NumberFormat(formatSpec)
                 return { value: Any ->
                     when (value) {
                         is Number -> numberFormatter.apply(value)

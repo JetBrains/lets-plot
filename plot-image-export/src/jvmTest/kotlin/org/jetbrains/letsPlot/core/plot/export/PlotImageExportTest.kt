@@ -5,7 +5,8 @@
 package org.jetbrains.letsPlot.core.plot.export
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
+import java.awt.Desktop
+import java.io.File
 import kotlin.test.Test
 
 class PlotImageExportTest {
@@ -73,5 +74,35 @@ class PlotImageExportTest {
             )
         )
         PlotImageExport.buildImageFromRawSpecs(spec, PlotImageExport.Format.PNG, 1.0, 144.0)
+    }
+
+    @Test
+    fun superExportToPngTest() {
+        val spec = """
+            {
+              "data": {
+                "x": [ 0.0, 1e-05, 2e-05, 3.0000000000000004e-05, 4e-05 ],
+                "y": [ 0.0, 0.0, 0.0, 0.0, 0.0 ]
+              },
+              "mapping": { "x": "x", "y": "y" },
+              "ggtitle": {
+                "text": "Deault format",
+                "subtitle": "Superscript triggered automatically"
+              },
+              "kind": "plot",
+              "layers": [ { "geom": "point" } ]
+            }
+        """.trimIndent()
+
+        PlotImageExport.buildImageFromRawSpecs(parsePlotSpec(spec), PlotImageExport.Format.PNG, 1.0, 72.0)
+    }
+
+    @Suppress("unused")
+    private fun showPng(png: PlotImageExport.ImageData) {
+        File.createTempFile("plot", ".png").apply {
+            writeBytes(png.bytes)
+            println("Plot saved to $absolutePath")
+            Desktop.getDesktop().open(this)
+        }
     }
 }

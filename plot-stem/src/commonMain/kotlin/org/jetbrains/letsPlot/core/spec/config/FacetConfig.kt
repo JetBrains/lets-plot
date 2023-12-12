@@ -85,7 +85,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, name)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, name)
-                    levels.addAll(data.get(variable).filterNotNull())
+                    levels.addAll(data.distinctValues(variable))
                 }
             }
             facetLevels.add(levels.toList())

@@ -14,7 +14,8 @@ import demoAndTestShared.parsePlotSpec
 class Issue_facet_ordering_boxplot_746 {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            case0()
+            case0(),
+            case1() // with specified factor_levels
         )
     }
 
@@ -36,8 +37,108 @@ class Issue_facet_ordering_boxplot_746 {
         """.trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = data
+        return plotSpec
+    }
 
-        // Data (n=20)
+    private fun case1(): MutableMap<String, Any> {
+        val spec = """
+            {
+                'kind': 'plot',
+                'mapping':  {
+                                'x': 'chrom',
+                                'y': 'y'
+                            },
+                'data_meta': {
+                    'series_annotations': [
+                        {   
+                            'column': 'chrom',
+                            'factor_levels': ['chr5','chr4','chr1','chr2'],
+                            'order': 1
+                        }                            
+                    ]
+                },                                
+                'layers':   [
+                                {
+                                    'geom': 'boxplot'
+                                }
+                            ],
+                'facet':{ 'name': 'grid', 'y': 'arm', 'y_order': 1}                            
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = data
+        return plotSpec
+    }
+
+    private val data = mapOf<String, List<Any>>(
+        "chrom" to listOf(
+            "chr1",
+            "chr1",
+            "chr1",
+            "chr2",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr4",
+            "chr5",
+            "chr5",
+            "chr5",
+            "chr5",
+            "chr5",
+            "chr5",
+        ),
+        "y" to listOf(
+            -0.90,
+            0.06,
+            -1.42,
+            0.11,
+            -0.29,
+            -0.60,
+            0.37,
+            -1.15,
+            -1.01,
+            1.46,
+            -1.41,
+            -0.54,
+            -1.22,
+            0.82,
+            -0.22,
+            0.31,
+            -0.60,
+            -0.01,
+            -1.05,
+        ),
+        "arm" to listOf(
+            "q",
+            "q",
+            "q",
+            "q",
+            "q",
+            "q",
+            "p",
+            "p",
+            "q",
+            "q",
+            "q",
+            "q",
+            "p",
+            "p",
+            "q",
+            "p",
+            "q",
+            "q",
+            "p",
+        ),
+    )
+
+    // Data (n=20)
 
 //        {'data':    chrom         y arm
 //                    2   chr1 -0.908024   q
@@ -59,75 +160,4 @@ class Issue_facet_ordering_boxplot_746 {
 //                    14  chr5 -0.601707   q
 //                    16  chr5 -0.013497   q
 //                    17  chr5 -1.057711   p,
-
-        val data = mapOf<String, List<Any>>(
-            "chrom" to listOf(
-                "chr1",
-                "chr1",
-                "chr1",
-                "chr2",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr4",
-                "chr5",
-                "chr5",
-                "chr5",
-                "chr5",
-                "chr5",
-                "chr5",
-            ),
-            "y" to listOf(
-                -0.90,
-                0.06,
-                -1.42,
-                0.11,
-                -0.29,
-                -0.60,
-                0.37,
-                -1.15,
-                -1.01,
-                1.46,
-                -1.41,
-                -0.54,
-                -1.22,
-                0.82,
-                -0.22,
-                0.31,
-                -0.60,
-                -0.01,
-                -1.05,
-            ),
-            "arm" to listOf(
-                "q",
-                "q",
-                "q",
-                "q",
-                "q",
-                "q",
-                "p",
-                "p",
-                "q",
-                "q",
-                "q",
-                "q",
-                "p",
-                "p",
-                "q",
-                "p",
-                "q",
-                "q",
-                "p",
-            ),
-        )
-
-
-        plotSpec["data"] = data
-        return plotSpec
-    }
 }

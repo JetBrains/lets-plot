@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.jfx.mapping.svg
 
 import javafx.collections.ListChangeListener
+import javafx.geometry.Bounds
 import javafx.geometry.VPos
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
@@ -26,6 +27,8 @@ internal class TextLine : Region() {
         val text: String,
         val baselineShift: BaselineShift? = null,
         val fontScale: Double? = null,
+        // NOTE: resets between runs, yet by standard it alters the baseline for the rest of the text
+        val dy: Double? = null,
     )
 
     init {
@@ -120,8 +123,16 @@ internal class TextLine : Region() {
     private var font: Font? = null
         set(value) {
             field = value
+            if (value != null) {
+                fontMetric = Text("X").apply { this.font = font }.boundsInLocal
+            } else {
+                fontMetric = null
+            }
+
             rebuild()
         }
+
+    private var fontMetric: Bounds? = null
 
     private fun rebuildFont() {
         font = Font.font(fontFamily, fontWeight, fontPosture, fontSize)
@@ -129,6 +140,8 @@ internal class TextLine : Region() {
     }
 
     private fun rebuild() {
+        val fontMetric = fontMetric ?: return // wait for font to be set
+
         val texts = content.map(::textRunToTextFx)
 
         val width = texts.sumOf { it.boundsInLocal.width }
@@ -138,11 +151,24 @@ internal class TextLine : Region() {
             else -> 0.0
         }
 
+        // Font metrics from Text bounds:
+        // lineHeight = fontMetric.height
+        // ascent = -fontMetric.minY
+        // descent = fontMetric.maxY
+        val height = fontMetric.minY
+        val dy = when (textOrigin) {
+            null -> 0.0
+            VPos.BOTTOM -> 0.0
+            VPos.TOP -> -height
+            VPos.CENTER -> -height / 2
+            VPos.BASELINE -> error("VPos.BASELINE is not supported")
+        }
+
         // Arrange runs one after another
         var currentRunPosX = x
         texts.forEach { text ->
             text.x = currentRunPosX + dx
-            text.y += y
+            text.y += y + dy
             currentRunPosX += text.boundsInLocal.width
         }
 
@@ -152,22 +178,13 @@ internal class TextLine : Region() {
 
     private fun textRunToTextFx(textRun: TextRun): Text {
         val font = font ?: error("Font is not specified")
-        val lineHeight = font.size
         val scaleFactor = textRun.fontScale ?: 1.0
-        val baseline = when (textRun.baselineShift) {
-            BaselineShift.SUPER -> lineHeight * 0.4
-            BaselineShift.SUB -> lineHeight * -0.4
-            else -> 0.0
-        }
 
         val text = Text()
-
         fill?.let { text.fill = it }
         stroke?.let { text.stroke = it }
         strokeWidth?.let { text.strokeWidth = it }
-        textOrigin?.let { text.textOrigin = it }
         text.text = textRun.text
-        text.y = -baseline
         text.font = when (scaleFactor) {
             1.0 -> font
             else -> {
@@ -177,6 +194,17 @@ internal class TextLine : Region() {
                 Font.font(font.family, fontWeight, fontPosture, fontSize)
             }
         }
+
+        val bounds = text.boundsInLocal
+        val lineHeight = bounds.height
+
+        val dy = textRun.dy?.let { lineHeight * it } ?: 0.0
+        val baseline = when (textRun.baselineShift) {
+            BaselineShift.SUPER -> lineHeight * 0.4
+            BaselineShift.SUB -> lineHeight * -0.4
+            else -> 0.0
+        }
+        text.y = -baseline + dy
 
         return text
     }

@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import kotlin.math.min
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumericBreakFormatterTest {
+    @Suppress("PrivatePropertyName")
+    private val TYPE_S_MAX = 1e26 // see NumberFormat.TYPE_S_MAX
+
     @Test
     fun formatZero() {
         val formatter = NumericBreakFormatter(0.0, 0.0, true)
@@ -22,7 +24,7 @@ class NumericBreakFormatterTest {
         assertEquals(
             listOf("-100Y", "-75Y", "-50Y", "-25Y", "0"),
             formatRange(
-                min = -NumberFormat.TYPE_S_MAX,
+                min = -TYPE_S_MAX,
                 max = 0.0,
                 metricPrefix = true
             )
@@ -32,7 +34,7 @@ class NumericBreakFormatterTest {
             listOf("0", "25Y", "50Y", "75Y", "100Y"),
             formatRange(
                 min = 0.0,
-                max = NumberFormat.TYPE_S_MAX,
+                max = TYPE_S_MAX,
                 metricPrefix = true
             )
         )
@@ -40,8 +42,8 @@ class NumericBreakFormatterTest {
         assertEquals(
             listOf("-100Y", "-50Y", "0", "50Y", "100Y"),
             formatRange(
-                min = -NumberFormat.TYPE_S_MAX,
-                max = NumberFormat.TYPE_S_MAX,
+                min = -TYPE_S_MAX,
+                max = TYPE_S_MAX,
                 metricPrefix = true
             )
         )
@@ -50,7 +52,7 @@ class NumericBreakFormatterTest {
     @Test
     fun formatExtremesTypeE() {
         assertEquals(
-            listOf("-1.80e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
+            listOf("-1.80·\\(10^{308}\\)", "-1.35·\\(10^{308}\\)", "-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0"),
             formatRange(
                 min = -Double.MAX_VALUE,
                 max = 0.0,
@@ -59,7 +61,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.80e+308"),
+            listOf("0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)", "1.35·\\(10^{308}\\)", "1.80·\\(10^{308}\\)"),
             formatRange(
                 min = 0.0,
                 max = Double.MAX_VALUE,
@@ -68,7 +70,7 @@ class NumericBreakFormatterTest {
         )
 
         assertEquals(
-            listOf("-8.99e+307", "-4.49e+307", "0", "4.49e+307", "8.99e+307"),
+            listOf("-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)"),
             formatRange(
                 min = -Double.MAX_VALUE / 2,
                 max = Double.MAX_VALUE / 2,

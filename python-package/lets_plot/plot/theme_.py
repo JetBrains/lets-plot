@@ -71,6 +71,8 @@ def theme(*,
           tooltip=None,
           tooltip_text=None, tooltip_title_text=None,
 
+          label_text=None,
+
           geom=None
           ):
     """
@@ -183,11 +185,13 @@ def theme(*,
     plot_margin : number or list of numbers
         Margin around entire plot.
         The margin may be specified using a number or a list of numbers:
+
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
         the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
         It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
     strip_background : str or dict
         Background of facet labels.
@@ -216,6 +220,11 @@ def theme(*,
     tooltip_title_text: str or dict
         Tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
+    label_text : str or dict
+        Annotation text.
+        Currently, annotations are supported for pie bar charts.
+        Set `element_text()` to specify annotation text parameters: font family and face, text size,
+        text color (is relevant for a pie chart - for those annotations that are outside the pie).
     geom: dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.
@@ -434,24 +443,26 @@ def element_text(
         Angle to rotate the text (in degrees).
     hjust : float
         Horizontal justification (in [0, 1]).
-        0 - left-justified
-        1 - right-justified
-        0.5 - center-justified
+        0 - left-justified;
+        1 - right-justified;
+        0.5 - center-justified.
         Can be used with values out of range, but behaviour is not specified.
     vjust : float
         Vertical justification (in [0, 1]).
-        0 - bottom-justified
-        1 - top-justified
-        0.5 - middle-justified
+        0 - bottom-justified;
+        1 - top-justified;
+        0.5 - middle-justified.
         Can be used with values out of range, but behaviour is not specified.
     margin : number or list of numbers
         Margins around the text.
+
         The margin may be specified using a number or a list of numbers:
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
         - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
         the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
         It is acceptable to use None for any side; in this case, the default side value for this element will be used.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
