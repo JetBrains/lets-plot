@@ -82,9 +82,9 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        return _export_as_raster(self, path, scale, 'png')
+        return _export_as_raster(plot, pathname, scale, 'png')
     elif ext == 'pdf':
-        return _export_as_raster(self, path, scale, 'pdf')
+        return _export_as_raster(plot, pathname, scale, 'pdf')
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
