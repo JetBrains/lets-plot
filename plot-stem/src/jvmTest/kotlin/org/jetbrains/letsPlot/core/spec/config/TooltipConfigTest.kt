@@ -493,16 +493,16 @@ class TooltipConfigTest {
 
     @Test
     fun `wrong tooltip format (wrong number of arguments)`() {
-        assertFailTooltipSpec(
-            tooltipConfig = mapOf(
-                FORMATS to listOf(
-                    mapOf(
-                        FIELD to "^color",
-                        FORMAT to "{.2f} {.2f}"
-                    )
-                )
-            ),
-            expectedMessage = "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2"
+        val tooltipConfig = mapOf(
+            FORMATS to listOf(          //define formats
+                mapOf(FIELD to "^color", FORMAT to "{.2f} {.2f}")
+            )
+        )
+        val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+
+        assertEquals(
+            "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2",
+            kotlin.runCatching { getGeneralTooltipStrings(geomLayer) }.exceptionOrNull()!!.message
         )
     }
 

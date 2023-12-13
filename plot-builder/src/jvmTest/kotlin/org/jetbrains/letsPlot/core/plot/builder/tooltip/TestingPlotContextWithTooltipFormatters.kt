@@ -13,6 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.Scale
 class TestingPlotContextWithTooltipFormatters : PlotContext {
     private val mockFormatters: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> String> = HashMap()
 
+    override val superscriptExponent: Boolean = false
+
     override val layers: List<PlotContext.Layer>
         get() = UNSUPPORTED("Not yet implemented")
 

@@ -10,7 +10,12 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
 
-class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Boolean) {
+class NumericBreakFormatter(
+    value: Double,
+    step: Double,
+    allowMetricPrefix: Boolean,
+    superscriptExponent: Boolean
+) {
     private var formatter: NumberFormat
 
     init {
@@ -65,7 +70,7 @@ class NumericBreakFormatter(value: Double, step: Double, allowMetricPrefix: Bool
             delimiter = ","
         }
 
-        val richOutput = if (type == "e") "&" else ""
+        val richOutput = if (type == "e" && superscriptExponent) "&" else ""
         formatter = NumberFormat("$delimiter.${precision.toInt()}$type$richOutput")
     }
 

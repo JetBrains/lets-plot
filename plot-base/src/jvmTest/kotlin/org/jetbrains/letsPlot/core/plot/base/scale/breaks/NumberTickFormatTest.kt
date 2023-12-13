@@ -153,18 +153,13 @@ class NumberTickFormatTest {
     @Test
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
-        assertEquals(
-            "5.000·\\(10^{-4}\\)",
-            format(.0005, domainAndStep)
-        )
-        assertEquals(
-            "5.050·\\(10^{-4}\\)",
-            format(.0005 + 5e-6, domainAndStep)
-        )
-        assertEquals(
-            "1.505·\\(10^{-3}\\)",
-            format(.0015 + 5e-6, domainAndStep)
-        )
+        assertEquals("5.000·\\(10^{-4}\\)", format(.0005, domainAndStep, superscriptExponent = true))
+        assertEquals("5.050·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, superscriptExponent = true))
+        assertEquals("1.505·\\(10^{-3}\\)", format(.0015 + 5e-6, domainAndStep, superscriptExponent = true))
+
+        assertEquals("5.000e-4", format(.0005, domainAndStep, superscriptExponent = false))
+        assertEquals("5.050e-4", format(.0005 + 5e-6, domainAndStep, superscriptExponent = false))
+        assertEquals("1.505e-3", format(.0015 + 5e-6, domainAndStep, superscriptExponent = false))
     }
 
     @Test
@@ -221,34 +216,15 @@ class NumberTickFormatTest {
     @Test
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
-        assertEquals(
-            "5.00·\\(10^{7}\\)",
-            formatScientific(
-                5e7,
-                domainAndStep
-            )
-        )
-        assertEquals(
-            "5.00·\\(10^{7}\\)",
-            formatScientific(
-                5e7 + 5,
-                domainAndStep
-            )
-        )
-        assertEquals(
-            "5.50·\\(10^{7}\\)",
-            formatScientific(
-                5e7 + 5e6,
-                domainAndStep
-            )
-        )
-        assertEquals(
-            "1.05·\\(10^{8}\\)",
-            formatScientific(
-                1e8 + 5e6,
-                domainAndStep
-            )
-        )
+        assertEquals("5.00·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, superscriptExponent = true))
+        assertEquals("5.00·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = true))
+        assertEquals("5.50·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = true))
+        assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, superscriptExponent = true))
+
+        assertEquals("5.00e+7", formatScientific(5e7, domainAndStep, superscriptExponent = false))
+        assertEquals("5.00e+7", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = false))
+        assertEquals("5.50e+7", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = false))
+        assertEquals("1.05e+8", formatScientific(1e8 + 5e6, domainAndStep, superscriptExponent = false))
     }
 
     @Test
@@ -272,28 +248,31 @@ class NumberTickFormatTest {
     }
 
     companion object {
-        private fun format(number: Number, domainAndStep: DoubleArray): String {
+        private fun format(number: Number, domainAndStep: DoubleArray, superscriptExponent: Boolean = false): String {
             return format(
                 number,
                 domainAndStep[0],
-                domainAndStep[1]
+                domainAndStep[1],
+                superscriptExponent
             )
         }
 
-        private fun format(number: Number, domain: Double, step: Double): String {
+        private fun format(number: Number, domain: Double, step: Double, superscriptExponent: Boolean = false): String {
             val formatter = NumericBreakFormatter(
                 domain,
                 step,
-                allowMetricPrefix = true
+                allowMetricPrefix = true,
+                superscriptExponent = superscriptExponent
             )
             return formatter.apply(number)
         }
 
-        private fun formatScientific(number: Number, domainAndStep: DoubleArray): String {
+        private fun formatScientific(number: Number, domainAndStep: DoubleArray, superscriptExponent: Boolean): String {
             val formatter = NumericBreakFormatter(
                 domainAndStep[0],
                 domainAndStep[1],
-                allowMetricPrefix = false
+                allowMetricPrefix = false,
+                superscriptExponent = superscriptExponent
             )
             return formatter.apply(number)
         }

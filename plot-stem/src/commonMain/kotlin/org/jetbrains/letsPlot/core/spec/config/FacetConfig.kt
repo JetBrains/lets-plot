@@ -21,7 +21,10 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.X_ORDER
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_FORMAT
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
-internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options) {
+internal class FacetConfig(
+    options: Map<String, Any>,
+    private val superscriptExponent: Boolean
+) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
         return when (val name = getStringSafe(Facet.NAME)) {
@@ -144,7 +147,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
         return when (optionVal) {
             null -> DEF_FORMATTER
             else -> {
-                val fmt = StringFormat.forOneArg(optionVal.toString())
+                val fmt = StringFormat.forOneArg(optionVal.toString(), superscriptExponent = superscriptExponent)
                 return { value: Any -> fmt.format(value) }
             }
         }

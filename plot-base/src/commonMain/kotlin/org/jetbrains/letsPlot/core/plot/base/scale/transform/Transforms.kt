@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
@@ -26,15 +26,16 @@ object Transforms {
 
     fun createBreaksGeneratorForTransformedDomain(
         transform: ContinuousTransform,
-        labelFormatter: ((Any) -> String)? = null
+        labelFormatter: ((Any) -> String)? = null,
+        superscriptExponent: Boolean
     ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
-            IDENTITY -> LinearBreaksGen(labelFormatter)
-            REVERSE -> LinearBreaksGen(labelFormatter)
-            SQRT -> NonlinearBreaksGen(SQRT, labelFormatter)
-            LOG10 -> NonlinearBreaksGen(LOG10, labelFormatter)
-            LOG2 -> NonlinearBreaksGen(LOG2, labelFormatter)
-            SYMLOG -> NonlinearBreaksGen(SYMLOG, labelFormatter)
+            IDENTITY -> LinearBreaksGen(labelFormatter, superscriptExponent)
+            REVERSE -> LinearBreaksGen(labelFormatter, superscriptExponent)
+            SQRT -> NonlinearBreaksGen(SQRT, labelFormatter, superscriptExponent)
+            LOG10 -> NonlinearBreaksGen(LOG10, labelFormatter, superscriptExponent)
+            LOG2 -> NonlinearBreaksGen(LOG2, labelFormatter, superscriptExponent)
+            SYMLOG -> NonlinearBreaksGen(SYMLOG, labelFormatter, superscriptExponent)
             else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
         }
 

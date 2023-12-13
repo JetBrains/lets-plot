@@ -15,7 +15,7 @@ class NumericBreakFormatterTest {
 
     @Test
     fun formatZero() {
-        val formatter = NumericBreakFormatter(0.0, 0.0, true)
+        val formatter = NumericBreakFormatter(0.0, 0.0, true, superscriptExponent = false)
         assertEquals("0.0", formatter.apply(0))
     }
 
@@ -52,30 +52,18 @@ class NumericBreakFormatterTest {
     @Test
     fun formatExtremesTypeE() {
         assertEquals(
-            listOf("-1.80·\\(10^{308}\\)", "-1.35·\\(10^{308}\\)", "-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0"),
-            formatRange(
-                min = -Double.MAX_VALUE,
-                max = 0.0,
-                metricPrefix = false
-            )
+            listOf("-1.80e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
+            formatRange(min = -Double.MAX_VALUE, max = 0.0, metricPrefix = false)
         )
 
         assertEquals(
-            listOf("0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)", "1.35·\\(10^{308}\\)", "1.80·\\(10^{308}\\)"),
-            formatRange(
-                min = 0.0,
-                max = Double.MAX_VALUE,
-                metricPrefix = false
-            )
+            listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.80e+308"),
+            formatRange(min = 0.0, max = Double.MAX_VALUE, metricPrefix = false)
         )
 
         assertEquals(
-            listOf("-8.99·\\(10^{307}\\)", "-4.49·\\(10^{307}\\)", "0", "4.49·\\(10^{307}\\)", "8.99·\\(10^{307}\\)"),
-            formatRange(
-                min = -Double.MAX_VALUE / 2,
-                max = Double.MAX_VALUE / 2,
-                metricPrefix = false
-            )
+            listOf("-8.99e+307", "-4.49e+307", "0", "4.49e+307", "8.99e+307"),
+            formatRange(min = -Double.MAX_VALUE / 2, max = Double.MAX_VALUE / 2, metricPrefix = false)
         )
     }
 
@@ -85,7 +73,7 @@ class NumericBreakFormatterTest {
         val values = List(n) { i -> min(min + i * step, Double.MAX_VALUE) }
         val formatterStep = (max - min) / 100
         val formatters = values.map {
-            NumericBreakFormatter(it, formatterStep, metricPrefix)
+            NumericBreakFormatter(it, formatterStep, metricPrefix, superscriptExponent = false)
         }
         return values.mapIndexed { i, v -> formatters[i].apply(v) }
     }

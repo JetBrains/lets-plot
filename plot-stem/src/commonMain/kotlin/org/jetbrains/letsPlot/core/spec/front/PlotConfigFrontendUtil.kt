@@ -210,7 +210,7 @@ object PlotConfigFrontendUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion)
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.superscript)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -229,6 +229,8 @@ object PlotConfigFrontendUtil {
 
         // geomTheme
         layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
+
+        layerBuilder.superscriptExponent(theme.exponentFormat.superscript)
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

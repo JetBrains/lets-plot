@@ -69,7 +69,7 @@ class PlotAssembler constructor(
         require(hasLayers()) { "No layers in plot" }
 
         // ToDo: transformed ranges by aes
-        plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap)
+        plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap, theme.exponentFormat.superscript)
 
         val legendBoxInfos: List<LegendBoxInfo> = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(

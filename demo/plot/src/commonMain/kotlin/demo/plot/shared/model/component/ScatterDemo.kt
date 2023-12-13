@@ -47,7 +47,7 @@ open class ScatterDemo : SimpleDemoBase() {
         )
     }
 
-    private fun classicTheme() = ThemeUtil.buildTheme(ThemeOption.Name.R_CLASSIC)
+    private fun classicTheme() = ThemeUtil.buildTheme(ThemeOption.Name.R_CLASSIC,)
 
     private fun gauss(): GroupComponent {
         val count = 200

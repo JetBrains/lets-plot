@@ -48,6 +48,8 @@ interface Scale {
 
         fun labelFormatter(v: (Any) -> String): Builder
 
+        fun superscriptExponent(v: Boolean): Builder
+
         fun multiplicativeExpand(v: Double): Builder
 
         fun additiveExpand(v: Double): Builder
