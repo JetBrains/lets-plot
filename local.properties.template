@@ -41,4 +41,4 @@ enable_python_package=false
 #   signing.secretKeyRingFile=/Users/you/.gnupg/secring.kbx
 # -------------------------------------------------------------------
 #sonatype.username=
-#password.password=
+#sonatype.password=

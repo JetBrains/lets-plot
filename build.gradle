@@ -128,13 +128,11 @@ if (project.hasProperty("build_release")) {
 project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 
 // define Sonatype nexus repository manager settings:
-def sonatypeUsername = localProps."sonatype.username" as String
-def sonatypePassword = localProps."sonatype.password" as String
 nexusPublishing {
     repositories {
         maven {
-            username = sonatypeUsername
-            password = sonatypePassword
+            username = localProps."sonatype.username"
+            password = localProps."sonatype.password"
             stagingProfileId = "11c25ff9a87b89"
             nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
