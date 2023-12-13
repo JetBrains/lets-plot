@@ -130,8 +130,8 @@ if system == "Linux":
     # So the only one Python host installation, defined in the settings file, is needed:
     python_paths = list(python_settings.values())[0]
 
-    # And Python package build by Gradle is disabled due the same reason.
-    enable_python_package = "false"
+    # Enable Python package to build Python extension module.
+    enable_python_package = "true"
 
     # Collect all predefined parameters:
     build_parameters = [
