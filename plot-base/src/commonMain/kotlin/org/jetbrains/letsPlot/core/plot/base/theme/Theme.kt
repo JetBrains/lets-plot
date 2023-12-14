@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 interface Theme {
     val fontFamilyRegistry: FontFamilyRegistry
 
+    val exponentFormat: ExponentFormat
+
     fun horizontalAxis(flipAxis: Boolean): AxisTheme
 
     fun verticalAxis(flipAxis: Boolean): AxisTheme

@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class DataFrameField(
@@ -20,28 +20,35 @@ class DataFrameField(
 
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private lateinit var myFormatter: (Any) -> String
+    private var myFormatter: ((Any) -> String)? = null
+
+    private fun initFormatter(superscriptExponent: Boolean): (Any) -> String {
+        require(myFormatter == null)
+
+        myFormatter = when (format) {
+            null -> TooltipFormatting.createFormatter(myVariable, superscriptExponent)
+            else -> StringFormat.forOneArg(format, formatFor = name, superscriptExponent = superscriptExponent)::format
+        }
+        return myFormatter!!
+    }
+
 
     override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
+
         myDataFrame = data
-
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
-
-        myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable)
-            else -> StringFormat.forOneArg(format, formatFor = name)::format
-        }
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
+        val formatter = myFormatter ?: initFormatter(ctx.superscriptExponent)
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
-            value = myFormatter(originalValue),
+            value = formatter.invoke(originalValue),
             aes = null,
             isAxis = false,
             isSide = false

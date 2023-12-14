@@ -18,7 +18,8 @@ internal object PlotConfigScaleProviders {
         layerConfigs: List<LayerConfig>,
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean,
-        zeroPositionalExpands: Boolean
+        zeroPositionalExpands: Boolean,
+        superscriptExponent: Boolean,
     ): Map<Aes<*>, ScaleProvider> {
 
         val scaleProviderBuilderByAes = HashMap<Aes<*>, ScaleProviderBuilder<*>>()
@@ -77,6 +78,10 @@ internal object PlotConfigScaleProviders {
             }
         }
 
-        return scaleProviderBuilders.mapValues { (_, builder) -> builder.build() }
+        return scaleProviderBuilders.mapValues { (_, builder) ->
+            builder
+                .superscriptExponent(superscriptExponent)
+                .build()
+        }
     }
 }

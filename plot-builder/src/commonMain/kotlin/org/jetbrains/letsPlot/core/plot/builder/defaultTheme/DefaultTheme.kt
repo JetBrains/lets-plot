@@ -31,6 +31,8 @@ class DefaultTheme internal constructor(
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
     private val colors = DefaultColorTheme(options, fontFamilyRegistry)
 
+    override val exponentFormat: ExponentFormat = options[ThemeOption.EXPONENT_FORMAT] as? ExponentFormat ?: ExponentFormat.E
+
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
     override fun verticalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisX else axisY

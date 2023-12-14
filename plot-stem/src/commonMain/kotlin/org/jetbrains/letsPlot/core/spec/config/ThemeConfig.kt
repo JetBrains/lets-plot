@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
 
 class ThemeConfig constructor(
@@ -29,6 +30,7 @@ class ThemeConfig constructor(
         val userOptions: Map<String, Any> = themeSettings.mapValues { (key, value) ->
             var value = convertElementBlank(value)
             value = convertMargins(key, value)
+            value = convertExponentFormat(key, value)
             LegendThemeConfig.convertValue(key, value)
         }
 
@@ -36,6 +38,18 @@ class ThemeConfig constructor(
     }
 
     companion object {
+        private fun convertExponentFormat(key: String, value: Any): Any {
+            if (key == ThemeOption.EXPONENT_FORMAT) {
+                return when (value.toString().lowercase()) {
+                    "e" -> ExponentFormat.E
+                    "pow" -> ExponentFormat.POW
+                    else -> throw IllegalArgumentException(
+                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow."
+                    )
+                }
+            }
+            return value
+        }
 
         /**
          * Converts a simple "blank" string to a 'blank element'.

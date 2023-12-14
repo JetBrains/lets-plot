@@ -17,7 +17,8 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: Map<Aes<*>, Scale>
+    private val scaleMap: Map<Aes<*>, Scale>,
+    override val superscriptExponent: Boolean
 ) : PlotContext {
 
     private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)

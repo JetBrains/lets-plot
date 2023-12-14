@@ -672,6 +672,9 @@ object Option {
     }
 
     object Theme {
+        // System
+        const val EXPONENT_FORMAT = ThemeOption.EXPONENT_FORMAT
+
         // Common
         const val TITLE = ThemeOption.TITLE
         const val TEXT = ThemeOption.TEXT

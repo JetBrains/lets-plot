@@ -30,12 +30,12 @@ internal object TooltipFormatting {
         }
     }
 
-    fun createFormatter(variable: DataFrame.Variable): (Any) -> String {
+    fun createFormatter(variable: DataFrame.Variable, superscriptExponent: Boolean): (Any) -> String {
         return when (variable) {
             Stats.PROP,
-            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name)::format
+            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, superscriptExponent = superscriptExponent)::format
             Stats.PROPPCT,
-            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name)::format
+            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, superscriptExponent = superscriptExponent)::format
             else -> { value -> value.toString() }
         }
     }

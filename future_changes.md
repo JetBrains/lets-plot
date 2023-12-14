@@ -33,6 +33,10 @@
 
 
 
+- Formatting: add scientific superscript option [[#743](https://github.com/JetBrains/lets-plot/issues/743)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript.ipynb).
+
 ### Changed
 
 - The `plot_margin` parameter in `theme()` and the `margin` parameter in `element_text()` accept a number or a list of numbers:
@@ -44,10 +48,6 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).
 
-
-- Superscript for powers of 10 instead of e-notation.
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript.ipynb).
 
 
 ### Fixed

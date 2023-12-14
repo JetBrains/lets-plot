@@ -23,8 +23,32 @@ class MappingField(
 
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = label
-    private val myFormatter = format?.let {
-        StringFormat.forOneArg(format, formatFor = aes.name)
+
+    private var myFormatter: ((Any?) -> String)? = null
+
+    private fun initFormatter(ctx: PlotContext): (Any?) -> String {
+        require(myFormatter == null)
+
+        val mappingFormatter = format?.let {
+            StringFormat.forOneArg(it, formatFor = aes.name, superscriptExponent = ctx.superscriptExponent)
+        }
+
+        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
+        val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+
+        val plotFormatter = ctx.getTooltipFormatter(primaryAes) {
+            TooltipFormatting.createFormatter(primaryAes, ctx)
+        }
+
+        fun formatter(value: Any?): String {
+            if (value != null && mappingFormatter != null) {
+                return mappingFormatter.format(value)
+            }
+            return plotFormatter.invoke(value)
+        }
+
+        myFormatter = ::formatter
+        return myFormatter!!
     }
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -43,19 +67,11 @@ class MappingField(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
+        val formatter = myFormatter ?: initFormatter(ctx)
+
         val originalValue = myDataAccess.getOriginalValue(aes, index)
-        val formattedValue =
-            originalValue?.let {
-                myFormatter?.format(it)
-            } ?: run {
-                val tooltipAes = when {
-                    Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, myDataAccess.isYOrientation)
-                    else -> aes
-                }
-                ctx.getTooltipFormatter(tooltipAes) {
-                    TooltipFormatting.createFormatter(tooltipAes, ctx)
-                }.invoke(originalValue)
-            }
+        val formattedValue = formatter.invoke(originalValue)
+
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,

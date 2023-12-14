@@ -12,6 +12,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     private val definedBreaks: List<DomainT>?
     private val definedLabels: List<String>?
     private val labelLengthLimit: Int
+    protected val superscriptExponent: Boolean
 
     final override val name: String
 
@@ -27,6 +28,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         labelLengthLimit = 0
         definedLabels = null
         labelFormatter = null
+        superscriptExponent = false
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
@@ -35,6 +37,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         definedLabels = b.myLabels
         labelLengthLimit = b.myLabelLengthLimit
         labelFormatter = b.myLabelFormatter
+        superscriptExponent = b.mySuperscriptExponent
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -118,6 +121,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         internal var myLabels: List<String>? = scale.definedLabels
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
+        internal var mySuperscriptExponent: Boolean = scale.superscriptExponent
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
@@ -147,6 +151,11 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         override fun labelFormatter(v: (Any) -> String): Scale.Builder {
             myLabelFormatter = v
+            return this
+        }
+
+        override fun superscriptExponent(v: Boolean): Scale.Builder {
+            mySuperscriptExponent = v
             return this
         }
 

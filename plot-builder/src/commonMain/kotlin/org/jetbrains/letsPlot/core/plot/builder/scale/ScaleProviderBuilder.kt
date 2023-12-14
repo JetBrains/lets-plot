@@ -19,6 +19,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
+    private var mySuperscriptExponent: Boolean = false
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<Any?>? = null
@@ -108,6 +109,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
+    fun superscriptExponent(v: Boolean): ScaleProviderBuilder<T> {
+        mySuperscriptExponent = v
+        return this
+    }
+
     @Suppress("FunctionName")
     fun guide_NI(
         @Suppress("UNUSED_PARAMETER") v: Any
@@ -140,6 +146,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
+        private val mySuperscriptExponent: Boolean = b.mySuperscriptExponent
         private val myAes: Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
@@ -217,6 +224,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
         private fun completeScale(scale: Scale): Scale {
             val with = scale.with()
+                .superscriptExponent(mySuperscriptExponent)
+
             if (breaks != null) {
                 with.breaks(breaks)
             }
@@ -227,7 +236,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labelLengthLimit(myLabelLengthLimit)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.forOneArg(myLabelFormat)::format)
+                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, superscriptExponent = mySuperscriptExponent)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
