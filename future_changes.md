@@ -64,3 +64,4 @@
 - as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
 - Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
 - `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].
+- NumberFormat: `g` format doesn't use e-notation for small numbers [[#965](https://github.com/JetBrains/lets-plot/issues/965)].
