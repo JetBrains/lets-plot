@@ -753,6 +753,9 @@ object Option {
         const val TOOLTIP_TEXT = ThemeOption.TOOLTIP_TEXT
         const val TOOLTIP_TITLE_TEXT = ThemeOption.TOOLTIP_TITLE_TEXT
 
+        // Annotation
+        const val ANNOTATION_TEXT = ThemeOption.ANNOTATION_TEXT
+
         const val GEOM = ThemeOption.GEOM
         const val FLAVOR = ThemeOption.FLAVOR
 

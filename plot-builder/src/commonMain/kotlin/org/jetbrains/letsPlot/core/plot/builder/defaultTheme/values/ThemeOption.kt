@@ -88,6 +88,7 @@ object ThemeOption {
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
 
+    // Annotation
     const val ANNOTATION_TEXT = "label_text"
 
     const val GEOM = "geom"
