@@ -57,6 +57,22 @@ Examples
 
 """
 
+LETS_PLOT_BW = _maptiles_lets_plot(theme='bw')
+"""
+Vector tiles, BW theme.
+
+Examples
+--------
+.. jupyter-execute::
+    :linenos:
+    :emphasize-lines: 4
+
+    from lets_plot import *
+    from lets_plot import tilesets
+    LetsPlot.setup_html()
+    ggplot() + geom_livemap(tiles=tilesets.LETS_PLOT_BW)
+
+"""
 
 SOLID = _maptiles_solid('#FFFFFF')
 """
