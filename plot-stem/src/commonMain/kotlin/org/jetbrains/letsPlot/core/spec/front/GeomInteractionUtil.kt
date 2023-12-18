@@ -244,7 +244,8 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
-            GeomKind.LOLLIPOP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.LOLLIPOP,
+            GeomKind.SPOKE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,
@@ -284,6 +285,7 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
+            GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
             GeomKind.RIBBON,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR -> {
@@ -425,6 +427,7 @@ object GeomInteractionUtil {
             GeomKind.FREQPOLY,
             GeomKind.PATH,
             GeomKind.SEGMENT,
+            GeomKind.SPOKE,
             GeomKind.RIBBON,
             GeomKind.SMOOTH,
             GeomKind.STEP -> true

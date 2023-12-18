@@ -33,6 +33,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
@@ -113,6 +114,7 @@ object AesInitValue {
         VALUE_MAP[HJUST] = 0.5  // 'middle'
         VALUE_MAP[VJUST] = 0.5  // 'middle'
         VALUE_MAP[ANGLE] = 0.0
+        VALUE_MAP[RADIUS] = 0.0
         VALUE_MAP[SLICE] = 0.0
         VALUE_MAP[EXPLODE] = 0.0
     }

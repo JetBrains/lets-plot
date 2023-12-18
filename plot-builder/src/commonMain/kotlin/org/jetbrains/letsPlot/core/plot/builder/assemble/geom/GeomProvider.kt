@@ -313,6 +313,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun spoke(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.SPOKE,
+                LollipopGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun text(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TEXT,

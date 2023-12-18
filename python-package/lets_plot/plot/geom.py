@@ -23,7 +23,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
-           'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
+           'geom_freqpoly', 'geom_step', 'geom_rect',
+           'geom_segment', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
            'geom_count']
 
@@ -5697,6 +5698,110 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  arrow=arrow,
                  flat=flat,
                  geodesic=geodesic,
+                 color_by=color_by,
+                 **other_args)
+
+
+def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               pivot=None,
+               color_by=None, **other_args):
+    """
+    Draw a straight line segment with given length and angle from the starting point.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    pivot : {'tail', 'middle', 'mid', 'tip'}, default='tail'
+        The part of the segment that is anchored to the plane. The segment rotates about this point.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_spoke()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - angle : slope's angle in radians.
+    - radius : segment length.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - size : line width.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_spoke(x=0, y=0, angle=0, radius=1)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 17
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 21
+        a, b = -1, 1
+        d = (b - a) / (n - 1)
+        space = np.linspace(a, b, n)
+        X, Y = np.meshgrid(space, space)
+        Z = X**2 + Y**2
+        dY, dX = np.gradient(Z, d)
+        R = np.sqrt(dX**2 + dY**2)
+        nR = R / R.max() * d
+        A = np.arctan2(dY, dX)
+        data = dict(x=X.reshape(-1), y=Y.reshape(-1), z=Z.reshape(-1), r=nR.reshape(-1), a=A.reshape(-1))
+        ggplot(data, aes('x', 'y', color='z')) + \\
+            geom_point(size=1.5) + \\
+            geom_spoke(aes(angle='a', radius='r')) + \\
+            scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
+            coord_fixed()
+
+    """
+    return _geom('spoke',
+                 mapping=mapping,
+                 data=data,
+                 stat=None,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 pivot=pivot,
                  color_by=color_by,
                  **other_args)
 

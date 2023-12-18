@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
+import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
 import org.jetbrains.letsPlot.core.spec.config.ArrowSpecConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
@@ -344,6 +345,22 @@ internal object GeomProviderFactory {
                         this.fatten = layerConfig.getDouble(Option.Geom.Lollipop.FATTEN)!!
                     }
                 }
+            }
+
+            GeomKind.SPOKE ->  GeomProvider.spoke {
+                val geom = SpokeGeom()
+                layerConfig.getString(Spoke.PIVOT)?.let {
+                    geom.pivot = when (it.lowercase()) {
+                        "tail" -> SpokeGeom.Pivot.TAIL
+                        "middle", "mid" -> SpokeGeom.Pivot.MIDDLE
+                        "tip" -> SpokeGeom.Pivot.TIP
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Spoke.PIVOT} parameter: '$it'. " +
+                            "Use one of: tail, middle, mid, tip."
+                        )
+                    }
+                }
+                geom
             }
 
             else -> {

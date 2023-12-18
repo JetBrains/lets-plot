@@ -30,6 +30,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
@@ -213,6 +214,9 @@ abstract class AesVisitor<T> {
         if (aes == ANGLE) {
             return angle()
         }
+        if (aes == RADIUS) {
+            return radius()
+        }
 
         if (aes == SLICE) {
             return slice()
@@ -316,6 +320,8 @@ abstract class AesVisitor<T> {
     protected abstract fun vjust(): T
 
     protected abstract fun angle(): T
+
+    protected abstract fun radius(): T
 
     protected abstract fun slice(): T
 

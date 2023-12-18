@@ -363,6 +363,15 @@ object GeomMeta {
                 Aes.FLOW
             )
 
+            GeomKind.SPOKE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.ANGLE, Aes.RADIUS,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+            )
+
             GeomKind.TEXT -> listOf(
                 Aes.X, Aes.Y,
                 Aes.SIZE,

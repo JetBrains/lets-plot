@@ -30,6 +30,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
@@ -151,6 +152,7 @@ object DefaultMapperProvider {
             // text vertical justification (numbers [0..1] or predefined strings, not positional)
             this.put(VJUST, createObjectIdentity())
             this.put(ANGLE, NUMERIC_IDENTITY)
+            this.put(RADIUS, NUMERIC_IDENTITY)
 
             this.put(SLICE, NUMERIC_IDENTITY)
             this.put(EXPLODE, NUMERIC_IDENTITY)

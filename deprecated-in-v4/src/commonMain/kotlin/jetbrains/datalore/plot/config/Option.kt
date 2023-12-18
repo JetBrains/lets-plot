@@ -705,6 +705,7 @@ object Option {
         private const val STEP = "step"
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
+        private const val SPOKE = "spoke"
         const val TEXT = "text"
         const val LABEL = "label"
         private const val RASTER = "raster"
@@ -755,6 +756,7 @@ object Option {
             map[STEP] = GeomKind.STEP
             map[RECT] = GeomKind.RECT
             map[SEGMENT] = GeomKind.SEGMENT
+            map[SPOKE] = GeomKind.SPOKE
             map[TEXT] = GeomKind.TEXT
             map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER

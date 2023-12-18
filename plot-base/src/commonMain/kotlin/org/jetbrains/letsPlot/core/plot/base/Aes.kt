@@ -116,6 +116,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val ANGLE: Aes<Double> =
             Aes("angle")
+        val RADIUS: Aes<Double> =
+            Aes("radius")
 
         // pie geom - defines size of sector
         val SLICE: Aes<Double> =
@@ -221,6 +223,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == HJUST ||
                     aes == VJUST ||
                     aes == ANGLE ||
+                    aes == RADIUS ||
                     aes == FAMILY ||
                     aes == FONTFACE ||
                     aes == LINEHEIGHT ||

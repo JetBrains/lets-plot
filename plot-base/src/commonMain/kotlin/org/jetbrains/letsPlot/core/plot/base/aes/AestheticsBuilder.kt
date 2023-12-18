@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
@@ -175,6 +176,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun angle(v: (Int) -> Double?): AestheticsBuilder {
         return aes(ANGLE, v)
+    }
+
+    fun radius(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(RADIUS, v)
     }
 
     fun xmin(v: (Int) -> Double?): AestheticsBuilder {

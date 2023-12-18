@@ -30,6 +30,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
@@ -120,6 +121,7 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
             IDENTITY_O_CVT
         )   // text vertical justification (numbers [0..1] or predefined strings, not positional)
         this.put(ANGLE, DOUBLE_CVT)
+        this.put(RADIUS, DOUBLE_CVT)
         this.put(SLICE, DOUBLE_CVT)
         this.put(EXPLODE, DOUBLE_CVT)
     }
