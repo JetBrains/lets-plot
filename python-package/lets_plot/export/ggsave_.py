@@ -5,7 +5,7 @@ import os
 from os.path import join
 from typing import Union
 
-from .simple import export_svg, export_html, export_png, export_pdf
+from ..plot.core import _to_svg, _to_html, _export_as_raster
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 from ..plot.subplots import SupPlotsSpec
@@ -74,20 +74,17 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     if not path:
         path = join(os.getcwd(), _DEF_EXPORT_DIR)
 
-    if not os.path.exists(path):
-        os.makedirs(path)
-
     pathname = join(path, filename)
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return export_svg(plot, pathname)
+        return _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
-        return export_html(plot, pathname, iframe=iframe)
+        return _to_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        return export_png(plot, pathname, scale)
+        return _export_as_raster(plot, pathname, scale, 'png')
     elif ext == 'pdf':
-        return export_pdf(plot, pathname, scale)
+        return _export_as_raster(plot, pathname, scale, 'pdf')
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
