@@ -210,6 +210,7 @@ internal class SquareFrameOfReferenceProvider(
                 plotBackground,
                 penColor,
                 debugDrawing,
+                theme.exponentFormat.superscript
             )
         }
     }

@@ -747,14 +747,17 @@ def scale_continuous(aesthetic, *,
                   **kwargs)
 
 
-def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None,
-                          **kwargs):
+def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Default color scale for `fill` aesthetic and continuous data.
+    Define smooth color gradient between two colors for `fill` aesthetic.
 
     Parameters
     ----------
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -791,7 +794,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
 
     Notes
     -----
-    Define most common properties of a continuous scale for `fill` aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
 
     Examples
     --------
@@ -804,12 +807,13 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
         x = list(range(50))
         ggplot({'x': x}, aes(x='x')) + \\
             geom_tile(aes(fill='x')) + \\
-            scale_fill_continuous(breaks=[5, 25, 45]) + \\
+            scale_fill_continuous(low='#1a9641', high='#d7191c') + \\
             coord_cartesian() + \\
             ggsize(600, 200)
 
     """
     return scale_continuous('fill',
+                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -818,18 +822,20 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format,
-                            **kwargs)
+                            format=format)
 
 
-def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None,
-                           **kwargs):
+def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None):
     """
-    Default color scale for `color` aesthetic and continuous data.
+    Define smooth color gradient between two colors for `color` aesthetic.
 
     Parameters
     ----------
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -866,7 +872,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
 
     Notes
     -----
-    Define most common properties of a continuous scale for `color` aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for `color` aesthetic.
 
     Examples
     --------
@@ -879,10 +885,11 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
         x = list(range(10))
         ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point(aes(color='x'), shape=1, size=5) + \\
-            scale_color_continuous(breaks=[0, 3, 6, 9])
+            scale_color_continuous(low='#1a9641', high='#d7191c')
 
     """
     return scale_continuous('color',
+                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -891,8 +898,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format,
-                            **kwargs)
+                            format=format)
 
 
 #

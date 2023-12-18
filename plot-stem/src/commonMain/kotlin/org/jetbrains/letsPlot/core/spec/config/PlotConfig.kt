@@ -100,7 +100,8 @@ abstract class PlotConfig(
             layerConfigs,
             scaleConfigs,
             excludeStatVariables,
-            zeroPositionalExpands
+            zeroPositionalExpands,
+            theme.exponentFormat.superscript
         )
 
         transformByAes = PlotConfigTransforms.createTransforms(
@@ -112,7 +113,7 @@ abstract class PlotConfig(
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions)
+            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat.superscript)
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)

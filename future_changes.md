@@ -37,6 +37,10 @@
 
 
 
+- Formatting: add scientific superscript option [[#743](https://github.com/JetBrains/lets-plot/issues/743)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript.ipynb).
+
 ### Changed
 
 - The `plot_margin` parameter in `theme()` and the `margin` parameter in `element_text()` accept a number or a list of numbers:
@@ -47,6 +51,7 @@
   - a list of four numbers - the margins are applied to the **top, right, bottom and left** in that order.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).
+
 
 
 ### Fixed
@@ -63,3 +68,4 @@
 - as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
 - Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
 - `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].
+- NumberFormat: `g` format doesn't use e-notation for small numbers [[#965](https://github.com/JetBrains/lets-plot/issues/965)].

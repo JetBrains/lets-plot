@@ -16,6 +16,8 @@ __all__ = [
 
 
 def theme(*,
+          exponent_format=None,
+
           line=None,
           rect=None,
           text=None,
@@ -81,6 +83,11 @@ def theme(*,
 
     Parameters
     ----------
+    exponent_format : {'e', 'pow'}, default='e'
+        Format for numeric labels in scientific notation.
+        e for "e" notation (e.g. 1e+6)
+        pow for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent.
+        Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
     line : str or dict
         All line elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -222,9 +229,9 @@ def theme(*,
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
     label_text : str or dict
         Annotation text.
-        Currently, annotations are supported for pie bar charts.
+        Annotations are currently supported for pie and bar charts.
         Set `element_text()` to specify annotation text parameters: font family and face, text size,
-        text color (is relevant for a pie chart - for those annotations that are outside the pie).
+        text color (relevant for a pie chart - for those annotations that are outside the pie).
     geom: dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.

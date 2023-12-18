@@ -54,7 +54,8 @@ internal object GeomProviderFactory {
     fun createGeomProvider(
         geomKind: GeomKind,
         layerConfig: OptionsAccessor,
-        aopConversion: AesOptionConversion
+        aopConversion: AesOptionConversion,
+        superscriptExponent: Boolean
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
@@ -260,14 +261,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom)
+                applyTextOptions(layerConfig, geom, superscriptExponent)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom)
+                applyTextOptions(layerConfig, geom, superscriptExponent)
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
@@ -369,8 +370,8 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
-        opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
+    private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom, superscriptExponent: Boolean) {
+        opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }

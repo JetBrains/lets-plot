@@ -6,6 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 object ThemeOption {
+    // System
+    const val EXPONENT_FORMAT = "exponent_format"
+
     // Common
     const val TITLE = "title"
     const val TEXT = "text"
@@ -85,6 +88,7 @@ object ThemeOption {
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
 
+    // Annotation
     const val ANNOTATION_TEXT = "label_text"
 
     const val GEOM = "geom"

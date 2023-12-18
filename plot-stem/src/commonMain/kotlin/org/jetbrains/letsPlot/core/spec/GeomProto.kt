@@ -24,8 +24,8 @@ import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor, aopConversion: AesOptionConversion): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion)
+    fun geomProvider(layerConfig: OptionsAccessor, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
     }
 
     fun defaultOptions(): Map<String, Any> {

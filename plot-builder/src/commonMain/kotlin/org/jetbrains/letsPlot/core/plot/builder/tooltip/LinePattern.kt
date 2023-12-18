@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ValueSource
 
@@ -22,13 +22,21 @@ class LinePattern(
 
     constructor(other: LinePattern) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
 
-    private val myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields")
+    private var myLineFormatter: ((List<Any>) -> String)? = null
+
+    private fun initFormatter(superscriptExponent: Boolean): (List<Any>) -> String {
+        require(myLineFormatter == null)
+        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", superscriptExponent)::format
+        return myLineFormatter!!
+    }
 
     fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
+        val formatter = myLineFormatter ?: initFormatter(ctx.superscriptExponent)
+
         val dataValues = fields.map { dataValue ->
             dataValue.getDataPoint(index, ctx) ?: return null
         }
@@ -36,7 +44,7 @@ class LinePattern(
             val dataValue = dataValues.single()
             DataPoint(
                 label = chooseLabel(dataValue.label),
-                value = myLineFormatter.format(dataValue.value),
+                value = formatter.invoke(listOf(dataValue.value)),
                 aes = dataValue.aes,
                 isAxis = dataValue.isAxis,
                 isSide = dataValue.isSide
@@ -44,7 +52,7 @@ class LinePattern(
         } else {
             DataPoint(
                 label = chooseLabel(dataValues.joinToString(", ") { it.label ?: "" }),
-                value = myLineFormatter.format(dataValues.map(DataPoint::value)),
+                value = formatter.invoke(dataValues.map(DataPoint::value)),
                 aes = null,
                 isAxis = false,
                 isSide = false

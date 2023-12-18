@@ -15,7 +15,8 @@ import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
-    private val formatter: ((Any) -> String)? = null
+    private val formatter: ((Any) -> String)? = null,
+    private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -36,6 +37,41 @@ internal class NonlinearBreaksGen(
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
+    }
+
+    private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
+        val breakFormatters = createFormatters(breakValues)
+        return MultiFormatter(breakValues, breakFormatters)::apply
+    }
+
+    private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
+        if (breakValues.isEmpty()) return emptyList()
+        if (breakValues.size == 1) {
+            val domainValue = breakValues[0]
+            val step = domainValue / 10
+            return listOf(createFormatter(domainValue, step))
+        }
+
+        // format each tick with its own formatter
+        val formatters: List<(Any) -> String> = breakValues.mapIndexed { i, currValue ->
+            val step = abs(
+                when (i) {
+                    0 -> currValue - breakValues[i + 1]
+                    else -> currValue - breakValues[i - 1]
+                }
+            )
+            createFormatter(currValue, step)
+        }
+        return formatters
+    }
+
+    private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
+        return NumericBreakFormatter(
+            domainValue,
+            step,
+            true,
+            superscriptExponent = superscriptExponent
+        )::apply
     }
 
     companion object {
@@ -68,41 +104,6 @@ internal class NonlinearBreaksGen(
                 }
                 else -> breaksCount
             }
-        }
-
-        private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
-            val breakFormatters = createFormatters(breakValues)
-            return MultiFormatter(breakValues, breakFormatters)::apply
-        }
-
-        private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
-            if (breakValues.isEmpty()) return emptyList()
-            if (breakValues.size == 1) {
-                val domainValue = breakValues[0]
-                val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step))
-            }
-
-            // format each tick with its own formatter
-            @Suppress("UnnecessaryVariable")
-            val formatters: List<(Any) -> String> = breakValues.mapIndexed { i, currValue ->
-                val step = abs(
-                    when (i) {
-                        0 -> currValue - breakValues[i + 1]
-                        else -> currValue - breakValues[i - 1]
-                    }
-                )
-                createFormatter(currValue, step)
-            }
-            return formatters
-        }
-
-        private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
-            return NumericBreakFormatter(
-                domainValue,
-                step,
-                true
-            )::apply
         }
     }
 

@@ -22,6 +22,7 @@ internal class MarginalFrameOfReference(
     private val plotBackground: Color,
     private val penColor: Color,
     private val isDebugDrawing: Boolean,
+    private val superscriptExponent: Boolean,
 ) : FrameOfReference {
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
 
@@ -44,7 +45,8 @@ internal class MarginalFrameOfReference(
             flippedAxis = false,
             targetCollector,
             plotBackground,
-            penColor
+            penColor,
+            superscriptExponent
         )
 
         layerComponent.moveTo(geomBounds.origin)

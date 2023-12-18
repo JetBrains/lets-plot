@@ -14,7 +14,8 @@ object TestingPlotContext {
     fun create(layer: GeomLayer): PlotContext {
         return PlotAssemblerPlotContext(
             layersByTile = listOf(listOf(layer)),
-            scaleMap = layer.scaleMap
+            scaleMap = layer.scaleMap,
+            superscriptExponent = false
         )
     }
 
@@ -25,7 +26,8 @@ object TestingPlotContext {
         val layersByTile = listOf(layers) // 1 tile, 2 layers.
         return PlotAssemblerPlotContext(
             layersByTile = layersByTile,
-            scaleMap = scaleMap
+            scaleMap = scaleMap,
+            superscriptExponent = false
         )
     }
 }

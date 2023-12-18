@@ -45,7 +45,7 @@ internal class ContinuousScale : AbstractScale<Double> {
         return if (customBreaksGenerator != null) {
             Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
         } else {
-            createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter)
+            createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter, superscriptExponent)
         }
     }
 

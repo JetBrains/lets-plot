@@ -14,7 +14,8 @@ import kotlin.math.abs
 import kotlin.math.max
 
 internal class LinearBreaksGen(
-    private val formatter: ((Any) -> String)? = null
+    private val formatter: ((Any) -> String)? = null,
+    private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -32,6 +33,28 @@ internal class LinearBreaksGen(
         return createFormatter(generateBreakValues(domain, targetCount))
     }
 
+    private fun createFormatter(breakValues: List<Double>): (Any) -> String {
+        val (referenceValue, step) = when {
+            breakValues.isEmpty() -> Pair(0.0, 0.5)
+            else -> {
+                val v = max(abs(breakValues.first()), abs(breakValues.last()))
+                val s = when {
+                    breakValues.size == 1 -> v / 10
+                    else -> abs(breakValues[1] - breakValues[0])
+                }
+                Pair(v, s)
+            }
+        }
+
+        val formatter = NumericBreakFormatter(
+            referenceValue,
+            step,
+            allowMetricPrefix = true,
+            superscriptExponent = superscriptExponent
+        )
+        return formatter::apply
+    }
+
     companion object {
         internal fun generateBreakValues(domain: DoubleSpan, targetCount: Int): List<Double> {
             val helper = LinearBreaksHelper(
@@ -40,27 +63,6 @@ internal class LinearBreaksGen(
                 targetCount
             )
             return helper.breaks
-        }
-
-        private fun createFormatter(breakValues: List<Double>): (Any) -> String {
-            val (referenceValue, step) = when {
-                breakValues.isEmpty() -> Pair(0.0, 0.5)
-                else -> {
-                    val v = max(abs(breakValues.first()), abs(breakValues.last()))
-                    val s = when {
-                        breakValues.size == 1 -> v / 10
-                        else -> abs(breakValues[1] - breakValues[0])
-                    }
-                    Pair(v, s)
-                }
-            }
-
-            val formatter = NumericBreakFormatter(
-                referenceValue,
-                step,
-                allowMetricPrefix = true
-            )
-            return formatter::apply
         }
     }
 }

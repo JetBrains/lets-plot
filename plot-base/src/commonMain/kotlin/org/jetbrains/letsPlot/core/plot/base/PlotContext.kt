@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 
 interface PlotContext {
+    val superscriptExponent: Boolean
     val layers: List<Layer>
 
     fun hasScale(aes: Aes<*>): Boolean

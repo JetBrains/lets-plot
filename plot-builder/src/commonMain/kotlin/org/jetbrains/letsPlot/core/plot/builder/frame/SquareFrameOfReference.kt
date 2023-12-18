@@ -204,7 +204,8 @@ internal class SquareFrameOfReference(
             flipAxis,
             targetCollector,
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
-            penColor = theme.colors().pen()
+            penColor = theme.colors().pen(),
+            theme.exponentFormat.superscript
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -275,7 +276,8 @@ internal class SquareFrameOfReference(
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
             backgroundColor: Color,
-            penColor: Color
+            penColor: Color,
+            superscriptExponent: Boolean
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -306,7 +308,7 @@ internal class SquareFrameOfReference(
                 }
             }
 
-            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap)
+            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap, superscriptExponent)
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)

@@ -18,9 +18,9 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     Parameters
     ----------
     url : str
-        Address of the tile server. Can be ommited if URL is already set in global settings.
+        Address of the tile server. Can be omitted if URL is already set in global settings.
 
-    theme : {'color', 'light', 'dark'}
+    theme : {'color', 'light', 'dark', 'bw'}
         Tiles theme.
 
     Returns

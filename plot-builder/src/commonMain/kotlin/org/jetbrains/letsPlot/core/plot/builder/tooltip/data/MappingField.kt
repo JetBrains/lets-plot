@@ -6,14 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class MappingField(
-    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+    val aes: Aes<*>,
     override val isSide: Boolean = false,
     override val isAxis: Boolean = false,
     private val format: String? = null,
@@ -22,8 +23,32 @@ class MappingField(
 
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = label
-    private val myFormatter = format?.let {
-        StringFormat.forOneArg(format, formatFor = aes.name)
+
+    private var myFormatter: ((Any?) -> String)? = null
+
+    private fun initFormatter(ctx: PlotContext): (Any?) -> String {
+        require(myFormatter == null)
+
+        val mappingFormatter = format?.let {
+            StringFormat.forOneArg(it, formatFor = aes.name, superscriptExponent = ctx.superscriptExponent)
+        }
+
+        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
+        val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+
+        val plotFormatter = ctx.getTooltipFormatter(primaryAes) {
+            TooltipFormatting.createFormatter(primaryAes, ctx)
+        }
+
+        fun formatter(value: Any?): String {
+            if (value != null && mappingFormatter != null) {
+                return mappingFormatter.format(value)
+            }
+            return plotFormatter.invoke(value)
+        }
+
+        myFormatter = ::formatter
+        return myFormatter!!
     }
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -42,23 +67,11 @@ class MappingField(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
-        val originalValue = myDataAccess.getOriginalValue(aes, index)
-        val formattedValue =
-            originalValue?.let {
-                myFormatter?.format(it)
-            } ?: run {
-                val tooltipAes = when {
-                    org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(
-                        aes,
-                        myDataAccess.isYOrientation
-                    )
+        val formatter = myFormatter ?: initFormatter(ctx)
 
-                    else -> aes
-                }
-                ctx.getTooltipFormatter(tooltipAes) {
-                    TooltipFormatting.createFormatter(tooltipAes, ctx)
-                }.invoke(originalValue)
-            }
+        val originalValue = myDataAccess.getOriginalValue(aes, index)
+        val formattedValue = formatter.invoke(originalValue)
+
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,
