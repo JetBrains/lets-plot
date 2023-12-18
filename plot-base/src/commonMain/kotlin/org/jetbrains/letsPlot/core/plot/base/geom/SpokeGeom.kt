@@ -7,9 +7,8 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
@@ -40,12 +39,10 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            val x = p.x() ?: continue
-            val y = p.y() ?: continue
+            val x = finiteOrNull(p.x()) ?: continue
+            val y = finiteOrNull(p.y()) ?: continue
             val base = DoubleVector(x, y)
-            val radius = p.radius() ?: continue
-            val angle = p.angle() ?: continue
-            val spoke = Spoke(radius, angle)
+            val spoke = toSpoke(p) ?: continue
             val start = getStart(base, spoke)
             val end = getEnd(base, spoke)
             svgElementHelper.createLine(start, end, p)?.let { line ->
@@ -70,13 +67,7 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val base = GeomUtil.TO_LOCATION_X_Y(p)?.also {
-            if (coordAes == Aes.Y) it.flip()
-        } ?: return null
-        val spoke = toSpoke(p) ?: return null
-        val start = getStart(base, spoke)
-        val end = getEnd(base, spoke)
-        return DoubleSpan(start.x, end.x)
+        return calculateSpan(p, coordAes, Aes.X)
     }
 
     override fun heightSpan(
@@ -85,44 +76,48 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
+        return calculateSpan(p, coordAes, Aes.Y)
+    }
+
+    private fun calculateSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        spanAxisAes: Aes<Double>
+    ): DoubleSpan? {
         val base = GeomUtil.TO_LOCATION_X_Y(p)?.also {
-            if (coordAes == Aes.X) it.flip()
+            if (coordAes != spanAxisAes) it.flip()
         } ?: return null
         val spoke = toSpoke(p) ?: return null
         val start = getStart(base, spoke)
         val end = getEnd(base, spoke)
-        return DoubleSpan(start.y, end.y)
-    }
-
-    private fun toSpoke(p: DataPointAesthetics): Spoke? {
-        val angle = p.angle()
-        val radius = p.radius()
-        if (!SeriesUtil.allFinite(angle, radius)) {
-            return null
+        return if (spanAxisAes == Aes.X) {
+            DoubleSpan(start.x, end.x)
+        } else {
+            DoubleSpan(start.y, end.y)
         }
-
-        return Spoke(radius!!, angle!!)
     }
 
-    private fun getStart(base: DoubleVector, spoke: Spoke): DoubleVector {
+    private fun toSpoke(p: DataPointAesthetics): DoubleVector? {
+        val angle = finiteOrNull(p.angle()) ?: return null
+        val radius = finiteOrNull(p.radius()) ?: return null
+
+        return DoubleVector(radius * cos(angle), radius * sin(angle))
+    }
+
+    private fun getStart(base: DoubleVector, spoke: DoubleVector): DoubleVector {
         return when (pivot) {
             Pivot.TAIL -> base
-            Pivot.MIDDLE -> DoubleVector(base.x - spoke.dx / 2, base.y - spoke.dy / 2)
-            Pivot.TIP -> DoubleVector(base.x - spoke.dx, base.y - spoke.dy)
+            Pivot.MIDDLE -> base.subtract(spoke.mul(0.5))
+            Pivot.TIP -> base.subtract(spoke)
         }
     }
 
-    private fun getEnd(base: DoubleVector, spoke: Spoke): DoubleVector {
+    private fun getEnd(base: DoubleVector, spoke: DoubleVector): DoubleVector {
         return when (pivot) {
-            Pivot.TAIL -> DoubleVector(base.x + spoke.dx, base.y + spoke.dy)
-            Pivot.MIDDLE -> DoubleVector(base.x + spoke.dx / 2, base.y + spoke.dy / 2)
+            Pivot.TAIL -> base.add(spoke)
+            Pivot.MIDDLE -> base.add(spoke.mul(0.5))
             Pivot.TIP -> base
         }
-    }
-
-    private data class Spoke(val radius: Double, val angle: Double) {
-        val dx = radius * cos(angle)
-        val dy = radius * sin(angle)
     }
 
     enum class Pivot {
