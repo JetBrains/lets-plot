@@ -41,8 +41,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         for (p in aesthetics.dataPoints()) {
             val x = finiteOrNull(p.x()) ?: continue
             val y = finiteOrNull(p.y()) ?: continue
-            val base = DoubleVector(x, y)
             val spoke = toSpoke(p) ?: continue
+            val base = DoubleVector(x, y)
             val start = getStart(base, spoke)
             val end = getEnd(base, spoke)
             svgElementHelper.createLine(start, end, p)?.let { line ->
@@ -84,9 +84,12 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         coordAes: Aes<Double>,
         spanAxisAes: Aes<Double>
     ): DoubleSpan? {
-        val base = GeomUtil.TO_LOCATION_X_Y(p)?.also {
-            if (coordAes != spanAxisAes) it.flip()
-        } ?: return null
+        val loc = GeomUtil.TO_LOCATION_X_Y(p) ?: return null
+        val base = if (coordAes == spanAxisAes) {
+            loc
+        } else {
+            loc.flip()
+        }
         val spoke = toSpoke(p) ?: return null
         val start = getStart(base, spoke)
         val end = getEnd(base, spoke)
