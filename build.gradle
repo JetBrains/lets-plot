@@ -10,7 +10,7 @@ plugins {
     id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as platform
 import org.yaml.snakeyaml.Yaml
 
 project.ext.letsPlotTaskGroup = 'lets-plot'
@@ -31,7 +31,7 @@ allprojects {
     }
 
     project.ext.jfx_platform = { -> //getJfxPlatform()
-        OperatingSystem os = org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.currentOperatingSystem
+        def os = platform.currentOperatingSystem
         if (os.isWindows()) {
             return "win"
         } else if (os.isLinux()) {
@@ -51,77 +51,77 @@ allprojects {
 }
 
 // Read build settings from commandline parameters (for build_release.py script):
-def readSettingsFromParameters() {
-    def settings = [
-            build_python_extension: false,
-            enable_python_package : false,
-            python                : [bin_path: "", include_path: ""],
-            pypi                  : [test: [username: null, password: null],
-                                     prod: [username: null, password: null]]
-    ]
-    if (project.hasProperty("build_python_extension")) {
-        settings.build_python_extension = project.getProperty("build_python_extension")
-        assert settings.build_python_extension != null
-    }
+def readPropertiesFromParameters() {
+    def properties = new Properties()
     if (project.hasProperty("enable_python_package")) {
-        settings.enable_python_package = project.getProperty("enable_python_package")
-        assert settings.enable_python_package != null
+        properties."enable_python_package" = project.getProperty("enable_python_package").toBoolean()
     }
-    if (settings.build_python_extension) {
-        settings.python.bin_path = project.getProperty("python_bin_path")
-        settings.python.include_path = project.getProperty("python_include_path")
-        assert !settings.python.bin_path.isEmpty()
-        assert !settings.python.include_path.isEmpty()
+    if (properties.enable_python_package) {
+        properties."python.bin_path" = project.getProperty("python.bin_path")
+        properties."python.include_path" = project.getProperty("python.include_path")
     }
-    return settings
+    def os = platform.getCurrentOperatingSystem()
+    if (!os.windows) {
+        properties."architecture" = project.getProperty("architecture")
+    }
+    return properties
 }
 
-// Read build settings from build_settings.yml:
-def readSettingsFromYaml() {
-    def build_settings_file = new File(rootDir, "build_settings.yml")
-    if (!build_settings_file.canRead()) {
-        throw new GradleException("Couldn't read build_settings.yml")
-    }
-    def settings = new Yaml().load(build_settings_file.newInputStream())
-    if (settings.build_python_extension) {
-        assert settings.python.include_path != null
-    }
-    if (settings.enable_python_package) {
-        assert settings.build_python_extension
-        assert settings.python.bin_path != null
-    }
-    return settings
-}
+// Read build settings from local.properties:
+def readPropertiesFromFile() {
+    def os = platform.getCurrentOperatingSystem()
+    def properties = new Properties()
+    def localPropsFileName = "local.properties"
 
-// Get Python's arch to define Kotlin targets:
-def getPythonArch() {
-    def python_bin_path = project.buildSettings.python.bin_path
-    def getArchOutput = new ByteArrayOutputStream()
-    exec {
-        commandLine "${python_bin_path}/python",
-                "-c",
-                "import platform; print(platform.machine())"
-        standardOutput = getArchOutput
+    if (project.file(localPropsFileName).exists()) {
+        properties.load(project.file(localPropsFileName).newInputStream())
+    } else {
+        throw new FileNotFoundException("${localPropsFileName} file not found!\n" +
+                "Check ${localPropsFileName}_template file for the template.")
     }
-    return getArchOutput.toString().trim()
-}
+    properties."enable_python_package" = properties."enable_python_package".toBoolean()
 
+    if (!os.windows) {
+        assert properties."architecture" != null // Windows only 64bit version can be built, so the arch parameter is not needed and may not be set.
+    }
+
+    if (properties."enable_python_package") {
+
+        def pythonBinPath = properties."python.bin_path"
+        def pythonIncludePath = properties."python.include_path"
+
+        assert pythonBinPath != null
+        assert pythonIncludePath != null
+
+        if (!os.windows) {
+            def getArchOutput = new ByteArrayOutputStream()
+            exec {
+                commandLine "${pythonBinPath}/python",
+                        "-c",
+                        "import platform; print(platform.machine())"
+                standardOutput = getArchOutput
+            }
+            def currentPythonArch = getArchOutput.toString().trim()
+
+            if (currentPythonArch != properties."architecture") {
+                throw new IllegalArgumentException("Project and Python architectures don't match!\n" +
+                        " - Value, from your '${localPropsFileName}' file: ${properties.architecture}\n" +
+                        " - Your Python architecture: ${currentPythonArch}\n" +
+                        "Check your '${localPropsFileName}' file.")
+            }
+        }
+    }
+    return properties
+}
 
 // For build_release.py settings will be read from commandline parameters.
-// If not, settings will be read from build_settings.yml.
+// In other cases, settings will be read from local.properties.
 if (project.hasProperty("build_release")) {
-    project.ext.buildSettings = readSettingsFromParameters()
+    ext.localProps = readPropertiesFromParameters()
 } else {
-    project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
+    ext.localProps = readPropertiesFromFile()
 }
 
-// Read Python arch from commandline parameter if used:
-if (project.hasProperty("build_arch")) {
-    project.ext.pythonArch = project.getProperty("build_arch")
-    assert !project.pythonArch.isEmpty()
-} else if (project.buildSettings.build_python_extension) {
-    project.ext.pythonArch = getPythonArch()
-}
 
 // Maven publication settings
 // define local Maven Repository path:
@@ -131,8 +131,8 @@ project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 nexusPublishing {
     repositories {
         maven {
-            username = project.buildSettings?.sonatype?.username
-            password = project.buildSettings?.sonatype?.password
+            username = localProps."sonatype.username"
+            password = localProps."sonatype.password"
             stagingProfileId = "11c25ff9a87b89"
             nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
@@ -170,31 +170,29 @@ subprojects {
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
-        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+        def os = platform.getCurrentOperatingSystem()
 
         kotlin {
-            if (project.buildSettings.build_python_extension) {
-                if (currentOs.macOsX & project.pythonArch == "x86_64") {
+            if (os.macOsX & localProps."architecture" == "x86_64") {
+                macosX64()
+            } else if (os.macOsX & localProps."architecture" == "arm64") {
+                if (project.hasProperty("build_release")) {
                     macosX64()
-                } else if (currentOs.macOsX & project.pythonArch == "arm64") {
-                    if (project.hasProperty("build_release")) {
-                        macosX64()
-                        macosArm64()
-                    } else {
-                        macosArm64()
-                    }
-                } else if (currentOs.linux) {
-                    if (project.hasProperty("build_release")) {
-                        linuxX64()
-                        linuxArm64()
-                    } else if (project.pythonArch == "x86_64") {
-                        linuxX64()
-                    }
-                } else if (currentOs.windows) {
-                    mingwX64()
+                    macosArm64()
                 } else {
-                    throw new Exception("Unsupported platform.")
+                    macosArm64()
                 }
+            } else if (os.linux) {
+                if (project.hasProperty("build_release")) {
+                    linuxX64()
+                    linuxArm64()
+                } else if (project.localProps."architecture" == "x86_64") {
+                    linuxX64()
+                }
+            } else if (os.windows) {
+                mingwX64()
+            } else {
+                throw new Exception("Unsupported platform! Check project settings.")
             }
         }
     }

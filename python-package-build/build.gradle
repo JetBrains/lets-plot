@@ -1,9 +1,3 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-
-plugins {
-    id "base"
-}
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -13,36 +7,48 @@ plugins {
 // Building and publishing Python package
 // ----------------------------------------
 
-def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+plugins {
+    id "base"
+}
+
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as platform
 
 //def task_group = 'lets plot'
-def python_package_dir = "${rootDir}/python-package"
-def python_package_build_dir = "${python_package_dir}/build"
-def python_package_dist_dir = "${python_package_dir}/dist"
+def pythonPackagePath = "${rootDir}/python-package"
+def pythonPackageBuildDir = "${pythonPackagePath}/build"
+def pythonPackageDistDir = "${pythonPackagePath}/dist"
 
 clean {
-    delete python_package_build_dir
-    delete python_package_dist_dir
-    delete "${python_package_dir}/lets_plot/package_data"
-    delete "${python_package_dir}/lets_plot.egg-info"
-    delete "${python_package_dir}/kotlin-bridge/kotlin_bridge.o"
-    delete fileTree("${python_package_dir}/kotlin-bridge/"){
+    delete pythonPackageBuildDir
+    delete pythonPackageDistDir
+    delete "${pythonPackagePath}/lets_plot/package_data"
+    delete "${pythonPackagePath}/lets_plot.egg-info"
+    delete "${pythonPackagePath}/kotlin-bridge/kotlin_bridge.o"
+    delete fileTree("${pythonPackagePath}/kotlin-bridge/"){
         include "*.def"
     }
 }
 
-if (project.buildSettings.enable_python_package) {
-    def python_bin_path = project.buildSettings.python.bin_path
-    def python_twine_commnad = "${python_bin_path}/twine"
-    def python_build_command = ["${python_bin_path}/python",
+if (localProps.enable_python_package) {
+    def os = platform.getCurrentOperatingSystem()
+
+    def pypiTestUsername = localProps."pypi.test.username"
+    def pypiTestPassword = localProps."pypi.test.password"
+
+    def pypiProdUsername = localProps."pypi.prod.username"
+    def pypiProdPassword = localProps."pypi.prod.password"
+
+    def pythonBinPath = localProps."python.bin_path"
+    def pythonTwineCommand = "${pythonBinPath}/twine"
+    def pythonBuildCommand = ["${pythonBinPath}/python",
                                 'setup.py',
                                 'update_js',
                                 'bdist_wheel',
-                                "--dist-dir=${python_package_dist_dir}",]
+                                "--dist-dir=${pythonPackageDistDir}",]
 
-    if (currentOs.isWindows()) {
-        python_twine_commnad = "${python_bin_path}/Scripts/twine"
-        python_build_command += ['build',
+    if (os.isWindows()) {
+        pythonTwineCommand = "${pythonBinPath}/Scripts/twine"
+        pythonBuildCommand += ['build',
                                   '-c',
                                   'mingw32']
     }
@@ -51,42 +57,40 @@ if (project.buildSettings.enable_python_package) {
     task buildPythonPackage(type: Exec) {
         group = project.letsPlotTaskGroup
         description = 'Builds lets-plot wheel distribution (python)'
-        workingDir python_package_dir
-        commandLine python_build_command
+        workingDir pythonPackagePath
+        commandLine pythonBuildCommand
     }
 
-    def pypi_prod = project.buildSettings.pypi.prod
-    if (pypi_prod.username != null && pypi_prod.password != null) {
+    if (pypiProdUsername != null && pypiProdPassword != null) {
         task publishProdPythonPackage(type: Exec) {
             group = project.letsPlotTaskGroup
             description = 'Publishes lets-plot python package to pypi.org'
 
-            workingDir python_package_dist_dir
-            commandLine python_twine_commnad,
+            workingDir pythonPackageDistDir
+            commandLine pythonTwineCommand,
                     "upload",
                     "-u",
-                    pypi_prod.username,
+                    pypiProdUsername,
                     "-p",
-                    pypi_prod.password,
+                    pypiProdPassword,
                     "./*"
         }
     }
 
-    def pipy_test = project.buildSettings.pypi.test
-    if (pipy_test.username != null && pipy_test.password != null) {
+    if (pypiTestUsername != null && pypiTestPassword != null) {
         task publishTestPythonPackage(type: Exec) {
             group = project.letsPlotTaskGroup
             description = 'Publishes lets-plot python package to test.pypi.org'
 
-            workingDir python_package_dist_dir
-            commandLine python_twine_commnad,
+            workingDir pythonPackageDistDir
+            commandLine pythonTwineCommand,
                     "upload",
                     "--repository-url",
                     "https://test.pypi.org/legacy/",
                     "-u",
-                    pipy_test.username,
+                    pypiTestUsername,
                     "-p",
-                    pipy_test.password,
+                    pypiTestPassword,
                     "./*"
         }
     }

@@ -7,29 +7,26 @@ plugins {
     id "org.jetbrains.kotlin.multiplatform"
 }
 
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-
-def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform as platform
 
 kotlin {
-//    // Enable the default target hierarchy:
-//    targetHierarchy.default()
 
-    if (project.buildSettings.build_python_extension) {
+    if (localProps.enable_python_package) {
 
+        def os = platform.getCurrentOperatingSystem()
         def target
-        if (currentOs.macOsX & project.pythonArch == "x86_64") {
+        if (os.macOsX & localProps.architecture == "x86_64") {
             target = macosX64("native")
-        } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+        } else if (os.macOsX & localProps."architecture" == "arm64") {
             target = macosArm64("native")
-        } else if (currentOs.linux & project.pythonArch == "x86_64") {
+        } else if (os.linux & localProps."architecture" == "x86_64") {
             target = linuxX64("native")
-        } else if (currentOs.linux & project.pythonArch == "arm64") {
+        } else if (os.linux & localProps."architecture" == "arm64") {
             target = linuxArm64("native")
-        } else if (currentOs.windows) {
+        } else if (os.windows) {
             target = mingwX64("native")
         } else {
-            throw new Exception("Unsupported platform.")
+            throw new Exception("Unsupported platform! Check project settings.")
         }
 
         target.binaries {
@@ -39,7 +36,7 @@ kotlin {
         }
         target.compilations.main.cinterops {
             python {
-                compilerOpts "-I${project.buildSettings.python.include_path}"
+                compilerOpts "-I${localProps."python.include_path"}"
             }
         }
     } else {
