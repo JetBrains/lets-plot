@@ -42,3 +42,4 @@ enable_python_package=false
 # -------------------------------------------------------------------
 #sonatype.username=
 #sonatype.password=
+#sonatype.profileID=
