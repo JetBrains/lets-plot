@@ -101,8 +101,13 @@ class LocatedTargetsPicker(
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
 
-        private const val BAR_TOOLTIPS_MAX_COUNT = 5 // allowed number of visible tooltips
+        private const val BAR_TARGETS_MAX_COUNT = 5 // allowed number of visible tooltips
         private val BAR_GEOMS = setOf(BAR, HISTOGRAM)
+
+        // more than 10 targets per layer is too much.
+        // Seems like Lets-Plot was used by vis tools, not by humans. Limit tooltips count to 1.
+        // User won't get much info from it anyway.
+        private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
         // Consider layers with the same geom as a single layer to join their tooltips
         private val STACKABLE_GEOMS = setOf(
@@ -160,7 +165,9 @@ class LocatedTargetsPicker(
             val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
 
             // for bar - if the number of targets exceeds the restriction value => use the closest one
-            if (lookupResult.geomKind in BAR_GEOMS && geomTargets.size > BAR_TOOLTIPS_MAX_COUNT) {
+            if (lookupResult.geomKind in BAR_GEOMS && geomTargets.size > BAR_TARGETS_MAX_COUNT
+                || geomTargets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
+            ) {
                 val closestTarget = geomTargets.minBy { target ->
                     MathUtil.distance(coord, target.tipLayoutHint.coord!!)
                 }
