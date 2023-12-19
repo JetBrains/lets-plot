@@ -95,7 +95,6 @@ internal class TooltipRenderer constructor(
         val geomBounds = tileInfo.geomBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
-        println("cursor = $cursor tooltipSpecs.size = ${tooltipSpecs.size}")
         tooltipSpecs
             .filter { it.lines.isNotEmpty() }
             .zip(tooltipComponents)
