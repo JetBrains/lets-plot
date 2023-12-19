@@ -153,8 +153,8 @@ class NumberTickFormatTest {
     @Test
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
-        assertEquals("5.000·\\(10^{-4}\\)", format(.0005, domainAndStep, superscriptExponent = true))
-        assertEquals("5.050·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, superscriptExponent = true))
+        assertEquals("5·\\(10^{-4}\\)", format(.0005, domainAndStep, superscriptExponent = true))
+        assertEquals("5.05·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, superscriptExponent = true))
         assertEquals("1.505·\\(10^{-3}\\)", format(.0015 + 5e-6, domainAndStep, superscriptExponent = true))
 
         assertEquals("5.000e-4", format(.0005, domainAndStep, superscriptExponent = false))
@@ -182,43 +182,33 @@ class NumberTickFormatTest {
     @Test
     fun domain_ultraLarge() {
         val domainAndStep = doubleArrayOf(1e8, 5.0)
-        assertEquals(
-            "50,000,000",
-            format(5e7, domainAndStep)
-        )
-        assertEquals(
-            "50,000,005",
-            format(5e7 + 5, domainAndStep)
-        )
+        assertEquals("50,000,000", format(5e7, domainAndStep))
+        assertEquals("50,000,005", format(5e7 + 5, domainAndStep))
+
+        assertEquals("50,000,000", format(5e7, domainAndStep, superscriptExponent = true))
+        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, superscriptExponent = true))
     }
 
     @Test
     fun both_ultraLarge_metricPrefix() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
-        assertEquals(
-            "50M",
-            format(5e7, domainAndStep)
-        )
-        assertEquals(
-            "50M",
-            format(5e7 + 5, domainAndStep)
-        )
-        assertEquals(
-            "55M",
-            format(5e7 + 5e6, domainAndStep)
-        )
-        assertEquals(
-            "105M",
-            format(1e8 + 5e6, domainAndStep)
-        )
+        assertEquals("50M", format(5e7, domainAndStep))
+        assertEquals("50M", format(5e7 + 5, domainAndStep))
+        assertEquals( "55M", format(5e7 + 5e6, domainAndStep))
+        assertEquals("105M", format(1e8 + 5e6, domainAndStep))
+
+        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, superscriptExponent = true))
+        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, superscriptExponent = true))
+        assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, superscriptExponent = true))
+        assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, superscriptExponent = true))
     }
 
     @Test
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
-        assertEquals("5.00·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, superscriptExponent = true))
-        assertEquals("5.00·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = true))
-        assertEquals("5.50·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = true))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, superscriptExponent = true))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = true))
+        assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = true))
         assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, superscriptExponent = true))
 
         assertEquals("5.00e+7", formatScientific(5e7, domainAndStep, superscriptExponent = false))

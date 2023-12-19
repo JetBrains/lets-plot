@@ -20,7 +20,7 @@ class NumericBreakFormatter(
 
     init {
         @Suppress("NAME_SHADOWING")
-        var value = if (value == 0.0) {
+        val value = if (value == 0.0) {
             // Use very small value instead because log10(0) -> -Infinity.
             Double.MIN_VALUE * 10
         } else {
@@ -28,7 +28,7 @@ class NumericBreakFormatter(
         }
 
         @Suppress("NAME_SHADOWING")
-        var step = if (step == 0.0) {
+        val step = if (step == 0.0) {
             value / 10
         } else {
             abs(step)
@@ -60,18 +60,16 @@ class NumericBreakFormatter(
         precision = ceil(precision - 0.001)
 
         if (scientificNotation) {
-            type = if (domain10Power > 0 && allowMetricPrefix) {
-                // generate 'engineering notation', in which the exponent is a multiple of three
-                "s"
-            } else {
-                "e"
-            }
+            // generate 'engineering notation', in which the exponent is a multiple of three
+            type = if (domain10Power > 0 && allowMetricPrefix && !superscriptExponent) "s" else "e"
         } else {
             delimiter = ","
         }
 
         val richOutput = if (type == "e" && superscriptExponent) "&" else ""
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$type$richOutput")
+        val trim = if (type == "e" && superscriptExponent) "~" else ""
+
+        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput")
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)
