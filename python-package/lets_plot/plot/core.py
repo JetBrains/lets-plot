@@ -5,6 +5,7 @@
 import io
 import json
 import os
+from typing import Union
 
 __all__ = ['aes', 'layer']
 
@@ -792,7 +793,7 @@ def _theme_dicts_merge(x, y):
     return {**x, **y, **z}
 
 
-def _to_svg(spec, path) -> str | None:
+def _to_svg(spec, path) -> Union[str, None]:
     from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(spec.as_dict())
@@ -806,7 +807,7 @@ def _to_svg(spec, path) -> str | None:
         return None
 
 
-def _to_html(spec, path, iframe: bool) -> str | None:
+def _to_html(spec, path, iframe: bool) -> Union[str, None]:
     if iframe is None:
         iframe = False
 
@@ -823,7 +824,7 @@ def _to_html(spec, path, iframe: bool) -> str | None:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str) -> str | None:
+def _export_as_raster(spec, path, scale: float, export_format: str) -> Union[str, None]:
     if scale is None:
         scale = 2.0
 
