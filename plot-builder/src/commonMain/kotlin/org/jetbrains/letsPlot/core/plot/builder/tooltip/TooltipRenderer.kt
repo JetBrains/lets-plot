@@ -58,7 +58,6 @@ internal class TooltipRenderer constructor(
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: RetainableComponents<TooltipBox>
     private val crosshairStorage: RetainableComponents<CrosshairComponent>
-    private var lastCursorCoord: DoubleVector? = null
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
@@ -86,11 +85,6 @@ internal class TooltipRenderer constructor(
     }
 
     private fun showTooltips(cursor: DoubleVector) {
-        if (lastCursorCoord == cursor) {
-            return
-        }
-        lastCursorCoord = cursor
-
         val tileInfo = findTileInfo(cursor)
         if (tileInfo == null) {
             hideTooltips()
@@ -101,6 +95,7 @@ internal class TooltipRenderer constructor(
         val geomBounds = tileInfo.geomBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
+        println("cursor = $cursor tooltipSpecs.size = ${tooltipSpecs.size}")
         tooltipSpecs
             .filter { it.lines.isNotEmpty() }
             .zip(tooltipComponents)

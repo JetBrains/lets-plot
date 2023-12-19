@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
+import org.jetbrains.letsPlot.awt.util.AwtEventUtil
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -18,7 +19,6 @@ import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.awt.util.AwtEventUtil
 import java.awt.Rectangle
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -159,8 +159,20 @@ internal class FigureToAwt(
             (plotComponent as DisposingHub).registerDisposable(plotContainer)
 
             plotComponent.addMouseMotionListener(object : MouseAdapter() {
+                private var lastEvent: MouseEvent? = null
+
                 override fun mouseMoved(e: MouseEvent) {
                     super.mouseMoved(e)
+
+                    // For some reason AWT sends two events with the same coord for one mouse move.
+                    lastEvent?.let {
+                        if (it.id == e.id && it.point == e.point) {
+                            return
+                        }
+                    }
+
+                    lastEvent = e
+
                     executor {
                         plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
                     }
