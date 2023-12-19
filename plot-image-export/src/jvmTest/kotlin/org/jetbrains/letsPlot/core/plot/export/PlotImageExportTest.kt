@@ -85,22 +85,21 @@ class PlotImageExportTest {
                 "y": [ 0.0, 0.0, 0.0, 0.0, 0.0 ]
               },
               "mapping": { "x": "x", "y": "y" },
-              "ggtitle": {
-                "text": "Deault format",
-                "subtitle": "Superscript triggered automatically"
-              },
+              "ggtitle": { "text": "exponent_format=pow" },
               "kind": "plot",
-              "layers": [ { "geom": "point" } ]
+              "layers": [ { "geom": "point" } ],
+              "theme": { "exponent_format": "pow" }
             }
         """.trimIndent()
 
         PlotImageExport.buildImageFromRawSpecs(parsePlotSpec(spec), PlotImageExport.Format.PNG, 1.0, 72.0)
+            //.show()
     }
 
     @Suppress("unused")
-    private fun showPng(png: PlotImageExport.ImageData) {
+    private fun PlotImageExport.ImageData.show() {
         File.createTempFile("plot", ".png").apply {
-            writeBytes(png.bytes)
+            writeBytes(bytes)
             println("Plot saved to $absolutePath")
             Desktop.getDesktop().open(this)
         }
