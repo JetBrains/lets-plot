@@ -747,17 +747,36 @@ def scale_continuous(aesthetic, *,
                   **kwargs)
 
 
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None):
+def type_to_scale_mapper_kind(scale_type):
+    if scale_type is None or scale_type == 'gradient':
+        scale_mapper_kind = 'color_gradient'
+    elif scale_type == 'gradient2':
+        scale_mapper_kind = 'color_gradient2'
+    elif scale_type == 'gradientn':
+        scale_mapper_kind = 'color_gradientn'
+    elif scale_type == 'hue':
+        scale_mapper_kind = 'color_hue'
+    elif scale_type == 'grey':
+        scale_mapper_kind = 'color_grey'
+    elif scale_type == 'brewer':
+        scale_mapper_kind = 'color_brewer'
+    elif scale_type == 'viridis':
+        scale_mapper_kind = 'color_cmap'
+    else:
+        raise ValueError("Unsupported scale type: {}".format(scale_type))
+    return scale_mapper_kind
+
+
+def scale_fill_continuous(type=None, name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None,
+                          **kwargs):
     """
-    Define smooth color gradient between two colors for `fill` aesthetic.
+    Color scale for `fill` aesthetic and continuous data.
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
+    type : str, default='gradient'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -786,15 +805,14 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    kwargs:
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
 
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
 
     Examples
     --------
@@ -812,30 +830,33 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
             ggsize(600, 200)
 
     """
-    return scale_continuous('fill',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            lablim=lablim,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
+    scale_mapper_kind = type_to_scale_mapper_kind(type)
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  scale_mapper_kind=scale_mapper_kind,
+                  **kwargs)
 
 
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
+def scale_color_continuous(type=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None,
+                           **kwargs):
     """
-    Define smooth color gradient between two colors for `color` aesthetic.
+    Color scale for `color` aesthetic and continuous data.
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
+    type : str, default='gradient'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -864,15 +885,13 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    kwargs:
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for `color` aesthetic.
 
     Examples
     --------
@@ -888,17 +907,21 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
             scale_color_continuous(low='#1a9641', high='#d7191c')
 
     """
-    return scale_continuous('color',
-                            low=low, high=high,
-                            name=name,
-                            breaks=breaks,
-                            labels=labels,
-                            lablim=lablim,
-                            limits=limits,
-                            na_value=na_value,
-                            guide=guide,
-                            trans=trans,
-                            format=format)
+    scale_mapper_kind = type_to_scale_mapper_kind(type)
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  scale_mapper_kind=scale_mapper_kind,
+                  **kwargs)
 
 
 #
