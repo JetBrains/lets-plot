@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
@@ -94,18 +95,17 @@ internal class TopDownTileLayout(
             coordProvider: CoordProvider
         ): GeomAreaInsets {
             val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
-            val geomHeightEstim = geomOuterBounds(
-                insetsInitial,
-                plotSize,
-                hDomain,
-                vDomain,
-                marginsLayout,
-                coordProvider
-            ).dimension.let {
-                marginsLayout.toInnerSize(it).y
-            }
+            val axisHeightEstim =
+                geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, coordProvider)
+                    .dimension
+                    .let(marginsLayout::toInnerSize)
+                    .y
+                    .let { geomHeight ->
+                        // For polar coord axis height is half of geom height - it starts from the center.
+                        geomHeight.takeUnless { coordProvider is PolarCoordProvider } ?: (geomHeight / 2)
+                    }
 
-            val insetsVAxis = insetsInitial.layoutVAxis(vDomain, geomHeightEstim)
+            val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
             val plottingArea = geomOuterBounds(
                 insetsVAxis,
                 plotSize,
