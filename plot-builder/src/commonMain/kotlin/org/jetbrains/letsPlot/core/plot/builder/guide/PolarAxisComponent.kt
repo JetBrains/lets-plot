@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
@@ -47,7 +46,12 @@ class PolarAxisComponent(
                 for ((i, br) in breaksData.majorBreaks.withIndex()) {
                     //if (br in start..end) {
                         val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                        val labelOffset = DoubleVector.ZERO // tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+
+                        val labelOffset = when (orientation.isHorizontal) {
+                            false -> tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                            true -> DoubleVector.ZERO
+                        }
+
                         val group = buildTick(label, labelOffset, axisTheme)
 
                         when (orientation.isHorizontal) {
@@ -84,7 +88,7 @@ class PolarAxisComponent(
     ): SvgGElement {
 
         var tickMark: SvgLineElement? = null
-        if (false && axisTheme.showTickMarks()) { // doesnt fit to polar coord
+        if (!orientation.isHorizontal && axisTheme.showTickMarks()) {
             tickMark = SvgLineElement()
             tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
@@ -96,7 +100,7 @@ class PolarAxisComponent(
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
         }
 
-        val markLength = 0.0//axisTheme.tickMarkLength()
+        val markLength = axisTheme.tickMarkLength()
         when (orientation) {
             Orientation.LEFT -> {
                 if (tickMark != null) {
@@ -134,8 +138,8 @@ class PolarAxisComponent(
 
         if (tickLabel != null) {
             tickLabel.moveTo(labelOffset.x, labelOffset.y)
-            tickLabel.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            tickLabel.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+            tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
+            tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }
