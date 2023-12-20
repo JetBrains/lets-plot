@@ -117,6 +117,15 @@ object Option {
             const val ROW_HEIGHTS = "heights"
             const val FIT_CELL_ASPECT_RATIO = "fit" // bool
             const val INNER_ALIGNMENT = "align" // bool
+            const val SHARE_X_SCALE = "sharex" // all, row, col
+            const val SHARE_Y_SCALE = "sharey" // all, row, col
+
+            object Scales {
+                const val SHARE_NONE = "none"
+                const val SHARE_ALL = "all"
+                const val SHARE_ROW = "row"
+                const val SHARE_COL = "col"
+            }
         }
     }
 
@@ -765,6 +774,7 @@ object Option {
 
         // view element
         const val ELEMENT_BLANK = ThemeOption.ELEMENT_BLANK_SHORTHAND
+
         object Elem {
             const val BLANK = ThemeOption.Elem.BLANK
             const val FILL = ThemeOption.Elem.FILL

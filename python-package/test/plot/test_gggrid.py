@@ -41,6 +41,12 @@ expected_hv_space = {
     'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'hspace': 10, 'vspace': 20}
 }
 
+expected_share_xy_all_none = {
+    'kind': 'subplots',
+    'figures': figures_prop,
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'sharex': 'all', 'sharey': 'none'}
+}
+
 
 @pytest.mark.parametrize('kwargs,expected', [
     ({}, expected_no_args),
@@ -48,6 +54,8 @@ expected_hv_space = {
     ({'widths': [1, 2, 3], 'heights': [4, 5, 6]}, expected_widths_heights),
     ({'fit': False, 'align': True}, expected_fit_align),
     ({'hspace': 10, 'vspace': 20}, expected_hv_space),
+    ({'sharex': True, 'sharey': False}, expected_share_xy_all_none),
+    ({'sharex': 'all', 'sharey': 'none'}, expected_share_xy_all_none),
 ])
 def test_gggrid(kwargs, expected):
     p = gg.ggplot(data={})

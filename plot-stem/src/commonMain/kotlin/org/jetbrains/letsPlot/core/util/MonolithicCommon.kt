@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -157,6 +159,8 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?,
+        scaleXContinuousDomainUpdate: DoubleSpan? = null,
+        scaleYContinuousDomainUpdate: DoubleSpan? = null,
         compositeFigureComputationMessages: MutableList<String>? = null
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
@@ -177,6 +181,8 @@ object MonolithicCommon {
             config,
             plotSize,
             plotMaxWidth, plotPreferredWidth,
+            scaleXContinuousDomainUpdate,
+            scaleYContinuousDomainUpdate,
             ownComputationMessages
         )
     }
@@ -186,6 +192,8 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?,
+        sharedContinuousDomainX: DoubleSpan? = null,
+        sharedContinuousDomainY: DoubleSpan? = null,
         computationMessages: List<String>
     ): PlotFigureBuildInfo {
 
@@ -198,7 +206,11 @@ object MonolithicCommon {
             config.containsLiveMap
         )
 
-        val assembler = PlotConfigFrontendUtil.createPlotAssembler(config)
+        val assembler = PlotConfigFrontendUtil.createPlotAssembler(
+            config,
+            sharedContinuousDomainX,
+            sharedContinuousDomainY,
+        )
         return PlotFigureBuildInfo(
             assembler,
             config.toMap(),
@@ -238,14 +250,34 @@ object MonolithicCommon {
         computationMessages: MutableList<String>,
     ): CompositeFigureBuildInfo {
 
-        val elements: List<FigureBuildInfo?> = config.elementConfigs.map {
-            it?.let {
+        val compositeFigureLayout = config.createLayout()
+
+        val sharedXDomains: List<DoubleSpan?>?
+        val sharedYDomains: List<DoubleSpan?>?
+        if (compositeFigureLayout is CompositeFigureGridLayoutBase &&
+            compositeFigureLayout.hasSharedAxis()
+        ) {
+            val sharedDomainsXY = FigureGridScaleShareUtil.getSharedDomains(
+                elementConfigs = config.elementConfigs,
+                gridLayout = compositeFigureLayout
+            )
+            sharedXDomains = sharedDomainsXY.first
+            sharedYDomains = sharedDomainsXY.second
+        } else {
+            sharedXDomains = null
+            sharedYDomains = null
+        }
+
+        val elements: List<FigureBuildInfo?> = config.elementConfigs.mapIndexed { index, element ->
+            element?.let {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
                         plotSize = null,           // Will be updateed by sub-plots layout.
                         plotMaxWidth = null,
                         plotPreferredWidth = null,
+                        sharedContinuousDomainX = sharedXDomains?.get(index),
+                        sharedContinuousDomainY = sharedYDomains?.get(index),
                         computationMessages = emptyList()  // No "own messages" when a part of a composite.
                     )
 
@@ -264,7 +296,7 @@ object MonolithicCommon {
 
         return CompositeFigureBuildInfo(
             elements = elements,
-            layout = config.createLayout(),
+            layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
             theme = config.theme,
             computationMessages

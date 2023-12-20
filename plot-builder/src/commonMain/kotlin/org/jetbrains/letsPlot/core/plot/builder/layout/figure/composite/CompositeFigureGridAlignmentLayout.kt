@@ -24,6 +24,8 @@ class CompositeFigureGridAlignmentLayout(
     rowHeights: List<Double>?,
     fitCellAspectRatio: Boolean,
     elementsDefaultSizes: List<DoubleVector?>,
+    scaleShareX: ScaleSharePolicy,
+    scaleShareY: ScaleSharePolicy,
 ) : CompositeFigureGridLayoutBase(
     ncols = ncols,
     nrows = nrows,
@@ -33,6 +35,8 @@ class CompositeFigureGridAlignmentLayout(
     rowHeights = rowHeights,
     fitCellAspectRatio = fitCellAspectRatio,
     elementsDefaultSizes = elementsDefaultSizes,
+    scaleShareX = scaleShareX,
+    scaleShareY = scaleShareY,
 ), CompositeFigureLayout {
     override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
         val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)

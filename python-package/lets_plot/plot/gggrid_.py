@@ -13,6 +13,8 @@ __all__ = ['gggrid']
 
 
 def gggrid(plots: list, ncol: int = None, *,
+           sharex: str = None,
+           sharey: str = None,
            widths: list = None,
            heights: list = None,
            hspace: float = None,
@@ -31,6 +33,12 @@ def gggrid(plots: list, ncol: int = None, *,
     ncol : int
         Number of columns in grid.
         If not specified, shows plots horizontally, in one row.
+    sharex, sharey : bool or str, default=False
+        Controls sharing of axis limits between subplots in the grid.
+        - 'all'/True - share limits between all subplots.
+        - 'none'/False - do not share limits between subplots.
+        - 'row' - share limits between subplots in the same row.
+        - 'col' - share limits between subplots in the same column.
     widths : list of numbers
         Relative width of each column of grid, left to right.
     heights : list of numbers
@@ -86,10 +94,17 @@ def gggrid(plots: list, ncol: int = None, *,
         length = ncol * nrow
         plots = extended_list[0:length]
 
+    if sharex is not None and type(sharex) != str:
+        sharex = 'all' if sharex else 'none'
+    if sharey is not None and type(sharey) != str:
+        sharey = 'all' if sharey else 'none'
+
     layout = SupPlotsLayoutSpec(
         name="grid",
         ncol=ncol,
         nrow=nrow,
+        sharex=sharex,
+        sharey=sharey,
         widths=widths,
         heights=heights,
         hspace=hspace,

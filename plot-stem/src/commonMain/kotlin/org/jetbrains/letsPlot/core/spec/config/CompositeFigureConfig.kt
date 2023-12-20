@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import org.jetbrains.letsPlot.core.spec.FigKind
@@ -24,6 +25,12 @@ import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.INNER_ALIGNMENT
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NCOLS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.NROWS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.ROW_HEIGHTS
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.SHARE_X_SCALE
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.SHARE_Y_SCALE
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.Scales.SHARE_ALL
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.Scales.SHARE_COL
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.Scales.SHARE_NONE
+import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.Scales.SHARE_ROW
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.VSPACE
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.NAME
@@ -80,6 +87,8 @@ class CompositeFigureConfig constructor(
             val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
             val fitCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, true)
             val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
+            val scaleShareX: ScaleSharePolicy = asScaleSharePolicy(SHARE_X_SCALE, layoutOptions)
+            val scaleShareY: ScaleSharePolicy = asScaleSharePolicy(SHARE_Y_SCALE, layoutOptions)
 
             val elementsDefaultSizes: List<DoubleVector?> = elementConfigs.map { figureSpec ->
                 figureSpec?.let {
@@ -108,6 +117,8 @@ class CompositeFigureConfig constructor(
                     rowHeights = rowHeights,
                     fitCellAspectRatio = fitCellAspectRatio,
                     elementsDefaultSizes = elementsDefaultSizes,
+                    scaleShareX = scaleShareX,
+                    scaleShareY = scaleShareY,
                 )
             } else {
                 CompositeFigureGridLayout(
@@ -119,6 +130,8 @@ class CompositeFigureConfig constructor(
                     rowHeights = rowHeights,
                     fitCellAspectRatio = fitCellAspectRatio,
                     elementsDefaultSizes = elementsDefaultSizes,
+                    scaleShareX = scaleShareX,
+                    scaleShareY = scaleShareY,
                 )
             }
         }
@@ -136,5 +149,17 @@ class CompositeFigureConfig constructor(
         } else {
             null
         }
+    }
+
+    private fun asScaleSharePolicy(option: String, layoutOptions: OptionsAccessor): ScaleSharePolicy {
+        return layoutOptions.get(option)?.let {
+            when (it.toString().lowercase()) {
+                SHARE_NONE -> ScaleSharePolicy.NONE
+                SHARE_ALL -> ScaleSharePolicy.ALL
+                SHARE_ROW -> ScaleSharePolicy.ROW
+                SHARE_COL -> ScaleSharePolicy.COL
+                else -> throw IllegalArgumentException("Unexpected value: '$option = $it'. Use: 'all', 'row', 'col' or 'none'")
+            }
+        } ?: ScaleSharePolicy.NONE
     }
 }

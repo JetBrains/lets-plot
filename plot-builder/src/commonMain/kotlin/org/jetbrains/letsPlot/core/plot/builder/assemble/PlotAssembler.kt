@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -28,8 +30,8 @@ import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotAssembler constructor(
     private val layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
-    private val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
+    private val scaleMap: Map<Aes<*>, Scale>,
+    private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
     private val facets: PlotFacets = PlotFacets.undefined(),
     private val coordProvider: CoordProvider,
     private val xAxisPosition: AxisPosition,
@@ -38,15 +40,15 @@ class PlotAssembler constructor(
     title: String? = null,
     subtitle: String? = null,
     caption: String? = null,
-    private val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions> = HashMap(),
+    private val guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap(),
 ) {
 
     private val plotTitle = title?.takeIf { theme.plot().showTitle() }
     private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
     private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
 
-    private val scaleXProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-    private val scaleYProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+    private val scaleXProto: Scale = scaleMap.getValue(Aes.X)
+    private val scaleYProto: Scale = scaleMap.getValue(Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }
@@ -56,6 +58,17 @@ class PlotAssembler constructor(
     }
 
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
+
+    val rawXYTransformedDomainsByTile: List<Pair<DoubleSpan, DoubleSpan>>? = when {
+        containsLiveMap -> null
+        coreLayersByTile.isEmpty() -> null // no layers in plot
+        else -> PositionalScalesUtil.computePlotXYTransformedDomains(
+            coreLayersByTile,
+            scaleXProto,
+            scaleYProto,
+            facets
+        )
+    }
 
     private var legendsEnabled = true
     private var interactionsEnabled = true
@@ -92,10 +105,11 @@ class PlotAssembler constructor(
         frameProviderByTile = frameProviderByTile(
             coreLayersByTile = coreLayersByTile,
             marginalLayersByTile = marginalLayersByTile,
-            facets = facets,
+//            facets = facets,
             coordProvider = coordProvider,
             scaleXProto = scaleXProto,
             scaleYProto = scaleYProto,
+            rawXYTransformedDomainsByTile = rawXYTransformedDomainsByTile,
             containsLiveMap = containsLiveMap,
             hAxisPosition = hAxisPosition,
             vAxisPosition = vAxisPosition,
@@ -172,8 +186,8 @@ class PlotAssembler constructor(
     companion object {
         fun demoAndTest(
             plotLayers: List<GeomLayer>,
-            scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
-            scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
+            scaleMap: Map<Aes<*>, Scale>,
+            scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme,
             xAxisPosition: AxisPosition = AxisPosition.BOTTOM,
@@ -195,10 +209,11 @@ class PlotAssembler constructor(
         private fun frameProviderByTile(
             coreLayersByTile: List<List<GeomLayer>>,
             marginalLayersByTile: List<List<GeomLayer>>,
-            facets: PlotFacets,
+//            facets: PlotFacets,
             coordProvider: CoordProvider,
             scaleXProto: Scale,
             scaleYProto: Scale,
+            rawXYTransformedDomainsByTile: List<Pair<DoubleSpan, DoubleSpan>>?,
             containsLiveMap: Boolean,
             hAxisPosition: AxisPosition,
             vAxisPosition: AxisPosition,
@@ -208,14 +223,15 @@ class PlotAssembler constructor(
                 return coreLayersByTile.map { BogusFrameOfReferenceProvider() }
             }
 
-            val flipAxis = coordProvider.flipped
-            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-                coreLayersByTile,
-                scaleXProto,
-                scaleYProto,
-                facets
-            )
+//            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
+//                coreLayersByTile,
+//                scaleXProto,
+//                scaleYProto,
+//                facets
+//            )
+            val domainsXYByTile = rawXYTransformedDomainsByTile!!
 
+            val flipAxis = coordProvider.flipped
             val (hScaleProto, vScaleProto) = when (flipAxis) {
                 true -> scaleYProto to scaleXProto
                 else -> scaleXProto to scaleYProto

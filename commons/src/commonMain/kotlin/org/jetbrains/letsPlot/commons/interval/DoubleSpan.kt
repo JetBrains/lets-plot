@@ -74,6 +74,10 @@ class DoubleSpan(
         return DoubleSpan(lowerEnd - expand, upperEnd + expand)
     }
 
+    fun toPair(): Pair<Double, Double> {
+        return lowerEnd to upperEnd
+    }
+
     companion object {
         fun withLowerEnd(lowerEnd: Double, length: Double) = DoubleSpan(lowerEnd, lowerEnd + length)
         fun withUpperEnd(upperEnd: Double, length: Double) = DoubleSpan(upperEnd - length, upperEnd)

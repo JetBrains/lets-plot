@@ -5,11 +5,10 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -49,11 +48,35 @@ object PlotConfigFrontendUtil {
         return guideOptionsByAes
     }
 
-    fun createPlotAssembler(config: PlotConfigFrontend): PlotAssembler {
+    fun createPlotAssembler(
+        config: PlotConfigFrontend,
+        sharedContinuousDomainX: DoubleSpan? = null,
+        sharedContinuousDomainY: DoubleSpan? = null,
+    ): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
+        val scaleMap: Map<Aes<*>, Scale> = config.scaleMap.mapValues { (aes, scale) ->
+            if (aes == Aes.X && sharedContinuousDomainX != null) {
+                scale.with().continuousTransform(
+                    Transforms.continuousWithLimits(
+                        scale.transform as ContinuousTransform,
+                        sharedContinuousDomainX.toPair()
+                    )
+                ).build()
+            } else if (aes == Aes.Y && sharedContinuousDomainY != null) {
+                scale.with().continuousTransform(
+                    Transforms.continuousWithLimits(
+                        scale.transform as ContinuousTransform,
+                        sharedContinuousDomainY.toPair()
+                    )
+                ).build()
+            } else {
+                scale
+            }
+        }
+
         return PlotAssembler(
             layersByTile,
-            config.scaleMap,
+            scaleMap,
             config.mappersByAesNP,
             config.facets,
             config.coordProvider,
@@ -210,7 +233,8 @@ object PlotConfigFrontendUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.superscript)
+        val geomProvider =
+            layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.superscript)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
