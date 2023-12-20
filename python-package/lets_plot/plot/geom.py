@@ -2670,7 +2670,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
-     Unlike most other geoms, this geom does not affect the x and y scales.
+    Unlike most other geoms, this geom does not affect the x and y scales.
 
     `geom_abline()` understands the following aesthetics mappings:
 
@@ -4705,8 +4705,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_jitter(aes(color='x', size='y'), \\
                         sampling=sampling_random(n=600, seed=60), \\
-                        seed=37, + \\
-                        show_legend=False, width=.25) + \\
+                        seed=37, show_legend=False, width=.25) + \\
             scale_color_grey(start=.75, end=0) + \\
             scale_size(range=[1, 3])
 

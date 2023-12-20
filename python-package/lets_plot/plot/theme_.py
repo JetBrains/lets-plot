@@ -195,8 +195,7 @@ def theme(*,
 
         - a number or list of one number - the same margin it applied to all four sides;
         - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
-        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
-        the third - to the bottom;
+        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
@@ -224,16 +223,17 @@ def theme(*,
     tooltip_text : str or dict
         Text in general tooltip.
         Set `element_text()` to specify tooltip text parameters.
-    tooltip_title_text: str or dict
+    tooltip_title_text : str or dict
         Tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
     label_text : str or dict
         Annotation text.
         Annotations are currently supported for pie and bar charts.
         Set `element_text()` to specify annotation text parameters: font family and face, text size, text color.
-    geom: dict
+    geom : dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.
+
     Returns
     -------
     `FeatureSpec`
