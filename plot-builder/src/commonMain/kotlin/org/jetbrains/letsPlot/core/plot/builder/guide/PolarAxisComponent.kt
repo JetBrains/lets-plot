@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
@@ -138,8 +139,18 @@ class PolarAxisComponent(
 
         if (tickLabel != null) {
             tickLabel.moveTo(labelOffset.x, labelOffset.y)
-            tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
-            tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
+
+            when (orientation.isHorizontal) {
+                false -> {
+                    tickLabel.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
+                    tickLabel.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+                }
+                true -> {
+                    tickLabel.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+                    tickLabel.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+                }
+            }
+
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }
