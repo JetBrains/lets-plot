@@ -57,7 +57,8 @@
   - a list of four numbers - the margins are applied to the **top, right, bottom and left** in that order.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).
-
+             
+- Upgraded Apache Batik to version 1.17 [[#887](https://github.com/JetBrains/lets-plot/issues/887)]
 
 
 ### Fixed
