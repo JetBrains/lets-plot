@@ -42,7 +42,8 @@ object AxisUtil {
                 val label = pair.first
                 val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
 
-                if (labelsMap.haveSpace(br, label, labelOffset)) {
+                val loc = if (orientation.isHorizontal) br.x else br.y
+                if (labelsMap.haveSpace(loc, label, labelOffset)) {
                     return@mapIndexedNotNull i
                 } else {
                     return@mapIndexedNotNull null
@@ -92,19 +93,20 @@ object AxisUtil {
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
         horizontal: Boolean
-    ): List<Double?> {
+    ): List<DoubleVector?> {
         return breaks.map { breakValue ->
             val breakCoord = when (horizontal) {
-                true -> DoubleVector(breakValue, domain.yRange().lowerEnd)
+                true -> DoubleVector(breakValue, domain.yRange().upperEnd)
                 false -> DoubleVector(domain.xRange().lowerEnd, breakValue)
             }
 
             val breakClientCoord = toClient(breakCoord, coordinateSystem, flipAxis) ?: return@map null
 
-            when (horizontal) {
-                true -> breakClientCoord.x
-                false -> breakClientCoord.y
-            }
+            //when (horizontal) {
+            //    true -> breakClientCoord.x
+            //    false -> breakClientCoord.y
+            //}
+            breakClientCoord
         }
     }
 

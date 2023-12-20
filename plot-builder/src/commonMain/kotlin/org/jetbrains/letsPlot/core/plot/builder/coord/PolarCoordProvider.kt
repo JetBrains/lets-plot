@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
+import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers.IDENTITY
 import kotlin.math.PI
@@ -34,13 +36,13 @@ internal class PolarCoordProvider(
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
         // Domain of a data withouth any adjustments (i.e. no expand).
         // Keep lower end as is to avoid hole in the center and to keep correct start angle.
-        // Extend radius domain upper end with 5% to make space for labels and axis line.
+        // Extend upper end of the radius domain by 0.75 to make room for labels and axis line.
 
         val (rDomain, thetaDomain) = when (thetaFromX) {
             true -> domain.yRange() to domain.xRange()
             false -> domain.xRange() to domain.yRange()
         }.let { (rDomain, thetaDomain) ->
-            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.05)
+            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + 0.75)
             rDomainAdjusted to thetaDomain
         }
 
@@ -113,4 +115,22 @@ internal class PolarCoordProvider(
             flipAxis = false
         )
     }
+
+    override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinateSystem {
+        val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
+        return PolarCoordinateSystem(Coords.create(coordMapper))
+    }
+}
+
+
+class PolarCoordinateSystem(
+    private val coordinateSystem: CoordinateSystem
+) : CoordinateSystem {
+    override val isLinear: Boolean get() = coordinateSystem.isLinear
+
+    override fun toClient(p: DoubleVector): DoubleVector? = coordinateSystem.toClient(p)
+
+    override fun unitSize(p: DoubleVector): DoubleVector = coordinateSystem.unitSize(p)
+
+    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip())
 }

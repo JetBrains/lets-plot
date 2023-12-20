@@ -12,16 +12,19 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.BreaksData
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.TickLabelAdjustments
 import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.PolarAxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
@@ -98,8 +101,10 @@ internal class SquareFrameOfReference(
                     hideAxis = !drawHAxis,
                     hideAxisBreaks = !layoutInfo.hAxisShown,
                     axisTheme = hAxisTheme,
+                    gridTheme = hGridTheme,
                     labelAdjustments = labelAdjustments,
                     isDebugDrawing,
+                    coord,
                 )
 
                 val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
@@ -127,8 +132,10 @@ internal class SquareFrameOfReference(
                     hideAxis = !drawVAxis,
                     hideAxisBreaks = !layoutInfo.vAxisShown,
                     vAxisTheme,
+                    vGridTheme,
                     labelAdjustments,
                     isDebugDrawing,
+                    coord,
                 )
 
                 val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
@@ -221,9 +228,24 @@ internal class SquareFrameOfReference(
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
             axisTheme: AxisTheme,
+            gridTheme: PanelGridTheme,
             labelAdjustments: TickLabelAdjustments,
             isDebugDrawing: Boolean,
-        ): AxisComponent {
+            coord: CoordinateSystem,
+        ): SvgComponent {
+            if (coord is PolarCoordinateSystem) {
+                return PolarAxisComponent(
+                    length = info.axisLength,
+                    orientation = info.orientation,
+                    breaksData = breaksData,
+                    labelAdjustments = labelAdjustments,
+                    axisTheme = axisTheme,
+                    gridTheme = gridTheme,
+                    hideAxis = hideAxis,
+                    hideAxisBreaks = hideAxisBreaks
+                )
+            }
+
             val axis = AxisComponent(
                 length = info.axisLength,
                 orientation = info.orientation,
