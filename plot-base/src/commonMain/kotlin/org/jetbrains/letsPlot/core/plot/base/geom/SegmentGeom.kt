@@ -46,42 +46,35 @@ class SegmentGeom : GeomBase() {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
                 val start = DoubleVector(p.x()!!, p.y()!!)
                 val end = DoubleVector(p.xend()!!, p.yend()!!)
-                val line = helper.createLine(start, end, p)
-                if (line == null) continue
+                val line = helper.createLine(start, end, p) ?: continue
                 root.add(line)
 
+                val clientStart = DoubleVector(line.x1().get()!!, line.y1().get()!!)
+                val clientEnd = DoubleVector(line.x2().get()!!, line.y2().get()!!)
                 targetCollector.addPath(
-                    listOf(
-                        coord.toClient(start)!!,
-                        coord.toClient(end)!!
-                    ),
+                    listOf(clientStart, clientEnd),
                     { p.index() },
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     )
                 )
 
-                if (arrowSpec != null) {
-                    val clientX1 = line.x1().get()!!
-                    val clientY1 = line.y1().get()!!
-                    val clientX2 = line.x2().get()!!
-                    val clientY2 = line.y2().get()!!
-
-                    val abscissa = clientX2 - clientX1
-                    val ordinate = clientY2 - clientY1
+                arrowSpec?.let { arrowSpec ->
+                    val abscissa = clientEnd.x - clientStart.x
+                    val ordinate = clientEnd.y - clientStart.y
                     if (abscissa != 0.0 || ordinate != 0.0) {
                         // Compute the angle that the vector defined by this segment makes with the
                         // X-axis (radians)
                         val polarAngle = atan2(ordinate, abscissa)
 
-                        val arrowAes = arrowSpec!!.toArrowAes(p)
-                        if (arrowSpec!!.isOnLastEnd) {
-                            val arrow = arrowSpec!!.createElement(polarAngle, clientX2, clientY2)
+                        val arrowAes = arrowSpec.toArrowAes(p)
+                        if (arrowSpec.isOnLastEnd) {
+                            val arrow = arrowSpec.createElement(polarAngle, clientEnd.x, clientEnd.y)
                             decorate(arrow, arrowAes, applyAlphaToAll = true)
                             root.add(arrow)
                         }
-                        if (arrowSpec!!.isOnFirstEnd) {
-                            val arrow = arrowSpec!!.createElement(polarAngle + PI, clientX1, clientY1)
+                        if (arrowSpec.isOnFirstEnd) {
+                            val arrow = arrowSpec.createElement(polarAngle + PI, clientStart.x, clientStart.y)
                             decorate(arrow, arrowAes, applyAlphaToAll = true)
                             root.add(arrow)
                         }
