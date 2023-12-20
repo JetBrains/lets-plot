@@ -193,6 +193,12 @@ object Colors {
         return (luminance(color) + .05) / (luminance(other) + .05)
     }
 
+    fun contrastRatio(color: Color, other: Color): Double {
+        val l1 = luminance(color)
+        val l2 = luminance(other)
+        return (max(l1, l2) + .05) / (min(l1, l2) + .05)
+    }
+
     fun luminance(color: Color): Double {
         return .2126 * colorLuminance(color.red) + .7152 * colorLuminance(color.green) + .0722 * colorLuminance(color.blue)
     }
