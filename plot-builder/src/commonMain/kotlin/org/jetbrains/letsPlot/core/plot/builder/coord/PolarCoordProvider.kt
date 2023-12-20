@@ -42,7 +42,7 @@ internal class PolarCoordProvider(
             true -> domain.yRange() to domain.xRange()
             false -> domain.xRange() to domain.yRange()
         }.let { (rDomain, thetaDomain) ->
-            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + 0.75)
+            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
             rDomainAdjusted to thetaDomain
         }
 
