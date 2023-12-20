@@ -27,7 +27,6 @@ object DemoAndTest {
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
             backgroundColor = Color.WHITE,
-            penColor = Color.BLACK,
             superscriptExponent = false
         )
     }

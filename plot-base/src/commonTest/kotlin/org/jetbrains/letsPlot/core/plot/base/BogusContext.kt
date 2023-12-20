@@ -20,8 +20,6 @@ object BogusContext : GeomContext {
         get() = error("Not available in a bogus geom context")
     override val backgroundColor: Color
         get() = error("Not available in a bogus geom context")
-    override val penColor: Color
-        get() = error("Not available in a bogus geom context")
     override val plotContext: PlotContext
         get() = error("Not available in a bogus geom context")
 

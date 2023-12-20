@@ -437,10 +437,9 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 )
             )
         }
-        val textColor = when {
-            side != Side.INSIDE -> annotations.textStyle.color
-            Colors.luminance(sector.p.fill()!!) < 0.5 -> Color.WHITE // if fill is dark
-            else -> Color.BLACK
+        val textColor = when (side) {
+            Side.INSIDE -> AnnotationsUtil.chooseColor(sector.p.fill()!!)
+            else -> annotations.textStyle.color
         }
         return AnnotationLabel(
             text,

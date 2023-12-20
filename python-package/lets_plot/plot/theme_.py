@@ -230,8 +230,7 @@ def theme(*,
     label_text : str or dict
         Annotation text.
         Annotations are currently supported for pie and bar charts.
-        Set `element_text()` to specify annotation text parameters: font family and face, text size,
-        text color (relevant for a pie chart - for those annotations that are outside the pie).
+        Set `element_text()` to specify annotation text parameters: font family and face, text size, text color.
     geom: dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.

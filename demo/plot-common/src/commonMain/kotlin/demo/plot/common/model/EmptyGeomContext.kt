@@ -25,7 +25,6 @@ class EmptyGeomContext : GeomContext {
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
     override val annotations: Annotations? = null
     override val backgroundColor: Color = Color.WHITE
-    override val penColor: Color = Color.BLACK
     override val plotContext: PlotContext? = null
 
     override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {

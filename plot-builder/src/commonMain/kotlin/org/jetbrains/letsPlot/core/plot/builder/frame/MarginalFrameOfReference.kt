@@ -45,7 +45,6 @@ internal class MarginalFrameOfReference(
             flippedAxis = false,
             targetCollector,
             plotBackground,
-            penColor,
             superscriptExponent
         )
 
