@@ -780,7 +780,7 @@ def scale_fill_continuous(type=None, name=None, breaks=None, labels=None, lablim
     Parameters
     ----------
     type : str, default='gradient'
-        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -862,7 +862,7 @@ def scale_color_continuous(type=None, name=None, breaks=None, labels=None, labli
     Parameters
     ----------
     type : str, default='gradient'
-        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2045,9 +2045,9 @@ def scale_fill_discrete(type=None,
     Parameters
     ----------
     type : str, default='brewer'
-        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     direction : {1, -1}, default=1
-        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by original palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2130,7 +2130,7 @@ def scale_color_discrete(type=None,
     Parameters
     ----------
     type : str, default='brewer'
-        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by original palette.
         If -1, the order of colors is reversed.
