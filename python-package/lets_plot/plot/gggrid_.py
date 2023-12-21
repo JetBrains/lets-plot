@@ -5,7 +5,7 @@
 import json
 
 from lets_plot._global_settings import has_global_value, get_global_val, PLOT_THEME
-from lets_plot.plot.core import FeatureSpec
+from lets_plot.plot.core import FeatureSpec, PlotSpec
 from .subplots import SupPlotsLayoutSpec
 from .subplots import SupPlotsSpec
 
@@ -115,11 +115,28 @@ def gggrid(plots: list, ncol: int = None, *,
         align=align
     )
 
-    figure_spec = SupPlotsSpec(figures=plots, layout=layout)
+    # Global Theme
+    global_theme_options = json.loads(get_global_val(PLOT_THEME)) if has_global_value(PLOT_THEME) else None
 
-    if has_global_value(PLOT_THEME):
-        theme_options = json.loads(get_global_val(PLOT_THEME))
-        theme_name = theme_options.pop('name', None)
-        figure_spec += FeatureSpec('theme', theme_name, **theme_options)
+    def _strip_theme_if_global(fig):
+        # Strip global theme options from plots in grid (see issue: #966).
+        if global_theme_options is not None and 'theme' in fig.props() and fig.props()['theme'] == global_theme_options:
+            if isinstance(fig, PlotSpec):
+                fig = PlotSpec.duplicate(fig)
+                fig.props().pop('theme')
+                return fig
+            elif isinstance(fig, SupPlotsSpec):
+                fig = SupPlotsSpec.duplicate(fig)
+                fig.props().pop('theme')
+                return fig
+        return fig
+
+    figures = [_strip_theme_if_global(fig) for fig in plots]
+
+    figure_spec = SupPlotsSpec(figures=figures, layout=layout)
+
+    if global_theme_options is not None:
+        theme_name = global_theme_options.pop('name', None)
+        figure_spec += FeatureSpec('theme', theme_name, **global_theme_options)
 
     return figure_spec
