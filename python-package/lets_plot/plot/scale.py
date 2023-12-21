@@ -748,6 +748,9 @@ def scale_continuous(aesthetic, *,
 
 
 def _type_to_scale_mapper_kind(scale_type):
+    if scale_type is None:
+        return None
+
     if scale_type == 'gradient':
         scale_mapper_kind = 'color_gradient'
     elif scale_type == 'gradient2':
@@ -762,10 +765,9 @@ def _type_to_scale_mapper_kind(scale_type):
         scale_mapper_kind = 'color_brewer'
     elif scale_type == 'viridis':
         scale_mapper_kind = 'color_cmap'
-    elif scale_type is None:
-        scale_mapper_kind = 'color_gradient'
     else:
         raise ValueError("Unsupported scale type: {}".format(scale_type))
+
     return scale_mapper_kind
 
 
@@ -833,6 +835,8 @@ def scale_fill_continuous(type=None, name=None, breaks=None, labels=None, lablim
 
     """
     scale_mapper_kind = _type_to_scale_mapper_kind(type)
+    if scale_mapper_kind is None:
+        scale_mapper_kind = 'color_gradient'
     return _scale('fill',
                   name=name,
                   breaks=breaks,
@@ -910,6 +914,8 @@ def scale_color_continuous(type=None, name=None, breaks=None, labels=None, labli
 
     """
     scale_mapper_kind = _type_to_scale_mapper_kind(type)
+    if scale_mapper_kind is None:
+        scale_mapper_kind = 'color_gradient'
     return _scale('color',
                   name=name,
                   breaks=breaks,
@@ -2029,14 +2035,17 @@ def scale_discrete(aesthetic, *,
                   discrete=True)
 
 
-def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+def scale_fill_discrete(type=None,
+                        direction=None,
+                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                        **kwargs):
     """
-    Qualitative colors scale for `fill` aesthetic.
-    Defaults to the Brewer 'Set1' palette.
+    Color scale for `fill` aesthetic and discrete data.
 
     Parameters
     ----------
+    type : str, default='brewer'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
@@ -2067,15 +2076,13 @@ def scale_fill_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    kwargs:
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -2095,28 +2102,37 @@ def scale_fill_discrete(direction=None,
             scale_fill_discrete(guide='none')
 
     """
-    return scale_discrete('fill',
-                          direction=direction,
-                          name=name,
-                          breaks=breaks,
-                          labels=labels,
-                          lablim=lablim,
-                          limits=limits,
-                          na_value=na_value,
-                          guide=guide,
-                          format=format)
+    scale_mapper_kind = _type_to_scale_mapper_kind(type)
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  format=format,
+                  #
+                  scale_mapper_kind=scale_mapper_kind,
+                  direction=direction,
+                  discrete=True,
+                  **kwargs)
 
 
-def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+def scale_color_discrete(type=None,
+                         direction=None,
+                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                         **kwargs):
     """
-    Qualitative colors for `color` aesthetic.
-    Defaults to the Brewer 'Set1' palette.
+    Color scale for `color` aesthetic and discrete data.
 
     Parameters
     ----------
+    type : str, default='brewer'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}
     direction : {1, -1}, default=1
-        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by original palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2145,15 +2161,13 @@ def scale_color_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    kwargs:
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define qualitative color scale with evenly spaced hues for `color` aesthetic.
 
     Examples
     --------
@@ -2173,16 +2187,22 @@ def scale_color_discrete(direction=None,
             scale_color_discrete(guide='none')
 
     """
-    return scale_discrete('color',
-                          direction=direction,
-                          name=name,
-                          breaks=breaks,
-                          labels=labels,
-                          lablim=lablim,
-                          limits=limits,
-                          na_value=na_value,
-                          guide=guide,
-                          format=format)
+    scale_mapper_kind = _type_to_scale_mapper_kind(type)
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  lablim=lablim,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  format=format,
+                  #
+                  scale_mapper_kind=scale_mapper_kind,
+                  direction=direction,
+                  discrete=True,
+                  **kwargs)
 
 
 def scale_grey(aesthetic, *,
