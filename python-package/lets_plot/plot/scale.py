@@ -2008,7 +2008,7 @@ def scale_fill_discrete(direction=None,
                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors scale for `fill` aesthetic.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
+    Defaults to the Brewer 'Set1' palette.
 
     Parameters
     ----------
@@ -2086,7 +2086,7 @@ def scale_color_discrete(direction=None,
                          name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
     """
     Qualitative colors for `color` aesthetic.
-    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
+    Defaults to the Brewer 'Set1' palette.
 
     Parameters
     ----------
