@@ -35,8 +35,20 @@ class PolarAxisComponent(
 
     private fun buildAxis() {
         val rootElement = rootGroup
-        val start = 0.0
-        val end: Double = length
+
+        // Axis line
+        if (!hideAxisBreaks && axisTheme.showLine()) {
+            if (orientation.isHorizontal) {
+                val cx = length / 2
+                val cy = length / 2
+                val circle = SvgCircleElement(cx, cy, length / 2).apply {
+                    strokeWidth().set(gridTheme.majorLineWidth())
+                    strokeColor().set(gridTheme.majorLineColor())
+                    fillColor().set(Color.TRANSPARENT)
+                }
+                rootElement.children().add(circle)
+            }
+        }
 
         // Axis
         if (!hideAxis) {
@@ -57,29 +69,14 @@ class PolarAxisComponent(
 
                         when (orientation.isHorizontal) {
                             false -> SvgUtils.transformTranslate(group, 0.0, br.y)
-                            true -> SvgUtils.transformTranslate(group, br.x, -br.y)
+                            true -> SvgUtils.transformTranslate(group, br.x, br.y)
                         }
 
                         rootElement.children().add(group)
                     //}
                 }
             }
-
-            // Axis line
-            if (!hideAxisBreaks && axisTheme.showLine()) {
-                if (orientation.isHorizontal) {
-                    val cx = length / 2
-                    val cy = -length / 2
-                    val circle = SvgCircleElement(cx, cy, length / 2).apply {
-                        strokeWidth().set(gridTheme.majorLineWidth())
-                        strokeColor().set(gridTheme.majorLineColor())
-                        fillColor().set(Color.TRANSPARENT)
-                    }
-                    rootElement.children().add(circle)
-                }
-            }
         }
-
     }
 
     private fun buildTick(

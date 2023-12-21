@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
@@ -97,9 +98,13 @@ class PlotAssembler constructor(
 
         val flipAxis = coordProvider.flipped
 
-        val (hAxisPosition, vAxisPosition) = when (flipAxis) {
-            true -> yAxisPosition.flip() to xAxisPosition.flip()
-            else -> xAxisPosition to yAxisPosition
+        val (hAxisPosition, vAxisPosition) = if (coordProvider is PolarCoordProvider) {
+            AxisPosition.TOP to AxisPosition.LEFT
+        } else {
+            when (flipAxis) {
+                true -> yAxisPosition.flip() to xAxisPosition.flip()
+                else -> xAxisPosition to yAxisPosition
+            }
         }
 
         frameProviderByTile = frameProviderByTile(

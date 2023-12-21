@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.commons.geometry
 import kotlin.math.*
 
 class DoubleVector(val x: Double, val y: Double) {
+    constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+
     operator fun component1(): Double = x
     operator fun component2(): Double = y
 
