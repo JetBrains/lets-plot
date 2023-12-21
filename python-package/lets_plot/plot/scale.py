@@ -747,8 +747,8 @@ def scale_continuous(aesthetic, *,
                   **kwargs)
 
 
-def type_to_scale_mapper_kind(scale_type):
-    if scale_type is None or scale_type == 'gradient':
+def _type_to_scale_mapper_kind(scale_type):
+    if scale_type == 'gradient':
         scale_mapper_kind = 'color_gradient'
     elif scale_type == 'gradient2':
         scale_mapper_kind = 'color_gradient2'
@@ -762,6 +762,8 @@ def type_to_scale_mapper_kind(scale_type):
         scale_mapper_kind = 'color_brewer'
     elif scale_type == 'viridis':
         scale_mapper_kind = 'color_cmap'
+    elif scale_type is None:
+        scale_mapper_kind = 'color_gradient'
     else:
         raise ValueError("Unsupported scale type: {}".format(scale_type))
     return scale_mapper_kind
@@ -830,7 +832,7 @@ def scale_fill_continuous(type=None, name=None, breaks=None, labels=None, lablim
             ggsize(600, 200)
 
     """
-    scale_mapper_kind = type_to_scale_mapper_kind(type)
+    scale_mapper_kind = _type_to_scale_mapper_kind(type)
     return _scale('fill',
                   name=name,
                   breaks=breaks,
@@ -907,7 +909,7 @@ def scale_color_continuous(type=None, name=None, breaks=None, labels=None, labli
             scale_color_continuous(low='#1a9641', high='#d7191c')
 
     """
-    scale_mapper_kind = type_to_scale_mapper_kind(type)
+    scale_mapper_kind = _type_to_scale_mapper_kind(type)
     return _scale('color',
                   name=name,
                   breaks=breaks,
