@@ -54,9 +54,7 @@ object AxisUtil {
             majorClientBreaks.indices.toList()
         }
 
-        val visibleMajorClientBreaks = pickAtIndices(majorClientBreaks, visibleBreaks)
         val visibleMajorLabels = pickAtIndices(scaleBreaks.labels, visibleBreaks)
-
         val visibleMajorDomainBreak = pickAtIndices(scaleBreaks.transformedValues, visibleBreaks)
         val visibleMinorDomainBreak = if (visibleMajorDomainBreak.size > 1) {
             val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
@@ -66,14 +64,29 @@ object AxisUtil {
             emptyList()
         }
 
+        val visibleMajorClientBreaks = pickAtIndices(majorClientBreaks, visibleBreaks)
+            .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
+
         val visibleMinorClientBreaks = toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
+            .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
+
         val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
         val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
 
+        // For coord_polar squash first and last labels into one to avoid overlapping.
+        val labels = if (visibleMajorClientBreaks.first().subtract(visibleMajorClientBreaks.last()).length() <= 3.0) {
+            val labels = visibleMajorLabels.toMutableList()
+            labels[labels.lastIndex] = "${labels[labels.lastIndex]}/${labels[0]}"
+            labels[0] = ""
+            labels
+        } else {
+            visibleMajorLabels
+        }
+
         return AxisComponent.BreaksData(
-            majorBreaks = visibleMajorClientBreaks.filterNotNull(),
-            minorBreaks = visibleMinorClientBreaks.filterNotNull(),
-            majorLabels = visibleMajorLabels,
+            majorBreaks = visibleMajorClientBreaks,
+            minorBreaks = visibleMinorClientBreaks,
+            majorLabels = labels,
             majorGrid = majorGrid,
             minorGrid = minorGrid
         )
