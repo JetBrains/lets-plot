@@ -27,7 +27,7 @@ internal class TopDownTileLayout(
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        var geomAreaInsets = computeAxisInfos(
+        val geomAreaInsets = computeAxisInfos(
             axisLayoutQuad,
             preferredSize,
             hDomain, vDomain,
@@ -100,9 +100,9 @@ internal class TopDownTileLayout(
                     .dimension
                     .let(marginsLayout::toInnerSize)
                     .y
-                    .let { geomHeight ->
+                    .let { height ->
                         // For polar coord axis height is half of geom height - it starts from the center.
-                        geomHeight.takeUnless { coordProvider is PolarCoordProvider } ?: (geomHeight / 2)
+                        height.takeUnless { coordProvider is PolarCoordProvider } ?: (height / 2)
                     }
 
             val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
@@ -115,7 +115,14 @@ internal class TopDownTileLayout(
                 coordProvider
             )
 
-            val hAxisLength = marginsLayout.toInnerBounds(plottingArea).width
+            val hAxisLength = marginsLayout
+                .toInnerBounds(plottingArea)
+                .width
+                .let { width ->
+                    // h axis in polar coord is rendered as a circle - increase its length to make more tick.
+                    width.takeUnless { coordProvider is PolarCoordProvider } ?: (width * 1.5)
+                }
+
             val insetsHVAxis = insetsVAxis.layoutHAxis(
                 hDomain,
                 hAxisLength
