@@ -1,4 +1,4 @@
-## [4.1.1] - 2023-mm-dd
+## [4.2.0] - 2023-12-dd
 
 ### Added
 
@@ -48,8 +48,10 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/gggrid_scale_share.ipynb).
 
 ### Changed
-
-- The `plot_margin` parameter in `theme()` and the `margin` parameter in `element_text()` accept a number or a list of numbers:
+                
+- [BREAKING] Function `margin()` is deprecated and will be removed in future releases. <br/>
+  Please replace all existing usages, i.e. `theme(plot_margin=margin(..))` and `element_text(margin=margin(..))` <br/> 
+  with a list or with just a number:
   - a number or list of one number - the same margin it applied to **all four sides**;
   - a list of two numbers - the first margin applies to the **top and bottom**, the second - to the **left and right**;
   - a list of three numbers -  the first margin applies to the **top**, the second - to the **right and left**,
@@ -57,7 +59,8 @@
   - a list of four numbers - the margins are applied to the **top, right, bottom and left** in that order.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/margins.ipynb).
-             
+                                               
+
 - Upgraded Apache Batik to version 1.17 [[#887](https://github.com/JetBrains/lets-plot/issues/887)]
 
 
