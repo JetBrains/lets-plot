@@ -35,10 +35,12 @@ def gggrid(plots: list, ncol: int = None, *,
         If not specified, shows plots horizontally, in one row.
     sharex, sharey : bool or str, default=False
         Controls sharing of axis limits between subplots in the grid.
+
         - 'all'/True - share limits between all subplots.
         - 'none'/False - do not share limits between subplots.
         - 'row' - share limits between subplots in the same row.
         - 'col' - share limits between subplots in the same column.
+
     widths : list of numbers
         Relative width of each column of grid, left to right.
     heights : list of numbers
