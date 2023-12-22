@@ -151,7 +151,7 @@ class LetsPlot:
             from lets_plot import *
             from lets_plot import tilesets
             LetsPlot.setup_html()
-            LetsPlot.set(tilesets.STAMEN_DESIGN_TERRAIN)
+            LetsPlot.set(tilesets.LETS_PLOT_BW)
             ggplot() + geom_livemap()
 
         """
