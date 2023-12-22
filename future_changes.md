@@ -2,7 +2,11 @@
 
 ### Added
 
-- Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].  
+- Support for `Categoricals`:
+  - Support for `pandas.Categorical` data type [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
+  - The `levels` parameter in `as_discrete()` function [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
 
 
 - `scale_x_log2()`, `scale_y_log2()` [[#922](https://github.com/JetBrains/lets-plot/issues/922)].
@@ -27,11 +31,6 @@
 - The `lablim` parameter for `scale_xxx()` functions [[#939](https://github.com/JetBrains/lets-plot/issues/939), [#946](https://github.com/JetBrains/lets-plot/issues/946)].
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_lablim.ipynb).
-
-
-- The `levels` parameter in `as_discrete` function [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
 
 
 - `geom_livemap()`: new tiles - `bw`.
