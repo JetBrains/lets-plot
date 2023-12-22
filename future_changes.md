@@ -2,12 +2,15 @@
 
 ### Added
 
-- Add `geom_spoke()` [[#738](https://github.com/JetBrains/lets-plot/issues/738)].
+- Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].  
+
+
+- `scale_x_log2()`, `scale_y_log2()` [[#922](https://github.com/JetBrains/lets-plot/issues/922)].
+
+
+- `geom_spoke()` [[#738](https://github.com/JetBrains/lets-plot/issues/738)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_spoke.ipynb).
-
-
-- Add `scale_x_log2()`, `scale_y_log2()` [[#922](https://github.com/JetBrains/lets-plot/issues/922)].
 
 
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sumprop..'`, `'..sumpct..'` [[#936](https://github.com/JetBrains/lets-plot/issues/936)].
@@ -15,8 +18,8 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_stat_count_vars.ipynb).
 
 
-- Using a dictionary as a value of `'labels'`, `'breaks'` ([[#169](https://github.com/JetBrains/lets-plot/issues/169)])
-  and `'values'` ([[#882](https://github.com/JetBrains/lets-plot/issues/882)]) parameters in scaling functions.
+- Using a dictionary as a value of `'labels'`, `'breaks'` [[#169](https://github.com/JetBrains/lets-plot/issues/169)]
+  and `'values'` [[#882](https://github.com/JetBrains/lets-plot/issues/882)] parameters in scaling functions.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_params_with_dict.ipynb).
 
@@ -82,10 +85,6 @@
 - Enormous CPU / Time/ Memory consumption on some data [[#932](https://github.com/JetBrains/lets-plot/issues/932)].
 - gggrid: composite plot is not visible if saved with ggsave [[#942](https://github.com/JetBrains/lets-plot/issues/942)].
 - gggrid doesn't override global theme [[#966](https://github.com/JetBrains/lets-plot/issues/966)].
-- Make scale's 'breaks' / 'labels' parameters understand dict of breaks as keys and labels as values [[#169](https://github.com/JetBrains/lets-plot/issues/169)].
-- scale manual: "values" parameter should accept dictionary as a value [[#882](https://github.com/JetBrains/lets-plot/issues/882)].
-- as_discrete: add 'levels' parameter [[#931](https://github.com/JetBrains/lets-plot/issues/931)].
-- Support for ordered categoricals [[#914](https://github.com/JetBrains/lets-plot/issues/914)].
 - `scale_continuous()` fails with non-color aesthetics [[#953](https://github.com/JetBrains/lets-plot/issues/953)].
 - NumberFormat: `g` format doesn't use e-notation for small numbers [[#965](https://github.com/JetBrains/lets-plot/issues/965)].
 - Tooltips: graphical artifacts and bad performance in multi-line plot in Batik [[#967](https://github.com/JetBrains/lets-plot/issues/967)].
