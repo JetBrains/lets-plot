@@ -9,6 +9,9 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
 
 
+- NumberFormat: new flag `~` to trim trailing zeros.
+
+
 - `scale_x_log2()`, `scale_y_log2()` [[#922](https://github.com/JetBrains/lets-plot/issues/922)].
 
 

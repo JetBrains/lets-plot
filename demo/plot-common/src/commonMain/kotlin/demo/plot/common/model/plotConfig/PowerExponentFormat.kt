@@ -23,6 +23,7 @@ class PowerExponentFormat {
               },
               "mapping": { "x": "x", "y": "y" },
               "ggsize": { "width": 600.0, "height": 600.0 },
+              "theme": { "exponent_format": "pow" },
               "kind": "plot",
               "layers": [
                 {
