@@ -99,7 +99,7 @@ class PlotAssembler constructor(
         val flipAxis = coordProvider.flipped
 
         val (hAxisPosition, vAxisPosition) = if (coordProvider is PolarCoordProvider) {
-            AxisPosition.TOP to AxisPosition.LEFT
+            AxisPosition.BOTTOM to AxisPosition.LEFT
         } else {
             when (flipAxis) {
                 true -> yAxisPosition.flip() to xAxisPosition.flip()

@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.MarginalLayerCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
@@ -115,20 +116,39 @@ internal class SquareFrameOfReferenceProvider(
 
         val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
-        val hScale = hScaleProto.with()
-            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(hAxisLayoutInfo.axisBreaks.labels)
-            .build()
+        val hScale: Scale
+        val vScale: Scale
+        val domain: DoubleRectangle
+        if (coordProvider is PolarCoordProvider && coordProvider.flipped) {
+            domain = adjustedDomain.flip()
+            vScale = hScaleProto.with()
+                .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+                .labels(hAxisLayoutInfo.axisBreaks.labels)
+                .build()
 
-        val vScale = vScaleProto.with()
-            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(vAxisLayoutInfo.axisBreaks.labels)
-            .build()
+            hScale = vScaleProto.with()
+                .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+                .labels(vAxisLayoutInfo.axisBreaks.labels)
+                .build()
+
+        } else {
+            domain = adjustedDomain
+            hScale = hScaleProto.with()
+                .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+                .labels(hAxisLayoutInfo.axisBreaks.labels)
+                .build()
+
+            vScale = vScaleProto.with()
+                .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+                .labels(vAxisLayoutInfo.axisBreaks.labels)
+                .build()
+        }
+
 
         val tileFrameOfReference = SquareFrameOfReference(
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
-            adjustedDomain,
+            domain,
             coord,
             layoutInfo,
             marginsLayout,

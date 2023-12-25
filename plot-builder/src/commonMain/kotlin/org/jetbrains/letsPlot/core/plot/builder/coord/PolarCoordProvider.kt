@@ -20,17 +20,17 @@ import kotlin.math.min
 import kotlin.math.sin
 
 internal class PolarCoordProvider(
-    private val thetaFromX: Boolean,
-    private val start: Double,
-    private val clockwise: Boolean
-) : CoordProviderBase(xLim = null, yLim = null, false) {
+    flipped: Boolean,
+    val start: Double,
+    val clockwise: Boolean
+) : CoordProviderBase(xLim = null, yLim = null, flipped) {
 
     override val isLinear: Boolean
         get() = false
 
     // TODO: polar coord actually does not support flipped and xLim/yLim
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(thetaFromX, start, clockwise)
+        return PolarCoordProvider(!flipped, start, clockwise)
     }
 
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
@@ -38,17 +38,17 @@ internal class PolarCoordProvider(
         // Keep lower end as is to avoid hole in the center and to keep correct start angle.
         // Extend upper end of the radius domain by 0.75 to make room for labels and axis line.
 
-        val (rDomain, thetaDomain) = when (thetaFromX) {
-            true -> domain.yRange() to domain.xRange()
-            false -> domain.xRange() to domain.yRange()
+        val (rDomain, thetaDomain) = when (flipped) {
+            false -> domain.yRange() to domain.xRange()
+            true -> domain.xRange() to domain.yRange()
         }.let { (rDomain, thetaDomain) ->
             val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
             rDomainAdjusted to thetaDomain
         }
 
-        return when (thetaFromX) {
-            true -> DoubleRectangle(thetaDomain, rDomain)
-            false -> DoubleRectangle(rDomain, thetaDomain)
+        return when (flipped) {
+            false -> DoubleRectangle(thetaDomain, rDomain)
+            true -> DoubleRectangle(rDomain, thetaDomain)
         }
     }
 
@@ -57,9 +57,9 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
-        val (rDomain, thetaDomain) = when (thetaFromX) {
-            true -> adjustedDomain.yRange() to adjustedDomain.xRange()
-            false -> adjustedDomain.xRange() to adjustedDomain.yRange()
+        val (rDomain, thetaDomain) = when (flipped) {
+            false -> adjustedDomain.yRange() to adjustedDomain.xRange()
+            true -> adjustedDomain.xRange() to adjustedDomain.yRange()
         }
 
         val rNorm = 0.0 - rDomain.lowerEnd
@@ -72,17 +72,17 @@ internal class PolarCoordProvider(
         val thetaScaleMapper = Mappers.mul(thetaRangeNorm, 2.0 * PI)
         val center = clientSize.mul(0.5)
 
-        val norm = when (thetaFromX) {
-            true -> DoubleVector(thetaNorm, rNorm)
-            false -> DoubleVector(rNorm, thetaNorm)
+        val norm = when (flipped) {
+            false -> DoubleVector(thetaNorm, rNorm)
+            true -> DoubleVector(rNorm, thetaNorm)
         }
 
         fun scalerThetaX(v: DoubleVector) = rScaleMapper(v.y) to thetaScaleMapper(v.x)
         fun scalerThetaY(v: DoubleVector) = rScaleMapper(v.x) to thetaScaleMapper(v.y)
 
-        val scaler = when (thetaFromX) {
-            true -> ::scalerThetaX
-            false -> ::scalerThetaY
+        val scaler = when (flipped) {
+            false -> ::scalerThetaX
+            true -> ::scalerThetaY
         }
 
         val sign = if (clockwise) -1.0 else 1.0

@@ -20,7 +20,7 @@ class PolarCoordTest {
     private val clientSize = DoubleVector(200.0, 200.0)
 
     private fun applyPolarTransform(start: Double, clockwise: Boolean): List<Vector> {
-        val polarCoordProvider = PolarCoordProvider(thetaFromX = true, start, clockwise)
+        val polarCoordProvider = PolarCoordProvider(flipped = true, start, clockwise)
 
         val polarMapper = polarCoordProvider.createCoordinateMapper(
             adjustedDomain = adjustedDomain,
@@ -33,7 +33,7 @@ class PolarCoordTest {
     }
 
     private fun applyPolarScreenTransform(start: Double, clockwise: Boolean): List<Vector> {
-        val polarCoordProvider = PolarCoordProvider(thetaFromX = true, start, clockwise)
+        val polarCoordProvider = PolarCoordProvider(flipped = true, start, clockwise)
         val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
 
         return x.zip(y)

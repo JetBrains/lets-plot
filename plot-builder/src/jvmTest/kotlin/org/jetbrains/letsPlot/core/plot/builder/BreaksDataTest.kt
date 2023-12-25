@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 class BreaksDataTest {
     @Test
     fun simple() {
-        val polarCoordProvider = PolarCoordProvider(thetaFromX = true, start = 0.0, clockwise = true)
+        val polarCoordProvider = PolarCoordProvider(flipped = false, start = 0.0, clockwise = true)
         val adjustedDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.625)
         val clientSize = DoubleVector(504.0, 504.0)
         val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
