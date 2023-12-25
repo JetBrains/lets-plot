@@ -5,9 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.FontFace
-import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
@@ -21,7 +18,7 @@ object AnnotationsProviderUtil {
         spec: AnnotationSpecification,
         dataAccess: MappedDataAccess,
         dataFrame: DataFrame,
-        themeTextStyle: ThemeTextStyle?
+        themeTextStyle: ThemeTextStyle
     ): Annotations? {
         val mappedLines = LinePattern.prepareMappedLines(
             spec.linePatterns.map(::LinePattern),
@@ -34,18 +31,11 @@ object AnnotationsProviderUtil {
         return Annotations(
             mappedLines,
             textStyle = TextStyle(
-                themeTextStyle?.family?.name ?: DEFAULT_STYLE.family.name,
-                themeTextStyle?.face ?: DEFAULT_STYLE.face,
-                spec.textSize ?: themeTextStyle?.size ?: DEFAULT_STYLE.size,
-                themeTextStyle?.color ?: DEFAULT_STYLE.color
+                themeTextStyle.family.name,
+                themeTextStyle.face,
+                spec.textSize ?: themeTextStyle.size,
+                themeTextStyle.color
             )
         )
     }
-
-    private val DEFAULT_STYLE = ThemeTextStyle(
-        family = FontFamily.SERIF,
-        face = FontFace.NORMAL,
-        size = 10.0,
-        color = Color.BLACK
-    )
 }

@@ -101,7 +101,7 @@ open class BarGeom : GeomBase() {
                         val labelColor = when {
                             barRect.contains(textRect) -> {
                                 alpha = 0.0
-                                AnnotationsUtil.chooseColor(annotations.textStyle.color,  p.fill()!!)
+                                AnnotationsUtil.chooseColor(p.fill()!!)
                             }
                             else -> {
                                 alpha = 0.75
