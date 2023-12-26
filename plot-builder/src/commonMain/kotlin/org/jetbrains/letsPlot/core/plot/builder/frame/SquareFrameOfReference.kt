@@ -83,17 +83,39 @@ internal class SquareFrameOfReference(
             parent.add(panel)
         }
 
-        if (drawHAxis || drawGridlines) {
-            // Top/Bottom axis
-            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+        // First draw grid lines and then add axis to prevent axis overlapping by grid lines (esp in polar coord system).
+        if (drawGridlines) {
+            if (drawHAxis) {
+                // Top/Bottom axis
+                listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                    val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
-                if (drawGridlines) {
                     val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
                     val gridBounds = geomBounds.origin
                     gridComponent.moveTo(gridBounds)
                     parent.add(gridComponent)
                 }
+            }
+
+            if (drawVAxis) {
+                // Left/Right axis
+                listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                    val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+
+                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+                    val gridBounds = geomBounds.origin
+                    gridComponent.moveTo(gridBounds)
+                    parent.add(gridComponent)
+                }
+            }
+        }
+
+        val isPolarCoordinateSystem = coord is PolarCoordinateSystem
+
+        if (drawHAxis) {
+            // Top/Bottom axis
+            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
                 val axisComponent = buildAxis(
                     breaksData = breaksData,
@@ -104,27 +126,19 @@ internal class SquareFrameOfReference(
                     gridTheme = hGridTheme,
                     labelAdjustments = labelAdjustments,
                     isDebugDrawing,
-                    coord,
+                    isPolarCoordinateSystem,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, isPolarCoordinateSystem)
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
         }
 
-
-        if (drawVAxis || drawGridlines) {
+        if (drawVAxis) {
             // Left/Right axis
             listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
                 val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
-
-                if (drawGridlines) {
-                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                    val gridBounds = geomBounds.origin
-                    gridComponent.moveTo(gridBounds)
-                    parent.add(gridComponent)
-                }
 
                 val axisComponent = buildAxis(
                     breaksData = breaksData,
@@ -135,10 +149,10 @@ internal class SquareFrameOfReference(
                     vGridTheme,
                     labelAdjustments,
                     isDebugDrawing,
-                    coord,
+                    isPolarCoordinateSystem,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, isPolarCoordinateSystem)
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -231,9 +245,9 @@ internal class SquareFrameOfReference(
             gridTheme: PanelGridTheme,
             labelAdjustments: TickLabelAdjustments,
             isDebugDrawing: Boolean,
-            coord: CoordinateSystem,
+            isPolarCoordinateSystem: Boolean,
         ): SvgComponent {
-            if (coord is PolarCoordinateSystem) {
+            if (isPolarCoordinateSystem) {
                 return PolarAxisComponent(
                     length = info.axisLength,
                     orientation = info.orientation,

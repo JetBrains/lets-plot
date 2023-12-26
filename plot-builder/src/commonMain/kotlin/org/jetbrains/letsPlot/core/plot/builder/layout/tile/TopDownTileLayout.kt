@@ -102,7 +102,11 @@ internal class TopDownTileLayout(
                     .y
                     .let { height ->
                         // For polar coord axis height is half of geom height - it starts from the center.
-                        height.takeUnless { coordProvider is PolarCoordProvider } ?: (height / 2)
+                        if (coordProvider is PolarCoordProvider) {
+                            height / 2
+                        } else {
+                            height
+                        }
                     }
 
             val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)

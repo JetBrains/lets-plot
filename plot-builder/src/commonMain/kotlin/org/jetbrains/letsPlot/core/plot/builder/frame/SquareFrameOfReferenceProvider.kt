@@ -119,18 +119,32 @@ internal class SquareFrameOfReferenceProvider(
         val hScale: Scale
         val vScale: Scale
         val domain: DoubleRectangle
-        if (coordProvider is PolarCoordProvider && coordProvider.flipped) {
-            domain = adjustedDomain.flip()
-            vScale = hScaleProto.with()
-                .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
-                .labels(hAxisLayoutInfo.axisBreaks.labels)
-                .build()
 
-            hScale = vScaleProto.with()
-                .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
-                .labels(vAxisLayoutInfo.axisBreaks.labels)
-                .build()
+        if (true) {
+            if (coordProvider is PolarCoordProvider && coordProvider.flipped) {
+                domain = adjustedDomain.flip()
+                vScale = hScaleProto.with()
+                    .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+                    .labels(hAxisLayoutInfo.axisBreaks.labels)
+                    .build()
 
+                hScale = vScaleProto.with()
+                    .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+                    .labels(vAxisLayoutInfo.axisBreaks.labels)
+                    .build()
+
+            } else {
+                domain = adjustedDomain
+                hScale = hScaleProto.with()
+                    .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+                    .labels(hAxisLayoutInfo.axisBreaks.labels)
+                    .build()
+
+                vScale = vScaleProto.with()
+                    .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+                    .labels(vAxisLayoutInfo.axisBreaks.labels)
+                    .build()
+            }
         } else {
             domain = adjustedDomain
             hScale = hScaleProto.with()
