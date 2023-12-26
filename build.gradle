@@ -133,20 +133,27 @@ nexusPublishing {
     }
 }
 
-
-// "JavaDoc" artifact for all publications.
-task jarJavaDocs(type: Jar) {
-    group project.letsPlotTaskGroup
-    archiveClassifier.set("javadoc")
-    from("$rootDir/README.md")
-}
-
 // Publish some sub-projects as Kotlin Multiproject libraries.
 task publishLetsPlotCoreModulesToMavenLocalRepository {
     group project.letsPlotTaskGroup
 }
 task publishLetsPlotCoreModulesToMavenRepository {
     group project.letsPlotTaskGroup
+}
+
+// Generating JavaDoc task for each publication task.
+// Fixes "Task ':canvas:publishJsPublicationToMavenRepository' uses this output of task ':canvas:signJvmPublication'
+// without declaring an explicit or implicit dependency" error.
+// Issues:
+//  - https://github.com/gradle-nexus/publish-plugin/issues/208
+//  - https://github.com/gradle/gradle/issues/26091
+//
+def getJarJavaDocsTask(distributeName) {
+    return tasks.register("${distributeName}${project.name}jarJavaDoc", Jar) {
+        archiveClassifier.set("javadoc")
+        from("$rootDir/README.md")
+        archiveBaseName.set("${distributeName}")
+    }
 }
 
 subprojects {
@@ -220,7 +227,9 @@ subprojects {
                 withType(MavenPublication) {
                     if (name in publications_to_publish) {
                         // Configure this publication.
-                        artifact rootProject.jarJavaDocs
+
+                        // "JavaDoc" artifact for all publications.
+                        artifact getJarJavaDocsTask("${name}-${project.name}")
 
                         pom {
                             name = "Lets-Plot core artifact"

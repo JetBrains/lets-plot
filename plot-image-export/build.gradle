@@ -95,7 +95,7 @@ publishing {
 
             artifact jvmJar
             artifact jvmSourcesJar
-            artifact rootProject.jarJavaDocs
+            artifact rootProject.getJarJavaDocsTask("${artifactBaseName}-${project.name}")
 
             pom {
                 name = "Lets-Plot raster image export"
