@@ -148,7 +148,7 @@ task publishLetsPlotCoreModulesToMavenRepository {
 //  - https://github.com/gradle-nexus/publish-plugin/issues/208
 //  - https://github.com/gradle/gradle/issues/26091
 //
-def getJarJAvaDocsTask(distributeName) {
+def getJarJavaDocsTask(distributeName) {
     return tasks.register("${distributeName}${project.name}jarJavaDoc", Jar) {
         archiveClassifier.set("javadoc")
         from("$rootDir/README.md")
@@ -229,7 +229,7 @@ subprojects {
                         // Configure this publication.
 
                         // "JavaDoc" artifact for all publications.
-                        artifact getJarJAvaDocsTask("${name}-${project.name}")
+                        artifact getJarJavaDocsTask("${name}-${project.name}")
 
                         pom {
                             name = "Lets-Plot core artifact"
