@@ -56,7 +56,7 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/gggrid_scale_share.ipynb).
 
 
-- Plot methods `to_svg()`, `to_html()`, `to_png()`, `to_pdf()` [[#885](https://github.com/JetBrains/lets-plot/issues/885)].
+- Plot methods `to_svg()`, `to_html()`, `to_png()`, `to_pdf()` [[#885](https://github.com/JetBrains/lets-plot/issues/885)], [[#590](https://github.com/JetBrains/lets-plot/issues/590)].
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_export_methods.ipynb).
 
