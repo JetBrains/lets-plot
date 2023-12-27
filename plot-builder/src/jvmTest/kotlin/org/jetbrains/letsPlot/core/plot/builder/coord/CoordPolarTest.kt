@@ -16,11 +16,12 @@ import kotlin.test.assertContentEquals
 class PolarCoordTest {
     private val x = listOf(0, 90, 180, 270, 360)
     private val y = listOf(0, 1, 2, 3, 4)
-    private val adjustedDomain = DoubleRectangle.LTRB(0, 0, 360, 4)
+    private val domain = DoubleRectangle.LTRB(0, 0, 360, 4)
     private val clientSize = DoubleVector(200.0, 200.0)
 
     private fun applyPolarTransform(start: Double, clockwise: Boolean): List<Vector> {
         val polarCoordProvider = PolarCoordProvider(flipped = true, start, clockwise)
+        val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
         val polarMapper = polarCoordProvider.createCoordinateMapper(
             adjustedDomain = adjustedDomain,
@@ -34,6 +35,8 @@ class PolarCoordTest {
 
     private fun applyPolarScreenTransform(start: Double, clockwise: Boolean): List<Vector> {
         val polarCoordProvider = PolarCoordProvider(flipped = true, start, clockwise)
+        val adjustedDomain = polarCoordProvider.adjustDomain(domain)
+
         val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
 
         return x.zip(y)
@@ -46,10 +49,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(125, 100),
-                Vector(100, 50),
-                Vector(25, 100),
-                Vector(100, 200),
+                Vector(122, 100),
+                Vector(100, 57),
+                Vector(35, 100),
+                Vector(100, 187),
             ),
             actual = applyPolarTransform(start = 0.0, clockwise = true)
         )
@@ -57,10 +60,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(125, 100),
-                Vector(100, 150),
-                Vector(25, 100),
-                Vector(100, 0),
+                Vector(122, 100),
+                Vector(100, 143),
+                Vector(35, 100),
+                Vector(100, 13),
             ),
             actual = applyPolarScreenTransform(start = 0.0, clockwise = true)
         )
@@ -71,20 +74,20 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(75, 100),
-                Vector(100, 50),
-                Vector(175, 100),
-                Vector(100, 200),
+                Vector(78, 100),
+                Vector(100, 57),
+                Vector(165, 100),
+                Vector(100, 187),
             ),
             actual = applyPolarTransform(start = 0.0, clockwise = false)
         )
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(75, 100),
-                Vector(100, 150),
-                Vector(175, 100),
-                Vector(100, 0),
+                Vector(78, 100),
+                Vector(100, 143),
+                Vector(165, 100),
+                Vector(100, 13),
             ),
             actual = applyPolarScreenTransform(start = 0.0, clockwise = false)
         )
@@ -95,10 +98,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 75),
-                Vector(50, 100),
-                Vector(100, 175),
-                Vector(200, 100),
+                Vector(100, 78),
+                Vector(57, 100),
+                Vector(100, 165),
+                Vector(187, 100),
             ),
             actual = applyPolarTransform(start = PI / 2, clockwise = true)
         )
@@ -106,10 +109,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 125),
-                Vector(50, 100),
-                Vector(100, 25),
-                Vector(200, 100),
+                Vector(100, 122),
+                Vector(57, 100),
+                Vector(100, 35),
+                Vector(187, 100),
             ),
             actual = applyPolarScreenTransform(start = PI / 2, clockwise = true)
         )
@@ -120,10 +123,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 125),
-                Vector(150, 100),
-                Vector(100, 25),
-                Vector(0, 100),
+                Vector(100, 122),
+                Vector(143, 100),
+                Vector(100, 35),
+                Vector(13, 100),
             ),
             actual = applyPolarTransform(start = -PI / 2, clockwise = true)
         )
@@ -131,10 +134,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 75),
-                Vector(150, 100),
-                Vector(100, 175),
-                Vector(0, 100),
+                Vector(100, 78),
+                Vector(143, 100),
+                Vector(100, 165),
+                Vector(13, 100),
             ),
             actual = applyPolarScreenTransform(start = -PI / 2, clockwise = true)
         )
@@ -146,10 +149,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 75),
-                Vector(150, 100),
-                Vector(100, 175),
-                Vector(0, 100),
+                Vector(100, 78),
+                Vector(143, 100),
+                Vector(100, 165),
+                Vector(13, 100),
             ),
             actual = applyPolarTransform(start = PI / 2, clockwise = false)
         )
@@ -157,10 +160,10 @@ class PolarCoordTest {
         assertContentEquals(
             expected = listOf(
                 Vector(100, 100),
-                Vector(100, 125),
-                Vector(150, 100),
-                Vector(100, 25),
-                Vector(0, 100),
+                Vector(100, 122),
+                Vector(143, 100),
+                Vector(100, 35),
+                Vector(13, 100),
             ),
             actual = applyPolarScreenTransform(start = PI / 2, clockwise = false)
         )

@@ -36,20 +36,13 @@ internal class PolarCoordProvider(
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
         // Domain of a data withouth any adjustments (i.e. no expand).
         // Keep lower end as is to avoid hole in the center and to keep correct start angle.
-        // Extend upper end of the radius domain by 0.75 to make room for labels and axis line.
+        // Extend upper end of the radius domain by 0.15 to make room for labels and axis line.
 
-        val (rDomain, thetaDomain) = when (flipped) {
-            false -> domain.yRange() to domain.xRange()
-            true -> domain.xRange() to domain.yRange()
-        }.let { (rDomain, thetaDomain) ->
-            val rDomainAdjusted = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
-            rDomainAdjusted to thetaDomain
-        }
+        val thetaDomain = domain.xRange()
+        val rDomain = domain.yRange()
+        val adjustedRDomain = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
 
-        return when (flipped) {
-            false -> DoubleRectangle(thetaDomain, rDomain)
-            true -> DoubleRectangle(rDomain, thetaDomain)
-        }
+        return DoubleRectangle(thetaDomain, adjustedRDomain).flipIf(flipped)
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
@@ -57,44 +50,36 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
-        val (rDomain, thetaDomain) = when (flipped) {
-            false -> adjustedDomain.yRange() to adjustedDomain.xRange()
-            true -> adjustedDomain.xRange() to adjustedDomain.yRange()
-        }
-
-        val rNorm = 0.0 - rDomain.lowerEnd
-        val thetaNorm = 0.0 - thetaDomain.lowerEnd
-
-        val rRangeNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
-        val thetaRangeNorm = DoubleSpan(0.0, thetaDomain.upperEnd + thetaNorm)
-
-        val rScaleMapper = Mappers.mul(rRangeNorm, min(clientSize.x, clientSize.y) / 2.0)
-        val thetaScaleMapper = Mappers.mul(thetaRangeNorm, 2.0 * PI)
-        val center = clientSize.mul(0.5)
-
-        val norm = when (flipped) {
-            false -> DoubleVector(thetaNorm, rNorm)
-            true -> DoubleVector(rNorm, thetaNorm)
-        }
-
-        fun scalerThetaX(v: DoubleVector) = rScaleMapper(v.y) to thetaScaleMapper(v.x)
-        fun scalerThetaY(v: DoubleVector) = rScaleMapper(v.x) to thetaScaleMapper(v.y)
-
-        val scaler = when (flipped) {
-            false -> ::scalerThetaX
-            true -> ::scalerThetaY
-        }
-
-        val sign = if (clockwise) -1.0 else 1.0
-        val startAngle = PI / 2.0 + sign * start
-
         val polarProjection = object : Projection {
+            val domain = adjustedDomain.flipIf(flipped)
+
+            val thetaDomain = domain.xRange()
+            val rDomain = domain.yRange()
+
+            val rNorm = 0.0 - rDomain.lowerEnd
+            val thetaNorm = 0.0 - thetaDomain.lowerEnd
+            val norm = DoubleVector(thetaNorm, rNorm)
+
+            val rDomainNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
+            val thetaDomainNorm = DoubleSpan(0.0, thetaDomain.upperEnd + thetaNorm)
+
+            val rScaleMapper = Mappers.mul(rDomainNorm, min(clientSize.x, clientSize.y) / 2.0)
+            val thetaScaleMapper = Mappers.mul(thetaDomainNorm, 2.0 * PI)
+
+            val sign = if (clockwise) -1.0 else 1.0
+            val startAngle = PI / 2.0 + sign * start
+
+            val center = clientSize.mul(0.5)
+
             override val nonlinear: Boolean = true
 
             override fun project(v: DoubleVector): DoubleVector {
-                val (r, theta) = scaler(v.add(norm))
-                checkNotNull(r)
+                val normalized = v.add(norm)
+                val theta = thetaScaleMapper(normalized.x)
+                val r = rScaleMapper(normalized.y)
+
                 checkNotNull(theta)
+                checkNotNull(r)
 
                 val x = r * cos(sign * theta + startAngle)
                 val y = r * sin(sign * theta + startAngle)
@@ -103,7 +88,6 @@ internal class PolarCoordProvider(
 
             override fun invert(v: DoubleVector): DoubleVector = TODO("Not yet implemented")
             override fun validDomain(): DoubleRectangle = TODO("Not yet implemented")
-
         }
         val clientBounds = DoubleRectangle(DoubleVector.ZERO, clientSize)
 

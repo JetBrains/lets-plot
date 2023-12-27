@@ -73,6 +73,10 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         )
     }
 
+    fun flipIf(flipped: Boolean): DoubleRectangle {
+        return if (flipped) flip() else this
+    }
+
     fun union(rect: DoubleRectangle): DoubleRectangle {
         val newOrigin = origin.min(rect.origin)
         val corner = origin.add(dimension)
