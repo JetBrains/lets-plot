@@ -38,11 +38,12 @@ internal class PolarCoordProvider(
         // Keep lower end as is to avoid hole in the center and to keep correct start angle.
         // Extend upper end of the radius domain by 0.15 to make room for labels and axis line.
 
-        val thetaDomain = domain.xRange()
-        val rDomain = domain.yRange()
+        val realDomain = domain.flipIf(flipped)
+        val thetaDomain = realDomain.xRange()
+        val rDomain = realDomain.yRange()
         val adjustedRDomain = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
 
-        return DoubleRectangle(thetaDomain, adjustedRDomain).flipIf(flipped)
+        return DoubleRectangle(thetaDomain, adjustedRDomain)
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
@@ -51,16 +52,15 @@ internal class PolarCoordProvider(
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
         val polarProjection = object : Projection {
-            val domain = adjustedDomain.flipIf(flipped)
+            val valDomain = adjustedDomain//.flipIf(flipped)
 
-            val thetaDomain = domain.xRange()
-            val rDomain = domain.yRange()
-
+            val rDomain = valDomain.yRange()
             val rNorm = 0.0 - rDomain.lowerEnd
+            val rDomainNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
+
+            val thetaDomain = valDomain.xRange()
             val thetaNorm = 0.0 - thetaDomain.lowerEnd
             val norm = DoubleVector(thetaNorm, rNorm)
-
-            val rDomainNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
             val thetaDomainNorm = DoubleSpan(0.0, thetaDomain.upperEnd + thetaNorm)
 
             val rScaleMapper = Mappers.mul(rDomainNorm, min(clientSize.x, clientSize.y) / 2.0)
@@ -74,7 +74,7 @@ internal class PolarCoordProvider(
             override val nonlinear: Boolean = true
 
             override fun project(v: DoubleVector): DoubleVector {
-                val normalized = v.add(norm)
+                val normalized = v.add(norm).flipIf(flipped)
                 val theta = thetaScaleMapper(normalized.x)
                 val r = rScaleMapper(normalized.y)
 
