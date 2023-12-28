@@ -93,7 +93,7 @@ Also read:
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_spoke.ipynb).
 
-- #### Hight-contrast Tileset "BW" for `geom_livemap()`
+- #### High-contrast Tileset "BW" for `geom_livemap()`
 
   <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/tileset_BW.png" alt="f-23f/images/tileset_BW.png" width="512" height="312">
