@@ -5,9 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.colorspace.HSL
-import org.jetbrains.letsPlot.commons.colorspace.hslFromRgb
-import org.jetbrains.letsPlot.commons.colorspace.rgbFromHsl
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
@@ -28,24 +25,9 @@ object AnnotationsUtil {
         )
     }
 
-    private const val LIGHTER_LUMINANCE = 1.0
-    private const val DARKER_LUMINANCE = 0.15
-    // WCAG recommend a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text
-    private const val CONTRAST_RATIO = 3.0
-
-    fun chooseColor(textColor: Color, background: Color): Color {
-        val contrastRatio = Colors.contrastRatio(background, textColor)
-        if (contrastRatio >= CONTRAST_RATIO) {
-            return textColor
-        }
-        val newLightness = when {
-            Colors.luminance(background) < 0.5 -> LIGHTER_LUMINANCE
-            else -> DARKER_LUMINANCE
-        }
-        val hsl = hslFromRgb(textColor)
-        return rgbFromHsl(
-            HSL(hsl.h, hsl.s, newLightness)
-        )
+    fun chooseColor(background: Color) = when {
+        Colors.luminance(background) < 0.5 -> Color.WHITE // if fill is dark
+        else -> Color.BLACK
     }
 
     data class TextParams(
