@@ -68,7 +68,7 @@ Also read:
   >
   > Do NOT(!) use `exponent_format='pow'` if you are planning to export plot to a raster format (PNG,PDF).
   >
-  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handre `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
+  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handle `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
   >
   > More details: https://github.com/Kozea/CairoSVG/issues/317
 
