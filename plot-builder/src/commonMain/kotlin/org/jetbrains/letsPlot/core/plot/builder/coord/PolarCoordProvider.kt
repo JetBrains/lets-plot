@@ -51,35 +51,24 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
+        val normOffset = DoubleVector(0.0 - adjustedDomain.left, 0.0 - adjustedDomain.top)
+        val normDomain = adjustedDomain.add(normOffset)
+
+        val thetaScaleMapper = Mappers.mul(normDomain.xRange(), 2.0 * PI)
+        val rScaleMapper = Mappers.mul(normDomain.yRange(), min(clientSize.x, clientSize.y) / 2.0)
+
+        val sign = if (clockwise) -1.0 else 1.0
+        val startAngle = PI / 2.0 + sign * start
+        val center = clientSize.mul(0.5)
+
         val polarProjection = object : Projection {
-            val valDomain = adjustedDomain//.flipIf(flipped)
-
-            val rDomain = valDomain.yRange()
-            val rNorm = 0.0 - rDomain.lowerEnd
-            val rDomainNorm = DoubleSpan(0.0, rDomain.upperEnd + rNorm)
-
-            val thetaDomain = valDomain.xRange()
-            val thetaNorm = 0.0 - thetaDomain.lowerEnd
-            val norm = DoubleVector(thetaNorm, rNorm)
-            val thetaDomainNorm = DoubleSpan(0.0, thetaDomain.upperEnd + thetaNorm)
-
-            val rScaleMapper = Mappers.mul(rDomainNorm, min(clientSize.x, clientSize.y) / 2.0)
-            val thetaScaleMapper = Mappers.mul(thetaDomainNorm, 2.0 * PI)
-
-            val sign = if (clockwise) -1.0 else 1.0
-            val startAngle = PI / 2.0 + sign * start
-
-            val center = clientSize.mul(0.5)
-
             override val nonlinear: Boolean = true
 
             override fun project(v: DoubleVector): DoubleVector {
-                val normalized = v.add(norm).flipIf(flipped)
-                val theta = thetaScaleMapper(normalized.x)
-                val r = rScaleMapper(normalized.y)
+                val normV = v.flipIf(flipped).add(normOffset)
 
-                checkNotNull(theta)
-                checkNotNull(r)
+                val theta = thetaScaleMapper(normV.x) ?: error("Unexpected: theta is null")
+                val r = rScaleMapper(normV.y) ?: error("Unexpected: r is null")
 
                 val x = r * cos(sign * theta + startAngle)
                 val y = r * sin(sign * theta + startAngle)

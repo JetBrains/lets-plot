@@ -93,11 +93,11 @@ object AxisUtil {
     }
 
     private fun toClient(v: DoubleVector, coordinateSystem: CoordinateSystem, flipAxis: Boolean): DoubleVector? {
-        return finiteOrNull(coordinateSystem.toClient(if (flipAxis) v.flip() else v))
+        return finiteOrNull(coordinateSystem.toClient(v.flipIf(flipAxis)))
     }
 
     private fun toClient(v: DoubleRectangle, coordinateSystem: CoordinateSystem, flipAxis: Boolean): DoubleRectangle? {
-        return coordinateSystem.toClient(if (flipAxis) v.flip() else v)
+        return coordinateSystem.toClient(v.flipIf(flipAxis))
     }
 
     private fun toClient(
@@ -213,11 +213,7 @@ object AxisUtil {
             labelOffset: DoubleVector
         ): DoubleRectangle {
             val labelNormalSize = labelSpec.dimensions(label)
-            val wh = if (isVertical(rotationDegree)) {
-                labelNormalSize.flip()
-            } else {
-                labelNormalSize
-            }
+            val wh = labelNormalSize.flipIf(isVertical(rotationDegree))
             val origin = if (horizontalAxis) DoubleVector(loc, 0.0) else DoubleVector(0.0, loc)
             return DoubleRectangle(origin, wh)
                 .subtract(wh.mul(0.5)) // labels use central adjustments
