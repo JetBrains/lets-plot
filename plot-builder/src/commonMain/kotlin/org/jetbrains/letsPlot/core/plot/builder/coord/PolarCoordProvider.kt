@@ -90,14 +90,17 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinateSystem {
+        val sign = if (clockwise) -1.0 else 1.0
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
-        return PolarCoordinateSystem(Coords.create(coordMapper))
+        return PolarCoordinateSystem(Coords.create(coordMapper), start, sign)
     }
 }
 
 
 class PolarCoordinateSystem(
-    private val coordinateSystem: CoordinateSystem
+    private val coordinateSystem: CoordinateSystem,
+    val startAngle: Double,
+    val direction: Double
 ) : CoordinateSystem {
     override val isLinear: Boolean get() = coordinateSystem.isLinear
 
@@ -105,5 +108,5 @@ class PolarCoordinateSystem(
 
     override fun unitSize(p: DoubleVector): DoubleVector = coordinateSystem.unitSize(p)
 
-    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip())
+    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip(), startAngle, direction)
 }

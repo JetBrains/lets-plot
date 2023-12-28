@@ -13,10 +13,12 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.pickAtIndices
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
+import kotlin.math.PI
 import kotlin.math.abs
 
 object AxisUtil {
@@ -30,12 +32,17 @@ object AxisUtil {
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
-        val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorClientBreaks =
+            toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
 
         // cleanup overlapping labels
         // WARNING: highly coupled with AxisComponent
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
-        val labelsMap = TickLabelsMap(orientation.isHorizontal, PlotLabelSpecFactory.axisTick(axisTheme), labelAdjustments.rotationDegree)
+        val labelsMap = TickLabelsMap(
+            orientation.isHorizontal,
+            PlotLabelSpecFactory.axisTick(axisTheme),
+            labelAdjustments.rotationDegree
+        )
         val visibleBreaks = if (coord.isLinear) {
             scaleBreaks.labels.zip(majorClientBreaks).mapIndexedNotNull { i, pair ->
                 val br = pair.second ?: return@mapIndexedNotNull null
@@ -67,8 +74,9 @@ object AxisUtil {
         val visibleMajorClientBreaks = pickAtIndices(majorClientBreaks, visibleBreaks)
             .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
 
-        val visibleMinorClientBreaks = toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
-            .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
+        val visibleMinorClientBreaks =
+            toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
+                .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
 
         val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
         val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
@@ -107,20 +115,33 @@ object AxisUtil {
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<DoubleVector?> {
-        return breaks.map { breakValue ->
-            val breakCoord = when (horizontal) {
-                true -> DoubleVector(breakValue, domain.yRange().upperEnd)
-                false -> DoubleVector(domain.xRange().lowerEnd, breakValue)
+        return if (coordinateSystem is PolarCoordinateSystem) {
+
+            val startAnglePercent = (coordinateSystem.startAngle % (2 * PI)) / (2 * PI)
+            val startAngleOffset = domain.xRange().length * startAnglePercent
+            val verticalAngleValue = (domain.xRange().lowerEnd - startAngleOffset).let {
+                when { // non-normalized domain value
+                    it < domain.xRange().lowerEnd -> it + domain.xRange().length
+                    it > domain.xRange().upperEnd -> it - domain.xRange().length
+                    else -> it
+                }
             }
 
-            val breakClientCoord = toClient(breakCoord, coordinateSystem, flipAxis) ?: return@map null
-
-            //when (horizontal) {
-            //    true -> breakClientCoord.x
-            //    false -> breakClientCoord.y
-            //}
-            breakClientCoord
+            breaks.map { breakValue ->
+                when (horizontal) {
+                    true -> DoubleVector(breakValue, domain.yRange().upperEnd)
+                    false -> DoubleVector(verticalAngleValue, breakValue)
+                }
+            }
+        } else {
+            breaks.map { breakValue ->
+                when (horizontal) {
+                    true -> DoubleVector(breakValue, domain.yRange().upperEnd)
+                    false -> DoubleVector(domain.xRange().lowerEnd, breakValue)
+                }
+            }
         }
+            .map { toClient(it, coordinateSystem, flipAxis) ?: return@map null }
     }
 
     private fun buildGrid(
