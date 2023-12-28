@@ -56,45 +56,63 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.1.0
+## What is new in 4.2.0
 
-- #### Support for Python 3.12
+- #### Support for `"Categoricals"`
 
-- #### Annotations in Barchart
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
 
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23e/images/annotated_bars.png" alt="f-23e/images/annotated_bars.png" width="512" height="312">
+- #### Superscript for Numbers in Scientific Notation
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/bar_annotations.ipynb).    
-
-- #### Common Theme for Subplots
-
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23e/images/gggrid_theme.png" alt="f-23e/images/gggrid_theme.png" width="512" height="292">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/gggrid_theme.ipynb).
-
-- #### `HCL` and `CIELAB` Color Space for Hue Color Scale and Gradient Color Scales
+  > #### Warning!
+  >
+  > Do NOT(!) use `exponent_format='pow'` if you are planning to export plot to a raster format (PNG,PDF).
+  >
+  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handre `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
+  >
+  > More details: https://github.com/Kozea/CairoSVG/issues/317
 
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23e/images/hue_color_scale.png" alt="f-23e/images/hue_color_scale.png" width="512" height="341">
-  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/color_space_update.ipynb).
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/superscript.png" alt="f-23f/images/superscript.png" width="328" height="241">
 
-- #### Scale Transformations: `'log2'` and `'symlog'`
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/new_scale_transformations.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript_exponent.ipynb).
 
-- #### Plot Margins
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/theme_plot_margin.ipynb).
+- #### Exporting Plot to a File-Like Object. <br>
+  Convenience methods: `to_svg()`, `to_html()`, `to_png()`, `to_pdf()`
 
-- #### Dual Orientation in Geometries:
-    - `geom_linerange()`
-    - `geom_pointrange()`
-    - `geom_errorbar()`
-    - `geom_crossbar()`
-    - `geom_ribbon()`
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_export_methods.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23e/horizontal_geoms.ipynb).
+- #### Sharing of X,Y-scale Limits Between Subplots in `gggrid()`
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/gggrid_scale_share.ipynb).
+
+- #### `geom_spoke()`
+
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/geom_spoke.png" alt="f-23f/images/geom_spoke.png" width="248" height="272">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_spoke.ipynb).
+
+- #### Hight-contrast Tileset "BW" for `geom_livemap()`
+
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/tileset_BW.png" alt="f-23f/images/tileset_BW.png" width="512" height="312">
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).<br>
+  See Advanced EDA example: [Spatial prediction of soil pollutants with multi-output Gaussian processes](https://nextjournal.com/asmirnov-horis/spatial-prediction-of-soil-pollutants-with-multi-output-gaussian-processes?token=26GT2sBa3Ycw6LGZxqdTay).
+                                          
+- #### Other New Features and Improvements
+
+  - `scale_x_log2()`, `scale_y_log2()`
+  - New variables computed by `'count'` and `'count2d'` statistics: `'..sumprop..'`, `'..sumpct..'`.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_stat_count_vars.ipynb).
+  - Support using dictionaries for breaks/labels/values customization in `scale_xxx()` functions.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_params_with_dict.ipynb).
+  - The `lablim` parameter in `scale_xxx()` functions.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_lablim.ipynb).
+  - `label_text` parameter in `theme()` for annotation text settings.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/theme_label_text.ipynb).
+  - NumberFormat: new flag `~` to trim trailing zeros.
 
 
 ## Change Log
