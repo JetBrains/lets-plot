@@ -99,7 +99,7 @@ Also read:
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/tileset_BW.png" alt="f-23f/images/tileset_BW.png" width="512" height="312">
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).<br>
-  See advanced example: [Spatial prediction of soil pollutants with multi-output Gaussian processes](https://nextjournal.com/asmirnov-horis/spatial-prediction-of-soil-pollutants-with-multi-output-gaussian-processes?token=26GT2sBa3Ycw6LGZxqdTay). Credits: Essi Parent (@essicolo).
+  See advanced example: [Spatial prediction of soil pollutants with multi-output Gaussian processes](https://nextjournal.com/asmirnov-horis/spatial-prediction-of-soil-pollutants-with-multi-output-gaussian-processes?token=26GT2sBa3Ycw6LGZxqdTay). Credits: Essi Parent ([@essicolo](https://github.com/essicolo)).
                                           
 - #### Other New Features and Improvements
 
