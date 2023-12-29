@@ -32,17 +32,12 @@ object AxisUtil {
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
-        val majorClientBreaks =
-            toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
 
         // cleanup overlapping labels
         // WARNING: highly coupled with AxisComponent
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
-        val labelsMap = TickLabelsMap(
-            orientation.isHorizontal,
-            PlotLabelSpecFactory.axisTick(axisTheme),
-            labelAdjustments.rotationDegree
-        )
+        val labelsMap = TickLabelsMap(orientation.isHorizontal, PlotLabelSpecFactory.axisTick(axisTheme), labelAdjustments.rotationDegree)
         val visibleBreaks = if (coord.isLinear) {
             scaleBreaks.labels.zip(majorClientBreaks).mapIndexedNotNull { i, pair ->
                 val br = pair.second ?: return@mapIndexedNotNull null

@@ -34,16 +34,16 @@ internal class PolarCoordProvider(
     }
 
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
-        // Domain of a data withouth any adjustments (i.e. no expand).
-        // Keep lower end as is to avoid hole in the center and to keep correct start angle.
-        // Extend upper end of the radius domain by 0.15 to make room for labels and axis line.
-
         val realDomain = domain.flipIf(flipped)
-        val thetaDomain = realDomain.xRange()
-        val rDomain = realDomain.yRange()
-        val adjustedRDomain = DoubleSpan(rDomain.lowerEnd, rDomain.upperEnd + rDomain.length * 0.15)
 
-        return DoubleRectangle(thetaDomain, adjustedRDomain)
+        // Domain of a data without any adjustments (i.e. no expand).
+        // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
+        // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
+
+        return DoubleRectangle(
+            realDomain.xRange(), //theta
+            realDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length * 1.15) } // r
+        )
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
@@ -51,8 +51,8 @@ internal class PolarCoordProvider(
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
-        val normOffset = DoubleVector(0.0 - adjustedDomain.left, 0.0 - adjustedDomain.top)
-        val normDomain = adjustedDomain.add(normOffset)
+        val normOffset = DoubleVector.ZERO.subtract(adjustedDomain.origin)
+        val normDomain = DoubleRectangle(DoubleVector.ZERO, adjustedDomain.dimension)
 
         val thetaScaleMapper = Mappers.mul(normDomain.xRange(), 2.0 * PI)
         val rScaleMapper = Mappers.mul(normDomain.yRange(), min(clientSize.x, clientSize.y) / 2.0)

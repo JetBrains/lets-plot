@@ -115,13 +115,12 @@ internal class SquareFrameOfReferenceProvider(
 
         val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
-        val domain: DoubleRectangle = adjustedDomain
-        val hScale: Scale = hScaleProto.with()
+        val hScale = hScaleProto.with()
             .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
             .labels(hAxisLayoutInfo.axisBreaks.labels)
             .build()
 
-        val vScale: Scale = vScaleProto.with()
+        val vScale = vScaleProto.with()
             .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
             .labels(vAxisLayoutInfo.axisBreaks.labels)
             .build()
@@ -129,7 +128,7 @@ internal class SquareFrameOfReferenceProvider(
         val tileFrameOfReference = SquareFrameOfReference(
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
-            domain,
+            adjustedDomain,
             coord,
             layoutInfo,
             marginsLayout,
