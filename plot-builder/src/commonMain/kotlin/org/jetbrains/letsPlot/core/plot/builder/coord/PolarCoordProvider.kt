@@ -28,20 +28,27 @@ internal class PolarCoordProvider(
     override val isLinear: Boolean
         get() = false
 
-    // TODO: polar coord actually does not support flipped and xLim/yLim
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(!flipped, start, clockwise)
+        return PolarCoordProvider(flipped, start, clockwise)
     }
 
-    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+    override fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle {
         val realDomain = domain.flipIf(flipped)
 
         // Domain of a data without any adjustments (i.e. no expand).
         // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
         // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
 
+
+        // For discrete scale increase the upper end of the radius by 1
+        // so that the last point won't overlap with the first one
+        // in contrast to the continuous scale where the last point
+        // has the same coordinate as the first one
+        // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
+        val rightExpand = if (isHScaleContinuous) 0.0 else 1.0
+
         return DoubleRectangle(
-            realDomain.xRange(), //theta
+            realDomain.xRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length + rightExpand) }, //theta
             realDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length * 1.15) } // r
         )
     }

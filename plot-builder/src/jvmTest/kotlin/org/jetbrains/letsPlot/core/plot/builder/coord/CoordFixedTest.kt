@@ -31,7 +31,7 @@ internal class CoordFixedTest : CoordTestBase() {
             displaySize: DoubleVector
         ): DoubleVector {
             val coordProvider = CoordProviders.fixed(1.0, xLim, yLim)
-            val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
+            val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain), false)
             return coordProvider.adjustGeomSize(
                 adjustedDomain.xRange(),
                 adjustedDomain.yRange(),

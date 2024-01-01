@@ -247,7 +247,7 @@ class PlotAssembler constructor(
 
             // Create frame of reference provider for each tile.
             return domainsXYByTile.map { (xDomain, yDomain) ->
-                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
+                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain), hScaleProto.isContinuous)
                 SquareFrameOfReferenceProvider(
                     hScaleProto, vScaleProto,
                     adjustedDomain,
