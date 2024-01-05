@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 
 internal abstract class CoordProviderBase(
-    private val xLim: DoubleSpan?,
-    private val yLim: DoubleSpan?,
+    protected val xLim: DoubleSpan?,
+    protected val yLim: DoubleSpan?,
     override val flipped: Boolean,
     protected val projection: Projection = identity(),
 ) : CoordProvider {

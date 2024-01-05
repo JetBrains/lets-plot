@@ -44,7 +44,13 @@ object CoordProviders {
         )
     }
 
-    fun polar(flipped: Boolean, start: Double, clockwise: Boolean): CoordProvider {
-        return PolarCoordProvider(flipped, start, clockwise)
+    fun polar(
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null,
+        flipped: Boolean,
+        start: Double,
+        clockwise: Boolean
+    ): CoordProvider {
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
     }
 }

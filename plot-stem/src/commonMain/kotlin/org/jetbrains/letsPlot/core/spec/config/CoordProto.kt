@@ -45,6 +45,8 @@ internal object CoordProto {
             }
 
             POLAR -> CoordProviders.polar(
+                xLim = xLim,
+                yLim = yLim,
                 flipped = when (val theta = options.getString(Coord.THETA)) {
                     Coord.Theta.X -> false
                     Coord.Theta.Y -> true

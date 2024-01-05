@@ -20,16 +20,18 @@ import kotlin.math.min
 import kotlin.math.sin
 
 internal class PolarCoordProvider(
+    xLim: DoubleSpan?,
+    yLim: DoubleSpan?,
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean
-) : CoordProviderBase(xLim = null, yLim = null, flipped) {
+) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean
         get() = false
 
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(flipped, start, clockwise)
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
     }
 
     override fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle {
@@ -39,17 +41,23 @@ internal class PolarCoordProvider(
         // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
         // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
 
+        val adjustedXRange = realDomain.xRange().let {
+            // For discrete scale add extra segment by increasing domain by 1
+            // so that the last point won't overlap with the first one
+            // in contrast to the continuous scale where the last point
+            // has the same coordinate as the first one
+            // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
+            val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
+            DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
+        }
 
-        // For discrete scale increase the upper end of the radius by 1
-        // so that the last point won't overlap with the first one
-        // in contrast to the continuous scale where the last point
-        // has the same coordinate as the first one
-        // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
-        val rightExpand = if (isHScaleContinuous) 0.0 else 1.0
+        val adjustedYRange = realDomain.yRange().let {
+            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * 1.15)
+        }
 
         return DoubleRectangle(
-            realDomain.xRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length + rightExpand) }, //theta
-            realDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length * 1.15) } // r
+            xLim ?: adjustedXRange, //theta
+            yLim ?: adjustedYRange // r
         )
     }
 
