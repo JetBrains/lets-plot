@@ -85,7 +85,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
             .alpha(constant(0.5))
             .build()
         val coord = CoordProviders.map().let {
-            val adjustedDomain = it.adjustDomain(DoubleRectangle(domainX, domainY))
+            val adjustedDomain = it.adjustDomain(DoubleRectangle(domainX, domainY), false)
             it.createCoordinateSystem(
                 adjustedDomain = adjustedDomain,
                 clientSize = demoInnerSize

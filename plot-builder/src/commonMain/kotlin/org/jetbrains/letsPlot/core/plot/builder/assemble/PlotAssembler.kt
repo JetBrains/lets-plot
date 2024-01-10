@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
@@ -97,8 +98,9 @@ class PlotAssembler constructor(
 
         val flipAxis = coordProvider.flipped
 
-        val (hAxisPosition, vAxisPosition) = when (flipAxis) {
-            true -> yAxisPosition.flip() to xAxisPosition.flip()
+        val (hAxisPosition, vAxisPosition) = when {
+            coordProvider is PolarCoordProvider -> AxisPosition.BOTTOM to AxisPosition.LEFT
+            flipAxis -> yAxisPosition.flip() to xAxisPosition.flip()
             else -> xAxisPosition to yAxisPosition
         }
 
@@ -245,7 +247,7 @@ class PlotAssembler constructor(
 
             // Create frame of reference provider for each tile.
             return domainsXYByTile.map { (xDomain, yDomain) ->
-                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
+                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain), hScaleProto.isContinuous)
                 SquareFrameOfReferenceProvider(
                     hScaleProto, vScaleProto,
                     adjustedDomain,

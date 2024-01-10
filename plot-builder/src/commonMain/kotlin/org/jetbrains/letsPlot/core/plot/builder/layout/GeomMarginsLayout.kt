@@ -65,13 +65,25 @@ internal class GeomMarginsLayout(
     }
 
 
-    fun toAxisOrigin(geomInnerBounds: DoubleRectangle, axisOrientation: Orientation): DoubleVector {
+    fun toAxisOrigin(
+        geomInnerBounds: DoubleRectangle,
+        axisOrientation: Orientation,
+        isPolarCoordinateSystem: Boolean
+    ): DoubleVector {
+
         val outerBounds = toOuterBounds(geomInnerBounds)
         return when (axisOrientation) {
             Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
             Orientation.TOP -> geomInnerBounds.origin
             Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top)
-            Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, outerBounds.bottom)
+            Orientation.BOTTOM -> {
+                if (isPolarCoordinateSystem) {
+                    // Angle marks are placed from top to bottom. With a bottom alignment, they will go under a plot.
+                    DoubleVector(geomInnerBounds.left, outerBounds.top)
+                } else {
+                    DoubleVector(geomInnerBounds.left, outerBounds.bottom)
+                }
+            }
         }
     }
 
