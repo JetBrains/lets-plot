@@ -130,4 +130,4 @@ Please make sure you read it.
 ## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
-Copyright © 2019-2023, JetBrains s.r.o.
+Copyright © 2019-2024, JetBrains s.r.o.
