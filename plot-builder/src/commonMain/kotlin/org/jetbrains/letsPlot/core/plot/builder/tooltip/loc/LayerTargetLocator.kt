@@ -10,9 +10,14 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MathUtil.ClosestPointChecker
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetLocator.Collector.CollectingStrategy
 import kotlin.math.max
 
 internal class LayerTargetLocator(
@@ -24,38 +29,28 @@ internal class LayerTargetLocator(
     GeomTargetLocator {
 
     private val myTargets = ArrayList<Target>()
-    private val myTargetDetector: TargetDetector =
-        TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
+    private val myTargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
 
     private val mySimpleGeometry = setOf(GeomKind.RECT, GeomKind.POLYGON)
 
-    private val myCollectingStrategy: Collector.CollectingStrategy =
+    private val myCollectingStrategy: CollectingStrategy =
         when {
-            geomKind in mySimpleGeometry -> {
-                // fix overlapping tooltips under cursor
-                Collector.CollectingStrategy.REPLACE
-            }
+            geomKind in mySimpleGeometry -> CollectingStrategy.REPLACE // fix overlapping tooltips under cursor
 
-            lookupSpec.lookupSpace.isUnivariate() && lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NEAREST -> {
+            lookupSpec.lookupSpace.isUnivariate() && lookupSpec.lookupStrategy === LookupStrategy.NEAREST -> {
                 // collect all with a minimum distance from cursor
-                Collector.CollectingStrategy.APPEND_IF_EQUAL
+                CollectingStrategy.APPEND_IF_EQUAL
             }
 
-            lookupSpec.lookupSpace.isUnivariate() -> {
-                Collector.CollectingStrategy.APPEND
+            lookupSpec.lookupSpace.isUnivariate() -> CollectingStrategy.APPEND
+
+            lookupSpec.lookupStrategy === HOVER -> CollectingStrategy.APPEND
+
+            lookupSpec.lookupStrategy === LookupStrategy.NONE || lookupSpec.lookupSpace === LookupSpace.NONE -> {
+                CollectingStrategy.IGNORE
             }
 
-            lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER -> {
-                Collector.CollectingStrategy.APPEND
-            }
-
-            lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NONE || lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.NONE -> {
-                Collector.CollectingStrategy.IGNORE
-            }
-
-            else -> {
-                Collector.CollectingStrategy.REPLACE
-            }
+            else -> CollectingStrategy.REPLACE
         }
 
     init {
@@ -120,37 +115,17 @@ internal class LayerTargetLocator(
             return null
         }
 
-        val rectCollector = Collector<GeomTarget>(
-            coord,
-            myCollectingStrategy,
-            lookupSpec.lookupSpace
-        )
-        val pointCollector = Collector<GeomTarget>(
-            coord,
-            myCollectingStrategy,
-            lookupSpec.lookupSpace
-        )
-        val pathCollector = Collector<GeomTarget>(
-            coord,
-            myCollectingStrategy,
-            lookupSpec.lookupSpace
-        )
-
         // Should always replace because of polygon with holes - only top should have tooltip.
-        val polygonCollector = Collector<GeomTarget>(
-            coord,
-            Collector.CollectingStrategy.REPLACE,
-            lookupSpec.lookupSpace
-        )
+        val polygonCollector = Collector<GeomTarget>(coord, CollectingStrategy.REPLACE, lookupSpec.lookupSpace)
+        val rectCollector = Collector<GeomTarget>(coord, myCollectingStrategy, lookupSpec.lookupSpace)
+        val pointCollector = Collector<GeomTarget>(coord, myCollectingStrategy, lookupSpec.lookupSpace)
+        val pathCollector = Collector<GeomTarget>(coord, myCollectingStrategy, lookupSpec.lookupSpace)
 
         for (target in myTargets) {
             when (target.prototype.hitShape.kind) {
                 RECT -> processRect(coord, target, rectCollector)
-
                 POINT -> processPoint(coord, target, pointCollector)
-
                 PATH -> processPath(coord, target, pathCollector)
-
                 POLYGON -> processPolygon(coord, target, polygonCollector)
             }
         }
@@ -187,12 +162,12 @@ internal class LayerTargetLocator(
             val rect = target.prototype.hitShape.rect
             val yOffset = when {
                 target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
-                lookupSpec.lookupSpace == GeomTargetLocator.LookupSpace.Y -> rect.height / 2.0
+                lookupSpec.lookupSpace == LookupSpace.Y -> rect.height / 2.0
                 else -> 0.0
             }
             val hintOffset = when (lookupSpec.lookupSpace) {
-                GeomTargetLocator.LookupSpace.X -> rect.width / 2
-                GeomTargetLocator.LookupSpace.Y -> rect.height / 2
+                LookupSpace.X -> rect.width / 2
+                LookupSpace.Y -> rect.height / 2
                 else -> 0.0
             }
 
@@ -234,16 +209,24 @@ internal class LayerTargetLocator(
     private fun processPath(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
         // When searching single point from all targets (REPLACE) - should search nearest projection between every path target.
         // When searching points for every target (APPEND) - should reset nearest point between every path target.
-        val pointChecker = if (myCollectingStrategy == Collector.CollectingStrategy.APPEND)
+        val pointChecker = if (myCollectingStrategy == CollectingStrategy.APPEND)
             ClosestPointChecker(coord)
         else
             resultCollector.closestPointChecker
 
         val hitPoint = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
         if (hitPoint != null) {
+            val hitCoord: DoubleVector
+            if (lookupSpec.lookupSpace == XY && lookupSpec.lookupStrategy == HOVER) {
+                // TODO: detector should return projection of the point on the segment
+                hitCoord = coord
+            } else {
+                hitCoord = hitPoint.originalCoord
+            }
+
             resultCollector.collect(
                 target.prototype.createGeomTarget(
-                    hitPoint.originalCoord,
+                    hitCoord,
                     hitPoint.index
                 )
             )
@@ -272,12 +255,12 @@ internal class LayerTargetLocator(
     internal class Collector<T>(
         cursor: DoubleVector,
         private val myStrategy: CollectingStrategy,
-        lookupSpace: GeomTargetLocator.LookupSpace
+        lookupSpace: LookupSpace
     ) {
         private val result = ArrayList<T>()
         val closestPointChecker: ClosestPointChecker = when (lookupSpace) {
-            GeomTargetLocator.LookupSpace.X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
-            GeomTargetLocator.LookupSpace.Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
+            LookupSpace.X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
+            LookupSpace.Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
             else -> ClosestPointChecker(cursor)
         }
         private var myLastAddedDistance: Double = -1.0

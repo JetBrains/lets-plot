@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance2ToSegment
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
@@ -58,13 +59,14 @@ internal class TargetDetector(
             LookupSpace.XY -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> return null
                 LookupStrategy.HOVER -> {
-                    for (pathPoint in pathProjection.points) {
-                        val targetPointCoord = pathPoint.projection().xy()
-                        if (MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)) {
-                            return pathPoint
-                        }
+                    val segment = pathProjection.points.asSequence().windowed(2).firstOrNull() {
+                        val p1 = it[0].projection().xy()
+                        val p2 = it[1].projection().xy()
+
+                        return@firstOrNull distance2ToSegment(cursorCoord, p1, p2) < PATH_HOVER_LIMIT_SQR
                     }
-                    return null
+
+                    segment?.firstOrNull() // return first point of the segment
                 }
 
                 LookupStrategy.NEAREST -> {
@@ -183,6 +185,8 @@ internal class TargetDetector(
 
     companion object {
         private const val POINT_AREA_EPSILON = 5.1
+        private const val PATH_HOVER_LIMIT = 7
+        private const val PATH_HOVER_LIMIT_SQR = PATH_HOVER_LIMIT * PATH_HOVER_LIMIT
         private const val RECT_X_NEAREST_EPSILON = 2.0
 
         private fun <T> searchNearest(value: Double, items: List<T>, mapper: (T) -> Double): T {

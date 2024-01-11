@@ -5,9 +5,8 @@
 
 package org.jetbrains.letsPlot.livemap.chart.path
 
+import org.jetbrains.letsPlot.commons.intern.math.distance2
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.livemap.Client
-import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
@@ -15,7 +14,6 @@ import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.pow
 
 object PathLocator : Locator {
@@ -80,25 +78,19 @@ object PathLocator : Locator {
         segmentNum: Int
     ): Double {
         val next = segmentNum + 1
-        val dx: Double = path[next].x - path[segmentNum].x
-        val dy: Double = path[next].y - path[segmentNum].y
-        val scalar: Double = dx * (coord.x - path[segmentNum].x) + dy * (coord.y - path[segmentNum].y)
+        val segmentEnd = path[next]
+        val segmentStart = path[segmentNum]
+        val dx: Double = segmentEnd.x - segmentStart.x
+        val dy: Double = segmentEnd.y - segmentStart.y
+
+        val scalar: Double = dx * (coord.x - segmentStart.x) + dy * (coord.y - segmentStart.y)
         if (scalar <= 0) {
-            return calculateSquareDistanceToPathPoint(coord, path, segmentNum)
+            return distance2(coord.x, coord.y, segmentStart.x, segmentStart.y)
         }
         val segmentSquareLength = dx * dx + dy * dy
         val baseSquareLength = scalar * scalar / segmentSquareLength
         return if (baseSquareLength >= segmentSquareLength) {
-            calculateSquareDistanceToPathPoint(coord, path, next)
-        } else calculateSquareDistanceToPathPoint(coord, path, segmentNum) - baseSquareLength
-    }
-    private fun <TypeT> calculateSquareDistanceToPathPoint(
-        coord: Vec<TypeT>,
-        path: List<Vec<TypeT>>,
-        pointNum: Int
-    ): Double {
-        val dx: Double = coord.x - path[pointNum].x
-        val dy: Double = coord.y - path[pointNum].y
-        return dx * dx + dy * dy
+            distance2(coord.x, coord.y, segmentEnd.x, segmentEnd.y)
+        } else distance2(coord.x, coord.y, segmentStart.x, segmentStart.y) - baseSquareLength
     }
 }

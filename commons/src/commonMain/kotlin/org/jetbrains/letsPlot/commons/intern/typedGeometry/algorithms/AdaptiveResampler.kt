@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.pointSqrDistance
-import org.jetbrains.letsPlot.commons.intern.math.pointToLineSqrDistance
+import org.jetbrains.letsPlot.commons.intern.math.distance2
+import org.jetbrains.letsPlot.commons.intern.math.distance2ToLine
 
 
 class AdaptiveResampler<T> private constructor(
@@ -99,12 +99,12 @@ class AdaptiveResampler<T> private constructor(
         val pm = (p1 + p2) / 2.0
         val tm = transform(pm) ?: return
 
-        if (pointToLineSqrDistance(tm.x, tm.y, t1.x, t1.y, t2.x, t2.y) >= precisionSqr && depth > 0) {
+        if (distance2ToLine(tm.x, tm.y, t1.x, t1.y, t2.x, t2.y) >= precisionSqr && depth > 0) {
             resample(p1, t1, pm, tm, output, depth - 1)
             output.add(tm)
             resample(pm, tm, p2, t2, output, depth - 1)
         } else {
-            if (pointSqrDistance(t1.x, t1.y, t2.x, t2.y) > precisionSqr) {
+            if (distance2(t1.x, t1.y, t2.x, t2.y) > precisionSqr) {
                 output.add(tm)
             }
         }

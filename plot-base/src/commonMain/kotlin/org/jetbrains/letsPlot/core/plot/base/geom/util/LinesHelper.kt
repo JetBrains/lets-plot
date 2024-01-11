@@ -267,7 +267,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 data class PathData(
     val points: List<PathPoint>
 ) {
-    val aes: DataPointAesthetics by lazy(points.first()::aes)
+    val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
     val coordinates by lazy { points.map(PathPoint::coord) }
 }
