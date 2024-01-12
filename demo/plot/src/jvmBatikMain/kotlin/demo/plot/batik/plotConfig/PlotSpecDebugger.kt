@@ -28,14 +28,14 @@ fun main() {
         """.trimIndent()
 
     // TODO: add pretty print for JsonSupport
-    val plotSpecEditor = PlotSpecEditor()
-    plotSpecEditor.setSpec(spec)
-    plotSpecEditor.evaluate()
-    plotSpecEditor.isVisible = true
+    val plotSpecDebugger = PlotSpecDebugger()
+    plotSpecDebugger.setSpec(spec)
+    plotSpecDebugger.evaluate()
+    plotSpecDebugger.isVisible = true
 }
 
 
-class PlotSpecEditor : JFrame("PlotSpec Editor") {
+class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val specEditorPane = JScrollPane()
     private val plotPanel = JPanel()
     private val evaluateButton = JButton("Evaluate")
