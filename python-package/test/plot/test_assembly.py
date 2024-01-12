@@ -107,3 +107,9 @@ def test_feature_array_with_dummy():
     expect = array.as_dict()
     assert (array + DummySpec()).as_dict() == expect
     assert (DummySpec() + array).as_dict() == expect
+
+
+def test_feature_array_is_always_flat():
+    expect = FeatureSpecArray(FeatureSpec("some kind", "some name"))
+    nested_array = FeatureSpecArray(expect)
+    assert nested_array.as_dict() == expect.as_dict()
