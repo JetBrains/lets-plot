@@ -11,16 +11,16 @@ import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NumericBreakFormatter
-import kotlin.math.abs
-import kotlin.math.min
+import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
-    private val formatter: ((Any) -> String)? = null
+    private val formatter: ((Any) -> String)? = null,
+    private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
-        val breakValues = generateBreakValues(domain, targetCount, transform)
+        val breakValues = generateBreakValues(domain, recalculateBreaksCount(targetCount, domain, transform), transform)
         val breakFormatters = if (formatter != null) {
             List(breakValues.size) { formatter }
         } else {
@@ -39,7 +39,44 @@ internal class NonlinearBreaksGen(
         return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
 
+    private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
+        val breakFormatters = createFormatters(breakValues)
+        return MultiFormatter(breakValues, breakFormatters)::apply
+    }
+
+    private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
+        if (breakValues.isEmpty()) return emptyList()
+        if (breakValues.size == 1) {
+            val domainValue = breakValues[0]
+            val step = domainValue / 10
+            return listOf(createFormatter(domainValue, step))
+        }
+
+        // format each tick with its own formatter
+        val formatters: List<(Any) -> String> = breakValues.mapIndexed { i, currValue ->
+            val step = abs(
+                when (i) {
+                    0 -> currValue - breakValues[i + 1]
+                    else -> currValue - breakValues[i - 1]
+                }
+            )
+            createFormatter(currValue, step)
+        }
+        return formatters
+    }
+
+    private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
+        return NumericBreakFormatter(
+            domainValue,
+            step,
+            true,
+            superscriptExponent = superscriptExponent
+        )::apply
+    }
+
     companion object {
+        private const val MIN_BREAKS_COUNT = 3
+
         private fun generateBreakValues(
             domain: DoubleSpan,
             targetCount: Int,
@@ -53,39 +90,20 @@ internal class NonlinearBreaksGen(
             return transform.applyInverse(transformedBreakValues).filterNotNull()
         }
 
-        private fun createMultiFormatter(breakValues: List<Double>): (Any) -> String {
-            val breakFormatters = createFormatters(breakValues)
-            return MultiFormatter(breakValues, breakFormatters)::apply
-        }
-
-        private fun createFormatters(breakValues: List<Double>): List<(Any) -> String> {
-            if (breakValues.isEmpty()) return emptyList()
-            if (breakValues.size == 1) {
-                val domainValue = breakValues[0]
-                val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step))
-            }
-
-            // format each tick with its own formatter
-            @Suppress("UnnecessaryVariable")
-            val formatters: List<(Any) -> String> = breakValues.mapIndexed { i, currValue ->
-                val step = abs(
-                    when (i) {
-                        0 -> currValue - breakValues[i + 1]
-                        else -> currValue - breakValues[i - 1]
+        private fun recalculateBreaksCount(breaksCount: Int, domain: DoubleSpan, transform: ContinuousTransform): Int {
+            return when (transform) {
+                is Log10Transform,
+                is SymlogTransform -> {
+                    val transformedDomain = ScaleUtil.applyTransform(domain, transform)
+                    val recalculatedBreaksCount = (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
+                    if (recalculatedBreaksCount in MIN_BREAKS_COUNT..breaksCount) {
+                        recalculatedBreaksCount
+                    } else {
+                        breaksCount
                     }
-                )
-                createFormatter(currValue, step)
+                }
+                else -> breaksCount
             }
-            return formatters
-        }
-
-        private fun createFormatter(domainValue: Double, step: Double): (Any) -> String {
-            return NumericBreakFormatter(
-                domainValue,
-                step,
-                true
-            )::apply
         }
     }
 

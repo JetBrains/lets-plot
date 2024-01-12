@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 object ThemeUtil {
 
@@ -54,8 +54,9 @@ object ThemeUtil {
                     ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${color.name}'")
             }
         }
-            .mergeWith(flavor.specialColors)
 
-        return geomThemeOptions.mergeWith(withResolvedColors)
+        return geomThemeOptions
+            .mergeWith(flavor.specialColors)
+            .mergeWith(withResolvedColors)
     }
 }

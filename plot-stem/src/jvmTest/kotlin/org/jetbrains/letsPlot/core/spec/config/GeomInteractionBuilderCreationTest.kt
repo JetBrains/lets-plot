@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipLine
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
 import org.jetbrains.letsPlot.core.spec.Option
@@ -196,6 +196,7 @@ class GeomInteractionBuilderCreationTest {
                 scaleMap = plotConfig.scaleMap,
                 multilayerWithTooltips = false,
                 isLiveMap = false,
+                isLinearCoordSystem = true,
                 theme = DefaultTheme.minimal2()
             )
             val tooltipLines = builder.tooltipLines
@@ -379,23 +380,24 @@ class GeomInteractionBuilderCreationTest {
             scaleMap = plotConfig.scaleMap,
             multilayerWithTooltips = false,
             isLiveMap = false,
+            isLinearCoordSystem = true,
             theme
         )
     }
 
-    private fun getAesListInTooltip(tooltipLines: List<TooltipLine>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun getAesListInTooltip(tooltipLines: List<LinePattern>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
         }
     }
 
-    private fun getAesListInAxisTooltip(tooltipLines: List<TooltipLine>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun getAesListInAxisTooltip(tooltipLines: List<LinePattern>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingField>().filter(MappingField::isAxis).map(MappingField::aes)
         }
     }
 
-    private fun getAesListInGeneralTooltip(tooltipLines: List<TooltipLine>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    private fun getAesListInGeneralTooltip(tooltipLines: List<LinePattern>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingField>().filterNot(MappingField::isSide).map(MappingField::aes)
         }

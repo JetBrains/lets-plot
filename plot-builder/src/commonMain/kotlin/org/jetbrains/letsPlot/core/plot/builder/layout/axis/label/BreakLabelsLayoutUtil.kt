@@ -20,10 +20,10 @@ import kotlin.math.*
 
 internal object BreakLabelsLayoutUtil {
 
-    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int, axisLength: Double): ScaleBreaks {
+    fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int): ScaleBreaks {
         require(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
         require(maxCount > 0) { "maxCount=$maxCount" }
-        var breaks = breaksProvider.getBreaks(maxCount, axisLength)
+        var breaks = breaksProvider.getBreaks(maxCount)
 
         if (maxCount == 1 && !breaks.isEmpty) {
             return ScaleBreaks(
@@ -37,10 +37,10 @@ internal object BreakLabelsLayoutUtil {
             val delta = max(1, (breaks.size - maxCount) / 2)
             count -= delta
             if (count <= 1) {
-                breaks = breaksProvider.getBreaks(1, axisLength)
+                breaks = breaksProvider.getBreaks(1)
                 break
             }
-            breaks = breaksProvider.getBreaks(count, axisLength)
+            breaks = breaksProvider.getBreaks(count)
         }
         return breaks
     }
@@ -167,7 +167,10 @@ internal object BreakLabelsLayoutUtil {
         return bounds.add(offsetVector)
     }
 
-    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle {
+    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle? {
+        if (elementRect.width == 0.0 || elementRect.height == 0.0) {
+            return null
+        }
         return when {
             orientation.isHorizontal -> {
                 DoubleRectangle(

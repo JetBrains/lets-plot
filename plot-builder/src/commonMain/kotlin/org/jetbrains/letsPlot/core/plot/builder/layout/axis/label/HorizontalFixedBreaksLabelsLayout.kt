@@ -47,8 +47,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
-//        val axisSpanExpanded = DoubleSpan(0.0, axisLength)
-//            .expanded(H_AXIS_LABELS_EXPAND)
         val axisSpanExpanded = DoubleSpan(
             lower = -axisLeftExpand,
             upper = axisLength + axisRightExpand
@@ -58,18 +56,24 @@ internal class HorizontalFixedBreaksLabelsLayout(
             return rotatedLayout(theme.labelAngle()).doLayout(axisLength, axisMapper)
         }
 
-        var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper)
-        if (overlap(labelsInfo, axisSpanExpanded)) {
-            labelsInfo = multilineLayout().doLayout(axisLength, axisMapper)
-            if (overlap(labelsInfo, axisSpanExpanded)) {
-                labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper)
-                if (overlap(labelsInfo, axisSpanExpanded)) {
-//                    println("Overlap")
-                    labelsInfo = verticalLayout().doLayout(axisLength, axisMapper)
+        // Don't run this expensive code when num of breaks is too large.
+        val labelsLayoutInfo = if (breaks.size > 400) {
+            // Don't even try variants when num of breaks is too large (optimization, see issue #932).
+            verticalLayout().doLayout(axisLength, axisMapper)
+        } else {
+            var layoutInfo = simpleLayout().doLayout(axisLength, axisMapper)
+            if (overlap(layoutInfo, axisSpanExpanded)) {
+                layoutInfo = multilineLayout().doLayout(axisLength, axisMapper)
+                if (overlap(layoutInfo, axisSpanExpanded)) {
+                    layoutInfo = tiltedLayout().doLayout(axisLength, axisMapper)
+                    if (overlap(layoutInfo, axisSpanExpanded)) {
+                        layoutInfo = verticalLayout().doLayout(axisLength, axisMapper)
+                    }
                 }
             }
+            layoutInfo
         }
-        return labelsInfo
+        return labelsLayoutInfo
     }
 
     private fun simpleLayout(): AxisLabelsLayout {

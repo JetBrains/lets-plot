@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom.BRUSH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom.PAPER
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom.PEN
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultColorTheme(
     options: Map<String, Any>,

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
@@ -301,8 +301,8 @@ class TooltipAxisConfigTest {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val generalTooltip = dataPoints
-                .filterNot(TooltipLineSpec.DataPoint::isSide)
-                .map(TooltipLineSpec.DataPoint::value)
+                .filterNot(LineSpec.DataPoint::isSide)
+                .map(LineSpec.DataPoint::value)
                 .firstOrNull()
             areEqual(expected, generalTooltip, "general tooltip", method)
         }
@@ -311,9 +311,9 @@ class TooltipAxisConfigTest {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints
-                .filter(TooltipLineSpec.DataPoint::isAxis)
+                .filter(LineSpec.DataPoint::isAxis)
                 .filter { it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y }
-                .map(TooltipLineSpec.DataPoint::value)
+                .map(LineSpec.DataPoint::value)
                 .firstOrNull()
             areEqual(expected, yAxisTooltip, "axis tooltip", method)
         }

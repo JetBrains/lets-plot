@@ -14,7 +14,7 @@ __all__ = ['layer_labels']
 
 class layer_labels(FeatureSpec):
     """
-    Configure annotations (for pie chart).
+    Configure annotations (for pie and bar charts).
 
     Examples
     --------

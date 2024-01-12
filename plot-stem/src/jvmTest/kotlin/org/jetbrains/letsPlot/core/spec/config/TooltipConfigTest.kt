@@ -6,8 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
-import org.jetbrains.letsPlot.core.spec.config.TestUtil.buildPointLayer
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
@@ -27,7 +26,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.config.TestUtil.buildPointLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -494,16 +493,16 @@ class TooltipConfigTest {
 
     @Test
     fun `wrong tooltip format (wrong number of arguments)`() {
-        assertFailTooltipSpec(
-            tooltipConfig = mapOf(
-                FORMATS to listOf(
-                    mapOf(
-                        FIELD to "^color",
-                        FORMAT to "{.2f} {.2f}"
-                    )
-                )
-            ),
-            expectedMessage = "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2"
+        val tooltipConfig = mapOf(
+            FORMATS to listOf(          //define formats
+                mapOf(FIELD to "^color", FORMAT to "{.2f} {.2f}")
+            )
+        )
+        val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
+
+        assertEquals(
+            "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2",
+            kotlin.runCatching { getGeneralTooltipStrings(geomLayer) }.exceptionOrNull()!!.message
         )
     }
 
@@ -1094,6 +1093,26 @@ class TooltipConfigTest {
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
+    }
+
+    @Test
+    fun `issue845 - variable with new line character`() {
+        // Should not fail with exception
+        buildGeomLayer(
+            geom = "line",
+            data = mapOf(
+                "foo\nbar" to listOf(1, 2, 3),
+                "baz" to listOf("a", "b", "c")
+            ),
+            mapping = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "foo\nbar"),
+            tooltips = mapOf(
+                "formats" to emptyList<Any>(),
+                "lines" to listOf(
+                    "@{baz}",
+                    "@{foo\nbar}",
+                )
+            )
+        )
     }
 
     companion object {

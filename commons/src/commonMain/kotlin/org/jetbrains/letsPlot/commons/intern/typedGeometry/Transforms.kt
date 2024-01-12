@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.commons.intern.typedGeometry
 
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.VecResampler.Companion.resample
+
 object Transforms {
-    private const val RESAMPLING_PRECISION = 0.001
+    private const val RESAMPLING_PRECISION = 0.004
 
     fun <InT, OutT> transform(
         bbox: Rect<InT>,
@@ -44,6 +46,6 @@ object Transforms {
         resamplingPrecision: Double?
     ): List<Vec<OutT>> = when(resamplingPrecision) {
         null -> path.mapNotNull(transform)
-        else -> VecResampler(transform, resamplingPrecision).resample(path)
+        else -> resample(path, resamplingPrecision, transform)
     }
 }

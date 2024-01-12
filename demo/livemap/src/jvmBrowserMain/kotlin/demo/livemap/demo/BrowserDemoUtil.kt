@@ -17,10 +17,23 @@ object BrowserDemoUtil {
 
     private const val ROOT_PROJECT = "lets-plot"
     private const val DEMO_PROJECT_PATH = "demo/livemap"
-    private const val JS_DIST_PATH = "js-package/build/distributions"
 
-    fun openInBrowser(html: () -> String) {
-        val outputDir = "$DEMO_PROJECT_PATH/build/distributions"
+    private fun getPlotLibPath(dev: Boolean): String {
+        val name = "lets-plot.min.js"
+        val dist = when {
+            dev -> "js-package/build/dist/js/developmentExecutable"
+            else -> "js-package/build/dist/js/productionExecutable"
+        }
+        return "${BrowserDemoUtil.getRootPath()}/$dist/$name"
+    }
+
+    private fun getDemoDir(dev: Boolean = false) = when {
+        dev -> "build/dist/js/developmentExecutable"
+        else -> "build/dist/js/productionExecutable"
+    }
+
+    fun openInBrowser(dev: Boolean = false, html: () -> String) {
+        val outputDir = "$DEMO_PROJECT_PATH/${getDemoDir(dev)}"
 
         val projectRoot = getProjectRoot()
         println("Project root: $projectRoot")
@@ -46,12 +59,7 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-    private fun getPlotLibPath(): String {
-        val name = "lets-plot.min.js"
-        return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
-    }
-
-    fun mapperDemoHtml(demoProject: String, callFun: String, title: String): String {
+    fun mapperDemoHtml(demoProject: String, callFun: String, title: String, dev: Boolean = false): String {
         val mainScript = "$demoProject.js"
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -63,7 +71,7 @@ object BrowserDemoUtil {
 
                 script {
                     type = "text/javascript"
-                    src = getPlotLibPath()
+                    src = getPlotLibPath(dev)
                 }
 
                 script {

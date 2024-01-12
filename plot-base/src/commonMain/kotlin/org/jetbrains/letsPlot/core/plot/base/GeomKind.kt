@@ -46,6 +46,7 @@ enum class GeomKind {
     RECT,
     SEGMENT,
     CURVE,
+    SPOKE,
     TEXT,
     LABEL,
     RASTER,

@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JScrollPane
+import javax.swing.ScrollPaneConstants
 
 abstract class PlotSpecComponentProvider(
     private val processedSpec: MutableMap<String, Any>,
@@ -22,6 +23,10 @@ abstract class PlotSpecComponentProvider(
     private val executor: (() -> Unit) -> Unit,
     private val computationMessagesHandler: (List<String>) -> Unit
 ) : PlotComponentProvider {
+
+    private val errorMessageComponentFactory: (String) -> JComponent = { errorMessage: String ->
+        createErrorMessageComponent(errorMessage)
+    }
 
     override fun getPreferredSize(containerSize: Dimension): Dimension {
         val outerSize = DoubleVector(containerSize.width.toDouble(), containerSize.height.toDouble())
@@ -43,6 +48,7 @@ abstract class PlotSpecComponentProvider(
             processedSpec, plotSize,
             svgComponentFactory,
             executor,
+            errorMessageComponentFactory,
             computationMessagesHandler
         )
 
@@ -61,7 +67,28 @@ abstract class PlotSpecComponentProvider(
         }
     }
 
-    protected abstract fun createScrollPane(plotComponent: JComponent): JScrollPane
+    /**
+     * Override in "Lets-Plot in SciView" IDEA plugin: use JBScrollPane.
+     */
+    protected open fun createScrollPane(plotComponent: JComponent): JScrollPane {
+        return JScrollPane(
+            plotComponent,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        ).apply {
+            border = null
+        }
+    }
+
+    /**
+     * Provids an "error message" component
+     * in the case of a failure while building a plot.
+     *
+     * Override this method if your application requires better "error message" component.
+     */
+    protected open fun createErrorMessageComponent(message: String): JComponent {
+        return DefaultErrorMessageComponent(message)
+    }
 
     companion object {
         private fun createPlotComponent(
@@ -69,15 +96,17 @@ abstract class PlotSpecComponentProvider(
             preferredSize: DoubleVector?,
             svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
             executor: (() -> Unit) -> Unit,
+            errorMessageComponentFactory: (message: String) -> JComponent,
             computationMessagesHandler: ((List<String>) -> Unit)
         ): JComponent {
             return MonolithicAwt.buildPlotFromProcessedSpecs(
-                plotSize = preferredSize,
                 plotSpec = figureSpecProcessed,
+                plotSize = preferredSize,
                 plotMaxWidth = null,
                 svgComponentFactory = svgComponentFactory,
                 executor = executor,
-                computationMessagesHandler = computationMessagesHandler
+                errorMessageComponentFactory = errorMessageComponentFactory,
+                computationMessagesHandler = computationMessagesHandler,
             )
         }
     }

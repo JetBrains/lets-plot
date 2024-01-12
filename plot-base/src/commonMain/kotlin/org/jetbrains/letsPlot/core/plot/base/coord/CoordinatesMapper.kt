@@ -6,12 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.base.coord
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 
-class CoordinatesMapper private constructor(
+class CoordinatesMapper(
     val hScaleMapper: ScaleMapper<Double>,
     val vScaleMapper: ScaleMapper<Double>,
     val clientBounds: DoubleRectangle,
@@ -19,6 +21,8 @@ class CoordinatesMapper private constructor(
     private val flipAxis: Boolean,
 ) {
     private var cachedUnitSize: DoubleVector? = null
+
+    val isLinear: Boolean = !projection.nonlinear
 
     fun toClient(p: DoubleVector): DoubleVector? {
         val projected = projection.project(p)
@@ -79,16 +83,7 @@ class CoordinatesMapper private constructor(
                 false -> adjustedDomain
             }
 
-            val leftTop = projection.project(validDomain.origin)
-            check(leftTop != null) {
-                "Can't project domain left-top: ${validDomain.origin}"
-            }
-            val domainRB = validDomain.origin.add(validDomain.dimension)
-            val rightBottom = projection.project(domainRB)
-            check(rightBottom != null) {
-                "Can't project domain right-bottom: ${domainRB}"
-            }
-            val domainProjected = DoubleRectangle.span(leftTop, rightBottom).let {
+            val domainProjected = projectDomain(projection, validDomain).let {
                 when (flipAxis) {
                     true -> it.flip()  // un-flip the domain
                     false -> it
@@ -125,4 +120,36 @@ class CoordinatesMapper private constructor(
             return DoubleVector(x, y)
         }
     }
+}
+
+fun projectDomain(
+    projection: Projection,
+    domain: DoubleRectangle
+): DoubleRectangle {
+    val leftTop: DoubleVector
+    val rightBottom: DoubleVector
+
+    if (projection.nonlinear) {
+        // TODO: better to use transformed data points instead of grid.
+        // Grid can produce projected domain that is much bigger than the actual data points domain.
+        fun points(min: Double, max: Double, n: Int = 10): List<Double> {
+            val step = (max - min) / n
+            return listOf(min) + (0..n).map { min + it * step } + listOf(max)
+        }
+
+        val hLines = points(domain.top, domain.bottom).map { DoubleVector(domain.left, it) to DoubleVector(domain.right, it) }
+        val vLines = points(domain.left, domain.right).map { DoubleVector(it, domain.top) to DoubleVector(it, domain.bottom) }
+        val grid = (hLines + vLines).map { (p1, p2) -> resample(p1, p2, 1.0, projection::project) }
+
+        val projectedDomain = boundingBox(grid.flatten()) ?: error("Can't calculate bounding box for projected domain")
+
+        leftTop = DoubleVector(projectedDomain.left, projectedDomain.top)
+        rightBottom = DoubleVector(projectedDomain.right, projectedDomain.bottom)
+
+    } else {
+        val domainRB = domain.origin.add(domain.dimension)
+        leftTop = projection.project(domain.origin) ?: error("Can't project domain left-top: ${domain.origin}")
+        rightBottom = projection.project(domainRB) ?: error("Can't project domain right-bottom: $domainRB")
+    }
+    return DoubleRectangle.span(leftTop, rightBottom)
 }

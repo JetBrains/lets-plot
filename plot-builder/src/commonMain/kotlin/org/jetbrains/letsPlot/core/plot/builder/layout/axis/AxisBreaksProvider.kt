@@ -12,5 +12,5 @@ interface AxisBreaksProvider {
 
     val fixedBreaks: ScaleBreaks
 
-    fun getBreaks(targetCount: Int, axisLength: Double): ScaleBreaks
+    fun getBreaks(targetCount: Int): ScaleBreaks
 }

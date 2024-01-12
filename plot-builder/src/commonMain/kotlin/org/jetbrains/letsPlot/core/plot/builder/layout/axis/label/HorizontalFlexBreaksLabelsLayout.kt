@@ -37,7 +37,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             myRotationAngle,
             side = DoubleVector::x
         )
-        var breaks = getBreaks(targetBreakCount, axisLength)
+        var breaks = getBreaks(targetBreakCount)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
 
         while (labelsInfo.isOverlap) {
@@ -54,7 +54,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 break
             }
             targetBreakCount = newTargetBreakCount
-            breaks = getBreaks(targetBreakCount, axisLength)
+            breaks = getBreaks(targetBreakCount)
             labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
         }
 
@@ -85,11 +85,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
         return layout.doLayout(axisLength, axisMapper)
     }
 
-    private fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
-        return BreakLabelsLayoutUtil.getFlexBreaks(
-            myBreaksProvider,
-            maxCount,
-            axisLength
-        )
+    private fun getBreaks(maxCount: Int): ScaleBreaks {
+        return BreakLabelsLayoutUtil.getFlexBreaks(myBreaksProvider, maxCount)
     }
 }

@@ -71,7 +71,6 @@ abstract class ColorBarComponentLayout(
         reverse,
         theme
     ) {
-
         override val graphSize: DoubleVector
         private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).height() / 3
         override val guideBarLength: Double get() = guideBarSize.x

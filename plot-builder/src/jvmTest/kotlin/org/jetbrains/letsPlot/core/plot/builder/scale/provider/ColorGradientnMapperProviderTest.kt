@@ -42,7 +42,7 @@ class ColorGradientnMapperProviderTest {
             ColorGradientnMapperProvider(listOf(Color.BLACK, Color.WHITE), Color.RED)
                 .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
 
-        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(128, 128, 128))
+        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(119, 119, 119))
     }
 
     @Test

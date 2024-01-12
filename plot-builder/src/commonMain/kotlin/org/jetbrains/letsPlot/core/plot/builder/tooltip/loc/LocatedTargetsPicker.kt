@@ -101,6 +101,14 @@ class LocatedTargetsPicker(
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
 
+        private const val BAR_TARGETS_MAX_COUNT = 5 // allowed number of visible tooltips
+        private val BAR_GEOMS = setOf(BAR, HISTOGRAM)
+
+        // more than 10 targets per layer is too much.
+        // Seems like Lets-Plot was used by vis tools, not by humans. Limit tooltips count to 1.
+        // User won't get much info from it anyway.
+        private const val EXPECTED_TARGETS_MAX_COUNT = 10
+
         // Consider layers with the same geom as a single layer to join their tooltips
         private val STACKABLE_GEOMS = setOf(
             DENSITY,
@@ -127,8 +135,7 @@ class LocatedTargetsPicker(
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     locatedTargetList.targets
                         .filter { it.tipLayoutHint.coord != null }
-                        .map { target -> MathUtil.distance(coord, target.tipLayoutHint.coord!!) }
-                        .minOrNull()
+                        .minOfOrNull { target -> MathUtil.distance(coord, target.tipLayoutHint.coord!!) }
                         ?: FAKE_DISTANCE
                 }
             } else {
@@ -140,12 +147,34 @@ class LocatedTargetsPicker(
             return lft.geomKind === rgt.geomKind && STACKABLE_GEOMS.contains(rgt.geomKind)
         }
 
+        private fun LookupResult.withTargets(newTargets: List<GeomTarget>) = LookupResult(
+            targets = newTargets,
+            distance = distance,
+            geomKind = geomKind,
+            contextualMapping = contextualMapping,
+            isCrosshairEnabled = isCrosshairEnabled
+        )
+
         private fun filterResults(
             lookupResult: LookupResult,
             coord: DoubleVector?,
             flippedAxis: Boolean
         ): LookupResult {
-            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON, CURVE)) {
+            if (coord == null) return lookupResult
+
+            val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
+
+            // for bar - if the number of targets exceeds the restriction value => use the closest one
+            if (lookupResult.geomKind in BAR_GEOMS && geomTargets.size > BAR_TARGETS_MAX_COUNT
+                || geomTargets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
+            ) {
+                val closestTarget = geomTargets.minBy { target ->
+                    MathUtil.distance(coord, target.tipLayoutHint.coord!!)
+                }
+                return lookupResult.withTargets(listOf(closestTarget))
+            }
+
+            if (lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, CURVE, SPOKE, RIBBON)) {
                 return lookupResult
             }
 
@@ -157,8 +186,7 @@ class LocatedTargetsPicker(
                 }
             }
 
-            // Get closest targets and remove duplicates
-            val geomTargets = lookupResult.targets.filter { it.tipLayoutHint.coord != null }
+            // Get the closest targets and remove duplicates
 
             val minXDistanceToTarget = geomTargets
                 .map(::xDistanceToCoord)
@@ -168,13 +196,7 @@ class LocatedTargetsPicker(
                 .filter { target -> xDistanceToCoord(target) == minXDistanceToTarget }
                 .distinctBy(GeomTarget::hitIndex)
 
-            return LookupResult(
-                targets = newTargets,
-                distance = lookupResult.distance,
-                geomKind = lookupResult.geomKind,
-                contextualMapping = lookupResult.contextualMapping,
-                isCrosshairEnabled = lookupResult.isCrosshairEnabled
-            )
+            return lookupResult.withTargets(newTargets)
         }
     }
 }

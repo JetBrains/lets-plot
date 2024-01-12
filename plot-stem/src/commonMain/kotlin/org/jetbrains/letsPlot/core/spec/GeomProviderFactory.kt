@@ -13,8 +13,11 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
+import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
 import org.jetbrains.letsPlot.core.spec.config.ArrowSpecConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 internal object GeomProviderFactory {
     private val PROVIDER = HashMap<GeomKind, GeomProvider>()
@@ -48,7 +51,12 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 
-    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
+    fun createGeomProvider(
+        geomKind: GeomKind,
+        layerConfig: OptionsAccessor,
+        aopConversion: AesOptionConversion,
+        superscriptExponent: Boolean
+    ): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
@@ -113,7 +121,7 @@ internal object GeomProviderFactory {
                 geom
             }
 
-            GeomKind.POINT_RANGE -> GeomProvider.pointRange {ctx ->
+            GeomKind.POINT_RANGE -> GeomProvider.pointRange { ctx ->
                 val geom = PointRangeGeom(isVertical(ctx, geomKind.name))
                 if (layerConfig.hasOwn(Option.Geom.PointRange.FATTEN)) {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
@@ -267,14 +275,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom)
+                applyTextOptions(layerConfig, geom, superscriptExponent)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom)
+                applyTextOptions(layerConfig, geom, superscriptExponent)
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
@@ -309,21 +317,21 @@ internal object GeomProviderFactory {
 
             GeomKind.PIE -> GeomProvider.pie {
                 val geom = PieGeom()
-                layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
-                layerConfig.getDouble(Option.Geom.Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
-                layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)?.let { geom.spacerColor = it }
-                layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)?.let {
+                layerConfig.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
+                layerConfig.getDouble(Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
+                layerConfig.getColor(Pie.SPACER_COLOR, aopConversion)?.let { geom.spacerColor = it }
+                layerConfig.getString(Pie.STROKE_SIDE)?.let {
                     geom.strokeSide = when (it.lowercase()) {
                         "outer" -> PieGeom.StrokeSide.OUTER
                         "inner" -> PieGeom.StrokeSide.INNER
                         "both" -> PieGeom.StrokeSide.BOTH
                         else -> throw IllegalArgumentException(
-                            "Unsupported value for ${Option.Geom.Pie.STROKE_SIDE} parameter: '$it'. " +
+                            "Unsupported value for ${Pie.STROKE_SIDE} parameter: '$it'. " +
                                     "Use one of: outer, inner, both."
                         )
                     }
                 }
-                geom.sizeUnit = layerConfig.getString(Option.Geom.Pie.SIZE_UNIT)?.lowercase()
+                geom.sizeUnit = layerConfig.getString(Pie.SIZE_UNIT)?.lowercase()
                 geom
             }
 
@@ -353,6 +361,22 @@ internal object GeomProviderFactory {
                 }
             }
 
+            GeomKind.SPOKE ->  GeomProvider.spoke {
+                val geom = SpokeGeom()
+                layerConfig.getString(Spoke.PIVOT)?.let {
+                    geom.pivot = when (it.lowercase()) {
+                        "tail" -> SpokeGeom.Pivot.TAIL
+                        "middle", "mid" -> SpokeGeom.Pivot.MIDDLE
+                        "tip" -> SpokeGeom.Pivot.TIP
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Spoke.PIVOT} parameter: '$it'. " +
+                            "Use one of: tail, middle, mid, tip."
+                        )
+                    }
+                }
+                geom
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 PROVIDER.getValue(geomKind)
@@ -360,8 +384,8 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
-        opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
+    private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom, superscriptExponent: Boolean) {
+        opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }

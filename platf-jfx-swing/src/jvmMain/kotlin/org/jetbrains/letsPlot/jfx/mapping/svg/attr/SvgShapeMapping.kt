@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.jfx.mapping.svg.attr
 
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
@@ -61,24 +60,24 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
         /**
          * value : the color name (string) or SvgColor (jetbrains.datalore.vis.svg)
          */
-        private fun setColor(value: Any?, get: () -> Color, set: (Color) -> Unit) {
+        internal fun setColor(value: Any?, get: () -> Color, set: (Color) -> Unit) {
             if (value == null) return
-
-            val svgColorString = value.toString()
-            val newColor =
-                if (svgColorString == SvgColors.NONE.toString()) {
-                    Color(0.0, 0.0, 0.0, 0.0)
-                } else {
-                    val new = Paint.valueOf(svgColorString) as Color
-                    val curr = get()
-                    Color.color(new.red, new.green, new.blue, curr.opacity)
-                }
-            set(newColor)
+            set(asColor(value, get().opacity))
         }
 
-        private fun setOpacity(value: Double, get: () -> Color, set: (Color) -> Unit) {
-            val c = get()
-            set(Color.color(c.red, c.green, c.blue, value))
+        internal fun asColor(value: Any, opacity: Double): Color {
+            return when (val svgColorString = value.toString()) {
+                SvgColors.NONE.toString() -> Color.TRANSPARENT
+                else -> Color.web(svgColorString, opacity)
+            }
+        }
+
+        internal fun changeOpacity(color: Color, newOpacity: Double): Color {
+            return Color.color(color.red, color.green, color.blue, newOpacity)
+        }
+
+        internal fun setOpacity(value: Double, get: () -> Color, set: (Color) -> Unit) {
+            set(changeOpacity(get(), value))
         }
     }
 }

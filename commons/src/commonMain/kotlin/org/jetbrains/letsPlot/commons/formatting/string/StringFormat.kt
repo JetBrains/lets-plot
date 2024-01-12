@@ -7,14 +7,15 @@ package org.jetbrains.letsPlot.commons.formatting.string
 
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
-import org.jetbrains.letsPlot.commons.intern.datetime.Instant
-import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 
 class StringFormat private constructor(
     private val pattern: String,
-    private val formatType: FormatType
+    private val formatType: FormatType,
+    superscriptExponent: Boolean?
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
@@ -26,16 +27,16 @@ class StringFormat private constructor(
 
     init {
         myFormatters = when (formatType) {
-            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType))
+            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, superscriptExponent))
             STRING_FORMAT -> {
                 BRACES_REGEX.findAll(pattern)
                     .map { it.groupValues[TEXT_IN_BRACES] }
-                    .map { format ->
-                        val formatType = detectFormatType(format)
+                    .map { pattern ->
+                        val formatType = detectFormatType(pattern)
                         require(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
-                            error("Can't detect type of pattern '$format' used in string pattern '$pattern'")
+                            error("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
                         }
-                        initFormatter(format, formatType)
+                        initFormatter(pattern, formatType, superscriptExponent)
                     }
                     .toList()
             }
@@ -68,13 +69,22 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(formatPattern: String, formatType: FormatType): ((Any) -> String) {
+    private fun initFormatter(formatPattern: String, formatType: FormatType, superscriptExponent: Boolean?): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
         }
         when (formatType) {
             NUMBER_FORMAT -> {
-                val numberFormatter = NumberFormat(formatPattern)
+                val formatSpec = NumberFormat.parseSpec(formatPattern)
+
+                // override richOutput if superscriptExponent is set
+                val spec = if (superscriptExponent != null) {
+                    formatSpec.copy(richOutput = superscriptExponent)
+                } else {
+                    formatSpec
+                }
+
+                val numberFormatter = NumberFormat(spec)
                 return { value: Any ->
                     when (value) {
                         is Number -> numberFormatter.apply(value)
@@ -117,17 +127,19 @@ class StringFormat private constructor(
         fun forOneArg(
             pattern: String,
             type: FormatType? = null,
-            formatFor: String? = null
+            formatFor: String? = null,
+            superscriptExponent: Boolean = true,
         ): StringFormat {
-            return create(pattern, type, formatFor, expectedArgs = 1)
+            return create(pattern, type, formatFor, expectedArgs = 1, superscriptExponent)
         }
 
         fun forNArgs(
             pattern: String,
             argCount: Int,
-            formatFor: String? = null
+            formatFor: String? = null,
+            superscriptExponent: Boolean = true,
         ): StringFormat {
-            return create(pattern, STRING_FORMAT, formatFor, argCount)
+            return create(pattern, STRING_FORMAT, formatFor, argCount, superscriptExponent)
         }
 
         private fun detectFormatType(pattern: String): FormatType {
@@ -142,10 +154,11 @@ class StringFormat private constructor(
             pattern: String,
             type: FormatType? = null,
             formatFor: String? = null,
-            expectedArgs: Int = -1
+            expectedArgs: Int = -1,
+            superscriptExponent: Boolean? = null
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(pattern, formatType).also {
+            return StringFormat(pattern, formatType, superscriptExponent = superscriptExponent).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {
                         @Suppress("NAME_SHADOWING")

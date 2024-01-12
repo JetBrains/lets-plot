@@ -8,14 +8,16 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.horizontalFixedBreaks
+import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.horizontalFlexBreaks
+import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.verticalFixedBreaks
+import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.verticalFlexBreaks
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Axis
 
 internal abstract class AxisLayouter(
     val orientation: Orientation,
@@ -62,51 +64,23 @@ internal abstract class AxisLayouter(
             geomAreaInsets: Insets,
             theme: AxisTheme
         ): AxisLayouter {
-
-            if (orientation.isHorizontal) {
-                val labelsLayout: AxisLabelsLayout = if (breaksProvider.isFixedBreaks) {
-                    val trimmedScaleBreaks = with(breaksProvider.fixedBreaks) {
-                        ScaleBreaks(domainValues, transformedValues, labels.map(::trimLongValues))
+            val labelsLayout =
+                if (breaksProvider.isFixedBreaks) {
+                    if (orientation.isHorizontal) {
+                        horizontalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, geomAreaInsets, theme)
+                    } else {
+                        verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
                     }
-                    AxisLabelsLayout.horizontalFixedBreaks(
-                        orientation,
-                        axisDomain,
-                        trimmedScaleBreaks,
-                        geomAreaInsets,
-                        theme
-                    )
                 } else {
-                    AxisLabelsLayout.horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                    if (orientation.isHorizontal) {
+                        horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                    } else {
+                        verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                    }
                 }
-                return HorizontalAxisLayouter(
-                    orientation,
-                    axisDomain,
-                    labelsLayout
-                )
-            }
 
-            // vertical
-            val labelsLayout: AxisLabelsLayout = if (breaksProvider.isFixedBreaks) {
-                val trimmedScaleBreaks = with(breaksProvider.fixedBreaks) {
-                    ScaleBreaks(domainValues, transformedValues, labels.map(::trimLongValues))
-                }
-                AxisLabelsLayout.verticalFixedBreaks(orientation, axisDomain, trimmedScaleBreaks, theme)
-            } else {
-                AxisLabelsLayout.verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
-            }
-            return VerticalAxisLayouter(
-                orientation,
-                axisDomain,
-                labelsLayout
-            )
-        }
-
-        private fun trimLongValues(text: String): String {
-            return if (text.length <= Axis.LABEL_MAX_LENGTH) {
-                text
-            } else {
-                text.take(Axis.LABEL_MAX_LENGTH) + ".."
-            }
+            val axisLayouter = if (orientation.isHorizontal) ::HorizontalAxisLayouter else ::VerticalAxisLayouter
+            return axisLayouter(orientation, axisDomain, labelsLayout)
         }
     }
 }

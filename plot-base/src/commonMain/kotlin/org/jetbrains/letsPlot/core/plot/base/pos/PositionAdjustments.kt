@@ -51,8 +51,8 @@ object PositionAdjustments {
         return FillPos(aesthetics, vjust, stackingMode)
     }
 
-    fun jitter(width: Double?, height: Double?): PositionAdjustment {
-        return JitterPos(width, height)
+    fun jitter(width: Double?, height: Double?, seed: Long?): PositionAdjustment {
+        return JitterPos(width, height, seed)
     }
 
     fun nudge(width: Double?, height: Double?): PositionAdjustment {
@@ -64,9 +64,10 @@ object PositionAdjustments {
         groupCount: Int,
         width: Double?,
         jitterWidth: Double?,
-        jitterHeight: Double?
+        jitterHeight: Double?,
+        seed: Long?
     ): PositionAdjustment {
-        return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight)
+        return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight, seed)
     }
 
     enum class Meta(private val handlesGroups: Boolean) {

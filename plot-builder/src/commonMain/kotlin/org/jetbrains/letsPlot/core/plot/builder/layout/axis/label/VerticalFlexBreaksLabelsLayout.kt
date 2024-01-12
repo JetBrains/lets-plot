@@ -40,7 +40,7 @@ internal class VerticalFlexBreaksLabelsLayout(
             side = DoubleVector::y
         )
 
-        var breaks = getBreaks(targetBreakCount, axisLength)
+        var breaks = getBreaks(targetBreakCount)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
 
         while (labelsInfo.isOverlap) {
@@ -58,19 +58,15 @@ internal class VerticalFlexBreaksLabelsLayout(
                 break
             }
             targetBreakCount = newTargetBreakCount
-            breaks = getBreaks(targetBreakCount, axisLength)
+            breaks = getBreaks(targetBreakCount)
             labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
         }
 
         return labelsInfo
     }
 
-    private fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
-        return BreakLabelsLayoutUtil.getFlexBreaks(
-            myBreaksProvider,
-            maxCount,
-            axisLength
-        )
+    private fun getBreaks(maxCount: Int): ScaleBreaks {
+        return BreakLabelsLayoutUtil.getFlexBreaks(myBreaksProvider, maxCount)
     }
 
     private fun doLayoutLabels(

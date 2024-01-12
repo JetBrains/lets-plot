@@ -5,7 +5,7 @@ import os
 from os.path import join
 from typing import Union
 
-from .simple import export_svg, export_html, export_png
+from ..plot.core import _to_svg, _to_html, _export_as_raster
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 from ..plot.subplots import SupPlotsSpec
@@ -19,7 +19,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
            scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file.
-    Supported formats: PNG, SVG, HTML.
+    Supported formats: PNG, SVG, PDF, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
     if not specified otherwise (see the `path` parameter).
@@ -30,13 +30,14 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library).
+        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library), PDF.
     path : str
         Path to a directory to save image files in.
         By default it is ${user.dir}/lets-plot-images.
     iframe : bool, default=True
         Whether to wrap HTML page into a iFrame.
         Only applicable when exporting to HTML.
+        Some browsers may not display some UTF-8 characters correctly when setting iframe=True
     scale : float, default=2.0
         Scaling factor for raster output.
         Only applicable when exporting to PNG.
@@ -73,19 +74,18 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     if not path:
         path = join(os.getcwd(), _DEF_EXPORT_DIR)
 
-    if not os.path.exists(path):
-        os.makedirs(path)
-
     pathname = join(path, filename)
 
     ext = ext[1:].lower()
     if ext == 'svg':
-        return export_svg(plot, pathname)
+        return _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
-        return export_html(plot, pathname, iframe=iframe)
+        return _to_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        return export_png(plot, pathname, scale)
+        return _export_as_raster(plot, pathname, scale, 'png')
+    elif ext == 'pdf':
+        return _export_as_raster(plot, pathname, scale, 'pdf')
     else:
         raise ValueError(
-            "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'html', 'htm'".format(ext)
+            "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
         )

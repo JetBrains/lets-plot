@@ -16,13 +16,15 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil
-import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
-import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
+import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.BreaksData
+import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.TickLabelAdjustments
+import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.PolarAxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
@@ -53,7 +55,6 @@ internal class SquareFrameOfReference(
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
         val geomBounds: DoubleRectangle = layoutInfo.geomInnerBounds
-        val geomOuterBounds: DoubleRectangle = layoutInfo.geomOuterBounds
         val panelTheme = theme.panel()
 
         // Flip theme
@@ -82,50 +83,76 @@ internal class SquareFrameOfReference(
             parent.add(panel)
         }
 
-        if (drawHAxis || drawGridlines) {
+        // First draw grid lines and then add axis to prevent axis overlapping by grid lines (esp in polar coord system).
+        if (drawGridlines) {
+            if (drawHAxis) {
+                // Top/Bottom axis
+                listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                    val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+
+                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
+                    val gridBounds = geomBounds.origin
+                    gridComponent.moveTo(gridBounds)
+                    parent.add(gridComponent)
+                }
+            }
+
+            if (drawVAxis) {
+                // Left/Right axis
+                listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                    val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+
+                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+                    val gridBounds = geomBounds.origin
+                    gridComponent.moveTo(gridBounds)
+                    parent.add(gridComponent)
+                }
+            }
+        }
+
+        val isPolarCoordinateSystem = coord is PolarCoordinateSystem
+
+        if (drawHAxis) {
             // Top/Bottom axis
             listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+
                 val axisComponent = buildAxis(
-                    hScaleBreaks,
-                    axisInfo,
+                    breaksData = breaksData,
+                    info = axisInfo,
                     hideAxis = !drawHAxis,
                     hideAxisBreaks = !layoutInfo.hAxisShown,
-                    hideGridlines = !drawGridlines,
-                    coord,
-                    flipAxis,
-                    hAxisTheme,
-                    hGridTheme,
-                    gridLineLength = geomBounds.height,
-                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                    isDebugDrawing
+                    axisTheme = hAxisTheme,
+                    gridTheme = hGridTheme,
+                    labelAdjustments = labelAdjustments,
+                    isDebugDrawing,
+                    isPolarCoordinateSystem,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, isPolarCoordinateSystem)
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
         }
 
-
-        if (drawVAxis || drawGridlines) {
+        if (drawVAxis) {
             // Left/Right axis
             listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+
                 val axisComponent = buildAxis(
-                    vScaleBreaks,
+                    breaksData = breaksData,
                     axisInfo,
                     hideAxis = !drawVAxis,
                     hideAxisBreaks = !layoutInfo.vAxisShown,
-                    hideGridlines = !drawGridlines,
-                    coord,
-                    flipAxis,
                     vAxisTheme,
                     vGridTheme,
-                    gridLineLength = geomBounds.width,
-                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                    isDebugDrawing
+                    labelAdjustments,
+                    isDebugDrawing,
+                    isPolarCoordinateSystem,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, isPolarCoordinateSystem)
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -139,6 +166,27 @@ internal class SquareFrameOfReference(
         if (isDebugDrawing && !beforeGeomLayer) {
             drawDebugShapes(parent, geomBounds)
         }
+    }
+
+    private fun prepareAxisData(axisInfo: AxisLayoutInfo, scaleBreaks: ScaleBreaks, axisTheme: AxisTheme): Pair<TickLabelAdjustments, BreaksData> {
+        val labelAdjustments = TickLabelAdjustments(
+            orientation = axisInfo.orientation,
+            horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
+            verticalAnchor = axisInfo.tickLabelVerticalAnchor,
+            rotationDegree = axisInfo.tickLabelRotationAngle,
+            additionalOffsets = axisInfo.tickLabelAdditionalOffsets
+        )
+
+        val breaksData = AxisUtil.breaksData(
+            scaleBreaks = scaleBreaks,
+            coord = coord,
+            domain = adjustedDomain,
+            flipAxis = flipAxis,
+            orientation = axisInfo.orientation,
+            axisTheme = axisTheme,
+            labelAdjustments = labelAdjustments
+        )
+        return Pair(labelAdjustments, breaksData)
     }
 
     private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
@@ -176,7 +224,8 @@ internal class SquareFrameOfReference(
             coord,
             flipAxis,
             targetCollector,
-            theme.plot().backgroundFill()
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
+            theme.exponentFormat.superscript
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -188,48 +237,37 @@ internal class SquareFrameOfReference(
 
     companion object {
         private fun buildAxis(
-            scaleBreaks: ScaleBreaks,
+            breaksData: BreaksData,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
-            hideGridlines: Boolean,
-            coord: CoordinateSystem,
-            flipAxis: Boolean,
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
-            gridLineLength: Double,
-            gridLineDistance: Double,
-            isDebugDrawing: Boolean
-        ): AxisComponent {
-            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
-            val orientation = info.orientation
-            val labelAdjustments = AxisComponent.TickLabelAdjustments(
-                orientation = orientation,
-                horizontalAnchor = info.tickLabelHorizontalAnchor,
-                verticalAnchor = info.tickLabelVerticalAnchor,
-                rotationDegree = info.tickLabelRotationAngle,
-                additionalOffsets = info.tickLabelAdditionalOffsets
-            )
-
-            val breaksData = org.jetbrains.letsPlot.core.plot.builder.AxisUtil.breaksData(
-                scaleBreaks,
-                coord,
-                flipAxis,
-                orientation.isHorizontal
-            )
+            labelAdjustments: TickLabelAdjustments,
+            isDebugDrawing: Boolean,
+            isPolarCoordinateSystem: Boolean,
+        ): SvgComponent {
+            if (isPolarCoordinateSystem) {
+                return PolarAxisComponent(
+                    length = info.axisLength,
+                    orientation = info.orientation,
+                    breaksData = breaksData,
+                    labelAdjustments = labelAdjustments,
+                    axisTheme = axisTheme,
+                    gridTheme = gridTheme,
+                    hideAxis = hideAxis,
+                    hideAxisBreaks = hideAxisBreaks
+                )
+            }
 
             val axis = AxisComponent(
                 length = info.axisLength,
-                orientation = orientation,
+                orientation = info.orientation,
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
-                gridLineLength = gridLineLength,
-                gridLineDistance = gridLineDistance,
                 axisTheme = axisTheme,
-                gridTheme = gridTheme,
                 hideAxis = hideAxis,
-                hideAxisBreaks = hideAxisBreaks,
-                hideGridlines = hideGridlines
+                hideAxisBreaks = hideAxisBreaks
             )
 
             if (isDebugDrawing) {
@@ -272,7 +310,8 @@ internal class SquareFrameOfReference(
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color
+            backgroundColor: Color,
+            superscriptExponent: Boolean
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -303,6 +342,7 @@ internal class SquareFrameOfReference(
                 }
             }
 
+            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap, superscriptExponent)
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
@@ -312,25 +352,13 @@ internal class SquareFrameOfReference(
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
                 .annotations(rendererData.annotations)
                 .backgroundColor(backgroundColor)
+                .plotContext(plotContext)
                 .build()
 
             val pos = rendererData.pos
             val geom = layer.geom
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
-        }
-
-        private fun gridLineDistance(
-            geomInnerBounds: DoubleRectangle,
-            geomOuterBounds: DoubleRectangle,
-            orientation: Orientation
-        ): Double {
-            return when (orientation) {
-                Orientation.LEFT -> geomInnerBounds.left - geomOuterBounds.left
-                Orientation.RIGHT -> geomOuterBounds.right - geomInnerBounds.right
-                Orientation.TOP -> geomInnerBounds.top - geomOuterBounds.top
-                Orientation.BOTTOM -> geomOuterBounds.bottom - geomInnerBounds.bottom
-            }
         }
     }
 }

@@ -11,14 +11,15 @@ class Pie {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             strValsInX(),
-            pie(hole = 0.0, useCountStat = false),
-            pie(hole = 0.2),
-            pie(hole = 0.5, withOrdering = true),
-            withExplodes(addLabels = false),
+            // pie(hole = 0.0, useCountStat = false),
+            // pie(hole = 0.2),
+            // pie(hole = 0.5, withOrdering = true),
+            //  withExplodes(addLabels = false),
             withExplodes(addLabels = true),
             withStrokeAndSpacerLines(),
             sizeUnit(),
-            useFillBy()
+            useFillBy(),
+            exponentialNotation()
         )
     }
 
@@ -56,7 +57,11 @@ class Pie {
         "value" to listOf(160, 90, 34, 44, 21, 86, 15, 100, 20)
     )
 
-    private fun pie(hole: Double, useCountStat: Boolean = true, withOrdering: Boolean = false): MutableMap<String, Any> {
+    private fun pie(
+        hole: Double,
+        useCountStat: Boolean = true,
+        withOrdering: Boolean = false
+    ): MutableMap<String, Any> {
         val stat = if (useCountStat) "count2d" else "identity"
         val mapping = if (useCountStat) {
             "'fill': 'name', 'weight': 'value'"
@@ -151,8 +156,7 @@ class Pie {
         val spec = """
         {
           'kind': 'plot',
-          'ggsize': {'width': 400, 'height': 300},
-          'theme': { 'axis':'blank', 'line':'blank' },
+          'theme': { 'axis':'blank', 'line':'blank', 'legend_position':'none' },
           'mapping': { 'slice' : 'count', 'fill': 'group_names', 'explode': 'explode' },
           'layers': [
              {
@@ -177,7 +181,8 @@ class Pie {
     private fun withStrokeAndSpacerLines(): MutableMap<String, Any> {
         val spec = """
         {
-          'kind': 'plot', 
+          'kind': 'plot',
+          'ggtitle': {'text' : 'stroke aes + \'spacer_width\'=2.0 + \'stroke_side\'=\'both\''},
           'theme': { 'line': 'blank', 'axis': 'blank', 'flavor': 'solarized_light' },
           'mapping': { 
             'fill': 'name',
@@ -190,7 +195,7 @@ class Pie {
               'geom': 'pie',
               'stat': 'identity',
               'size': 20,
-              'hole': 0.0,
+              'hole': 0.5,
               'spacer_width': 2.0,
               'stroke_side': 'both'
             }
@@ -237,6 +242,48 @@ class Pie {
            'values': ['red', 'green', 'blue']}]
                 }""".trimIndent()
 
+        return parsePlotSpec(spec)
+    }
+
+    private fun exponentialNotation(): MutableMap<String, Any> {
+        val spec = """
+        {
+            'theme': { 'axis':'blank', 'line':'blank', 'legend_position':'none' },
+            'data': {
+                'name': ['a', 'b', 'c'],
+                'value': [
+                   1e-05,
+                   3.0000000000000004e-05,
+                   6.000000000000001e-05
+                ]
+            },
+            'kind': 'plot',
+            'layers': [
+              {
+                'geom': 'pie',
+                'mapping': {
+                    'fill': 'name',
+                    'weight': 'value'
+                },
+                'data_meta': {
+                    'mapping_annotations': [
+                       {
+                         'aes': 'fill',
+                         'annotation': 'as_discrete',
+                         'parameters': {
+                            'label': 'name',
+                            'order_by': '..count..',
+                            'order': null
+                         }
+                       }
+                    ]
+                },
+                'labels': { 'lines': ['@name', '^slice', 'size=^size'] },
+                'hole': 0.2,
+                'size': 15.0
+              } 
+            ]
+        }""".trimIndent()
         return parsePlotSpec(spec)
     }
 }

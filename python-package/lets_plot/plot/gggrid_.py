@@ -2,6 +2,10 @@
 # Copyright (c) 2023. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import json
+
+from lets_plot._global_settings import has_global_value, get_global_val, PLOT_THEME
+from lets_plot.plot.core import FeatureSpec, PlotSpec
 from .subplots import SupPlotsLayoutSpec
 from .subplots import SupPlotsSpec
 
@@ -9,6 +13,8 @@ __all__ = ['gggrid']
 
 
 def gggrid(plots: list, ncol: int = None, *,
+           sharex: str = None,
+           sharey: str = None,
            widths: list = None,
            heights: list = None,
            hspace: float = None,
@@ -27,6 +33,14 @@ def gggrid(plots: list, ncol: int = None, *,
     ncol : int
         Number of columns in grid.
         If not specified, shows plots horizontally, in one row.
+    sharex, sharey : bool or str, default=False
+        Controls sharing of axis limits between subplots in the grid.
+
+        - 'all'/True - share limits between all subplots.
+        - 'none'/False - do not share limits between subplots.
+        - 'row' - share limits between subplots in the same row.
+        - 'col' - share limits between subplots in the same column.
+
     widths : list of numbers
         Relative width of each column of grid, left to right.
     heights : list of numbers
@@ -82,10 +96,17 @@ def gggrid(plots: list, ncol: int = None, *,
         length = ncol * nrow
         plots = extended_list[0:length]
 
+    if sharex is not None and type(sharex) != str:
+        sharex = 'all' if sharex else 'none'
+    if sharey is not None and type(sharey) != str:
+        sharey = 'all' if sharey else 'none'
+
     layout = SupPlotsLayoutSpec(
         name="grid",
         ncol=ncol,
         nrow=nrow,
+        sharex=sharex,
+        sharey=sharey,
         widths=widths,
         heights=heights,
         hspace=hspace,
@@ -94,7 +115,28 @@ def gggrid(plots: list, ncol: int = None, *,
         align=align
     )
 
-    return SupPlotsSpec(
-        figures=plots,
-        layout=layout
-    )
+    # Global Theme
+    global_theme_options = json.loads(get_global_val(PLOT_THEME)) if has_global_value(PLOT_THEME) else None
+
+    def _strip_theme_if_global(fig):
+        # Strip global theme options from plots in grid (see issue: #966).
+        if global_theme_options is not None and fig is not None and 'theme' in fig.props() and fig.props()['theme'] == global_theme_options:
+            if isinstance(fig, PlotSpec):
+                fig = PlotSpec.duplicate(fig)
+                fig.props().pop('theme')
+                return fig
+            elif isinstance(fig, SupPlotsSpec):
+                fig = SupPlotsSpec.duplicate(fig)
+                fig.props().pop('theme')
+                return fig
+        return fig
+
+    figures = [_strip_theme_if_global(fig) for fig in plots]
+
+    figure_spec = SupPlotsSpec(figures=figures, layout=layout)
+
+    if global_theme_options is not None:
+        theme_name = global_theme_options.pop('name', None)
+        figure_spec += FeatureSpec('theme', theme_name, **global_theme_options)
+
+    return figure_spec

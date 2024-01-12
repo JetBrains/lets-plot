@@ -6,6 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 object ThemeOption {
+    // System
+    const val EXPONENT_FORMAT = "exponent_format"
+
     // Common
     const val TITLE = "title"
     const val TEXT = "text"
@@ -17,6 +20,7 @@ object ThemeOption {
     const val PLOT_SUBTITLE = "plot_subtitle"
     const val PLOT_CAPTION = "plot_caption"
     const val PLOT_MESSAGE = "plot_message"
+    const val PLOT_MARGIN = "plot_margin"
 
     // ToDo: "text_width_scale" is used Violin demo - update.
 //    const val TEXT_WIDTH_FACTOR = "text_width_scale"
@@ -83,6 +87,9 @@ object ThemeOption {
     const val TOOLTIP_RECT = "tooltip"
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
+
+    // Annotation
+    const val ANNOTATION_TEXT = "label_text"
 
     const val GEOM = "geom"
     const val FLAVOR = "flavor"
@@ -198,6 +205,7 @@ object ThemeOption {
             LEGEND_TITLE,
             TOOLTIP_TEXT,
             TOOLTIP_TITLE_TEXT,
+            ANNOTATION_TEXT
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
@@ -229,6 +237,7 @@ object ThemeOption {
             LEGEND_TITLE,
             TOOLTIP_TEXT,
             TOOLTIP_TITLE_TEXT,
+            ANNOTATION_TEXT
         )
     }
 }

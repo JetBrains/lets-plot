@@ -8,6 +8,11 @@ package org.jetbrains.letsPlot.commons.geometry
 import kotlin.math.*
 
 class DoubleVector(val x: Double, val y: Double) {
+    constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+
+    operator fun component1(): Double = x
+    operator fun component2(): Double = y
+
     val isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
     fun add(v: DoubleVector): DoubleVector {
@@ -58,6 +63,10 @@ class DoubleVector(val x: Double, val y: Double) {
 
     fun flip(): DoubleVector {
         return DoubleVector(y, x)
+    }
+
+    fun flipIf(flipped: Boolean): DoubleVector {
+        return if (flipped) flip() else this
     }
 
     override fun equals(other: Any?): Boolean {

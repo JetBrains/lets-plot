@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
-import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
@@ -48,11 +48,35 @@ object PlotConfigFrontendUtil {
         return guideOptionsByAes
     }
 
-    fun createPlotAssembler(config: PlotConfigFrontend): PlotAssembler {
+    fun createPlotAssembler(
+        config: PlotConfigFrontend,
+        sharedContinuousDomainX: DoubleSpan? = null,
+        sharedContinuousDomainY: DoubleSpan? = null,
+    ): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
+        val scaleMap: Map<Aes<*>, Scale> = config.scaleMap.mapValues { (aes, scale) ->
+            if (aes == Aes.X && sharedContinuousDomainX != null) {
+                scale.with().continuousTransform(
+                    Transforms.continuousWithLimits(
+                        scale.transform as ContinuousTransform,
+                        sharedContinuousDomainX.toPair()
+                    )
+                ).build()
+            } else if (aes == Aes.Y && sharedContinuousDomainY != null) {
+                scale.with().continuousTransform(
+                    Transforms.continuousWithLimits(
+                        scale.transform as ContinuousTransform,
+                        sharedContinuousDomainY.toPair()
+                    )
+                ).build()
+            } else {
+                scale
+            }
+        }
+
         return PlotAssembler(
             layersByTile,
-            config.scaleMap,
+            scaleMap,
             config.mappersByAesNP,
             config.facets,
             config.coordProvider,
@@ -70,16 +94,18 @@ object PlotConfigFrontendUtil {
         return buildPlotLayers(
             plotConfig.layerConfigs,
             plotConfig.facets,
+            plotConfig.coordProvider,
             plotConfig.scaleMap,
             plotConfig.mappersByAesNP,
             plotConfig.theme,
-            plotConfig.fontFamilyRegistry,
+            plotConfig.theme.fontFamilyRegistry,
         )
     }
 
     private fun buildPlotLayers(
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
+        coordProvider: CoordProvider,
         commonScaleMap: Map<Aes<*>, Scale>,
         mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
         theme: Theme,
@@ -136,6 +162,7 @@ object PlotConfigFrontendUtil {
                     layerScaleMap,
                     otherLayerWithTooltips,
                     isLiveMap,
+                    coordProvider.isLinear,
                     theme
                 )
             }
@@ -206,7 +233,8 @@ object PlotConfigFrontendUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
+        val geomProvider =
+            layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.superscript)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -225,6 +253,8 @@ object PlotConfigFrontendUtil {
 
         // geomTheme
         layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
+
+        layerBuilder.superscriptExponent(theme.exponentFormat.superscript)
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {
@@ -255,7 +285,7 @@ object PlotConfigFrontendUtil {
                 .contextualMappingProvider(it)
         }
         // annotations
-        layerBuilder.annotationSpecification(layerConfig.annotations, theme.plot().textStyle())
+        layerBuilder.annotationSpecification(layerConfig.annotations, theme.annotations().textStyle())
 
         return layerBuilder
     }

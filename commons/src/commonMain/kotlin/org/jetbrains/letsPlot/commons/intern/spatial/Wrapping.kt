@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.spatial
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.math.yOnLine
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.abs
 
@@ -30,20 +30,6 @@ fun <TypeT> wrapPath(path: List<Vec<TypeT>>, domain: Rect<TypeT>): List<List<Vec
     var currentPath = ArrayList<Vec<TypeT>>()
     currentPath.add(path[0])
 
-    fun yOnLine(p1: Vec<TypeT>, p2: Vec<TypeT>, x: Double): Double {
-        // the Equation for the Line
-        // y = m * x + b
-        // Where
-        // m = (y2 - y1) / (x2 - x1)
-        // and b computed by substitution p1 or p2 to the equation of the line
-
-        val m = (p2.y - p1.y) / ((p2.x) - p1.x)
-        val b = p2.y - m * (p2.x)
-
-        // Result
-        return m * x + b
-    }
-
     for (i in 1 until path.size) {
         val p1 = path[i - 1]
         val p2 = path[i]
@@ -54,11 +40,11 @@ fun <TypeT> wrapPath(path: List<Vec<TypeT>>, domain: Rect<TypeT>): List<List<Vec
             val y: Double
 
             if (p1.x < p2.x) {
-                y = yOnLine(p1, p2.copy(x = p2.x - domain.width), x = domain.left)
+                y = yOnLine(p1.x, p1.y, p2.x - domain.width, p2.y, x = domain.left)
                 xa = domain.left
                 xb = domain.right
             } else {
-                y = yOnLine(p1, p2.copy(x = p2.x + domain.width), x = domain.right)
+                y = yOnLine(p1.x, p1.y, p2.x + domain.width, p2.y, x = domain.right)
                 xa = domain.right
                 xb = domain.left
             }

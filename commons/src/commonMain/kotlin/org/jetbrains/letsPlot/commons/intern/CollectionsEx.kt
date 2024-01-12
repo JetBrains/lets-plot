@@ -12,6 +12,13 @@ fun <K, V> Map<K?, V>.filterNotNullKeys(): Map<K, V> {
         .toMap()
 }
 
+fun <K, V> Map<K, V?>.filterNotNullValues(): Map<K, V> {
+    return entries
+        .asSequence()
+        .mapNotNull { (k, v) -> v?.let { k to v } }
+        .toMap()
+}
+
 fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {
     val result = mutableListOf<List<T>>()
     var chunk = mutableListOf<T>()

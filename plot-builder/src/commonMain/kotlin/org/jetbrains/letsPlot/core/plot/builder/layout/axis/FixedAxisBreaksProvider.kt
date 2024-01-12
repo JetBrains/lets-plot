@@ -14,7 +14,7 @@ class FixedAxisBreaksProvider(
     override val isFixedBreaks: Boolean
         get() = true
 
-    override fun getBreaks(targetCount: Int, axisLength: Double): ScaleBreaks {
+    override fun getBreaks(targetCount: Int): ScaleBreaks {
         return fixedBreaks
     }
 }

@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2023. JetBrains s.r.o.
+# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+#
+
+# Set project architecture for Linux or Mac. Windows users can skip this parameter.
+# Available values: 'arm64', 'x86_64'"
+architecture=x86_64
+
+# Enable tasks responsible for building and publishing of lets-plot python package.
+# Set 'true' or 'false' here:
+enable_python_package=false
+
+# -------------------------------------------------------------------
+# Python settings
+# ---------
+#python.bin_path=
+#python.include_path=
+
+# -------------------------------------------------------------------
+# PyPI settings
+# -------------------------------------------------------------------
+# credentials for test.pypi.org
+#pypi.test.username=
+#pypi.test.password=
+# credentials on pypi.org
+#pypi.prod.username=
+#pypi.prod.password=
+
+
+
+# -------------------------------------------------------------------
+# Sonatype settings
+#
+# User with deployment permission to Sonatype Nexus repository.
+#
+# In addition, each publication must be signed using a PGP key.
+# Create file "~/.gradle/gradle.properties":
+#   signing.keyId=your_keyid_here (short)
+#   signing.password=your_password_here
+#   signing.secretKeyRingFile=/Users/you/.gnupg/secring.kbx
+# -------------------------------------------------------------------
+#sonatype.username=
+#sonatype.password=
+#sonatype.profileID=

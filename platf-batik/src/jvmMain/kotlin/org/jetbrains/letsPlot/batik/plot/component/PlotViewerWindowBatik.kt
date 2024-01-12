@@ -5,15 +5,15 @@
 
 package org.jetbrains.letsPlot.batik.plot.component
 
-import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
 import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.awt.plot.component.PlotViewerWindowBase
+import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import javax.swing.JComponent
 
-class PlotViewerWindowBatik(
+open class PlotViewerWindowBatik(
     title: String,
     windowSize: Dimension? = null,
     private val rawSpec: MutableMap<String, Any>,

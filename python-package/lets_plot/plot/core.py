@@ -2,7 +2,10 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import io
 import json
+import os
+from typing import Union
 
 __all__ = ['aes', 'layer']
 
@@ -473,6 +476,173 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
+    def to_svg(self, path) -> str:
+        """
+        Export a plot to a file or to a file-like object in SVG format.
+
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 9
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_svg(file_like)
+            display.SVG(file_like.getvalue())
+        """
+        return _to_svg(self, path)
+
+    def to_html(self, path, iframe: bool = None) -> str:
+        """
+        Export a plot to a file or to a file-like object in HTML format.
+
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
+        iframe : bool, default=False
+            Whether to wrap HTML page into a iFrame.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_html(file_like)
+        """
+        return _to_html(self, path, iframe)
+
+    def to_png(self, path, scale: float = None) -> str:
+        """
+        Export a plot to a file or to a file-like object in PNG format.
+
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
+
+        Notes
+        -----
+        Export to PNG file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 9
+
+            import numpy as np
+            import io
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            x = np.random.randint(10, size=100)
+            p = ggplot({'x': x}, aes(x='x')) + geom_bar()
+            file_like = io.BytesIO()
+            p.to_png(file_like)
+            display.Image(file_like.getvalue())
+        """
+        return _export_as_raster(self, path, scale, 'png')
+
+    def to_pdf(self, path, scale: float = None) -> str:
+        """
+        Export a plot to a file or to a file-like object in PDF format.
+
+        Parameters
+        ----------
+        self : `PlotSpec`
+            Plot specification to export.
+        path : str, file-like object
+            Сan be either a string specifying a file path or a file-like object.
+            If a string is provided, the result will be exported to the file at that path.
+            If a file-like object is provided, the result will be exported to that object.
+        scale : float
+            Scaling factor for raster output. Default value is 2.0.
+
+        Returns
+        -------
+        str
+            Absolute pathname of created file or None if file-like object is provided.
+
+        Notes
+        -----
+        Export to PDF file uses the CairoSVG library.
+        CairoSVG is free and distributed under the LGPL-3.0 license.
+        For more details visit: https://cairosvg.org/documentation/
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 13
+
+            import numpy as np
+            import io
+            import os
+            from lets_plot import *
+            from IPython import display
+            LetsPlot.setup_html()
+            n = 60
+            np.random.seed(42)
+            x = np.random.choice(list('abcde'), size=n)
+            y = np.random.normal(size=n)
+            p = ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_jitter()
+            file_like = io.BytesIO()
+            p.to_pdf(file_like)
+        """
+        return _export_as_raster(self, path, scale, 'pdf')
+
 
 class LayerSpec(FeatureSpec):
     """
@@ -621,3 +791,78 @@ def _theme_dicts_merge(x, y):
     overlapping_keys = x.keys() & y.keys()
     z = {k: {**x[k], **y[k]} for k in overlapping_keys if type(x[k]) is dict and type(y[k]) is dict}
     return {**x, **y, **z}
+
+
+def _to_svg(spec, path) -> Union[str, None]:
+    from .. import _kbridge as kbr
+
+    svg = kbr._generate_svg(spec.as_dict())
+    if isinstance(path, str):
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
+            f.write(svg)
+            return abspath
+    else:
+        path.write(svg.encode())
+        return None
+
+
+def _to_html(spec, path, iframe: bool) -> Union[str, None]:
+    if iframe is None:
+        iframe = False
+
+    from .. import _kbridge as kbr
+    html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
+
+    if isinstance(path, str):
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
+            f.write(html_page)
+            return abspath
+    else:
+        path.write(html_page.encode())
+        return None
+
+
+def _export_as_raster(spec, path, scale: float, export_format: str) -> Union[str, None]:
+    if scale is None:
+        scale = 2.0
+
+    try:
+        import cairosvg
+    except ImportError:
+        import sys
+        print("\n"
+              "To export Lets-Plot figure to a PNG or PDF file please install CairoSVG library"
+              "to your Python environment.\n"
+              "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
+              "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
+        return None
+
+    if export_format.lower() == 'png':
+        export_function = cairosvg.svg2png
+    elif export_format.lower() == 'pdf':
+        export_function = cairosvg.svg2pdf
+    else:
+        raise ValueError("Unknown export format: {}".format(export_format))
+
+    from .. import _kbridge
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(spec.as_dict(), use_css_pixelated_image_rendering=False)
+
+    if isinstance(path, str):
+        abspath = _makedirs(path)
+        result = abspath
+    else:
+        result = None  # file-like object is provided. No path to return.
+    export_function(bytestring=svg, write_to=path, scale=scale)
+    return result
+
+
+def _makedirs(path: str) -> str:
+    """Return absolute path to a file after creating all directories in the path."""
+    abspath = os.path.abspath(path)
+    dirname = os.path.dirname(abspath)
+    if dirname and not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return abspath

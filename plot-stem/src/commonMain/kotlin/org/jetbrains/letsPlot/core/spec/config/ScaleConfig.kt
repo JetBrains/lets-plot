@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.BREAKS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.CHROMA
@@ -29,6 +30,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.GUIDE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.HIGH
 import org.jetbrains.letsPlot.core.spec.Option.Scale.HUE_RANGE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LABELS
+import org.jetbrains.letsPlot.core.spec.Option.Scale.LABLIM
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LIMITS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LOW
 import org.jetbrains.letsPlot.core.spec.Option.Scale.LUMINANCE
@@ -58,14 +60,14 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.Viridis
 import org.jetbrains.letsPlot.core.spec.Option.TransformName
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMappers
-import org.jetbrains.letsPlot.core.spec.Option
 
 /**
  * @param <T> - target aesthetic type of the configured scale
  */
 class ScaleConfig<T> constructor(
     val aes: Aes<T>,
-    options: Map<String, Any>
+    options: Map<String, Any>,
+    private val aopConversion: AesOptionConversion
 ) : OptionsAccessor(options) {
 
     private fun enforceDiscreteDomain(): Boolean {
@@ -79,14 +81,14 @@ class ScaleConfig<T> constructor(
         var mapperProvider: MapperProvider<*> = DefaultMapperProvider[aes]
 
         val naValue: T = when {
-            has(NA_VALUE) -> getValue(aes, NA_VALUE)!!
+            has(NA_VALUE) -> getValue(aes, NA_VALUE, aopConversion)!!
             else -> DefaultNaValue[aes]
         }
 
         // all 'manual' scales
         if (has(OUTPUT_VALUES)) {
             val outputValues = getList(OUTPUT_VALUES)
-            val mapperOutputValues = AesOptionConversion.applyToList(aes, outputValues)
+            val mapperOutputValues = aopConversion.applyToList(aes, outputValues)
             mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
         }
 
@@ -122,20 +124,20 @@ class ScaleConfig<T> constructor(
         when (scaleMapperKind) {
             null -> {} // Nothing
             IDENTITY ->
-                mapperProvider = createIdentityMapperProvider(aes, naValue)
+                mapperProvider = createIdentityMapperProvider(aes, naValue, aopConversion)
 
             COLOR_GRADIENT ->
                 mapperProvider = ColorGradientMapperProvider(
-                    getColor(LOW),
-                    getColor(HIGH),
+                    getColor(LOW, aopConversion),
+                    getColor(HIGH, aopConversion),
                     (naValue as Color)
                 )
 
             COLOR_GRADIENT2 ->
                 mapperProvider = ColorGradient2MapperProvider(
-                    getColor(LOW),
-                    getColor(MID),
-                    getColor(HIGH),
+                    getColor(LOW, aopConversion),
+                    getColor(MID, aopConversion),
+                    getColor(HIGH, aopConversion),
                     getDouble(MIDPOINT), naValue as Color
                 )
 
@@ -147,17 +149,18 @@ class ScaleConfig<T> constructor(
 
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
-                    getDoubleList(HUE_RANGE),
-                    getDouble(CHROMA),
-                    getDouble(LUMINANCE),
-                    getDouble(START_HUE),
-                    getDouble(DIRECTION), naValue as Color
+                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorHueMapperProvider.DEF_HUE_RANGE,
+                    chroma = (getDouble(CHROMA) ?: ColorHueMapperProvider.DEF_CHROMA),
+                    luminance = (getDouble(LUMINANCE) ?: ColorHueMapperProvider.DEF_LUMINANCE),
+                    startHue = getDouble(START_HUE) ?: ColorHueMapperProvider.DEF_START_HUE,
+                    reversed = getDouble(DIRECTION)?.let { it < 0 } ?: false,
+                    naValue = naValue as Color
                 )
 
             COLOR_GREY ->
                 mapperProvider = GreyscaleLightnessMapperProvider(
-                    getDouble(START),
-                    getDouble(END),
+                    getDouble(START) ?: GreyscaleLightnessMapperProvider.DEF_START,
+                    getDouble(END) ?: GreyscaleLightnessMapperProvider.DEF_END,
                     naValue as Color
                 )
 
@@ -197,7 +200,7 @@ class ScaleConfig<T> constructor(
         return createScaleProviderBuilder().build()
     }
 
-    private fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
+    fun createScaleProviderBuilder(): ScaleProviderBuilder<T> {
         val discreteDomain = enforceDiscreteDomain()
         val reverse = getBoolean(Option.Scale.DISCRETE_DOMAIN_REVERSE)
 
@@ -249,24 +252,31 @@ class ScaleConfig<T> constructor(
         if (has(NAME)) {
             b.name(getString(NAME)!!)
         }
+
         if (has(BREAKS)) {
             b.breaks(getList(BREAKS).mapNotNull { it })
         }
+
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))
         } else {
             // Skip format is labels are defined
             b.labelFormat(getString(FORMAT))
         }
+
+        if (has(LABLIM)) {
+            b.labelLengthLimit(getInteger(LABLIM)!!)
+        }
+
         if (has(EXPAND)) {
-            val list = getList(EXPAND)
-            if (list.isNotEmpty()) {
-                val multiplicativeExpand = list[0] as Number
-                b.multiplicativeExpand(multiplicativeExpand.toDouble())
-                if (list.size > 1) {
-                    val additiveExpand = list[1] as Number
-                    b.additiveExpand(additiveExpand.toDouble())
-                }
+            val expandList = getDoubleList(EXPAND)
+
+            expandList.getOrNull(0)?.let {
+                b.multiplicativeExpand(it)
+            }
+
+            expandList.getOrNull(1)?.let {
+                b.additiveExpand(it)
             }
         }
         if (has(LIMITS)) {
@@ -308,11 +318,14 @@ class ScaleConfig<T> constructor(
             return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
-        fun <T> createIdentityMapperProvider(aes: Aes<T>, naValue: T): MapperProvider<T> {
+        fun <T> createIdentityMapperProvider(
+            aes: Aes<T>,
+            naValue: T,
+            aopConversion: AesOptionConversion
+        ): MapperProvider<T> {
             // There is an option value converter for every AES (which can be used as discrete identity mapper)
-            val cvt = AesOptionConversion.getConverter(aes)
             val discreteMapperProvider =
-                IdentityDiscreteMapperProvider(cvt/*, naValue*/)
+                IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
 
             // For some AES there is also a continuous identity mapper
             if (TypedContinuousIdentityMappers.contain(aes)) {

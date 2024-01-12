@@ -23,6 +23,10 @@ class SvgTSpanElement() : SvgElement(), SvgTextContent {
             SvgAttributeSpec.createSpec("x")
         private val Y: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("y")
+        val DY: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("dy")
+        val FONT_SIZE: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec("font-size")
     }
 
     override val elementName = "tspan"

@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 
 interface CoordProvider {
     val flipped: Boolean
+    val isLinear: Boolean
 
     fun with(
         xLim: DoubleSpan?,
@@ -24,7 +25,7 @@ interface CoordProvider {
     /**
      * Reshape and flip the domain if necessary.
      */
-    fun adjustDomain(domain: DoubleRectangle): DoubleRectangle
+    fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle
 
     fun adjustGeomSize(
         hDomain: DoubleSpan,

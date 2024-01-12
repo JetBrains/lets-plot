@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
@@ -25,7 +27,7 @@ internal class TopDownTileLayout(
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        var geomAreaInsets = computeAxisInfos(
+        val geomAreaInsets = computeAxisInfos(
             axisLayoutQuad,
             preferredSize,
             hDomain, vDomain,
@@ -46,14 +48,23 @@ internal class TopDownTileLayout(
 
         // Combine geom area and x/y-axis
         val (l, r, t, b) = axisInfos
-        val axisBounds = listOfNotNull(l, r, t, b)
-            .map {
-                it.axisBoundsAbsolute(geomBoundsAfterLayout)
-            }
+        // Only take in account:
+        //  - width of vertical axis
+        //  - height of horizontal axis
+//        val axisBounds = listOfNotNull(l, r, t, b)
+//            .map {
+//                it.axisBoundsAbsolute(geomBoundsAfterLayout)
+//            }
 
-        val geomWithAxisBounds = axisBounds.fold(geomBoundsAfterLayout) { a, e ->
-            a.union(e)
-        }
+//        val geomWithAxisBounds = axisBounds.fold(geomBoundsAfterLayout) { a, e ->
+//            a.union(e)
+//        }
+        val geomWithAxisBounds: DoubleRectangle = DoubleRectangle.LTRB(
+            left = l?.axisBoundsAbsolute(geomBoundsAfterLayout)?.left ?: geomBoundsAfterLayout.left,
+            top = t?.axisBoundsAbsolute(geomBoundsAfterLayout)?.top ?: geomBoundsAfterLayout.top,
+            right = r?.axisBoundsAbsolute(geomBoundsAfterLayout)?.right ?: geomBoundsAfterLayout.right,
+            bottom = b?.axisBoundsAbsolute(geomBoundsAfterLayout)?.bottom ?: geomBoundsAfterLayout.bottom,
+        )
 
         val geomInnerBounds = marginsLayout.toInnerBounds(geomBoundsAfterLayout)
 
@@ -84,18 +95,21 @@ internal class TopDownTileLayout(
             coordProvider: CoordProvider
         ): GeomAreaInsets {
             val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
-            val geomHeightEstim = geomOuterBounds(
-                insetsInitial,
-                plotSize,
-                hDomain,
-                vDomain,
-                marginsLayout,
-                coordProvider
-            ).dimension.let {
-                marginsLayout.toInnerSize(it).y
-            }
+            val axisHeightEstim =
+                geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, coordProvider)
+                    .dimension
+                    .let(marginsLayout::toInnerSize)
+                    .y
+                    .let { height ->
+                        // For polar coord axis height is half of geom height - it starts from the center.
+                        if (coordProvider is PolarCoordProvider) {
+                            height / 2
+                        } else {
+                            height
+                        }
+                    }
 
-            val insetsVAxis = insetsInitial.layoutVAxis(vDomain, geomHeightEstim)
+            val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
             val plottingArea = geomOuterBounds(
                 insetsVAxis,
                 plotSize,
@@ -105,7 +119,14 @@ internal class TopDownTileLayout(
                 coordProvider
             )
 
-            val hAxisLength = marginsLayout.toInnerBounds(plottingArea).width
+            val hAxisLength = marginsLayout
+                .toInnerBounds(plottingArea)
+                .width
+                .let { width ->
+                    // h axis in polar coord is rendered as a circle - increase its length to make more tick.
+                    width.takeUnless { coordProvider is PolarCoordProvider } ?: (width * 1.5)
+                }
+
             val insetsHVAxis = insetsVAxis.layoutHAxis(
                 hDomain,
                 hAxisLength

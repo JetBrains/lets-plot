@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -13,12 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class RectTargetCollectorHelper(
     private val rectanglesHelper: RectanglesHelper,
-    private val clientRectByDataPoint: (DataPointAesthetics) -> DoubleRectangle?,
     private val tooltipKind: TipLayoutHint.Kind,
     private val colorsByDataPoint: (DataPointAesthetics) -> List<Color>
 ) {
     fun collectTo(targetCollector: GeomTargetCollector) {
-        rectanglesHelper.iterateRectangleGeometry(clientRectByDataPoint)
+        rectanglesHelper.iterateRectangleGeometry()
         { p, rectangle ->
             targetCollector.addRectangle(
                 p.index(),

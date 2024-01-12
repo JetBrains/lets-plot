@@ -25,8 +25,8 @@ object BoxHelper {
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?
     ) {
         // rectangles
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
-        val rectangles = helper.createRectangles(rectFactory)
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, rectFactory)
+        val rectangles = helper.createRectangles()
         rectangles.forEach { root.add(it) }
     }
 

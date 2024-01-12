@@ -27,26 +27,26 @@ object Colors {
         "very_light_yellow" to Color.VERY_LIGHT_YELLOW
     )
     private val namedColors = (
-        mapOf<String, Color>(
-            "white" to Color.WHITE,
-            "black" to Color.BLACK,
-            "gray" to Color.GRAY,
-            "red" to Color.RED,
-            "green" to Color.GREEN,
-            "blue" to Color.BLUE,
-            "yellow" to Color.YELLOW,
-            "magenta" to Color.MAGENTA,
-            "cyan" to Color.CYAN,
-            "orange" to Color.ORANGE,
-            "pink" to Color.PINK
-        ) +
-            // light_gray
-            variantColors +
-            // light-gray
-            variantColors.mapKeys { it.key.replace('_', '-') } +
-            // lightgray
-            variantColors.mapKeys { it.key.replace("_", "") }
-    )
+            mapOf<String, Color>(
+                "white" to Color.WHITE,
+                "black" to Color.BLACK,
+                "gray" to Color.GRAY,
+                "red" to Color.RED,
+                "green" to Color.GREEN,
+                "blue" to Color.BLUE,
+                "yellow" to Color.YELLOW,
+                "magenta" to Color.MAGENTA,
+                "cyan" to Color.CYAN,
+                "orange" to Color.ORANGE,
+                "pink" to Color.PINK
+            ) +
+                    // light_gray
+                    variantColors +
+                    // light-gray
+                    variantColors.mapKeys { it.key.replace('_', '-') } +
+                    // lightgray
+                    variantColors.mapKeys { it.key.replace("_", "") }
+            )
         .run {
             // ***grey
             this + mapKeys { it.key.replace("gray", "grey") }
@@ -107,22 +107,27 @@ object Colors {
                 r = c
                 g = x
             }
+
             hd < 2 -> {
                 r = x
                 g = c
             }
+
             hd < 3 -> {
                 g = c
                 b = x
             }
+
             hd < 4 -> {
                 g = x
                 b = c
             }
+
             hd < 5 -> {
                 r = x
                 b = c
             }
+
             else -> {
                 r = c
                 b = x
@@ -135,35 +140,6 @@ object Colors {
             (255 * (g + m)).roundToInt(),
             (255 * (b + m)).roundToInt(),
             (255 * alpha).roundToInt(),
-        )
-    }
-
-    fun hsvFromRgb(color: Color): HSV {
-        val scale = 1.0 / 255
-        val r = color.red * scale
-        val g = color.green * scale
-        val b = color.blue * scale
-        val min = min(r, min(g, b))
-        val max = max(r, max(g, b))
-
-        val v = if (max == 0.0) 0.0 else 1 - min / max
-        val h: Double
-        val div = 1f / (6 * (max - min))
-
-        h = if (max == min) {
-            0.0
-        } else if (max == r) {
-            if (g >= b) (g - b) * div else 1 + (g - b) * div
-        } else if (max == g) {
-            1f / 3 + (b - r) * div
-        } else {
-            2f / 3 + (r - g) * div
-        }
-
-        return HSV(
-            hue = 360 * h,
-            saturation = v,
-            value = max
         )
     }
 
@@ -215,6 +191,12 @@ object Colors {
 
     fun contrast(color: Color, other: Color): Double {
         return (luminance(color) + .05) / (luminance(other) + .05)
+    }
+
+    fun contrastRatio(color: Color, other: Color): Double {
+        val l1 = luminance(color)
+        val l2 = luminance(other)
+        return (max(l1, l2) + .05) / (min(l1, l2) + .05)
     }
 
     fun luminance(color: Color): Double {

@@ -29,7 +29,7 @@ internal class HorizontalMultilineLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()
+        val boundsByShelfIndex = ArrayList<DoubleRectangle>()
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         val boundsList = labelBoundsList(
             ticks, breaks.labels,
@@ -41,20 +41,20 @@ internal class HorizontalMultilineLabelsLayout(
             // find shelf with no overlap
             var shelfIndex = 0
             while (true) {
-                if (!boundsByShelfIndex.containsKey(shelfIndex)) {
-                    boundsByShelfIndex[shelfIndex] = labelBounds
+                if (boundsByShelfIndex.size == shelfIndex) {
+                    // First label on the shelf.
+                    boundsByShelfIndex.add(labelBounds)
                     shelfIndexForTickIndex.add(shelfIndex)
                     break
                 }
 
-                var shelfBounds = boundsByShelfIndex[shelfIndex]!!
+                val shelfBounds = boundsByShelfIndex[shelfIndex]
                 // not overlapped?
                 if (!shelfBounds.xRange()
                         .connected(DoubleSpan(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))
                 ) {
                     shelfIndexForTickIndex.add(shelfIndex)
-                    shelfBounds = shelfBounds.union(labelBounds)
-                    boundsByShelfIndex[shelfIndex] = shelfBounds
+                    boundsByShelfIndex[shelfIndex] = shelfBounds.union(labelBounds)
                     break
                 }
 
@@ -62,13 +62,13 @@ internal class HorizontalMultilineLabelsLayout(
             }
         }
 
-        var bounds = if (boundsByShelfIndex.isEmpty())
+        var bounds = if (boundsByShelfIndex.isEmpty()) {
             DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-        else
-            boundsByShelfIndex[0]!!
+        } else {
+            boundsByShelfIndex[0]
+        }
         val h = labelSpec.height() * LINE_HEIGHT
-        for (i in 0 until boundsByShelfIndex.size) {
-            val shelfBounds = boundsByShelfIndex[i]!!
+        for ((i, shelfBounds) in boundsByShelfIndex.withIndex()) {
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, i * h)))
         }
 
@@ -121,6 +121,5 @@ internal class HorizontalMultilineLabelsLayout(
             }
             return result
         }
-
     }
 }

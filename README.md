@@ -1,10 +1,9 @@
-# Lets-Plot  [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+# Lets-Plot
 
-<a href="https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="Couldn't load MIT license svg"/>
-</a>
+[![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![License MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/JetBrains/lets-plot-kotlin/master/LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
 
-##
 
 **Lets-Plot** is a multiplatform plotting library based on the Grammar of Graphics. 
 
@@ -16,28 +15,27 @@ The library' design is heavily influenced by Leland Wilkinson work [The Grammar 
 We provide ggplot2-like plotting API for Python and Kotlin users. 
 
 
-## Lets-Plot for Python
+## Lets-Plot for Python [![Latest Release](https://badge.fury.io/py/lets-plot.svg)](https://pypi.org/project/lets-plot)
 
-<a href="https://pypi.org/project/lets-plot/">
-  <img src="https://badge.fury.io/py/lets-plot.svg"/>
-</a>
-
-A bridge between R (ggplot2) and Python data visualization.
-
-To learn more: [lets-plot.org](https://lets-plot.org).          
+A bridge between R (ggplot2) and Python data visualization. \
+To learn more see the documentation site at [lets-plot.org](https://lets-plot.org).          
 
 
-## Lets-Plot for Kotlin
+## Lets-Plot Kotlin API [![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
 
-<a href="https://github.com/JetBrains/lets-plot-kotlin/releases/latest">
-  <img src="https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin"/>
-</a>
+### Notebooks
+Create plots in [Kotlin Notebook](https://plugins.jetbrains.com/plugin/16340-kotlin-notebook),
+[Datalore](https://datalore.jetbrains.com/report/static/HZqq77cegYd.E7get_WnChZ/aTA9lQnPkRwdCzT6uy95GZ), [Jupyter with Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter#readme) \
+or any other notebook that supports `Kotlin Kernel`. \
+To learn more see the [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) project at GitHub.
 
-*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter).
+### Compose Multiplatform
+Embed Lets-Plot charts in [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) applications. \
+To learn more see the [Lets-Plot Skia Frontend](https://github.com/JetBrains/lets-plot-skia) project at GitHub.
 
-You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications as well.
-
-*Lets-Plot for Kotlin* at GitHub: https://github.com/JetBrains/lets-plot-kotlin.
+### JVM and Kotlin/JS
+Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. \ 
+To learn more see the [Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin) project at GitHub.
 
 ## "Lets-Plot in SciView" plugin
 
@@ -58,56 +56,63 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.0.0
+## What is new in 4.2.0
 
-The major version was bumped to 4 due to a major package refactoring that the project has undergone.\
-This refactoring doesn't affect the Python API, however, as a result of package names changed,\
-Lets-Plot v4.0.0 is partially incompatible with Lets-Plot Kotlin API versions 4.4.1 and earlier.
-    
-### A Number of Geometry Defaults Changed
+- #### Support for `"Categoricals"`
 
-  - The default qualitative color palette is now [Color Brewer "Set1"](https://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9) (was ["Set2"](https://colorbrewer2.org/#type=qualitative&scheme=Set2&n=8)).
-  - Slightly bigger default size of points and width of lines.
-  - Flavor-aware default colors for points, lines etc.
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
+
+- #### Superscript for Numbers in Scientific Notation
+
+  > #### Warning!
+  >
+  > Do NOT(!) use `exponent_format='pow'` if you are planning to export plot to a raster format (PNG,PDF).
+  >
+  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handle `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
+  >
+  > More details: https://github.com/Kozea/CairoSVG/issues/317
+
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/geom_defaults.png" alt="f-23c/images/geom_defaults.png" width="504" height="150">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/superscript.png" alt="f-23f/images/superscript.png" width="328" height="241">
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript_exponent.ipynb).
+
+- #### Exporting Plot to a File-Like Object. <br>
+  Convenience methods: `to_svg()`, `to_html()`, `to_png()`, `to_pdf()`
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_export_methods.ipynb).
+
+- #### Sharing of X,Y-scale Limits Between Subplots in `gggrid()`
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/gggrid_scale_share.ipynb).
+
+- #### `geom_spoke()`
+
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/flavor_geom_colors.png" alt="f-23c/images/flavor_geom_colors.png" width="1024" height="120">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/geom_spoke.png" alt="f-23f/images/geom_spoke.png" width="248" height="272">
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_theme_colors.ipynb).
-       
-  - Size of points is slightly adjusted to match the width of a line of the same "size".
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_spoke.ipynb).
+
+- #### High-contrast Tileset "BW" for `geom_livemap()`
+
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/point_vs_line.png" alt="f-23c/images/point_vs_line.png" width="170" height="150">
-  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/tileset_BW.png" alt="f-23f/images/tileset_BW.png" width="512" height="312">
 
-### Support for Variadic Line Width and/or Color in `geom_line()` and `geom_path()`
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/variadic_width.png" alt="f-23c/images/variadic_width.png" width="455" height="150">
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).<br>
+  See advanced example: [Spatial prediction of soil pollutants with multi-output Gaussian processes](https://nextjournal.com/asmirnov-horis/spatial-prediction-of-soil-pollutants-with-multi-output-gaussian-processes?token=26GT2sBa3Ycw6LGZxqdTay). Credits: Essi Parent ([@essicolo](https://github.com/essicolo)).
+                                          
+- #### Other New Features and Improvements
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
-       
-### Parameter `"size_unit"` in `geom_pie()`
-  A way to specify size of the pie in units relative to the plot size.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_size_unit.ipynb).
-
-### Stroke and Spacers in `geom_pie()`
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23c/images/pie_stroke.png" alt="f-23c/images/pie_stroke.png" width="162" height="150">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_pie_stroke_and_spacers.ipynb).
-
-
-### New `theme_void()`, Geometries and Statistics
-
-- `theme_void()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/theme_void.ipynb).
-- `geom_function()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_function.ipynb).
-- `stat_ecdf()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_ecdf.ipynb).
-- `stat_summary()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
-- `stat_summary_bin()`: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
-- `"sum"` statistic: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_sum.ipynb).
-- `"boxplot_outlier"` statistic: [example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_boxplot_outlier.ipynb).
+  - `scale_x_log2()`, `scale_y_log2()`
+  - New variables computed by `'count'` and `'count2d'` statistics: `'..sumprop..'`, `'..sumpct..'`.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_stat_count_vars.ipynb).
+  - Support using dictionaries for breaks/labels/values customization in `scale_xxx()` functions.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_params_with_dict.ipynb).
+  - The `lablim` parameter in `scale_xxx()` functions.
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_lablim.ipynb).
+  - `label_text` parameter in `theme()` for annotation text settings.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/theme_label_text.ipynb).
+  - NumberFormat: new flag `~` to trim trailing zeros.
 
 
 ## Change Log
@@ -125,4 +130,4 @@ Please make sure you read it.
 ## License
 
 Code and documentation released under the [MIT license](https://github.com/JetBrains/lets-plot/blob/master/LICENSE).
-Copyright © 2019-2023, JetBrains s.r.o.
+Copyright © 2019-2024, JetBrains s.r.o.

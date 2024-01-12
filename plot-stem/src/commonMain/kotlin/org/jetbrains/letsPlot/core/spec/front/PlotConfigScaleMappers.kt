@@ -48,7 +48,7 @@ internal object PlotConfigScaleMappers {
         //
         // Note: domains for positional Aes are not needed and not computed.
         // Effective domains for X, Y axis are computed later.
-        //      See: PlotAssemblerUtil.computePlotDryRunXYRanges()
+        //      See: PositionalScalesUtil.computeTileXYDomains()
 
         val continuousDomainByAes = HashMap<Aes<*>, DoubleSpan>()
         transformByAes.getValue(Aes.X).let {

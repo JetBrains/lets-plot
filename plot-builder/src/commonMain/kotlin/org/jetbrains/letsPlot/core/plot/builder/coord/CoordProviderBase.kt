@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 
 internal abstract class CoordProviderBase(
-    private val xLim: DoubleSpan?,
-    private val yLim: DoubleSpan?,
+    protected val xLim: DoubleSpan?,
+    protected val yLim: DoubleSpan?,
     override val flipped: Boolean,
     protected val projection: Projection = identity(),
 ) : CoordProvider {
@@ -24,10 +24,12 @@ internal abstract class CoordProviderBase(
         require(yLim == null || yLim.length > 0.0) { "Coord y-limits range should be > 0.0" }
     }
 
+    override val isLinear: Boolean = !projection.nonlinear
+
     /**
      * Reshape and flip the domain if necessary.
      */
-    final override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+    override fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle {
         val validDomain = domain.let {
             val withLims = DoubleRectangle(
                 xLim ?: domain.xRange(),
@@ -49,7 +51,7 @@ internal abstract class CoordProviderBase(
         }
     }
 
-    final override fun createCoordinateMapper(
+    override fun createCoordinateMapper(
         adjustedDomain: DoubleRectangle,
         clientSize: DoubleVector,
     ): CoordinatesMapper {

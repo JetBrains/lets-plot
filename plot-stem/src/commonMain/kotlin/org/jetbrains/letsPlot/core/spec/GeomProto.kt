@@ -20,11 +20,12 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Pos
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
+    fun geomProvider(layerConfig: OptionsAccessor, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
     }
 
     fun defaultOptions(): Map<String, Any> {
@@ -90,6 +91,7 @@ class GeomProto(val geomKind: GeomKind) {
             RECT -> DefaultSampling.RECT
             SEGMENT -> DefaultSampling.SEGMENT
             CURVE -> DefaultSampling.SEGMENT
+            SPOKE -> DefaultSampling.SPOKE
             TEXT, LABEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
@@ -113,6 +115,7 @@ class GeomProto(val geomKind: GeomKind) {
                 Meta.NAME to PosProto.JITTER,
                 Pos.Jitter.WIDTH to layerOptions.getDouble(Geom.Jitter.WIDTH),
                 Pos.Jitter.HEIGHT to layerOptions.getDouble(Geom.Jitter.HEIGHT),
+                Pos.Jitter.SEED to layerOptions.getLong(Geom.Jitter.SEED)
             )
 
             Y_DOT_PLOT -> if (layerOptions.hasOwn(Geom.YDotplot.STACKGROUPS) &&

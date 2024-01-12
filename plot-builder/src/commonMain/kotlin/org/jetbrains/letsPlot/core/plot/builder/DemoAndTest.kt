@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReference
-import org.jetbrains.letsPlot.commons.values.Color
 
 object DemoAndTest {
     fun buildGeom(
@@ -18,8 +18,7 @@ object DemoAndTest {
         xyAesBounds: DoubleRectangle,
         coord: CoordinateSystem,
         flippedAxis: Boolean,
-        targetCollector: GeomTargetCollector,
-        plotBackground: Color
+        targetCollector: GeomTargetCollector
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
             layer = layer,
@@ -27,7 +26,8 @@ object DemoAndTest {
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            backgroundColor = plotBackground
+            backgroundColor = Color.WHITE,
+            superscriptExponent = false
         )
     }
 }

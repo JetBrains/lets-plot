@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.commons.data
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Iterables
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -53,8 +54,26 @@ object SeriesUtil {
             defaultValue
     }
 
+    fun finiteOrNull(v: Double?): Double? {
+        return if (v != null && v.isFinite())
+            v
+        else
+            null
+    }
+
     fun isFinite(v: Double): Boolean {
         return v.isFinite()
+    }
+
+    fun isFinite(v: DoubleVector): Boolean {
+        return v.isFinite
+    }
+
+    fun finiteOrNull(v: DoubleVector?): DoubleVector? {
+        return if (v != null && v.isFinite)
+            v
+        else
+            null
     }
 
     fun allFinite(v0: Double?, v1: Double?): Boolean {
@@ -210,24 +229,22 @@ object SeriesUtil {
         return !(range.lowerEnd.isInfinite() || range.upperEnd.isInfinite())
     }
 
-    fun matchingIndices(list: List<*>, matchedValue: Any?): MutableList<Int> {
+    fun <T> matchingIndices(list: List<T>, predicate: (T) -> Boolean): MutableList<Int> {
         val result = ArrayList<Int>()
         for (i in list.indices) {
-            if (matchedValue == list[i]) {
+            if (predicate(list[i])) {
                 result.add(i)
             }
         }
         return result
     }
 
+    fun matchingIndices(list: List<*>, matchedValue: Any?): MutableList<Int> {
+        return matchingIndices(list) { matchedValue == it }
+    }
+
     fun matchingIndices(list: List<*>, matchedValues: Set<*>): List<Int> {
-        val result = ArrayList<Int>()
-        for (i in list.indices) {
-            if (matchedValues.contains(list[i])) {
-                result.add(i)
-            }
-        }
-        return result
+        return matchingIndices(list) { it in matchedValues }
     }
 
     // ToDo: see Kotlin `slice()`

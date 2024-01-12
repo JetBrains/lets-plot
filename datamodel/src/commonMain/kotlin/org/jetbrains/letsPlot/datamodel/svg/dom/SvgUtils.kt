@@ -113,4 +113,16 @@ object SvgUtils {
                 .append(base64EncodedPngImage)
                 .toString()
     }
+
+    // Useful for debugging
+    fun getRoot(node: SvgNode): SvgNode {
+        tailrec fun findRoot(currNode: SvgNode): SvgNode {
+            return if (currNode.parent().get() == null) {
+                currNode
+            } else {
+                findRoot(currNode.parent().get()!!)
+            }
+        }
+        return findRoot(node)
+    }
 }

@@ -73,6 +73,10 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         )
     }
 
+    fun flipIf(flipped: Boolean): DoubleRectangle {
+        return if (flipped) flip() else this
+    }
+
     fun union(rect: DoubleRectangle): DoubleRectangle {
         val newOrigin = origin.min(rect.origin)
         val corner = origin.add(dimension)
@@ -151,6 +155,13 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             y = origin.y + (height - newSize.y) / 2,
         )
         return DoubleRectangle(newOrigin, newSize)
+    }
+
+    fun inflate(delta: Double): DoubleRectangle {
+        return DoubleRectangle(
+            origin.subtract(DoubleVector(delta, delta)),
+            dimension.add(DoubleVector(delta * 2, delta * 2))
+        )
     }
 
     override fun hashCode(): Int {

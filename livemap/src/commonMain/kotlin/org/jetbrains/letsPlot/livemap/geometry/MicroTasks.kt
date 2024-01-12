@@ -9,13 +9,13 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.GeometryType.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.VecResampler
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.VecResampler.Companion.resample
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.map
 
 
 object MicroTasks {
-    const val RESAMPLING_PRECISION = 0.001
+    const val RESAMPLING_PRECISION = 0.004
 
     fun <InT, OutT> resample(
         geometry: Geometry<InT>,
@@ -69,7 +69,6 @@ object MicroTasks {
     internal class IterativeResampler<InT, OutT>(
         private val myTransform: (Vec<InT>) -> Vec<OutT>?
     ) {
-        private val myAdaptiveResampling = VecResampler(myTransform, RESAMPLING_PRECISION)
         private var myPrevPoint: Vec<InT>? = null
         private var myRing: MutableCollection<Vec<OutT>>? = null
 
@@ -86,7 +85,7 @@ object MicroTasks {
 
             when (prev) {
                 null -> myTransform(p)?.let(myRing!!::add)
-                else -> myAdaptiveResampling.resample(prev, p).drop(1).forEach(myRing!!::add)
+                else -> myRing!!.addAll(resample(prev, p, RESAMPLING_PRECISION, myTransform).asSequence().drop(1))
             }
         }
     }

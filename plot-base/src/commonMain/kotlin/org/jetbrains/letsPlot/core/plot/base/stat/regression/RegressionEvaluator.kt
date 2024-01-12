@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.TDistribution
+import org.jetbrains.letsPlot.core.stat.tQuantile
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -68,7 +68,7 @@ abstract class RegressionEvaluator protected constructor(
         fun calcTCritical(degreesOfFreedom: Double, confidenceLevel: Double): Double {
             return if (degreesOfFreedom > 0) {
                 val alpha = 1.0 - confidenceLevel
-                TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
+                tQuantile(degreesOfFreedom)(1.0 - alpha / 2.0)
             } else {
                 Double.NaN
             }

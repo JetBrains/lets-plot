@@ -5,10 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale.mapper
 
+import org.jetbrains.letsPlot.commons.colorspace.*
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors
-import org.jetbrains.letsPlot.commons.values.HSV
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import kotlin.math.abs
 
@@ -39,62 +38,85 @@ object ColorMapper {
         naColor: Color,
         alpha: Double = 1.0
     ): (Double?) -> Color {
-        return gradientHSV(
+        return gradientLAB(
             domain,
-            Colors.hsvFromRgb(low),
-            Colors.hsvFromRgb(high),
-            true,
-            naColor, alpha
+            labFromRgb(low),
+            labFromRgb(high),
+            naColor,
+            alpha
         )
     }
 
-    fun gradientHSV(
+    private fun gradientLAB(
         domain: DoubleSpan,
-        lowHSV: HSV,
-        highHSV: HSV,
-        autoHueDirection: Boolean,
+        low: LAB,
+        high: LAB,
         naColor: Color,
         alpha: Double = 1.0
     ): (Double?) -> Color {
 
-        var lowHue = lowHSV.h
-        var highHue = highHSV.h
+        val mapperA = Mappers.linear(domain, low.a, high.a, null)
+        val mapperB = Mappers.linear(domain, low.b, high.b, null)
+        val mapperL = Mappers.linear(domain, low.l, high.l, null)
 
-        val lowS = lowHSV.s
-        val highS = highHSV.s
+        return { input ->
+            if (input == null || !domain.contains(input)) {
+                naColor
+            } else {
+                val a = mapperA(input)!!
+                val b = mapperB(input)!!
+                val l = mapperL(input)!!
+                rgbFromLab(LAB(l, a, b), alpha = alpha)
+            }
+        }
+    }
+
+    fun gradientHCL(
+        domain: DoubleSpan,
+        low: HCL,
+        high: HCL,
+        naColor: Color,
+        alpha: Double = 1.0,
+        autoHueDirection: Boolean = false
+    ): (Double?) -> Color {
+        var lowH = low.h
+        var highH = high.h
+
+        val lowC = low.c
+        val highC = high.c
 
         // No hue if saturation is near zero
-        if (lowS < 0.0001) {
-            lowHue = highHue
+        if (lowC < 0.0001) {
+            lowH = highH
         }
-        if (highS < 0.0001) {
-            highHue = lowHue
+        if (highC < 0.0001) {
+            highH = lowH
         }
 
         if (autoHueDirection) {
-            val dH = abs(highHue - lowHue)
+            val dH = abs(highH - lowH)
             if (dH > 180) {
-                if (highHue >= lowHue) {
-                    lowHue += 360.0
+                if (highH >= lowH) {
+                    lowH += 360.0
                 } else {
-                    highHue += 360.0
+                    highH += 360.0
                 }
             }
         }
 
-        val mapperH = Mappers.linear(domain, lowHue, highHue, null)
-        val mapperS = Mappers.linear(domain, lowS, highS, null)
-        val mapperV = Mappers.linear(domain, lowHSV.v, highHSV.v, null)
+        val mapperH = Mappers.linear(domain, lowH, highH, null)
+        val mapperC = Mappers.linear(domain, lowC, highC, null)
+        val mapperL = Mappers.linear(domain, low.l, high.l, null)
 
         return { input ->
             if (input == null || !domain.contains(input)) {
                 naColor
             } else {
                 val hue = mapperH(input)!! % 360
-                val H = if (hue >= 0) hue else 360 + hue
-                val S = mapperS(input)!!
-                val V = mapperV(input)!!
-                Colors.rgbFromHsv(H, S, V, alpha = alpha)
+                val h = if (hue >= 0) hue else 360 + hue
+                val c = mapperC(input)!!
+                val l = mapperL(input)!!
+                rgbFromHcl(HCL(h, c, l), alpha = alpha)
             }
         }
     }

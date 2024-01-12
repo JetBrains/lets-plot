@@ -14,18 +14,11 @@ import kotlin.jvm.JvmOverloads
 
 open class OptionsAccessor(
     private val options: Map<String, Any>,
-    private val defaultOptions: Map<String, Any> = emptyMap<String, Any>()
+    private val defaultOptions: Map<String, Any> = emptyMap<String, Any>(),
 ) {
-//    val mergedOptions: Map<String, Any> = defaultOptions + options
-//    val isEmpty: Boolean = mergedOptions.isEmpty()
-
     fun update(key: String, value: Any) {
         (options as MutableMap<String, Any>)[key] = value
     }
-
-//    protected fun update(otherOptions: Map<String, Any>) {
-//        (options as MutableMap<String, Any>).putAll(otherOptions)
-//    }
 
     fun has(option: String): Boolean {
         return hasOwn(option) || defaultOptions[option] != null
@@ -241,17 +234,17 @@ open class OptionsAccessor(
         return mapper(v)
     }
 
-    fun getColor(option: String): Color? {
-        return getValue(Aes.COLOR, option)
+    fun getColor(option: String, aopConversion: AesOptionConversion): Color? {
+        return getValue(Aes.COLOR, option, aopConversion)
     }
 
-    fun getShape(option: String): PointShape? {
-        return getValue(Aes.SHAPE, option)
+    fun getShape(option: String, aopConversion: AesOptionConversion): PointShape? {
+        return getValue(Aes.SHAPE, option, aopConversion)
     }
 
-    protected fun <T> getValue(aes: Aes<T>, option: String): T? {
+    protected fun <T> getValue(aes: Aes<T>, option: String, aopConversion: AesOptionConversion): T? {
         val v = get(option) ?: return null
-        return AesOptionConversion.apply(aes, v)
+        return aopConversion.apply(aes, v)
     }
 
     fun toMap(): Map<String, Any> {

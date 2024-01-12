@@ -6,7 +6,9 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
@@ -14,10 +16,11 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
-internal class CompositeFigureBuildInfo(
+internal class CompositeFigureBuildInfo constructor(
     private val elements: List<FigureBuildInfo?>,
     private val layout: CompositeFigureLayout,
     override val bounds: DoubleRectangle,
+    private val theme: Theme,
     override val computationMessages: List<String>,
 ) : FigureBuildInfo {
 
@@ -44,7 +47,7 @@ internal class CompositeFigureBuildInfo(
             it.createSvgRoot()
         }
 
-        val svgComponent = CompositeFigureSvgComponent(elementSvgRoots)
+        val svgComponent = CompositeFigureSvgComponent(elementSvgRoots, bounds.dimension, theme)
         return CompositeFigureSvgRoot(svgComponent, bounds)
     }
 
@@ -57,14 +60,25 @@ internal class CompositeFigureBuildInfo(
                 elements,
                 layout,
                 bounds,
+                theme,
                 computationMessages
             )
         }
     }
 
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
+        val plotMargins = theme.plot().plotMargins()
+        val leftTop = DoubleVector(
+            plotMargins.left,
+            plotMargins.top,
+        )
+        val marginsSize = DoubleVector(
+            plotMargins.width(),
+            plotMargins.height(),
+        )
         val outerSize = bounds.dimension
-        val layoutedElements = layout.doLayout(outerSize, elements)
+        val elementsBounts = DoubleRectangle(leftTop, outerSize.subtract(marginsSize))
+        val layoutedElements = layout.doLayout(elementsBounts, elements)
 
         val geomBounds = layoutedElements.filterNotNull().map {
             it.layoutInfo.geomAreaBounds
@@ -74,6 +88,7 @@ internal class CompositeFigureBuildInfo(
             elements = layoutedElements,
             layout,
             bounds,
+            theme,
             computationMessages
         ).apply {
             this._layoutInfo = FigureLayoutInfo(outerSize, geomBounds)

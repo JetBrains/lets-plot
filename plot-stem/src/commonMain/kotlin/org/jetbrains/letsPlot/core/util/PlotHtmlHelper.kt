@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
-import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 
@@ -25,15 +25,16 @@ object PlotHtmlHelper {
     /**
      * This method is used in Lets-Plot Kotlin API.
      */
+    @Suppress("unused")
     fun scriptUrl(
         version: String
     ): String {
-        val dev = version.contains("dev")
+        val dev = version.contains("dev") || version.contains("SNAPSHOT")
         return if (dev) {
             // We don't publish "dev" version, it must be served on localhost:
             // $ cd lets-plot
             // $ python -m http.server 8080
-            "http://127.0.0.1:8080/js-package/build/distributions/lets-plot-$version.js"
+            "http://127.0.0.1:8080/js-package/build/dist/js/developmentExecutable/js-package.js"
         } else {
             // bintray: until v2.0.2
 //            "https://dl.bintray.com/jetbrains/lets-plot/lets-plot-$version.min.js"
@@ -44,6 +45,10 @@ object PlotHtmlHelper {
         }
     }
 
+    /**
+     * This method is used in Lets-Plot Kotlin API.
+     */
+    @Suppress("unused")
     fun getDynamicConfigureHtml(scriptUrl: String, verbose: Boolean): String {
         val outputId = randomString(6)
 

@@ -476,6 +476,12 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
 
     Notes
     -----
+    Computed variables:
+
+    - ..n.. : number of points with same x-axis and y-axis coordinates.
+    - ..prop.. : proportion of points with same x-axis and y-axis coordinates.
+    - ..proppct.. : proportion of points with same x-axis and y-axis coordinates in percent.
+
     `stat_sum()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.

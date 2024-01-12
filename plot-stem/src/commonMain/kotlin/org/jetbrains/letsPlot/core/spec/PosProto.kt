@@ -36,7 +36,8 @@ internal object PosProto {
             FILL -> configureFillPosition(opts)
             JITTER -> PosProvider.jitter(
                 opts.getDouble(Pos.Jitter.WIDTH),
-                opts.getDouble(Pos.Jitter.HEIGHT)
+                opts.getDouble(Pos.Jitter.HEIGHT),
+                opts.getLong(Pos.Jitter.SEED)
             )
 
             NUDGE -> PosProvider.nudge(
@@ -47,7 +48,8 @@ internal object PosProto {
             JITTER_DODGE -> PosProvider.jitterDodge(
                 opts.getDouble(Pos.JitterDodge.DODGE_WIDTH),
                 opts.getDouble(Pos.JitterDodge.JITTER_WIDTH),
-                opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT)
+                opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT),
+                opts.getLong(Pos.JitterDodge.SEED)
             )
 
             else -> throw IllegalArgumentException("Unknown position adjustments name: '$posName'")

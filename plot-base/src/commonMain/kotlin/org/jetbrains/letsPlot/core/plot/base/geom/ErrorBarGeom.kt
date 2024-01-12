@@ -98,7 +98,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
                 val width = p[widthAes]!! * ctx.getResolution(xAes)
                 val height = ymax - ymin
                 val rect = geomHelper.toClient(
-                    afterRotation(DoubleRectangle(x - width / 2.0, ymin - height / 2.0, width, 0.0)),
+                    afterRotation(DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)),
                     p
                 )!!
                 rect

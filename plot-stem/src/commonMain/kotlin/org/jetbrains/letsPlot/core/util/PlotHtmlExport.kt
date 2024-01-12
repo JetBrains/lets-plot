@@ -41,7 +41,8 @@ object PlotHtmlExport {
         }
         val html = """
             |<html lang="en">
-            |   <head>$style
+            |   <head>
+            |       <meta charset="UTF-8">$style
             |       $configureHtml
             |   </head>
             |   <body>
@@ -90,7 +91,7 @@ object PlotHtmlExport {
             return when (PlotConfig.figSpecKind(plotSpec)) {
                 FigKind.PLOT_SPEC,
                 FigKind.SUBPLOTS_SPEC -> {
-                    val config = PlotConfigFrontend.create(plotSpec) { /*ignore messages*/ }
+                    val config = PlotConfigFrontend.create(plotSpec, containerTheme = null) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
                         plotSpec, plotSize,
                         plotMaxWidth = null,

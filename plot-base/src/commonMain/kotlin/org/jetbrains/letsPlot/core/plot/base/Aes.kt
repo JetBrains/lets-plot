@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 
@@ -116,6 +116,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val ANGLE: Aes<Double> =
             Aes("angle")
+        val RADIUS: Aes<Double> =
+            Aes("radius")
 
         // pie geom - defines size of sector
         val SLICE: Aes<Double> =
@@ -131,7 +133,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isPositional(aes: Aes<*>): Boolean {
-            return Companion.isPositionalXY(aes) ||
+            return isPositionalXY(aes) ||
                     // SLOPE must be positional or
                     // `geom_abline(slope=number)` will not work.
                     // it should draw the same line as:
@@ -141,37 +143,37 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isPositionalXY(aes: Aes<*>): Boolean {
-            return Companion.isPositionalX(aes) ||
-                    Companion.isPositionalY(aes)
+            return isPositionalX(aes) ||
+                    isPositionalY(aes)
         }
 
         fun isPositionalX(aes: Aes<*>): Boolean {
             return aes == X ||
-                    aes == Companion.XINTERCEPT ||
-                    aes == Companion.XMIN ||
-                    aes == Companion.XMAX ||
-                    aes == Companion.XEND
+                    aes == XINTERCEPT ||
+                    aes == XMIN ||
+                    aes == XMAX ||
+                    aes == XEND
         }
 
         fun isPositionalY(aes: Aes<*>): Boolean {
             return aes == Y ||
-                    aes == Companion.YMIN ||
-                    aes == Companion.YMAX ||
+                    aes == YMIN ||
+                    aes == YMAX ||
                     aes == INTERCEPT ||
-                    aes == Companion.YINTERCEPT ||
+                    aes == YINTERCEPT ||
                     aes == LOWER ||
                     aes == MIDDLE ||
                     aes == UPPER ||
                     aes == SAMPLE ||
-                    aes == Companion.YEND
+                    aes == YEND
         }
 
         fun toAxisAes(aes: Aes<*>, isYOrientation: Boolean): Aes<*> {
             // Aes like `LOWER` (boxplot) are mapped on either X or Y-axis depending on the geom orientation.
             return when {
                 aes == X || aes == Y -> aes
-                Companion.isPositionalX(aes) -> if (isYOrientation) Y else X
-                Companion.isPositionalY(aes) -> if (isYOrientation) X else Y
+                isPositionalX(aes) -> if (isYOrientation) Y else X
+                isPositionalY(aes) -> if (isYOrientation) X else Y
                 else -> throw IllegalArgumentException("Expected a positional aes by was $aes")
             }
         }
@@ -185,11 +187,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun affectingScaleX(aes: Aes<*>): Boolean {
-            return Companion.isPositionalX(aes)
+            return isPositionalX(aes)
         }
 
         fun affectingScaleY(aes: Aes<*>): Boolean {
-            return Companion.isPositionalY(aes) &&
+            return isPositionalY(aes) &&
                     // "INTERCEPT" is "positional Y" because it must use the same 'mapper' as other "positional Y"-s,
                     // but its range of values is not taken in account when computing the Y-mapper.
                     aes != INTERCEPT
@@ -221,6 +223,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == HJUST ||
                     aes == VJUST ||
                     aes == ANGLE ||
+                    aes == RADIUS ||
                     aes == FAMILY ||
                     aes == FONTFACE ||
                     aes == LINEHEIGHT ||

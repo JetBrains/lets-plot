@@ -9,7 +9,7 @@ Class that implements number format.
 The general form of a specifier is:
 
 ```
-[​[fill]align][sign][symbol][0][width][,][.precision][type]
+[​[fill]align][sign][symbol][0][width][,][.precision][~][type]
 ```
 
 *fill* - can be any character. The presence of a fill character is signaled by the *align* character following it.
@@ -41,6 +41,8 @@ The general form of a specifier is:
 *precision* Depending on the *type*, the *precision* either indicates the number of digits that follow the decimal point (types `f` and `%`), or the number of significant digits (types` ​`, `e`, `g`, `r`, `s` and `p`).
 If the precision is not specified, it defaults to 6 for all types except ​ (none), which defaults to 12.
 Precision is ignored for integer formats (types `b`, `o`, `d`, `x`, `X` and `c`).
+
+*~* The ~ option trims insignificant trailing zeros across all format types.
 
 *type* can be:
 

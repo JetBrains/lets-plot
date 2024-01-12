@@ -32,6 +32,9 @@ interface Scale {
 
     fun getScaleBreaks(): ScaleBreaks
 
+    // For axis and legend (truncated labels). For tooltips the getScaleBreaks functions should be used (full labels).
+    fun getShortenedScaleBreaks(): ScaleBreaks
+
     fun with(): Builder
 
     interface Builder {
@@ -41,7 +44,11 @@ interface Scale {
 
         fun labels(l: List<String>): Builder
 
+        fun labelLengthLimit(v: Int): Builder
+
         fun labelFormatter(v: (Any) -> String): Builder
+
+        fun superscriptExponent(v: Boolean): Builder
 
         fun multiplicativeExpand(v: Double): Builder
 

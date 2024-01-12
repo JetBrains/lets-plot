@@ -35,6 +35,8 @@ object Stats {
     val SUM = DataFrame.Variable("..sum..", STAT, "sum")
     val PROP = DataFrame.Variable("..prop..", STAT, "prop")
     val PROPPCT = DataFrame.Variable("..proppct..", STAT, "proppct")
+    val SUMPROP = DataFrame.Variable("..sumprop..", STAT, "sumprop")
+    val SUMPCT = DataFrame.Variable("..sumpct..", STAT, "sumpct")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -66,6 +68,8 @@ object Stats {
             SUM,
             PROP,
             PROPPCT,
+            SUMPROP,
+            SUMPCT,
             SCALED,
             GROUP,
         )

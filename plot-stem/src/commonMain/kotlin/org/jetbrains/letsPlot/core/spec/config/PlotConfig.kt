@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
-import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.spec.*
@@ -29,14 +29,16 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
-import org.jetbrains.letsPlot.core.spec.conversion.NamedSystemColorOptionConverter
-import org.jetbrains.letsPlot.core.spec.conversion.NamedSystemColors
+import org.jetbrains.letsPlot.core.spec.conversion.ColorOptionConverter
 
 abstract class PlotConfig(
     opts: Map<String, Any>,
-    private val isClientSide: Boolean
+    containerTheme: Theme?,
+    private val isClientSide: Boolean,
 ) : OptionsAccessor(opts, DEF_OPTIONS) {
 
+    val theme: Theme
+    val aopConversion: AesOptionConversion
     val layerConfigs: List<LayerConfig>
     val facets: PlotFacets
 
@@ -59,23 +61,32 @@ abstract class PlotConfig(
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
     init {
-        sharedData = ConfigUtil.createDataFrame(get(DATA))
-
-        // update the color option converter with system named colors including flavors
-        run {
-            val colorTheme = ThemeConfig(getMap(Option.Plot.THEME), DefaultFontFamilyRegistry()).theme.colors()
-            val colorConverter = NamedSystemColorOptionConverter(
-                NamedSystemColors(colorTheme)
-            )
-            AesOptionConversion.updateWith(colorConverter)
+        val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
+        val ownTheme = ThemeConfig(getMap(Option.Plot.THEME), fontFamilyRegistry).theme
+        theme = if (containerTheme == null || hasOwn(Option.Plot.THEME)) {
+            ownTheme
+        } else {
+            ownTheme.toInherited(containerTheme)
         }
+
+        aopConversion = AesOptionConversion(
+            ColorOptionConverter(
+                pen = theme.colors().pen(),
+                paper = theme.colors().paper(),
+                brush = theme.colors().brush(),
+            )
+        )
+
+        sharedData = ConfigUtil.createDataFrame(get(DATA))
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
 
         // build all scales
         val excludeStatVariables = !isClientSide
-
-        scaleConfigs = PlotConfigUtil.createScaleConfigs(DataMetaUtil.createScaleSpecs(opts) + getList(SCALES))
+        scaleConfigs = PlotConfigUtil.createScaleConfigs(
+            scaleOptionsList = DataMetaUtil.createScaleSpecs(opts) + getList(SCALES),
+            aopConversion = aopConversion
+        )
 
         mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
             layerConfigs,
@@ -83,10 +94,14 @@ abstract class PlotConfig(
             excludeStatVariables
         )
 
+        val zeroPositionalExpands = !CoordConfig.allowsDomainExpand(get(Option.Plot.COORD))
+
         scaleProviderByAes = PlotConfigScaleProviders.createScaleProviders(
             layerConfigs,
             scaleConfigs,
-            excludeStatVariables
+            excludeStatVariables,
+            zeroPositionalExpands,
+            theme.exponentFormat.superscript
         )
 
         transformByAes = PlotConfigTransforms.createTransforms(
@@ -98,7 +113,7 @@ abstract class PlotConfig(
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions)
+            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat.superscript)
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)
@@ -150,13 +165,7 @@ abstract class PlotConfig(
         val geomName = layerOptions[Option.Layer.GEOM] as String
         val geomKind = Option.GeomName.toGeomKind(geomName)
 
-//        val geomProto = if (isClientSide) {
-//            GeomProtoClientSide(geomKind)
-//        } else {
-//            GeomProto(geomKind)
-//        }
         val geomProto = GeomProto(geomKind)
-
         return LayerConfig(
             layerOptions,
             sharedData,
@@ -164,6 +173,7 @@ abstract class PlotConfig(
             plotDataMeta,
             plotOrderOptions,
             geomProto,
+            aopConversion = aopConversion,
             clientSide = isClientSide,
             isMapPlot
         )

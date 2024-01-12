@@ -26,6 +26,7 @@ object DefaultSampling {
     val LINE = systematic(50_000)
     val PATH = vertexDp(50_000)  // ToDo: vertex sampling has issues.
     val SEGMENT = random(10_000, SEED)
+    val SPOKE = random(10_000, SEED)
 
     val RECT = random(20_000, SEED)
     val TEXT = random(5_000, SEED)

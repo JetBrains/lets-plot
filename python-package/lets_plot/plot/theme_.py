@@ -16,6 +16,8 @@ __all__ = [
 
 
 def theme(*,
+          exponent_format=None,
+
           line=None,
           rect=None,
           text=None,
@@ -59,6 +61,7 @@ def theme(*,
           plot_subtitle=None,
           plot_caption=None,
           plot_message=None,
+          plot_margin=None,
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -70,6 +73,8 @@ def theme(*,
           tooltip=None,
           tooltip_text=None, tooltip_title_text=None,
 
+          label_text=None,
+
           geom=None
           ):
     """
@@ -78,6 +83,11 @@ def theme(*,
 
     Parameters
     ----------
+    exponent_format : {'e', 'pow'}, default='e'
+        Format for numeric labels in scientific notation.
+        e for "e" notation (e.g. 1e+6)
+        pow for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent.
+        Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
     line : str or dict
         All line elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -179,6 +189,16 @@ def theme(*,
         Plot message (e.g. sampling messages).
         Set 'blank' or result of `element_blank()` to show nothing.
         Set `element_text()` to show sampling messages (`element_text()` options don't affect a message text).
+    plot_margin : number or list of numbers
+        Margin around entire plot.
+        The margin may be specified using a number or a list of numbers:
+
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -203,12 +223,17 @@ def theme(*,
     tooltip_text : str or dict
         Text in general tooltip.
         Set `element_text()` to specify tooltip text parameters.
-    tooltip_title_text: str or dict
+    tooltip_title_text : str or dict
         Tooltip title text.
         Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
-    geom: dict
+    label_text : str or dict
+        Annotation text.
+        Annotations are currently supported for pie and bar charts.
+        Set `element_text()` to specify annotation text parameters: font family and face, text size, text color.
+    geom : dict
         Geometry colors.
         Set `element_geom()` to specify new values for the named colors.
+
     Returns
     -------
     `FeatureSpec`
@@ -424,18 +449,27 @@ def element_text(
         Angle to rotate the text (in degrees).
     hjust : float
         Horizontal justification (in [0, 1]).
-        0 - left-justified
-        1 - right-justified
-        0.5 - center-justified
+        0 - left-justified;
+        1 - right-justified;
+        0.5 - center-justified.
         Can be used with values out of range, but behaviour is not specified.
     vjust : float
         Vertical justification (in [0, 1]).
-        0 - bottom-justified
-        1 - top-justified
-        0.5 - middle-justified
+        0 - bottom-justified;
+        1 - top-justified;
+        0.5 - middle-justified.
         Can be used with values out of range, but behaviour is not specified.
-    margin : `margin`
-        Margins around the text. See `margin()` for more details.
+    margin : number or list of numbers
+        Margins around the text.
+
+        The margin may be specified using a number or a list of numbers:
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers -  the first margin applies to the top, the second - to the right and left,
+        the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default side value for this element will be used.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -462,42 +496,16 @@ def element_text(
     return locals()
 
 
-def margin(t=None, r=None, b=None, l=None) -> dict:
+def margin(t=None, r=None, b=None, l=None):
     """
-    Dimensions of each margin.
-
-    Parameters
-    ----------
-    t : float
-        Top margin.
-    r : float
-        Right margin.
-    b : float
-        Bottom margin.
-    l : float
-        Left margin.
-
-    Returns
-    -------
-    `dict`
-        Margins specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 7
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
+    Function `margin()` is deprecated.
+    Please, use a number or list of numbers to specify margins (see description of the parameter used).
 
     """
-    return locals()
+    print("WARN: The margin() is deprecated and will be removed in future releases.\n"
+          "      Please, use a number or list of numbers to specify margins (see description of the parameter used).")
+
+    return [t, r, b, l]
 
 
 def element_geom(

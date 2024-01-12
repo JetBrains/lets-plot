@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -50,15 +49,14 @@ class YOrientationGeomBuildingTest {
             layer = geomLayerStub,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
             coord = CoordProviders.cartesian().let {
-                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain))
+                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain), isHScaleContinuous = false)
                 it.createCoordinateSystem(
                     adjustedDomain = adjustedDomain,
                     clientSize = DoubleVector(xAxisLength, yAxisLength)
                 )
             },
             flippedAxis = false,
-            targetCollector = NullGeomTargetCollector(),
-            plotBackground = Color.WHITE
+            targetCollector = NullGeomTargetCollector()
         )
 
         // Do all checks inside the GeomStub.

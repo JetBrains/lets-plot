@@ -79,7 +79,7 @@ def build_python_packages(build_command, arch=None):
     # Runs Python artifacts build commands. If 'arch' argument was passed, adds it to shell command.
     python_extension_build_command = [gradle_script_name, "python-extension:build"]
     if arch is not None:
-        python_extension_build_command += [f"-Pbuild_arch={arch}"]
+        python_extension_build_command += [f"-Parchitecture={arch}"]
         command = build_command + [arch]
     else:
         command = build_command
@@ -87,6 +87,17 @@ def build_python_packages(build_command, arch=None):
     run_command(python_extension_build_command + build_parameters)
     print_message(f"Building Python Package...")
     run_command(command)
+
+
+def get_python_arch(python_bin_path):
+    get_python_arch_command = [f"{python_bin_path}/python", "-c", "import platform; print(platform.machine())"]
+    process = subprocess.check_output(get_python_arch_command, stderr=None)
+    current_python_arch = process.decode().strip()
+    if current_python_arch == "arm64" or current_python_arch == "x86_64":
+        return current_python_arch
+    else:
+        print_error_and_exit(f"Got wrong Python architecture for {python_bin_path}!\n"
+                             f"Check your settings file or Python installation.")
 
 
 # Read Python settings file from script argument.
@@ -119,23 +130,19 @@ if system == "Linux":
     # So the only one Python host installation, defined in the settings file, is needed:
     python_paths = list(python_settings.values())[0]
 
-    # And Python package build by Gradle is disabled due the same reason.
-    enable_python_package = "false"
-
-    # Enable Python Extension. Native artifacts from here are used for Python packages.
-    build_python_extension = "true"
+    # Enable Python package to build Python extension module.
+    enable_python_package = "true"
 
     # Collect all predefined parameters:
     build_parameters = [
         "-Pbuild_release=true",
-        "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
-        "-Ppython_include_path=%s" % (python_paths["include_path"]),
-        f"-Penable_python_package={enable_python_package}",
-        f"-Pbuild_python_extension={build_python_extension}"
+        "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
+        "-Ppython.include_path=%s" % (python_paths["include_path"]),
+        f"-Penable_python_package={enable_python_package}"
     ]
 
     # Run JS artifact build first:
-    gradle_js_build_command = [gradle_script_name, "js-package:jsBrowserProductionWebpack"]
+    gradle_js_build_command = [gradle_script_name, "js-package:jsBrowserProductionWebpack", "-Parchitecture=x86_64"]
     run_command(gradle_js_build_command + build_parameters)
 
     # Run Python 'manylinux' packages build for x64 arch:
@@ -153,7 +160,6 @@ elif system == "Darwin" or system == "Windows":
     # for all Python binaries, defined in the settings file.
     # Enable Python Extension and packages build by Gradle:
     enable_python_package = "true"
-    build_python_extension = "true"
 
     # Define Gradle command for Python packages build:
     python_package_build_command = [gradle_script_name, "python-package-build:build"]
@@ -163,11 +169,13 @@ elif system == "Darwin" or system == "Windows":
         # Collect all predefined parameters:
         build_parameters = [
             "-Pbuild_release=true",
-            "-Ppython_bin_path=%s" % (python_paths["bin_path"]),
-            "-Ppython_include_path=%s" % (python_paths["include_path"]),
-            f"-Penable_python_package={enable_python_package}",
-            f"-Pbuild_python_extension={build_python_extension}"
+            "-Ppython.bin_path=%s" % (python_paths["bin_path"]),
+            "-Ppython.include_path=%s" % (python_paths["include_path"]),
+            f"-Penable_python_package={enable_python_package}"
         ]
+        # Add architecture parameter for Mac:
+        if system == "Darwin":
+            build_parameters += ["-Parchitecture=%s" % (get_python_arch(python_paths["bin_path"]))]
 
         # Run Python package build:
         build_python_packages(python_package_build_command + build_parameters)

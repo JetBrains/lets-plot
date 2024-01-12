@@ -5,20 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
 
 object ScaleProviderHelper {
-    fun <T> createDefault(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): ScaleProvider {
+    fun <T> createDefault(aes: Aes<T>): ScaleProvider {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDateTimeScaleProvider(
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>,
-        name: String
-    ): ScaleProvider {
+    fun <T> createDateTimeScaleProviderBuilder(aes: Aes<T>, name: String): ScaleProviderBuilder<T> {
         return ScaleProviderBuilder(aes)
             .name(name)
             .breaksGenerator(DateTimeBreaksGen())
-            .build()
     }
 }

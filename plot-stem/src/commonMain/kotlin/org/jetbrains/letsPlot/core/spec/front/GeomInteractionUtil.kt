@@ -31,9 +31,10 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
+        isLinearCoordSystem: Boolean,
         theme: Theme
     ): GeomInteraction {
-        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, theme).build()
+        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, isLinearCoordSystem, theme).build()
     }
 
     internal fun createGeomInteractionBuilder(
@@ -41,12 +42,14 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
+        isLinearCoordSystem: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind = layerConfig.geomProto.geomKind,
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
+            isLinearCoordSystem = isLinearCoordSystem,
             multilayerWithTooltips = multilayerWithTooltips,
             definedAesList = layerConfig.varBindings.map(VarBinding::aes) + layerConfig.constantsMap.keys
         )
@@ -120,6 +123,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
+        isLinearCoordSystem: Boolean,
         multilayerWithTooltips: Boolean,
         definedAesList: List<Aes<*>>,
     ): GeomTooltipSetup {
@@ -127,6 +131,7 @@ object GeomInteractionUtil {
             geomKind,
             statKind,
             isCrosshairEnabled,
+            isLinearCoordSystem,
             definedAesList
         ).let {
             var multilayerLookup = false
@@ -157,8 +162,18 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
+        isLinearCoordSystem: Boolean,
         definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
+        if (!isLinearCoordSystem
+            && geomKind != GeomKind.MAP // FIXME: mercator is also non linear, but tooltips strategy should not be changed
+            ) {
+            return GeomTooltipSetup.bivariateFunction(
+                GeomTooltipSetup.AREA_GEOM,
+                axisTooltipVisibilityFromConfig = true
+            )
+        }
+
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
                 GeomKind.POINT,
@@ -230,7 +245,8 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN,
-            GeomKind.LOLLIPOP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.LOLLIPOP,
+            GeomKind.SPOKE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,
@@ -270,6 +286,7 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT, GeomKind.CURVE -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
+            GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
             GeomKind.RIBBON,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR -> {
@@ -412,6 +429,7 @@ object GeomInteractionUtil {
             GeomKind.PATH,
             GeomKind.SEGMENT,
             GeomKind.CURVE,
+            GeomKind.SPOKE,
             GeomKind.RIBBON,
             GeomKind.SMOOTH,
             GeomKind.STEP -> true

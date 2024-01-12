@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
-import org.jetbrains.letsPlot.commons.intern.splitBy
-import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -18,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
-import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.math.abs
 
 open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
@@ -58,6 +59,23 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     internal fun createVariadicPathData(dataPoints: Iterable<DataPointAesthetics>): List<List<PathData>> {
         return createVariadicPathData(createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y))
+    }
+
+    // coord in domain units
+    internal fun createVariadicNonLinearPathData(dataPoints: Iterable<DataPointAesthetics>): List<List<PathData>> {
+        val groups = GeomUtil.createPathGroups(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+        return createVariadicPathData(groups)
+    }
+
+    // TODO: refactor - inconsistent and implicit usage of the toClient method in a whole LinesHelper class
+    fun interpolate(data: List<PathData>): List<PathData> {
+        return data.map { pathData ->
+            val smoothed = pathData.points
+                .windowed(size = 2)
+                .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, 0.5) { toClient(it, p1.aes) } }
+                .flatMap { (aes, points) -> points.map { PathPoint(aes, it) } }
+            PathData(smoothed)
+        }
     }
 
     internal fun createPathDataByGroup(
@@ -249,7 +267,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 data class PathData(
     val points: List<PathPoint>
 ) {
-    val aes: DataPointAesthetics by lazy(points.first()::aes)
+    val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
     val coordinates by lazy { points.map(PathPoint::coord) }
 }
