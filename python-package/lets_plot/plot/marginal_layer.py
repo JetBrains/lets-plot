@@ -1,12 +1,14 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
+from typing import Union
+
 from .core import FeatureSpec, LayerSpec, DummySpec, FeatureSpecArray
 
 __all__ = ["ggmarginal"]
 
 
-def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
+def ggmarginal(sides: str, *, size=None, layer: Union[LayerSpec, FeatureSpecArray]) -> FeatureSpec:
     """
     Convert a given geometry layer to a marginal layer.
     You can add one or more marginal layers to a plot to create a marginal plot.
@@ -20,7 +22,7 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
         Size of marginal geometry (width or height, depending on the margin side) as a fraction of the entire
         plotting area of the plot.
         The value should be in range [0.01..0.95].
-    layer : `LayerSpec`
+    layer : `LayerSpec` or `FeatureSpecArray`
         A marginal geometry layer.
         The result of calling of the `geom_xxx()` / `stat_xxx()` function.
         Marginal plot works best with `density`,`histogram`,`boxplot`,`violin` and `freqpoly` geometry layers.
