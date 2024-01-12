@@ -24,7 +24,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
-           'geom_segment', 'geom_spoke',
+           'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
            'geom_count']
 

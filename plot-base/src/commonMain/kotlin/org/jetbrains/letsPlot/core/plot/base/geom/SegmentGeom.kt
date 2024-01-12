@@ -60,24 +60,21 @@ class SegmentGeom : GeomBase() {
                 )
 
                 arrowSpec?.let { arrowSpec ->
-                    val abscissa = clientEnd.x - clientStart.x
-                    val ordinate = clientEnd.y - clientStart.y
-                    if (abscissa != 0.0 || ordinate != 0.0) {
-                        // Compute the angle that the vector defined by this segment makes with the
-                        // X-axis (radians)
-                        val polarAngle = atan2(ordinate, abscissa)
-
-                        val arrowAes = arrowSpec.toArrowAes(p)
-                        if (arrowSpec.isOnLastEnd) {
-                            val arrow = arrowSpec.createElement(polarAngle, clientEnd.x, clientEnd.y)
-                            decorate(arrow, arrowAes, applyAlphaToAll = true)
-                            root.add(arrow)
-                        }
-                        if (arrowSpec.isOnFirstEnd) {
-                            val arrow = arrowSpec.createElement(polarAngle + PI, clientStart.x, clientStart.y)
-                            decorate(arrow, arrowAes, applyAlphaToAll = true)
-                            root.add(arrow)
-                        }
+                    if (arrowSpec.isOnLastEnd) {
+                        ArrowSpec.createArrow(
+                            p,
+                            clientStart,
+                            clientEnd,
+                            arrowSpec
+                        )?.let(root::add)
+                    }
+                    if (arrowSpec.isOnFirstEnd) {
+                        ArrowSpec.createArrow(
+                            p,
+                            start = clientEnd,
+                            end = clientStart,
+                            arrowSpec
+                        )?.let(root::add)
                     }
                 }
             }
