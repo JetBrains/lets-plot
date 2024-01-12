@@ -85,8 +85,10 @@ def theme(*,
     ----------
     exponent_format : {'e', 'pow'}, default='e'
         Format for numeric labels in scientific notation.
-        e for "e" notation (e.g. 1e+6)
-        pow for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent.
+
+        - e for "e" notation (e.g. 1e+6)
+        - pow for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent.
+
         Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
     line : str or dict
         All line elements.
