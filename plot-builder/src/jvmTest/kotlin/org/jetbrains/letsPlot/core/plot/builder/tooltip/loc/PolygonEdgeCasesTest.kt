@@ -170,10 +170,7 @@ class PolygonEdgeCasesTest {
             .y(list(polygon.map(DoubleVector::y)))
             .build()
 
-        val pathData = GeomUtil.createPathGroups(
-            aes.dataPoints(),
-            GeomUtil.TO_LOCATION_X_Y,
-        )
+        val pathData = GeomUtil.createPathGroups(aes.dataPoints(), GeomUtil.TO_LOCATION_X_Y).values.toList()
         val rings = splitRings(pathData[0].coordinates)
 
         assertEquals(3, rings.size)
