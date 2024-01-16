@@ -21,8 +21,10 @@ internal object TooltipFormatting {
 
         val scale = ctx.getScale(aes)
         if (scale.isContinuousDomain) {
-            val domain = ctx.overallTransformedDomain(aes)
-            val formatter = scale.getBreaksGenerator().defaultFormatter(domain, 100)
+            val formatter = scale.labelFormatter ?: run {
+                val domain = ctx.overallTransformedDomain(aes)
+                scale.getBreaksGenerator().defaultFormatter(domain, 100)
+            }
             return { value -> value?.let { formatter.invoke(it) } ?: "n/a" }
         } else {
             val labelsMap = ScaleUtil.labelByBreak(scale)

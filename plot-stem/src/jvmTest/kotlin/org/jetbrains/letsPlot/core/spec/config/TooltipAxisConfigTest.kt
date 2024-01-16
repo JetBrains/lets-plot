@@ -68,26 +68,26 @@ class TooltipAxisConfigTest {
     }
 
     @Test
-    fun `scale format does not apply to tooltips`() {
+    fun `scale format is also applied to tooltips`() {
         run {
             val geomLayer = geomLayer(
                 scaleFormat = "scale = {} %",    // todo should use the default tick value -> 0.3
                 tooltipFormat = null
             )
-            assertGeneralTooltip(geomLayer, "0.34")
-            assertYAxisTooltip(geomLayer, "0.34")
+            assertGeneralTooltip(geomLayer, "scale = 0.34447 %")
+            assertYAxisTooltip(geomLayer, "scale = 0.34447 %")
             // todo assertEquals("scale = 0.3 %", getYTick(geomLayer))
         }
         run {
             val geomLayer = geomLayer(scaleFormat = "scale = {.3f} %", tooltipFormat = null)
-            assertGeneralTooltip(geomLayer, "0.34")
-            assertYAxisTooltip(geomLayer, "0.34")
+            assertGeneralTooltip(geomLayer, "scale = 0.344 %")
+            assertYAxisTooltip(geomLayer, "scale = 0.344 %")
             assertEquals("scale = 0.300 %", getYTick(geomLayer))
         }
     }
 
     @Test
-    fun `scale_y_discrete(format)`() {
+    fun `scale_y_discrete(format) - formatted label breaks are used for tooltips`() {
         run {
             val geomLayer = geomLayer(
                 additionalScaleOption = Scale.DISCRETE_DOMAIN to true,
