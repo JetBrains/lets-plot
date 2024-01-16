@@ -37,7 +37,7 @@ class LayerTargetLocatorTwoOverlappedRectsTest {
     fun hoverXy() {
         val locator = createLocator(LookupStrategy.HOVER, LookupSpace.XY)
 
-        assertObjects(locator, inside(FIRST_RECT), FIRST_RECT_KEY, SECOND_RECT_KEY)
+        assertObjects(locator, inside(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, outsideY(FIRST_RECT), SECOND_RECT_KEY)
         assertObjects(locator, inside(SECOND_RECT), SECOND_RECT_KEY)
 

@@ -6,7 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.distance2ToSegment
+import org.jetbrains.letsPlot.commons.intern.math.isOnSegment
+import org.jetbrains.letsPlot.commons.intern.math.projection
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
@@ -23,64 +24,75 @@ internal class TargetDetector(
         cursorCoord: DoubleVector,
         pathProjection: PathTargetProjection,
         closestPointChecker: ClosestPointChecker
-    ): PathPoint? {
+    ): Pair<PathPoint, DoubleVector?>? {
         if (pathProjection.points.isEmpty()) {
             return null
         }
 
-        return when (locatorLookupSpace) {
+        val lookupResult: Pair<PathPoint, DoubleVector?>? = when (locatorLookupSpace) {
             LookupSpace.NONE -> null
             LookupSpace.X -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> null
-                LookupStrategy.NEAREST -> searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() }
+                LookupStrategy.NEAREST -> searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() } to null
                 LookupStrategy.HOVER ->
                     if (cursorCoord.x < pathProjection.points.first().projection().x() ||
                         cursorCoord.x > pathProjection.points.last().projection().x()
                     ) {
                         null
                     } else {
-                        searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() }
+                        searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() } to null
                     }
             }
 
             LookupSpace.Y -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> null
-                LookupStrategy.NEAREST -> searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() }
+                LookupStrategy.NEAREST -> searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() } to null
                 LookupStrategy.HOVER ->
                     if (cursorCoord.y < pathProjection.points.first().projection().y() ||
                         cursorCoord.y > pathProjection.points.last().projection().y()
                     ) {
                         null
                     } else {
-                        searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() }
+                        searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() } to null
                     }
             }
 
             LookupSpace.XY -> when (locatorLookupStrategy) {
-                LookupStrategy.NONE -> return null
+                LookupStrategy.NONE -> null
                 LookupStrategy.HOVER -> {
-                    val segment = pathProjection.points.asSequence().windowed(2).firstOrNull() {
+                    var candidate: Pair<PathPoint, DoubleVector>? = null
+
+                    pathProjection.points.asSequence().windowed(2).forEach() {
                         val p1 = it[0].projection().xy()
                         val p2 = it[1].projection().xy()
 
-                        return@firstOrNull distance2ToSegment(cursorCoord, p1, p2) < PATH_HOVER_LIMIT_SQR
+                        if (isOnSegment(cursorCoord, p1, p2)) {
+                            val targetPointCoord = projection(cursorCoord, p1, p2)
+                            if (closestPointChecker.check(targetPointCoord)) {
+                                candidate = it[0] to targetPointCoord
+                            }
+                        } else if (closestPointChecker.check(p1)) {
+                            candidate = it[0] to p1
+                        }
                     }
 
-                    segment?.firstOrNull() // return first point of the segment
+                    candidate
                 }
 
                 LookupStrategy.NEAREST -> {
-                    var nearestPoint: PathPoint? = null
+                    var candidate: PathPoint? = null
                     for (pathPoint in pathProjection.points) {
                         val targetPointCoord = pathPoint.projection().xy()
                         if (closestPointChecker.check(targetPointCoord)) {
-                            nearestPoint = pathPoint
+                            candidate = pathPoint
                         }
                     }
-                    return nearestPoint
+                    candidate?.let { it to null }
                 }
             }
         }
+
+        return lookupResult
     }
 
     fun checkPoint(
@@ -185,8 +197,6 @@ internal class TargetDetector(
 
     companion object {
         private const val POINT_AREA_EPSILON = 5.1
-        private const val PATH_HOVER_LIMIT = 7
-        private const val PATH_HOVER_LIMIT_SQR = PATH_HOVER_LIMIT * PATH_HOVER_LIMIT
         private const val RECT_X_NEAREST_EPSILON = 2.0
 
         private fun <T> searchNearest(value: Double, items: List<T>, mapper: (T) -> Double): T {

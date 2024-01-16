@@ -11,7 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.X
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.Y
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
@@ -44,7 +45,7 @@ internal class LayerTargetLocator(
 
             lookupSpec.lookupSpace.isUnivariate() -> CollectingStrategy.APPEND
 
-            lookupSpec.lookupStrategy === HOVER -> CollectingStrategy.APPEND
+            lookupSpec.lookupStrategy == HOVER && (lookupSpec.lookupSpace in setOf(X, Y)) -> CollectingStrategy.APPEND
 
             lookupSpec.lookupStrategy === LookupStrategy.NONE || lookupSpec.lookupSpace === LookupSpace.NONE -> {
                 CollectingStrategy.IGNORE
@@ -214,15 +215,10 @@ internal class LayerTargetLocator(
         else
             resultCollector.closestPointChecker
 
-        val hitPoint = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
-        if (hitPoint != null) {
-            val hitCoord: DoubleVector
-            if (lookupSpec.lookupSpace == XY && lookupSpec.lookupStrategy == HOVER) {
-                // TODO: detector should return projection of the point on the segment
-                hitCoord = coord
-            } else {
-                hitCoord = hitPoint.originalCoord
-            }
+        val lookupResult = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
+        if (lookupResult != null) {
+            val hitPoint = lookupResult.first
+            val hitCoord = lookupResult.second ?: hitPoint.originalCoord
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
