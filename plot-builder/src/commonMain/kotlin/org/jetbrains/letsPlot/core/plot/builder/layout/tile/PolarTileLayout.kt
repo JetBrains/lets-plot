@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,10 +13,9 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
-import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.GeomAreaInsets
 
-internal class TopDownTileLayout(
+internal class PolarTileLayout(
     private val axisLayoutQuad: AxisLayoutQuad,
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
@@ -34,7 +33,7 @@ internal class TopDownTileLayout(
             coordProvider
         )
 
-        val geomBoundsAfterLayout = geomOuterBounds(
+        val geomBoundsAfterLayout = TileLayoutUtil.geomOuterBounds(
             geomAreaInsets,
             preferredSize,
             hDomain,
@@ -95,13 +94,13 @@ internal class TopDownTileLayout(
         ): GeomAreaInsets {
             val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
             val axisHeightEstim =
-                geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, coordProvider)
+                TileLayoutUtil.geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, coordProvider)
                     .dimension
                     .let(marginsLayout::toInnerSize)
-                    .y
+                    .y / 2 // For polar coord axis height is half of geom height - it starts from the center.
 
             val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
-            val plottingArea = geomOuterBounds(
+            val plottingArea = TileLayoutUtil.geomOuterBounds(
                 insetsVAxis,
                 plotSize,
                 hDomain,
@@ -112,7 +111,7 @@ internal class TopDownTileLayout(
 
             val hAxisLength = marginsLayout
                 .toInnerBounds(plottingArea)
-                .width
+                .width * 1.5 // h axis in polar coord is rendered as a circle - increase its length to make more tick.
 
             val insetsHVAxis = insetsVAxis.layoutHAxis(
                 hDomain,
@@ -122,16 +121,17 @@ internal class TopDownTileLayout(
             // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
             val insetsFinal =
                 if ((insetsHVAxis.top + insetsHVAxis.bottom) > (insetsInitial.top + insetsInitial.bottom)) {
-                    val geomHeight = geomOuterBounds(
+                    val geomHeight = TileLayoutUtil.geomOuterBounds(
                         insetsHVAxis,
                         plotSize,
                         hDomain,
                         vDomain,
                         marginsLayout,
                         coordProvider
-                    ).dimension.let {
-                        marginsLayout.toInnerSize(it).y
-                    }
+                    )
+                        .dimension
+                        .let(marginsLayout::toInnerSize)
+                        .y / 2 // For polar coord axis height is half of geom height - it starts from the center.
 
                     insetsHVAxis.layoutVAxis(vDomain, geomHeight)
                 } else {

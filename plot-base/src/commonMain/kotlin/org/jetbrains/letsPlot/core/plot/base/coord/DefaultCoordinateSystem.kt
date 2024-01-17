@@ -15,6 +15,7 @@ internal class DefaultCoordinateSystem(
     private val clientLeft = coordMapper.clientBounds.xRange().lowerEnd
     private val clientBottom = coordMapper.clientBounds.yRange().upperEnd
     override val isLinear: Boolean = coordMapper.isLinear
+    override val isPolar: Boolean = false
 
     override fun toClient(p: DoubleVector): DoubleVector? {
         val mapped = coordMapper.toClient(p)

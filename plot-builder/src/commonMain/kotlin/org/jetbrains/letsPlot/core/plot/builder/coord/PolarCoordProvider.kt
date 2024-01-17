@@ -27,8 +27,8 @@ internal class PolarCoordProvider(
     val clockwise: Boolean
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
-    override val isLinear: Boolean
-        get() = false
+    override val isLinear: Boolean = false
+    override val isPolar: Boolean = true
 
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
@@ -117,7 +117,8 @@ class PolarCoordinateSystem(
     val startAngle: Double,
     val direction: Double
 ) : CoordinateSystem {
-    override val isLinear: Boolean get() = coordinateSystem.isLinear
+    override val isLinear: Boolean get() = false
+    override val isPolar: Boolean get() = true
 
     override fun toClient(p: DoubleVector): DoubleVector? = coordinateSystem.toClient(p)
 

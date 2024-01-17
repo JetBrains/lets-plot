@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 interface CoordinateSystem {
     val isLinear: Boolean
+    val isPolar: Boolean
 
     fun toClient(p: DoubleVector): DoubleVector?
 
