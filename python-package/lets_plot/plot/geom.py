@@ -5701,7 +5701,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                arrow=None,
                curvature=None, angle=None, ncp=None,
                color_by=None, **other_args):
@@ -5732,9 +5732,6 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
-        Specify appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     curvature : float, default=0.5
@@ -5787,7 +5784,6 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
-                 tooltips=tooltips,
                  arrow=arrow,
                  curvature=curvature, angle=angle, ncp=ncp,
                  color_by=color_by,

@@ -174,7 +174,7 @@ class LocatedTargetsPicker(
                 return lookupResult.withTargets(listOf(closestTarget))
             }
 
-            if (lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, CURVE, SPOKE, RIBBON)) {
+            if (lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, SPOKE, RIBBON)) {
                 return lookupResult
             }
 

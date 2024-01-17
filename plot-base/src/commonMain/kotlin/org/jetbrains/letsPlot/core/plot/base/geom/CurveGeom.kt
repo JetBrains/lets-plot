@@ -11,10 +11,8 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -38,9 +36,7 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.CURVE, ctx)
 
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
@@ -72,6 +68,7 @@ class CurveGeom : GeomBase() {
                     createArrows(p, geometry, arrowSpec).forEach(root::add)
                 }
 
+                /*
                 // hints
                 targetCollector.addPath(
                     listOf(geometry.first(), geometry.last()),
@@ -79,7 +76,7 @@ class CurveGeom : GeomBase() {
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     )
-                )
+                )*/
             }
         }
     }

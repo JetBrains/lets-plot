@@ -195,7 +195,6 @@ object GeomInteractionUtil {
             GeomKind.BAR,
             GeomKind.SEGMENT,
             GeomKind.STEP,
-            GeomKind.CURVE,
             GeomKind.V_LINE -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true
@@ -285,7 +284,7 @@ object GeomInteractionUtil {
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
-            GeomKind.SEGMENT, GeomKind.CURVE -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
+            GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
             GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
             GeomKind.RIBBON,
             GeomKind.LINE_RANGE,
@@ -428,7 +427,6 @@ object GeomInteractionUtil {
             GeomKind.FREQPOLY,
             GeomKind.PATH,
             GeomKind.SEGMENT,
-            GeomKind.CURVE,
             GeomKind.SPOKE,
             GeomKind.RIBBON,
             GeomKind.SMOOTH,
