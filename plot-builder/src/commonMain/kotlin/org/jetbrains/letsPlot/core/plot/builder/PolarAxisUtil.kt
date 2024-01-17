@@ -33,10 +33,10 @@ object PolarAxisUtil {
 
         val visibleMajorLabels = SeriesUtil.pickAtIndices(scaleBreaks.labels, visibleBreaks)
         val visibleMajorDomainBreak = SeriesUtil.pickAtIndices(scaleBreaks.transformedValues, visibleBreaks)
-        val visibleMinorDomainBreak = if (visibleMajorDomainBreak.size > 1) {
+        val visibleMinorDomainBreak = if (visibleMajorDomainBreak.size > 2) {
             val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
             val start = visibleMajorDomainBreak[0] - step / 2.0
-            (0..visibleMajorDomainBreak.size).map { start + it * step }
+            (0 until (visibleMajorDomainBreak.size )).map { start + it * step }
         } else {
             emptyList()
         }
