@@ -28,7 +28,8 @@ import kotlin.math.max
 internal class PolarFrameOfReferenceProvider(
     private val hScaleProto: Scale,
     private val vScaleProto: Scale,
-    private val adjustedDomain: DoubleRectangle,
+    private val dataDomain: DoubleRectangle,
+    private val plotDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
@@ -88,7 +89,7 @@ internal class PolarFrameOfReferenceProvider(
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
 
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
+        return MyTileLayoutProvider(axisLayoutQuad, plotDomain, marginsLayout)
     }
 
     override fun createTileFrame(
@@ -114,7 +115,7 @@ internal class PolarFrameOfReferenceProvider(
             vAxisLayoutInfo.axisLength
         )
 
-        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
+        val coord = coordProvider.createCoordinateSystem(plotDomain, client)
 
         val hScale = hScaleProto.with()
             .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
@@ -129,7 +130,8 @@ internal class PolarFrameOfReferenceProvider(
         val tileFrameOfReference = PolarFrameOfReference(
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
-            adjustedDomain,
+            dataDomain,
+            plotDomain,
             coord,
             layoutInfo,
             marginsLayout,

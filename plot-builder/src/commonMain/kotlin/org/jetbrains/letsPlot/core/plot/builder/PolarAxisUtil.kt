@@ -21,22 +21,40 @@ object PolarAxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
         coord: PolarCoordinateSystem,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
+        plotDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
         axisTheme: AxisTheme,
-        labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
+        labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ): AxisComponent.BreaksData {
-        val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorClientBreaks = toClient(scaleBreaks.transformedValues, plotDomain, coord, flipAxis, orientation.isHorizontal)
 
         val visibleBreaks = majorClientBreaks.indices.toList()
 
+        val axisDataRange = if (orientation.isHorizontal) {
+            dataDomain.xRange()
+        } else {
+            dataDomain.yRange()
+        }
+
         val visibleMajorLabels = SeriesUtil.pickAtIndices(scaleBreaks.labels, visibleBreaks)
         val visibleMajorDomainBreak = SeriesUtil.pickAtIndices(scaleBreaks.transformedValues, visibleBreaks)
+            // TODO: refactor and add tests
+            .map {
+                    if (it < axisDataRange.lowerEnd) {
+                        axisDataRange.lowerEnd
+                    } else if (it > axisDataRange.upperEnd) {
+                        axisDataRange.upperEnd
+                    } else {
+                        it
+                    }
+            } + axisDataRange.upperEnd // always add last major circle
+
         val visibleMinorDomainBreak = if (visibleMajorDomainBreak.size > 2) {
             val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
             val start = visibleMajorDomainBreak[0] - step / 2.0
-            (0 until (visibleMajorDomainBreak.size )).map { start + it * step }
+            (0 .. (visibleMajorDomainBreak.size )).map { start + it * step }.filter { it in axisDataRange }
         } else {
             emptyList()
         }
@@ -45,11 +63,11 @@ object PolarAxisUtil {
             .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
 
         val visibleMinorClientBreaks =
-            toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
+            toClient(visibleMinorDomainBreak, plotDomain, coord, flipAxis, orientation.isHorizontal)
                 .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
 
-        val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
-        val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorGrid = buildGrid(visibleMajorDomainBreak, dataDomain, plotDomain, coord, flipAxis, orientation.isHorizontal)
+        val minorGrid = buildGrid(visibleMinorDomainBreak, dataDomain, plotDomain, coord, flipAxis, orientation.isHorizontal)
 
         // For coord_polar squash first and last labels into one to avoid overlapping.
         val labels = if (visibleMajorClientBreaks.size > 1 && visibleMajorClientBreaks.first()
@@ -83,27 +101,29 @@ object PolarAxisUtil {
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<DoubleVector?> {
-        val startAnglePercent = (coordinateSystem.startAngle % (2 * PI)) / (2 * PI)
-        val startAngleOffset = domain.xRange().length * startAnglePercent
-        val verticalAngleValue = (domain.xRange().lowerEnd - startAngleOffset).let {
-            when { // non-normalized domain value
-                it < domain.xRange().lowerEnd -> it + domain.xRange().length
-                it > domain.xRange().upperEnd -> it - domain.xRange().length
-                else -> it
-            }
-        }
-
         return breaks.map { breakValue ->
             when (horizontal) {
                 true -> DoubleVector(breakValue, domain.yRange().upperEnd)
-                false -> DoubleVector(verticalAngleValue, breakValue)
+                false -> {
+                    val startAnglePercent = (coordinateSystem.startAngle % (2 * PI)) / (2 * PI)
+                    val startAngleOffset = domain.xRange().length * startAnglePercent
+                    val verticalAngleValue = (domain.xRange().lowerEnd - startAngleOffset).let {
+                        when { // non-normalized domain value
+                            it < domain.xRange().lowerEnd -> it + domain.xRange().length
+                            it > domain.xRange().upperEnd -> it - domain.xRange().length
+                            else -> it
+                        }
+                    }
+                    DoubleVector(verticalAngleValue, breakValue)
+                }
             }
         }.map { toClient(it, coordinateSystem, flipAxis) ?: return@map null }
     }
 
     private fun buildGrid(
         breaks: List<Double>,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
+        plotDomain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
         horizontal: Boolean
@@ -111,13 +131,13 @@ object PolarAxisUtil {
         val domainGrid = breaks.map { breakCoord ->
             when (horizontal) {
                 true -> listOf(
-                    DoubleVector(breakCoord, domain.yRange().lowerEnd),
-                    DoubleVector(breakCoord, domain.yRange().upperEnd)
+                    DoubleVector(breakCoord, plotDomain.yRange().lowerEnd),
+                    DoubleVector(breakCoord, dataDomain.yRange().upperEnd) // dataDomain to not go beyond the last major circle
                 )
 
                 false -> listOf(
-                    DoubleVector(domain.xRange().lowerEnd, breakCoord),
-                    DoubleVector(domain.xRange().upperEnd, breakCoord)
+                    DoubleVector(plotDomain.xRange().lowerEnd, breakCoord),
+                    DoubleVector(plotDomain.xRange().upperEnd, breakCoord)
                 )
             }
         }

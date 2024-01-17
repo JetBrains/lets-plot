@@ -31,6 +31,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
+    private val dataDomain: DoubleRectangle,
     private val adjustedDomain: DoubleRectangle,
     coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -177,7 +178,8 @@ internal class PolarFrameOfReference(
         val breaksData = PolarAxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
             coord = coord,
-            domain = adjustedDomain,
+            dataDomain = dataDomain,
+            plotDomain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
             axisTheme = axisTheme,
