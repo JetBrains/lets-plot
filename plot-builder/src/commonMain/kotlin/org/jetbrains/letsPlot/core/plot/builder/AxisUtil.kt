@@ -77,7 +77,7 @@ object AxisUtil {
         val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
 
         // For coord_polar squash first and last labels into one to avoid overlapping.
-        val labels = if (visibleMajorClientBreaks.first().subtract(visibleMajorClientBreaks.last()).length() <= 3.0) {
+        val labels = if (visibleMajorClientBreaks.size > 1 && visibleMajorClientBreaks.first().subtract(visibleMajorClientBreaks.last()).length() <= 3.0) {
             val labels = visibleMajorLabels.toMutableList()
             labels[labels.lastIndex] = "${labels[labels.lastIndex]}/${labels[0]}"
             labels[0] = ""
