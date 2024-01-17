@@ -5737,9 +5737,16 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
-    curvature : ToDo
-    angle : ToDo
-    ncp : ToDo
+    curvature : float, default=0.5
+        The amount of curvature.
+        Negative values produce left-hand curves, positive values produce right-hand curves,
+        and zero produces a straight line.
+    angle : float, default=90
+        Angle in degrees, giving an amount to skew the control points of the curve.
+        Values less than 90 skew the curve towards the start point
+        and values greater than 90 skew the curve towards the end point.
+    ncp : int, default=5
+        The number of control points used to draw the curve. More control points creates a smoother curve.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args

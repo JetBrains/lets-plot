@@ -44,15 +44,17 @@ class CurveGeom : GeomBase() {
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
 
-                val start = helper.toClient(DoubleVector(p.x()!!, p.y()!!), p) ?: continue
-                val end = helper.toClient(DoubleVector(p.xend()!!, p.yend()!!), p) ?: continue
+                val start = DoubleVector(p.x()!!, p.y()!!)
+                val end = DoubleVector(p.xend()!!, p.yend()!!)
 
-                val geometry = createGeometry(start, end)
+                val clientStart = helper.toClient(start, p) ?: continue
+                val clientEnd = helper.toClient(end, p) ?: continue
+                val geometry = createGeometry(clientStart, clientEnd)
+
                 val curve = SvgPathElement().apply {
                     d().set(
                         SvgPathDataBuilder().apply {
                             moveTo(geometry.first())
-                            //geometry.forEach(::lineTo)
                             interpolatePoints(
                                 geometry,
                                 SvgPathDataBuilder.Interpolation.CARDINAL
@@ -72,7 +74,7 @@ class CurveGeom : GeomBase() {
 
                 // hints
                 targetCollector.addPath(
-                    geometry,
+                    listOf(geometry.first(), geometry.last()),
                     { p.index() },
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
@@ -124,170 +126,17 @@ class CurveGeom : GeomBase() {
             -degreeAngle,
             ncp
         )
-        //println(controlPoints)
         return listOf(start) + controlPoints + listOf(end)
     }
 
 
     // https://svn.r-project.org/R/trunk/src/library/grid/R/curve.R
 
-    private fun calcControlPoints(
-        start: DoubleVector,
-        end: DoubleVector,
-        curvature: Double,
-        degreeAngle: Double,
-        ncp: Int
-    ): List<DoubleVector> {
-        if (curvature == 0.0) {  // straight line
-            return emptyList()
-        }
-
-        // Negative curvature means curve to the left
-        // Positive curvature means curve to the right
-        // Special case curvature = 0 (straight line) has been handled
-
-        val x1 = start.x
-        val y1 = start.y
-        val x2 = end.x
-        val y2 = end.y
-
-        val xm = (x1 + x2) / 2
-        val ym = (y1 + y2) / 2
-        val dx = x2 - x1
-        val dy = y2 - y1
-
-        val angle = toRadians(degreeAngle)
-        val sina = sin(angle)
-        val cosa = cos(angle)
-        // # FIXME:  special case of vertical or horizontal line ?
-        val cornerX = xm + (x1 - xm) * cosa - (y1 - ym) * sina
-        val cornerY = ym + (y1 - ym) * cosa + (x1 - xm) * sina
-
-        // Calculate angle to rotate region by to align it with x/y axes
-        val beta = -atan((cornerY - y1) / (cornerX - x1))
-        val sinb = sin(beta)
-        val cosb = cos(beta)
-
-        // Rotate end point about start point to align region with x/y axes
-        var newX2 = x1 + dx * cosb - dy * sinb
-        val newY2 = y1 + dy * cosb + dx * sinb
-
-        // Calculate x-scale factor to make region "square"
-        val scalex = (newY2 - y1) / (newX2 - x1)
-        // Scale end points to make region "square"
-        val newX1 = x1 * scalex
-        newX2 *= scalex
-
-        // Calculate the origin in the "square" region
-        // (for rotating start point to produce control points)
-        // (depends on 'curvature')
-        // 'origin' calculated from 'curvature'
-        val ratio = 2 * (sin(atan(curvature)).pow(2))
-        val origin = curvature - curvature / ratio
-
-        val oxy = calcOrigin(newX1, y1, newX2, newY2, origin)
-        val ox = oxy.x
-        val oy = oxy.y
-
-        // Calculate control points
-
-        // Direction of rotation depends on 'hand'
-        val dir = sign(curvature)
-
-        // Angle of rotation depends on location of origin
-        val maxTheta = PI + sign(origin * dir) * 2 * atan(abs(origin))
-
-        // theta <- seq(0, dir*maxtheta, dir*maxtheta/(ncp + 1))[c(-1, -(ncp + 2))]
-        val theta = (0 until (ncp + 2))
-            .map { it * dir * maxTheta / (ncp + 1) }
-            .drop(1)
-            .dropLast(1)
-
-        val cosTheta = theta.map(::cos)
-        val sinTheta = theta.map(::sin)
-
-        // May have BOTH multiple end points AND multiple
-        // control points to generate (per set of end points)
-        // Generate consecutive sets of control points by performing
-        // matrix multiplication
-
-        val indices = List(theta.size) { index -> index }
-
-        // cpx <- ox + ((newx1 - ox) %*% t(costheta)) - ((y1 - oy) %*% t(sintheta))
-        var cpx = indices.map { index ->
-            ox + (newX1 - ox) * cosTheta[index] - ((y1 - oy) * sinTheta[index])
-        }
-        // cpy <- oy + ((y1 - oy) %*% t(costheta)) + ((newx1 - ox) %*% t(sintheta))
-        val cpy = indices.map { index ->
-            oy + (y1 - oy) * cosTheta[index] + ((newX1 - ox) * sinTheta[index])
-        }
-        // Reverse transformations (scaling and rotation) to
-        // produce control points in the original space
-        cpx = cpx.map { it / scalex }
-
-        val sinnb = sin(-beta)
-        val cosnb = cos(-beta)
-        val finalcpx = indices.map { index -> x1 + (cpx[index] - x1) * cosnb - (cpy[index] - y1) * sinnb }
-        val finalcpy = indices.map { index -> y1 + (cpy[index] - y1) * cosnb + (cpx[index] - x1) * sinnb }
-
-        return indices.map { index -> DoubleVector(finalcpx[index], finalcpy[index]) }
-    }
-
-    private fun calcOrigin(
-        x1: Double,
-        y1: Double,
-        x2: Double,
-        y2: Double,
-        origin: Double
-    ): DoubleVector {
-
-        // Positive origin means origin to the "right"
-        // Negative origin means origin to the "left"
-        val xm = (x1 + x2) / 2
-        val ym = (y1 + y2) / 2
-        val dx = x2 - x1
-        val dy = y2 - y1
-        val slope = dy / dx
-        val oSlope = -1 / slope
-
-        // The origin is a point somewhere along the line between
-        // the end points, rotated by 90 (or -90) degrees
-        // Two special cases:
-        // If slope is non-finite then the end points lie on a vertical line, so
-        // the origin lies along a horizontal line (oSlope = 0)
-        // If oSlope is non-finite then the end points lie on a horizontal line,
-        // so the origin lies along a vertical line (oSlope = Inf)
-        val tmpOX = when {
-            !slope.isFinite() -> xm
-            !oSlope.isFinite() -> xm + origin * (x2 - x1) / 2
-            else -> xm + origin * (x2 - x1) / 2
-        }
-
-        val tmpOY = when {
-            !slope.isFinite() -> ym + origin * (y2 - y1) / 2
-            !oSlope.isFinite() -> ym
-            else -> ym + origin * (y2 - y1) / 2
-        }
-        // ALWAYS rotate by -90 about midpoint between end points
-        // Actually no need for "hand" because "origin" also encodes direction
-        /* val sintheta = when (hand) {
-         "left" -> -1
-         else -> 1
-     }*/
-        val sinTheta = -1
-        val ox = xm - (tmpOY - ym) * sinTheta
-        val oy = ym + (tmpOX - xm) * sinTheta
-
-        return DoubleVector(ox, oy)
-    }
-
-    //Refactored
-
     private fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
         return (v2.y - v1.y) / (v2.x - v1.x)
     }
 
-    private fun calcControlPoints2(
+    private fun calcControlPoints(
         start: DoubleVector,
         end: DoubleVector,
         curvature: Double,
@@ -325,7 +174,7 @@ class CurveGeom : GeomBase() {
         val origin = curvature - curvature / ratio
 
         val ps = DoubleVector(start.x * scaleX, start.y)
-        val oxy = calcOrigin2(
+        val oxy = calcOrigin(
             ps = ps,
             pe = DoubleVector(new.x * scaleX, new.y),
             origin
@@ -371,7 +220,7 @@ class CurveGeom : GeomBase() {
         }
     }
 
-    private fun calcOrigin2(
+    private fun calcOrigin(
         ps: DoubleVector,
         pe: DoubleVector,
         origin: Double
