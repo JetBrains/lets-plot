@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import kotlin.math.*
@@ -61,9 +62,8 @@ class CurveGeom : GeomBase() {
                             )
                         }.build()
                     )
-                    strokeColor().set(p.color())
-                    strokeOpacity().set(p.alpha())
-                    fillOpacity().set(0.0)
+                    fill().set(SvgColors.NONE)
+                    GeomHelper.decorate(this, p, applyAlphaToAll = true, filled = false)
                 }
                 root.add(curve)
 

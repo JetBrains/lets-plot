@@ -147,14 +147,16 @@ open class GeomHelper(
             node: SvgNode,
             p: DataPointAesthetics,
             applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
+            filled: Boolean = true
         ) {
             if (node is SvgShape) {
                 decorateShape(
                     node as SvgShape,
                     p,
                     applyAlphaToAll,
-                    strokeScaler
+                    strokeScaler,
+                    filled
                 )
             }
 
@@ -170,10 +172,13 @@ open class GeomHelper(
             shape: SvgShape,
             p: DataPointAesthetics,
             applyAlphaToAll: Boolean,
-            strokeScaler: (DataPointAesthetics) -> Double
+            strokeScaler: (DataPointAesthetics) -> Double,
+            filled: Boolean
         ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
-            AestheticsUtil.updateFill(shape, p)
+           if (filled) {
+               AestheticsUtil.updateFill(shape, p)
+           }
             shape.strokeWidth().set(strokeScaler(p))
         }
 
