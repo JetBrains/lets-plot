@@ -737,7 +737,8 @@ class LayerSpec(FeatureSpec):
 class FeatureSpecArray(FeatureSpec):
     def __init__(self, *features):
         super().__init__('feature-list', name=None)
-        self.__elements = self._flatten(list(features))
+        self.__elements = []
+        self._flatten(list(features), self.__elements)
 
     def elements(self):
         return self.__elements
@@ -765,14 +766,12 @@ class FeatureSpecArray(FeatureSpec):
 
         return super().__add__(other)
 
-    def _flatten(self, features):
-        result = []
+    def _flatten(self, features, out):
         for feature in features:
             if isinstance(feature, FeatureSpecArray):
-                result.extend(self._flatten(feature.elements()))
+                self._flatten(feature.elements(), out)
             else:
-                result.append(feature)
-        return result
+                out.append(feature)
 
 
 class DummySpec(FeatureSpec):
