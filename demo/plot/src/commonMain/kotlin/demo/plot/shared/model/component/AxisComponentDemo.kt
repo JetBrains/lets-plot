@@ -12,10 +12,8 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
@@ -45,24 +43,17 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val domainX = DoubleSpan(0.0, 1000.0)
         val domainY = DoubleSpan(0.0, 1000.0)
 
-        val rangeX = DoubleSpan(0.0, CENTER_SQUARE_SIZE.x)
-        val rangeY = DoubleSpan(0.0, CENTER_SQUARE_SIZE.y)
-
-        val mapperX = Mappers.linear(domainX, rangeX)
-        val mapperY = Mappers.linear(domainY, rangeY)
-        var scaleX = Scales.continuousDomain("X", /*mapperX,*/ true)
-        var scaleY = Scales.continuousDomain("Y", /*mapperY,*/ true)
+        var scaleX = Scales.continuousDomain("X", true)
+        var scaleY = Scales.continuousDomain("Y", true)
 
         scaleX = ScaleBreaksUtil.withBreaks(scaleX, domainX, 10)
         scaleY = ScaleBreaksUtil.withBreaks(scaleY, domainY, 10)
 
-//        val coord = Coords.create(rangeX, rangeY)
         val coord = Coords.DemoAndTest.create(domainX, domainY, CENTER_SQUARE_SIZE)
 
         val leftAxis = createAxis(
             CENTER_SQUARE_SIZE.y,
             scaleY,
-            mapperY,
             coord,
             Orientation.LEFT
         )
@@ -72,7 +63,6 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val bottomAxis = createAxis(
             CENTER_SQUARE_SIZE.x,
             scaleX,
-            mapperX,
             coord,
             Orientation.BOTTOM
         )
@@ -82,7 +72,6 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val rightAxis = createAxis(
             CENTER_SQUARE_SIZE.y,
             scaleY,
-            mapperY,
             coord,
             Orientation.RIGHT
         )
@@ -92,7 +81,6 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val topAxis = createAxis(
             CENTER_SQUARE_SIZE.x,
             scaleX,
-            mapperX,
             coord,
             Orientation.TOP
         )
@@ -124,7 +112,6 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun createAxis(
             axisLength: Double,
             scale: Scale,
-            scaleMapper: ScaleMapper<Double>,
             coord: CoordinateSystem,
             orientation: Orientation
         ): AxisComponent {

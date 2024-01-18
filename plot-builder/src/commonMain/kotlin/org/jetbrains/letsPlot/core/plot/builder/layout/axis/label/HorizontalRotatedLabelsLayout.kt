@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -25,8 +26,8 @@ internal class HorizontalRotatedLabelsLayout(
 ) {
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         if (breaks.isEmpty) {
             return noLabelsLayoutInfo(axisLength, orientation)
@@ -36,7 +37,7 @@ internal class HorizontalRotatedLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
-        val ticks = breaks.toAxisCoord(axisMapper)
+        val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         val labelBoundsList = labelBoundsList(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)
 
         var overlap = false

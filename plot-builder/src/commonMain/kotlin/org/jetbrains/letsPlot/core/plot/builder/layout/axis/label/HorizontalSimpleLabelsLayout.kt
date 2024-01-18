@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -24,8 +25,8 @@ internal class HorizontalSimpleLabelsLayout(
 ) {
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         if (breaks.isEmpty) {
@@ -38,7 +39,7 @@ internal class HorizontalSimpleLabelsLayout(
 
         var bounds: DoubleRectangle? = null
         var overlap = false
-        val ticks = breaks.toAxisCoord(axisMapper)
+        val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
 
         val boundsList = labelBoundsList(
             ticks, breaks.labels,

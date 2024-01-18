@@ -28,12 +28,12 @@ internal class HorizontalMultilineLabelsLayout(
 ) {
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         val boundsByShelfIndex = ArrayList<DoubleRectangle>()
-        val ticks = breaks.toAxisCoord(axisMapper)
+        val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         val boundsList = labelBoundsList(
             ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION

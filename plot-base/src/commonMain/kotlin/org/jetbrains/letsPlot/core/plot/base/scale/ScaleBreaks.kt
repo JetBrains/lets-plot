@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+
 class ScaleBreaks(
     val domainValues: List<Any>,
     val transformedValues: List<Double>,
@@ -25,10 +27,22 @@ class ScaleBreaks(
         }
     }
 
-    fun toAxisCoord(
-        axisMapper: (Double?) -> Double?
+    fun projectOnAxis(
+        axisDomain: DoubleSpan,
+        axisLength: Double,
+        isHorizontal: Boolean
     ): List<Double> {
-        return transformedValues.map { axisMapper(it)!! }
+        // Do reverse maping for vertical axis: screen coordinates: top->bottom, but y-axis coordinate: bottom->top
+        val reverse = !isHorizontal
+        val mapper = Mappers.linear(
+            domain = axisDomain,
+            range = DoubleSpan(0.0, axisLength),
+            reverse = reverse
+        )
+        return transformedValues.mapIndexed { i, v ->
+            mapper(v)
+                ?: throw IllegalStateException("Can't project axis break ${labels[i]} ($v) to axis (horiz:$isHorizontal)")
+        }
     }
 
 

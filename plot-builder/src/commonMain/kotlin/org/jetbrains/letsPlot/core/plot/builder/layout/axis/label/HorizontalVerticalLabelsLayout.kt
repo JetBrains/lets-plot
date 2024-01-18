@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -35,12 +36,12 @@ internal class HorizontalVerticalLabelsLayout(
     val labelVerticalAnchor: Text.VerticalAnchor = Text.VerticalAnchor.CENTER
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         val height = labelSpec.height()
-        val ticks = breaks.toAxisCoord(axisMapper)
+        val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         var overlap = false
         if (breaks.size >= 2) {
             val minTickDistance = height + MIN_DISTANCE

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -26,8 +27,8 @@ internal class VerticalFlexBreaksLabelsLayout(
     }
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         require(axisLength > 0) { "axis length: $axisLength" }
@@ -42,7 +43,7 @@ internal class VerticalFlexBreaksLabelsLayout(
         )
 
         var breaks = getBreaks(targetBreakCount)
-        var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+        var labelsInfo = doLayoutLabels(breaks, axisDomain, axisLength)
 
         while (labelsInfo.isOverlap) {
             // reduce tick count
@@ -60,7 +61,7 @@ internal class VerticalFlexBreaksLabelsLayout(
             }
             targetBreakCount = newTargetBreakCount
             breaks = getBreaks(targetBreakCount)
-            labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+            labelsInfo = doLayoutLabels(breaks, axisDomain, axisLength)
         }
 
         return labelsInfo
@@ -72,16 +73,16 @@ internal class VerticalFlexBreaksLabelsLayout(
 
     private fun doLayoutLabels(
         breaks: ScaleBreaks,
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
     ): AxisLabelsLayoutInfo {
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
             orientation,
             labelSpec,
             breaks,
             theme,
+            axisDomain,
             axisLength,
-            axisMapper
         )
     }
 }

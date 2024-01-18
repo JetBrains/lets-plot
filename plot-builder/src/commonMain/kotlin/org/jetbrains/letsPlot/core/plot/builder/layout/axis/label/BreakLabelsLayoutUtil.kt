@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -53,8 +54,8 @@ internal object BreakLabelsLayoutUtil {
         labelSpec: LabelSpec,
         breaks: ScaleBreaks,
         theme: AxisTheme,
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         check(!orientation.isHorizontal)
 
@@ -64,7 +65,7 @@ internal object BreakLabelsLayoutUtil {
                 breaks,
                 theme,
                 theme.labelAngle()
-            ).doLayout(axisLength, axisMapper)
+            ).doLayout(axisDomain, axisLength)
         }
 
         val tickLength = if (theme.showTickMarks()) theme.tickMarkLength() else 0.0
@@ -72,8 +73,8 @@ internal object BreakLabelsLayoutUtil {
             theme.showLabels() -> {
                 val labelsBounds = verticalAxisLabelsBounds(
                     breaks,
-                    axisMapper,
-                    labelSpec
+                    projectedBreaks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = false),
+                    tickLabelSpec = labelSpec
                 )
                 applyLabelMargins(
                     labelsBounds,
@@ -188,17 +189,16 @@ internal object BreakLabelsLayoutUtil {
 
     private fun verticalAxisLabelsBounds(
         breaks: ScaleBreaks,
-        axisMapper: (Double?) -> Double?,
+        projectedBreaks: List<Double>,  // coordinates on axis
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
         val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
-            val axisBreaks = breaks.toAxisCoord(axisMapper)
 
-            y1 = min(axisBreaks[0], axisBreaks.last())
-            y2 = max(axisBreaks[0], axisBreaks.last())
+            y1 = min(projectedBreaks[0], projectedBreaks.last())
+            y2 = max(projectedBreaks[0], projectedBreaks.last())
             y1 -= tickLabelSpec.height() / 2
             y2 += tickLabelSpec.height() / 2
         }

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -24,10 +25,13 @@ internal class VerticalRotatedLabelsLayout(
     theme
 ) {
 
-    override fun doLayout(axisLength: Double, axisMapper: (Double?) -> Double?): AxisLabelsLayoutInfo {
+    override fun doLayout(
+        axisDomain: DoubleSpan,
+        axisLength: Double,
+    ): AxisLabelsLayoutInfo {
         check(!orientation.isHorizontal)
 
-        val ticks = breaks.toAxisCoord(axisMapper)
+        val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = false)
         val labelBoundsList = labelBoundsList(ticks, breaks.labels) { y: Double -> DoubleVector(0.0, y) }
 
         // total bounds

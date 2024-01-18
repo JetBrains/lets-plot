@@ -6,8 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.axis
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
@@ -19,16 +17,15 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 
-internal class AxisLayouter(
+internal class AxisLayouter constructor(
     val orientation: Orientation,
     private val domainRange: DoubleSpan,
     private val labelsLayout: AxisLabelsLayout
 ) {
 
-    fun doLayout(
-        axisLength: Double
-    ): AxisLayoutInfo {
-        val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength))
+    fun doLayout(axisDomain: DoubleSpan, axisLength: Double): AxisLayoutInfo {
+
+        val labelsInfo = labelsLayout.doLayout(axisDomain, axisLength)
         val axisBreaks = labelsInfo.breaks!!
         val labelsBounds = labelsInfo.bounds!!
         return AxisLayoutInfo(
@@ -47,21 +44,6 @@ internal class AxisLayouter(
                 orientation
             ),
             tickLabelBoundsList = labelsInfo.labelBoundsList
-        )
-    }
-
-    private fun toAxisMapper(axisLength: Double): (Double?) -> Double? {
-        // Do reverse maping for vertical axis: screen coordinates: top->bottom, but y-axis coordinate: bottom->top
-        val reverse = !orientation.isHorizontal
-        val scaleMapper = toScaleMapper(axisLength, reverse)
-        return { v -> scaleMapper(v) }
-    }
-
-    protected fun toScaleMapper(axisLength: Double, reverse: Boolean): ScaleMapper<Double> {
-        return Mappers.linear(
-            domain = domainRange,
-            range = DoubleSpan(0.0, axisLength),
-            reverse = reverse
         )
     }
 

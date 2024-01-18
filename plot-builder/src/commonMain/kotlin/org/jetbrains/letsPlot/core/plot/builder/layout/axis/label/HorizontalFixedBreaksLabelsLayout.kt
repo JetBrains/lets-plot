@@ -17,13 +17,11 @@ import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
-//    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     geomAreaInsets: Insets,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
-//    axisDomain,
     breaks,
     theme
 ) {
@@ -40,8 +38,8 @@ internal class HorizontalFixedBreaksLabelsLayout(
     }
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         if (!theme.showLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
@@ -53,21 +51,21 @@ internal class HorizontalFixedBreaksLabelsLayout(
         )
 
         if (theme.rotateLabels()) {
-            return rotatedLayout(theme.labelAngle()).doLayout(axisLength, axisMapper)
+            return rotatedLayout(theme.labelAngle()).doLayout(axisDomain, axisLength)
         }
 
         // Don't run this expensive code when num of breaks is too large.
         val labelsLayoutInfo = if (breaks.size > 400) {
             // Don't even try variants when num of breaks is too large (optimization, see issue #932).
-            verticalLayout().doLayout(axisLength, axisMapper)
+            verticalLayout().doLayout(axisDomain, axisLength)
         } else {
-            var layoutInfo = simpleLayout().doLayout(axisLength, axisMapper)
+            var layoutInfo = simpleLayout().doLayout(axisDomain, axisLength)
             if (overlap(layoutInfo, axisSpanExpanded)) {
-                layoutInfo = multilineLayout().doLayout(axisLength, axisMapper)
+                layoutInfo = multilineLayout().doLayout(axisDomain, axisLength)
                 if (overlap(layoutInfo, axisSpanExpanded)) {
-                    layoutInfo = tiltedLayout().doLayout(axisLength, axisMapper)
+                    layoutInfo = tiltedLayout().doLayout(axisDomain, axisLength)
                     if (overlap(layoutInfo, axisSpanExpanded)) {
-                        layoutInfo = verticalLayout().doLayout(axisLength, axisMapper)
+                        layoutInfo = verticalLayout().doLayout(axisDomain, axisLength)
                     }
                 }
             }
@@ -79,7 +77,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun simpleLayout(): AxisLabelsLayout {
         return HorizontalSimpleLabelsLayout(
             orientation,
-//            axisDomain,
             breaks,
             theme
         )
@@ -88,7 +85,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun multilineLayout(): AxisLabelsLayout {
         return HorizontalMultilineLabelsLayout(
             orientation,
-//            axisDomain,
             breaks,
             theme,
             2
@@ -98,7 +94,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun tiltedLayout(): AxisLabelsLayout {
         return HorizontalTiltedLabelsLayout(
             orientation,
-//            axisDomain,
             breaks,
             theme
         )
@@ -107,7 +102,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun rotatedLayout(angle: Double): AxisLabelsLayout {
         return HorizontalRotatedLabelsLayout(
             orientation,
-//            axisDomain,
             breaks,
             theme,
             angle
@@ -117,7 +111,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun verticalLayout(): AxisLabelsLayout {
         return HorizontalVerticalLabelsLayout(
             orientation,
-//            axisDomain,
             breaks,
             theme
         )

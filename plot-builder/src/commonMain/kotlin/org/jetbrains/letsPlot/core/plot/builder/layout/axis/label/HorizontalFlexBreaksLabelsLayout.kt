@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -28,8 +29,8 @@ internal class HorizontalFlexBreaksLabelsLayout(
     }
 
     override fun doLayout(
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
@@ -39,7 +40,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             side = DoubleVector::x
         )
         var breaks = getBreaks(targetBreakCount)
-        var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+        var labelsInfo = doLayoutLabels(breaks, axisDomain, axisLength)
 
         while (labelsInfo.isOverlap) {
             // reduce tick count
@@ -56,7 +57,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             }
             targetBreakCount = newTargetBreakCount
             breaks = getBreaks(targetBreakCount)
-            labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+            labelsInfo = doLayoutLabels(breaks, axisDomain, axisLength)
         }
 
         return labelsInfo
@@ -64,8 +65,8 @@ internal class HorizontalFlexBreaksLabelsLayout(
 
     private fun doLayoutLabels(
         breaks: ScaleBreaks,
+        axisDomain: DoubleSpan,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         val layout = if (myRotationAngle != null) {
             HorizontalRotatedLabelsLayout(
@@ -81,7 +82,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 theme
             )
         }
-        return layout.doLayout(axisLength, axisMapper)
+        return layout.doLayout(axisDomain, axisLength)
     }
 
     private fun getBreaks(maxCount: Int): ScaleBreaks {
