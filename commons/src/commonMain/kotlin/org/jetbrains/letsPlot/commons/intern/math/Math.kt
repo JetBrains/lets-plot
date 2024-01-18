@@ -164,6 +164,6 @@ fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
     return distance2(p1.x, p1.y, p2.x, p2.y)
 }
 
-fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
-    return lineParams(v1.x, v1.y, v2.x, v2.y).first
+fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
+    return lineParams(p1.x, p1.y, p2.x, p2.y).first
 }
