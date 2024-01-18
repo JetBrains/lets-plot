@@ -17,7 +17,7 @@ try:
 except ImportError:
     pl = None
 
-from ..plot.core import PlotSpec, aes
+from ..plot.core import PlotSpec, DummySpec, FeatureSpecArray, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
 from ..plot.theme_ import *
@@ -307,17 +307,17 @@ def residual_plot(data=None, x=None, y=None, *,
     else:
         scales.append(ylab("{0} residual".format(y)))
     # prepare layers
-    layers = []
+    layer_spec = DummySpec()
     # main layer
     main_layer = _get_geom2d_layer(geom, binwidth2d, bins2d, color, color_by, size, alpha, show_legend)
     if main_layer is not None:
-        layers.append(main_layer)
+        layer_spec += main_layer
     # hline layer
     if hline:
-        layers.append(geom_hline(yintercept=0, color=_HLINE_COLOR, linetype=_HLINE_LINETYPE))
+        layer_spec += geom_hline(yintercept=0, color=_HLINE_COLOR, linetype=_HLINE_LINETYPE)
     # marginal layers
     if marginal != 'none':
-        layers += _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend)
+        layer_spec += _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend)
     # theme layer
     theme_layer = theme(axis="blank",
                         axis_text_x=element_text(),
@@ -326,5 +326,6 @@ def residual_plot(data=None, x=None, y=None, *,
                         axis_ticks_y=element_line(),
                         axis_text_y=element_text(),
                         axis_title_y=element_text())
+    layers = FeatureSpecArray(layer_spec).elements()
 
     return PlotSpec(data=stat_data, mapping=aes(**mapping_dict), scales=scales, layers=layers) + theme_layer

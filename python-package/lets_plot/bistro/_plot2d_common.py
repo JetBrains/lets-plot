@@ -2,7 +2,7 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from ..plot.core import DummySpec, FeatureSpecArray, aes
+from ..plot.core import DummySpec, aes
 from ..plot.geom import *
 from ..plot.marginal_layer import ggmarginal
 
@@ -90,9 +90,4 @@ def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_leg
         for side in sides:
             result += _get_marginal_layer(geom_kind, side, size)
 
-    if isinstance(result, DummySpec):
-        return []
-    elif isinstance(result, FeatureSpecArray):
-        return result.elements()
-    else:
-        return [result]
+    return result
