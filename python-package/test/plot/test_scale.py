@@ -133,17 +133,48 @@ def test_scale_manual_values_dict_no_matches_with_specified_breaks():
 
 # scale continuous
 
-def test_scale_continuous_with_color_aesthetic():
-    spec = gg.scale_color_continuous(low='red', high='blue')
-    as_dict = spec.as_dict()
+def test_scale_color_continuous():
+    # identical:
+    spec1 = gg.scale_continuous('color', low='red', high='blue')
+    spec2 = gg.scale_color_continuous(low='red', high='blue')
+    spec3 = gg.scale_color_gradient(low='red', high='blue')
+
+    as_dict = spec1.as_dict()
+    assert as_dict == spec2.as_dict()
+    assert as_dict == spec3.as_dict()
     assert as_dict['aesthetic'] == 'color'
     assert as_dict['scale_mapper_kind'] == 'color_gradient'
     assert as_dict['low'] == 'red'
     assert as_dict['high'] == 'blue'
 
 
+def test_scale_color_continuous_with_mapper_kind():
+    # identical:
+    spec1 = gg.scale_continuous('color', scale_mapper_kind='color_gradient2', low='red', mid='green', high='blue')
+    spec2 = gg.scale_color_continuous(scale_mapper_kind='color_gradient2', low='red', mid='green', high='blue')
+
+    as_dict = spec1.as_dict()
+    assert as_dict == spec2.as_dict()
+    assert as_dict['aesthetic'] == 'color'
+    assert as_dict['scale_mapper_kind'] == 'color_gradient2'
+    assert as_dict['low'] == 'red'
+    assert as_dict['mid'] == 'green'
+    assert as_dict['high'] == 'blue'
+
+
 def test_scale_continuous_with_non_color_aesthetic():
-    spec = gg.scale_continuous('x')
+    spec = gg.scale_continuous('x', scale_mapper_kind='color_gradient')
     as_dict = spec.as_dict()
     assert as_dict['aesthetic'] == 'x'
     assert 'scale_mapper_kind' not in as_dict
+
+
+def test_scale_color_discrete():
+    spec1 = gg.scale_discrete('color', scale_mapper_kind='brewer', palette='Set1')
+    spec2 = gg.scale_color_discrete(scale_mapper_kind='brewer', palette='Set1')
+    as_dict = spec1.as_dict()
+    assert as_dict == spec2.as_dict()
+    assert as_dict['aesthetic'] == 'color'
+    assert as_dict['scale_mapper_kind'] == 'brewer'
+    assert as_dict['palette'] == 'Set1'
+    assert as_dict['discrete'] is True
