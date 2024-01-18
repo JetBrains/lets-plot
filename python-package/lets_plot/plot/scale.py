@@ -1976,7 +1976,7 @@ def scale_discrete(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='brewer' for color scale
+    scale_mapper_kind : str, default='color_brewer' for color scale
         The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
         'color_brewer', 'color_cmap'}.
     kwargs :
@@ -2068,7 +2068,7 @@ def scale_fill_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='brewer'
+    scale_mapper_kind : str, default='color_brewer'
         The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
         'color_brewer', 'color_cmap'}.
     kwargs :
@@ -2150,7 +2150,7 @@ def scale_color_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='brewer'
+    scale_mapper_kind : str, default='color_brewer'
         The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
         'color_brewer', 'color_cmap'}.
     kwargs:
