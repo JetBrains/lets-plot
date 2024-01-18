@@ -22,7 +22,7 @@ def ggmarginal(sides: str, *, size=None, layer: Union[LayerSpec, FeatureSpecArra
         Size of marginal geometry (width or height, depending on the margin side) as a fraction of the entire
         plotting area of the plot.
         The value should be in range [0.01..0.95].
-    layer : `LayerSpec` or `FeatureSpecArray`
+    layer : `LayerSpec`
         A marginal geometry layer.
         The result of calling of the `geom_xxx()` / `stat_xxx()` function.
         Marginal plot works best with `density`,`histogram`,`boxplot`,`violin` and `freqpoly` geometry layers.
