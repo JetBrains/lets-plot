@@ -20,7 +20,7 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
     private var myTension = .7
 
     enum class Interpolation {
-        LINEAR, CARDINAL, MONOTONE
+        LINEAR, CARDINAL, MONOTONE, BSPLINE
     }
 
     init {
@@ -303,6 +303,40 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
         return tangents
     }
 
+
+    private fun doBasicInterpolation(points: List<DoubleVector>) {
+        fun lineDot4(a: List<Double>, b: List<Double>): Double {
+            // returns the dot product of the given four-element vectors
+            return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]
+        }
+        // Matrix to transform basis (b-spline) control points to bezier control points.
+        val lineBasisBezier1 = listOf(0.0, 2.0/3.0, 1.0/3.0, 0.0)
+        val lineBasisBezier2 = listOf(0.0, 1.0/3.0, 2.0/3.0, 0.0)
+        val lineBasisBezier3 = listOf(0.0, 1.0/6.0, 2.0/3.0, 1.0/6.0)
+
+        val px = arrayListOf(points[0].x, points[0].x, points[0].x, points[1].x)
+        val py = arrayListOf(points[0].y, points[0].y, points[0].y, points[1].y)
+
+        lineTo(
+            lineDot4(lineBasisBezier3, px),
+            lineDot4(lineBasisBezier3, py)
+        )
+        for (i in 2..points.size) {
+            val curPoint = if (i < points.size) points[i] else points.last()
+            px.removeFirst(); px.add(curPoint.x)
+            py.removeFirst(); py.add(curPoint.y)
+            curveTo(
+                lineDot4(lineBasisBezier1, px),
+                lineDot4(lineBasisBezier1, py),
+                lineDot4(lineBasisBezier2, px),
+                lineDot4(lineBasisBezier2, py),
+                lineDot4(lineBasisBezier3, px),
+                lineDot4(lineBasisBezier3, py)
+            )
+        }
+        lineTo(points.last())
+    }
+
     // see https://github.com/d3/d3/blob/9364923ee2b35ec2eb80ffc4bdac12a7930097fc/src/svg/line.js for reference
     fun interpolatePoints(xs: Collection<Double>, ys: Collection<Double>, interpolation: Interpolation): SvgPathDataBuilder {
         // NOTE: only absolute commands will be produced
@@ -330,6 +364,11 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
                 doLinearInterpolation(points)
             } else {
                 doHermiteInterpolation(points, monotoneTangents(points))
+            }
+            Interpolation.BSPLINE -> if (points.size < 3) {
+                doLinearInterpolation(points)
+            } else {
+                doBasicInterpolation(points)
             }
         }
 

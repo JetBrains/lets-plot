@@ -54,7 +54,7 @@ class CurveGeom : GeomBase() {
                             moveTo(geometry.first())
                             interpolatePoints(
                                 geometry,
-                                SvgPathDataBuilder.Interpolation.CARDINAL
+                                SvgPathDataBuilder.Interpolation.BSPLINE
                             )
                         }.build()
                     )
