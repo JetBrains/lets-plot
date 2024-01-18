@@ -103,29 +103,67 @@ fun distance2ToSegment(x: Double, y: Double, l1x: Double, l1y: Double, l2x: Doub
     return min(distance2(x, y, l1x, l1y), distance2(x, y, l2x, l2y))
 }
 
-fun distance2ToSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Double {
-    return distance2ToSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
-}
-
-fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Double {
+// Pair of line parameters: m and b
+fun lineParams(p1x: Double, p1y: Double, p2x: Double, p2y: Double): Pair<Double, Double> {
     // the Equation for the Line
     // y = m * x + b
     // Where
     // m = (y2 - y1) / (x2 - x1)
     // and b computed by substitution p1 or p2 to the equation of the line
 
-    val m = lineSlope(p1x, p1y, p2x, p2y)
+    val m = (p2y - p1y) / (p2x - p1x)
     val b = p2y - m * (p2x)
+    return m to b
+}
 
-    // Result
+fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Double {
+    val (m, b) = lineParams(p1x, p1y, p2x, p2y)
     return m * x + b
 }
 
-fun lineSlope(p1x: Double, p1y: Double, p2x: Double, p2y: Double): Double {
-    return (p2y - p1y) / (p2x - p1x)
+fun xOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, y: Double): Double {
+    val (m, b) = lineParams(p1x, p1y, p2x, p2y)
+    return (y - b) / m
+}
+
+// vector projection
+// See: https://en.wikipedia.org/wiki/Vector_projection
+fun projection(px: Double, py: Double, l1x: Double, l1y: Double, l2x: Double, l2y: Double): DoubleVector {
+    val vx = px - l1x
+    val vy = py - l1y
+
+    val sx = l2x - l1x
+    val sy = l2y - l1y
+
+    val c = dot(vx, vy, sx, sy) / dot(sx, sy, sx, sy)
+
+    return DoubleVector(sx * c + l1x, sy * c + l1y)
+}
+
+fun distance2ToSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Double {
+    return distance2ToSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
+}
+
+fun isOnSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Boolean {
+    return isOnSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
+}
+
+fun yOnLine(x: Double, p1: DoubleVector, p2: DoubleVector): DoubleVector {
+    return DoubleVector(x, yOnLine(p1.x, p1.y, p2.x, p2.y, x))
+}
+
+fun xOnLine(y: Double, p1: DoubleVector, p2: DoubleVector): DoubleVector {
+    return DoubleVector(xOnLine(p1.x, p1.y, p2.x, p2.y, y), y)
+}
+
+fun projection(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): DoubleVector {
+    return projection(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
+}
+
+fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
+    return distance2(p1.x, p1.y, p2.x, p2.y)
 }
 
 fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
-    return lineSlope(v1.x, v1.y, v2.x, v2.y)
+    return lineParams(v1.x, v1.y, v2.x, v2.y).first
 }
-

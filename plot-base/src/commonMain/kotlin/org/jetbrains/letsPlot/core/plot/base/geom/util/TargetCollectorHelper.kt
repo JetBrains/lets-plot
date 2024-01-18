@@ -22,15 +22,15 @@ class TargetCollectorHelper(
     private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(geomKind, ctx)
     private val targetCollector: GeomTargetCollector = ctx.targetCollector
 
-    fun addPaths(paths: List<PathData>) {
+    fun addPaths(paths: Map<Int, PathData>) {
         for (path in paths) {
-            val simplifiedPath = reduce(path)
+            val simplifiedPath = reduce(path.value)
             addPath(simplifiedPath, TooltipParams(markerColors = colorMarkerMapper(simplifiedPath.aes)))
         }
     }
 
-    fun addVariadicPaths(paths: List<List<PathData>>) {
-        for (subPaths in paths) {
+    fun addVariadicPaths(paths: Map<Int, List<PathData>>) {
+        for (subPaths in paths.values) {
             val simplifiedSubPaths = subPaths.map(::reduce)
 
             // build a subpaths aes index so later we would fetch a proper tooltip marker.
@@ -50,8 +50,8 @@ class TargetCollectorHelper(
         }
     }
 
-    fun addPolygons(pathDataList: List<PathData>) {
-        pathDataList.forEach { pathData ->
+    fun addPolygons(pathDataList: Map<Int, PathData>) {
+        pathDataList.values.forEach { pathData ->
             targetCollector.addPolygon(
                 pathData.coordinates,
                 pathData.aes.index(),

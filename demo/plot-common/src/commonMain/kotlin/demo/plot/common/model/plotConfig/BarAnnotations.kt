@@ -10,24 +10,27 @@ import demoAndTestShared.parsePlotSpec
 class BarAnnotations {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            /*
-            barPlot(grouped = false, flip = false),
+            //barPlot(grouped = false, flip = false),
             barPlot("dodge", flip = false),
             barPlot("stack", flip = false),
-            barPlot("fill", flip = false),
+            barPlot("stack", flip = false, yLim = "[3, 30]"),
+            //barPlot("fill", flip = false),
 
-            barPlot(grouped = false, flip = true),
-            barPlot("dodge", flip = true),
-            barPlot("stack", flip = true),
-            barPlot("fill", flip = true),*
-           */
+            //barPlot(grouped = false, flip = true),
+            //barPlot("dodge", flip = true),
+            //barPlot("stack", flip = true),
+            barPlot("fill", flip = true),
+            barPlot("fill", flip = true, yLim = "[0.4, 0.8]"),
+
             withNegativeValues("stack", flip = false),
-            withNegativeValues("fill", flip = false),
-            withNegativeValues("dodge", flip = false),
+            withNegativeValues("stack", flip = false, yLim = "[2, 8]"),
+            //withNegativeValues("fill", flip = false),
+            //withNegativeValues("dodge", flip = false),
 
-            withNegativeValues("stack", flip = true),
+            //withNegativeValues("stack", flip = true),
             withNegativeValues("fill", flip = true),
-            withNegativeValues("dodge", flip = true),
+            withNegativeValues("fill", flip = true, yLim = "[-0.5, 0.5]"),
+            //withNegativeValues("dodge", flip = true),
         )
     }
 
@@ -41,17 +44,20 @@ class BarAnnotations {
     private fun barPlot(
         position: String = "stack",
         flip: Boolean = false,
-        grouped: Boolean = true
+        grouped: Boolean = true,
+        yLim: String? = null
     ): MutableMap<String, Any> {
         val coordSpec = when {
-            flip -> "'coord': {'name': 'flip', 'flip': true},"
+            flip -> "'coord': {'name': 'flip', 'flip': true, 'ylim': $yLim},"
+            yLim != null -> "'coord': {'name': 'cartesian', 'ylim': $yLim},"
             else -> ""
         }
         val mappingSpec = "'x': 'x'" + if (grouped) ", 'fill': 'v'" else ""
         val spec = """
           {
              'kind': 'plot',
-              $coordSpec            
+             'ggtitle': { 'text': 'position=\'$position\', coord_cartesian(ylim=$yLim)'},
+              $coordSpec
              'mapping': { $mappingSpec },
              'layers': [
                {
@@ -77,16 +83,18 @@ class BarAnnotations {
         "value" to listOf(0.5, 5, -1.5, 3, 1, 2, 4, 0.5, -1, 6, 5, -0.2, 5, -2, 5, 4)
     )
 
-    private fun withNegativeValues(position: String, flip: Boolean): MutableMap<String, Any> {
+    private fun withNegativeValues(position: String, flip: Boolean, yLim: String? = null): MutableMap<String, Any> {
         val coordSpec = when {
-            flip -> "'coord': {'name': 'flip', 'flip': true},"
+            flip -> "'coord': {'name': 'flip', 'flip': true, 'ylim': $yLim},"
+            yLim != null -> "'coord': {'name': 'cartesian', 'ylim': $yLim},"
             else -> ""
         }
         val spec = """
         {
+          'kind': 'plot',
+          'ggtitle': { 'text': 'position=\'$position\', coord_cartesian(ylim=$yLim)'},
           'mapping': { 'x': 'x', 'y': 'value', 'fill': 'group' },
            $coordSpec
-          'kind': 'plot',
           'layers': [
             {
                 'geom': 'bar',

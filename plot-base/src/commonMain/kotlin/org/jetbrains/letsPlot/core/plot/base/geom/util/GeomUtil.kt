@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 
 object GeomUtil {
@@ -157,10 +157,10 @@ object GeomUtil {
     fun createPathGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?)
-    ): List<PathData> {
-        val groups = createGroups(dataPoints, sorted = true).values
+    ): Map<Int, PathData> {
+        val groups = createGroups(dataPoints, sorted = true)
 
-        return groups.map { group ->
+        return groups.mapValues { (_, group) ->
             PathData(
                 points = group.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
             )

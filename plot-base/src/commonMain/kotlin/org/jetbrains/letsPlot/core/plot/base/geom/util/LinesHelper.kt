@@ -37,10 +37,14 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     ): List<LinePath> {
         // draw line for each group
         val pathDataByGroup = createPathDataByGroup(dataPoints, toLocation)
-        return createPaths(pathDataByGroup, closePath = false)
+        return createPaths(pathDataByGroup.values, closePath = false)
     }
 
-    internal fun createPaths(paths: List<PathData>, closePath: Boolean): List<LinePath> {
+    internal fun createPaths(paths: Map<Int, List<PathData>>, closePath: Boolean): List<LinePath> {
+        return createPaths(paths.values.flatten(), closePath)
+    }
+
+    internal fun createPaths(paths: Collection<PathData>, closePath: Boolean): List<LinePath> {
         return paths.map { path -> createPaths(path.aes, path.coordinates, closePath) }
     }
 
@@ -57,40 +61,42 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return element
     }
 
-    internal fun createVariadicPathData(dataPoints: Iterable<DataPointAesthetics>): List<List<PathData>> {
+    internal fun createVariadicPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
         return createVariadicPathData(createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y))
     }
 
     // coord in domain units
-    internal fun createVariadicNonLinearPathData(dataPoints: Iterable<DataPointAesthetics>): List<List<PathData>> {
+    internal fun createVariadicNonLinearPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
         val groups = GeomUtil.createPathGroups(dataPoints, GeomUtil.TO_LOCATION_X_Y)
         return createVariadicPathData(groups)
     }
 
     // TODO: refactor - inconsistent and implicit usage of the toClient method in a whole LinesHelper class
-    fun interpolate(data: List<PathData>): List<PathData> {
-        return data.map { pathData ->
-            val smoothed = pathData.points
-                .windowed(size = 2)
-                .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, 0.5) { toClient(it, p1.aes) } }
-                .flatMap { (aes, points) -> points.map { PathPoint(aes, it) } }
-            PathData(smoothed)
+    fun interpolate(groups: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+        return groups.mapValues { (_, path) ->
+            path.map { segment ->
+                val smoothed = segment.points
+                    .windowed(size = 2)
+                    .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, 0.5) { toClient(it, p1.aes) } }
+                    .flatMap { (aes, points) -> points.map { PathPoint(aes, it) } }
+                PathData(smoothed)
+            }
         }
     }
 
     internal fun createPathDataByGroup(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
-    ): List<PathData> {
+    ): Map<Int, PathData> {
         return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation))
     }
 
 
-    internal fun createSteps(paths: List<PathData>, horizontalThenVertical: Boolean): List<LinePath> {
+    internal fun createSteps(paths: Map<Int, PathData>, horizontalThenVertical: Boolean): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
 
         // draw step for each group
-        paths.forEach { subPath ->
+        paths.values.forEach { subPath ->
             val points = subPath.coordinates
             if (points.isNotEmpty()) {
                 val newPoints = ArrayList<DoubleVector>()
@@ -184,6 +190,16 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
+    fun toClient(pathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+        return pathData.mapValues { (_, groupPath) ->
+            groupPath.map { segment ->
+                // Note that PathPoint have to be recreated with the point aes, not with a segment aes
+                val points = segment.points.mapNotNull { p -> toClient(p.coord, segment.aes)?.let { PathPoint(p.aes, coord = it) } }
+                PathData(points)
+            }
+        }
+    }
+
     companion object {
         private fun reduce(points: List<DoubleVector>): List<DoubleVector> {
             return reduce(points, 0.999) { e1, e2 -> maxOf(abs(e1.x - e2.x), abs(e1.y - e2.y)) }
@@ -202,8 +218,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             return result
         }
 
-        fun createVariadicPathData(paths: List<PathData>): List<List<PathData>> {
-            return paths.map { pathData ->
+        fun createVariadicPathData(paths: Map<Int, PathData>): Map<Int, List<PathData>> {
+            return paths.mapValues { (_, pathData) ->
                 pathData.points
                     .splitBy(
                         compareBy(
@@ -258,8 +274,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             return p1.add(p2.subtract(p1).mul(progress))
         }
 
-        fun createVisualPath(variadicPath: List<List<PathData>>): List<PathData> {
-            return variadicPath.flatMap(::midPointsPathInterpolator)
+        fun createVisualPath(variadicPath: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+            return variadicPath.mapValues { (_, pathSegments) -> midPointsPathInterpolator(pathSegments) }
         }
     }
 }

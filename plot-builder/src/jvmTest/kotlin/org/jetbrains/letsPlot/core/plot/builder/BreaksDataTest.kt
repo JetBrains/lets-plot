@@ -8,8 +8,9 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.breaksData
+import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.breaksData
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -20,9 +21,10 @@ class BreaksDataTest {
     @Test
     fun simple() {
         val polarCoordProvider = PolarCoordProvider(xLim = null, yLim = null, flipped = false, start = 0.0, clockwise = true)
-        val adjustedDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.625)
+        val plotDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.625)
+        val dataDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.0)
         val clientSize = DoubleVector(504.0, 504.0)
-        val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
+        val coordinateSystem = polarCoordProvider.createCoordinateSystem(plotDomain, clientSize) as PolarCoordinateSystem
         val breaksData = breaksData(
             scaleBreaks = ScaleBreaks(
                 domainValues = listOf(-5.0, -4.0, -3.0, -2.0, -1.0, 0.0),
@@ -30,11 +32,12 @@ class BreaksDataTest {
                 labels = listOf("-5", "-4", "-3", "-2", "-1", "0"),
             ),
             coord = coordinateSystem,
-            domain = adjustedDomain,
+            dataDomain = dataDomain,
+            plotDomain = plotDomain,
             flipAxis = false,
             orientation = Orientation.BOTTOM,
             axisTheme = DefaultTheme.minimal2().horizontalAxis(flipAxis = false),
-            labelAdjustments = AxisComponent.TickLabelAdjustments(Orientation.BOTTOM)
+            labelAdjustments = AxisComponent.TickLabelAdjustments(Orientation.BOTTOM),
         )
 
         // Breaks start at top center

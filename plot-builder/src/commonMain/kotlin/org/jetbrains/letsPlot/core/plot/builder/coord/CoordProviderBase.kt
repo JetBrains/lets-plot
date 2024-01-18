@@ -25,6 +25,7 @@ internal abstract class CoordProviderBase(
     }
 
     override val isLinear: Boolean = !projection.nonlinear
+    override val isPolar: Boolean = false
 
     /**
      * Reshape and flip the domain if necessary.

@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -19,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import kotlin.math.abs
 import kotlin.math.min
@@ -135,12 +135,12 @@ internal class DataPointsConverter(
             val variadicPathData = LinesHelper.createVariadicPathData(paths)
             val visualPathData = LinesHelper.createVisualPath(variadicPathData)
 
-            return process(paths = visualPathData, isClosed = false)
+            return process(paths = visualPathData.values.flatten(), isClosed = false)
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
             val paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y)
-            return process(paths = paths, isClosed = true)
+            return process(paths = paths.values, isClosed = true)
         }
 
         fun rect(): List<DataPointLiveMapAesthetics> {
@@ -151,7 +151,7 @@ internal class DataPointsConverter(
             return process(rectangles.map(::PathData), isClosed = true)
         }
 
-        private fun process(paths: List<PathData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {
+        private fun process(paths: Collection<PathData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {
             return paths.map { pathToBuilder(it.aes, it.coordinates.toVecs(), isClosed) }
         }
     }

@@ -5,11 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
+import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertEncodedObjects
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.createLocator
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.horizontalPathTarget
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.pathTarget
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.point
 import kotlin.test.Test
 
@@ -63,6 +66,26 @@ class LayerTargetLocatorTwoPathsTest {
             FIRST_PATH_KEY,
             SECOND_PATH_KEY
         )
+    }
+
+    @Test
+    fun hoverXY() {
+        val locator = createLocator(
+            LookupStrategy.HOVER, LookupSpace.XY,
+            pathTarget(FIRST_PATH_KEY, listOf(DoubleVector(100.0, 100.0), DoubleVector(110.0, 110.0), DoubleVector(120.0, 120.0))),
+        )
+
+        // Interpolate the point.
+        locator.search(point(112.5, 117.5))!!.targets[0].let {
+            assertThat(it.hitIndex).isEqualTo(101)
+            assertThat(it.tipLayoutHint.coord).isEqualTo(DoubleVector(115, 115))
+        }
+
+        // Snap to the nearest point.
+        locator.search(point(90.0, 90.0))!!.targets[0].let {
+            assertThat(it.hitIndex).isEqualTo(100)
+            assertThat(it.tipLayoutHint.coord).isEqualTo(DoubleVector(100, 100))
+        }
     }
 
     companion object {

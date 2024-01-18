@@ -54,7 +54,7 @@ open class PathGeom : GeomBase() {
 
             // To not add interpolated points and to not show incorrect tooltips on them
             val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
-            targetCollectorHelper.addVariadicPaths(variadicPathData)
+            targetCollectorHelper.addVariadicPaths(linesHelper.toClient(variadicPathData))
 
             val svgPath = linesHelper.createPaths(smoothed, closePath = false)
             root.appendNodes(svgPath)

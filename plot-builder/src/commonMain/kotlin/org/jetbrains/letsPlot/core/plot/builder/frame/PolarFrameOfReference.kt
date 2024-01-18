@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,33 +12,36 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
-import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.BreaksData
-import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.TickLabelAdjustments
 import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.PolarAxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
-internal class SquareFrameOfReference(
+internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
+    private val dataDomain: DoubleRectangle,
     private val adjustedDomain: DoubleRectangle,
-    private val coord: CoordinateSystem,
+    coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
     private val theme: Theme,
     private val flipAxis: Boolean,
 ) : FrameOfReference {
-
     var isDebugDrawing: Boolean = false
+
+    private val coord: PolarCoordinateSystem = coord as PolarCoordinateSystem
 
     // Rendering
 
@@ -118,8 +121,8 @@ internal class SquareFrameOfReference(
                     hideAxis = !drawHAxis,
                     hideAxisBreaks = !layoutInfo.hAxisShown,
                     axisTheme = hAxisTheme,
+                    gridTheme = hGridTheme,
                     labelAdjustments = labelAdjustments,
-                    isDebugDrawing,
                 )
 
                 val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
@@ -139,8 +142,8 @@ internal class SquareFrameOfReference(
                     hideAxis = !drawVAxis,
                     hideAxisBreaks = !layoutInfo.vAxisShown,
                     vAxisTheme,
+                    vGridTheme,
                     labelAdjustments,
-                    isDebugDrawing,
                 )
 
                 val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
@@ -163,8 +166,8 @@ internal class SquareFrameOfReference(
         axisInfo: AxisLayoutInfo,
         scaleBreaks: ScaleBreaks,
         axisTheme: AxisTheme
-    ): Pair<TickLabelAdjustments, BreaksData> {
-        val labelAdjustments = TickLabelAdjustments(
+    ): Pair<AxisComponent.TickLabelAdjustments, AxisComponent.BreaksData> {
+        val labelAdjustments = AxisComponent.TickLabelAdjustments(
             orientation = axisInfo.orientation,
             horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
             verticalAnchor = axisInfo.tickLabelVerticalAnchor,
@@ -172,10 +175,11 @@ internal class SquareFrameOfReference(
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 
-        val breaksData = AxisUtil.breaksData(
+        val breaksData = PolarAxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
             coord = coord,
-            domain = adjustedDomain,
+            dataDomain = dataDomain,
+            plotDomain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
             axisTheme = axisTheme,
@@ -232,37 +236,24 @@ internal class SquareFrameOfReference(
 
     companion object {
         private fun buildAxis(
-            breaksData: BreaksData,
+            breaksData: AxisComponent.BreaksData,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
             axisTheme: AxisTheme,
-            labelAdjustments: TickLabelAdjustments,
-            isDebugDrawing: Boolean,
+            gridTheme: PanelGridTheme,
+            labelAdjustments: AxisComponent.TickLabelAdjustments,
         ): SvgComponent {
-            val axis = AxisComponent(
+            return PolarAxisComponent(
                 length = info.axisLength,
                 orientation = info.orientation,
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
                 axisTheme = axisTheme,
+                gridTheme = gridTheme,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks
             )
-
-            if (isDebugDrawing) {
-                fun drawDebugRect(r: DoubleRectangle, color: Color) {
-                    val rect = SvgRectElement(r)
-                    rect.strokeColor().set(color)
-                    rect.strokeWidth().set(1.0)
-                    rect.fillOpacity().set(0.0)
-                    axis.add(rect)
-                }
-                drawDebugRect(info.tickLabelsBounds, Color.GREEN)
-                info.tickLabelsTextBounds?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
-                info.tickLabelBoundsList?.forEach { drawDebugRect(it, Color.LIGHT_MAGENTA) }
-            }
-            return axis
         }
 
         private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
@@ -341,4 +332,6 @@ internal class SquareFrameOfReference(
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
         }
     }
+
 }
+

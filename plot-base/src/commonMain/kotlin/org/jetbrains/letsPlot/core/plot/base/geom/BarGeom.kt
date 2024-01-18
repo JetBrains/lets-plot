@@ -65,7 +65,9 @@ open class BarGeom : GeomBase() {
 
         val rectangles = mutableListOf<Triple<DataPointAesthetics, DoubleRectangle, Boolean>>()
         rectanglesHelper.iterateRectangleGeometry { p, rect ->
-            val clientRect = rectanglesHelper.toClient(rect, p) ?: return@iterateRectangleGeometry
+            val clientRect = rectanglesHelper.toClient(rect, p)
+                ?.intersect(viewPort)   // use the visible part of bar to place annotation on it
+                ?: return@iterateRectangleGeometry
 
             val isNegative = rect.dimension.y < 0
             rectangles.add(Triple(p, clientRect, isNegative))
