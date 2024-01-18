@@ -656,7 +656,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 #
 
 def scale_continuous(aesthetic, *,
-                     name=None, breaks=None, labels=None, lablim=None,
+                     type=None, name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None,
                      **kwargs):
     """
@@ -667,6 +667,8 @@ def scale_continuous(aesthetic, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
+    type : str, default='gradient'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -721,15 +723,11 @@ def scale_continuous(aesthetic, *,
             ggsize(600, 200)
 
     """
-    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
-    if isinstance(aesthetic, str):
-        is_color_scale = aesthetic in color_aesthetics
-    elif isinstance(aesthetic, list):
-        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    if _is_color_scale(aesthetic):
+        specified_kind = _type_to_scale_mapper_kind(type)
+        scale_mapper_kind = 'color_gradient' if specified_kind is None else specified_kind
     else:
-        is_color_scale = False
-
-    scale_mapper_kind = 'color_gradient' if is_color_scale else None
+        scale_mapper_kind = None
 
     return _scale(aesthetic,
                   name=name,
@@ -745,6 +743,17 @@ def scale_continuous(aesthetic, *,
                   #
                   scale_mapper_kind=scale_mapper_kind,
                   **kwargs)
+
+
+def _is_color_scale(aesthetic):
+    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
+    if isinstance(aesthetic, str):
+        is_color_scale = aesthetic in color_aesthetics
+    elif isinstance(aesthetic, list):
+        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    else:
+        is_color_scale = False
+    return is_color_scale
 
 
 def _type_to_scale_mapper_kind(scale_type):
@@ -1952,8 +1961,10 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 
 def scale_discrete(aesthetic, *,
+                   type=None,
                    direction=None,
-                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                   **kwargs):
     """
     General purpose scale for discrete data.
     Use it to adjust most common properties of a default scale for given aesthetics.
@@ -1962,6 +1973,8 @@ def scale_discrete(aesthetic, *,
     ----------
     aesthetic : str or list
         The name(s) of the aesthetic(s) that this scale works with.
+    type : str, default='brewer'
+        The type of color scale: {'gradient', 'gradient2', 'gradientn', 'hue', 'grey', 'brewer', 'viridis'}.
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
@@ -2020,6 +2033,11 @@ def scale_discrete(aesthetic, *,
             scale_discrete(aesthetic=['color', 'fill'], guide='none')
 
     """
+    if _is_color_scale(aesthetic):
+        scale_mapper_kind = _type_to_scale_mapper_kind(type)
+    else:
+        scale_mapper_kind = None
+
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -2031,8 +2049,10 @@ def scale_discrete(aesthetic, *,
                   guide=guide,
                   format=format,
                   #
+                  scale_mapper_kind=scale_mapper_kind,
                   direction=direction,
-                  discrete=True)
+                  discrete=True,
+                  **kwargs)
 
 
 def scale_fill_discrete(type=None,
