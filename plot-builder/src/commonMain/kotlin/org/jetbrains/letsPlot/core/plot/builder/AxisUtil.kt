@@ -19,6 +19,15 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import kotlin.math.abs
 
 object AxisUtil {
+    internal fun minorDomainBreaks(visibleMajorDomainBreak: List<Double>) =
+        if (visibleMajorDomainBreak.size > 2) {
+            val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
+            val start = visibleMajorDomainBreak[0] - step / 2.0
+            (0..(visibleMajorDomainBreak.size)).map { start + it * step }
+        } else {
+            emptyList()
+        }
+
     fun breaksData(
         scaleBreaks: ScaleBreaks,
         coord: CoordinateSystem,
@@ -28,8 +37,7 @@ object AxisUtil {
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
-        val majorClientBreaks =
-            toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
 
         // cleanup overlapping labels
         // WARNING: highly coupled with AxisComponent

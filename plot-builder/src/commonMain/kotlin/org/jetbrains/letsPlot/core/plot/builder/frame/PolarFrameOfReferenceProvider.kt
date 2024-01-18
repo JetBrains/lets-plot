@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.MarginalLayerCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
@@ -28,8 +29,7 @@ import kotlin.math.max
 internal class PolarFrameOfReferenceProvider(
     private val hScaleProto: Scale,
     private val vScaleProto: Scale,
-    private val dataDomain: DoubleRectangle,
-    private val plotDomain: DoubleRectangle,
+    private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
@@ -89,7 +89,7 @@ internal class PolarFrameOfReferenceProvider(
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
 
-        return MyTileLayoutProvider(axisLayoutQuad, plotDomain, marginsLayout)
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
     }
 
     override fun createTileFrame(
@@ -97,6 +97,8 @@ internal class PolarFrameOfReferenceProvider(
         coordProvider: CoordProvider,
         debugDrawing: Boolean
     ): FrameOfReference {
+        @Suppress("NAME_SHADOWING")
+        val coordProvider = coordProvider as PolarCoordProvider
 
         // Below use any of horizontal/vertical axis info in the "quad".
         // ToDo: with non-rectangular coordinates this might not work as axis length (for example) might be different
@@ -115,7 +117,8 @@ internal class PolarFrameOfReferenceProvider(
             vAxisLayoutInfo.axisLength
         )
 
-        val coord = coordProvider.createCoordinateSystem(plotDomain, client)
+        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
+        val gridDomain = coordProvider.gridDomain(adjustedDomain)
 
         val hScale = hScaleProto.with()
             .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
@@ -130,8 +133,8 @@ internal class PolarFrameOfReferenceProvider(
         val tileFrameOfReference = PolarFrameOfReference(
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
-            dataDomain,
-            plotDomain,
+            gridDomain,
+            adjustedDomain,
             coord,
             layoutInfo,
             marginsLayout,

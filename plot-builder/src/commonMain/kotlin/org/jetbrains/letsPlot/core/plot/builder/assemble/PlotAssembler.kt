@@ -251,7 +251,6 @@ class PlotAssembler constructor(
                 if (coordProvider.isPolar) {
                     PolarFrameOfReferenceProvider(
                         hScaleProto, vScaleProto,
-                        DoubleRectangle(xDomain, yDomain).flipIf(flipAxis),
                         adjustedDomain,
                         flipAxis,
                         theme,

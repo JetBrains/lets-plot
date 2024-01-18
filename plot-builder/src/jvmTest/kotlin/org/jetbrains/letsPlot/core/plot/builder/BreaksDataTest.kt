@@ -21,10 +21,11 @@ class BreaksDataTest {
     @Test
     fun simple() {
         val polarCoordProvider = PolarCoordProvider(xLim = null, yLim = null, flipped = false, start = 0.0, clockwise = true)
-        val plotDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.625)
         val dataDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.0)
+        val adjustedDomain = polarCoordProvider.adjustDomain(dataDomain, isHScaleContinuous = true)
+        val gridDomain = polarCoordProvider.gridDomain(adjustedDomain)
         val clientSize = DoubleVector(504.0, 504.0)
-        val coordinateSystem = polarCoordProvider.createCoordinateSystem(plotDomain, clientSize) as PolarCoordinateSystem
+        val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize) as PolarCoordinateSystem
         val breaksData = breaksData(
             scaleBreaks = ScaleBreaks(
                 domainValues = listOf(-5.0, -4.0, -3.0, -2.0, -1.0, 0.0),
@@ -32,8 +33,7 @@ class BreaksDataTest {
                 labels = listOf("-5", "-4", "-3", "-2", "-1", "0"),
             ),
             coord = coordinateSystem,
-            dataDomain = dataDomain,
-            plotDomain = plotDomain,
+            gridDomain = gridDomain,
             flipAxis = false,
             orientation = Orientation.BOTTOM,
             axisTheme = DefaultTheme.minimal2().horizontalAxis(flipAxis = false),
@@ -41,13 +41,13 @@ class BreaksDataTest {
         )
 
         // Breaks start at top center
-        val topCenter = DoubleVector(clientSize.x / 2, 0.0)
+        val topCenter = DoubleVector(clientSize.x / 2, 32.0)
 
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[0])
-        assertDoubleVectorEquals(DoubleVector(491, 174), breaksData.majorBreaks[1])
-        assertDoubleVectorEquals(DoubleVector(400, 455), breaksData.majorBreaks[2])
-        assertDoubleVectorEquals(DoubleVector(103, 455), breaksData.majorBreaks[3])
-        assertDoubleVectorEquals(DoubleVector(12, 174), breaksData.majorBreaks[4])
+        assertDoubleVectorEquals(DoubleVector(460, 184), breaksData.majorBreaks[1])
+        assertDoubleVectorEquals(DoubleVector(380, 429), breaksData.majorBreaks[2])
+        assertDoubleVectorEquals(DoubleVector(123, 429), breaksData.majorBreaks[3])
+        assertDoubleVectorEquals(DoubleVector(43, 184), breaksData.majorBreaks[4])
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[5])
     }
 

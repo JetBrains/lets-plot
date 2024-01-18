@@ -109,6 +109,20 @@ internal class PolarCoordProvider(
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return PolarCoordinateSystem(Coords.create(coordMapper), start, sign)
     }
+
+
+    fun gridDomain(adjustedDomain: DoubleRectangle): DoubleRectangle {
+        val xRange = adjustedDomain.xRange() // either xLim or domain.xRange() with adjustments
+
+        val yRange = if (yLim != null) {
+            adjustedDomain.yRange() // yLim should not be adjusted
+        } else {
+            // No yLim -> redo adjustments
+            adjustedDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length / 1.15) }
+        }
+
+        return DoubleRectangle(xRange, yRange)
+    }
 }
 
 
