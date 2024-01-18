@@ -103,6 +103,10 @@ fun distance2ToSegment(x: Double, y: Double, l1x: Double, l1y: Double, l2x: Doub
     return min(distance2(x, y, l1x, l1y), distance2(x, y, l2x, l2y))
 }
 
+fun distance2ToSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Double {
+    return distance2ToSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
+}
+
 fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Double {
     // the Equation for the Line
     // y = m * x + b
@@ -110,14 +114,18 @@ fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Doub
     // m = (y2 - y1) / (x2 - x1)
     // and b computed by substitution p1 or p2 to the equation of the line
 
-    val m = (p2y - p1y) / ((p2x) - p1x)
+    val m = lineSlope(p1x, p1y, p2x, p2y)
     val b = p2y - m * (p2x)
 
     // Result
     return m * x + b
 }
 
-fun distance2ToSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Double {
-    return distance2ToSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
+fun lineSlope(p1x: Double, p1y: Double, p2x: Double, p2y: Double): Double {
+    return (p2y - p1y) / (p2x - p1x)
+}
+
+fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
+    return lineSlope(v1.x, v1.y, v2.x, v2.y)
 }
 

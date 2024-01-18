@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.lineSlope
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -39,45 +40,45 @@ class CurveGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
+            val x = SeriesUtil.finiteOrNull(p.x()) ?: continue
+            val y = SeriesUtil.finiteOrNull(p.y()) ?: continue
+            val xend = SeriesUtil.finiteOrNull(p.xend()) ?: continue
+            val yend = SeriesUtil.finiteOrNull(p.yend()) ?: continue
 
-                val start = DoubleVector(p.x()!!, p.y()!!)
-                val end = DoubleVector(p.xend()!!, p.yend()!!)
+            val clientStart = helper.toClient(DoubleVector(x, y), p) ?: continue
+            val clientEnd = helper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-                val clientStart = helper.toClient(start, p) ?: continue
-                val clientEnd = helper.toClient(end, p) ?: continue
-                val geometry = createGeometry(clientStart, clientEnd)
+            val geometry = createGeometry(clientStart, clientEnd)
 
-                val curve = SvgPathElement().apply {
-                    d().set(
-                        SvgPathDataBuilder().apply {
-                            moveTo(geometry.first())
-                            interpolatePoints(
-                                geometry,
-                                SvgPathDataBuilder.Interpolation.BSPLINE
-                            )
-                        }.build()
-                    )
-                    fill().set(SvgColors.NONE)
-                    GeomHelper.decorate(this, p, applyAlphaToAll = true, filled = false)
-                }
-                root.add(curve)
-
-                // arrows
-                arrowSpec?.let { arrowSpec ->
-                    createArrows(p, geometry, arrowSpec).forEach(root::add)
-                }
-
-                /*
-                // hints
-                targetCollector.addPath(
-                    listOf(geometry.first(), geometry.last()),
-                    { p.index() },
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
-                    )
-                )*/
+            val curve = SvgPathElement().apply {
+                d().set(
+                    SvgPathDataBuilder().apply {
+                        moveTo(geometry.first())
+                        interpolatePoints(
+                            geometry,
+                            SvgPathDataBuilder.Interpolation.BSPLINE
+                        )
+                    }.build()
+                )
+                fill().set(SvgColors.NONE)
+                GeomHelper.decorate(this, p, applyAlphaToAll = true, filled = false)
             }
+            root.add(curve)
+
+            // arrows
+            arrowSpec?.let { arrowSpec ->
+                createArrows(p, geometry, arrowSpec).forEach(root::add)
+            }
+
+            /*
+            // hints
+            targetCollector.addPath(
+                listOf(geometry.first(), geometry.last()),
+                { p.index() },
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(p)
+                )
+            )*/
         }
     }
 
@@ -113,9 +114,7 @@ class CurveGeom : GeomBase() {
         'curvature', ' angle', and 'ncp' and the start and end point locations.
     */
     private fun createGeometry(start: DoubleVector, end: DoubleVector): List<DoubleVector> {
-
         val degreeAngle = angle % 180
-
         val controlPoints = calcControlPoints(
             start,
             end,
@@ -128,10 +127,6 @@ class CurveGeom : GeomBase() {
 
 
     // https://svn.r-project.org/R/trunk/src/library/grid/R/curve.R
-
-    private fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
-        return (v2.y - v1.y) / (v2.x - v1.x)
-    }
 
     private fun calcControlPoints(
         start: DoubleVector,

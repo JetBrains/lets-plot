@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.lineSlope
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData.Action
 
 import kotlin.jvm.JvmOverloads
@@ -181,10 +182,6 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
             throw IllegalArgumentException("Tension should be within [0, 1] interval")
         }
         myTension = tension
-    }
-
-    private fun lineSlope(v1: DoubleVector, v2: DoubleVector): Double {
-        return (v2.y - v1.y) / (v2.x - v1.x)
     }
 
     private fun finiteDifferences(points: List<DoubleVector>): MutableList<Double> {
