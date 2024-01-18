@@ -17,13 +17,13 @@ import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
+//    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     geomAreaInsets: Insets,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
-    axisDomain,
+//    axisDomain,
     breaks,
     theme
 ) {
@@ -79,7 +79,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun simpleLayout(): AxisLabelsLayout {
         return HorizontalSimpleLabelsLayout(
             orientation,
-            axisDomain,
+//            axisDomain,
             breaks,
             theme
         )
@@ -88,7 +88,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun multilineLayout(): AxisLabelsLayout {
         return HorizontalMultilineLabelsLayout(
             orientation,
-            axisDomain,
+//            axisDomain,
             breaks,
             theme,
             2
@@ -98,7 +98,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun tiltedLayout(): AxisLabelsLayout {
         return HorizontalTiltedLabelsLayout(
             orientation,
-            axisDomain,
+//            axisDomain,
             breaks,
             theme
         )
@@ -107,7 +107,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun rotatedLayout(angle: Double): AxisLabelsLayout {
         return HorizontalRotatedLabelsLayout(
             orientation,
-            axisDomain,
+//            axisDomain,
             breaks,
             theme,
             angle
@@ -117,7 +117,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
     private fun verticalLayout(): AxisLabelsLayout {
         return HorizontalVerticalLabelsLayout(
             orientation,
-            axisDomain,
+//            axisDomain,
             breaks,
             theme
         )

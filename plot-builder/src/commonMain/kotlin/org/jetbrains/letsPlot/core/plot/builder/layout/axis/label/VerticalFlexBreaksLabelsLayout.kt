@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -14,10 +13,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProvider
 
 internal class VerticalFlexBreaksLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     private val myBreaksProvider: AxisBreaksProvider,
     theme: AxisTheme
-) : AxisLabelsLayout(orientation, axisDomain, theme) {
+) : AxisLabelsLayout(
+    orientation,
+    theme
+) {
 
     init {
         require(!orientation.isHorizontal) { orientation.toString() }
@@ -76,7 +77,6 @@ internal class VerticalFlexBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
             orientation,
-            axisDomain,
             labelSpec,
             breaks,
             theme,

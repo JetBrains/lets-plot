@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -16,16 +15,19 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
 
 internal class VerticalRotatedLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     theme: AxisTheme,
     private val myRotationAngle: Double
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(
+    orientation,
+    breaks,
+    theme
+) {
 
     override fun doLayout(axisLength: Double, axisMapper: (Double?) -> Double?): AxisLabelsLayoutInfo {
         check(!orientation.isHorizontal)
 
-        val ticks = mapToAxis(breaks.transformedValues, axisMapper)
+        val ticks = breaks.toAxisCoord(axisMapper)
         val labelBoundsList = labelBoundsList(ticks, breaks.labels) { y: Double -> DoubleVector(0.0, y) }
 
         // total bounds

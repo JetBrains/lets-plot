@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -16,10 +15,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
 
 internal abstract class AbstractFixedBreaksLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     protected val breaks: ScaleBreaks,
     theme: AxisTheme
-) : AxisLabelsLayout(orientation, axisDomain, theme) {
+) : AxisLabelsLayout(
+    orientation,
+    theme
+) {
 
     private fun labelBounds(labelLocation: DoubleVector, labelText: String): DoubleRectangle {
         val dim = labelSpec.dimensions(labelText)

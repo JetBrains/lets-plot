@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -51,7 +50,6 @@ internal object BreakLabelsLayoutUtil {
 
     fun doLayoutVerticalAxisLabels(
         orientation: Orientation,
-        axisDomain: DoubleSpan,
         labelSpec: LabelSpec,
         breaks: ScaleBreaks,
         theme: AxisTheme,
@@ -63,7 +61,6 @@ internal object BreakLabelsLayoutUtil {
         if (theme.showLabels() && theme.rotateLabels()) {
             return VerticalRotatedLabelsLayout(
                 orientation,
-                axisDomain,
                 breaks,
                 theme,
                 theme.labelAngle()
@@ -75,7 +72,6 @@ internal object BreakLabelsLayoutUtil {
             theme.showLabels() -> {
                 val labelsBounds = verticalAxisLabelsBounds(
                     breaks,
-                    axisDomain,
                     axisMapper,
                     labelSpec
                 )
@@ -106,20 +102,6 @@ internal object BreakLabelsLayoutUtil {
 //            .labelHorizontalAnchor(), // Default anchors,
 //            .labelVerticalAnchor()    // see: AxisComponent.TickLabelAdjustments
             .build()
-    }
-
-    fun mapToAxis(
-        breaks: List<Double>,
-        axisDomain: DoubleSpan,
-        axisMapper: (Double?) -> Double?
-    ): List<Double> {
-        val axisMin = axisDomain.lowerEnd
-        val axisBreaks = ArrayList<Double>()
-        for (v in breaks) {
-            val mapped = axisMapper(v - axisMin)
-            axisBreaks.add(mapped!!)
-        }
-        return axisBreaks
     }
 
     // Expands to borders with margins
@@ -206,7 +188,6 @@ internal object BreakLabelsLayoutUtil {
 
     private fun verticalAxisLabelsBounds(
         breaks: ScaleBreaks,
-        axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
@@ -214,11 +195,7 @@ internal object BreakLabelsLayoutUtil {
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
-            val axisBreaks = mapToAxis(
-                breaks.transformedValues,
-                axisDomain,
-                axisMapper
-            )
+            val axisBreaks = breaks.toAxisCoord(axisMapper)
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())

@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -18,10 +17,13 @@ import kotlin.math.abs
 
 internal class HorizontalVerticalLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     theme: AxisTheme
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(
+    orientation,
+    breaks,
+    theme
+) {
 
     val labelHorizontalAnchor: Text.HorizontalAnchor
         get() = when (orientation) {
@@ -38,7 +40,7 @@ internal class HorizontalVerticalLabelsLayout(
     ): AxisLabelsLayoutInfo {
 
         val height = labelSpec.height()
-        val ticks = mapToAxis(breaks.transformedValues, axisMapper)
+        val ticks = breaks.toAxisCoord(axisMapper)
         var overlap = false
         if (breaks.size >= 2) {
             val minTickDistance = height + MIN_DISTANCE

@@ -7,17 +7,19 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 
 internal class VerticalFixedBreaksLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     theme: AxisTheme
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(
+    orientation,
+    breaks,
+    theme
+) {
 
     init {
         require(!orientation.isHorizontal) { orientation.toString() }
@@ -33,7 +35,6 @@ internal class VerticalFixedBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
             orientation,
-            axisDomain,
             labelSpec,
             breaks,
             theme,

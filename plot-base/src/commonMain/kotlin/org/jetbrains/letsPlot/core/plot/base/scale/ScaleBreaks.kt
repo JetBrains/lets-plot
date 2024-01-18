@@ -25,6 +25,13 @@ class ScaleBreaks(
         }
     }
 
+    fun toAxisCoord(
+        axisMapper: (Double?) -> Double?
+    ): List<Double> {
+        return transformedValues.map { axisMapper(it)!! }
+    }
+
+
     companion object {
         val EMPTY: ScaleBreaks = ScaleBreaks(emptyList(), emptyList(), emptyList())
     }

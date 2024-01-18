@@ -18,11 +18,14 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
-    axisDomain: DoubleSpan,
     breaks: ScaleBreaks,
     theme: AxisTheme,
     private val maxLines: Int
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(
+    orientation,
+    breaks,
+    theme
+) {
 
     override fun doLayout(
         axisLength: Double,
@@ -30,7 +33,7 @@ internal class HorizontalMultilineLabelsLayout(
     ): AxisLabelsLayoutInfo {
 
         val boundsByShelfIndex = ArrayList<DoubleRectangle>()
-        val ticks = mapToAxis(breaks.transformedValues, axisMapper)
+        val ticks = breaks.toAxisCoord(axisMapper)
         val boundsList = labelBoundsList(
             ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION

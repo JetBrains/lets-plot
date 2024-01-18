@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 
-internal abstract class AxisLayouter(
+internal class AxisLayouter(
     val orientation: Orientation,
     private val domainRange: DoubleSpan,
     private val labelsLayout: AxisLabelsLayout
@@ -50,10 +50,19 @@ internal abstract class AxisLayouter(
         )
     }
 
-    protected abstract fun toAxisMapper(axisLength: Double): (Double?) -> Double?
+    private fun toAxisMapper(axisLength: Double): (Double?) -> Double? {
+        // Do reverse maping for vertical axis: screen coordinates: top->bottom, but y-axis coordinate: bottom->top
+        val reverse = !orientation.isHorizontal
+        val scaleMapper = toScaleMapper(axisLength, reverse)
+        return { v -> scaleMapper(v) }
+    }
 
-    protected fun toScaleMapper(axisLength: Double): ScaleMapper<Double> {
-        return Mappers.mul(domainRange, axisLength)
+    protected fun toScaleMapper(axisLength: Double, reverse: Boolean): ScaleMapper<Double> {
+        return Mappers.linear(
+            domain = domainRange,
+            range = DoubleSpan(0.0, axisLength),
+            reverse = reverse
+        )
     }
 
     companion object {
@@ -67,20 +76,37 @@ internal abstract class AxisLayouter(
             val labelsLayout =
                 if (breaksProvider.isFixedBreaks) {
                     if (orientation.isHorizontal) {
-                        horizontalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, geomAreaInsets, theme)
+                        horizontalFixedBreaks(
+                            orientation,
+                            breaksProvider.fixedBreaks,
+                            geomAreaInsets,
+                            theme
+                        )
                     } else {
-                        verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
+                        verticalFixedBreaks(
+                            orientation,
+                            breaksProvider.fixedBreaks, theme
+                        )
                     }
                 } else {
                     if (orientation.isHorizontal) {
-                        horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                        horizontalFlexBreaks(
+                            orientation,
+                            breaksProvider, theme
+                        )
                     } else {
-                        verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
+                        verticalFlexBreaks(
+                            orientation,
+                            breaksProvider, theme
+                        )
                     }
                 }
 
-            val axisLayouter = if (orientation.isHorizontal) ::HorizontalAxisLayouter else ::VerticalAxisLayouter
-            return axisLayouter(orientation, axisDomain, labelsLayout)
+            return AxisLayouter(
+                orientation,
+                axisDomain,
+                labelsLayout
+            )
         }
     }
 }
