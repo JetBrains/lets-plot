@@ -2,7 +2,8 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from ..plot.core import PlotSpec, DummySpec, FeatureSpecArray, aes
+from ..plot.plot import ggplot
+from ..plot.core import DummySpec, aes
 from ..plot.geom import geom_smooth
 from ..plot.label import xlab, ylab
 from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
@@ -163,14 +164,14 @@ def joint_plot(data, x, y, *,
         mapping_dict['color'] = color_by
         mapping_dict['fill'] = color_by
     # prepare layers
-    layer_spec = DummySpec()
+    layers = DummySpec()
     # main layer
     main_layer = _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alpha, show_legend)
     if main_layer is not None:
-        layer_spec += main_layer
+        layers += main_layer
     # smooth layer
     if _is_reg_line_needed(reg_line, geom_kind):
-        layer_spec += geom_smooth(
+        layers += geom_smooth(
             aes(group=color_by),
             method=_REG_LINE_METHOD, se=se,
             color=_REG_LINE_COLOR, linetype=_REG_LINE_LINETYPE
@@ -180,7 +181,6 @@ def joint_plot(data, x, y, *,
         marginal = 'none'
     defined_marginal = marginal or _get_marginal_def(geom_kind, color_by)
     if defined_marginal != 'none':
-        layer_spec += _get_marginal_layers(defined_marginal, binwidth2d, bins2d, color, color_by, show_legend)
-    layers = FeatureSpecArray(layer_spec).elements()
+        layers += _get_marginal_layers(defined_marginal, binwidth2d, bins2d, color, color_by, show_legend)
 
-    return PlotSpec(data=data, mapping=aes(**mapping_dict), scales=[xlab(x), ylab(y)], layers=layers)
+    return ggplot(data, aes(**mapping_dict)) + layers + xlab(x) + ylab(y)
