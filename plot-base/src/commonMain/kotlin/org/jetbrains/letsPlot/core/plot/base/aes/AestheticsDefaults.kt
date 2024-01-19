@@ -158,6 +158,7 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
                 GeomKind.FREQPOLY,
                 GeomKind.RECT,
                 GeomKind.SEGMENT,
+                GeomKind.CURVE,
                 GeomKind.SPOKE,
                 GeomKind.STEP,
                 GeomKind.RASTER,

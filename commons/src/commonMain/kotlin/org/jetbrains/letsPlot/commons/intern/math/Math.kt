@@ -163,3 +163,7 @@ fun projection(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): DoubleVecto
 fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
     return distance2(p1.x, p1.y, p2.x, p2.y)
 }
+
+fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
+    return lineParams(p1.x, p1.y, p2.x, p2.y).first
+}

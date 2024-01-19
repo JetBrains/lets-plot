@@ -313,6 +313,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun curve(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.CURVE,
+                SegmentGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun spoke(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.SPOKE,

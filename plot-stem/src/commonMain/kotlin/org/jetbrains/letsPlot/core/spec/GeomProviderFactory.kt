@@ -219,8 +219,8 @@ internal object GeomProviderFactory {
             GeomKind.SEGMENT -> GeomProvider.segment {
                 val geom = SegmentGeom()
                 if (layerConfig.has(Option.Geom.Segment.ARROW)) {
-                    val cfg1 = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
-                    geom.arrowSpec = cfg1.createArrowSpec()
+                    val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+                    geom.arrowSpec = arrowConfig.createArrowSpec()
                 }
                 if (layerConfig.has(Option.Geom.Segment.ANIMATION)) {
                     geom.animation = layerConfig[Option.Geom.Segment.ANIMATION]
@@ -230,6 +230,18 @@ internal object GeomProviderFactory {
                 }
                 if (layerConfig.has(Option.Geom.Segment.GEODESIC)) {
                     geom.geodesic = layerConfig.getBoolean(Option.Geom.Segment.GEODESIC)
+                }
+                geom
+            }
+
+            GeomKind.CURVE -> return GeomProvider.curve {
+                val geom = CurveGeom()
+                layerConfig.getDouble(Option.Geom.Curve.CURVATURE)?.let { geom.curvature = it }
+                layerConfig.getDouble(Option.Geom.Curve.ANGLE)?.let { geom.angle = it }
+                layerConfig.getInteger(Option.Geom.Curve.NCP)?.let { geom.ncp = it }
+                if (layerConfig.has(Option.Geom.Segment.ARROW)) {
+                    val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Curve.ARROW]!!)
+                    geom.arrowSpec = arrowConfig.createArrowSpec()
                 }
                 geom
             }

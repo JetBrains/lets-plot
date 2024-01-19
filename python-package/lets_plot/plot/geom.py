@@ -24,7 +24,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
-           'geom_segment', 'geom_spoke',
+           'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
            'geom_count']
 
@@ -5697,6 +5697,95 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  arrow=arrow,
                  flat=flat,
                  geodesic=geodesic,
+                 color_by=color_by,
+                 **other_args)
+
+
+def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+               arrow=None,
+               curvature=None, angle=None, ncp=None,
+               color_by=None, **other_args):
+    """
+    Draw a curved line.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    arrow : `FeatureSpec`
+        Specification for arrow head, as created by `arrow()` function.
+    curvature : float, default=0.5
+        The amount of curvature.
+        Negative values produce left-hand curves, positive values produce right-hand curves,
+        and zero produces a straight line.
+    angle : float, default=90
+        Angle in degrees, giving an amount to skew the control points of the curve.
+        Values less than 90 skew the curve towards the start point
+        and values greater than 90 skew the curve towards the end point.
+    ncp : int, default=5
+        The number of control points used to draw the curve. More control points creates a smoother curve.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_curve()` draws a curved lines.
+
+    `geom_curve()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - xend : x-axis value.
+    - yend : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - size : line width.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    ToDo
+
+    """
+    return _geom('curve',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 arrow=arrow,
+                 curvature=curvature, angle=angle, ncp=ncp,
                  color_by=color_by,
                  **other_args)
 

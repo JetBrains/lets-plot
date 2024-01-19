@@ -9,14 +9,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper.Companion.decorate
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import kotlin.math.PI
-import kotlin.math.atan2
+
 
 class SegmentGeom : GeomBase() {
 
@@ -60,24 +58,21 @@ class SegmentGeom : GeomBase() {
                 )
 
                 arrowSpec?.let { arrowSpec ->
-                    val abscissa = clientEnd.x - clientStart.x
-                    val ordinate = clientEnd.y - clientStart.y
-                    if (abscissa != 0.0 || ordinate != 0.0) {
-                        // Compute the angle that the vector defined by this segment makes with the
-                        // X-axis (radians)
-                        val polarAngle = atan2(ordinate, abscissa)
-
-                        val arrowAes = arrowSpec.toArrowAes(p)
-                        if (arrowSpec.isOnLastEnd) {
-                            val arrow = arrowSpec.createElement(polarAngle, clientEnd.x, clientEnd.y)
-                            decorate(arrow, arrowAes, applyAlphaToAll = true)
-                            root.add(arrow)
-                        }
-                        if (arrowSpec.isOnFirstEnd) {
-                            val arrow = arrowSpec.createElement(polarAngle + PI, clientStart.x, clientStart.y)
-                            decorate(arrow, arrowAes, applyAlphaToAll = true)
-                            root.add(arrow)
-                        }
+                    if (arrowSpec.isOnLastEnd) {
+                        ArrowSpec.createArrow(
+                            p,
+                            clientStart,
+                            clientEnd,
+                            arrowSpec
+                        )?.let(root::add)
+                    }
+                    if (arrowSpec.isOnFirstEnd) {
+                        ArrowSpec.createArrow(
+                            p,
+                            start = clientEnd,
+                            end = clientStart,
+                            arrowSpec
+                        )?.let(root::add)
                     }
                 }
             }
