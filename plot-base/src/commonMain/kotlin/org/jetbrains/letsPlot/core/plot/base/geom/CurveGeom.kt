@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.lineSlope
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
@@ -40,10 +40,10 @@ class CurveGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            val x = SeriesUtil.finiteOrNull(p.x()) ?: continue
-            val y = SeriesUtil.finiteOrNull(p.y()) ?: continue
-            val xend = SeriesUtil.finiteOrNull(p.xend()) ?: continue
-            val yend = SeriesUtil.finiteOrNull(p.yend()) ?: continue
+            val x = finiteOrNull(p.x()) ?: continue
+            val y = finiteOrNull(p.y()) ?: continue
+            val xend = finiteOrNull(p.xend()) ?: continue
+            val yend = finiteOrNull(p.yend()) ?: continue
 
             val clientStart = helper.toClient(DoubleVector(x, y), p) ?: continue
             val clientEnd = helper.toClient(DoubleVector(xend, yend), p) ?: continue
@@ -114,12 +114,11 @@ class CurveGeom : GeomBase() {
         'curvature', ' angle', and 'ncp' and the start and end point locations.
     */
     private fun createGeometry(start: DoubleVector, end: DoubleVector): List<DoubleVector> {
-        val degreeAngle = angle % 180
         val controlPoints = calcControlPoints(
             start,
             end,
-            if (degreeAngle < 0) -curvature else curvature,
-            -degreeAngle,
+            curvature,
+            angle,
             ncp
         )
         return listOf(start) + controlPoints + listOf(end)
@@ -132,19 +131,29 @@ class CurveGeom : GeomBase() {
         start: DoubleVector,
         end: DoubleVector,
         curvature: Double,
-        degreeAngle: Double,
+        angle: Double,
         ncp: Int
     ): List<DoubleVector> {
-        if (curvature == 0.0) {  // straight line
+        // straight line
+        if (curvature == 0.0) {
             return emptyList()
         }
+        // Angle: make between 0 and 180
+        var degreeAngle = angle % 180
+        if (degreeAngle < 0) degreeAngle += 180
+        // straight line
+        if (degreeAngle < 1 || degreeAngle > 179) {
+            return emptyList()
+        }
+        // Inverse angle because of using client coordinates
+        degreeAngle *= -1
 
         val mid = start.add(end).mul(0.5)
         val d = end.subtract(start)
 
-        val angle = toRadians(degreeAngle)
+        val rAngle = toRadians(degreeAngle)
         val corner = mid.add(
-            start.subtract(mid).rotate(angle)
+            start.subtract(mid).rotate(rAngle)
         )
 
         // Calculate angle to rotate region by to align it with x/y axes
