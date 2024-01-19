@@ -707,9 +707,9 @@ def scale_continuous(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_gradient' for color scale
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient' for color scale
+        The type of color scale.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -796,9 +796,9 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_gradient'
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient'
+        The type of color scale.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -875,9 +875,9 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_gradient'
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient'
+        The type of color scale.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -1976,9 +1976,9 @@ def scale_discrete(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_brewer' for color scale
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer' for color scale
+        The type of color scale.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -2068,9 +2068,9 @@ def scale_fill_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_brewer'
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer'
+        The type of color scale.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -2150,9 +2150,9 @@ def scale_color_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : str, default='color_brewer'
-        The type of color scale: {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
-        'color_brewer', 'color_cmap'}.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer'
+        The type of color scale.
     kwargs:
         Additional parameters for the specified scale type.
 
