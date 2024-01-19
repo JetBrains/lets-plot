@@ -55,6 +55,10 @@ class DoubleVector(val x: Double, val y: Double) {
         return mul(1 / length())
     }
 
+    fun rotateAround(center: DoubleVector, phi: Double): DoubleVector {
+        return subtract(center).rotate(phi).add(center)
+    }
+
     fun rotate(phi: Double): DoubleVector {
         val x = this.x * cos(phi) - this.y * sin(phi)
         val y = this.x * sin(phi) + this.y * cos(phi)

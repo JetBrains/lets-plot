@@ -41,18 +41,18 @@ class BreaksDataTest {
         )
 
         // Breaks start at top center
-        val topCenter = DoubleVector(clientSize.x / 2, 32.0)
+        val topCenter = DoubleVector(clientSize.x / 2, 21.0)
 
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[0])
-        assertDoubleVectorEquals(DoubleVector(460, 184), breaksData.majorBreaks[1])
-        assertDoubleVectorEquals(DoubleVector(380, 429), breaksData.majorBreaks[2])
-        assertDoubleVectorEquals(DoubleVector(123, 429), breaksData.majorBreaks[3])
-        assertDoubleVectorEquals(DoubleVector(43, 184), breaksData.majorBreaks[4])
+        assertDoubleVectorEquals(DoubleVector(470, 180), breaksData.majorBreaks[1])
+        assertDoubleVectorEquals(DoubleVector(387, 438), breaksData.majorBreaks[2])
+        assertDoubleVectorEquals(DoubleVector(116, 438), breaksData.majorBreaks[3])
+        assertDoubleVectorEquals(DoubleVector(33, 180), breaksData.majorBreaks[4])
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[5])
     }
 
     private fun assertDoubleVectorEquals(expected: DoubleVector, actual: DoubleVector, tolerance: Double = 1.0) {
-        assertEquals(expected.x, actual.x, tolerance)
-        assertEquals(expected.y, actual.y, tolerance)
+        assertEquals(expected.x, actual.x, tolerance, "Expected: $expected, actual: $actual\n")
+        assertEquals(expected.y, actual.y, tolerance, "Expected: $expected, actual: $actual\n")
     }
 }

@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import kotlin.math.PI
 
 object PolarAxisUtil {
     fun breaksData(
@@ -35,15 +34,17 @@ object PolarAxisUtil {
         val majorLabels = scaleBreaks.labels
         val minorDomainBreaks = minorDomainBreaks(majorDomainBreaks)
 
-        val majorClientBreaks = toClient(majorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-        val minorClientBreaks = toClient(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
+        val majorClientBreaks = buildBreaks(majorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
+        val minorClientBreaks = buildBreaks(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
 
-        val axisDataRange = if (orientation.isHorizontal) gridDomain.xRange() else gridDomain.yRange()
-        val majorGrid = buildGrid(majorDomainBreaks.filter { it in axisDataRange } + axisDataRange.upperEnd, gridDomain, coord, flipAxis, orientation.isHorizontal)
-        val minorGrid = buildGrid(minorDomainBreaks.filter { it in axisDataRange }, gridDomain, coord, flipAxis, orientation.isHorizontal)
+        val majorGrid = buildGrid(majorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
+        val minorGrid = buildGrid(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
 
         // For coord_polar squash first and last labels into one to avoid overlapping.
-        val labels = if (majorClientBreaks.size > 1 && majorClientBreaks.first().subtract(majorClientBreaks.last()).length() <= 3.0) {
+        val labels = if (
+            majorClientBreaks.size > 1 &&
+            majorClientBreaks.first().subtract(majorClientBreaks.last()).length() <= 3.0
+        ) {
             val labels = majorLabels.toMutableList()
             labels[labels.lastIndex] = "${labels[labels.lastIndex]}/${labels[0]}"
             labels[0] = ""
@@ -65,30 +66,76 @@ object PolarAxisUtil {
         return coordinateSystem.toClient(v.flipIf(flipAxis)) ?: error("Unexpected null value")
     }
 
-    private fun toClient(
+    private fun buildRadiusBreaks(
+        breaks: List<Double>,
+        domain: DoubleRectangle,
+        coordinateSystem: PolarCoordinateSystem,
+        flipAxis: Boolean
+    ): List<DoubleVector> {
+        val center = coordinateSystem.toClient(domain.origin)!!
+        return breaks
+            .map { breakValue -> DoubleVector(domain.xRange().lowerEnd, breakValue) }
+            .map { toClient(it, coordinateSystem, flipAxis) }
+            // revert angle to align breaks vertically, or they will not match the grid (or even collapse into one)
+            .map { it.rotateAround(center, coordinateSystem.startAngle * coordinateSystem.direction) }
+    }
+
+    private fun buildAngleBreaks(
+        breaks: List<Double>,
+        domain: DoubleRectangle,
+        coordinateSystem: PolarCoordinateSystem,
+        flipAxis: Boolean
+    ): List<DoubleVector> {
+        val center = coordinateSystem.toClient(domain.origin)!!
+        return breaks
+            .map { DoubleVector(it, domain.yRange().upperEnd) }
+            .map { toClient(it, coordinateSystem, flipAxis) }
+            .map { it.subtract(center).mul(1.05).add(center) }
+    }
+
+    private fun buildBreaks(
         breaks: List<Double>,
         domain: DoubleRectangle,
         coordinateSystem: PolarCoordinateSystem,
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<DoubleVector> {
-        return breaks.map { breakValue ->
-            when (horizontal) {
-                true -> DoubleVector(breakValue, domain.yRange().upperEnd)
-                false -> {
-                    val startAnglePercent = (coordinateSystem.startAngle % (2 * PI)) / (2 * PI)
-                    val startAngleOffset = domain.xRange().length * startAnglePercent
-                    val verticalAngleValue = (domain.xRange().lowerEnd - startAngleOffset).let {
-                        when { // non-normalized domain value
-                            it < domain.xRange().lowerEnd -> it + domain.xRange().length
-                            it > domain.xRange().upperEnd -> it - domain.xRange().length
-                            else -> it
-                        }
-                    }
-                    DoubleVector(verticalAngleValue, breakValue)
-                }
-            }
-        }.map { toClient(it, coordinateSystem, flipAxis) }
+        return when (horizontal) {
+            true -> buildAngleBreaks(breaks, domain, coordinateSystem, flipAxis)
+            false -> buildRadiusBreaks(breaks, domain, coordinateSystem, flipAxis)
+        }
+    }
+
+    private fun buildAngleGrid(
+        breaks: List<Double>,
+        gridDomain: DoubleRectangle,
+        coordinateSystem: CoordinateSystem,
+        flipAxis: Boolean,
+    ): List<List<DoubleVector>> {
+        return breaks
+            .filter { it in gridDomain.xRange() }
+            .map { breakCoord ->
+            listOf(
+                toClient(DoubleVector(breakCoord, gridDomain.yRange().lowerEnd), coordinateSystem, flipAxis),
+                toClient(DoubleVector(breakCoord, gridDomain.yRange().upperEnd), coordinateSystem, flipAxis)
+            )
+        }
+    }
+
+    private fun buildRadiusGrid(
+        breaks: List<Double>,
+        gridDomain: DoubleRectangle,
+        coordinateSystem: CoordinateSystem,
+        flipAxis: Boolean,
+    ): List<List<DoubleVector>> {
+        return (breaks + gridDomain.yRange().upperEnd)
+            .filter { it in gridDomain.yRange() }
+            .map {
+                listOf(
+                    DoubleVector(gridDomain.xRange().lowerEnd, it),
+                    DoubleVector(gridDomain.xRange().upperEnd, it)
+                )
+            }.map { line -> AdaptiveResampler.resample(line, 0.5) { toClient(it, coordinateSystem, flipAxis) } }
     }
 
     private fun buildGrid(
@@ -98,28 +145,9 @@ object PolarAxisUtil {
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<List<DoubleVector>> {
-        val domainGrid = breaks.map { breakCoord ->
-            when (horizontal) {
-                true -> listOf(
-                    DoubleVector(breakCoord, gridDomain.yRange().lowerEnd),
-                    DoubleVector(breakCoord, gridDomain.yRange().upperEnd) // dataDomain to not go beyond the last major circle
-                )
-
-                false -> listOf(
-                    DoubleVector(gridDomain.xRange().lowerEnd, breakCoord),
-                    DoubleVector(gridDomain.xRange().upperEnd, breakCoord)
-                )
-            }
-        }
-
-        return domainGrid.map { line ->
-            AdaptiveResampler.resample(line, 0.5) {
-                toClient(
-                    it,
-                    coordinateSystem,
-                    flipAxis
-                )
-            }
+        return when (horizontal) {
+            true -> buildAngleGrid(breaks, gridDomain, coordinateSystem, flipAxis)
+            false -> buildRadiusGrid(breaks, gridDomain, coordinateSystem, flipAxis)
         }
     }
 }
