@@ -75,7 +75,8 @@ internal class SquareFrameOfReferenceProvider(
                 AxisLayout(
                     spec.breaksProviderFactory,
                     orientation,
-                    spec.theme
+                    spec.theme,
+                    false
                 )
             }
         }

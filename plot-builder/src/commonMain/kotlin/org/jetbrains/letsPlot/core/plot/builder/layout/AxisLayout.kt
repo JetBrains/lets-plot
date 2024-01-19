@@ -15,7 +15,8 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 internal class AxisLayout(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
     val orientation: Orientation,
-    val theme: AxisTheme
+    val theme: AxisTheme,
+    private val polar: Boolean
 ) {
 
     fun doLayout(
@@ -24,7 +25,7 @@ internal class AxisLayout(
         geomAreaInsets: Insets
     ): AxisLayoutInfo {
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
-        val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, geomAreaInsets, theme)
+        val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, geomAreaInsets, theme, polar)
 
         return layouter.doLayout(axisDomain, axisLength)
     }

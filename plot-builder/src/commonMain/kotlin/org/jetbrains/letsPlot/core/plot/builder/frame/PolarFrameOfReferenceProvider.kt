@@ -77,7 +77,8 @@ internal class PolarFrameOfReferenceProvider(
                 AxisLayout(
                     spec.breaksProviderFactory,
                     orientation,
-                    spec.theme
+                    spec.theme,
+                    true
                 )
             }
         }
@@ -88,7 +89,6 @@ internal class PolarFrameOfReferenceProvider(
             top = toAxisLayout(Orientation.TOP, hAxisPosition, hAxisSpec),
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
-
         return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
     }
 

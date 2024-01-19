@@ -19,7 +19,8 @@ internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
     breaks: ScaleBreaks,
     geomAreaInsets: Insets,
-    theme: AxisTheme
+    theme: AxisTheme,
+    private val polar: Boolean
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
     breaks,
@@ -59,17 +60,21 @@ internal class HorizontalFixedBreaksLabelsLayout(
             // Don't even try variants when num of breaks is too large (optimization, see issue #932).
             verticalLayout().doLayout(axisDomain, axisLength)
         } else {
-            var layoutInfo = simpleLayout().doLayout(axisDomain, axisLength)
-            if (overlap(layoutInfo, axisSpanExpanded)) {
-                layoutInfo = multilineLayout().doLayout(axisDomain, axisLength)
+            if (!polar) {
+                var layoutInfo = simpleLayout().doLayout(axisDomain, axisLength)
                 if (overlap(layoutInfo, axisSpanExpanded)) {
-                    layoutInfo = tiltedLayout().doLayout(axisDomain, axisLength)
+                    layoutInfo = multilineLayout().doLayout(axisDomain, axisLength)
                     if (overlap(layoutInfo, axisSpanExpanded)) {
-                        layoutInfo = verticalLayout().doLayout(axisDomain, axisLength)
+                        layoutInfo = tiltedLayout().doLayout(axisDomain, axisLength)
+                        if (overlap(layoutInfo, axisSpanExpanded)) {
+                            layoutInfo = verticalLayout().doLayout(axisDomain, axisLength)
+                        }
                     }
                 }
+                layoutInfo
+            } else {
+                simpleLayout().doLayout(axisDomain, axisLength)
             }
-            layoutInfo
         }
         return labelsLayoutInfo
     }

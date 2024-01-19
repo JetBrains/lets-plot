@@ -70,7 +70,8 @@ internal abstract class AxisLabelsLayout protected constructor(
             orientation: Orientation,
             breaks: ScaleBreaks,
             geomAreaInsets: Insets,
-            theme: AxisTheme
+            theme: AxisTheme,
+            polar: Boolean
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -78,7 +79,8 @@ internal abstract class AxisLabelsLayout protected constructor(
                 orientation,
                 breaks,
                 geomAreaInsets,
-                theme
+                theme,
+                polar
             )
         }
 

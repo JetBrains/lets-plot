@@ -53,7 +53,8 @@ internal class AxisLayouter constructor(
             axisDomain: DoubleSpan,
             breaksProvider: AxisBreaksProvider,
             geomAreaInsets: Insets,
-            theme: AxisTheme
+            theme: AxisTheme,
+            polar: Boolean
         ): AxisLayouter {
             val labelsLayout =
                 if (breaksProvider.isFixedBreaks) {
@@ -62,7 +63,8 @@ internal class AxisLayouter constructor(
                             orientation,
                             breaksProvider.fixedBreaks,
                             geomAreaInsets,
-                            theme
+                            theme,
+                            polar
                         )
                     } else {
                         verticalFixedBreaks(
