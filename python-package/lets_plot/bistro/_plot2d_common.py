@@ -2,7 +2,7 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from ..plot.core import LayerSpec, FeatureSpecArray, aes
+from ..plot.core import DummySpec, aes
 from ..plot.geom import *
 from ..plot.marginal_layer import ggmarginal
 
@@ -82,19 +82,12 @@ def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_leg
 
         return ggmarginal(side, size=size, layer=layer)
 
-    marginals = []
+    result = DummySpec()
     for layer_description in filter(bool, marginal.split(",")):
         params = layer_description.strip().split(":")
         geom_kind, sides = params[0].strip(), params[1].strip()
         size = float(params[2].strip()) if len(params) > 2 else None
         for side in sides:
-            layer = _get_marginal_layer(geom_kind, side, size)
-            if isinstance(layer, LayerSpec):
-                marginals.append(layer)
-            elif isinstance(layer, FeatureSpecArray):
-                for sublayer in layer.elements():
-                    marginals.append(sublayer)
-            else:
-                raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
+            result += _get_marginal_layer(geom_kind, side, size)
 
-    return marginals
+    return result

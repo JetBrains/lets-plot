@@ -17,7 +17,8 @@ try:
 except ImportError:
     pl = None
 
-from ..plot.core import PlotSpec, aes
+from ..plot.plot import ggplot
+from ..plot.core import DummySpec, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
 from ..plot.theme_ import *
@@ -301,20 +302,19 @@ def residual_plot(data=None, x=None, y=None, *,
         mapping_dict['color'] = color_by
         mapping_dict['fill'] = color_by
     # prepare scales
-    scales = []
     if method == 'none':
-        scales.append(ylab(y))
+        scales = ylab(y)
     else:
-        scales.append(ylab("{0} residual".format(y)))
+        scales = ylab("{0} residual".format(y))
     # prepare layers
-    layers = []
+    layers = DummySpec()
     # main layer
     main_layer = _get_geom2d_layer(geom, binwidth2d, bins2d, color, color_by, size, alpha, show_legend)
     if main_layer is not None:
-        layers.append(main_layer)
+        layers += main_layer
     # hline layer
     if hline:
-        layers.append(geom_hline(yintercept=0, color=_HLINE_COLOR, linetype=_HLINE_LINETYPE))
+        layers += geom_hline(yintercept=0, color=_HLINE_COLOR, linetype=_HLINE_LINETYPE)
     # marginal layers
     if marginal != 'none':
         layers += _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend)
@@ -327,4 +327,4 @@ def residual_plot(data=None, x=None, y=None, *,
                         axis_text_y=element_text(),
                         axis_title_y=element_text())
 
-    return PlotSpec(data=stat_data, mapping=aes(**mapping_dict), scales=scales, layers=layers) + theme_layer
+    return ggplot(stat_data, aes(**mapping_dict)) + layers + scales + theme_layer

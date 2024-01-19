@@ -107,3 +107,17 @@ def test_feature_array_with_dummy():
     expect = array.as_dict()
     assert (array + DummySpec()).as_dict() == expect
     assert (DummySpec() + array).as_dict() == expect
+
+
+def test_feature_array_is_always_flat():
+    violin = FeatureSpec("plot", "violin")
+    boxplot = FeatureSpec("plot", "boxplot")
+    outlier = FeatureSpec("plot", "boxplot_outlier")
+    abline = FeatureSpec("plot", "abline")
+    expect = FeatureSpecArray(violin, boxplot, outlier, abline)
+    nested_array1 = FeatureSpecArray(violin, FeatureSpecArray(boxplot, outlier), abline)
+    assert nested_array1.as_dict() == expect.as_dict()
+    nested_array2 = FeatureSpecArray(FeatureSpecArray(violin),
+                                     FeatureSpecArray(boxplot, FeatureSpecArray(outlier)),
+                                     FeatureSpecArray(abline))
+    assert nested_array2.as_dict() == expect.as_dict()
