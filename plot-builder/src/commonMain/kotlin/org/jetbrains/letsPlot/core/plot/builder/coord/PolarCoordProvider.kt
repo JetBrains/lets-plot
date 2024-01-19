@@ -19,6 +19,8 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
+private const val R_EXPAND = 1.15
+
 internal class PolarCoordProvider(
     xLim: DoubleSpan?,
     yLim: DoubleSpan?,
@@ -51,13 +53,13 @@ internal class PolarCoordProvider(
             DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
         }
 
-        val adjustedYRange = realDomain.yRange().let {
-            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * 1.15)
+        val adjustedYRange = (yLim ?: realDomain.yRange()).let {
+            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * R_EXPAND)
         }
 
         return DoubleRectangle(
             xLim ?: adjustedXRange, //theta
-            yLim ?: adjustedYRange // r
+            adjustedYRange // r
         )
     }
 
@@ -113,13 +115,7 @@ internal class PolarCoordProvider(
 
     fun gridDomain(adjustedDomain: DoubleRectangle): DoubleRectangle {
         val xRange = adjustedDomain.xRange() // either xLim or domain.xRange() with adjustments
-
-        val yRange = if (yLim != null) {
-            adjustedDomain.yRange() // yLim should not be adjusted
-        } else {
-            // No yLim -> redo adjustments
-            adjustedDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length / 1.15) }
-        }
+        val yRange = adjustedDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length / R_EXPAND) }
 
         return DoubleRectangle(xRange, yRange)
     }
