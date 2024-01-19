@@ -75,23 +75,25 @@ def ggmarginal(sides: str, *, size=None, layer: Union[LayerSpec, FeatureSpecArra
     if not 0 < len(sides) <= 4:
         raise ValueError("'sides' must be a string containing 1 to 4 chars: 'l','r','t','b'.")
 
-    # Recursive call when layer is sum of geoms
-    if isinstance(layer, FeatureSpecArray):
-        result = DummySpec()
+    # In some cases (only boxplot so far) a layer may consist of multiple sub-layers of type LayerSpec.
+    if isinstance(layer, LayerSpec):
+        sublayers = [layer]
+    elif isinstance(layer, FeatureSpecArray):
         for sublayer in layer.elements():
-            result += ggmarginal(sides, size=size, layer=sublayer)
-        return result
-
-    if not isinstance(layer, LayerSpec):
+            if not isinstance(sublayer, LayerSpec):
+                raise TypeError("Invalid 'layer' type: {}".format(type(sublayer)))
+        sublayers = layer.elements()
+    else:
         raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
 
     result = DummySpec()
 
-    for i in range(len(sides)):
-        side = sides[i]
-        margin_size = _to_size(size, i)
-        marginal_layer = _to_marginal(side, margin_size, layer)
-        result = result + marginal_layer
+    for sublayer in sublayers:
+        for i in range(len(sides)):
+            side = sides[i]
+            margin_size = _to_size(size, i)
+            marginal_layer = _to_marginal(side, margin_size, sublayer)
+            result = result + marginal_layer
 
     return result
 
