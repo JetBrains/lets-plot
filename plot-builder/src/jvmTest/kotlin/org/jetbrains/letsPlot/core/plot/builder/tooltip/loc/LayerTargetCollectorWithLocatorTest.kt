@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
@@ -108,7 +109,7 @@ class LayerTargetCollectorWithLocatorTest {
         }
 
         private fun createGeomInteractionBuilder(area: Boolean): GeomInteraction {
-            return GeomInteractionBuilder.DemoAndTest(org.jetbrains.letsPlot.core.plot.base.Aes.values())
+            return GeomInteractionBuilder.DemoAndTest(Aes.values())
                 .bivariateFunction(area)
                 .ignoreInvisibleTargets(true)
                 .build()

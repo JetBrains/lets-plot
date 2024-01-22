@@ -74,6 +74,11 @@ final class DiscreteTransform(
         }
     }
 
+    fun withMoreLimits(limits: Collection<Any>): DiscreteTransform {
+        val expandedLimits = domainLimits.union(limits).toList()
+        return DiscreteTransform(domainValues, expandedLimits)
+    }
+
     companion object {
         fun join(l: List<DiscreteTransform>): DiscreteTransform {
             val domainValues = LinkedHashSet<Any>()

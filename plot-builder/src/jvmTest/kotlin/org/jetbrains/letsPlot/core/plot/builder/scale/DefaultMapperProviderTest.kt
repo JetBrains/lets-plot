@@ -5,13 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class DefaultMapperProviderTest {
     @Test
     fun everyAesHasMapperProvider() {
-        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+        for (aes in Aes.values()) {
             assertTrue(DefaultMapperProvider.hasDefault(aes), "Aes " + aes.name + " has MapperProvider")
         }
     }

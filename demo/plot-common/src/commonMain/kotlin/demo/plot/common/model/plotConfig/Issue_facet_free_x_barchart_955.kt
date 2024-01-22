@@ -15,12 +15,13 @@ class Issue_facet_free_x_barchart_955 {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             case0(),  // free_x
-            case1(),  // fixed scales
-            case2(),  // free scales
+//            case1(),  // fixed scales
+//            case2(),  // free scales
         )
     }
 
     private fun case0(): MutableMap<String, Any> {
+//        'y': 'diet',
         val spec = """
             {
                 'kind': 'plot',
@@ -31,7 +32,6 @@ class Issue_facet_free_x_barchart_955 {
                                'color': 'black'}],
                 'facet':{'name': 'grid',
                           'x': 'animal_type', 
-                          'y': 'diet',
                           'scales': 'free_x',
                           'x_order': 1,
                           'y_order': 1},

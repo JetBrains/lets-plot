@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertNoTooltips
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.continuous
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.discrete
@@ -15,7 +16,7 @@ class GeomTargetInteractionAreaFunctionTest {
     @Test
     fun whenXIsContinuous_ShouldNotAddTooltip() {
         val targetTooltipSpec = createBuilder()
-            .variable(continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+            .variable(continuous(Aes.X))
             .build()
 
         assertNoTooltips(targetTooltipSpec)
@@ -24,7 +25,7 @@ class GeomTargetInteractionAreaFunctionTest {
     @Test
     fun whenXIsNotContinuous_ShouldNotAddTooltip() {
         val targetTooltipSpec = createBuilder()
-            .variable(discrete(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+            .variable(discrete(Aes.X))
             .build()
 
         assertNoTooltips(targetTooltipSpec)

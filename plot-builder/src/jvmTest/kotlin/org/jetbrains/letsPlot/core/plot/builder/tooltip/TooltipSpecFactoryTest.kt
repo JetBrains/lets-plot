@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MappedDataAccessMock.Companion.variable
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.MappingField
@@ -27,7 +28,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     fun shouldNotDuplicateAesFromHintsToBigTooltip() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         val colorMapping =
-            addMappedData(variable().name("cyl").value("4").mapping(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR))
+            addMappedData(variable().name("cyl").value("4").mapping(Aes.COLOR))
 
         createTooltipSpecs(
             geomTargetBuilder.withPathHitShape()

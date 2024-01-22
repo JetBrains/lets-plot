@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertNoTooltips
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertText
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.continuous
@@ -23,7 +24,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenPositionalXVar_ShouldAddTooltipText() {
-        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        val mapping = continuous(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -33,7 +34,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenPositionalDiscreteXVar_ShouldAddTooltipText() {
-        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        val mapping = discrete(Aes.X)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -43,7 +44,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenPositionalYVar_ShouldAddTooltipText() {
-        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val mapping = continuous(Aes.Y)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -53,7 +54,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenPositionalDiscreteYVar_ShouldAddTooltipText() {
-        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        val mapping = discrete(Aes.Y)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -63,7 +64,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenWidthVar_ShouldAddTooltipText() {
-        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+        val mapping = continuous(Aes.WIDTH)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -73,7 +74,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
 
     @Test
     fun whenDiscreteWidthVar_ShouldAddTooltipText() {
-        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
+        val mapping = discrete(Aes.WIDTH)
         val targetTooltipSpec = createUnivariateFunctionBuilder(mapping.aes)
             .variable(mapping)
             .build()
@@ -81,7 +82,7 @@ class GeomTargetInteractionUnivariateFunctionTest {
         assertText(targetTooltipSpec, mapping.longTooltipText())
     }
 
-    private fun createUnivariateFunctionBuilder(displayableAes: org.jetbrains.letsPlot.core.plot.base.Aes<*>?): TestingTooltipSpecsBuilder {
+    private fun createUnivariateFunctionBuilder(displayableAes: Aes<*>?): TestingTooltipSpecsBuilder {
         return TestingTooltipSpecsBuilder.univariateFunctionBuilder(
             listOfNotNull(displayableAes)
         )

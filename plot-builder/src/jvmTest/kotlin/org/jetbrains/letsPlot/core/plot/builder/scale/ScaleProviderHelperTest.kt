@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import kotlin.test.Test
@@ -18,7 +19,7 @@ class ScaleProviderHelperTest {
             .put(region, listOf("Europe", "Asia", null, "Australia"))
             .build()
 
-        ScaleProviderHelper.createDefault(org.jetbrains.letsPlot.core.plot.base.Aes.HJUST).createScale(
+        ScaleProviderHelper.createDefault(Aes.HJUST).createScale(
             "region",
             DiscreteTransform(df.distinctValues(region), emptyList())
         )

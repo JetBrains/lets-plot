@@ -102,7 +102,7 @@ class DataFrame private constructor(builder: Builder) {
         return list as List<Double?>
     }
 
-    fun distinctValues(variable: Variable): Collection<Any> {
+    fun distinctValues(variable: Variable): Set<Any> {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
             val orderSpec = myOrderSpecs.findLast { it.variable == variable }

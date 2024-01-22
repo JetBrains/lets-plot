@@ -56,6 +56,8 @@ interface Scale {
 
         fun continuousTransform(v: ContinuousTransform): Builder
 
+        fun discreteTransform(v: DiscreteTransform): Builder
+
         fun breaksGenerator(v: BreaksGenerator): Builder
 
         fun build(): Scale

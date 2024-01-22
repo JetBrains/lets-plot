@@ -7,31 +7,32 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 class TestingPlotContextWithTooltipFormatters : PlotContext {
-    private val mockFormatters: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> String> = HashMap()
+    private val mockFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
 
     override val superscriptExponent: Boolean = false
 
     override val layers: List<PlotContext.Layer>
         get() = UNSUPPORTED("Not yet implemented")
 
-    override fun hasScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    override fun hasScale(aes: Aes<*>): Boolean {
         UNSUPPORTED("Not yet implemented")
     }
 
-    override fun getScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Scale {
+    override fun getScale(aes: Aes<*>): Scale {
         UNSUPPORTED("Not yet implemented")
     }
 
-    override fun overallTransformedDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan {
+    override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
         UNSUPPORTED("Not yet implemented")
     }
 
     override fun getTooltipFormatter(
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aes: Aes<*>,
         defaultValue: () -> (Any?) -> String
     ): (Any?) -> String {
         return mockFormatters.getValue(aes)

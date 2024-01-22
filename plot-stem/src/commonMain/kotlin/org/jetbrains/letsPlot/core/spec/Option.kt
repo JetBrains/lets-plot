@@ -296,10 +296,10 @@ object Option {
             // Parameters in GeomImage.
             // It's "rendered" aesthetics at the same time but "geom image" doesn't use aes to actually render image.
             // The constants are used to compute limits on x/y-axis and the image bbox.
-            val XMIN = org.jetbrains.letsPlot.core.plot.base.Aes.XMIN.name
-            val XMAX = org.jetbrains.letsPlot.core.plot.base.Aes.XMAX.name
-            val YMIN = org.jetbrains.letsPlot.core.plot.base.Aes.YMIN.name
-            val YMAX = org.jetbrains.letsPlot.core.plot.base.Aes.YMAX.name
+            val XMIN = Aes.XMIN.name
+            val XMAX = Aes.XMAX.name
+            val YMIN = Aes.YMIN.name
+            val YMAX = Aes.YMAX.name
         }
 
         object Text {

@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
 /**
@@ -27,7 +28,7 @@ class EmptyGeomContext : GeomContext {
     override val backgroundColor: Color = Color.WHITE
     override val plotContext: PlotContext? = null
 
-    override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
+    override fun getResolution(aes: Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
@@ -39,7 +40,7 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun isMappedAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = false
+    override fun isMappedAes(aes: Aes<*>): Boolean = false
     override fun estimateTextSize(
         text: String,
         family: String,

@@ -79,7 +79,7 @@ internal class DiscreteScale : AbstractScale<Any> {
     }
 
     private class MyBuilder(scale: DiscreteScale) : AbstractBuilder<Any>(scale) {
-        internal val discreteTransform: DiscreteTransform = scale.discreteTransform
+        internal var discreteTransform: DiscreteTransform = scale.discreteTransform
 
         override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
             throw IllegalStateException("Not applicable to scale with discrete domain")
@@ -87,6 +87,11 @@ internal class DiscreteScale : AbstractScale<Any> {
 
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder {
             // ignore
+            return this
+        }
+
+        override fun discreteTransform(v: DiscreteTransform): Scale.Builder {
+            discreteTransform = v
             return this
         }
 

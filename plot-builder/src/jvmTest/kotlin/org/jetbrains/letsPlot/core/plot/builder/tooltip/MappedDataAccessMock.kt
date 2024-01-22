@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.mockito.eq
 import org.mockito.Mockito.mock
@@ -12,7 +13,7 @@ import org.mockito.Mockito.`when`
 
 class MappedDataAccessMock {
 
-    private val mappedAes = HashSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
+    private val mappedAes = HashSet<Aes<*>>()
     val mappedDataAccess: MappedDataAccess = mock(MappedDataAccess::class.java)
 
     fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
@@ -40,12 +41,12 @@ class MappedDataAccessMock {
         return this
     }
 
-    fun getMappedAes(): MutableSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+    fun getMappedAes(): MutableSet<Aes<*>> {
         return mappedAes
     }
 
     class Mapping<T> internal constructor(
-        internal val aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>,
+        internal val aes: Aes<T>,
         internal val label: String,
         internal val value: String
     ) {
@@ -78,7 +79,7 @@ class MappedDataAccessMock {
             return this
         }
 
-        fun <T> mapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): Mapping<T> {
+        fun <T> mapping(aes: Aes<T>): Mapping<T> {
             return Mapping(aes, name, value)
         }
 

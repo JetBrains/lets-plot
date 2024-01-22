@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale
 
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms.createBreaksGeneratorForTransformedDomain
@@ -62,6 +63,11 @@ internal class ContinuousScale : AbstractScale<Double> {
 
         override fun continuousTransform(v: ContinuousTransform): Scale.Builder {
             myContinuousTransform = v
+            return this
+        }
+
+        override fun discreteTransform(v: DiscreteTransform): Scale.Builder {
+            // Ignore
             return this
         }
 
