@@ -53,7 +53,16 @@ object PlotConfigFrontendUtil {
         sharedContinuousDomainX: DoubleSpan? = null,
         sharedContinuousDomainY: DoubleSpan? = null,
     ): PlotAssembler {
-        val layersByTile = buildPlotLayers(config)
+        val layersByTile = buildPlotLayers(
+            config.layerConfigs,
+            config.facets,
+            config.coordProvider,
+            config.scaleMap,
+            config.mappersByAesNP,
+            config.theme,
+            config.theme.fontFamilyRegistry,
+        )
+
         val scaleMap: Map<Aes<*>, Scale> = config.scaleMap.mapValues { (aes, scale) ->
             if (aes == Aes.X && sharedContinuousDomainX != null) {
                 scale.with().continuousTransform(
@@ -87,18 +96,6 @@ object PlotConfigFrontendUtil {
             subtitle = config.subtitle,
             caption = config.caption,
             guideOptionsMap = config.guideOptionsMap
-        )
-    }
-
-    private fun buildPlotLayers(plotConfig: PlotConfigFrontend): List<List<GeomLayer>> {
-        return buildPlotLayers(
-            plotConfig.layerConfigs,
-            plotConfig.facets,
-            plotConfig.coordProvider,
-            plotConfig.scaleMap,
-            plotConfig.mappersByAesNP,
-            plotConfig.theme,
-            plotConfig.theme.fontFamilyRegistry,
         )
     }
 
