@@ -159,9 +159,6 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?,
-        scaleXContinuousDomainUpdate: DoubleSpan? = null,
-        scaleYContinuousDomainUpdate: DoubleSpan? = null,
-        compositeFigureComputationMessages: MutableList<String>? = null
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
@@ -171,19 +168,13 @@ object MonolithicCommon {
             computationMessages.addAll(it)
         }
 
-        val ownComputationMessages = compositeFigureComputationMessages?.let {
-            // Rerout all messages upstream to the root composite figure.
-            it.addAll(computationMessages)
-            emptyList()
-        } ?: computationMessages
-
         return buildSinglePlot(
             config,
             plotSize,
             plotMaxWidth, plotPreferredWidth,
-            scaleXContinuousDomainUpdate,
-            scaleYContinuousDomainUpdate,
-            ownComputationMessages
+            sharedContinuousDomainX = null,  // only applicable to "composite figures"
+            sharedContinuousDomainY = null,
+            computationMessages
         )
     }
 
@@ -192,8 +183,8 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?,
-        sharedContinuousDomainX: DoubleSpan? = null,
-        sharedContinuousDomainY: DoubleSpan? = null,
+        sharedContinuousDomainX: DoubleSpan?,
+        sharedContinuousDomainY: DoubleSpan?,
         computationMessages: List<String>
     ): PlotFigureBuildInfo {
 
