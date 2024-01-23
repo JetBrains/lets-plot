@@ -6,18 +6,12 @@
 package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
-import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
-import org.jetbrains.letsPlot.core.spec.Option.Plot.COORD
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
-import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
 import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
@@ -32,46 +26,12 @@ class PlotConfigFrontend private constructor(
     isClientSide = true
 ) {
 
-    internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
-
-    val scaleMap: Map<Aes<*>, Scale>
-    val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
     internal val xAxisPosition: AxisPosition
     internal val yAxisPosition: AxisPosition
 
     init {
-        val mappersByAes = PlotConfigScaleMappers.createMappers(
-            layerConfigs,
-            transformByAes,
-            mapperProviderByAes,
-        )
-
-        // ToDo: First transform data then create scales.
-        scaleMap = PlotConfigScales.createScales(
-            layerConfigs,
-            transformByAes,
-            mappersByAes,
-            scaleProviderByAes
-        )
-
-        // Use only Non-positional mappers.
-        mappersByAesNP = mappersByAes.filterKeys { !Aes.isPositional(it) }
-
-        val preferredCoordProvider: CoordProvider? = layerConfigs.firstNotNullOfOrNull {
-            it.geomProto.preferredCoordinateSystem(it)
-        }
-
-        val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
-        val coordProvider = CoordConfig.createCoordProvider(
-            get(COORD),
-            transformByAes.getValue(Aes.X),
-            transformByAes.getValue(Aes.Y),
-            defaultCoordProvider
-        )
-
-        this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition

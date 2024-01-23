@@ -19,13 +19,11 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
-import org.jetbrains.letsPlot.core.spec.config.GeoConfig
-import org.jetbrains.letsPlot.core.spec.config.GuideConfig
-import org.jetbrains.letsPlot.core.spec.config.LayerConfig
-import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
+import org.jetbrains.letsPlot.core.spec.config.*
 
 object PlotConfigFrontendUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -48,22 +46,71 @@ object PlotConfigFrontendUtil {
         return guideOptionsByAes
     }
 
+    internal fun createMappersAndScalesBeforeFacets(config: PlotConfigFrontend): Pair<Map<Aes<*>, ScaleMapper<*>>, Map<Aes<*>, Scale>> {
+        val layerConfigs = config.layerConfigs
+
+        val transformByAes = PlotConfigTransforms.createTransforms(
+            layerConfigs,
+            config.scaleProviderByAes,
+            config.mapperProviderByAes,
+            excludeStatVariables = false   // Frontend - take in account "stat" variables
+        )
+
+        val mappersByAes = PlotConfigScaleMappers.createMappers(
+            layerConfigs,
+            transformByAes,
+            config.mapperProviderByAes,
+        )
+
+        val scaleByAes = PlotConfigScales.createScales(
+            layerConfigs,
+            transformByAes,
+            mappersByAes,
+            config.scaleProviderByAes
+        )
+        return Pair(mappersByAes, scaleByAes)
+    }
+
     fun createPlotAssembler(
         config: PlotConfigFrontend,
         sharedContinuousDomainX: DoubleSpan? = null,
         sharedContinuousDomainY: DoubleSpan? = null,
     ): PlotAssembler {
+
+        // TMP: scale "before facets"
+        val (mapperByAes, scaleMapBeforeFacets) = createMappersAndScalesBeforeFacets(config)
+
+        // Use only Non-positional mappers.
+        val mappersByAesNP = mapperByAes.filterKeys { !Aes.isPositional(it) }
+
+        // Coord provider
+
+        val preferredCoordProvider: CoordProvider? = config.layerConfigs.firstNotNullOfOrNull {
+            it.geomProto.preferredCoordinateSystem(it)
+        }
+
+        val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
+        val coordProvider = CoordConfig.createCoordProvider(
+            config.get(Option.Plot.COORD),
+            scaleMapBeforeFacets.getValue(Aes.X).transform,
+            scaleMapBeforeFacets.getValue(Aes.Y).transform,
+            defaultCoordProvider
+        )
+
+
+        // Geom layers
+
         val layersByTile = buildPlotLayers(
             config.layerConfigs,
             config.facets,
-            config.coordProvider,
-            config.scaleMap,
-            config.mappersByAesNP,
+            coordProvider,
+            scaleMapBeforeFacets,
+            mappersByAesNP,
             config.theme,
             config.theme.fontFamilyRegistry,
         )
 
-        val scaleMap: Map<Aes<*>, Scale> = config.scaleMap.mapValues { (aes, scale) ->
+        val scaleMap: Map<Aes<*>, Scale> = scaleMapBeforeFacets.mapValues { (aes, scale) ->
             if (aes == Aes.X && sharedContinuousDomainX != null) {
                 scale.with().continuousTransform(
                     Transforms.continuousWithLimits(
@@ -86,9 +133,9 @@ object PlotConfigFrontendUtil {
         return PlotAssembler(
             layersByTile,
             scaleMap,
-            config.mappersByAesNP,
+            mappersByAesNP,
             config.facets,
-            config.coordProvider,
+            coordProvider,
             config.xAxisPosition,
             config.yAxisPosition,
             config.theme,

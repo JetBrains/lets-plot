@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
@@ -43,9 +42,8 @@ abstract class PlotConfig(
     val facets: PlotFacets
 
     protected val scaleConfigs: List<ScaleConfig<*>>
-    protected val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
-    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider>
-    protected val transformByAes: Map<Aes<*>, Transform>
+    internal val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
+    internal val scaleProviderByAes: Map<Aes<*>, ScaleProvider>
 
     protected var sharedData: DataFrame
         private set
@@ -102,13 +100,6 @@ abstract class PlotConfig(
             excludeStatVariables,
             zeroPositionalExpands,
             theme.exponentFormat.superscript
-        )
-
-        transformByAes = PlotConfigTransforms.createTransforms(
-            layerConfigs,
-            scaleProviderByAes,
-            mapperProviderByAes,
-            excludeStatVariables
         )
 
         facets = if (has(FACET)) {

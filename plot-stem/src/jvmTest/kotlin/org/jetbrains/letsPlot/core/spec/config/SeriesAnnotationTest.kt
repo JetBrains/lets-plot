@@ -297,7 +297,7 @@ class SeriesAnnotationTest {
         isDiscrete: Boolean,
         name: String? = null
     ): PlotConfigFrontend {
-        val scale = scaleMap.getValue(aes)
+        val scale = createScales().getValue(aes)
         if (scale.isContinuous) {
             val breaksGenerator =
                 (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator

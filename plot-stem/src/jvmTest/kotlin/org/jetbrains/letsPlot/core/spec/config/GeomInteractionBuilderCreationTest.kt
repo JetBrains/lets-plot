@@ -190,10 +190,11 @@ class GeomInteractionBuilderCreationTest {
         )
 
         val plotConfig = transformToClientPlotConfig(plotOpts)
+        val scaleMap = plotConfig.createScales()
         plotConfig.layerConfigs.forEach { layerConfig ->
             val builder = GeomInteractionUtil.createGeomInteractionBuilder(
                 layerConfig = layerConfig,
-                scaleMap = plotConfig.scaleMap,
+                scaleMap = scaleMap,
                 multilayerWithTooltips = false,
                 isLiveMap = false,
                 isLinearCoordSystem = true,
@@ -374,10 +375,12 @@ class GeomInteractionBuilderCreationTest {
         theme: Theme = DefaultTheme.minimal2()
     ): GeomInteractionBuilder {
         val plotConfig = transformToClientPlotConfig(plotOpts)
+        val scaleMap = plotConfig.createScales()
+
         val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
             layerConfig = layerConfig,
-            scaleMap = plotConfig.scaleMap,
+            scaleMap = scaleMap,
             multilayerWithTooltips = false,
             isLiveMap = false,
             isLinearCoordSystem = true,

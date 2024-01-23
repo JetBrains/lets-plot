@@ -8,10 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -60,6 +57,15 @@ class PlotAssembler constructor(
 
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
+    val xyTransformByTile: List<Pair<Transform, Transform>>? = when {
+        containsLiveMap -> null
+        coreLayersByTile.isEmpty() -> null // no layers in plot
+        else -> coreLayersByTile.map {
+            // TMP: all tiles have same X/Y transforms
+            // ToDo: tiles can have different transforms
+            Pair(scaleXProto.transform, scaleYProto.transform)
+        }
+    }
     val rawXYTransformedDomainsByTile: List<Pair<DoubleSpan, DoubleSpan>>? = when {
         containsLiveMap -> null
         coreLayersByTile.isEmpty() -> null // no layers in plot
@@ -82,7 +88,6 @@ class PlotAssembler constructor(
     init {
         require(hasLayers()) { "No layers in plot" }
 
-        // ToDo: transformed ranges by aes
         plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap, theme.exponentFormat.superscript)
 
         val legendBoxInfos: List<LegendBoxInfo> = when {
@@ -224,12 +229,6 @@ class PlotAssembler constructor(
                 return coreLayersByTile.map { BogusFrameOfReferenceProvider() }
             }
 
-//            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-//                coreLayersByTile,
-//                scaleXProto,
-//                scaleYProto,
-//                facets
-//            )
             val domainsXYByTile = rawXYTransformedDomainsByTile!!
 
             val flipAxis = coordProvider.flipped
@@ -246,7 +245,8 @@ class PlotAssembler constructor(
 
             // Create frame of reference provider for each tile.
             return domainsXYByTile.map { (xDomain, yDomain) ->
-                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain), hScaleProto.isContinuous)
+                val adjustedDomain =
+                    coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain), hScaleProto.isContinuous)
 
                 if (coordProvider.isPolar) {
                     PolarFrameOfReferenceProvider(

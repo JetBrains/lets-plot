@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
@@ -26,17 +25,20 @@ internal object FigureGridScaleShareUtil {
             when {
                 isApplicableElement(it) -> {
                     it as PlotConfigFrontend
-                    val xScaleProto = it.scaleMap.getValue(Aes.X)
-                    val yScaleProto = it.scaleMap.getValue(Aes.Y)
                     val plotAssembler = PlotConfigFrontendUtil.createPlotAssembler(it)
                     val transformedDomainsByTile = plotAssembler.rawXYTransformedDomainsByTile
+                    val transformesByTile = plotAssembler.xyTransformByTile
 
                     transformedDomainsByTile?.let {
+                        // ToDo: tiles could have different X/Y scales / transforms
                         // Assume just 1 tile (no facets)
                         val transformedDomainX = transformedDomainsByTile[0].first
                         val transformedDomainY = transformedDomainsByTile[0].second
-                        val domainX = inverseTransformIfContinuousOrNull(transformedDomainX, xScaleProto.transform)
-                        val domainY = inverseTransformIfContinuousOrNull(transformedDomainY, yScaleProto.transform)
+                        val scaleXTransform = transformesByTile!![0].first
+                        val scaleYTransform = transformesByTile[0].second
+
+                        val domainX = inverseTransformIfContinuousOrNull(transformedDomainX, scaleXTransform)
+                        val domainY = inverseTransformIfContinuousOrNull(transformedDomainY, scaleYTransform)
                         Pair(domainX, domainY)
                     }
                 }

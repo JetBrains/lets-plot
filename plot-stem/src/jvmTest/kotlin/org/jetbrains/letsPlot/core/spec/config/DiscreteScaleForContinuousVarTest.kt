@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.config.TestUtil.assertClientWontFail
-import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil.backendSpecTransform
+import org.jetbrains.letsPlot.core.spec.config.TestUtil.assertClientWontFail
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -50,11 +50,11 @@ class DiscreteScaleForContinuousVarTest {
         val opts = parsePlotSpec(spec)
         val opts1 = backendSpecTransform(opts)
 
-        val plotConfigClientSide = assertClientWontFail(opts1)
-        assertEquals(1, plotConfigClientSide.layerConfigs.size.toLong())
+        val plotConfigFrontend = assertClientWontFail(opts1)
+        assertEquals(1, plotConfigFrontend.layerConfigs.size.toLong())
 
-//        val scale = plotConfigClientSide.scaleMap[Aes.FILL]
-        val mapper = plotConfigClientSide.mappersByAesNP.getValue(Aes.FILL)
+        val mapperByAes = plotConfigFrontend.createScaleMappers()
+        val mapper = mapperByAes.getValue(Aes.FILL)
 
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)

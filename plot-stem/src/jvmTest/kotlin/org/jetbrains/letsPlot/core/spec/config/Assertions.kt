@@ -8,10 +8,12 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -66,10 +68,20 @@ fun PlotConfigFrontend.assertScale(
     name: String? = null,
     msg: () -> String = { "" }
 ): PlotConfigFrontend {
-    val scale = scaleMap.getValue(aes)
+    val scale = createScales().getValue(aes)
     assertEquals(!isDiscrete, scale.isContinuous, msg())
     name?.let { assertEquals(it, scale.name, msg()) }
     return this
+}
+
+fun PlotConfigFrontend.createScales(): Map<Aes<*>, Scale> {
+    val (_, scaleByAes) = PlotConfigFrontendUtil.createMappersAndScalesBeforeFacets(this)
+    return scaleByAes
+}
+
+fun PlotConfigFrontend.createScaleMappers(): Map<Aes<*>, ScaleMapper<*>> {
+    val (mapperByAes, _) = PlotConfigFrontendUtil.createMappersAndScalesBeforeFacets(this)
+    return mapperByAes
 }
 
 fun PlotConfigFrontend.hasVariable(variable: DataFrame.Variable): PlotConfigFrontend {

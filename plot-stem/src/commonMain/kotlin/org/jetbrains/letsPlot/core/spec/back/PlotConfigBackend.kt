@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
 import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
 import org.jetbrains.letsPlot.core.spec.getString
 
 open class PlotConfigBackend(
@@ -36,6 +37,17 @@ open class PlotConfigBackend(
     containerTheme,
     isClientSide = false
 ) {
+    private val transformByAes: Map<Aes<*>, Transform>
+
+    init {
+        transformByAes = PlotConfigTransforms.createTransforms(
+            layerConfigs,
+            scaleProviderByAes,
+            mapperProviderByAes,
+            excludeStatVariables = true  // No "stat" vars yet.
+        )
+    }
+
     /**
      * WARN! Side effects - performs modifications deep in specs tree
      */
