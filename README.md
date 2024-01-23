@@ -32,7 +32,7 @@ Embed Lets-Plot charts in [Compose Multiplatform](https://github.com/JetBrains/c
 To learn more see the **[Lets-Plot Skia Frontend](https://github.com/JetBrains/lets-plot-skia)** project at GitHub.
 
 ### JVM and Kotlin/JS
-Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. \ 
+Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. <br>
 To learn more see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
 
 ## "Lets-Plot in SciView" plugin
