@@ -49,7 +49,7 @@ class YOrientationGeomBuildingTest {
             layer = geomLayerStub,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
             coord = CoordProviders.cartesian().let {
-                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain), isHScaleContinuous = false)
+                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain))
                 it.createCoordinateSystem(
                     adjustedDomain = adjustedDomain,
                     clientSize = DoubleVector(xAxisLength, yAxisLength)

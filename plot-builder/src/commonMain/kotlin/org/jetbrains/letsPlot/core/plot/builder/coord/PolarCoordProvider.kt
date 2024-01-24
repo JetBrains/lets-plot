@@ -32,11 +32,13 @@ internal class PolarCoordProvider(
     override val isLinear: Boolean = false
     override val isPolar: Boolean = true
 
+    var isHScaleContinuous: Boolean = true
+
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
     }
 
-    override fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle {
+    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
         val realDomain = domain.flipIf(flipped)
 
         // Domain of a data without any adjustments (i.e. no expand).

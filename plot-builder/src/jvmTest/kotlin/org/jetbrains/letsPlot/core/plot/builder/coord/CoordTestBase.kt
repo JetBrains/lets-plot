@@ -28,7 +28,7 @@ internal open class CoordTestBase {
 
         val displaySize = unitDisplaySize(ratio)
         val domain = this.dataBounds
-        val adjustedDomain = provider.adjustDomain(domain, isHScaleContinuous = true)
+        val adjustedDomain = provider.adjustDomain(domain)
         val adjustedSize = provider.adjustGeomSize(adjustedDomain.xRange(), adjustedDomain.yRange(), displaySize)
         val coordMapper = provider.createCoordinateMapper(adjustedDomain, adjustedSize)
 

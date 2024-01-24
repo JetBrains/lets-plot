@@ -30,7 +30,7 @@ internal abstract class CoordProviderBase(
     /**
      * Reshape and flip the domain if necessary.
      */
-    override fun adjustDomain(domain: DoubleRectangle, isHScaleContinuous: Boolean): DoubleRectangle {
+    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
         val validDomain = domain.let {
             val withLims = DoubleRectangle(
                 xLim ?: domain.xRange(),
