@@ -26,16 +26,19 @@ internal class PolarCoordProvider(
     yLim: DoubleSpan?,
     flipped: Boolean,
     val start: Double,
-    val clockwise: Boolean
+    val clockwise: Boolean,
+    private val isHScaleContinuous: Boolean = true
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean = false
     override val isPolar: Boolean = true
 
-    var isHScaleContinuous: Boolean = true
-
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
+    }
+
+    fun with(isHScaleContinuous: Boolean): PolarCoordProvider {
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous)
     }
 
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
