@@ -77,11 +77,35 @@ object PlotConfigFrontendUtil {
         sharedContinuousDomainY: DoubleSpan? = null,
     ): PlotAssembler {
 
-        // TMP: scale "before facets"
-        val (mapperByAes, scaleMapBeforeFacets) = createMappersAndScalesBeforeFacets(config)
+        // Scale "before facets".
+        val (mappersByAesNP, scalesBeforeFacets) = createMappersAndScalesBeforeFacets(config).let { (mappers, scales) ->
+            // Adjust domains of continuous scales when axis are shared between plots in a composite figure.
+            val scalesAdjusted: Map<Aes<*>, Scale> = scales.mapValues { (aes, scale) ->
+                if (aes == Aes.X && sharedContinuousDomainX != null) {
+                    scale.with().continuousTransform(
+                        Transforms.continuousWithLimits(
+                            scale.transform as ContinuousTransform,
+                            sharedContinuousDomainX.toPair()
+                        )
+                    ).build()
+                } else if (aes == Aes.Y && sharedContinuousDomainY != null) {
+                    scale.with().continuousTransform(
+                        Transforms.continuousWithLimits(
+                            scale.transform as ContinuousTransform,
+                            sharedContinuousDomainY.toPair()
+                        )
+                    ).build()
+                } else {
+                    scale
+                }
+            }
 
-        // Use only Non-positional mappers.
-        val mappersByAesNP = mapperByAes.filterKeys { !Aes.isPositional(it) }
+            // Take only non-positional mappers
+            Pair(
+                mappers.filterKeys { !Aes.isPositional(it) },
+                scalesAdjusted)
+        }
+
 
         // Coord provider
 
@@ -92,8 +116,8 @@ object PlotConfigFrontendUtil {
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
         val coordProvider = CoordConfig.createCoordProvider(
             config.get(Option.Plot.COORD),
-            scaleMapBeforeFacets.getValue(Aes.X).transform,
-            scaleMapBeforeFacets.getValue(Aes.Y).transform,
+            scalesBeforeFacets.getValue(Aes.X).transform,
+            scalesBeforeFacets.getValue(Aes.Y).transform,
             defaultCoordProvider
         )
 
@@ -104,35 +128,15 @@ object PlotConfigFrontendUtil {
             config.layerConfigs,
             config.facets,
             coordProvider,
-            scaleMapBeforeFacets,
+            scalesBeforeFacets,
             mappersByAesNP,
             config.theme,
             config.theme.fontFamilyRegistry,
         )
 
-        val scaleMap: Map<Aes<*>, Scale> = scaleMapBeforeFacets.mapValues { (aes, scale) ->
-            if (aes == Aes.X && sharedContinuousDomainX != null) {
-                scale.with().continuousTransform(
-                    Transforms.continuousWithLimits(
-                        scale.transform as ContinuousTransform,
-                        sharedContinuousDomainX.toPair()
-                    )
-                ).build()
-            } else if (aes == Aes.Y && sharedContinuousDomainY != null) {
-                scale.with().continuousTransform(
-                    Transforms.continuousWithLimits(
-                        scale.transform as ContinuousTransform,
-                        sharedContinuousDomainY.toPair()
-                    )
-                ).build()
-            } else {
-                scale
-            }
-        }
-
         return PlotAssembler(
             layersByTile,
-            scaleMap,
+            scalesBeforeFacets,
             mappersByAesNP,
             config.facets,
             coordProvider,

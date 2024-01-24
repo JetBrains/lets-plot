@@ -25,7 +25,7 @@ internal class AxisLayout(
         geomAreaInsets: Insets
     ): AxisLayoutInfo {
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
-        val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, geomAreaInsets, theme, polar)
+        val layouter = AxisLayouter.create(orientation, breaksProvider, geomAreaInsets, theme, polar)
 
         return layouter.doLayout(axisDomain, axisLength)
     }

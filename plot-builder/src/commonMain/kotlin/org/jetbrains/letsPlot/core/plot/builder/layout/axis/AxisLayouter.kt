@@ -17,9 +17,8 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 
-internal class AxisLayouter constructor(
+internal class AxisLayouter private constructor(
     val orientation: Orientation,
-    private val domainRange: DoubleSpan,
     private val labelsLayout: AxisLabelsLayout
 ) {
 
@@ -30,7 +29,7 @@ internal class AxisLayouter constructor(
         val labelsBounds = labelsInfo.bounds!!
         return AxisLayoutInfo(
             axisLength = axisLength,
-            axisDomain = domainRange,
+            axisDomain = axisDomain, //domainRange,
             orientation = orientation,
             axisBreaks = axisBreaks,
             tickLabelsBounds = labelsBounds,
@@ -50,7 +49,6 @@ internal class AxisLayouter constructor(
     companion object {
         fun create(
             orientation: Orientation,
-            axisDomain: DoubleSpan,
             breaksProvider: AxisBreaksProvider,
             geomAreaInsets: Insets,
             theme: AxisTheme,
@@ -88,7 +86,6 @@ internal class AxisLayouter constructor(
 
             return AxisLayouter(
                 orientation,
-                axisDomain,
                 labelsLayout
             )
         }
