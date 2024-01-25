@@ -5,12 +5,6 @@
 
 package demo.plot.shared.model.component
 
-import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarAssembler
-import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssembler
-import org.jetbrains.letsPlot.core.plot.builder.guide.ColorBarComponent
-import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBreak
-import org.jetbrains.letsPlot.core.plot.builder.guide.LegendComponent
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
@@ -20,8 +14,12 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.arr
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.scale.Scales
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarAssembler
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssembler
+import org.jetbrains.letsPlot.core.plot.builder.guide.ColorBarComponent
+import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBreak
+import org.jetbrains.letsPlot.core.plot.builder.guide.LegendComponent
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 
 open class LegendDemo : SimpleDemoBase() {
 
@@ -64,23 +62,11 @@ open class LegendDemo : SimpleDemoBase() {
         val domain = DoubleSpan(0.0, 4.0)
 
         val mapper = ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
-        val scale = Scales.continuousDomain("color", /*mapper,*/ true)
-            .with()
-//            .lowerLimit(domain.lowerEnd)
-//            .upperLimit(domain.upperEnd)
-            .continuousTransform(
-                Transforms.continuousWithLimits(
-                    Transforms.IDENTITY,
-                    Pair(domain.lowerEnd, domain.upperEnd)
-                )
-            )
-            .build()
 
         val breakValues = List(3) { i -> (i + 1).toDouble() }
         val scaleBreaks = ScaleBreaks(breakValues, breakValues, breakValues.map { "$it" })
         val spec = ColorBarAssembler.createColorBarSpec(
             "Color Bar", domain, scaleBreaks,
-//            scale,
             mapper,
             theme.legend()
         )
