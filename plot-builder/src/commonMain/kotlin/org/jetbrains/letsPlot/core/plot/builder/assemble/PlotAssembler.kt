@@ -87,7 +87,7 @@ class PlotAssembler constructor(
     private val layouter: PlotFigureLayouter
 
     init {
-        require(hasLayers()) { "No layers in plot" }
+//        require(hasLayers()) { "No layers in plot" }
 
         plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap, theme.exponentFormat.superscript)
 
