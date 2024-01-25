@@ -124,13 +124,12 @@ class PlotAssembler constructor(
         )
 
         layouter = PlotFigureLayouter(
-            coreLayersByTile = coreLayersByTile,
-            marginalLayersByTile = marginalLayersByTile,
             frameProviderByTile = frameProviderByTile,
             facets = facets,
             coordProvider = coordProvider,
             hAxisPosition = hAxisPosition,
             vAxisPosition = vAxisPosition,
+            containsLiveMap = containsLiveMap,
             theme = theme,
             legendBoxInfos = legendBoxInfos,
             title = plotTitle,

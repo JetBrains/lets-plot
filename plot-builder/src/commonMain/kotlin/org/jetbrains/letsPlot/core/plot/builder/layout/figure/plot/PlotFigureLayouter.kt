@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -22,13 +21,12 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
 internal class PlotFigureLayouter constructor(
-    private val coreLayersByTile: List<List<GeomLayer>>,
-    private val marginalLayersByTile: List<List<GeomLayer>>,
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val facets: PlotFacets,
     private val coordProvider: CoordProvider,
     private val hAxisPosition: AxisPosition,
     private val vAxisPosition: AxisPosition,
+    private val containsLiveMap: Boolean,
     private val theme: Theme,
     private val legendBoxInfos: List<LegendBoxInfo>,
     private var title: String?,
@@ -36,7 +34,6 @@ internal class PlotFigureLayouter constructor(
     private var caption: String?,
 ) {
     private val flipAxis = coordProvider.flipped
-    private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
     private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
     private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
@@ -115,7 +112,7 @@ internal class PlotFigureLayouter constructor(
         //  - skip X/Y scale training
         //  - ignore coord provider
         //  - plot layout without axes
-        val layoutProviderByTile = coreLayersByTile.map {
+        val layoutProviderByTile = frameProviderByTile.map {
             LiveMapTileLayoutProvider()
         }
         return PlotAssemblerUtil.createPlotLayout(
