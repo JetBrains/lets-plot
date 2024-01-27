@@ -35,7 +35,7 @@ internal class PlotFigureBuildInfo constructor(
      */
     override fun injectLiveMapProvider(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Any) {
         if (containsLiveMap) {
-            val listOfTiles = plotAssembler.coreLayersByTile
+            val listOfTiles = plotAssembler.geomTiles.coreLayersByTile()
             liveMapCursorServiceConfig = f(listOfTiles, processedPlotSpec)
         }
     }

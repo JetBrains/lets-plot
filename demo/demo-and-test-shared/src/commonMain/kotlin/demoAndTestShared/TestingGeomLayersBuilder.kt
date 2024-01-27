@@ -17,7 +17,7 @@ object TestingGeomLayersBuilder {
         val transformed = SpecTransformBackendUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigFrontend.create(transformed) {}
-        return PlotConfigFrontendUtil.createPlotAssembler(config).coreLayersByTile
+        return PlotConfigFrontendUtil.createPlotGeomTiles(config).coreLayersByTile()
     }
 
     fun createSingleTileGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {

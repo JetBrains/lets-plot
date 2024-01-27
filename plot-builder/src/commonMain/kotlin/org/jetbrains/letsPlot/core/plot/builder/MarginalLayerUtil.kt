@@ -46,7 +46,7 @@ object MarginalLayerUtil {
                 layersByTile,
                 marginScaleXProto,
                 marginScaleYProto,
-                PlotFacets.undefined()
+                PlotFacets.UNDEFINED
             )
 
             // All tiles share the same domain.

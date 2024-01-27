@@ -150,7 +150,7 @@ class GeoConfigWithStatApplyingTest {
             """.trimMargin()
         )
             .assertValues("Name", listOf("A", "B", "A", "B"))
-             // Averages will be obtained for numeric or the first in the data for non-numeric values:
+            // Averages will be obtained for numeric or the first in the data for non-numeric values:
             .assertValues("Registered", listOf(138.0, 138.0, 138.0, 138.0))
             .assertValues("Full name", listOf("City A", "City A", "City A", "City A"))
 
@@ -179,7 +179,7 @@ class GeoConfigWithStatApplyingTest {
 
     private fun getGeomLayer(spec: String): GeomLayer {
         val config = transformToClientPlotConfig(spec)
-        val layers = PlotConfigFrontendUtil.createPlotAssembler(config).coreLayersByTile.single()
+        val layers = PlotConfigFrontendUtil.createPlotGeomTiles(config).coreLayersByTile().single()
         val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
         assertTrue(geomLayers.size == 1, "No layers")
         return geomLayers.single()

@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.spec.front.tiles.SimplePlotGeomTiles
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
@@ -84,11 +85,14 @@ class BarPlotResizeDemo private constructor(
             .build(data, scaleByAes, scaleMappersNP)
 
 
-        val assembler = PlotAssembler.demoAndTest(
+        val geomTiles = SimplePlotGeomTiles.demoAndTest(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
+        )
+        val assembler = PlotAssembler.demoAndTest(
+            geomTiles,
             DefaultTheme.minimal2()
         )
 

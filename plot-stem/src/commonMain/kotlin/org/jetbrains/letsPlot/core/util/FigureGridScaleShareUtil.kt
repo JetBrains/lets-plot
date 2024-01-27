@@ -6,9 +6,6 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
-import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
@@ -21,35 +18,21 @@ internal object FigureGridScaleShareUtil {
     ): Pair<List<DoubleSpan?>, List<DoubleSpan?>> {
 
         // Collect all continuous domains in grid.
-        val domainXYByElement = elementConfigs.map {
+        val continuousXYDomainByElement = elementConfigs.map {
             when {
                 isApplicableElement(it) -> {
                     it as PlotConfigFrontend
-                    val plotAssembler = PlotConfigFrontendUtil.createPlotAssembler(it)
-                    val transformedDomainsByTile = plotAssembler.rawXYTransformedDomainsByTile
-                    val transformesByTile = plotAssembler.xyTransformByTile
-
-                    transformedDomainsByTile?.let {
-                        // ToDo: tiles could have different X/Y scales / transforms
-                        // Assume just 1 tile (no facets)
-                        val transformedDomainX = transformedDomainsByTile[0].first
-                        val transformedDomainY = transformedDomainsByTile[0].second
-                        val scaleXTransform = transformesByTile!![0].first
-                        val scaleYTransform = transformesByTile[0].second
-
-                        val domainX = inverseTransformIfContinuousOrNull(transformedDomainX, scaleXTransform)
-                        val domainY = inverseTransformIfContinuousOrNull(transformedDomainY, scaleYTransform)
-                        Pair(domainX, domainY)
-                    }
+                    val plotGeomTiles = PlotConfigFrontendUtil.createPlotGeomTiles(it)
+                    plotGeomTiles.overallXYContinuousDomains()
                 }
 
-                else -> null
+                else -> Pair(null, null)
             }
         }
 
         // Shared X-axis
         val indicesWithSharedXAxis = gridLayout.indicesWithSharedXAxis(elementConfigs.size)
-        val domainXByElement = domainXYByElement.map { it?.first }
+        val domainXByElement = continuousXYDomainByElement.map { it.first }
         val jointDomainXByElement = joinDomains(
             domainByElement = domainXByElement,
             groupIndicesList = indicesWithSharedXAxis,
@@ -58,7 +41,7 @@ internal object FigureGridScaleShareUtil {
 
         // Shared Y-axis
         val indicesWithSharedYAxis = gridLayout.indicesWithSharedYAxis(elementConfigs.size)
-        val domainYByElement = domainXYByElement.map { it?.second }
+        val domainYByElement = continuousXYDomainByElement.map { it.second }
         val jointDomainYByElement = joinDomains(
             domainByElement = domainYByElement,
             groupIndicesList = indicesWithSharedYAxis,
@@ -74,24 +57,6 @@ internal object FigureGridScaleShareUtil {
             it is PlotConfigFrontend &&
                     !(it.facets.isDefined || it.containsLiveMap)
         } ?: false
-    }
-
-    private fun inverseTransformIfContinuousOrNull(
-        span: DoubleSpan,
-        transform: Transform,
-    ): DoubleSpan? {
-        val doubleSpan: DoubleSpan? = if (transform is ContinuousTransform) {
-            val v0 = transform.applyInverse(span.lowerEnd)
-            val v1 = transform.applyInverse(span.upperEnd)
-            if (SeriesUtil.allFinite(v0, v1)) {
-                DoubleSpan(v0!!, v1!!)
-            } else {
-                null
-            }
-        } else {
-            null
-        }
-        return doubleSpan
     }
 
     private fun joinDomains(

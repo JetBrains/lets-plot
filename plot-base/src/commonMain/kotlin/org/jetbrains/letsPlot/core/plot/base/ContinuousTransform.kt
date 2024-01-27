@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 interface ContinuousTransform : Transform {
     override fun isInDomain(v: Any?): Boolean {
@@ -19,4 +20,14 @@ interface ContinuousTransform : Transform {
     fun createApplicableDomain(middle: Double? = null): DoubleSpan
     fun toApplicableDomain(range: DoubleSpan): DoubleSpan
     fun definedLimits(): Pair<Double?, Double?> = null to null
+
+    fun applyInverse(span: DoubleSpan): DoubleSpan? {
+        val v0 = applyInverse(span.lowerEnd)
+        val v1 = applyInverse(span.upperEnd)
+        return if (SeriesUtil.allFinite(v0, v1)) {
+            DoubleSpan(v0!!, v1!!)
+        } else {
+            null
+        }
+    }
 }

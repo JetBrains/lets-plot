@@ -58,9 +58,7 @@ abstract class PlotFacets {
         const val DEF_ORDER_DIR = 0 // no ordering
         val DEF_FORMATTER: (Any) -> String = { it.toString() }
 
-        fun undefined(): PlotFacets {
-            return FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), 1, 1)
-        }
+        val UNDEFINED: PlotFacets = FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), 1, 1)
 
         fun dataByLevelTuple(
             data: DataFrame,

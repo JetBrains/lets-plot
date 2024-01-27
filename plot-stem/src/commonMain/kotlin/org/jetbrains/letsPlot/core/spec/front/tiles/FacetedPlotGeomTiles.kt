@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -17,35 +18,50 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 
-internal class FacetedPlotGeomTilesBuilder private constructor(
+internal class FacetedPlotGeomTiles private constructor(
     private val layersByTile: List<List<GeomLayer>>,
+    scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
+    mappersNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
     coordProvider: CoordProvider,
-    mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
-    theme: Theme,
-    fontRegistry: FontFamilyRegistry,
-    isLiveMap: Boolean
-) : PlotGeomTilesBuilder(
+    containsLiveMap: Boolean
+) : PlotGeomTilesBase(
+    scaleByAesBeforeFacets,
+    mappersNP,
     coordProvider,
-    mappersByAesNP,
-    theme,
-    fontRegistry,
-    isLiveMap
+    containsLiveMap
 ) {
+    override val isSingleTile: Boolean = false
+
+    private val scalesByTile: List<Map<Aes<*>, Scale>> = layersByTile.map {
+        // ToDo: different set of scales for each tile
+        scaleByAesBeforeFacets
+    }
 
     override fun layersByTile(): List<List<GeomLayer>> {
         return layersByTile
     }
+
+    override fun scalesByTile(): List<Map<Aes<*>, Scale>> {
+        return scalesByTile
+    }
+
+    override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
+        check(!containsLiveMap) { "Not applicable to LiveMap." }
+        // ToDo: implement if needed
+        return Pair(null, null)
+    }
+
 
     companion object {
         fun create(
             layerConfigs: List<LayerConfig>,
             facets: PlotFacets,
             scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
-            coordProvider: CoordProvider,
             mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>,
+            coordProvider: CoordProvider,
             theme: Theme,
             fontRegistry: FontFamilyRegistry
-        ): FacetedPlotGeomTilesBuilder {
+        ): FacetedPlotGeomTiles {
 
             ///////////////////////////////////
             // ToDo: scaleMap can be different for different tiles.
@@ -56,14 +72,14 @@ internal class FacetedPlotGeomTilesBuilder private constructor(
                 PlotGeomTilesUtil.buildLayerScaleMap(it, scaleByAesBeforeFacets)
             }
 
-            val isLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+            val containsLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
 
             val geomInteractionByLayer = PlotGeomTilesUtil.geomInteractionByLayer(
                 layerConfigs,
                 scaleMapByLayer,
                 coordProvider,
                 theme,
-                isLiveMap
+                containsLiveMap
             )
 
             val geomLayerBuildersByLayer = layerConfigs.mapIndexed { layerIndex, layerConfig ->
@@ -106,15 +122,12 @@ internal class FacetedPlotGeomTilesBuilder private constructor(
                 }
             }
 
-
-
-            return FacetedPlotGeomTilesBuilder(
+            return FacetedPlotGeomTiles(
                 geomLayersByTile,
-                coordProvider,
+                scaleByAesBeforeFacets,
                 mappersByAesNP,
-                theme,
-                fontRegistry,
-                isLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+                coordProvider,
+                containsLiveMap
             )
         }
     }

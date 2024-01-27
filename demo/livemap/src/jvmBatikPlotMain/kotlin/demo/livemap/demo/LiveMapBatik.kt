@@ -8,15 +8,12 @@ package demo.livemap.demo
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
 import demo.livemap.plotDemo.LiveMap
 
-object LiveMapBatik {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(LiveMap()) {
-            PlotSpecsDemoWindowBatik(
-                "LiveMap (Batik)",
-                plotSpecList(),
-                maxCol = 4
-            ).open()
-        }
+fun main(args: Array<String>) {
+    with(LiveMap()) {
+        PlotSpecsDemoWindowBatik(
+            "LiveMap (Batik)",
+            plotSpecList(),
+            maxCol = 4
+        ).open()
     }
 }

@@ -98,7 +98,7 @@ class CompositeFigureConfig constructor(
                             plotSize = null,
                             plotMaxWidth = null,
                             plotPreferredWidth = null,
-                            facets = PlotFacets.undefined(),
+                            facets = PlotFacets.UNDEFINED,
                             containsLiveMap = false
                         )
                     } else {

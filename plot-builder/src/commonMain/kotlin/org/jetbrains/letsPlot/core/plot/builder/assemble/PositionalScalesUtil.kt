@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotUtil
 import kotlin.math.max
 import kotlin.math.min
 
-internal object PositionalScalesUtil {
+object PositionalScalesUtil {
     /**
      * Computers X/Y ranges of transformed input series.
      *

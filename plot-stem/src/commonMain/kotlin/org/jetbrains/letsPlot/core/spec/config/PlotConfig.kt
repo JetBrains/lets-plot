@@ -111,7 +111,7 @@ abstract class PlotConfig(
             }
             facetConfig.createFacets(dataByLayer)
         } else {
-            PlotFacets.undefined()
+            PlotFacets.UNDEFINED
         }
     }
 

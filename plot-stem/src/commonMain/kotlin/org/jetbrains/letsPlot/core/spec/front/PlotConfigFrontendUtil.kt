@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.spec.Option
@@ -20,7 +21,7 @@ import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
 import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
-import org.jetbrains.letsPlot.core.spec.front.tiles.PlotGeomTilesBuilder
+import org.jetbrains.letsPlot.core.spec.front.tiles.PlotGeomTilesBase
 
 object PlotConfigFrontendUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -68,12 +69,11 @@ object PlotConfigFrontendUtil {
         return Pair(mappersByAes, scaleByAes)
     }
 
-    fun createPlotAssembler(
+    fun createPlotGeomTiles(
         config: PlotConfigFrontend,
         sharedContinuousDomainX: DoubleSpan? = null,
         sharedContinuousDomainY: DoubleSpan? = null,
-    ): PlotAssembler {
-
+    ): PlotGeomTiles {
         // Scale "before facets".
         val (mappersByAesNP, scaleByAesBeforeFacets) =
             createMappersAndScalesBeforeFacets(config).let { (mappers, scales) ->
@@ -105,9 +105,7 @@ object PlotConfigFrontendUtil {
                 )
             }
 
-
         // Coord provider
-
         val preferredCoordProvider: CoordProvider? = config.layerConfigs.firstNotNullOfOrNull {
             it.geomProto.preferredCoordinateSystem(it)
         }
@@ -120,9 +118,7 @@ object PlotConfigFrontendUtil {
             defaultCoordProvider
         )
 
-        // Geom layers
-
-        val geomTilesBuilder = PlotGeomTilesBuilder.create(
+        return PlotGeomTilesBase.create(
             config.layerConfigs,
             config.facets,
             coordProvider,
@@ -131,15 +127,22 @@ object PlotConfigFrontendUtil {
             config.theme,
             config.theme.fontFamilyRegistry,
         )
+    }
 
-        val layersByTile = geomTilesBuilder.layersByTile()
+    fun createPlotAssembler(
+        config: PlotConfigFrontend,
+        sharedContinuousDomainX: DoubleSpan? = null,
+        sharedContinuousDomainY: DoubleSpan? = null,
+    ): PlotAssembler {
 
+        val plotGeomTiles = createPlotGeomTiles(
+            config,
+            sharedContinuousDomainX,
+            sharedContinuousDomainY
+        )
         return PlotAssembler(
-            layersByTile,
-            scaleByAesBeforeFacets,
-            mappersByAesNP,
+            plotGeomTiles,
             config.facets,
-            coordProvider,
             config.xAxisPosition,
             config.yAxisPosition,
             config.theme,

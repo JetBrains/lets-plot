@@ -5,25 +5,38 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 
-abstract class PlotGeomTilesBuilder(
-    private val coordProvider: CoordProvider,
-    private val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
-    private val theme: Theme,
-    private val fontRegistry: FontFamilyRegistry,
-    private val isLiveMap: Boolean
-) {
+abstract class PlotGeomTilesBase(
+    scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
+    override val mappersNP: Map<Aes<*>, ScaleMapper<*>>,
+    override val coordProvider: CoordProvider,
+    override val containsLiveMap: Boolean
+) : PlotGeomTiles {
 
-    abstract fun layersByTile(): List<List<GeomLayer>>
+    override val xyContinuousTransforms: Pair<Transform?, Transform?> = Pair(
+        scaleByAesBeforeFacets.getValue(Aes.X).transform.let { if (it is ContinuousTransform) it else null },
+        scaleByAesBeforeFacets.getValue(Aes.Y).transform.let { if (it is ContinuousTransform) it else null }
+    )
+
+    override fun coreLayersByTile(): List<List<GeomLayer>> {
+        return layersByTile().map { layers ->
+            layers.filterNot { it.isMarginal }
+        }
+    }
+
+    override fun marginalLayersByTile(): List<List<GeomLayer>> {
+        return layersByTile().map { layers ->
+            layers.filter { it.isMarginal }.filterNot { it.isLiveMap }
+        }
+    }
 
     companion object {
         fun create(
@@ -34,24 +47,24 @@ abstract class PlotGeomTilesBuilder(
             mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
             theme: Theme,
             fontRegistry: FontFamilyRegistry
-        ): PlotGeomTilesBuilder {
+        ): PlotGeomTilesBase {
             require(hasLayers(layerConfigs)) { "No layers in plot" }
             return when {
-                facets.isDefined && isFacettable(layerConfigs, facets) -> FacetedPlotGeomTilesBuilder.create(
+                facets.isDefined && isFacettable(layerConfigs, facets) -> FacetedPlotGeomTiles.create(
                     layerConfigs,
                     facets,
                     scaleByAesBeforeFacets,
-                    coordProvider,
                     mappersByAesNP,
+                    coordProvider,
                     theme,
                     fontRegistry,
                 )
 
-                else -> SimplePlotGeomTilesBuilder.create(
+                else -> SimplePlotGeomTiles.create(
                     layerConfigs,
                     scaleByAesBeforeFacets,
-                    coordProvider,
                     mappersByAesNP,
+                    coordProvider,
                     theme,
                     fontRegistry,
                 )

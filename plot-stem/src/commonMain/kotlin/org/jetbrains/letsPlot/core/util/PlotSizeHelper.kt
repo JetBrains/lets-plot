@@ -155,7 +155,7 @@ object PlotSizeHelper {
             singlePlotSize(
                 bunchItem.featureSpec,
                 null, null, null,
-                PlotFacets.undefined(), false
+                PlotFacets.UNDEFINED, false
             )
         }
     }
