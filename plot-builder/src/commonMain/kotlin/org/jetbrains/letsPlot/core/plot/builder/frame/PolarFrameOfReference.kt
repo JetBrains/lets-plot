@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
+import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.PolarBreaksData
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
@@ -166,7 +167,7 @@ internal class PolarFrameOfReference(
         axisInfo: AxisLayoutInfo,
         scaleBreaks: ScaleBreaks,
         axisTheme: AxisTheme
-    ): Pair<AxisComponent.TickLabelAdjustments, AxisComponent.BreaksData> {
+    ): Pair<AxisComponent.TickLabelAdjustments, PolarBreaksData> {
         val labelAdjustments = AxisComponent.TickLabelAdjustments(
             orientation = axisInfo.orientation,
             horizontalAnchor = axisInfo.tickLabelHorizontalAnchor,
@@ -235,7 +236,7 @@ internal class PolarFrameOfReference(
 
     companion object {
         private fun buildAxis(
-            breaksData: AxisComponent.BreaksData,
+            breaksData: PolarBreaksData,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,

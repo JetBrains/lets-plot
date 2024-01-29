@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
@@ -25,129 +24,129 @@ object PolarAxisUtil {
         orientation: Orientation,
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
-    ): AxisComponent.BreaksData {
-        check(scaleBreaks.transformedValues.size == scaleBreaks.labels.size) {
-            "Breaks and labels must have the same size"
-        }
-
-        val majorDomainBreaks = scaleBreaks.transformedValues
-        val majorLabels = scaleBreaks.labels
-        val minorDomainBreaks = minorDomainBreaks(majorDomainBreaks)
-
-        val majorClientBreaks = buildBreaks(majorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-        val minorClientBreaks = buildBreaks(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-
-        val majorGrid = buildGrid(majorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-        val minorGrid = buildGrid(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-
-        // For coord_polar squash first and last labels into one to avoid overlapping.
-        val labels = if (
-            majorClientBreaks.size > 1 &&
-            majorClientBreaks.first().subtract(majorClientBreaks.last()).length() <= 3.0
-        ) {
-            val labels = majorLabels.toMutableList()
-            labels[labels.lastIndex] = "${labels[labels.lastIndex]}/${labels[0]}"
-            labels[0] = ""
-            labels
-        } else {
-            majorLabels
-        }
-
-        return AxisComponent.BreaksData(
-            majorBreaks = majorClientBreaks,
-            minorBreaks = minorClientBreaks,
-            majorLabels = labels,
-            majorGrid = majorGrid,
-            minorGrid = minorGrid
-        )
+    ): PolarBreaksData {
+        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, axisTheme, labelAdjustments).breaksData()
     }
 
-    private fun toClient(v: DoubleVector, coordinateSystem: CoordinateSystem, flipAxis: Boolean): DoubleVector {
-        return coordinateSystem.toClient(v.flipIf(flipAxis)) ?: error("Unexpected null value")
-    }
 
-    private fun buildRadiusBreaks(
-        breaks: List<Double>,
-        domain: DoubleRectangle,
-        coordinateSystem: PolarCoordinateSystem,
-        flipAxis: Boolean
-    ): List<DoubleVector> {
-        val center = coordinateSystem.toClient(domain.origin)!!
-        return breaks
-            .map { breakValue -> DoubleVector(domain.xRange().lowerEnd, breakValue) }
-            .map { toClient(it, coordinateSystem, flipAxis) }
-            // revert angle to align breaks vertically, or they will not match the grid (or even collapse into one)
-            .map { it.rotateAround(center, coordinateSystem.startAngle * coordinateSystem.direction) }
-    }
+    private class Helper(
+        val scaleBreaks: ScaleBreaks,
+        val coord: PolarCoordinateSystem,
+        val gridDomain: DoubleRectangle,
+        val flipAxis: Boolean,
+        val orientation: Orientation,
+        val axisTheme: AxisTheme,
+        val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
+    ) {
+        fun breaksData(
+        ): PolarBreaksData {
+            check(scaleBreaks.transformedValues.size == scaleBreaks.labels.size) {
+                "Breaks and labels must have the same size"
+            }
 
-    private fun buildAngleBreaks(
-        breaks: List<Double>,
-        domain: DoubleRectangle,
-        coordinateSystem: PolarCoordinateSystem,
-        flipAxis: Boolean
-    ): List<DoubleVector> {
-        val center = coordinateSystem.toClient(domain.origin)!!
-        return breaks
-            .map { DoubleVector(it, domain.yRange().upperEnd) }
-            .map { toClient(it, coordinateSystem, flipAxis) }
-            .map { it.subtract(center).mul(1.05).add(center) }
-    }
+            val majorDomainBreaks = scaleBreaks.transformedValues
+            val majorLabels = scaleBreaks.labels
+            val minorDomainBreaks = minorDomainBreaks(majorDomainBreaks)
 
-    private fun buildBreaks(
-        breaks: List<Double>,
-        domain: DoubleRectangle,
-        coordinateSystem: PolarCoordinateSystem,
-        flipAxis: Boolean,
-        horizontal: Boolean
-    ): List<DoubleVector> {
-        return when (horizontal) {
-            true -> buildAngleBreaks(breaks, domain, coordinateSystem, flipAxis)
-            false -> buildRadiusBreaks(breaks, domain, coordinateSystem, flipAxis)
-        }
-    }
+            val majorClientBreaks = buildBreaks(majorDomainBreaks)
+            val minorClientBreaks = buildBreaks(minorDomainBreaks)
 
-    private fun buildAngleGrid(
-        breaks: List<Double>,
-        gridDomain: DoubleRectangle,
-        coordinateSystem: CoordinateSystem,
-        flipAxis: Boolean,
-    ): List<List<DoubleVector>> {
-        return breaks
-            .filter { it in gridDomain.xRange() }
-            .map { breakCoord ->
-            listOf(
-                toClient(DoubleVector(breakCoord, gridDomain.yRange().lowerEnd), coordinateSystem, flipAxis),
-                toClient(DoubleVector(breakCoord, gridDomain.yRange().upperEnd), coordinateSystem, flipAxis)
+            val majorGrid = buildGrid(majorDomainBreaks)
+            val minorGrid = buildGrid(minorDomainBreaks)
+
+            // For coord_polar squash first and last labels into one to avoid overlapping.
+            val labels = if (
+                majorClientBreaks.size > 1 &&
+                majorClientBreaks.first().subtract(majorClientBreaks.last()).length() <= 3.0
+            ) {
+                val labels = majorLabels.toMutableList()
+                labels[labels.lastIndex] = "${labels[labels.lastIndex]}/${labels[0]}"
+                labels[0] = ""
+                labels
+            } else {
+                majorLabels
+            }
+
+            val center = toClient(gridDomain.origin)
+            return PolarBreaksData(
+                center = center,
+                startAngle = coord.startAngle,
+                majorBreaks = majorClientBreaks,
+                minorBreaks = minorClientBreaks,
+                majorLabels = labels,
+                majorGrid = majorGrid,
+                minorGrid = minorGrid
             )
         }
-    }
 
-    private fun buildRadiusGrid(
-        breaks: List<Double>,
-        gridDomain: DoubleRectangle,
-        coordinateSystem: CoordinateSystem,
-        flipAxis: Boolean,
-    ): List<List<DoubleVector>> {
-        return (breaks + gridDomain.yRange().upperEnd)
-            .filter { it in gridDomain.yRange() }
-            .map {
-                listOf(
-                    DoubleVector(gridDomain.xRange().lowerEnd, it),
-                    DoubleVector(gridDomain.xRange().upperEnd, it)
-                )
-            }.map { line -> AdaptiveResampler.resample(line, 0.5) { toClient(it, coordinateSystem, flipAxis) } }
-    }
-
-    private fun buildGrid(
-        breaks: List<Double>,
-        gridDomain: DoubleRectangle,
-        coordinateSystem: CoordinateSystem,
-        flipAxis: Boolean,
-        horizontal: Boolean
-    ): List<List<DoubleVector>> {
-        return when (horizontal) {
-            true -> buildAngleGrid(breaks, gridDomain, coordinateSystem, flipAxis)
-            false -> buildRadiusGrid(breaks, gridDomain, coordinateSystem, flipAxis)
+        private fun toClient(v: DoubleVector): DoubleVector {
+            return coord.toClient(v.flipIf(flipAxis)) ?: error("Unexpected null value")
         }
+
+        private fun buildRadiusBreaks(breaks: List<Double>): List<DoubleVector> {
+            val center = coord.toClient(gridDomain.origin)!!
+            return breaks
+                .map { breakValue -> DoubleVector(gridDomain.xRange().lowerEnd, breakValue) }
+                .map { toClient(it) }
+                // revert angle to align breaks vertically, or they will not match the grid (or even collapse into one)
+                .map { it.rotateAround(center, coord.startAngle * coord.direction) }
+        }
+
+        private fun buildAngleBreaks(
+            breaks: List<Double>
+        ): List<DoubleVector> {
+            val center = coord.toClient(gridDomain.origin)!!
+            return breaks
+                .map { DoubleVector(it, gridDomain.yRange().upperEnd) }
+                .map { toClient(it) }
+                .map { it.subtract(center).mul(1.05).add(center) }
+        }
+
+        private fun buildBreaks(breaks: List<Double>): List<DoubleVector> {
+            return when (orientation.isHorizontal) {
+                true -> buildAngleBreaks(breaks)
+                false -> buildRadiusBreaks(breaks)
+            }
+        }
+
+        private fun buildAngleGrid(breaks: List<Double>): List<List<DoubleVector>> {
+            return breaks
+                .filter { it in gridDomain.xRange() }
+                .map { breakCoord ->
+                    listOf(
+                        toClient(DoubleVector(breakCoord, gridDomain.yRange().lowerEnd)),
+                        toClient(DoubleVector(breakCoord, gridDomain.yRange().upperEnd))
+                    )
+                }
+        }
+
+        private fun buildRadiusGrid(breaks: List<Double>): List<List<DoubleVector>> {
+            return (breaks + gridDomain.yRange().upperEnd)
+                .filter { it in gridDomain.yRange() }
+                .map {
+                    listOf(
+                        DoubleVector(gridDomain.xRange().lowerEnd, it),
+                        DoubleVector(gridDomain.xRange().upperEnd, it)
+                    )
+                }.map { line -> AdaptiveResampler.resample(line, 0.5) { toClient(it) } }
+        }
+
+        private fun buildGrid(breaks: List<Double>): List<List<DoubleVector>> {
+            return when (orientation.isHorizontal) {
+                true -> buildAngleGrid(breaks)
+                false -> buildRadiusGrid(breaks)
+            }
+        }
+
     }
+
+    class PolarBreaksData(
+        val center: DoubleVector,
+        val startAngle: Double,
+        val majorBreaks: List<DoubleVector>,
+        val majorLabels: List<String>,
+        val minorBreaks: List<DoubleVector>,
+        val majorGrid: List<List<DoubleVector>>,
+        val minorGrid: List<List<DoubleVector>>,
+    )
 }

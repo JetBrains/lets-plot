@@ -6,15 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
+import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
@@ -22,7 +21,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 class PolarAxisComponent(
     private val length: Double,
     private val orientation: Orientation,
-    private val breaksData: AxisComponent.BreaksData,
+    private val breaksData: PolarAxisUtil.PolarBreaksData,
     private val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
@@ -38,16 +37,16 @@ class PolarAxisComponent(
 
         // Axis line
         if (!hideAxisBreaks && axisTheme.showLine()) {
-            if (orientation.isHorizontal) {
-                val cx = length / 2
-                val cy = length / 2
-                val circle = SvgCircleElement(cx, cy, length / 2).apply {
-                    strokeWidth().set(gridTheme.majorLineWidth())
-                    strokeColor().set(gridTheme.majorLineColor())
-                    fillColor().set(Color.TRANSPARENT)
-                }
-                rootElement.children().add(circle)
-            }
+            //if (orientation.isHorizontal) {
+            //    val cx = length / 2
+            //    val cy = length / 2
+            //    val circle = SvgCircleElement(cx, cy, length / 2).apply {
+            //        strokeWidth().set(gridTheme.majorLineWidth())
+            //        strokeColor().set(gridTheme.majorLineColor())
+            //        fillColor().set(Color.TRANSPARENT)
+            //    }
+            //    rootElement.children().add(circle)
+            //}
         }
 
         // Axis
