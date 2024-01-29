@@ -651,6 +651,17 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
                         format=format)
 
 
+def _is_color_scale(aesthetic):
+    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
+    if isinstance(aesthetic, str):
+        is_color_scale = aesthetic in color_aesthetics
+    elif isinstance(aesthetic, list):
+        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    else:
+        is_color_scale = False
+    return is_color_scale
+
+
 #
 # Scale for continuous data
 #
@@ -658,6 +669,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
 def scale_continuous(aesthetic, *,
                      name=None, breaks=None, labels=None, lablim=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None,
+                     scale_mapper_kind=None,
                      **kwargs):
     """
     General purpose scale for continuous data.
@@ -695,6 +707,11 @@ def scale_continuous(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient' for color scale
+        The type of color scale.
+    kwargs :
+        Additional parameters for the specified scale type.
 
     Returns
     -------
@@ -721,15 +738,10 @@ def scale_continuous(aesthetic, *,
             ggsize(600, 200)
 
     """
-    color_aesthetics = ['color', 'fill', 'paint_a', 'paint_b', 'paint_c']
-    if isinstance(aesthetic, str):
-        is_color_scale = aesthetic in color_aesthetics
-    elif isinstance(aesthetic, list):
-        is_color_scale = set(aesthetic).issubset(color_aesthetics)
+    if _is_color_scale(aesthetic):
+        scale_mapper_kind = 'color_gradient' if scale_mapper_kind is None else scale_mapper_kind
     else:
-        is_color_scale = False
-
-    scale_mapper_kind = 'color_gradient' if is_color_scale else None
+        scale_mapper_kind = None
 
     return _scale(aesthetic,
                   name=name,
@@ -747,17 +759,15 @@ def scale_continuous(aesthetic, *,
                   **kwargs)
 
 
-def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None,
-                          limits=None, na_value=None, guide=None, trans=None, format=None):
+def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
+                          limits=None, na_value=None, guide=None, trans=None, format=None,
+                          scale_mapper_kind=None,
+                          **kwargs):
     """
-    Define smooth color gradient between two colors for `fill` aesthetic.
+    Color scale for `fill` aesthetic and continuous data.
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -786,15 +796,17 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient'
+        The type of color scale.
+    kwargs :
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
 
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for `fill` aesthetic.
 
     Examples
     --------
@@ -813,7 +825,6 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 
     """
     return scale_continuous('fill',
-                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -822,20 +833,20 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format)
+                            format=format,
+                            scale_mapper_kind=scale_mapper_kind,
+                            **kwargs)
 
 
-def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
+def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None,
+                           scale_mapper_kind=None,
+                           **kwargs):
     """
-    Define smooth color gradient between two colors for `color` aesthetic.
+    Color scale for `color` aesthetic and continuous data.
 
     Parameters
     ----------
-    low : str
-        Color for low end of gradient.
-    high : str
-        Color for high end of gradient.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -864,15 +875,16 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_gradient'
+        The type of color scale.
+    kwargs :
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define smooth gradient between two colors (defined by low and high) for `color` aesthetic.
 
     Examples
     --------
@@ -889,7 +901,6 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 
     """
     return scale_continuous('color',
-                            low=low, high=high,
                             name=name,
                             breaks=breaks,
                             labels=labels,
@@ -898,7 +909,9 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
                             na_value=na_value,
                             guide=guide,
                             trans=trans,
-                            format=format)
+                            format=format,
+                            scale_mapper_kind=scale_mapper_kind,
+                            **kwargs)
 
 
 #
@@ -1922,7 +1935,9 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
 def scale_discrete(aesthetic, *,
                    direction=None,
-                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+                   name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                   scale_mapper_kind=None,
+                   **kwargs):
     """
     General purpose scale for discrete data.
     Use it to adjust most common properties of a default scale for given aesthetics.
@@ -1961,6 +1976,11 @@ def scale_discrete(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer' for color scale
+        The type of color scale.
+    kwargs :
+        Additional parameters for the specified scale type.
 
     Returns
     -------
@@ -1989,6 +2009,9 @@ def scale_discrete(aesthetic, *,
             scale_discrete(aesthetic=['color', 'fill'], guide='none')
 
     """
+    if not _is_color_scale(aesthetic):
+        scale_mapper_kind = None
+
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -2001,19 +2024,22 @@ def scale_discrete(aesthetic, *,
                   format=format,
                   #
                   direction=direction,
-                  discrete=True)
+                  discrete=True,
+                  scale_mapper_kind=scale_mapper_kind,
+                  **kwargs)
 
 
 def scale_fill_discrete(direction=None,
-                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+                        name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                        scale_mapper_kind=None,
+                        **kwargs):
     """
-    Qualitative colors scale for `fill` aesthetic.
-    Defaults to the Brewer 'Set1' palette.
+    Color scale for `fill` aesthetic and discrete data.
 
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by original palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2042,15 +2068,16 @@ def scale_fill_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer'
+        The type of color scale.
+    kwargs :
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Examples
     --------
@@ -2079,19 +2106,22 @@ def scale_fill_discrete(direction=None,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
-                          format=format)
+                          format=format,
+                          scale_mapper_kind=scale_mapper_kind,
+                          **kwargs)
 
 
 def scale_color_discrete(direction=None,
-                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None):
+                         name=None, breaks=None, labels=None, lablim=None, limits=None, na_value=None, guide=None, format=None,
+                         scale_mapper_kind=None,
+                         **kwargs):
     """
-    Qualitative colors for `color` aesthetic.
-    Defaults to the Brewer 'Set1' palette.
+    Color scale for `color` aesthetic and discrete data.
 
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by original palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2120,15 +2150,16 @@ def scale_color_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey',
+        'color_brewer', 'color_cmap'}, default='color_brewer'
+        The type of color scale.
+    kwargs:
+        Additional parameters for the specified scale type.
 
     Returns
     -------
     `FeatureSpec`
         Scale specification.
-
-    Notes
-    -----
-    Define qualitative color scale with evenly spaced hues for `color` aesthetic.
 
     Examples
     --------
@@ -2157,7 +2188,9 @@ def scale_color_discrete(direction=None,
                           limits=limits,
                           na_value=na_value,
                           guide=guide,
-                          format=format)
+                          format=format,
+                          scale_mapper_kind=scale_mapper_kind,
+                          **kwargs)
 
 
 def scale_grey(aesthetic, *,
