@@ -49,6 +49,7 @@ class SegmentGeom : GeomBase() {
             val y = finiteOrNull(p.y()) ?: continue
             val xend = finiteOrNull(p.xend()) ?: continue
             val yend = finiteOrNull(p.yend()) ?: continue
+
             val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
             val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
@@ -71,9 +72,11 @@ class SegmentGeom : GeomBase() {
             val startPoint = pointOnLine(clientStart, clientEnd, startOffset)
             val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
 
+            // draw segment
             val line = helper.createLine(startPoint, endPoint, p) /*{ point: DoubleVector -> point } */?: continue
             root.add(line)
 /*
+            // tooltip
             targetCollector.addPath(
                 listOf(
                     // without additional offsets
@@ -86,24 +89,18 @@ class SegmentGeom : GeomBase() {
                 )
             )
 */
+            // add arrows
             arrowSpec?.let { arrowSpec ->
+                // Add offset by geometry width
                 val arrowOffset = (strokeWidth / 2) / sin(arrowSpec.angle)
-                if (arrowSpec.isOnLastEnd) {
-                    ArrowSpec.createArrowAtEnd(
-                        p,
-                        start = startPoint,
-                        end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset),
-                        arrowSpec
-                    )?.let(root::add)
-                }
-                if (arrowSpec.isOnFirstEnd) {
-                    ArrowSpec.createArrowAtEnd(
-                        p,
-                        start = endPoint,
-                        end = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset),
-                        arrowSpec
-                    )?.let(root::add)
-                }
+                val start = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
+                val end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
+
+                ArrowSpec.createArrows(
+                    p,
+                    listOf(start, end),
+                    arrowSpec
+                ).forEach(root::add)
             }
         }
     }
