@@ -6,10 +6,10 @@
 package demo.plot.batik.plotConfig
 
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
-import demo.plot.common.model.plotConfig.Curve
+import demo.plot.common.model.plotConfig.SegmentAndCurve
 
 fun main() {
-    with(Curve()) {
+    with(SegmentAndCurve()) {
         PlotSpecsDemoWindowBatik(
             "Segment/Curve plot",
             plotSpecList()
