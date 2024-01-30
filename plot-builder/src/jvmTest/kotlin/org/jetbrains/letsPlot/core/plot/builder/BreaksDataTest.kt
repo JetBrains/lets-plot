@@ -41,13 +41,13 @@ class BreaksDataTest {
         )
 
         // Breaks start at top center
-        val topCenter = DoubleVector(clientSize.x / 2, 21.0)
+        val topCenter = DoubleVector(0, -219)
 
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[0])
-        assertDoubleVectorEquals(DoubleVector(470, 180), breaksData.majorBreaks[1])
-        assertDoubleVectorEquals(DoubleVector(387, 438), breaksData.majorBreaks[2])
-        assertDoubleVectorEquals(DoubleVector(116, 438), breaksData.majorBreaks[3])
-        assertDoubleVectorEquals(DoubleVector(33, 180), breaksData.majorBreaks[4])
+        assertDoubleVectorEquals(DoubleVector(208, -67), breaksData.majorBreaks[1])
+        assertDoubleVectorEquals(DoubleVector(128, 177), breaksData.majorBreaks[2])
+        assertDoubleVectorEquals(DoubleVector(-128, 177), breaksData.majorBreaks[3])
+        assertDoubleVectorEquals(DoubleVector(-208, -67), breaksData.majorBreaks[4])
         assertDoubleVectorEquals(topCenter, breaksData.majorBreaks[5])
     }
 

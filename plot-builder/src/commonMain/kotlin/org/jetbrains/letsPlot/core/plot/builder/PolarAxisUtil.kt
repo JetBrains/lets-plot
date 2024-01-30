@@ -53,6 +53,7 @@ object PolarAxisUtil {
 
             val majorGrid = buildGrid(majorDomainBreaks)
             val minorGrid = buildGrid(minorDomainBreaks)
+            val axisLine = buildAxis()
 
             // For coord_polar squash first and last labels into one to avoid overlapping.
             val labels = if (
@@ -71,11 +72,12 @@ object PolarAxisUtil {
             return PolarBreaksData(
                 center = center,
                 startAngle = coord.startAngle,
-                majorBreaks = majorClientBreaks,
-                minorBreaks = minorClientBreaks,
+                majorBreaks = majorClientBreaks.map { it.subtract(center) },
+                minorBreaks = minorClientBreaks.map { it.subtract(center) },
                 majorLabels = labels,
                 majorGrid = majorGrid,
-                minorGrid = minorGrid
+                minorGrid = minorGrid,
+                axisLine = axisLine,
             )
         }
 
@@ -99,7 +101,7 @@ object PolarAxisUtil {
             return breaks
                 .map { DoubleVector(it, gridDomain.yRange().upperEnd) }
                 .map { toClient(it) }
-                .map { it.subtract(center).mul(1.05).add(center) }
+                .map { it.subtract(center).mul(1.0).add(center) }
         }
 
         private fun buildBreaks(breaks: List<Double>): List<DoubleVector> {
@@ -131,15 +133,23 @@ object PolarAxisUtil {
                 }.map { line -> AdaptiveResampler.resample(line, 0.5) { toClient(it) } }
         }
 
+        private fun buildAxis(): List<DoubleVector> {
+            return when (!orientation.isHorizontal) {
+                true -> buildAngleGrid(listOf(gridDomain.xRange().upperEnd)).single()
+                false -> buildRadiusGrid(emptyList()).single() // buildRadiusGrid always builds axis grid line even without breaks
+            }
+        }
+
         private fun buildGrid(breaks: List<Double>): List<List<DoubleVector>> {
             return when (orientation.isHorizontal) {
                 true -> buildAngleGrid(breaks)
                 false -> buildRadiusGrid(breaks)
             }
         }
-
     }
 
+    // TODO: grids: use a single DoubleVector to denote a radius vector or an angle grid line
+    // TODO: Build grid using SvgCircleElement and SvgLineElement
     class PolarBreaksData(
         val center: DoubleVector,
         val startAngle: Double,
@@ -148,5 +158,6 @@ object PolarAxisUtil {
         val minorBreaks: List<DoubleVector>,
         val majorGrid: List<List<DoubleVector>>,
         val minorGrid: List<List<DoubleVector>>,
+        val axisLine: List<DoubleVector>,
     )
 }
