@@ -137,9 +137,16 @@ open class GeomHelper(
             start: DoubleVector, end: DoubleVector,
             p: DataPointAesthetics,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ) = createLine(start, end, p, strokeScaler) { toClient(it, p) }
+
+        fun createLine(
+            start: DoubleVector, end: DoubleVector,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
+            transform: (DoubleVector) -> DoubleVector?
         ): SvgNode? {
             if (myResamplingEnabled) {
-                val lineString = resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
+                val lineString = resample(listOf(start, end), myResamplingPrecision) { transform(it) }
 
                 geometryHandler(p, lineString)
 
@@ -150,15 +157,15 @@ open class GeomHelper(
                 return svgPathElement
             } else {
                 @Suppress("NAME_SHADOWING")
-                val start = toClient(start, p) ?: return null
+                val start = transform(start) ?: return null
 
                 @Suppress("NAME_SHADOWING")
-                val end = toClient(end, p) ?: return null
+                val end = transform(end) ?: return null
 
                 geometryHandler(p, listOf(start, end))
 
                 val svgLineElement = SvgLineElement(start.x, start.y, end.x, end.y)
-                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler)
+                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
                 return svgLineElement
             }
         }
@@ -199,9 +206,11 @@ open class GeomHelper(
             filled: Boolean
         ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
-           if (filled) {
-               AestheticsUtil.updateFill(shape, p)
-           }
+            if (filled) {
+                AestheticsUtil.updateFill(shape, p)
+            } else {
+                shape.fill().set(SvgColors.NONE)
+            }
             shape.strokeWidth().set(strokeScaler(p))
         }
 

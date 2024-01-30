@@ -231,6 +231,7 @@ internal object GeomProviderFactory {
                 if (layerConfig.has(Option.Geom.Segment.GEODESIC)) {
                     geom.geodesic = layerConfig.getBoolean(Option.Geom.Segment.GEODESIC)
                 }
+                layerConfig.getDouble(Option.Geom.Segment.SPACER)?.let { geom.spacer = it }
                 geom
             }
 

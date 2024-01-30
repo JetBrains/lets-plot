@@ -7,12 +7,17 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import kotlin.math.sin
+import kotlin.math.tan
 
 
 class SegmentGeom : GeomBase() {
@@ -21,6 +26,7 @@ class SegmentGeom : GeomBase() {
     var animation: Any? = null
     var flat: Boolean = false
     var geodesic: Boolean = false
+    var spacer: Double = 0.0    // additional space to shorten segment by moving the start/end
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -39,22 +45,64 @@ class SegmentGeom : GeomBase() {
         helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         for (p in aesthetics.dataPoints()) {
-            if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
-                val start = DoubleVector(p.x()!!, p.y()!!)
-                val end = DoubleVector(p.xend()!!, p.yend()!!)
-                val line = helper.createLine(start, end, p) ?: continue
-                root.add(line)
+            val x = finiteOrNull(p.x()) ?: continue
+            val y = finiteOrNull(p.y()) ?: continue
+            val xend = finiteOrNull(p.xend()) ?: continue
+            val yend = finiteOrNull(p.yend()) ?: continue
+            val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
+            val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-                arrowSpec?.let { arrowSpec ->
-                    val clientStart = geomHelper.toClient(start, p)!!
-                    val clientEnd = geomHelper.toClient(end, p)!!
+            // Target sizes to move the start/end of the segment
+            val targetSizeStart = AesScaling.circleDiameter(p, DataPointAesthetics::sizeStart) / 2 +
+                        AesScaling.pointStrokeWidth(p, DataPointAesthetics::strokeStart)
+            val targetSizeEnd = AesScaling.circleDiameter(p, DataPointAesthetics::sizeEnd) / 2 +
+                        AesScaling.pointStrokeWidth(p, DataPointAesthetics::strokeEnd)
 
-                    if (arrowSpec.isOnLastEnd) {
-                        ArrowSpec.createArrow(p, clientStart, clientEnd, arrowSpec)?.let(root::add)
-                    }
-                    if (arrowSpec.isOnFirstEnd) {
-                        ArrowSpec.createArrow(p, start = clientEnd, end = clientStart, arrowSpec)?.let(root::add)
-                    }
+            // Use additional offset to avoid intersection with arrow
+            val strokeWidth = AesScaling.strokeWidth(p)
+            val segmentArrowOffset = arrowSpec?.angle?.let { angle -> (strokeWidth / 2) / tan(angle) } ?: 0.0
+
+            // Total offsets
+            val startOffset = (if (arrowSpec?.isOnFirstEnd == true) segmentArrowOffset else 0.0) +
+                    targetSizeStart + spacer
+            val endOffset = (if (arrowSpec?.isOnLastEnd == true) segmentArrowOffset else 0.0) +
+                    targetSizeEnd + spacer
+
+            val startPoint = pointOnLine(clientStart, clientEnd, startOffset)
+            val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
+
+            val line = helper.createLine(startPoint, endPoint, p) /*{ point: DoubleVector -> point } */?: continue
+            root.add(line)
+/*
+            targetCollector.addPath(
+                listOf(
+                    // without additional offsets
+                    pointOnLine(clientStart, clientEnd, targetSizeStart),
+                    pointOnLine(clientEnd, clientStart, targetSizeEnd)
+                ),
+                { p.index() },
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(p)
+                )
+            )
+*/
+            arrowSpec?.let { arrowSpec ->
+                val arrowOffset = (strokeWidth / 2) / sin(arrowSpec.angle)
+                if (arrowSpec.isOnLastEnd) {
+                    ArrowSpec.createArrowAtEnd(
+                        p,
+                        start = startPoint,
+                        end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset),
+                        arrowSpec
+                    )?.let(root::add)
+                }
+                if (arrowSpec.isOnFirstEnd) {
+                    ArrowSpec.createArrowAtEnd(
+                        p,
+                        start = endPoint,
+                        end = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset),
+                        arrowSpec
+                    )?.let(root::add)
                 }
             }
         }

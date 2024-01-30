@@ -360,7 +360,11 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.ALPHA,
                 Aes.SPEED,
-                Aes.FLOW
+                Aes.FLOW,
+                Aes.SIZE_START,
+                Aes.SIZE_END,
+                Aes.STROKE_START,
+                Aes.STROKE_END
             )
 
             GeomKind.CURVE -> listOf(
