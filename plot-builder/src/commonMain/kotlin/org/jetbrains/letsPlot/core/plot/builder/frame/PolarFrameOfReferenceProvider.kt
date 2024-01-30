@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -27,13 +28,14 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
 internal class PolarFrameOfReferenceProvider(
+    private val plotContext: PlotContext,
     private val hScaleProto: Scale,
     private val vScaleProto: Scale,
     private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
-    private val domainByMargin: Map<MarginSide, DoubleSpan>,
+    private val domainByMargin: Map<MarginSide, DoubleSpan>
 ) : FrameOfReferenceProvider {
 
     private val hAxisPosition: AxisPosition = AxisPosition.BOTTOM
@@ -131,6 +133,7 @@ internal class PolarFrameOfReferenceProvider(
             .build()
 
         val tileFrameOfReference = PolarFrameOfReference(
+            plotContext,
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
             gridDomain,
@@ -139,7 +142,7 @@ internal class PolarFrameOfReferenceProvider(
             layoutInfo,
             marginsLayout,
             theme,
-            flipAxis,
+            flipAxis
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
         return tileFrameOfReference
@@ -210,13 +213,13 @@ internal class PolarFrameOfReferenceProvider(
                 clientSize = clientSize,
             )
             MarginalFrameOfReference(
+                plotContext,
                 boundsByMargin.getValue(side),
                 adjustedDomain = adjustedDomain,
                 coord,
                 plotBackground,
                 penColor,
                 debugDrawing,
-                theme.exponentFormat.superscript
             )
         }
     }

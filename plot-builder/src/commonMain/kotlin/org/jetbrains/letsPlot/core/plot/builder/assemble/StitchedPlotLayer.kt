@@ -6,12 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
-import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class StitchedPlotLayer constructor(
@@ -22,60 +18,6 @@ internal class StitchedPlotLayer constructor(
             check(geomLayers.isNotEmpty())
             return geomLayers[0].isYOrientation
         }
-
-    val legendKeyElementFactory: LegendKeyElementFactory
-        get() {
-            check(geomLayers.isNotEmpty())
-            return geomLayers[0].legendKeyElementFactory
-        }
-
-    val aestheticsDefaults: AestheticsDefaults
-        get() {
-            check(geomLayers.isNotEmpty())
-            return geomLayers[0].aestheticsDefaults
-        }
-
-    val isLegendDisabled: Boolean
-        get() {
-            check(geomLayers.isNotEmpty())
-            return geomLayers[0].isLegendDisabled
-        }
-
-    val colorByAes: Aes<Color>
-        get() {
-            check(geomLayers.isNotEmpty())
-            return geomLayers[0].colorByAes
-        }
-
-    val fillByAes: Aes<Color>
-        get() {
-            check(geomLayers.isNotEmpty())
-            return geomLayers[0].fillByAes
-        }
-
-    fun renderedAes(): List<Aes<*>> {
-        return if (geomLayers.isEmpty()) {
-            emptyList()
-        } else geomLayers[0].renderedAes()
-    }
-
-    fun hasBinding(aes: Aes<*>): Boolean {
-        return geomLayers.isNotEmpty() && geomLayers[0].hasBinding(aes)
-    }
-
-    fun hasConstant(aes: Aes<*>): Boolean {
-        return geomLayers.isNotEmpty() && geomLayers[0].hasConstant(aes)
-    }
-
-    fun <T> getConstant(aes: Aes<T>): T {
-        check(geomLayers.isNotEmpty())
-        return geomLayers[0].getConstant(aes)
-    }
-
-//    fun getBinding(aes: Aes<*>): VarBinding {
-//        check(geomLayers.isNotEmpty())
-//        return geomLayers[0].getBinding(aes)
-//    }
 
     fun getDataRange(variable: DataFrame.Variable): DoubleSpan? {
         check(isNumericData(variable)) { "Not numeric data [$variable]" }

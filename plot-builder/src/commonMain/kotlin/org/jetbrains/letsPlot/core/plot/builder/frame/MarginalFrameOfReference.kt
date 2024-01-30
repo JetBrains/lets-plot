@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
@@ -16,13 +17,13 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class MarginalFrameOfReference(
+    private val plotContext: PlotContext,
     private val geomBounds: DoubleRectangle,
     private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val plotBackground: Color,
     private val penColor: Color,
-    private val isDebugDrawing: Boolean,
-    private val superscriptExponent: Boolean,
+    private val isDebugDrawing: Boolean
 ) : FrameOfReference {
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
 
@@ -39,13 +40,13 @@ internal class MarginalFrameOfReference(
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = SquareFrameOfReference.buildGeom(
+            plotContext,
             layer,
             xyAesBounds = adjustedDomain,
             coord,
             flippedAxis = false,
             targetCollector,
-            plotBackground,
-            superscriptExponent
+            plotBackground
         )
 
         layerComponent.moveTo(geomBounds.origin)

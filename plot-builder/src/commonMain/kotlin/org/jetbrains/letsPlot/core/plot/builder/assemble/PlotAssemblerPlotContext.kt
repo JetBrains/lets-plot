@@ -6,27 +6,20 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
-internal class PlotAssemblerPlotContext(
-    layersByTile: List<List<GeomLayer>>,
-//    geomTiles: PlotGeomTiles,
+internal class PlotAssemblerPlotContext constructor(
+    private val geomTiles: PlotGeomTiles,
     private val scaleMap: Map<Aes<*>, Scale>,
     override val superscriptExponent: Boolean
 ) : PlotContext {
 
-    private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)
     private val transformedDomainByAes: MutableMap<Aes<*>, DoubleSpan> = HashMap()
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
-
-    override val layers: List<PlotContext.Layer> = stitchedPlotLayers.map(::ContextPlotLayer)
 
     override fun hasScale(aes: Aes<*>) = scaleMap.containsKey(aes)
 
@@ -37,6 +30,8 @@ internal class PlotAssemblerPlotContext(
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
         checkPositionalAes(aes)
+
+        val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(geomTiles.layersByTile())
         return transformedDomainByAes.getOrPut(aes) {
             computeOverallTransformedDomain(aes, stitchedPlotLayers, scaleMap)
         }
@@ -81,7 +76,10 @@ internal class PlotAssemblerPlotContext(
             fun isMatching(v: DataFrame.Variable, aes: Aes<*>, isYOrientation: Boolean): Boolean {
                 val varAes = TransformVar.toAes(v)
                 return when {
-                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(varAes, isYOrientation) == aes // collecting pos variables
+                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(
+                        varAes,
+                        isYOrientation
+                    ) == aes // collecting pos variables
                     else -> varAes == aes
                 }
             }
@@ -140,19 +138,5 @@ internal class PlotAssemblerPlotContext(
                 "Positional aesthetic should be either X or Y but was $aes"
             }
         }
-    }
-
-    private class ContextPlotLayer(
-        private val stitchedPlotLayer: StitchedPlotLayer
-    ) : PlotContext.Layer {
-        override val isLegendDisabled: Boolean get() = stitchedPlotLayer.isLegendDisabled
-        override val aestheticsDefaults: AestheticsDefaults get() = stitchedPlotLayer.aestheticsDefaults
-        override val legendKeyElementFactory: LegendKeyElementFactory get() = stitchedPlotLayer.legendKeyElementFactory
-        override val colorByAes: Aes<Color> get() = stitchedPlotLayer.colorByAes
-        override val fillByAes: Aes<Color> get() = stitchedPlotLayer.fillByAes
-        override fun renderedAes(): List<Aes<*>> = stitchedPlotLayer.renderedAes()
-        override fun hasBinding(aes: Aes<*>): Boolean = stitchedPlotLayer.hasBinding(aes)
-        override fun hasConstant(aes: Aes<*>): Boolean = stitchedPlotLayer.hasConstant(aes)
-        override fun <T> getConstant(aes: Aes<T>): T = stitchedPlotLayer.getConstant(aes)
     }
 }

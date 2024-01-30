@@ -16,8 +16,8 @@ class TestingPlotContextWithTooltipFormatters : PlotContext {
 
     override val superscriptExponent: Boolean = false
 
-    override val layers: List<PlotContext.Layer>
-        get() = UNSUPPORTED("Not yet implemented")
+//    override val layers: List<PlotContext.Layer>
+//        get() = UNSUPPORTED("Not yet implemented")
 
     override fun hasScale(aes: Aes<*>): Boolean {
         UNSUPPORTED("Not yet implemented")

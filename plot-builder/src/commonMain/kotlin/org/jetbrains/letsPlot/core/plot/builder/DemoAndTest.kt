@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReference
 
 object DemoAndTest {
@@ -21,13 +22,13 @@ object DemoAndTest {
         targetCollector: GeomTargetCollector
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
+            plotContext = TestingPlotContext.create(layer),
             layer = layer,
             xyAesBounds = xyAesBounds,
             coord = coord,
             flippedAxis = flippedAxis,
             targetCollector = targetCollector,
-            backgroundColor = Color.WHITE,
-            superscriptExponent = false
+            backgroundColor = Color.WHITE
         )
     }
 }

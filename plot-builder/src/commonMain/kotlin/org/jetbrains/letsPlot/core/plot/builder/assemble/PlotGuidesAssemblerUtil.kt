@@ -8,18 +8,18 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.GeomLayerInfo
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
-        layer: PlotContext.Layer,
+        layer: GeomLayerInfo,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): List<Aes<*>> {
         if (layer.isLegendDisabled) {
-            // ToDo: add support for
+            // ToDo: add support for:
             // show_legend = True     : show all aesthetics in legend
             // show_legend = [.. list of aesthetics to show ..]     : show selected aesthetics in legend
             // see: https://ggplot2.tidyverse.org/reference/geom_point.html

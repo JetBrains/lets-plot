@@ -62,7 +62,7 @@ class PlotAssembler constructor(
         val scaleYProto = scaleMap.getValue(Aes.Y)
 
         plotContext = PlotAssemblerPlotContext(
-            geomTiles.layersByTile(),
+            geomTiles,
             scaleMap,
             theme.exponentFormat.superscript
         )
@@ -70,6 +70,7 @@ class PlotAssembler constructor(
         val legendBoxInfos: List<LegendBoxInfo> = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 plotContext,
+                geomTiles,
                 geomTiles.mappersNP,
                 guideOptionsMap,
                 theme.legend()
@@ -105,7 +106,8 @@ class PlotAssembler constructor(
             containsLiveMap = geomTiles.containsLiveMap,
             hAxisPosition = hAxisPosition,
             vAxisPosition = vAxisPosition,
-            theme
+            theme,
+            plotContext
         )
 
         layouter = PlotFigureLayouter(
@@ -198,6 +200,7 @@ class PlotAssembler constructor(
             hAxisPosition: AxisPosition,
             vAxisPosition: AxisPosition,
             theme: Theme,
+            plotContext: PlotContext
         ): List<FrameOfReferenceProvider> {
             if (containsLiveMap) {
                 return coreLayersByTile.map { BogusFrameOfReferenceProvider() }
@@ -225,20 +228,22 @@ class PlotAssembler constructor(
                         .adjustDomain(DoubleRectangle(xDomain, yDomain))
 
                     PolarFrameOfReferenceProvider(
-                        hScaleProto, vScaleProto,
+                        plotContext, hScaleProto,
+                        vScaleProto,
                         adjustedDomain,
                         flipAxis,
                         theme,
                         marginsLayout,
-                        domainByMargin,
+                        domainByMargin
                     )
                 } else {
                     val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
-                        hScaleProto, vScaleProto,
+                        plotContext, hScaleProto,
+                        vScaleProto,
                         adjustedDomain,
-                        flipAxis,
-                        hAxisPosition, vAxisPosition,
+                        flipAxis, hAxisPosition,
+                        vAxisPosition,
                         theme,
                         marginsLayout,
                         domainByMargin

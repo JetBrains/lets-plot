@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -17,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.BreaksData
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.TickLabelAdjustments
@@ -36,6 +36,7 @@ internal class SquareFrameOfReference(
     private val marginsLayout: GeomMarginsLayout,
     private val theme: Theme,
     private val flipAxis: Boolean,
+    private val plotContext: PlotContext
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
@@ -64,7 +65,6 @@ internal class SquareFrameOfReference(
         val drawPanel = panelTheme.showRect() && beforeGeomLayer
         val drawPanelBorder = panelTheme.showBorder() && !beforeGeomLayer
 
-        @Suppress("UnnecessaryVariable")
         val drawGridlines = beforeGeomLayer
         val drawHAxis = when {
             beforeGeomLayer -> !hAxisTheme.isOntop()
@@ -214,13 +214,13 @@ internal class SquareFrameOfReference(
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = buildGeom(
+            plotContext,
             layer,
-            xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
+            xyAesBounds = adjustedDomain, // positional aesthetics are the same as positional data.
             coord,
             flipAxis,
             targetCollector,
-            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill(),
-            theme.exponentFormat.superscript
+            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -285,13 +285,13 @@ internal class SquareFrameOfReference(
          * 'internal' access for tests.
          */
         internal fun buildGeom(
+            plotContext: PlotContext,
             layer: GeomLayer,
             xyAesBounds: DoubleRectangle,
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector,
-            backgroundColor: Color,
-            superscriptExponent: Boolean
+            backgroundColor: Color
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -322,7 +322,6 @@ internal class SquareFrameOfReference(
                 }
             }
 
-            val plotContext = PlotAssemblerPlotContext(listOf(listOf(layer)), layer.scaleMap, superscriptExponent)
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)

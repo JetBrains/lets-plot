@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.GeomLayerInfo
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 interface PlotGeomTiles {
@@ -27,4 +28,6 @@ interface PlotGeomTiles {
     fun scalesByTile(): List<Map<Aes<*>, Scale>>
 
     fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?>
+
+    fun coreLayerInfos(): List<GeomLayerInfo>
 }

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.GeomLayerInfo
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 
@@ -36,6 +37,10 @@ abstract class PlotGeomTilesBase(
         return layersByTile().map { layers ->
             layers.filter { it.isMarginal }.filterNot { it.isLiveMap }
         }
+    }
+
+    override fun coreLayerInfos(): List<GeomLayerInfo> {
+        return coreLayersByTile()[0].map(::GeomLayerInfo)
     }
 
     companion object {

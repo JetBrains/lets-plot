@@ -40,6 +40,7 @@ internal object PlotAssemblerUtil {
 
     fun createLegends(
         ctx: PlotContext,
+        geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
@@ -48,16 +49,16 @@ internal object PlotAssemblerUtil {
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-        for (contextLayer in ctx.layers) {
+        for (layerInfo in geomTiles.coreLayerInfos()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
-            for (aes in contextLayer.renderedAes()) {
-                if (contextLayer.hasConstant(aes)) {
-                    layerConstantByAes[aes] = contextLayer.getConstant(aes)!!
+            for (aes in layerInfo.renderedAes()) {
+                if (layerInfo.hasConstant(aes)) {
+                    layerConstantByAes[aes] = layerInfo.getConstant(aes)!!
                 }
             }
 
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
-            val aesList = mappedRenderedAesToCreateGuides(contextLayer, guideOptionsMap)
+            val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 var colorBar = false
                 val scale = ctx.getScale(aes)
@@ -106,16 +107,16 @@ internal object PlotAssemblerUtil {
                 }
 
                 val aesListForScaleName = aesListByScaleName.getValue(scaleName)
-                val legendKeyFactory = contextLayer.legendKeyElementFactory
-                val aestheticsDefaults = contextLayer.aestheticsDefaults
+                val legendKeyFactory = layerInfo.legendKeyElementFactory
+                val aestheticsDefaults = layerInfo.aestheticsDefaults
                 legendAssembler.addLayer(
                     legendKeyFactory,
                     aesListForScaleName,
                     layerConstantByAes,
                     aestheticsDefaults,
                     ctx,
-                    contextLayer.colorByAes,
-                    contextLayer.fillByAes
+                    layerInfo.colorByAes,
+                    layerInfo.fillByAes
                 )
             }
         }
