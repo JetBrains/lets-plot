@@ -15,4 +15,6 @@ interface TooltipsTheme {
     fun textStyle(): ThemeTextStyle
     fun titleStyle(): ThemeTextStyle
     fun labelStyle(): ThemeTextStyle
+
+    fun show(): Boolean
 }

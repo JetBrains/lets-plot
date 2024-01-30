@@ -45,4 +45,8 @@ internal class DefaultTooltipsTheme(
             ThemeTextStyle(family, FontFace.BOLD + face, size, color)
         }
     }
+
+    override fun show(): Boolean {
+        return !isElemBlank(listOf(TOOLTIP_RECT))
+    }
 }

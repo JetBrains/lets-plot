@@ -91,19 +91,29 @@ object GeomInteractionUtil {
                 hiddenAesList -
                 axisWithNoLabels
 
-        val sideTooltipAes = createSideTooltipAesList(
-            layerConfig.geomProto.geomKind
-        ).afterOrientation(yOrientation)
+        val showTooltips = theme.tooltips().show()
 
-        val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
-        val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
-        val tooltipAes = createTooltipAesList(
-            layerConfig,
-            scaleMap,
-            layerRendersAesAfterOrientation,
-            axisAesFromFunctionTypeAfterOrientation,
-            hiddenAesList
-        )
+        val sideTooltipAes: List<Aes<*>> = if (showTooltips) {
+            createSideTooltipAesList(
+                layerConfig.geomProto.geomKind
+            ).afterOrientation(yOrientation)
+        } else {
+            emptyList()
+        }
+
+        val tooltipAes: List<Aes<*>> = if (showTooltips) {
+            val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
+            val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
+            createTooltipAesList(
+                layerConfig,
+                scaleMap,
+                layerRendersAesAfterOrientation,
+                axisAesFromFunctionTypeAfterOrientation,
+                hiddenAesList
+            )
+        } else {
+            emptyList()
+        }
 
         val builder = GeomInteractionBuilder(
             locatorLookupSpace = tooltipSetup.locatorLookupSpace,
@@ -112,9 +122,11 @@ object GeomInteractionUtil {
             tooltipAxisAes = axisAes,
             sideTooltipAes = sideTooltipAes
         )
+        if (showTooltips) {
+            builder.tooltipLinesSpec(layerConfig.tooltips)
+        }
 
         return builder
-            .tooltipLinesSpec(layerConfig.tooltips)
             .tooltipConstants(createConstantAesList(layerConfig))
             .enableCrosshair(isCrosshairEnabled(layerConfig))
     }
