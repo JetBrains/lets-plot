@@ -39,6 +39,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -217,13 +221,23 @@ abstract class AesVisitor<T> {
         if (aes == RADIUS) {
             return radius()
         }
-
         if (aes == SLICE) {
             return slice()
         }
-
         if (aes == EXPLODE) {
             return explode()
+        }
+        if (aes == SIZE_START) {
+            return sizeStart()
+        }
+        if (aes == SIZE_END) {
+            return sizeEnd()
+        }
+        if (aes == STROKE_START) {
+            return strokeStart()
+        }
+        if (aes == STROKE_END) {
+            return strokeEnd()
         }
 
         throw IllegalArgumentException("Unexpected aes: $aes")
@@ -326,4 +340,12 @@ abstract class AesVisitor<T> {
     protected abstract fun slice(): T
 
     protected abstract fun explode(): T
+
+    protected abstract fun sizeStart(): T
+
+    protected abstract fun sizeEnd(): T
+
+    protected abstract fun strokeStart(): T
+
+    protected abstract fun strokeEnd(): T
 }

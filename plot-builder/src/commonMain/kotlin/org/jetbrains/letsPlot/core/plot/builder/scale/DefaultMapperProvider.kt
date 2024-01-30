@@ -40,6 +40,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -157,6 +161,11 @@ object DefaultMapperProvider {
 
             this.put(SLICE, NUMERIC_IDENTITY)
             this.put(EXPLODE, NUMERIC_IDENTITY)
+
+            this.put(SIZE_START, SizeMapperProvider.DEFAULT)
+            this.put(SIZE_END, SizeMapperProvider.DEFAULT)
+            this.put(STROKE_START, StrokeMapperProvider.DEFAULT)
+            this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

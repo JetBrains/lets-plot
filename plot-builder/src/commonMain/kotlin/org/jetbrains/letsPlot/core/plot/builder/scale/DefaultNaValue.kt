@@ -42,6 +42,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -115,6 +119,10 @@ object DefaultNaValue {
         VALUE_MAP.put(RADIUS, 0.0)
         VALUE_MAP.put(SLICE, 0.0)
         VALUE_MAP.put(EXPLODE, 0.0)
+        VALUE_MAP.put(SIZE_START, 0.0)
+        VALUE_MAP.put(SIZE_END, 0.0)
+        VALUE_MAP.put(STROKE_START, 0.0)
+        VALUE_MAP.put(STROKE_END, 0.0)
     }
 
     /**

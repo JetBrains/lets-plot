@@ -60,6 +60,10 @@ object TransformVar {
     val RADIUS = DataFrame.Variable("transform.RADIUS", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
+    val SIZE_START = DataFrame.Variable("transform.SIZE_START", TRANSFORM)
+    val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
+    val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
+    val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
@@ -289,6 +293,22 @@ object TransformVar {
 
         override fun explode(): DataFrame.Variable {
             return EXPLODE
+        }
+
+        override fun sizeStart(): DataFrame.Variable {
+            return SIZE_START
+        }
+
+        override fun sizeEnd(): DataFrame.Variable {
+            return SIZE_END
+        }
+
+        override fun strokeStart(): DataFrame.Variable {
+            return STROKE_START
+        }
+
+        override fun strokeEnd(): DataFrame.Variable {
+            return STROKE_END
         }
     }
 }

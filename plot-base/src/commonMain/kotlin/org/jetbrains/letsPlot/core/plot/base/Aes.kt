@@ -126,6 +126,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val EXPLODE: Aes<Double> =
             Aes("explode")
 
+        val SIZE_START: Aes<Double> = Aes("size_start")
+        val SIZE_END: Aes<Double> = Aes("size_end")
+        val STROKE_START: Aes<Double> = Aes("stroke_start")
+        val STROKE_END: Aes<Double> = Aes("stroke_end")
+
         fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
             @Suppress("UNCHECKED_CAST")
@@ -229,6 +234,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == LINEHEIGHT ||
                     aes == SLICE ||
                     aes == EXPLODE ||
+                    aes == SIZE_START ||
+                    aes == SIZE_END ||
+                    aes == STROKE_START ||
+                    aes == STROKE_END ||
                     isPositional(aes)
         }
 

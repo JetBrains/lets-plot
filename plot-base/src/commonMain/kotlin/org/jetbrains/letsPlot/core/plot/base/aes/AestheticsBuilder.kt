@@ -26,7 +26,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
@@ -204,6 +208,22 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun explode(v: (Int) -> Double?): AestheticsBuilder {
         return aes(EXPLODE, v)
+    }
+
+    fun sizeStart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SIZE_START, v)
+    }
+
+    fun startEnd(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SIZE_END, v)
+    }
+
+    fun strokeStart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(STROKE_START, v)
+    }
+
+    fun strokeEnd(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(STROKE_END, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {
