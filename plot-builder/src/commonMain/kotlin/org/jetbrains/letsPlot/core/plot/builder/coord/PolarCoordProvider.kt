@@ -37,8 +37,8 @@ internal class PolarCoordProvider(
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
     }
 
-    fun with(isHScaleContinuous: Boolean): PolarCoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous)
+    fun withHScaleContinuous(b: Boolean): PolarCoordProvider {
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous = b)
     }
 
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {

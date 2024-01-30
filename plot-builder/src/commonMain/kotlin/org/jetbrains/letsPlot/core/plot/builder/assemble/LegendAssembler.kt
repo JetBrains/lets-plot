@@ -39,8 +39,6 @@ class LegendAssembler(
         aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-//        scaleByAes: Map<Aes<*>, Scale>,
-//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
         colorByAes: Aes<Color>,
         fillByAes: Aes<Color>
@@ -52,9 +50,7 @@ class LegendAssembler(
                 aesList,
                 constantByAes,
                 aestheticsDefaults,
-//                scaleByAes,
                 scaleMappers,
-//                transformedDomainByAes
                 ctx,
                 colorByAes,
                 fillByAes
@@ -121,9 +117,7 @@ class LegendAssembler(
         val aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-//        scaleMap: Map<Aes<*>, Scale>,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
         colorByAes: Aes<Color>,
         fillByAes: Aes<Color>
@@ -136,10 +130,8 @@ class LegendAssembler(
             val aesValuesByLabel =
                 LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (aes in aesList) {
-//                var scale = scaleMap[aes]
                 var scale = ctx.getScale(aes)
                 if (!scale.hasBreaks()) {
-//                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
                     scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
                 }
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }

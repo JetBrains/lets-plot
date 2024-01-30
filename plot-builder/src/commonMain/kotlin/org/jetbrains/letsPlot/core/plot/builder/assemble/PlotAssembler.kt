@@ -224,7 +224,7 @@ class PlotAssembler constructor(
             return domainsXYByTile.map { (xDomain, yDomain) ->
                 if (coordProvider.isPolar) {
                     val adjustedDomain = (coordProvider as PolarCoordProvider)
-                        .with(hScaleProto.isContinuous)
+                        .withHScaleContinuous(hScaleProto.isContinuous)
                         .adjustDomain(DoubleRectangle(xDomain, yDomain))
 
                     PolarFrameOfReferenceProvider(
