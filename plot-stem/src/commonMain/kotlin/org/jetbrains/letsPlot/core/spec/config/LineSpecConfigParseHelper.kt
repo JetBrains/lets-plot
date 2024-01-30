@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinesContentSpecification
@@ -18,22 +19,22 @@ import org.jetbrains.letsPlot.core.spec.has
 
 open class LineSpecConfigParser(
     opts: Map<String, Any>,
-    private val constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
+    private val constantsMap: Map<Aes<*>, Any>,
     private val groupingVarName: String?,
     private val varBindings: List<VarBinding>,
 ) : OptionsAccessor(opts) {
 
     fun create(): LinesContentSpecification {
-       return LineSpecConfigParserHelper(
-           lines = if (has(Option.LinesSpec.LINES)) {
-               getStringList(Option.LinesSpec.LINES)
-           } else {
-               null
-           },
-           formats = getList(Option.LinesSpec.FORMATS),
-           variables = getStringList(Option.LinesSpec.VARIABLES),
-           titleLine = getString(Option.LinesSpec.TITLE)
-       ).parse()
+        return LineSpecConfigParserHelper(
+            lines = if (has(Option.LinesSpec.LINES)) {
+                getStringList(Option.LinesSpec.LINES)
+            } else {
+                null
+            },
+            formats = getList(Option.LinesSpec.FORMATS),
+            variables = getStringList(Option.LinesSpec.VARIABLES),
+            titleLine = getString(Option.LinesSpec.TITLE)
+        ).parse()
     }
 
     internal inner class LineSpecConfigParserHelper(
@@ -131,8 +132,12 @@ open class LineSpecConfigParser(
 
                 if (field.startsWith(AES_NAME_PREFIX)) {
                     val positionals = when (field.removePrefix(AES_NAME_PREFIX)) {
-                        "X" -> org.jetbrains.letsPlot.core.plot.base.Aes.values().filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalX)
-                        "Y" -> org.jetbrains.letsPlot.core.plot.base.Aes.values().filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalY)
+                        "X" -> org.jetbrains.letsPlot.core.plot.base.Aes.values()
+                            .filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalX)
+
+                        "Y" -> org.jetbrains.letsPlot.core.plot.base.Aes.values()
+                            .filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalY)
+
                         else -> {
                             // it is aes name
                             val aesField = aesField(field.removePrefix(AES_NAME_PREFIX))

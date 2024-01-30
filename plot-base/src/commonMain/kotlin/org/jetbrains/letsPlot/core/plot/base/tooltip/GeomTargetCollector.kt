@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 
 interface GeomTargetCollector {
@@ -46,13 +47,13 @@ interface GeomTargetCollector {
     fun withYOrientation(): GeomTargetCollector
 
     class TooltipParams(
-        val tipLayoutHints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint> = emptyMap(),
+        val tipLayoutHints: Map<Aes<*>, TipLayoutHint> = emptyMap(),
         val stemLength: TipLayoutHint.StemLength = TipLayoutHint.StemLength.NORMAL,
         val fillColorFactory: (Int) -> Color? = { null },
         val markerColorsFactory: ((Int) -> List<Color>) = { emptyList() },
     ) {
         constructor(
-            tipLayoutHints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint> = emptyMap(),
+            tipLayoutHints: Map<Aes<*>, TipLayoutHint> = emptyMap(),
             stemLength: TipLayoutHint.StemLength = TipLayoutHint.StemLength.NORMAL,
             fillColor: Color? = null,
             markerColors: List<Color> = emptyList(),

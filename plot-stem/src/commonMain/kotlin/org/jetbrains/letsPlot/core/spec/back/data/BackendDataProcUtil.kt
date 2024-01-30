@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.data
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.Transform
@@ -38,7 +39,7 @@ internal object BackendDataProcUtil {
         data: DataFrame,
         layerConfig: LayerConfig,
         statCtx: StatContext,
-        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
+        transformByAes: Map<Aes<*>, Transform>,
         facetVariables: List<DataFrame.Variable>,
         groupingContext: GroupingContext,
         messageHandler: (String) -> Unit

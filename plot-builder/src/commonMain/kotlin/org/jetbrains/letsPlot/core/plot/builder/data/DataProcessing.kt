@@ -7,12 +7,9 @@ package org.jetbrains.letsPlot.core.plot.builder.data
 
 import org.jetbrains.letsPlot.commons.intern.function.Consumer
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Builder
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
-import org.jetbrains.letsPlot.core.plot.base.Stat
-import org.jetbrains.letsPlot.core.plot.base.StatContext
-import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -25,7 +22,7 @@ object DataProcessing {
     fun transformOriginals(
         data: DataFrame,
         bindings: List<VarBinding>,
-        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>
+        transformByAes: Map<Aes<*>, Transform>
     ): DataFrame {
         @Suppress("NAME_SHADOWING")
         var data = data
@@ -128,7 +125,7 @@ object DataProcessing {
                     val orderOptionsMinusX = orderOptions
                         .filter { orderOption ->
                             // no need to reorder groups by X
-                            statInput.bindings.find { it.variable.name == orderOption.variableName && it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.X } == null
+                            statInput.bindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } == null
                         }
                     // Init order specs in Group merger.
                     groupMerger.orderSpecs = OrderOptionUtil.createOrderSpecs(
@@ -205,7 +202,7 @@ object DataProcessing {
         data: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
-        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
+        transformByAes: Map<Aes<*>, Transform>,
         facetVariables: List<Variable>,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
@@ -284,35 +281,35 @@ object DataProcessing {
         statData: DataFrame,
         stat: Stat,
         bindings: List<VarBinding>,
-        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>
+        transformByAes: Map<Aes<*>, Transform>
     ): DataFrame {
 
         // X,Y scale - always.
-        check(transformByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.X))
-        check(transformByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        check(transformByAes.containsKey(Aes.X))
+        check(transformByAes.containsKey(Aes.Y))
 
-        fun transformForAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Transform {
+        fun transformForAes(aes: Aes<*>): Transform {
             return when {
-                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes) -> transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes) -> transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+                Aes.isPositionalX(aes) -> transformByAes.getValue(Aes.X)
+                Aes.isPositionalY(aes) -> transformByAes.getValue(Aes.Y)
                 else -> throw IllegalStateException("Positional aes expected but was $aes.")
             }
         }
 
-        val needTransformX = stat.consumes().any { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(it) }
-        val needTransformY = stat.consumes().any { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(it) }
+        val needTransformX = stat.consumes().any { Aes.isPositionalX(it) }
+        val needTransformY = stat.consumes().any { Aes.isPositionalY(it) }
 
-        fun needInverseTransform(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
-            if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes)) return needTransformX
-            if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes)) return needTransformY
+        fun needInverseTransform(aes: Aes<*>): Boolean {
+            if (Aes.isPositionalX(aes)) return needTransformX
+            if (Aes.isPositionalY(aes)) return needTransformY
             return false
         }
 
-        val aesByStatVar: Map<Variable, org.jetbrains.letsPlot.core.plot.base.Aes<*>> = run {
+        val aesByStatVar: Map<Variable, Aes<*>> = run {
             // No need to flip stat 'default' aes with the y-orientation
             // because Aes in bindings / transformByAes are adjuasted so that
             // the stat operates as though the orientation is X.
-            val aesByStatVarDefault = org.jetbrains.letsPlot.core.plot.base.Aes.values()
+            val aesByStatVarDefault = Aes.values()
                 .filter { stat.hasDefaultMapping(it) }.associateBy { stat.getDefaultMapping(it) }
 
             val aesByStatVarMapped = bindings
@@ -429,11 +426,11 @@ object DataProcessing {
 
     private fun isDefaultGroupingVariable(
         data: DataFrame,
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aes: Aes<*>,
         variable: Variable
     ): Boolean {
         // 'origin' discrete vars (but not positional)
-        return variable.isOrigin && !org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(aes) && data.isDiscrete(
+        return variable.isOrigin && !Aes.isPositional(aes) && data.isDiscrete(
             variable
         )
     }

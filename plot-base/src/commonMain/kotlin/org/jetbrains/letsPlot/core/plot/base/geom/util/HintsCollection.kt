@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfigFactory.HintConfig
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -18,9 +19,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 
 
 class HintsCollection(private val myPoint: DataPointAesthetics, private val myHelper: GeomHelper) {
-    private val _hints = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>()
+    private val _hints = HashMap<Aes<*>, TipLayoutHint>()
 
-    val hints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>
+    val hints: Map<Aes<*>, TipLayoutHint>
         get() = _hints
 
     fun addHint(hintConfig: HintConfig): HintsCollection {
@@ -44,8 +45,8 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
 
         val coord = when {
-            org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes) -> DoubleVector(myPoint.get(aes)!!, hintConfig.baseCoord!!)
-            org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes) -> DoubleVector(hintConfig.baseCoord!!, myPoint.get(aes)!!)
+            Aes.isPositionalX(aes) -> DoubleVector(myPoint.get(aes)!!, hintConfig.baseCoord!!)
+            Aes.isPositionalY(aes) -> DoubleVector(hintConfig.baseCoord!!, myPoint.get(aes)!!)
             else -> throw IllegalStateException("Positional aes expected but was $aes.")
         }
         return myHelper.toClient(coord, myPoint)!!.let {
@@ -73,6 +74,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
                 fillColor = color,
                 markerColors = emptyList()
             )
+
             Kind.CURSOR_TOOLTIP -> cursorTooltip(coord, markerColors = emptyList())
             Kind.ROTATED_TOOLTIP -> rotatedTooltip(coord, objectRadius, color)
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
@@ -105,8 +107,8 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             return this
         }
 
-        fun create(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): HintConfig {
-            require(org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(aes))
+        fun create(aes: Aes<Double>): HintConfig {
+            require(Aes.isPositional(aes))
             return HintConfig(aes)
         }
 
@@ -115,7 +117,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             return this
         }
 
-        inner class HintConfig internal constructor(val aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>) {
+        inner class HintConfig internal constructor(val aes: Aes<Double>) {
             val kind: Kind?
             var objectRadius: Double? = null
                 private set

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
@@ -12,7 +13,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 
 class TooltipConfig(
     opts: Map<String, Any>,
-    constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
+    constantsMap: Map<Aes<*>, Any>,
     groupingVarName: String?,
     varBindings: List<VarBinding>
 ) : LineSpecConfigParser(opts, constantsMap, groupingVarName, varBindings) {

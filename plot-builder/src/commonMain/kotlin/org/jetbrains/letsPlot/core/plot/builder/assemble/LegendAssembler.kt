@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.FeatureSwitch
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -26,8 +27,8 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>,
-    private val scaleMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
+    private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+    private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
 
@@ -35,14 +36,14 @@ class LegendAssembler(
 
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
-        aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
+        aesList: List<Aes<*>>,
+        constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
 //        scaleByAes: Map<Aes<*>, Scale>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
-        fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ) {
 
         legendLayers.add(
@@ -117,15 +118,15 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
+        val aesList: List<Aes<*>>,
+        constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
 //        scaleMap: Map<Aes<*>, Scale>,
-        scaleMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
+        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
-        fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ) {
 
         val keyAesthetics: Aesthetics
@@ -133,7 +134,7 @@ class LegendAssembler(
 
         init {
             val aesValuesByLabel =
-                LinkedHashMap<String, MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>>()
+                LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (aes in aesList) {
 //                var scale = scaleMap[aes]
                 var scale = ctx.getScale(aes)

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -50,8 +51,8 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
         )
     }
 
-    private fun convertTipLayoutHints(tipLayoutHints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint> {
-        val result = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>()
+    private fun convertTipLayoutHints(tipLayoutHints: Map<Aes<*>, TipLayoutHint>): Map<Aes<*>, TipLayoutHint> {
+        val result = HashMap<Aes<*>, TipLayoutHint>()
         tipLayoutHints.forEach { (aes, hint) -> result[aes] = convertTipLayoutHint(hint) }
         return result
     }

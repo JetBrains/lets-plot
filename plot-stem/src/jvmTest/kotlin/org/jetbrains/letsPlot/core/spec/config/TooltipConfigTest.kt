@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
@@ -1137,7 +1138,7 @@ class TooltipConfigTest {
             return dataPoints.filter(DataPoint::isAxis)
         }
 
-        private fun getSideTooltips(geomLayer: GeomLayer): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String> {
+        private fun getSideTooltips(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH
@@ -76,23 +77,23 @@ object DefaultMapperProvider {
 
     private val PROVIDER_MAP = TypedMapperProviderMap()
 
-    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): MapperProvider<T> {
+    operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
         return PROVIDER_MAP[aes]
     }
 
     /**
      * For tests
      */
-    internal fun hasDefault(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+    internal fun hasDefault(aes: Aes<*>): Boolean {
         return PROVIDER_MAP.containsKey(aes)
     }
 
     private class TypedMapperProviderMap internal constructor() {
 
-        private var myMap: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MapperProvider<*>> = HashMap()
+        private var myMap: MutableMap<Aes<*>, MapperProvider<*>> = HashMap()
 
         init {
-            for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.allPositional()) {
+            for (aes in Aes.allPositional()) {
                 put(aes, NUMERIC_UNDEFINED)
             }
 
@@ -158,16 +159,16 @@ object DefaultMapperProvider {
             this.put(EXPLODE, NUMERIC_IDENTITY)
         }
 
-        internal operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): MapperProvider<T> {
+        internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
             @Suppress("UNCHECKED_CAST")
             return myMap[aes] as MapperProvider<T>
         }
 
-        private fun <T> put(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, value: MapperProvider<T>) {
+        private fun <T> put(aes: Aes<T>, value: MapperProvider<T>) {
             myMap[aes] = value
         }
 
-        internal fun containsKey(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
+        internal fun containsKey(aes: Aes<*>): Boolean {
             return myMap.containsKey(aes)
         }
 

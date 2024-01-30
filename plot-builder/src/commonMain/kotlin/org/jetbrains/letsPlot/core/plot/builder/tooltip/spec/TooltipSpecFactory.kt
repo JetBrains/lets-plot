@@ -7,12 +7,13 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.spec
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
 
 class TooltipSpecFactory(
@@ -78,10 +79,10 @@ class TooltipSpecFactory(
         private fun axisTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             val axis = mapOf(
-                org.jetbrains.letsPlot.core.plot.base.Aes.X to axisDataPoints().filter { org.jetbrains.letsPlot.core.plot.base.Aes.X == it.aes }
+                Aes.X to axisDataPoints().filter { Aes.X == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue),
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y to axisDataPoints().filter { org.jetbrains.letsPlot.core.plot.base.Aes.Y == it.aes }
+                Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue)
             )
@@ -143,18 +144,18 @@ class TooltipSpecFactory(
         }
 
         private fun createHintForAxis(
-            aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+            aes: Aes<*>,
             flippedAxis: Boolean
         ): TipLayoutHint {
             val axis = aes.let {
                 when {
-                    flippedAxis && it == org.jetbrains.letsPlot.core.plot.base.Aes.X -> org.jetbrains.letsPlot.core.plot.base.Aes.Y
-                    flippedAxis && it == org.jetbrains.letsPlot.core.plot.base.Aes.Y -> org.jetbrains.letsPlot.core.plot.base.Aes.X
+                    flippedAxis && it == Aes.X -> Aes.Y
+                    flippedAxis && it == Aes.Y -> Aes.X
                     else -> it
                 }
             }
             return when (axis) {
-                org.jetbrains.letsPlot.core.plot.base.Aes.X -> {
+                Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
                         axisRadius = AXIS_RADIUS,
@@ -162,7 +163,7 @@ class TooltipSpecFactory(
                     )
                 }
 
-                org.jetbrains.letsPlot.core.plot.base.Aes.Y -> {
+                Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
                         axisRadius = AXIS_RADIUS,

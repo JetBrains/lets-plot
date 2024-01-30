@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.ConstantField
@@ -15,10 +16,10 @@ internal object GeomInteractionBuilderUtil {
 
     fun createTooltipLines(
         userTooltipSpec: TooltipSpecification,
-        tooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        tooltipAxisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        tooltipConstantAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>?,
+        tooltipAes: List<Aes<*>>,
+        tooltipAxisAes: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
+        tooltipConstantAes: Map<Aes<*>, Any>?,
     ): List<LinePattern> {
 
         return when {
@@ -78,7 +79,7 @@ internal object GeomInteractionBuilderUtil {
 
 
     private fun getMappingValueSource(
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aes: Aes<*>,
         isSide: Boolean,
         isAxis: Boolean,
         userDefinedValueSources: List<ValueSource>?,
@@ -94,11 +95,11 @@ internal object GeomInteractionBuilderUtil {
     }
 
     internal fun defaultValueSourceTooltipLines(
-        aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-        sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        aesListForTooltip: List<Aes<*>>,
+        axisAes: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
         userDefinedValueSources: List<ValueSource>? = null,
-        constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>? = null
+        constantsMap: Map<Aes<*>, Any>? = null
     ): List<LinePattern> {
         val axisValueSources = axisAes.map { aes ->
             getMappingValueSource(aes, isSide = true, isAxis = true, userDefinedValueSources)
@@ -113,8 +114,8 @@ internal object GeomInteractionBuilderUtil {
 
         val aesValueSources = aesListForTooltip.map { aes ->
             val label = if (isOneLineTooltip && aes in listOf(
-                    org.jetbrains.letsPlot.core.plot.base.Aes.X,
-                    org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                    Aes.X,
+                    Aes.Y
                 )
             ) "" else null
             getMappingValueSource(aes, isSide = false, isAxis = false, userDefinedValueSources, label)

@@ -5,8 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
+
 // `open` - for Mockito tests
 open class GeomTarget(
     val hitIndex: Int,
     open val tipLayoutHint: TipLayoutHint,
-    open val aesTipLayoutHints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>)
+    open val aesTipLayoutHints: Map<Aes<*>, TipLayoutHint>
+)

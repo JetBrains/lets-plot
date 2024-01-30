@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -21,7 +22,7 @@ object TestingPlotContext {
 
     fun create(
         layers: List<GeomLayer>,
-        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>
+        scaleMap: Map<Aes<*>, Scale>
     ): PlotContext {
         val layersByTile = listOf(layers) // 1 tile, 2 layers.
         return PlotAssemblerPlotContext(

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -15,8 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
         layer: PlotContext.Layer,
-        guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>
-    ): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+        guideOptionsMap: Map<Aes<*>, GuideOptions>
+    ): List<Aes<*>> {
         if (layer.isLegendDisabled) {
             // ToDo: add support for
             // show_legend = True     : show all aesthetics in legend
@@ -25,9 +26,9 @@ internal object PlotGuidesAssemblerUtil {
             return emptyList()
         }
 
-        val result = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
+        val result = ArrayList<Aes<*>>()
         for (aes in layer.renderedAes()) {
-            if (org.jetbrains.letsPlot.core.plot.base.Aes.noGuideNeeded(aes)) {
+            if (Aes.noGuideNeeded(aes)) {
                 continue
             }
             if (layer.hasConstant(aes)) {
@@ -69,11 +70,11 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-    fun fitsColorBar(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, scale: Scale): Boolean {
+    fun fitsColorBar(aes: Aes<*>, scale: Scale): Boolean {
         return aes.isColor && scale.isContinuous
     }
 
-    fun checkFitsColorBar(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, scale: Scale) {
+    fun checkFitsColorBar(aes: Aes<*>, scale: Scale) {
         check(aes.isColor) { "Color-bar is not applicable to $aes aesthetic" }
         check(scale.isContinuous) { "Color-bar is only applicable when both domain and color palette are continuous" }
     }

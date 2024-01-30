@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -22,9 +23,9 @@ import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 internal object PlotAssemblerUtil {
 
     private fun updateAesRangeMap(
-        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
+        aes: Aes<*>,
         range: DoubleSpan?,
-        rangeByAes: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DoubleSpan>
+        rangeByAes: MutableMap<Aes<*>, DoubleSpan>
     ) {
         @Suppress("NAME_SHADOWING")
         var range = range
@@ -39,8 +40,8 @@ internal object PlotAssemblerUtil {
 
     fun createLegends(
         ctx: PlotContext,
-        scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>,
+        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
+        guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
 
@@ -48,14 +49,14 @@ internal object PlotAssemblerUtil {
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
         for (contextLayer in ctx.layers) {
-            val layerConstantByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>()
+            val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in contextLayer.renderedAes()) {
                 if (contextLayer.hasConstant(aes)) {
                     layerConstantByAes[aes] = contextLayer.getConstant(aes)!!
                 }
             }
 
-            val aesListByScaleName = LinkedHashMap<String, MutableList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>>()
+            val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(contextLayer, guideOptionsMap)
             for (aes in aesList) {
                 var colorBar = false

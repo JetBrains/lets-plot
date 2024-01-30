@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
@@ -48,9 +49,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     companion object {
         // For tests
         fun createTestContextualMapping(
-            aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-            axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
-            sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+            aesListForTooltip: List<Aes<*>>,
+            axisAes: List<Aes<*>>,
+            sideTooltipAes: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
             userDefinedValueSources: List<ValueSource>? = null

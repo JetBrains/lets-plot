@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble.geom
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Geom
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
@@ -20,8 +21,8 @@ class GeomProvider internal constructor(
     }
 
     abstract class Context {
-        abstract fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
-        abstract fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
+        abstract fun hasBinding(aes: Aes<*>): Boolean
+        abstract fun hasConstant(aes: Aes<*>): Boolean
     }
 
     companion object {

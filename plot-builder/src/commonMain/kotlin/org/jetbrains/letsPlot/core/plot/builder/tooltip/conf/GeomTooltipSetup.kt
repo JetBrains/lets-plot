@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.conf
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 
 class GeomTooltipSetup private constructor(
     val locatorLookupSpace: GeomTargetLocator.LookupSpace,
     val locatorLookupStrategy: GeomTargetLocator.LookupStrategy,
-    val axisAesFromFunctionKind: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,// = emptyList()
+    val axisAesFromFunctionKind: List<Aes<*>>,// = emptyList()
     val axisTooltipVisibilityFromFunctionKind: Boolean, // = false
     val axisTooltipEnabled: Boolean,// = true
 ) {

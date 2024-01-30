@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,
+//    geomTiles: PlotGeomTiles,
     private val scaleMap: Map<Aes<*>, Scale>,
     override val superscriptExponent: Boolean
 ) : PlotContext {
