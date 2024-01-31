@@ -74,13 +74,12 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     }
 
     @Test
-    fun shouldNotAddSemicolonIfLineFormatterIsSet() {
-//        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
-        val widthMapping = addMappedData(variable().name("type").value("n/a").mapping(AES_WIDTH))
+    fun shouldUseShortTextInFormatLine() {
+        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         // set line format -> short text will be used
         val widthAes = MappingField(
             AES_WIDTH,
-            format = "{}"
+            format = "value = {}"
         )
         createTooltipSpecWithValueSources(
             geomTargetBuilder.withPathHitShape()
@@ -94,6 +93,6 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
                 .build(),
             valueSources = listOf(widthAes)
         )
-        assertLines(listOf(widthMapping.shortTooltipText()), isSide = true)
+        assertLines(listOf("value = " + widthMapping.shortTooltipText()), isSide = true)
     }
 }
