@@ -5,14 +5,15 @@
 
 package demo.plot.batik.plotConfig
 
-import demo.plot.common.model.plotConfig.Path
 import demo.common.batik.demoUtils.PlotSpecsDemoWindowBatik
+import demo.plot.common.model.plotConfig.Path
 
 fun main() {
     with(Path()) {
         PlotSpecsDemoWindowBatik(
             "Path",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 1
         ).open()
     }
 }

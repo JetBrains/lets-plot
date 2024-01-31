@@ -26,9 +26,14 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     GeomHelper(pos, coord, ctx) {
 
     private var myAlphaEnabled = true
+    private var myResamplingEnabled = false
 
     fun setAlphaEnabled(b: Boolean) {
         this.myAlphaEnabled = b
+    }
+
+    fun setResamplingEnabled(resample: Boolean) {
+        this.myResamplingEnabled = resample
     }
 
     fun createLines(
@@ -61,18 +66,23 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return element
     }
 
-    internal fun createVariadicPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
-        return createVariadicPathData(createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y))
-    }
-
-    // coord in domain units
-    internal fun createVariadicNonLinearPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
-        val groups = GeomUtil.createPathGroups(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        return createVariadicPathData(groups)
+    internal fun createPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
+        return if (myResamplingEnabled) {
+            // coords are in data space as they have to be resampled
+            val pathData = GeomUtil.createPathGroups(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            val variadicPathData = variadicPathByStyle(pathData)
+            val interpolatedData = interpolatePathData(variadicPathData)
+            resamplePath(interpolatedData)
+        } else {
+            // coords are already in client space
+            val pathData = createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            val variadicPath = variadicPathByStyle(pathData)
+            interpolatePathData(variadicPath)
+        }
     }
 
     // TODO: refactor - inconsistent and implicit usage of the toClient method in a whole LinesHelper class
-    fun interpolate(groups: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+    private fun resamplePath(groups: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
         return groups.mapValues { (_, path) ->
             path.map { segment ->
                 val smoothed = segment.points
@@ -218,7 +228,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             return result
         }
 
-        fun createVariadicPathData(paths: Map<Int, PathData>): Map<Int, List<PathData>> {
+        fun variadicPathByStyle(paths: Map<Int, PathData>): Map<Int, List<PathData>> {
             return paths.mapValues { (_, pathData) ->
                 pathData.points
                     .splitBy(
@@ -274,7 +284,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             return p1.add(p2.subtract(p1).mul(progress))
         }
 
-        fun createVisualPath(variadicPath: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
+        fun interpolatePathData(variadicPath: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
             return variadicPath.mapValues { (_, pathSegments) -> midPointsPathInterpolator(pathSegments) }
         }
     }

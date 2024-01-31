@@ -44,8 +44,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -83,8 +82,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -122,8 +120,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -161,8 +158,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -203,8 +199,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -254,8 +249,7 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE, WHITE)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -301,8 +295,7 @@ class PathGeomTest {
         val aes = AestheticsBuilder(0)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         assertTrue(visualPath.isEmpty())
     }
@@ -316,8 +309,7 @@ class PathGeomTest {
             .color(listOf(BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -339,8 +331,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         visualPath[0].let {
             assertEquals(
@@ -365,8 +356,7 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
-        val visualPath = LinesHelper.createVisualPath(variadicPathData).values.flatten()
+        val visualPath = linesHelper.createPathData(aes.dataPoints()).values.flatten()
 
         assertEquals(1, visualPath.size)
         assertEquals(

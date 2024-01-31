@@ -35,30 +35,14 @@ open class PathGeom : GeomBase() {
 
         val dataPoints = dataPoints(aesthetics)
         val linesHelper = LinesHelper(pos, coord, ctx)
+        linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
 
-        // TODO: refactor code duplication
-        if (coord.isLinear || flat) {
-            val variadicPathData = linesHelper.createVariadicPathData(dataPoints)
-            val visualPathData = LinesHelper.createVisualPath(variadicPathData)
+        val pathData = linesHelper.createPathData(dataPoints)
+        val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
+        targetCollectorHelper.addVariadicPaths(pathData)
 
-            // To not add interpolated points and to not show incorrect tooltips on them
-            val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
-            targetCollectorHelper.addVariadicPaths(variadicPathData)
-
-            val svgPath = linesHelper.createPaths(visualPathData, closePath = false)
-            root.appendNodes(svgPath)
-        } else {
-            val variadicPathData = linesHelper.createVariadicNonLinearPathData(dataPoints)
-            val visualPathData = LinesHelper.createVisualPath(variadicPathData)
-            val smoothed = linesHelper.interpolate(visualPathData)
-
-            // To not add interpolated points and to not show incorrect tooltips on them
-            val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
-            targetCollectorHelper.addVariadicPaths(linesHelper.toClient(variadicPathData))
-
-            val svgPath = linesHelper.createPaths(smoothed, closePath = false)
-            root.appendNodes(svgPath)
-        }
+        val svgPath = linesHelper.createPaths(pathData, closePath = false)
+        root.appendNodes(svgPath)
     }
 
 

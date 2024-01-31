@@ -131,11 +131,11 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            val paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y)
-            val variadicPathData = LinesHelper.createVariadicPathData(paths)
-            val visualPathData = LinesHelper.createVisualPath(variadicPathData)
+            val pathData = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y)
+            val variadicPathData = LinesHelper.variadicPathByStyle(pathData)
+            val interpolatedPathData = LinesHelper.interpolatePathData(variadicPathData)
 
-            return process(paths = visualPathData.values.flatten(), isClosed = false)
+            return process(paths = interpolatedPathData.values.flatten(), isClosed = false)
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
