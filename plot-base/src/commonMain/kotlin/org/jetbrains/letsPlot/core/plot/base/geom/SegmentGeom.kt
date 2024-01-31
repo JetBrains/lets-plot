@@ -49,25 +49,31 @@ class SegmentGeom : GeomBase() {
             val y = finiteOrNull(p.y()) ?: continue
             val xend = finiteOrNull(p.xend()) ?: continue
             val yend = finiteOrNull(p.yend()) ?: continue
+            val strokeWidth = AesScaling.strokeWidth(p)
 
             val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
             val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-            // Target sizes to move the start/end of the segment
-            val targetSizeStart = AesScaling.circleDiameter(p, DataPointAesthetics::sizeStart) / 2 +
-                        AesScaling.pointStrokeWidth(p, DataPointAesthetics::strokeStart)
-            val targetSizeEnd = AesScaling.circleDiameter(p, DataPointAesthetics::sizeEnd) / 2 +
-                        AesScaling.pointStrokeWidth(p, DataPointAesthetics::strokeEnd)
+            val targetSizeStart = targetSize(p, atStart = true)
+            val targetSizeEnd = targetSize(p, atStart = false)
 
-            // Use additional offset to avoid intersection with arrow
-            val strokeWidth = AesScaling.strokeWidth(p)
-            val segmentArrowOffset = arrowSpec?.angle?.let { angle -> (strokeWidth / 2) / tan(angle) } ?: 0.0
-
-            // Total offsets
-            val startOffset = (if (arrowSpec?.isOnFirstEnd == true) segmentArrowOffset else 0.0) +
-                    targetSizeStart + spacer
-            val endOffset = (if (arrowSpec?.isOnLastEnd == true) segmentArrowOffset else 0.0) +
-                    targetSizeEnd + spacer
+            val segmentArrowOffset = arrowSpec?.angle?.let { angle -> (strokeWidth / 2) / tan(angle) }
+            val startOffset = when {
+                targetSizeStart > 0 -> {
+                    targetSizeStart + spacer +
+                            // Use additional offset to avoid intersection with arrow
+                            (segmentArrowOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
+                }
+                else -> 0.0
+            }
+            val endOffset = when {
+                targetSizeEnd > 0 -> {
+                    targetSizeEnd + spacer +
+                            // Use additional offset to avoid intersection with arrow
+                            (segmentArrowOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+                }
+                else -> 0.0
+            }
 
             val startPoint = pointOnLine(clientStart, clientEnd, startOffset)
             val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
@@ -91,21 +97,31 @@ class SegmentGeom : GeomBase() {
 */
             // add arrows
             arrowSpec?.let { arrowSpec ->
-                // Add offset by geometry width
+                // Add offset for arrow by geometry width
+                // if the start/end of the segment were shifted according to the target sizes
                 val arrowOffset = (strokeWidth / 2) / sin(arrowSpec.angle)
-                val start = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
-                val end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
+                val start = when {
+                    targetSizeStart > 0 -> pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
+                    else -> clientStart
+                }
+                val end = when {
+                    targetSizeEnd > 0 -> pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
+                    else -> clientEnd
+                }
 
-                ArrowSpec.createArrows(
-                    p,
-                    listOf(start, end),
-                    arrowSpec
-                ).forEach(root::add)
+                ArrowSpec.createArrows(p, listOf(start, end), arrowSpec)
+                    .forEach(root::add)
             }
         }
     }
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
+            val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
+            val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
+            return AesScaling.circleDiameter(p, sizeAes) / 2 + AesScaling.pointStrokeWidth(p, strokeAes)
+        }
     }
 }

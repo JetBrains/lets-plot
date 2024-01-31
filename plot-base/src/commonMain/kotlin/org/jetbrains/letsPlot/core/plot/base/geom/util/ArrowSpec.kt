@@ -48,21 +48,11 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
             val arrows = mutableListOf<SvgPathElement?>()
             if (arrowSpec.isOnFirstEnd) {
                 val (start, end) = geometry.take(2).reversed()
-                arrows += createArrowAtEnd(
-                    p,
-                    start,
-                    end,
-                    arrowSpec
-                )
+                arrows += createArrowAtEnd(p, start, end, arrowSpec)
             }
             if (arrowSpec.isOnLastEnd) {
                 val (start, end) = geometry.takeLast(2)
-                arrows += createArrowAtEnd(
-                    p,
-                    start,
-                    end,
-                    arrowSpec
-                )
+                arrows += createArrowAtEnd(p, start, end, arrowSpec)
             }
             return arrows.filterNotNull()
         }
