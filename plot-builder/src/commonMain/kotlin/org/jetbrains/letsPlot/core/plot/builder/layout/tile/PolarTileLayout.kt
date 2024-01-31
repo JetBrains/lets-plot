@@ -44,24 +44,11 @@ internal class PolarTileLayout(
 
         val axisInfos = geomAreaInsets.axisInfoQuad
 
-        // Combine geom area and x/y-axis
-        val (l, r, t, b) = axisInfos
-        // Only take in account:
-        //  - width of vertical axis
-        //  - height of horizontal axis
-//        val axisBounds = listOfNotNull(l, r, t, b)
-//            .map {
-//                it.axisBoundsAbsolute(geomBoundsAfterLayout)
-//            }
-
-//        val geomWithAxisBounds = axisBounds.fold(geomBoundsAfterLayout) { a, e ->
-//            a.union(e)
-//        }
         val geomWithAxisBounds: DoubleRectangle = DoubleRectangle.LTRB(
-            left = l?.axisBoundsAbsolute(geomBoundsAfterLayout)?.left ?: geomBoundsAfterLayout.left,
-            top = t?.axisBoundsAbsolute(geomBoundsAfterLayout)?.top ?: geomBoundsAfterLayout.top,
-            right = r?.axisBoundsAbsolute(geomBoundsAfterLayout)?.right ?: geomBoundsAfterLayout.right,
-            bottom = b?.axisBoundsAbsolute(geomBoundsAfterLayout)?.bottom ?: geomBoundsAfterLayout.bottom,
+            left = axisInfos.left?.axisBoundsAbsolute(geomBoundsAfterLayout)?.left ?: geomBoundsAfterLayout.left,
+            top = geomBoundsAfterLayout.top, // polar coord never has top axis
+            right = geomBoundsAfterLayout.right, // polar coord never has right axis
+            bottom = geomBoundsAfterLayout.bottom, // with polar coord bottom axis is as a part of geom area
         )
 
         val geomInnerBounds = marginsLayout.toInnerBounds(geomBoundsAfterLayout)
