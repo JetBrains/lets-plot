@@ -32,20 +32,35 @@ class MappingField(
             StringFormat.forOneArg(it, formatFor = aes.name, superscriptExponent = ctx.superscriptExponent)
         }
 
-        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
-        val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+//        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
+//        val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+//
+//        val plotFormatter = ctx.getTooltipFormatter(primaryAes)
+//
+//        fun formatter(value: Any?): String {
+//            if (value != null && mappingFormatter != null) {
+//                return mappingFormatter.format(value)
+//            }
+//            return plotFormatter.invoke(value)
+//        }
+//
+//        myFormatter = ::formatter
+//        return myFormatter!!
 
-        val plotFormatter = ctx.getTooltipFormatter(primaryAes)
-
-        fun formatter(value: Any?): String {
-            if (value != null && mappingFormatter != null) {
-                return mappingFormatter.format(value)
+        val formatter = if (mappingFormatter != null) {
+            { value: Any? ->
+                value?.let { mappingFormatter.format(value) } ?: "n/a"
             }
-            return plotFormatter.invoke(value)
+        } else {
+            // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
+            val primaryAes =
+                aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+
+            ctx.getTooltipFormatter(primaryAes)
         }
 
-        myFormatter = ::formatter
-        return myFormatter!!
+        myFormatter = formatter
+        return formatter
     }
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {

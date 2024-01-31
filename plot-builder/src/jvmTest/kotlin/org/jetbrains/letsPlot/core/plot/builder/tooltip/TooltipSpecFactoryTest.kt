@@ -75,7 +75,8 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun shouldNotAddSemicolonIfLineFormatterIsSet() {
-        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
+//        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
+        val widthMapping = addMappedData(variable().name("type").value("n/a").mapping(AES_WIDTH))
         // set line format -> short text will be used
         val widthAes = MappingField(
             AES_WIDTH,
