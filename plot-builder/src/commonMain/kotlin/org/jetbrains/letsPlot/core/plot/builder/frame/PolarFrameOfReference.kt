@@ -216,7 +216,7 @@ internal class PolarFrameOfReference(
         val layerComponent = buildGeom(
             plotContext,
             layer,  // positional aesthetics are the same as positional data.
-            xyAesBounds = adjustedDomain,
+            xyAesBounds = gridDomain,
             coord,
             flipAxis,
             targetCollector,

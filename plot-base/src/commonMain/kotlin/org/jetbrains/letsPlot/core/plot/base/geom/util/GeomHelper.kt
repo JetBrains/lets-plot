@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -15,11 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
+import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
 open class GeomHelper(
@@ -138,6 +136,22 @@ open class GeomHelper(
             )
             decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
             return line
+        }
+
+        fun createResampledLine(
+            start: DoubleVector, end: DoubleVector,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
+            precision: Double = 0.5
+        ): Pair<SvgPathElement, List<DoubleVector>> {
+            val line = SvgPathElement()
+            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
+
+            val points = resample(listOf(start, end), precision) { toClient(it, p) }
+            line.d().set(SvgPathDataBuilder().lineString(points).build())
+            line.fill().set(SvgColors.NONE)
+
+            return line to points
         }
     }
 

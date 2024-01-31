@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -37,11 +38,9 @@ class RectanglesHelper(
                     )
                 ) { toClient(it, p) }
 
-                val svgPathData = SvgPathDataBuilder()
-                polyRect.first().let(svgPathData::moveTo)
-                polyRect.drop(1).forEach(svgPathData::lineTo)
+                val svgPoly = SvgPathElement()
+                svgPoly.d().set(SvgPathDataBuilder().lineString(polyRect).build())
 
-                val svgPoly = SvgPathElement(svgPathData.build())
                 decorate(svgPoly, p)
                 handler(p, svgPoly, polyRect)
             }

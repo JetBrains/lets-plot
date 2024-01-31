@@ -14,10 +14,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.extend
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 class VLineGeom : GeomBase() {
 
@@ -38,37 +37,45 @@ class VLineGeom : GeomBase() {
         val viewPort = overallAesBounds(ctx)
         val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.V_LINE, ctx)
 
-        val lines = ArrayList<SvgLineElement>()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.XINTERCEPT)) {
             val intercept = p.interceptX()!!
             if (viewPort.xRange().contains(intercept)) {
                 // line
                 val start = DoubleVector(intercept, viewPort.top)
                 val end = DoubleVector(intercept, viewPort.bottom)
-                val line = helper.createLine(start, end, p)
-                if (line == null) continue
-                lines.add(line)
 
-                // tooltip
-                val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
-                val widthExpand = AesScaling.strokeWidth(p) + 4.0
-                // The tooltip point is on the top of the rectangle = on the plot border.
-                // To ensure that it will be displayed, move the rectangle a little inside the plot
-                // https://github.com/JetBrains/lets-plot/issues/610
-                val heightExpand = -2.0
-                val targetRect = extend(rect, ctx.flipped, widthExpand, heightExpand)
+                if (coord.isLinear) {
 
-                ctx.targetCollector.addRectangle(
-                    p.index(),
-                    targetRect,
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorMarkerMapper(p)
+                    val line = helper.createLine(start, end, p) ?: continue
+                    root.add(line)
+
+                    // tooltip
+                    val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
+                    val widthExpand = AesScaling.strokeWidth(p) + 4.0
+                    // The tooltip point is on the top of the rectangle = on the plot border.
+                    // To ensure that it will be displayed, move the rectangle a little inside the plot
+                    // https://github.com/JetBrains/lets-plot/issues/610
+                    val heightExpand = -2.0
+                    val targetRect = extend(rect, ctx.flipped, widthExpand, heightExpand)
+
+                    ctx.targetCollector.addRectangle(
+                        p.index(),
+                        targetRect,
+                        GeomTargetCollector.TooltipParams(
+                            markerColors = colorMarkerMapper(p)
+                        )
                     )
-                )
+                } else {
+                    val (svgPath, lineString) = helper.createResampledLine(start, end, p)
+                    root.add(svgPath)
+                    ctx.targetCollector.addPath(
+                        lineString,
+                        { p.index() },
+                        GeomTargetCollector.TooltipParams(markerColors = colorMarkerMapper(p))
+                    )
+                }
             }
         }
-
-        lines.forEach { root.add(it) }
     }
 
     companion object {
