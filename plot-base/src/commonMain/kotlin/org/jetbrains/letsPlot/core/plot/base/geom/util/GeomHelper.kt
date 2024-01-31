@@ -112,46 +112,55 @@ open class GeomHelper(
     }
 
     inner class SvgElementHelper {
+        private var geometryHandler: (DataPointAesthetics, List<DoubleVector>) -> Unit = { _, _ -> }
         private var myStrokeAlphaEnabled = false
+        private var myResamplingEnabled = false
+        private var myResamplingPrecision = 0.5
 
         fun setStrokeAlphaEnabled(b: Boolean) {
             myStrokeAlphaEnabled = b
+        }
+
+        fun setResamplingEnabled(b: Boolean) {
+            myResamplingEnabled = b
+        }
+
+        fun setResamplingPrecision(precision: Double) {
+            myResamplingPrecision = precision
+        }
+
+        fun setGeometryHandler(handler: (DataPointAesthetics, List<DoubleVector>) -> Unit) {
+            geometryHandler = handler
         }
 
         fun createLine(
             start: DoubleVector, end: DoubleVector,
             p: DataPointAesthetics,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
-        ): SvgLineElement? {
-            @Suppress("NAME_SHADOWING")
-            val start = toClient(start, p)
-            if (start == null) return null
-            @Suppress("NAME_SHADOWING")
-            val end = toClient(end, p)
-            if (end == null) return null
+        ): SvgNode? {
+            if (myResamplingEnabled) {
+                val lineString = resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
 
-            val line = SvgLineElement(
-                start.x, start.y,
-                end.x, end.y
-            )
-            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
-            return line
-        }
+                geometryHandler(p, lineString)
 
-        fun createResampledLine(
-            start: DoubleVector, end: DoubleVector,
-            p: DataPointAesthetics,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
-            precision: Double = 0.5
-        ): Pair<SvgPathElement, List<DoubleVector>> {
-            val line = SvgPathElement()
-            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
+                val svgPathElement = SvgPathElement()
+                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler)
+                svgPathElement.d().set(SvgPathDataBuilder().lineString(lineString).build())
+                svgPathElement.fill().set(SvgColors.NONE)
+                return svgPathElement
+            } else {
+                @Suppress("NAME_SHADOWING")
+                val start = toClient(start, p) ?: return null
 
-            val points = resample(listOf(start, end), precision) { toClient(it, p) }
-            line.d().set(SvgPathDataBuilder().lineString(points).build())
-            line.fill().set(SvgColors.NONE)
+                @Suppress("NAME_SHADOWING")
+                val end = toClient(end, p) ?: return null
 
-            return line to points
+                geometryHandler(p, listOf(start, end))
+
+                val svgLineElement = SvgLineElement(start.x, start.y, end.x, end.y)
+                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler)
+                return svgLineElement
+            }
         }
     }
 

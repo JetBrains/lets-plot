@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 class CrossBarGeom(private val isVertical: Boolean) : GeomBase() {
     private val flipHelper = FlippableGeomHelper(isVertical)
@@ -127,7 +128,9 @@ class CrossBarGeom(private val isVertical: Boolean) : GeomBase() {
                 p
             )!!
 
+            // TODO: use strokeScale in createLine() function
             // adjust thickness
+            require(line is SvgShape)
             val thickness = line.strokeWidth().get()!!
             line.strokeWidth().set(thickness * fatten)
 

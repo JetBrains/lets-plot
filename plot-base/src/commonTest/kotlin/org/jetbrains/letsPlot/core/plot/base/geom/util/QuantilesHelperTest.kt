@@ -8,10 +8,14 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.BogusContext
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -141,7 +145,7 @@ class QuantilesHelperTest {
         } else {
             quantiles.size
         }
-        val actualLinesNumber = quantileLines.map { it.x1().get() }.toSet().size
+        val actualLinesNumber = quantileLines.map { it as SvgLineElement }.map { it.x1().get() }.toSet().size
         assertEquals(expectedLinesNumber, actualLinesNumber, "Count of quantile line elements should be equal to size of quantiles parameter")
     }
 

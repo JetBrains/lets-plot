@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 object BoxHelper {
     fun buildBoxes(
@@ -55,7 +56,9 @@ object BoxHelper {
                 p
             )!!
 
+            // TODO: use strokeScale in createLine() function
             // adjust thickness
+            require(line is SvgShape)
             val thickness = line.strokeWidth().get()!!
             line.strokeWidth().set(thickness * fatten)
 

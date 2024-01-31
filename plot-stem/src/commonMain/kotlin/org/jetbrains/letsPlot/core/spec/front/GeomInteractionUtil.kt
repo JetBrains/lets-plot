@@ -194,8 +194,7 @@ object GeomInteractionUtil {
             GeomKind.AREA,
             GeomKind.BAR,
             GeomKind.SEGMENT,
-            GeomKind.STEP,
-            GeomKind.V_LINE -> return GeomTooltipSetup.xUnivariateFunction(
+            GeomKind.STEP -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true
             )
@@ -262,6 +261,7 @@ object GeomInteractionUtil {
             }
 
             GeomKind.H_LINE,
+            GeomKind.V_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,

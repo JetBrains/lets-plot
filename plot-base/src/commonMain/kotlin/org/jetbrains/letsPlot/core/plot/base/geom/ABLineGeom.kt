@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -14,8 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class ABLineGeom : GeomBase() {
 
@@ -36,7 +36,7 @@ class ABLineGeom : GeomBase() {
         val viewPort = overallAesBounds(ctx)
         val boundaries = viewPort.parts.toList()
 
-        val lines = ArrayList<SvgLineElement>()
+        val lines = ArrayList<SvgNode>()
         for (p in aesthetics.dataPoints()) {
             val intercept = p.intercept()
             val slope = p.slope()

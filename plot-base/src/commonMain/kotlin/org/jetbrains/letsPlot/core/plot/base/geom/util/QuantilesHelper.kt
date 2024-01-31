@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class QuantilesHelper(
     pos: PositionAdjustment,
@@ -61,13 +61,13 @@ open class QuantilesHelper(
         axisAes: Aes<Double>,
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
-    ): List<SvgLineElement> {
+    ): List<SvgNode> {
         if (quantiles.isEmpty() || dataPoints.none()) {
             return emptyList()
         }
 
         val quantiles = quantiles.sortedDescending()
-        val quantileLineElements = mutableListOf<SvgLineElement>()
+        val quantileLineElements = mutableListOf<SvgNode>()
         iterateThroughSortedDataPoints(dataPoints, axisAes) { ascendingSortedDataPoints ->
             val sortedDataPoints = ascendingSortedDataPoints.asReversed()
             var currPointsIdx = 0
@@ -120,7 +120,7 @@ open class QuantilesHelper(
         dataPoint: DataPointAesthetics,
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
-    ): SvgLineElement {
+    ): SvgNode {
         val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
         val start = toLocationBoundStart(dataPoint)
         val end = toLocationBoundEnd(dataPoint)

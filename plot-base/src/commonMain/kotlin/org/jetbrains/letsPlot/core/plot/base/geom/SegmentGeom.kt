@@ -6,14 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 
 class SegmentGeom : GeomBase() {
@@ -33,12 +32,11 @@ class SegmentGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val targetCollector = getGeomTargetCollector(ctx)
-        val helper = GeomHelper(pos, coord, ctx)
-            .createSvgElementHelper()
+        val tooltipHelper = TargetCollectorHelper(GeomKind.SEGMENT, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
-
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SEGMENT, ctx)
+        helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
@@ -47,32 +45,15 @@ class SegmentGeom : GeomBase() {
                 val line = helper.createLine(start, end, p) ?: continue
                 root.add(line)
 
-                val clientStart = DoubleVector(line.x1().get()!!, line.y1().get()!!)
-                val clientEnd = DoubleVector(line.x2().get()!!, line.y2().get()!!)
-                targetCollector.addPath(
-                    listOf(clientStart, clientEnd),
-                    { p.index() },
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
-                    )
-                )
-
                 arrowSpec?.let { arrowSpec ->
+                    val clientStart = geomHelper.toClient(start, p)!!
+                    val clientEnd = geomHelper.toClient(end, p)!!
+
                     if (arrowSpec.isOnLastEnd) {
-                        ArrowSpec.createArrow(
-                            p,
-                            clientStart,
-                            clientEnd,
-                            arrowSpec
-                        )?.let(root::add)
+                        ArrowSpec.createArrow(p, clientStart, clientEnd, arrowSpec)?.let(root::add)
                     }
                     if (arrowSpec.isOnFirstEnd) {
-                        ArrowSpec.createArrow(
-                            p,
-                            start = clientEnd,
-                            end = clientStart,
-                            arrowSpec
-                        )?.let(root::add)
+                        ArrowSpec.createArrow(p, start = clientEnd, end = clientStart, arrowSpec)?.let(root::add)
                     }
                 }
             }

@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.colorWithAl
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class BoxplotGeom : GeomBase() {
 
@@ -63,7 +63,7 @@ class BoxplotGeom : GeomBase() {
             val halfWidth = p.width()?.let { it * ctx.getResolution(Aes.X) / 2 } ?: 0.0
             val halfFenceWidth = halfWidth * whiskerWidth
 
-            val lines = ArrayList<SvgLineElement>()
+            val lines = ArrayList<SvgNode>()
 
             // lower whisker
             if (p.defined(Aes.LOWER) && p.defined(Aes.YMIN)) {

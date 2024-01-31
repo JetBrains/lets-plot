@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import kotlin.math.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
     var pivot: Pivot = DEF_PIVOT
@@ -31,12 +31,11 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val targetCollector = getGeomTargetCollector(ctx)
+        val tooltipHelper = TargetCollectorHelper(GeomKind.SPOKE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val svgElementHelper = geomHelper.createSvgElementHelper().also {
-            it.setStrokeAlphaEnabled(true)
-        }
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SPOKE, ctx)
+        val svgElementHelper = geomHelper.createSvgElementHelper()
+        svgElementHelper.setStrokeAlphaEnabled(true)
+        svgElementHelper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         for (p in aesthetics.dataPoints()) {
             val x = finiteOrNull(p.x()) ?: continue
@@ -45,19 +44,9 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
             val base = DoubleVector(x, y)
             val start = getStart(base, spoke)
             val end = getEnd(base, spoke)
-            svgElementHelper.createLine(start, end, p)?.let { line ->
-                root.add(line)
+            val line = svgElementHelper.createLine(start, end, p) ?: continue
 
-                val clientStart = DoubleVector(line.x1().get()!!, line.y1().get()!!)
-                val clientEnd = DoubleVector(line.x2().get()!!, line.y2().get()!!)
-                targetCollector.addPath(
-                    listOf(clientStart, clientEnd),
-                    { p.index() },
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
-                    )
-                )
-            }
+            root.add(line)
         }
     }
 

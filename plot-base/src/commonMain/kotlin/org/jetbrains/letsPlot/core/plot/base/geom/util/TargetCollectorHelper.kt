@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -72,5 +73,14 @@ class TargetCollectorHelper(
 
     private fun reduce(path: PathData): PathData {
         return PathData(reduce(path.points, 0.5) { p1, p2 -> p1.coord.subtract(p2.coord).length() })
+    }
+
+    fun addLine(lineString: List<DoubleVector>, p: DataPointAesthetics) {
+        targetCollector.addPath(
+            points = lineString,
+            localToGlobalIndex = { p.index() },
+            tooltipParams = TooltipParams(markerColors = colorMarkerMapper(p)),
+            tooltipKind = HORIZONTAL_TOOLTIP
+        )
     }
 }
