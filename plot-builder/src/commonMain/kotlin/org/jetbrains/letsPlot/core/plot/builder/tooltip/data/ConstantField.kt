@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class ConstantField(
     val aes: Aes<*>,
@@ -59,9 +58,7 @@ class ConstantField(
             }
 
             if (ctx.hasScale(tooltipAes) && ctx.getScale(tooltipAes).isContinuousDomain && value is Number) {
-                ctx.getTooltipFormatter(tooltipAes) {
-                    TooltipFormatting.createFormatter(tooltipAes, ctx)
-                }.invoke(value)
+                ctx.getTooltipFormatter(tooltipAes).invoke(value)
             } else {
                 value.toString()
             }

@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 class MappingField(
     val aes: Aes<*>,
@@ -36,9 +35,7 @@ class MappingField(
         // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)
         val primaryAes = aes.takeUnless { Aes.isPositionalXY(it) } ?: Aes.toAxisAes(aes, myDataAccess.isYOrientation)
 
-        val plotFormatter = ctx.getTooltipFormatter(primaryAes) {
-            TooltipFormatting.createFormatter(primaryAes, ctx)
-        }
+        val plotFormatter = ctx.getTooltipFormatter(primaryAes)
 
         fun formatter(value: Any?): String {
             if (value != null && mappingFormatter != null) {

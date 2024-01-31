@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
@@ -37,10 +38,11 @@ internal class PlotAssemblerPlotContext constructor(
         }
     }
 
-    override fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String {
+    override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String {
         checkPositionalAes(aes)
-        // TODO: why put defaultValue to the map? Always handle it in the caller.
-        return tooltipFormatters.getOrPut(aes, defaultValue)
+        return tooltipFormatters.getOrPut(aes) {
+            TooltipFormatting.createFormatter(aes, this)
+        }
     }
 
 
