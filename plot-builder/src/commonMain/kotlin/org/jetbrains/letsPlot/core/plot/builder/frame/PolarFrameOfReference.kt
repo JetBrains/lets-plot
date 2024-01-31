@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -90,7 +89,7 @@ internal class PolarFrameOfReference(
             if (drawHAxis) {
                 // Top/Bottom axis
                 listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                    val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+                    val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
                     val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
                     val gridBounds = geomBounds.origin
@@ -102,7 +101,7 @@ internal class PolarFrameOfReference(
             if (drawVAxis) {
                 // Left/Right axis
                 listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-                    val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+                    val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
                     val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
                     val gridBounds = geomBounds.origin
@@ -115,7 +114,7 @@ internal class PolarFrameOfReference(
         if (drawHAxis) {
             // Top/Bottom axis
             listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
                 val axisComponent = buildAxis(
                     breaksData = breaksData,
@@ -123,7 +122,6 @@ internal class PolarFrameOfReference(
                     hideAxis = !drawHAxis,
                     hideAxisBreaks = !layoutInfo.hAxisShown,
                     axisTheme = hAxisTheme,
-                    gridTheme = hGridTheme,
                     labelAdjustments = labelAdjustments,
                 )
 
@@ -136,7 +134,7 @@ internal class PolarFrameOfReference(
         if (drawVAxis) {
             // Left/Right axis
             listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
                 val axisComponent = buildAxis(
                     breaksData = breaksData,
@@ -144,7 +142,6 @@ internal class PolarFrameOfReference(
                     hideAxis = !drawVAxis,
                     hideAxisBreaks = !layoutInfo.vAxisShown,
                     vAxisTheme,
-                    vGridTheme,
                     labelAdjustments,
                 )
 
@@ -167,7 +164,6 @@ internal class PolarFrameOfReference(
     private fun prepareAxisData(
         axisInfo: AxisLayoutInfo,
         scaleBreaks: ScaleBreaks,
-        axisTheme: AxisTheme
     ): Pair<AxisComponent.TickLabelAdjustments, PolarBreaksData> {
         val labelAdjustments = AxisComponent.TickLabelAdjustments(
             orientation = axisInfo.orientation,
@@ -183,7 +179,6 @@ internal class PolarFrameOfReference(
             gridDomain = gridDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
-            axisTheme = axisTheme,
             labelAdjustments = labelAdjustments
         )
         return Pair(labelAdjustments, breaksData)
@@ -242,7 +237,6 @@ internal class PolarFrameOfReference(
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
             axisTheme: AxisTheme,
-            gridTheme: PanelGridTheme,
             labelAdjustments: AxisComponent.TickLabelAdjustments,
         ): SvgComponent {
             return PolarAxisComponent(
@@ -251,7 +245,6 @@ internal class PolarFrameOfReference(
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
                 axisTheme = axisTheme,
-                gridTheme = gridTheme,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks
             )

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -30,7 +29,6 @@ class PolarAxisComponent(
     private val breaksData: PolarAxisUtil.PolarBreaksData,
     private val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     private val axisTheme: AxisTheme,
-    private val gridTheme: PanelGridTheme,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
 ) : SvgComponent() {

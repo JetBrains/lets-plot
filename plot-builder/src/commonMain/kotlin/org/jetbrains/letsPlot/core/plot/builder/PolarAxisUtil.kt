@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -22,10 +21,9 @@ object PolarAxisUtil {
         gridDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
-        axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ): PolarBreaksData {
-        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, axisTheme, labelAdjustments).breaksData()
+        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, labelAdjustments).breaksData()
     }
 
 
@@ -35,7 +33,6 @@ object PolarAxisUtil {
         val gridDomain: DoubleRectangle,
         val flipAxis: Boolean,
         val orientation: Orientation,
-        val axisTheme: AxisTheme,
         val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ) {
         fun breaksData(

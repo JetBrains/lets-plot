@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.breaksData
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.junit.Test
@@ -36,7 +35,6 @@ class BreaksDataTest {
             gridDomain = gridDomain,
             flipAxis = false,
             orientation = Orientation.BOTTOM,
-            axisTheme = DefaultTheme.minimal2().horizontalAxis(flipAxis = false),
             labelAdjustments = AxisComponent.TickLabelAdjustments(Orientation.BOTTOM),
         )
 
