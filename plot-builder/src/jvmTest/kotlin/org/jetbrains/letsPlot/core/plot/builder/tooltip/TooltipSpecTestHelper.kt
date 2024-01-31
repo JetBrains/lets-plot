@@ -46,7 +46,6 @@ open class TooltipSpecTestHelper {
 
     internal fun <T> addMappedData(mapping: Mapping<T>): Mapping<T> {
         mappedDataAccessMock.add(mapping)
-        plotContext.addMappedData(mapping)
         return mapping
     }
 

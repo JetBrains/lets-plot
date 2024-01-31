@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 class TestingPlotContextWithTooltipFormatters : PlotContext {
-    private val mockFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
 
     override val superscriptExponent: Boolean = false
 
@@ -28,14 +27,7 @@ class TestingPlotContextWithTooltipFormatters : PlotContext {
         UNSUPPORTED("Not yet implemented")
     }
 
-    override fun getTooltipFormatter(
-        aes: Aes<*>
-    ): (Any?) -> String {
-        return mockFormatters.getValue(aes)
-    }
-
-    internal fun addMappedData(mapping: MappedDataAccessMock.Mapping<*>) {
-        val formatter = { _: Any? -> mapping.value }
-        mockFormatters[mapping.aes] = formatter
+    override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String {
+        return Any?::toString
     }
 }

@@ -56,7 +56,6 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
     fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
         mappedDataAccessMock.add(mappedData)
-        plotContext.addMappedData(mappedData)
         return this
     }
 

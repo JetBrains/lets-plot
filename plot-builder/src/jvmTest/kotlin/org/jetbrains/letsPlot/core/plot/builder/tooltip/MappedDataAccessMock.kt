@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.mockito.eq
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
@@ -23,13 +24,13 @@ class MappedDataAccessMock {
     fun <T> add(mapping: Mapping<T>, index: Int?): MappedDataAccessMock {
         val aes = mapping.aes
 
-//        if (index == null) {
-//            `when`(mappedDataAccess.getMappedDataValue(eq(aes), anyInt(), eq(TestingPlotContext.DUMMY)))
-//                .thenReturn(mapping.value)
-//        } else {
-//            `when`(mappedDataAccess.getMappedDataValue(eq(aes), eq(index), eq(TestingPlotContext.DUMMY)))
-//                .thenReturn(mapping.value)
-//        }
+        if (index == null) {
+            `when`(mappedDataAccess.getOriginalValue(eq(aes), anyInt()))
+                .thenReturn(mapping.value)
+        } else {
+            `when`(mappedDataAccess.getOriginalValue(eq(aes), eq(index)))
+                .thenReturn(mapping.value)
+        }
 
         `when`(mappedDataAccess.isMapped(eq(aes)))
             .thenReturn(true)
