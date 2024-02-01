@@ -26,7 +26,6 @@ object TestingPlotContext {
     ): PlotContext {
         return PlotAssemblerPlotContext(
             geomTiles = TestingPlotGeomTiles(layers, scaleMap),
-            scaleMap = scaleMap,
             superscriptExponent = false
         )
     }

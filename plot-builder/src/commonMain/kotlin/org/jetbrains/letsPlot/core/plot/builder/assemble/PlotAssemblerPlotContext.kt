@@ -13,17 +13,16 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
-    private val scaleMap: Map<Aes<*>, Scale>,
     override val superscriptExponent: Boolean
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
 
-    override fun hasScale(aes: Aes<*>) = scaleMap.containsKey(aes)
+    override fun hasScale(aes: Aes<*>) = geomTiles.scalesBeforeFacets.containsKey(aes)
 
     override fun getScale(aes: Aes<*>): Scale {
         checkPositionalAes(aes)
-        return scaleMap.getValue(aes)
+        return geomTiles.scalesBeforeFacets.getValue(aes)
     }
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {

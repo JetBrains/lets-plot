@@ -57,13 +57,11 @@ class PlotAssembler constructor(
 
     init {
         // ToDo: use different set of scales for each tile.
-        val scaleMap = geomTiles.scalesByTile()[0]
-        val scaleXProto = scaleMap.getValue(Aes.X)
-        val scaleYProto = scaleMap.getValue(Aes.Y)
+        val scaleXProto = geomTiles.scalesBeforeFacets.getValue(Aes.X)
+        val scaleYProto = geomTiles.scalesBeforeFacets.getValue(Aes.Y)
 
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
-            scaleMap,
             theme.exponentFormat.superscript
         )
 

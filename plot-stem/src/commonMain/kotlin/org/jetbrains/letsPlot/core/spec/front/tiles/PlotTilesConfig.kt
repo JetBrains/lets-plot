@@ -112,7 +112,7 @@ internal object PlotTilesConfig {
         )
     }
 
-    fun createFacetTiles(
+    private fun createFacetTiles(
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
         scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
