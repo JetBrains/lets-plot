@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomTooltipSetup
@@ -124,6 +125,17 @@ object GeomInteractionUtil {
         )
         if (showTooltips) {
             builder.tooltipLinesSpec(layerConfig.tooltips)
+        } else {
+            // Need to keep specified formats to use for non-hidden tooltips
+            builder.tooltipLinesSpec(
+                TooltipSpecification(
+                    valueSources = layerConfig.tooltips.valueSources,
+                    tooltipLinePatterns = null,
+                    tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
+                    tooltipTitle = null,
+                    disableSplitting = false
+                )
+            )
         }
 
         return builder
