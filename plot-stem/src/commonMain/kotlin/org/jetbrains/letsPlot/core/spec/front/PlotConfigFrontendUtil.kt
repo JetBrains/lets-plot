@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
 import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
-import org.jetbrains.letsPlot.core.spec.front.tiles.PlotGeomTilesBase
+import org.jetbrains.letsPlot.core.spec.front.tiles.PlotTilesConfig
 
 object PlotConfigFrontendUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -118,7 +118,7 @@ object PlotConfigFrontendUtil {
             defaultCoordProvider
         )
 
-        return PlotGeomTilesBase.create(
+        return PlotTilesConfig.createGeomTiles(
             config.layerConfigs,
             config.facets,
             coordProvider,

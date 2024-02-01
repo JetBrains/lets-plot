@@ -6,11 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
-import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
@@ -19,7 +17,6 @@ internal class PlotAssemblerPlotContext constructor(
     override val superscriptExponent: Boolean
 ) : PlotContext {
 
-    private val transformedDomainByAes: MutableMap<Aes<*>, DoubleSpan> = HashMap()
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
 
     override fun hasScale(aes: Aes<*>) = scaleMap.containsKey(aes)
@@ -30,12 +27,7 @@ internal class PlotAssemblerPlotContext constructor(
     }
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
-        checkPositionalAes(aes)
-
-        val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(geomTiles.layersByTile())
-        return transformedDomainByAes.getOrPut(aes) {
-            computeOverallTransformedDomain(aes, stitchedPlotLayers, scaleMap)
-        }
+        return geomTiles.overallTransformedDomain(aes)
     }
 
     override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String {
@@ -47,93 +39,6 @@ internal class PlotAssemblerPlotContext constructor(
 
 
     private companion object {
-        fun createStitchedLayers(layersByPanel: List<List<GeomLayer>>): List<StitchedPlotLayer> {
-            if (layersByPanel.isEmpty()) return emptyList()
-
-            // stitch together layers from all panels
-            val layerCount = layersByPanel[0].size
-
-            val stitchedLayers = ArrayList<StitchedPlotLayer>()
-            for (i in 0 until layerCount) {
-                val layersOnPlane = ArrayList<GeomLayer>()
-
-                // Collect layer[i] chunks from all panels.
-                for (panelLayers in layersByPanel) {
-                    layersOnPlane.add(panelLayers[i])
-                }
-
-                stitchedLayers.add(StitchedPlotLayer(layersOnPlane))
-            }
-
-            return stitchedLayers
-        }
-
-        fun computeOverallTransformedDomain(
-            aes: Aes<*>,
-            stitchedLayers: List<StitchedPlotLayer>,
-            scaleMap: Map<Aes<*>, Scale>
-        ): DoubleSpan {
-            checkPositionalAes(aes)
-
-            fun isMatching(v: DataFrame.Variable, aes: Aes<*>, isYOrientation: Boolean): Boolean {
-                val varAes = TransformVar.toAes(v)
-                return when {
-                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(
-                        varAes,
-                        isYOrientation
-                    ) == aes // collecting pos variables
-                    else -> varAes == aes
-                }
-            }
-
-            val domainsRaw = ArrayList<DoubleSpan>()
-            for (layer in stitchedLayers) {
-                val variables = layer.getVariables()
-                    .filter { it.isTransform }
-                    .filter { isMatching(it, aes, layer.isYOrientation) }
-
-                for (transformVar in variables) {
-                    val domain = layer.getDataRange(transformVar)
-                    if (domain != null) {
-                        domainsRaw.add(domain)
-                    }
-                }
-            }
-
-            val overallTransformedDomain = domainsRaw.reduceOrNull { acc, v -> acc.union(v) }
-
-            val scale = scaleMap.getValue(aes)
-            return if (scale.isContinuousDomain) {
-                finalizeOverallTransformedDomain(overallTransformedDomain, scale.transform as ContinuousTransform)
-            } else {
-                // Discrete domain
-                overallTransformedDomain ?: DoubleSpan.singleton(0.0)
-            }
-        }
-
-        private fun finalizeOverallTransformedDomain(
-            transformedDomain: DoubleSpan?,
-            transform: ContinuousTransform
-        ): DoubleSpan {
-            val (dataLower, dataUpper) = when (transformedDomain) {
-                null -> Pair(Double.NaN, Double.NaN)
-                else -> Pair(transformedDomain.lowerEnd, transformedDomain.upperEnd)
-            }
-            val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
-
-            val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
-            val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
-
-            val newRange = when {
-                lowerEnd.isFinite() && upperEnd.isFinite() -> DoubleSpan(lowerEnd, upperEnd)
-                lowerEnd.isFinite() -> DoubleSpan(lowerEnd, lowerEnd)
-                upperEnd.isFinite() -> DoubleSpan(upperEnd, upperEnd)
-                else -> null
-            }
-
-            return SeriesUtil.ensureApplicableRange(newRange)
-        }
-
         fun checkPositionalAes(aes: Aes<*>) {
             // expect only X,Y or not positional
             check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {

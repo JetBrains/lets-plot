@@ -19,10 +19,10 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.SimplePlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
-import org.jetbrains.letsPlot.core.spec.front.tiles.SimplePlotGeomTiles
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
@@ -37,7 +37,7 @@ class BarPlotResizeDemo private constructor(
 
         val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
-        val fillScale = Scales.DemoAndTest.pureDiscrete("C", categories/*, colors, Color.GRAY*/)
+        val fillScale = Scales.DemoAndTest.pureDiscrete("C", categories)
         val fillMapper = Mappers.discrete(
             fillScale.transform as DiscreteTransform,
             colors, Color.GRAY
@@ -54,9 +54,6 @@ class BarPlotResizeDemo private constructor(
         )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
-//            .stat(Stats.IDENTITY)
-//            .geom(GeomProvider.bar())
-//            .pos(PosProvider.dodge())
             .groupingVar(varCat)
             .addBinding(VarBinding(varX, Aes.X))
             .addBinding(
@@ -85,11 +82,12 @@ class BarPlotResizeDemo private constructor(
             .build(data, scaleByAes, scaleMappersNP)
 
 
-        val geomTiles = SimplePlotGeomTiles.demoAndTest(
+        val geomTiles = SimplePlotGeomTiles(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
+            containsLiveMap = false
         )
         val assembler = PlotAssembler.demoAndTest(
             geomTiles,

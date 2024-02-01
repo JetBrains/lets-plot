@@ -18,6 +18,7 @@ interface PlotGeomTiles {
     val isSingleTile: Boolean
     val containsLiveMap: Boolean
     val xyContinuousTransforms: Pair<Transform?, Transform?> // same cont. transforms are shared by all tiles
+    val scalesBeforeFacets: Map<Aes<*>, Scale>
     val mappersNP: Map<Aes<*>, ScaleMapper<*>>   // all non-positional mappers
     val coordProvider: CoordProvider
 
@@ -27,6 +28,7 @@ interface PlotGeomTiles {
 
     fun scalesByTile(): List<Map<Aes<*>, Scale>>
 
+    fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
     fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?>
 
     fun coreLayerInfos(): List<GeomLayerInfo>
