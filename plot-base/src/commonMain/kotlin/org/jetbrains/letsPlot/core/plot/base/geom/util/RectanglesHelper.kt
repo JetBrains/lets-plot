@@ -85,22 +85,64 @@ class RectanglesHelper(
         }
     }
 
-    fun createSlimRectangles(): SvgSlimGroup {
-        val pointCount = myAesthetics.dataPointCount()
-        val group = SvgSlimElements.g(pointCount)
+    fun createSvgRectHelper(): SvgRectHelper {
+        return SvgRectHelper()
+    }
 
-        for (index in 0 until pointCount) {
-            val p = myAesthetics.dataPointAt(index)
-            val clientRect = geometryFactory(p) ?: continue
+    inner class SvgRectHelper {
+        private var onGeometry: (DataPointAesthetics, DoubleRectangle?, List<DoubleVector>?) -> Unit = { _, _, _ -> }
+        private var myResamplingEnabled = false
+        private var myResamplingPrecision = 0.5
 
-            val slimShape = SvgSlimElements.rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height)
-            decorateSlimShape(
-                slimShape,
-                p
-            )
-            slimShape.appendTo(group)
+        fun setResamplingEnabled(b: Boolean) {
+            myResamplingEnabled = b
         }
 
-        return group
+        fun setResamplingPrecision(precision: Double) {
+            myResamplingPrecision = precision
+        }
+
+        fun onGeometry(handler: (DataPointAesthetics, DoubleRectangle?, List<DoubleVector>?) -> Unit) {
+            onGeometry = handler
+        }
+
+        fun createSlimRectangles(): SvgSlimGroup {
+            val pointCount = myAesthetics.dataPointCount()
+            val group = SvgSlimElements.g(pointCount)
+
+            for (index in 0 until pointCount) {
+                val p = myAesthetics.dataPointAt(index)
+                val rect = geometryFactory(p) ?: continue
+
+                if (myResamplingEnabled) {
+                    val polyRect = resample(
+                        precision = myResamplingPrecision,
+                        points = listOf(
+                            DoubleVector(rect.left, rect.top),
+                            DoubleVector(rect.right, rect.top),
+                            DoubleVector(rect.right, rect.bottom),
+                            DoubleVector(rect.left, rect.bottom),
+                            DoubleVector(rect.left, rect.top)
+                        )
+                    ) { toClient(it, p) }
+
+                    onGeometry(p, null, polyRect)
+
+                    val slimShape = SvgSlimElements.path(SvgPathDataBuilder().lineString(polyRect).build())
+                    decorateSlimShape(slimShape, p)
+                    slimShape.appendTo(group)
+                } else {
+                    val clientRect = toClient(rect, p) ?: continue
+
+                    onGeometry(p, clientRect, null)
+
+                    val slimShape = SvgSlimElements.rect(clientRect.left, clientRect.top, clientRect.width, clientRect.height)
+                    decorateSlimShape(slimShape, p)
+                    slimShape.appendTo(group)
+                }
+
+            }
+            return group
+        }
     }
 }

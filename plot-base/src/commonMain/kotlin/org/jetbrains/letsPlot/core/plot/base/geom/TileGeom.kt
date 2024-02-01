@@ -7,14 +7,12 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.RectTargetCollectorHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
 
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
@@ -28,41 +26,41 @@ open class TileGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
-        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx, geomHelper))
-        val slimGroup = helper.createSlimRectangles()
-        root.add(wrap(slimGroup))
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = CURSOR_TOOLTIP)
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(ctx))
+        val svgRectHelper = helper.createSvgRectHelper()
+        svgRectHelper.setResamplingEnabled(!coord.isLinear)
+        svgRectHelper.onGeometry { p, rect, polygon ->
+            if (polygon != null) {
+                tooltipHelper.addTarget(p, polygon)
+            } else if (rect != null) {
+                tooltipHelper.addTarget(p, rect)
+            }
+        }
 
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TILE, ctx)
-        RectTargetCollectorHelper(
-            helper,
-            TipLayoutHint.Kind.CURSOR_TOOLTIP,
-            colorsByDataPoint
-        )
-            .collectTo(ctx.targetCollector)
+        val slimGroup = svgRectHelper.createSlimRectangles()
+        root.add(wrap(slimGroup))
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun clientRectByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
-            return { p ->
-                val x = p.x()
-                val y = p.y()
-                val w = p.width()
-                val h = p.height()
+        private fun clientRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+            fun factory(p: DataPointAesthetics): DoubleRectangle? {
+                val x = finiteOrNull(p.x()) ?: return null
+                val y = finiteOrNull(p.y()) ?: return null
+                val w = finiteOrNull(p.width()) ?: return null
+                val h = finiteOrNull(p.height()) ?: return null
 
-                if (SeriesUtil.allFinite(x, y, w, h)) {
-                    val width = w!! * ctx.getResolution(Aes.X)
-                    val height = h!! * ctx.getResolution(Aes.Y)
+                val width = w * ctx.getResolution(Aes.X)
+                val height = h * ctx.getResolution(Aes.Y)
 
-                    val origin = DoubleVector(x!! - width / 2, y!! - height / 2)
-                    val dimensions = DoubleVector(width, height)
-                    geomHelper.toClient(DoubleRectangle(origin, dimensions), p)
-                } else {
-                    null
-                }
+                val origin = DoubleVector(x - width / 2, y - height / 2)
+                val dimensions = DoubleVector(width, height)
+                return DoubleRectangle(origin, dimensions)
             }
+
+            return ::factory
         }
     }
 }
