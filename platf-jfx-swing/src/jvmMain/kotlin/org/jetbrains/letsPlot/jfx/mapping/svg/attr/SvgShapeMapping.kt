@@ -40,6 +40,9 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
                 val strokeDashArray = (value as String).split(",").map { it.toDouble() }
                 target.strokeDashArray.addAll(strokeDashArray)
             }
+            SvgShape.STROKE_MITER_LIMIT.name -> {
+                target.strokeMiterLimit = asDouble(value)
+            }
             else -> super.setAttribute(target, name, value)
         }
     }

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -14,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -75,8 +75,11 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
             val arrowAes = arrowSpec.toArrowAes(p)
 
             val arrow = createElement(polarAngle, end.x, end.y, arrowSpec)
-            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, filled = arrowSpec.type == Type.CLOSED)
-
+            val strokeScaler = AesScaling::strokeWidth
+            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, strokeScaler, filled = arrowSpec.type == Type.CLOSED)
+            // Use 'stroke-miterlimit' attribute to avoid the bevelled corner
+            val milterLimit = strokeScaler(p) / (sin(arrowSpec.angle/2))
+            arrow.strokeMiterLimit().set(abs(milterLimit))
             return arrow
         }
 
