@@ -151,9 +151,8 @@ open class GeomHelper(
                 geometryHandler(p, lineString)
 
                 val svgPathElement = SvgPathElement()
-                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler)
+                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
                 svgPathElement.d().set(SvgPathDataBuilder().lineString(lineString).build())
-                svgPathElement.fill().set(SvgColors.NONE)
                 return svgPathElement
             } else {
                 @Suppress("NAME_SHADOWING")

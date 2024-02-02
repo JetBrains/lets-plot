@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
@@ -73,22 +72,9 @@ class SegmentGeom : GeomBase() {
             val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
 
             // draw segment
-            val line = helper.createLine(startPoint, endPoint, p) /*{ point: DoubleVector -> point } */?: continue
+            val line = helper.createLine(startPoint, endPoint, p) { point: DoubleVector -> point } ?: continue
             root.add(line)
-/*
-            // tooltip
-            targetCollector.addPath(
-                listOf(
-                    // without additional offsets
-                    pointOnLine(clientStart, clientEnd, targetSizeStart),
-                    pointOnLine(clientEnd, clientStart, targetSizeEnd)
-                ),
-                { p.index() },
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
-                )
-            )
-*/
+
             // add arrows
             arrowSpec?.let { arrowSpec ->
                 // Add offset for arrow by geometry width
