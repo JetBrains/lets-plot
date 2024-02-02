@@ -5600,7 +5600,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     spacer : float, default=0.0
-        Space to shorten segment by moving segment start/end.
+        Space to shorten a segment by moving the start/end.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -5628,10 +5628,10 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-    - size_start : size of the point at the start of the segment (to move the start to avoid an intersection).
-    - size_end : size of the point at the end of the segment (to move the end to avoid an intersection).
-    - stroke_start : width of the point border at the start of the segment (to move the start to avoid an intersection).
-    - stroke_end : width of the point border at the end of the segment (to move the end to avoid an intersection).
+    - size_start : offset from the segment start coordinate (usually equal to the size of the point object from which the segment starts to avoid overlapping with it).
+    - size_end : offset from the segment end coordinate (usually equal to the size of the point object from which the segment ends to avoid overlapping with it).
+    - stroke_start : offset from the segment start coordinate (usually equal to the stroke of the point object from which the segment starts to avoid overlapping with it).
+    - stroke_end : offset from the segment end coordinate (usually equal to the stroke of the point object from which the segment ends to avoid overlapping with it).
 
     Examples
     --------
