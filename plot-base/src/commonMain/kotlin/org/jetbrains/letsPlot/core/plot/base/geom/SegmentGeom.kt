@@ -16,8 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import kotlin.math.sin
-import kotlin.math.tan
+import kotlin.math.*
 
 
 class SegmentGeom : GeomBase() {
@@ -54,26 +53,21 @@ class SegmentGeom : GeomBase() {
             val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
             val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
+            // Target sizes to move the start/end of the segment
             val targetSizeStart = targetSize(p, atStart = true)
             val targetSizeEnd = targetSize(p, atStart = false)
 
-            val segmentArrowOffset = arrowSpec?.angle?.let { angle -> (strokeWidth / 2) / tan(angle) }
-            val startOffset = when {
-                targetSizeStart > 0 -> {
-                    targetSizeStart + spacer +
-                            // Use additional offset to avoid intersection with arrow
-                            (segmentArrowOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
-                }
-                else -> 0.0
-            }
-            val endOffset = when {
-                targetSizeEnd > 0 -> {
-                    targetSizeEnd + spacer +
-                            // Use additional offset to avoid intersection with arrow
-                            (segmentArrowOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
-                }
-                else -> 0.0
-            }
+            // Additional offset to avoid intersection with arrow
+            val segmentArrowOffset = arrowSpec?.let {
+                val angle = abs(it.angle)
+                (strokeWidth / 2) / tan(angle) * sign(sin(angle))
+            } ?: 0.0
+
+            // Total offsets
+            val startOffset = targetSizeStart + spacer +
+                    (segmentArrowOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
+            val endOffset = targetSizeEnd + spacer +
+                    (segmentArrowOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
 
             val startPoint = pointOnLine(clientStart, clientEnd, startOffset)
             val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
@@ -98,16 +92,10 @@ class SegmentGeom : GeomBase() {
             // add arrows
             arrowSpec?.let { arrowSpec ->
                 // Add offset for arrow by geometry width
-                // if the start/end of the segment were shifted according to the target sizes
-                val arrowOffset = (strokeWidth / 2) / sin(arrowSpec.angle)
-                val start = when {
-                    targetSizeStart > 0 -> pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
-                    else -> clientStart
-                }
-                val end = when {
-                    targetSizeEnd > 0 -> pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
-                    else -> clientEnd
-                }
+                val angle = abs(arrowSpec.angle)
+                val arrowOffset = (strokeWidth / 2) / sin(angle) * sign(tan(angle))
+                val start = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
+                val end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
 
                 ArrowSpec.createArrows(p, listOf(start, end), arrowSpec)
                     .forEach(root::add)
