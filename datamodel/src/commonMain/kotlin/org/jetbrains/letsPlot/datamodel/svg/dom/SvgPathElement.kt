@@ -23,6 +23,7 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
     companion object {
         val FILL_RULE: SvgAttributeSpec<FillRule> = SvgAttributeSpec.createSpec("fill-rule")
         val D: SvgAttributeSpec<SvgPathData> = SvgAttributeSpec.createSpec("d")
+        val STROKE_MITER_LIMIT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("stroke-miterlimit")
     }
 
     override val elementName = "path"
@@ -72,6 +73,10 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
 
     override fun strokeWidth(): Property<Double?> {
         return getAttribute(STROKE_WIDTH)
+    }
+
+    fun strokeMiterLimit(): Property<Double?> {
+        return getAttribute(STROKE_MITER_LIMIT)
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {

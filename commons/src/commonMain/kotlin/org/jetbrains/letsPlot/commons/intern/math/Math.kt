@@ -126,6 +126,18 @@ fun xOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, y: Double): Doub
     return (y - b) / m
 }
 
+fun pointOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, offset: Double): DoubleVector {
+    val d = distance(p2x, p2y, p1x, p1y)
+    if (d == 0.0) {
+        return DoubleVector(p1x, p1y)
+    }
+    val k = offset / d
+    val x = p1x + (p2x - p1x) * k
+    val y = p1y + (p2y - p1y) * k
+
+    return DoubleVector(x, y)
+}
+
 // vector projection
 // See: https://en.wikipedia.org/wiki/Vector_projection
 fun projection(px: Double, py: Double, l1x: Double, l1y: Double, l2x: Double, l2y: Double): DoubleVector {
@@ -166,4 +178,8 @@ fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
 
 fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
     return lineParams(p1.x, p1.y, p2.x, p2.y).first
+}
+
+fun pointOnLine(p1: DoubleVector, p2: DoubleVector, offset: Double): DoubleVector {
+    return pointOnLine(p1.x, p1.y, p2.x, p2.y, offset)
 }

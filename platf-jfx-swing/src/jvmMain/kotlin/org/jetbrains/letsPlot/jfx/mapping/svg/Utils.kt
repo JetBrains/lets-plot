@@ -80,8 +80,12 @@ internal object Utils {
             is SvgCircleElement -> Circle()
             is SvgRectElement -> Rectangle()
             is SvgTextElement -> TextLine()
-            is SvgPathElement -> SVGPath()
-            is SvgLineElement -> Line()
+            is SvgPathElement -> SVGPath().also {
+                it.strokeLineCap = StrokeLineCap.BUTT
+            }
+            is SvgLineElement -> Line().also {
+                it.strokeLineCap = StrokeLineCap.BUTT
+            }
             is SvgSvgElement -> Rectangle()
             is SvgGElement -> Group()
             is SvgStyleElement -> Group()          // ignore

@@ -16,9 +16,12 @@ object AesScaling {
         return p.size()!! * POINT_UNIT_SIZE
     }
 
-    fun pointStrokeWidth(p: DataPointAesthetics): Double {
+    fun pointStrokeWidth(
+        p: DataPointAesthetics,
+        strokeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::stroke
+    ): Double {
         // aes Units -> px
-        return p.stroke()!! * POINT_UNIT_SIZE
+        return strokeGetter(p)!! * POINT_UNIT_SIZE
     }
 
     fun lineWidth(p: DataPointAesthetics): Double {
@@ -26,9 +29,12 @@ object AesScaling {
         return p.linewidth()!! * POINT_UNIT_SIZE
     }
 
-    fun circleDiameter(p: DataPointAesthetics): Double {
+    fun circleDiameter(
+        p: DataPointAesthetics,
+        sizeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::size
+    ): Double {
         // aes Units -> px
-        return p.size()!! * POINT_UNIT_SIZE
+        return sizeGetter(p)!! * POINT_UNIT_SIZE
     }
 
     fun pieDiameter(p: DataPointAesthetics): Double {

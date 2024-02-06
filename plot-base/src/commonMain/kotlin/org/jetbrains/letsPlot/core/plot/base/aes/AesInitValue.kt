@@ -42,6 +42,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -117,6 +121,10 @@ object AesInitValue {
         VALUE_MAP[RADIUS] = 0.0
         VALUE_MAP[SLICE] = 0.0
         VALUE_MAP[EXPLODE] = 0.0
+        VALUE_MAP[SIZE_START] = 0.0
+        VALUE_MAP[SIZE_END] = 0.0
+        VALUE_MAP[STROKE_START] = 0.0
+        VALUE_MAP[STROKE_END] = 0.0
     }
 
     /**

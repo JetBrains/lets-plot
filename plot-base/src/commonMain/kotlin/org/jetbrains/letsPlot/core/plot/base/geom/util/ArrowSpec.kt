@@ -9,9 +9,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -38,8 +40,24 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
     }
 
     companion object {
+        fun createArrows(
+            p: DataPointAesthetics,
+            geometry: List<DoubleVector>,
+            arrowSpec: ArrowSpec
+        ): List<SvgPathElement> {
+            val arrows = mutableListOf<SvgPathElement?>()
+            if (arrowSpec.isOnFirstEnd) {
+                val (start, end) = geometry.take(2).reversed()
+                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+            }
+            if (arrowSpec.isOnLastEnd) {
+                val (start, end) = geometry.takeLast(2)
+                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+            }
+            return arrows.filterNotNull()
+        }
 
-        fun createArrow(
+        private fun createArrowAtEnd(
             p: DataPointAesthetics,
             start: DoubleVector,
             end: DoubleVector,
@@ -57,8 +75,11 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
             val arrowAes = arrowSpec.toArrowAes(p)
 
             val arrow = createElement(polarAngle, end.x, end.y, arrowSpec)
-            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true)
-
+            val strokeScaler = AesScaling::strokeWidth
+            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, strokeScaler, filled = arrowSpec.type == Type.CLOSED)
+            // Use 'stroke-miterlimit' attribute to avoid the bevelled corner
+            val miterLimit = strokeScaler(p) / (sin(arrowSpec.angle/2))
+            arrow.strokeMiterLimit().set(abs(miterLimit))
             return arrow
         }
 

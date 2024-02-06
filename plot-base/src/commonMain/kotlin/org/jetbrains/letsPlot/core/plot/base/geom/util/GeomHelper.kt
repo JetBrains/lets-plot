@@ -144,9 +144,8 @@ open class GeomHelper(
                 geometryHandler(p, lineString)
 
                 val svgPathElement = SvgPathElement()
-                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler)
+                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
                 svgPathElement.d().set(SvgPathDataBuilder().lineString(lineString).build())
-                svgPathElement.fill().set(SvgColors.NONE)
                 return svgPathElement
             } else {
                 @Suppress("NAME_SHADOWING")
@@ -158,7 +157,7 @@ open class GeomHelper(
                 geometryHandler(p, listOf(start, end))
 
                 val svgLineElement = SvgLineElement(start.x, start.y, end.x, end.y)
-                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler)
+                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
                 return svgLineElement
             }
         }
@@ -199,9 +198,11 @@ open class GeomHelper(
             filled: Boolean
         ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
-           if (filled) {
-               AestheticsUtil.updateFill(shape, p)
-           }
+            if (filled) {
+                AestheticsUtil.updateFill(shape, p)
+            } else {
+                shape.fill().set(SvgColors.NONE)
+            }
             shape.strokeWidth().set(strokeScaler(p))
         }
 

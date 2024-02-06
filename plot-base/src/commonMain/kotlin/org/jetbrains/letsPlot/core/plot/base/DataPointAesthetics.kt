@@ -204,6 +204,22 @@ abstract class DataPointAesthetics {
         return get(Aes.EXPLODE)
     }
 
+    fun sizeStart(): Double? {
+        return get(Aes.SIZE_START)
+    }
+
+    fun sizeEnd(): Double? {
+        return get(Aes.SIZE_END)
+    }
+
+    fun strokeStart(): Double? {
+        return get(Aes.STROKE_START)
+    }
+
+    fun strokeEnd(): Double? {
+        return get(Aes.STROKE_END)
+    }
+
     fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }

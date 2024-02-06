@@ -270,6 +270,7 @@ object Option {
             const val ANIMATION = "animation"
             const val FLAT = "flat"
             const val GEODESIC = "geodesic"
+            const val SPACER = "spacer"
         }
 
         object Curve {

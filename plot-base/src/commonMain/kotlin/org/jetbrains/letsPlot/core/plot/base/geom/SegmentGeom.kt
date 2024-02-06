@@ -6,13 +6,17 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import kotlin.math.*
 
 
 class SegmentGeom : GeomBase() {
@@ -21,6 +25,7 @@ class SegmentGeom : GeomBase() {
     var animation: Any? = null
     var flat: Boolean = false
     var geodesic: Boolean = false
+    var spacer: Double = 0.0    // additional space to shorten segment by moving the start/end
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -39,28 +44,60 @@ class SegmentGeom : GeomBase() {
         helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         for (p in aesthetics.dataPoints()) {
-            if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
-                val start = DoubleVector(p.x()!!, p.y()!!)
-                val end = DoubleVector(p.xend()!!, p.yend()!!)
-                val line = helper.createLine(start, end, p) ?: continue
-                root.add(line)
+            val x = finiteOrNull(p.x()) ?: continue
+            val y = finiteOrNull(p.y()) ?: continue
+            val xend = finiteOrNull(p.xend()) ?: continue
+            val yend = finiteOrNull(p.yend()) ?: continue
+            val strokeWidth = AesScaling.strokeWidth(p)
 
-                arrowSpec?.let { arrowSpec ->
-                    val clientStart = geomHelper.toClient(start, p)!!
-                    val clientEnd = geomHelper.toClient(end, p)!!
+            val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
+            val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-                    if (arrowSpec.isOnLastEnd) {
-                        ArrowSpec.createArrow(p, clientStart, clientEnd, arrowSpec)?.let(root::add)
-                    }
-                    if (arrowSpec.isOnFirstEnd) {
-                        ArrowSpec.createArrow(p, start = clientEnd, end = clientStart, arrowSpec)?.let(root::add)
-                    }
-                }
+            // Target sizes to move the start/end of the segment
+            val targetSizeStart = targetSize(p, atStart = true)
+            val targetSizeEnd = targetSize(p, atStart = false)
+
+            // Additional offset to avoid intersection with arrow
+            val segmentArrowOffset = arrowSpec?.let {
+                val angle = abs(it.angle)
+                (strokeWidth / 2) / tan(angle) * sign(sin(angle))
+            } ?: 0.0
+
+            // Total offsets
+            val startOffset = targetSizeStart + spacer +
+                    (segmentArrowOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
+            val endOffset = targetSizeEnd + spacer +
+                    (segmentArrowOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+
+            val startPoint = pointOnLine(clientStart, clientEnd, startOffset)
+            val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
+
+            // draw segment
+            val line = SvgLineElement(startPoint.x, startPoint.y, endPoint.x, endPoint.y)
+            GeomHelper.decorate(line, p, applyAlphaToAll = true, filled = false)
+            root.add(line)
+
+            // add arrows
+            arrowSpec?.let { arrowSpec ->
+                // Add offset for arrow by geometry width
+                val angle = abs(arrowSpec.angle)
+                val arrowOffset = (strokeWidth / 2) / sin(angle) * sign(tan(angle))
+                val start = pointOnLine(clientStart, clientEnd, targetSizeStart + arrowOffset)
+                val end = pointOnLine(clientEnd, clientStart, targetSizeEnd + arrowOffset)
+
+                ArrowSpec.createArrows(p, listOf(start, end), arrowSpec)
+                    .forEach(root::add)
             }
         }
     }
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
+            val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
+            val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
+            return AesScaling.circleDiameter(p, sizeAes) / 2 + AesScaling.pointStrokeWidth(p, strokeAes)
+        }
     }
 }

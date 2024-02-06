@@ -67,47 +67,11 @@ class CurveGeom : GeomBase() {
 
             // arrows
             arrowSpec?.let { arrowSpec ->
-                createArrows(p, geometry, arrowSpec).forEach(root::add)
+                ArrowSpec.createArrows(p, geometry, arrowSpec).forEach(root::add)
             }
-
-            /*
-            // hints
-            targetCollector.addPath(
-                listOf(geometry.first(), geometry.last()),
-                { p.index() },
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
-                )
-            )*/
         }
     }
 
-    private fun createArrows(
-        p: DataPointAesthetics,
-        geometry: List<DoubleVector>,
-        arrowSpec: ArrowSpec
-    ): List<SvgPathElement> {
-        val arrows = mutableListOf<SvgPathElement?>()
-        if (arrowSpec.isOnFirstEnd) {
-            val (startPoint, endPoint) = geometry.take(2).reversed()
-            arrows += ArrowSpec.createArrow(
-                p,
-                startPoint,
-                endPoint,
-                arrowSpec
-            )
-        }
-        if (arrowSpec.isOnLastEnd) {
-            val (startPoint, endPoint) = geometry.takeLast(2)
-            arrows += ArrowSpec.createArrow(
-                p,
-                startPoint,
-                endPoint,
-                arrowSpec
-            )
-        }
-        return arrows.filterNotNull()
-    }
 
     /*
         Calculates a set of control points based on:
