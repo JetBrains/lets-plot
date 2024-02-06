@@ -32,6 +32,11 @@ internal object SvgPathAttrMapping : SvgShapeMapping<SVGPath>() {
 
                 target.content = pathStr
             }
+
+            SvgPathElement.STROKE_MITER_LIMIT.name -> {
+                target.strokeMiterLimit = asDouble(value)
+            }
+
             else -> super.setAttribute(target, name, value)
         }
     }

@@ -36,7 +36,5 @@ interface SvgShape {
             SvgAttributeSpec.createSpec("stroke-opacity")
         val STROKE_WIDTH: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("stroke-width")
-        val STROKE_MITER_LIMIT: SvgAttributeSpec<Double> =
-            SvgAttributeSpec.createSpec("stroke-miterlimit")
     }
 }

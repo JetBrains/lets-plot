@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_MITER_LIMIT
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_WIDTH
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
@@ -24,6 +23,7 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
     companion object {
         val FILL_RULE: SvgAttributeSpec<FillRule> = SvgAttributeSpec.createSpec("fill-rule")
         val D: SvgAttributeSpec<SvgPathData> = SvgAttributeSpec.createSpec("d")
+        val STROKE_MITER_LIMIT: SvgAttributeSpec<Double> = SvgAttributeSpec.createSpec("stroke-miterlimit")
     }
 
     override val elementName = "path"
