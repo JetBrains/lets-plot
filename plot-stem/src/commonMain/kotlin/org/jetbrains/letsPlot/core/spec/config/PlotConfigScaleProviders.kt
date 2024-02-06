@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderBuilder
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper
+import org.jetbrains.letsPlot.core.spec.Option.Scale.EXPAND
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 
 internal object PlotConfigScaleProviders {
@@ -70,12 +71,16 @@ internal object PlotConfigScaleProviders {
         }
 
         if (zeroPositionalExpands) {
-            scaleProviderBuilders.forEach { (aes, builder) ->
-                if (Aes.isPositional(aes)) {
-                    builder.additiveExpand(0.0)
-                    builder.multiplicativeExpand(0.0)
+            val expandConfigs = scaleConfigs.associate { it.aes to it[EXPAND] }
+
+            scaleProviderBuilders
+                .filterKeys { Aes.isPositional(it) }
+                .forEach { (aes, builder) ->
+                    if (expandConfigs[aes] == null) {
+                        builder.additiveExpand(0.0)
+                        builder.multiplicativeExpand(0.0)
+                    }
                 }
-            }
         }
 
         return scaleProviderBuilders.mapValues { (_, builder) ->
