@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.jfx.mapping.svg.attr
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Shape
-import javafx.scene.shape.StrokeLineCap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
@@ -36,17 +35,12 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
             }
             SvgShape.STROKE.name -> setColor(value, strokeGet(target), strokeSet(target))
             SvgShape.STROKE_OPACITY.name -> setOpacity(asDouble(value), strokeGet(target), strokeSet(target))
-            SvgShape.STROKE_WIDTH.name -> {
-                target.strokeWidth = asDouble(value)
-                target.strokeLineCap = StrokeLineCap.BUTT
-            }
+            SvgShape.STROKE_WIDTH.name -> target.strokeWidth = asDouble(value)
             SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE -> {
                 val strokeDashArray = (value as String).split(",").map { it.toDouble() }
                 target.strokeDashArray.addAll(strokeDashArray)
             }
-            SvgShape.STROKE_MITER_LIMIT.name -> {
-                target.strokeMiterLimit = asDouble(value)
-            }
+            SvgShape.STROKE_MITER_LIMIT.name -> target.strokeMiterLimit = asDouble(value)
             else -> super.setAttribute(target, name, value)
         }
     }
