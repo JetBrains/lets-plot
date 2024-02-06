@@ -194,6 +194,29 @@ class SegmentAndCurve {
                             "ends": "both",
                             "type": "open"
                         }
+                    },
+                    {
+                        "geom": "curve",
+                        "mapping": {
+                            "xend": "x_end",
+                            "yend": "y_end",
+                            "size_start": "size",
+                            "size_end": "size_end",
+                            "stroke_start": "stroke",
+                            "stroke_end": "stroke_end"
+                        },
+                        "size": 1.2,
+                        "alpha": 0.8,
+                        "spacer": 0.0,
+                        "arrow": {
+                            "name": "arrow",
+                            "angle": 15.0,
+                            "length": 24.0,
+                            "ends": "both",
+                            "type": "open"
+                        },
+                        "curvature": -0.2,
+                        "angle": 90
                     }
                 ]
             }""".trimIndent()

@@ -278,6 +278,7 @@ object Option {
             const val CURVATURE = "curvature"
             const val ANGLE = "angle"
             const val NCP = "ncp"
+            const val SPACER = "spacer"
         }
 
         object Path {
