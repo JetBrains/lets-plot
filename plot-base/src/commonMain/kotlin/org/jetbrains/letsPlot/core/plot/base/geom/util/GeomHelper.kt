@@ -137,16 +137,9 @@ open class GeomHelper(
             start: DoubleVector, end: DoubleVector,
             p: DataPointAesthetics,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
-        ) = createLine(start, end, p, strokeScaler) { toClient(it, p) }
-
-        fun createLine(
-            start: DoubleVector, end: DoubleVector,
-            p: DataPointAesthetics,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
-            transform: (DoubleVector) -> DoubleVector?
         ): SvgNode? {
             if (myResamplingEnabled) {
-                val lineString = resample(listOf(start, end), myResamplingPrecision) { transform(it) }
+                val lineString = resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
 
                 geometryHandler(p, lineString)
 
@@ -156,10 +149,10 @@ open class GeomHelper(
                 return svgPathElement
             } else {
                 @Suppress("NAME_SHADOWING")
-                val start = transform(start) ?: return null
+                val start = toClient(start, p) ?: return null
 
                 @Suppress("NAME_SHADOWING")
-                val end = transform(end) ?: return null
+                val end = toClient(end, p) ?: return null
 
                 geometryHandler(p, listOf(start, end))
 

@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import kotlin.math.*
 
 
@@ -72,7 +73,8 @@ class SegmentGeom : GeomBase() {
             val endPoint = pointOnLine(clientEnd, clientStart, endOffset)
 
             // draw segment
-            val line = helper.createLine(startPoint, endPoint, p) { point: DoubleVector -> point } ?: continue
+            val line = SvgLineElement(startPoint.x, startPoint.y, endPoint.x, endPoint.y)
+            GeomHelper.decorate(line, p, applyAlphaToAll = true, filled = false)
             root.add(line)
 
             // add arrows
