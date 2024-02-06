@@ -75,7 +75,7 @@ class SvgPathElement() : SvgGraphicsElement(), SvgTransformable,
         return getAttribute(STROKE_WIDTH)
     }
 
-    override fun strokeMiterLimit(): Property<Double?> {
+    fun strokeMiterLimit(): Property<Double?> {
         return getAttribute(STROKE_MITER_LIMIT)
     }
 

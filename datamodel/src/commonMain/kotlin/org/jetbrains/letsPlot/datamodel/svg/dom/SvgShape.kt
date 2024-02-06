@@ -25,8 +25,6 @@ interface SvgShape {
 
     fun strokeWidth(): Property<Double?>
 
-    fun strokeMiterLimit(): Property<Double?>
-
     companion object {
         val FILL: SvgAttributeSpec<SvgColor> =
             SvgAttributeSpec.createSpec("fill")

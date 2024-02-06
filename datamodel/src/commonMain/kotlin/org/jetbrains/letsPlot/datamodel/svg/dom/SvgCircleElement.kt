@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_MITER_LIMIT
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_WIDTH
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
@@ -85,10 +84,6 @@ class SvgCircleElement() : SvgGraphicsElement(), SvgTransformable,
 
     override fun strokeWidth(): Property<Double?> {
         return getAttribute(STROKE_WIDTH)
-    }
-
-    override fun strokeMiterLimit(): Property<Double?> {
-        return getAttribute(STROKE_MITER_LIMIT)
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {
