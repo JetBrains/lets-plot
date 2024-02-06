@@ -2472,7 +2472,7 @@ class LiveMap {
             |      "geom": "livemap",
             |      "tiles": {
             |        "kind": "vector_lets_plot",
-            |        "url": "ws://localhost:3112",
+            |        "url": "wss://tiles.datalore.jetbrains.com/",
             |        "theme": "color",
             |        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
             |      },
