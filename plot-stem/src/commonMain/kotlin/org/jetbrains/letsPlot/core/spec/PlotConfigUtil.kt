@@ -85,27 +85,34 @@ internal object PlotConfigUtil {
         layerConfigs: List<LayerConfig>,
         excludeStatVariables: Boolean
     ): PlotAesBindingSetup {
+        return createPlotAesBindingSetup(
+            bindingsByLayer = layerConfigs.map { it.varBindings },
+            dataByLayer = layerConfigs.map { it.combinedData },
+            excludeStatVariables
+        )
+    }
 
+    internal fun createPlotAesBindingSetup(
+        bindingsByLayer: List<List<VarBinding>>,
+        dataByLayer: List<DataFrame>,
+        excludeStatVariables: Boolean
+    ): PlotAesBindingSetup {
+
+        @Suppress("NAME_SHADOWING")
+        val bindingsByLayer = bindingsByLayer.map { it.filter { !(excludeStatVariables && it.variable.isStat) } }
         val dataByVarBinding = associateVarBindingsWithData(
-            layerConfigs, excludeStatVariables
+            bindingsByLayer,
+            dataByLayer,
         )
 
-        val varBindings = getVarBindings(layerConfigs, excludeStatVariables)
-        val variablesByMappedAes = associateAesWithMappedVariables(
-            varBindings
-        )
+        val varBindings = bindingsByLayer.flatMap { it }
+        val variablesByMappedAes = associateAesWithMappedVariables(varBindings)
 
         return PlotAesBindingSetup(
             varBindings = varBindings,
             dataByVarBinding = dataByVarBinding,
             variablesByMappedAes = variablesByMappedAes,
         )
-    }
-
-    private fun getVarBindings(
-        layerConfigs: List<LayerConfig>, excludeStatVariables: Boolean
-    ): List<VarBinding> {
-        return layerConfigs.flatMap { it.varBindings }.filter { !(excludeStatVariables && it.variable.isStat) }
     }
 
     private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
@@ -119,12 +126,13 @@ internal object PlotConfigUtil {
     }
 
     private fun associateVarBindingsWithData(
-        layerConfigs: List<LayerConfig>, excludeStatVariables: Boolean
+        bindingsByLayer: List<List<VarBinding>>,
+        dataByLayer: List<DataFrame>,
     ): Map<VarBinding, DataFrame> {
-        val dataByVarBinding: Map<VarBinding, DataFrame> = layerConfigs.flatMap { layer ->
-            layer.varBindings.filter { !(excludeStatVariables && it.variable.isStat) }
-                .map { it to layer.combinedData }
-        }.toMap()
+        val dataByVarBinding = bindingsByLayer.zip(dataByLayer)
+            .flatMap { (varBindings, data) ->
+                varBindings.map { it to data }
+            }.toMap()
 
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {

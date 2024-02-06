@@ -5,10 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -25,28 +22,38 @@ internal object PlotTilesConfig {
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
         coordProvider: CoordProvider,
-        scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
+        commonScalesBeforeFacets: Map<Aes<*>, Scale>,
         mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
         theme: Theme,
         fontRegistry: FontFamilyRegistry
     ): PlotGeomTiles {
         require(hasLayers(layerConfigs)) { "No layers in plot" }
+
+        val containsLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+        val scalesByLayerBeforeFacets = layerConfigs.map {
+            PlotGeomTilesUtil.buildLayerScaleMap(it, commonScalesBeforeFacets)
+        }
+
         return when {
             facets.isDefined && isFacettable(layerConfigs, facets) -> createFacetTiles(
                 layerConfigs,
                 facets,
-                scaleByAesBeforeFacets,
+                commonScalesBeforeFacets,
+                scalesByLayerBeforeFacets,
                 mappersByAesNP,
                 coordProvider,
+                containsLiveMap,
                 theme,
                 fontRegistry,
             )
 
             else -> createSingletonTiles(
                 layerConfigs,
-                scaleByAesBeforeFacets,
+                commonScalesBeforeFacets,
+                scalesByLayerBeforeFacets,
                 mappersByAesNP,
                 coordProvider,
+                containsLiveMap,
                 theme,
                 fontRegistry,
             )
@@ -65,22 +72,18 @@ internal object PlotTilesConfig {
 
     private fun createSingletonTiles(
         layerConfigs: List<LayerConfig>,
-        scaleByAes: Map<Aes<*>, Scale>,
+        commonScalesBeforeFacets: Map<Aes<*>, Scale>,
+        scalesByLayerBeforeFacets: List<Map<Aes<*>, Scale>>,
         mappersNP: Map<Aes<*>, ScaleMapper<*>>,
         coordProvider: CoordProvider,
+        containsLiveMap: Boolean,
         theme: Theme,
         fontRegistry: FontFamilyRegistry
     ): SimplePlotGeomTiles {
 
-        val scaleMapByLayer = layerConfigs.map {
-            PlotGeomTilesUtil.buildLayerScaleMap(it, scaleByAes)
-        }
-
-        val containsLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
-
         val geomInteractionByLayer = PlotGeomTilesUtil.geomInteractionByLayer(
             layerConfigs,
-            scaleMapByLayer,
+            scalesByLayerBeforeFacets,
             coordProvider,
             theme,
             containsLiveMap
@@ -98,14 +101,14 @@ internal object PlotTilesConfig {
         val geomLayers: List<GeomLayer> = geomLayerBuildersByLayer.mapIndexed { layerIndex, layerBuilder ->
             layerBuilder.build(
                 layerConfigs[layerIndex].combinedData,
-                scaleMapByLayer[layerIndex],
+                scalesByLayerBeforeFacets[layerIndex],
                 mappersNP
             )
         }
 
         return SimplePlotGeomTiles(
             geomLayers,
-            scaleByAes,
+            commonScalesBeforeFacets,
             mappersNP,
             coordProvider,
             containsLiveMap
@@ -115,9 +118,11 @@ internal object PlotTilesConfig {
     private fun createFacetTiles(
         layerConfigs: List<LayerConfig>,
         facets: PlotFacets,
-        scaleByAesBeforeFacets: Map<Aes<*>, Scale>,
+        commonScalesBeforeFacets: Map<Aes<*>, Scale>,
+        scalesByLayerBeforeFacets: List<Map<Aes<*>, Scale>>,
         mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>,
         coordProvider: CoordProvider,
+        containsLiveMap: Boolean,
         theme: Theme,
         fontRegistry: FontFamilyRegistry
     ): FacetedPlotGeomTiles {
@@ -127,15 +132,10 @@ internal object PlotTilesConfig {
         // TMP: Just duplicate the code in SimplePlotGeomTilesBuilder
         ///////////////////////////////////
 
-        val scaleMapByLayer = layerConfigs.map {
-            PlotGeomTilesUtil.buildLayerScaleMap(it, scaleByAesBeforeFacets)
-        }
-
-        val containsLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
 
         val geomInteractionByLayer = PlotGeomTilesUtil.geomInteractionByLayer(
             layerConfigs,
-            scaleMapByLayer,
+            scalesByLayerBeforeFacets,
             coordProvider,
             theme,
             containsLiveMap
@@ -151,39 +151,46 @@ internal object PlotTilesConfig {
         }
 
         ///////////////////////////////////
+//        val freeDiscreteTransformsX =
+//            facets.freeHScale && !commonScalesBeforeFacets.getValue(Aes.X).isContinuousDomain
+//        val freeDiscreteTransformsY =
+//            facets.freeVScale && !commonScalesBeforeFacets.getValue(Aes.Y).isContinuousDomain
+//
+//        val setup = if (freeDiscreteTransformsX || freeDiscreteTransformsY) {
+//            PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, false)
+//        } else {
+//            null
+//        }
+
+        val dataByLayerByTile: List<MutableList<DataFrame>> = List(facets.numTiles) { ArrayList<DataFrame>() }
+        layerConfigs.map { it.combinedData }.forEach() { layerData ->
+            val layerDataByTile = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
+            layerDataByTile.forEachIndexed { tileIndex, data ->
+                dataByLayerByTile[tileIndex].add(data)
+            }
+        }
+
+
+        // ToDo: discrete transforms X/Y by tile.
+
 
         // Create tiles
-        val geomLayersByTile: MutableList<MutableList<GeomLayer>> = mutableListOf()
-        for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
-            //
-            // Layer tiles
-            //
-            val layerData = layerConfig.combinedData
-            val layerDataByTile = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
-
-            val geomLayerByTile = layerDataByTile.map { layerTileData ->
+        val geomLayersByTile: MutableList<List<GeomLayer>> = mutableListOf()
+        for (tileDataByLayer: List<DataFrame> in dataByLayerByTile) {
+            val tileGeomLayers = tileDataByLayer.mapIndexed() { layerIndex, layerData ->
                 geomLayerBuildersByLayer[layerIndex].build(
-                    layerTileData,
-                    scaleMapByLayer[layerIndex],
+                    layerData,
+                    scalesByLayerBeforeFacets[layerIndex],
                     mappersByAesNP,
                 )
             }
 
-            //
-            // Stack geom layers by tile.
-            //
-            if (geomLayersByTile.isEmpty()) {
-                geomLayerByTile.forEach { _ -> geomLayersByTile.add(ArrayList<GeomLayer>()) }
-            }
-            for ((tileIndex, geomLayer) in geomLayerByTile.withIndex()) {
-                val tileGeomLayers = geomLayersByTile[tileIndex]
-                tileGeomLayers.add(geomLayer)
-            }
+            geomLayersByTile.add(tileGeomLayers)
         }
 
         return FacetedPlotGeomTiles(
             geomLayersByTile,
-            scaleByAesBeforeFacets,
+            commonScalesBeforeFacets,
             mappersByAesNP,
             coordProvider,
             containsLiveMap
