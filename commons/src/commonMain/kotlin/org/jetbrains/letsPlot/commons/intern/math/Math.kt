@@ -126,6 +126,11 @@ fun xOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, y: Double): Doub
     return (y - b) / m
 }
 
+/*
+ offset is the distance from p1.
+ Positive value offsets the point in the direction from p1 to p2.
+ Negative value offsets the point in the opposite direction.
+ */
 fun pointOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, offset: Double): DoubleVector {
     val d = distance(p2x, p2y, p1x, p1y)
     if (d == 0.0) {
@@ -176,10 +181,19 @@ fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
     return distance2(p1.x, p1.y, p2.x, p2.y)
 }
 
+fun distance(p1: DoubleVector, p2: DoubleVector): Double {
+    return distance(p1.x, p1.y, p2.x, p2.y)
+}
+
 fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
     return lineParams(p1.x, p1.y, p2.x, p2.y).first
 }
 
+/*
+ offset is the distance from p1.
+ Positive value offsets the point in the direction from p1 to p2.
+ Negative value offsets the point in the opposite direction.
+ */
 fun pointOnLine(p1: DoubleVector, p2: DoubleVector, offset: Double): DoubleVector {
     return pointOnLine(p1.x, p1.y, p2.x, p2.y, offset)
 }

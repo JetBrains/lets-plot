@@ -78,7 +78,7 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
             val strokeScaler = AesScaling::strokeWidth
             GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, strokeScaler, filled = arrowSpec.type == Type.CLOSED)
             // Use 'stroke-miterlimit' attribute to avoid the bevelled corner
-            val miterLimit = strokeScaler(p) / (sin(arrowSpec.angle/2))
+            val miterLimit = miterLength(arrowSpec.angle * 2, strokeScaler(p))
             arrow.strokeMiterLimit().set(abs(miterLimit))
             return arrow
         }
@@ -122,6 +122,10 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
                     return value as T?
                 }
             }
+        }
+
+        fun miterLength(headAngle: Double, strokeWidth: Double): Double {
+            return strokeWidth / sin(headAngle / 2)
         }
     }
 }

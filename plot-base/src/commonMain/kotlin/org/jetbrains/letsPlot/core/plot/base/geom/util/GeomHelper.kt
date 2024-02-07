@@ -121,8 +121,9 @@ open class GeomHelper(
             myStrokeAlphaEnabled = b
         }
 
-        fun setResamplingEnabled(b: Boolean) {
+        fun setResamplingEnabled(b: Boolean): SvgElementHelper {
             myResamplingEnabled = b
+            return this
         }
 
         fun setResamplingPrecision(precision: Double) {
@@ -133,8 +134,24 @@ open class GeomHelper(
             geometryHandler = handler
         }
 
+        fun createLineGeometry(
+            start: DoubleVector,
+            end: DoubleVector,
+            p: DataPointAesthetics,
+        ): List<DoubleVector>? {
+            if (myResamplingEnabled) {
+                return resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
+            } else {
+                val from = toClient(start, p) ?: return null
+                val to = toClient(end, p) ?: return null
+
+                return listOf(from, to)
+            }
+        }
+
         fun createLine(
-            start: DoubleVector, end: DoubleVector,
+            start: DoubleVector,
+            end: DoubleVector,
             p: DataPointAesthetics,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
         ): SvgNode? {
@@ -148,15 +165,12 @@ open class GeomHelper(
                 svgPathElement.d().set(SvgPathDataBuilder().lineString(lineString).build())
                 return svgPathElement
             } else {
-                @Suppress("NAME_SHADOWING")
-                val start = toClient(start, p) ?: return null
+                val from = toClient(start, p) ?: return null
+                val to = toClient(end, p) ?: return null
 
-                @Suppress("NAME_SHADOWING")
-                val end = toClient(end, p) ?: return null
+                geometryHandler(p, listOf(from, to))
 
-                geometryHandler(p, listOf(start, end))
-
-                val svgLineElement = SvgLineElement(start.x, start.y, end.x, end.y)
+                val svgLineElement = SvgLineElement(from.x, from.y, to.x, to.y)
                 decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
                 return svgLineElement
             }
