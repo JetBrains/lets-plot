@@ -27,7 +27,7 @@ try:
 except ImportError:
     palettable = None
 
-__all__ = ['geom_imshow', 'geom_image']
+__all__ = ['geom_imshow']
 
 
 def _hex2rgb(hex_c, alpha):
@@ -90,24 +90,6 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
         vmax = float(numpy.nanmax(image_data))
 
     return (image_data, vmin, vmax)
-
-
-def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent=None):
-    """
-    Function `geom_image()` is deprecated.
-    Please, use `geom_imshow()` instead.
-
-    """
-    print("WARN: The function geom_image() is deprecated and will be removed in future releases.\n"
-          "      Please, use geom_imshow() instead.")
-
-    return geom_imshow(image_data,
-                       cmap=cmap,
-                       norm=norm,
-                       vmin=vmin,
-                       vmax=vmax,
-                       extent=extent
-                       )
 
 
 def geom_imshow(image_data, cmap=None, *,
