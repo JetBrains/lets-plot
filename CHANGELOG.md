@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   >
   > Do NOT(!) use `exponent_format='pow'` if you are planning to export plot to a raster format (PNG,PDF).
   >
-  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handle `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
+  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handle `tspan` element properly and breaks superscript notation when transforming SVG to PNG/PDF.
   >
   > More details: https://github.com/Kozea/CairoSVG/issues/317
 
