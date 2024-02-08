@@ -83,6 +83,7 @@ class SegmentGeom : GeomBase() {
 
                 val startPoint = pointOnLine(clientStart, clientEnd, startPadding)
                 val endPoint = pointOnLine(clientEnd, clientStart, endPadding)
+                tooltipHelper.addLine(listOf(startPoint, endPoint), p)
 
                 // draw segment
                 val line = SvgLineElement(startPoint.x, startPoint.y, endPoint.x, endPoint.y)
