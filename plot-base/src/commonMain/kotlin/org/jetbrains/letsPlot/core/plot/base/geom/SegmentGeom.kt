@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import kotlin.math.sign
@@ -45,30 +44,18 @@ class SegmentGeom : GeomBase() {
     ) {
         val tooltipHelper = TargetCollectorHelper(GeomKind.SEGMENT, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val helper = geomHelper.createSvgElementHelper()
-
-        if (!coord.isLinear && !flat) {
-            helper.setResamplingEnabled(true)
-        }
-
-        helper.setStrokeAlphaEnabled(true)
-        helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
+        val svgHelper = geomHelper
+            .createSvgElementHelper()
+            .setResamplingEnabled(!coord.isLinear && !flat)
 
         for (p in aesthetics.dataPoints()) {
-            val x = finiteOrNull(p.x()) ?: continue
-            val y = finiteOrNull(p.y()) ?: continue
-            val xend = finiteOrNull(p.xend()) ?: continue
-            val yend = finiteOrNull(p.yend()) ?: continue
+            val segmentGeometry = createSegmentGeometry(p, svgHelper) ?: continue
 
-            val start = DoubleVector(x, y)
-            val end = DoubleVector(xend, yend)
-
-            val strokeWidth = AesScaling.strokeWidth(p)
-
-            // Target sizes to adjust the start/end of the segment
+            // Apply padding to segment geometry based on the target size and arrow spec
             val targetSizeStart = targetSize(p, atStart = true)
             val targetSizeEnd = targetSize(p, atStart = false)
 
+            val strokeWidth = AesScaling.strokeWidth(p)
             val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
             val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
             val miterOffset = miterLength * miterSign / 2
@@ -77,89 +64,75 @@ class SegmentGeom : GeomBase() {
             val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
             val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
 
-            if (coord.isLinear) {
-                val clientStart = geomHelper.toClient(start, p) ?: continue
-                val clientEnd = geomHelper.toClient(end, p) ?: continue
+            val adjustedSegmentGeometry = padLineString(segmentGeometry, startPadding, endPadding)
 
-                val startPoint = pointOnLine(clientStart, clientEnd, startPadding)
-                val endPoint = pointOnLine(clientEnd, clientStart, endPadding)
-                tooltipHelper.addLine(listOf(startPoint, endPoint), p)
+            val svgSegmentElement = SvgPathElement(SvgPathDataBuilder().lineString(adjustedSegmentGeometry).build())
+            GeomHelper.decorate(svgSegmentElement, p, applyAlphaToAll = true, filled = false)
+            root.add(svgSegmentElement)
 
-                // draw segment
-                val line = SvgLineElement(startPoint.x, startPoint.y, endPoint.x, endPoint.y)
-                GeomHelper.decorate(line, p, applyAlphaToAll = true, filled = false)
-                root.add(line)
+            arrowSpec
+                ?.let { ArrowSpec.createArrows(p, adjustedSegmentGeometry, it) }
+                ?.forEach(root::add)
 
-                // add arrows
-                arrowSpec?.let { arrowSpec ->
-                    ArrowSpec.createArrows(p, listOf(startPoint, endPoint), arrowSpec)
-                        .forEach(root::add)
-                }
-            } else {
-                if (arrowSpec == null) {
-                    helper.createLine(start, end, p)?.let(root::add)
-                } else {
-                    // New helper to not trigger geometry callback
-                    val lineGeometry = geomHelper
-                        .createSvgElementHelper()
-                        .setResamplingEnabled(true)
-                        .createLineGeometry(start, end, p)
-                        ?: continue
-
-                    val adjustedGeometry = padPath(lineGeometry, startPadding, endPadding)
-
-                    tooltipHelper.addLine(adjustedGeometry, p)
-
-                    ArrowSpec.createArrows(p, adjustedGeometry, arrowSpec!!).forEach(root::add)
-
-                    val svgPathElement = SvgPathElement(SvgPathDataBuilder().lineString(adjustedGeometry).build())
-                    GeomHelper.decorate(svgPathElement, p, applyAlphaToAll = true, filled = false)
-                    root.add(svgPathElement)
-                }
-            }
+            tooltipHelper.addLine(adjustedSegmentGeometry, p)
         }
     }
 
-    private fun padPath(lineString: List<DoubleVector>, startPadding: Double, endPadding: Double): List<DoubleVector> {
-        if (lineString.size < 3) {
-            return lineString
-        }
+    private fun createSegmentGeometry(p: DataPointAesthetics, geomHelper: GeomHelper.SvgElementHelper): List<DoubleVector>? {
+        val x = finiteOrNull(p.x()) ?: return null
+        val y = finiteOrNull(p.y()) ?: return null
+        val xend = finiteOrNull(p.xend()) ?: return null
+        val yend = finiteOrNull(p.yend()) ?: return null
 
-        val startPadding2 = startPadding * startPadding
-        val startPoint = lineString.first()
-        val indexOutsideStartPadding = lineString.indexOfFirst { distance2(startPoint, it) >= startPadding2 }
-        if (indexOutsideStartPadding < 1) { // not found or first points already satisfy the padding
-            return lineString
-        }
+        val start = DoubleVector(x, y)
+        val end = DoubleVector(xend, yend)
 
-        val adjustedStartPoint = run {
-            val insidePadding = lineString[indexOutsideStartPadding - 1]
-            val outsidePadding = lineString[indexOutsideStartPadding]
-            val overPadding = distance(startPoint, outsidePadding) - startPadding
-
-            pointOnLine(outsidePadding, insidePadding, overPadding)
-        }
-
-        val endPadding2 = endPadding * endPadding
-        val endPoint = lineString.last()
-        val indexOutsideEndPadding = lineString.indexOfLast { distance2(endPoint, it) >= endPadding2 }
-        if (indexOutsideEndPadding < 1) { // not found or first points already satisfy the padding
-            return lineString
-        }
-
-        val adjustedEndPoint = run {
-            val insidePadding = lineString[indexOutsideEndPadding + 1]
-            val outsidePadding = lineString[indexOutsideEndPadding]
-            val overPadding = distance(endPoint, outsidePadding) - endPadding
-
-            pointOnLine(outsidePadding, insidePadding, overPadding)
-        }
-
-        return listOf(adjustedStartPoint) + lineString.subList(indexOutsideStartPadding, indexOutsideEndPadding) + adjustedEndPoint
+        return geomHelper.createLineGeometry(start, end, p)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun pad(lineString: List<DoubleVector>, padding: Double): Pair<Int, DoubleVector>? {
+            if (lineString.size < 2) {
+                return null
+            }
+
+            val padding2 = padding * padding
+            val indexOutsidePadding = lineString.indexOfFirst { distance2(lineString.first(), it) >= padding2 }
+            if (indexOutsidePadding < 1) { // not found or first points already satisfy the padding
+                return null
+            }
+
+            val adjustedStartPoint = run {
+                val insidePadding = lineString[indexOutsidePadding - 1]
+                val outsidePadding = lineString[indexOutsidePadding]
+                val overPadding = distance(lineString.first(), outsidePadding) - padding
+
+                pointOnLine(outsidePadding, insidePadding, overPadding)
+            }
+
+            return indexOutsidePadding to adjustedStartPoint
+        }
+
+        private fun padStart(lineString: List<DoubleVector>, padding: Double): List<DoubleVector> {
+            val (index, adjustedStartPoint) = pad(lineString, padding) ?: return lineString
+            return listOf(adjustedStartPoint) + lineString.subList(index, lineString.size)
+        }
+
+        private fun padEnd(lineString: List<DoubleVector>, padding: Double): List<DoubleVector> {
+            val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
+            return lineString.subList(0, lineString.size - index) + adjustedEndPoint
+        }
+
+        private fun padLineString(
+            lineString: List<DoubleVector>,
+            startPadding: Double,
+            endPadding: Double
+        ): List<DoubleVector> {
+            val startPadded = padStart(lineString, startPadding)
+            return padEnd(startPadded, endPadding)
+        }
 
         private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
             val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
