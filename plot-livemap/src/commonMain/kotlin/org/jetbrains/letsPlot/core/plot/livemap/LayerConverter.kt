@@ -135,6 +135,11 @@ object LayerConverter {
                             arrowLength = it.arrowLength
                             arrowAtEnds = it.arrowAtEnds
                             arrowType = it.arrowType
+                            sizeStart = it.sizeStart
+                            sizeEnd = it.sizeEnd
+                            strokeStart = it.strokeStart
+                            strokeEnd = it.strokeEnd
+                            spacer = it.spacer
                         }
                     }
                 }

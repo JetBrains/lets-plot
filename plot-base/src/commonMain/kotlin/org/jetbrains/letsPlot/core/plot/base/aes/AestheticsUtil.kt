@@ -51,7 +51,17 @@ object AestheticsUtil {
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
 
-    fun pointStrokeWidth(p: DataPointAesthetics) = AesScaling.pointStrokeWidth(p)
+    fun pieDiameter(p: DataPointAesthetics) = AesScaling.pieDiameter(p)
+
+    fun pointStrokeWidth(
+        p: DataPointAesthetics,
+        strokeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::stroke
+    ) = AesScaling.pointStrokeWidth(p, strokeGetter)
+
+    fun circleDiameter(
+        p: DataPointAesthetics,
+        sizeGetter: (DataPointAesthetics) -> Double? = DataPointAesthetics::size
+    ) = AesScaling.circleDiameter(p, sizeGetter)
 
     fun textSize(p: DataPointAesthetics) = AesScaling.textSize(p)
 
