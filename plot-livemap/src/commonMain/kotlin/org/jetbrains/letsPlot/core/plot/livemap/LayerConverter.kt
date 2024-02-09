@@ -48,7 +48,9 @@ object LayerConverter {
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
-            val positiveScalingLimit = when (Aes.SIZE in layer.mappedAes) {
+            val positiveScalingLimit = when (
+                listOf(Aes.SIZE, Aes.SIZE_START, Aes.SIZE_END).any { it in layer.mappedAes }
+            ) {
                 true -> aesScalingLimit
                 false -> constScalingLimit
             }
