@@ -92,28 +92,33 @@ object GeomInteractionUtil {
                 hiddenAesList -
                 axisWithNoLabels
 
-        val showTooltips = theme.tooltips().show()
+        val tooltipAes: List<Aes<*>>
+        val sideTooltipAes: List<Aes<*>>
+        val tooltipSpecification: TooltipSpecification
 
-        val sideTooltipAes: List<Aes<*>> = if (showTooltips) {
-            createSideTooltipAesList(
-                layerConfig.geomProto.geomKind
-            ).afterOrientation(yOrientation)
-        } else {
-            emptyList()
-        }
-
-        val tooltipAes: List<Aes<*>> = if (showTooltips) {
+        if (theme.tooltips().show()) {
             val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
             val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
-            createTooltipAesList(
+            tooltipAes = createTooltipAesList(
                 layerConfig,
                 scaleMap,
                 layerRendersAesAfterOrientation,
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
+            sideTooltipAes = createSideTooltipAesList(layerConfig.geomProto.geomKind).afterOrientation(yOrientation)
+            tooltipSpecification = layerConfig.tooltips
         } else {
-            emptyList()
+            tooltipAes = emptyList()
+            sideTooltipAes = emptyList()
+            // Need to keep specified formats to use for non-hidden tooltips:
+            tooltipSpecification = TooltipSpecification(
+                valueSources = layerConfig.tooltips.valueSources,
+                tooltipLinePatterns = null,
+                tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
+                tooltipTitle = null,
+                disableSplitting = false
+            )
         }
 
         val builder = GeomInteractionBuilder(
@@ -123,22 +128,9 @@ object GeomInteractionUtil {
             tooltipAxisAes = axisAes,
             sideTooltipAes = sideTooltipAes
         )
-        if (showTooltips) {
-            builder.tooltipLinesSpec(layerConfig.tooltips)
-        } else {
-            // Need to keep specified formats to use for non-hidden tooltips
-            builder.tooltipLinesSpec(
-                TooltipSpecification(
-                    valueSources = layerConfig.tooltips.valueSources,
-                    tooltipLinePatterns = null,
-                    tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
-                    tooltipTitle = null,
-                    disableSplitting = false
-                )
-            )
-        }
 
         return builder
+            .tooltipLinesSpec(tooltipSpecification)
             .tooltipConstants(createConstantAesList(layerConfig))
             .enableCrosshair(isCrosshairEnabled(layerConfig))
     }
