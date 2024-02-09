@@ -29,16 +29,17 @@ object PositionalScalesUtil {
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
-        xScaleProto: Scale,
-        yScaleProto: Scale,
+        scaleProtoXByTile: List<Scale>,
+        scaleProtoYByTile: List<Scale>,
         facets: PlotFacets
     ): List<Pair<DoubleSpan, DoubleSpan>> {
-        var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)
-        var yInitialDomain: DoubleSpan? = RangeUtil.initialRange(yScaleProto.transform)
 
         var xDomains = ArrayList<DoubleSpan?>()
         val yDomains = ArrayList<DoubleSpan?>()
-        for (tileLayers in layersByTile) {
+        for ((tileIndex, tileLayers) in layersByTile.withIndex()) {
+
+            var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(scaleProtoXByTile[tileIndex].transform)
+            var yInitialDomain: DoubleSpan? = RangeUtil.initialRange(scaleProtoYByTile[tileIndex].transform)
             val (xDomain, yDomain) = computeTileXYDomains(
                 tileLayers,
                 xInitialDomain,
@@ -54,14 +55,14 @@ object PositionalScalesUtil {
 
         val finalizedXDomains: List<DoubleSpan> = finalizeDomains(
             Aes.X,
-            xScaleProto,
+            scaleProtoXByTile,
             adjustedXDomains,
             layersByTile,
             facets.freeHScale
         )
         val finalizedYDomains: List<DoubleSpan> = finalizeDomains(
             Aes.Y,
-            yScaleProto,
+            scaleProtoYByTile,
             adjustedYDomains,
             layersByTile,
             facets.freeVScale
@@ -72,8 +73,8 @@ object PositionalScalesUtil {
 
     private fun finalizeDomains(
         aes: Aes<Double>,
-        scaleProto: Scale,
-        domains: List<DoubleSpan?>,
+        axisScaleByTile: List<Scale>,
+        domainByTile: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
         freeScale: Boolean
     ): List<DoubleSpan> {
@@ -81,16 +82,16 @@ object PositionalScalesUtil {
         return when {
             freeScale -> {
                 // Each tile has its own domain
-                domains.mapIndexed { i, v ->
+                domainByTile.mapIndexed { i, v ->
                     // 'expand' ranges and include '0' if necessary
-                    val domainExpanded = RangeUtil.expandRange(v, aes, scaleProto, layersByTile[i])
+                    val domainExpanded = RangeUtil.expandRange(v, aes, axisScaleByTile[i], layersByTile[i])
                     SeriesUtil.ensureApplicableRange(domainExpanded)
                 }
             }
 
             else -> {
                 // One domain for all tiles.
-                val domainOverall = domains.filterNotNull().reduceOrNull { r0, r1 ->
+                val domainOverall = domainByTile.filterNotNull().reduceOrNull { r0, r1 ->
                     RangeUtil.updateRange(r0, r1)!!
                 }
                 val preferableNullDomainOverall = layersByTile[0]
@@ -98,7 +99,7 @@ object PositionalScalesUtil {
                     .reduceOrNull { r0, r1 -> RangeUtil.updateRange(r0, r1)!! }
 
                 // 'expand' ranges and include '0' if necessary
-                val domainExpanded = RangeUtil.expandRange(domainOverall, aes, scaleProto, layersByTile[0])
+                val domainExpanded = RangeUtil.expandRange(domainOverall, aes, axisScaleByTile[0], layersByTile[0])
                 val domain = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
 
                 layersByTile.map { domain }

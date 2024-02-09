@@ -130,61 +130,6 @@ class FacetGrid constructor(
         return (start until start + colLevels.size).toList()
     }
 
-//    override fun discreteHScaleByTile(scale: Scale, dataByTile: List<DataFrame>): List<Scale> {
-//        return if (freeHScale && !scale.transform.hasDomainLimits()) {
-//            val transform = scale.transform as DiscreteTransform
-//            // adjust scale domains but each column still shares domain (same domain for each tile in col)
-//            for (colIndex in colLevels.indices) {
-//                 for(tileIndex in colIndices(colIndex)) {
-//
-//                     @Suppress("UNCHECKED_CAST")
-//                     val distinctTransformedValues = dataByTile[tileIndex].distinctValues(TransformVar.X) as List<Double?>
-//                     val distinctOrigValues = transform.applyInverse(distinctTransformedValues)
-//                 }
-//            }
-//            List(numTiles) {scale}
-//        } else {
-//            // same sclae for all tiles
-//            List(numTiles) {scale}
-//        }
-//    }
-
-//    fun adjustHDiscreteDomains(commonDomain: List<Any?>, commonTransform: DiscreteTransform, dataByTile: List<DataFrame>): List<List<Any?>> {
-//          val a = if (freeHScale) {
-//            // adjust scale domains but each column still shares domain (same domain for each tile in col)
-//            for (colIndex in colLevels.indices) {
-//                 for(tileIndex in colIndices(colIndex)) {
-//
-//                     @Suppress("UNCHECKED_CAST")
-//                     val distinctTransformedValues = dataByTile[tileIndex].distinctValues(TransformVar.X) as List<Double?>
-//                     val distinctOrigValues = commonTransform.applyInverse(distinctTransformedValues)
-//                 }
-//            }
-//          } else {
-//            // same domain for all tiles
-//            List(numTiles) {commonDomain}
-//          }
-//
-////        return if (freeHScale && !scale.transform.hasDomainLimits()) {
-////            val transform = scale.transform as DiscreteTransform
-////            // adjust scale domains but each column still shares domain (same domain for each tile in col)
-////            for (colIndex in colLevels.indices) {
-////                 for(tileIndex in colIndices(colIndex)) {
-////
-////                     @Suppress("UNCHECKED_CAST")
-////                     val distinctTransformedValues = dataByTile[tileIndex].distinctValues(TransformVar.X) as List<Double?>
-////                     val distinctOrigValues = transform.applyInverse(distinctTransformedValues)
-////                 }
-////            }
-////            List(numTiles) {scale}
-////        } else {
-////            // same sclae for all tiles
-////            List(numTiles) {scale}
-////        }
-//
-//        return listOf(listOf())
-//    }
-
     override fun adjustHDomains(domains: List<DoubleSpan?>): List<DoubleSpan?> {
         return if (freeHScale) {
             // same domain for all tiles in a column.
@@ -203,7 +148,6 @@ class FacetGrid constructor(
     }
 
     override fun adjustVDomains(domains: List<DoubleSpan?>): List<DoubleSpan?> {
-
         return if (freeVScale) {
             // same domain for all tiles in a row.
             val adjusted = MutableList<DoubleSpan?>(domains.size) { null }
@@ -218,5 +162,58 @@ class FacetGrid constructor(
         } else {
             domains
         }
+    }
+
+    override fun adjustFreeDisctereHDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>> {
+        check(freeHScale) { "Not applicable: freeHScale = $freeHScale " }
+        check(domainByTile.size == numTiles) { "domainByTile.size = ${domainByTile.size} but numTiles = $numTiles" }
+
+        val adjustedDomainByTile = List<List<Any>>(numTiles) { emptyList() }.toMutableList()
+
+        // adjust scale domains but each column still shares domain (same domain for each tile in col)
+        for (colIndex in colLevels.indices) {
+            val colIndices = colIndices(colIndex)
+            val colDomainByTile = domainByTile.slice(colIndices)
+            val colJointDomain = joinDiscreteDomains(domainBeforeFacets, colDomainByTile)
+            for (i in colIndices) {
+                adjustedDomainByTile[i] = colJointDomain
+            }
+        }
+
+        return adjustedDomainByTile
+    }
+
+    override fun adjustFreeDisctereVDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>> {
+        check(freeVScale) { "Not applicable: freeVScale = $freeVScale " }
+        check(domainByTile.size == numTiles) { "domainByTile.size = ${domainByTile.size} but numTiles = $numTiles" }
+
+        val adjustedDomainByTile = List<List<Any>>(numTiles) { emptyList() }.toMutableList()
+
+        // adjust scale domains but each row still shares domain (same domain for each tile in row)
+        for (rowIndex in rowLevels.indices) {
+            val rowIndices = rowIndices(rowIndex)
+            val rowDomainByTile = domainByTile.slice(rowIndices)
+            val rowJointDomain = joinDiscreteDomains(domainBeforeFacets, rowDomainByTile)
+            for (i in rowIndices) {
+                adjustedDomainByTile[i] = rowJointDomain
+            }
+        }
+
+        return adjustedDomainByTile
+    }
+
+    private fun joinDiscreteDomains(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<Any> {
+        val jointDomain = domainByTile.reduceOrNull { acc, elem -> acc.union(elem) }
+            ?: emptyList()
+        return domainBeforeFacets.intersect(jointDomain).toList()
     }
 }

@@ -26,7 +26,8 @@ interface PlotGeomTiles {
     fun coreLayersByTile(): List<List<GeomLayer>>
     fun marginalLayersByTile(): List<List<GeomLayer>>
 
-    fun scalesByTile(): List<Map<Aes<*>, Scale>>
+    fun scaleXByTile(): List<Scale>
+    fun scaleYByTile(): List<Scale>
 
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
     fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?>

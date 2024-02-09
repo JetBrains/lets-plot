@@ -35,16 +35,20 @@ class SimplePlotGeomTiles constructor(
         return listOf(geomLayers)
     }
 
-    override fun scalesByTile(): List<Map<Aes<*>, Scale>> {
-        return listOf(scalesBeforeFacets)
+    override fun scaleXByTile(): List<Scale> {
+        return listOf(scaleXProto)
+    }
+
+    override fun scaleYByTile(): List<Scale> {
+        return listOf(scaleYProto)
     }
 
     override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
         check(!containsLiveMap) { "Not applicable to LiveMap." }
         val xyTransformedDomains = PositionalScalesUtil.computePlotXYTransformedDomains(
             coreLayersByTile(),
-            scaleXProto,
-            scaleYProto,
+            listOf(scaleXProto),   // Just one tile
+            listOf(scaleYProto),
             PlotFacets.UNDEFINED
         )
         val pair = xyTransformedDomains[0].let {

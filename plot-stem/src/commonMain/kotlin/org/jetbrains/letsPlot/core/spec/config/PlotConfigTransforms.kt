@@ -73,16 +73,10 @@ internal object PlotConfigTransforms {
         }
 
         // Discrete domains from 'data'.
-        val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
-            it.aes in discreteAesSet
-        }
-        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
-        for ((varBinding, data) in discreteDataByVarBinding) {
-            val aes = varBinding.aes
-            val variable = varBinding.variable
-            val factors = data.distinctValues(variable)
-            discreteDomainByAes.getOrPut(aes) { LinkedHashSet() }.addAll(factors)
-        }
+        val discreteDomainByAes = discreteDomainByAes(
+            discreteAesSet,
+            dataByVarBinding
+        )
 
         // create discrete transforms.
         val discreteTransformByAes = HashMap<Aes<*>, DiscreteTransform>()
@@ -184,6 +178,24 @@ internal object PlotConfigTransforms {
         } ?: false
 
         return breaksAreDiscrete || limitsAreDiscrete
+    }
+
+    internal fun discreteDomainByAes(
+        discreteAesSet: Set<Aes<*>>,
+        dataByVarBinding: Map<VarBinding, DataFrame>,
+    ): Map<Aes<*>, Collection<Any>> {
+        // Discrete domains from 'data'.
+        val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
+            it.aes in discreteAesSet
+        }
+        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
+        for ((varBinding, data) in discreteDataByVarBinding) {
+            val aes = varBinding.aes
+            val variable = varBinding.variable
+            val factors = data.distinctValues(variable)
+            discreteDomainByAes.getOrPut(aes) { LinkedHashSet() }.addAll(factors)
+        }
+        return discreteDomainByAes
     }
 
     /**

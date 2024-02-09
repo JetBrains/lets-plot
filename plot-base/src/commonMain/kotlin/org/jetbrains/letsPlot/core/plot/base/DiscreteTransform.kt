@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base
 
 import kotlin.math.roundToInt
 
-final class DiscreteTransform(
+final class DiscreteTransform constructor(
     private val domainValues: Collection<Any>,
     private val domainLimits: List<Any>
 ) : Transform {
@@ -77,6 +77,10 @@ final class DiscreteTransform(
     fun withMoreLimits(limits: Collection<Any>): DiscreteTransform {
         val expandedLimits = domainLimits.union(limits).toList()
         return DiscreteTransform(domainValues, expandedLimits)
+    }
+
+    fun withDomain(domainValues: Collection<Any>): DiscreteTransform {
+        return DiscreteTransform(domainValues, domainLimits)
     }
 
     companion object {

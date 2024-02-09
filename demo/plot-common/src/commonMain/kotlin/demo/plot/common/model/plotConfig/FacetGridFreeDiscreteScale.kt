@@ -8,35 +8,47 @@ package demo.plot.common.model.plotConfig
 import demoAndTestShared.parsePlotSpec
 
 /**
+ * See issue:
  * https://github.com/JetBrains/lets-plot/issues/955
  */
-@Suppress("ClassName")
-class Issue_facet_free_x_barchart_955 {
+class FacetGridFreeDiscreteScale {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            case0(),  // free_x
-//            case1(),  // fixed scales
-//            case2(),  // free scales
+            twoFacetsFreeX(),
+            fourFacetsFreeX(),
+            fourFacetsFreeAll(),
+
+            // Y-orientation
+            twoFacetsFreeX(orientationY = true),
+            fourFacetsFreeX(orientationY = true),
+            fourFacetsFreeAll(orientationY = true),
         )
     }
 
-    private fun case0(): MutableMap<String, Any> {
-//        'y': 'diet',
+    private fun twoFacetsFreeX(orientationY: Boolean = false): MutableMap<String, Any> {
+        val mapping = if (!orientationY) {
+            "{'x': 'animal', 'y': 'weight'}"
+        } else {
+            "{'y': 'animal', 'x': 'weight'}"
+        }
+        val facet = if (!orientationY) {
+            "{'name': 'grid', 'x': 'animal_type', 'scales': 'free_x' }"
+        } else {
+            "{'name': 'grid', 'y': 'animal_type', 'scales': 'free_y' }"
+        }
+
         val spec = """
             {
                 'kind': 'plot',
-                'mapping':  {'x': 'animal', 'y': 'weight'},
+                'mapping':  $mapping,
                 'layers':   [{'geom': 'bar',
                                'stat': 'identity',
+                               ${if (orientationY) "'orientation': 'y'," else ""}
                                'size': 0.5,
                                'color': 'black'}],
-                'facet':{'name': 'grid',
-                          'x': 'animal_type', 
-                          'scales': 'free_x',
-                          'x_order': 1,
-                          'y_order': 1},
+                'facet': $facet,
                  'theme': {'name': 'bw', 'panel_grid_minor': {'blank': true}},
-                 'ggtitle': {'text': 'free_x'}                                      
+                 'ggtitle': {'text': '${if (orientationY) "free_y" else "free_x"}'}                                      
             }
         """.trimIndent()
 
@@ -45,23 +57,30 @@ class Issue_facet_free_x_barchart_955 {
         return plotSpec
     }
 
-    private fun case1(): MutableMap<String, Any> {
+    private fun fourFacetsFreeX(orientationY: Boolean = false): MutableMap<String, Any> {
+        val mapping = if (!orientationY) {
+            "{'x': 'animal', 'y': 'weight' }"
+        } else {
+            "{'y': 'animal', 'x': 'weight' }"
+        }
+        val facet = if (!orientationY) {
+            "{'name': 'grid', 'x': 'animal_type', 'y': 'diet', 'scales': 'free_x' }"
+        } else {
+            "{'name': 'grid', 'y': 'animal_type', 'x': 'diet', 'scales': 'free_y' }"
+        }
+
         val spec = """
             {
                 'kind': 'plot',
-                'mapping':  {'x': 'animal', 'y': 'weight'},
+                'mapping':  $mapping,
                 'layers':   [{'geom': 'bar',
                                'stat': 'identity',
+                               ${if (orientationY) "'orientation': 'y'," else ""}
                                'size': 0.5,
                                'color': 'black'}],
-                'facet':{'name': 'grid',
-                          'x': 'animal_type',
-                          'y': 'diet',
-                          'scales': 'fixed',
-                          'x_order': 1,
-                          'y_order': 1},
+                'facet': $facet,
                  'theme': {'name': 'bw', 'panel_grid_minor': {'blank': true}},
-                 'ggtitle': {'text': 'fixed'}                                      
+                 'ggtitle': {'text': '${if (orientationY) "free_y" else "free_x"}'}                                      
             }
         """.trimIndent()
 
@@ -70,21 +89,29 @@ class Issue_facet_free_x_barchart_955 {
         return plotSpec
     }
 
-    private fun case2(): MutableMap<String, Any> {
+    private fun fourFacetsFreeAll(orientationY: Boolean = false): MutableMap<String, Any> {
+        val mapping = if (!orientationY) {
+            "{'x': 'animal', 'y': 'weight' }"
+        } else {
+            "{'y': 'animal', 'x': 'weight' }"
+        }
+
+        val facet = if (!orientationY) {
+            "{'name': 'grid', 'x': 'animal_type', 'y': 'diet', 'scales': 'free' }"
+        } else {
+            "{'name': 'grid', 'y': 'animal_type', 'x': 'diet', 'scales': 'free' }"
+        }
+
         val spec = """
             {
                 'kind': 'plot',
-                'mapping':  {'x': 'animal', 'y': 'weight'},
+                'mapping': $mapping,
                 'layers':   [{'geom': 'bar',
                                'stat': 'identity',
+                                ${if (orientationY) "'orientation': 'y'," else ""}
                                'size': 0.5,
                                'color': 'black'}],
-                'facet':{'name': 'grid',
-                          'x': 'animal_type',
-                          'y': 'diet',
-                          'scales': 'free',
-                          'x_order': 1,
-                          'y_order': 1},
+                'facet': $facet,
                  'theme': {'name': 'bw', 'panel_grid_minor': {'blank': true}},
                  'ggtitle': {'text': 'free all'}                                      
             }
@@ -96,7 +123,7 @@ class Issue_facet_free_x_barchart_955 {
     }
 
     private companion object {
-//            animal_type   animal  weight  diet
+        //            animal_type   animal  weight  diet
 //                    pet      cat       5  carnivore
 //                    pet      dog      10  carnivore
 //                    pet   rabbit       2  herbivore

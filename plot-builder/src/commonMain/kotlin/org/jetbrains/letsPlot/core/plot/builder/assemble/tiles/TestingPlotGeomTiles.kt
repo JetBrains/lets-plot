@@ -32,8 +32,12 @@ internal class TestingPlotGeomTiles(
         return listOf(geomLayers)
     }
 
-    override fun scalesByTile(): List<Map<Aes<*>, Scale>> {
-        return listOf(scalesBeforeFacets)
+    override fun scaleXByTile(): List<Scale> {
+        return listOf(scalesBeforeFacets.getValue(Aes.X))
+    }
+
+    override fun scaleYByTile(): List<Scale> {
+        return listOf(scalesBeforeFacets.getValue(Aes.Y))
     }
 
     override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {

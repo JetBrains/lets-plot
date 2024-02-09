@@ -54,6 +54,16 @@ abstract class PlotFacets {
      */
     open fun adjustVDomains(domains: List<DoubleSpan?>): List<DoubleSpan?> = domains
 
+    abstract fun adjustFreeDisctereHDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>>
+
+    abstract fun adjustFreeDisctereVDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>>
+
     companion object {
         const val DEF_ORDER_DIR = 0 // no ordering
         val DEF_FORMATTER: (Any) -> String = { it.toString() }

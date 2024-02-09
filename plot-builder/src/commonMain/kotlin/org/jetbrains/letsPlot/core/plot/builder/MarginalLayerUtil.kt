@@ -42,11 +42,11 @@ object MarginalLayerUtil {
 
         return layersByMargin.mapValues { (side, layers) ->
             val (marginScaleXProto, marginScaleYProto) = scaleXYByMargin.getValue(side)
-            val layersByTile = listOf(layers)
+
             val domainXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-                layersByTile,
-                marginScaleXProto,
-                marginScaleYProto,
+                listOf(layers),
+                listOf(marginScaleXProto),
+                listOf(marginScaleYProto),
                 PlotFacets.UNDEFINED
             )
 

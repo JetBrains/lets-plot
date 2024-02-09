@@ -25,22 +25,25 @@ class FacetedPlotGeomTiles constructor(
 ) {
     override val isSingleTile: Boolean = false
 
-    private val scalesByTile: List<Map<Aes<*>, Scale>> = layersByTile.map {
-        // ToDo: different set of scales for each tile
-        scalesBeforeFacets
-    }
-
     override fun layersByTile(): List<List<GeomLayer>> {
         return layersByTile
     }
 
-    override fun scalesByTile(): List<Map<Aes<*>, Scale>> {
-        return scalesByTile
+    override fun scaleXByTile(): List<Scale> {
+        return layersByTile.map { geomLayers ->
+            geomLayers.first().scaleMap.getValue(Aes.X)
+        }
+    }
+
+    override fun scaleYByTile(): List<Scale> {
+        return layersByTile.map { geomLayers ->
+            geomLayers.first().scaleMap.getValue(Aes.Y)
+        }
     }
 
     override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
         check(!containsLiveMap) { "Not applicable to LiveMap." }
-        // ToDo: implement if needed
+        // Not implemented -:was not yet needed.
         return Pair(null, null)
     }
 }

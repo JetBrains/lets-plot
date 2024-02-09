@@ -117,6 +117,29 @@ class FacetWrap constructor(
         return infos.sortedWith(compareBy<FacetTileInfo> { it.row }.thenBy { it.col })
     }
 
+    override fun adjustFreeDisctereHDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>> {
+        check(freeHScale) { "Not applicable: freeHScale = $freeHScale " }
+        check(domainByTile.size == numTiles) { "domainByTile.size = ${domainByTile.size} but numTiles = $numTiles" }
+
+        // Keep all given domains, just ensure the original order.
+        return domainByTile.map { domainBeforeFacets.intersect(it).toList() }
+    }
+
+    override fun adjustFreeDisctereVDomainsByTile(
+        domainBeforeFacets: List<Any>,
+        domainByTile: List<Collection<Any>>
+    ): List<List<Any>> {
+        check(freeVScale) { "Not applicable: freeVScale = $freeVScale " }
+        check(domainByTile.size == numTiles) { "domainByTile.size = ${domainByTile.size} but numTiles = $numTiles" }
+
+        // Keep all given domains, just ensure the original order.
+        return domainByTile.map { domainBeforeFacets.intersect(it).toList() }
+    }
+
+
     enum class Direction {
         H, V
     }

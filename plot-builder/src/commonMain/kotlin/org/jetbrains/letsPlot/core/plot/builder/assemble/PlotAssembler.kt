@@ -56,10 +56,6 @@ class PlotAssembler constructor(
     private val layouter: PlotFigureLayouter
 
     init {
-        // ToDo: use different set of scales for each tile.
-        val scaleXProto = geomTiles.scalesBeforeFacets.getValue(Aes.X)
-        val scaleYProto = geomTiles.scalesBeforeFacets.getValue(Aes.Y)
-
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
             theme.exponentFormat.superscript
@@ -84,12 +80,15 @@ class PlotAssembler constructor(
             false -> xAxisPosition to yAxisPosition
         }
 
-        val xyTransformedDomainsByTile: List<Pair<DoubleSpan, DoubleSpan>>? = when {
+        val scaleXByTile = geomTiles.scaleXByTile()
+        val scaleYByTile = geomTiles.scaleYByTile()
+
+        val transformedDomainsXYByTile: List<Pair<DoubleSpan, DoubleSpan>>? = when {
             geomTiles.containsLiveMap -> null
             else -> PositionalScalesUtil.computePlotXYTransformedDomains(
                 geomTiles.coreLayersByTile(),
-                scaleXProto,
-                scaleYProto,
+                scaleXByTile,
+                scaleYByTile,
                 facets
             )
         }
@@ -98,9 +97,9 @@ class PlotAssembler constructor(
             coreLayersByTile = geomTiles.coreLayersByTile(),
             marginalLayersByTile = geomTiles.marginalLayersByTile(),
             coordProvider = geomTiles.coordProvider,
-            scaleXProto = scaleXProto,
-            scaleYProto = scaleYProto,
-            rawXYTransformedDomainsByTile = xyTransformedDomainsByTile,
+            scaleXProtoByTile = scaleXByTile,
+            scaleYProtoByTile = scaleYByTile,
+            rawXYTransformedDomainsByTile = transformedDomainsXYByTile,
             containsLiveMap = geomTiles.containsLiveMap,
             hAxisPosition = hAxisPosition,
             vAxisPosition = vAxisPosition,
@@ -191,8 +190,8 @@ class PlotAssembler constructor(
             coreLayersByTile: List<List<GeomLayer>>,
             marginalLayersByTile: List<List<GeomLayer>>,
             coordProvider: CoordProvider,
-            scaleXProto: Scale,
-            scaleYProto: Scale,
+            scaleXProtoByTile: List<Scale>,
+            scaleYProtoByTile: List<Scale>,
             rawXYTransformedDomainsByTile: List<Pair<DoubleSpan, DoubleSpan>>?,
             containsLiveMap: Boolean,
             hAxisPosition: AxisPosition,
@@ -207,44 +206,53 @@ class PlotAssembler constructor(
             val domainsXYByTile = rawXYTransformedDomainsByTile!!
 
             val flipAxis = coordProvider.flipped
-            val (hScaleProto, vScaleProto) = when (flipAxis) {
-                true -> scaleYProto to scaleXProto
-                else -> scaleXProto to scaleYProto
-            }
 
             // Marginal layers.
             // Marginal layers share "marginal domain" and layout across all tiles.
-            val marginalLayers = marginalLayersByTile.flatten()
-            val domainByMargin = MarginalLayerUtil.marginalDomainByMargin(marginalLayers, scaleXProto, scaleYProto)
-            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayers)
+            val domainByMarginByTile = marginalLayersByTile.mapIndexed { tileIndex, tileMarginalLayers ->
+                MarginalLayerUtil.marginalDomainByMargin(
+                    tileMarginalLayers,
+                    scaleXProtoByTile[tileIndex],
+                    scaleYProtoByTile[tileIndex]
+                )
+            }
+
+            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayersByTile[0])
+
+            val (hScaleProtoByTile, vScaleProtoByTile) = when (flipAxis) {
+                true -> scaleYProtoByTile to scaleXProtoByTile
+                else -> scaleXProtoByTile to scaleYProtoByTile
+            }
 
             // Create frame of reference provider for each tile.
-            return domainsXYByTile.map { (xDomain, yDomain) ->
+            return domainsXYByTile.mapIndexed { tileIndex, (xDomain, yDomain) ->
                 if (coordProvider.isPolar) {
                     val adjustedDomain = (coordProvider as PolarCoordProvider)
-                        .withHScaleContinuous(hScaleProto.isContinuous)
+                        .withHScaleContinuous(hScaleProtoByTile[tileIndex].isContinuous)
                         .adjustDomain(DoubleRectangle(xDomain, yDomain))
 
                     PolarFrameOfReferenceProvider(
-                        plotContext, hScaleProto,
-                        vScaleProto,
+                        plotContext,
+                        hScaleProtoByTile[tileIndex],
+                        vScaleProtoByTile[tileIndex],
                         adjustedDomain,
                         flipAxis,
                         theme,
                         marginsLayout,
-                        domainByMargin
+                        domainByMarginByTile[tileIndex]
                     )
                 } else {
                     val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
-                        plotContext, hScaleProto,
-                        vScaleProto,
+                        plotContext,
+                        hScaleProtoByTile[tileIndex],
+                        vScaleProtoByTile[tileIndex],
                         adjustedDomain,
                         flipAxis, hAxisPosition,
                         vAxisPosition,
                         theme,
                         marginsLayout,
-                        domainByMargin
+                        domainByMarginByTile[tileIndex]
                     )
                 }
             }
