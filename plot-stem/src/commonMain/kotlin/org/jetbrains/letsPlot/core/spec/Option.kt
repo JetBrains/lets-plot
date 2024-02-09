@@ -750,6 +750,9 @@ object Option {
 
         // Panel grid
         const val PANEL_GRID = ThemeOption.PANEL_GRID
+        const val PANEL_GRID_ONTOP = ThemeOption.PANEL_GRID_ONTOP
+        const val PANEL_GRID_ONTOP_X = ThemeOption.PANEL_GRID_ONTOP_X
+        const val PANEL_GRID_ONTOP_Y = ThemeOption.PANEL_GRID_ONTOP_Y
         const val PANEL_GRID_MAJOR = ThemeOption.PANEL_GRID_MAJOR
         const val PANEL_GRID_MINOR = ThemeOption.PANEL_GRID_MINOR
         const val PANEL_GRID_MAJOR_X = ThemeOption.PANEL_GRID_MAJOR_X

@@ -1,6 +1,7 @@
 ## [4.2.1] - 2024-mm-dd
 
 ### Added
+- `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`
 
 ### Changed
 

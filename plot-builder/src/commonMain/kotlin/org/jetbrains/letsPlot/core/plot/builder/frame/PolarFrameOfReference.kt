@@ -68,16 +68,10 @@ internal class PolarFrameOfReference(
         val drawPanel = panelTheme.showRect() && beforeGeomLayer
         val drawPanelBorder = panelTheme.showBorder() && !beforeGeomLayer
 
-        @Suppress("UnnecessaryVariable")
-        val drawGridlines = beforeGeomLayer
-        val drawHAxis = when {
-            beforeGeomLayer -> !hAxisTheme.isOntop()
-            else -> hAxisTheme.isOntop()
-        }
-        val drawVAxis = when {
-            beforeGeomLayer -> !vAxisTheme.isOntop()
-            else -> vAxisTheme.isOntop()
-        }
+        val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
+        val drawVGrid = beforeGeomLayer xor vGridTheme.isOntop()
+        val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
+        val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
         if (drawPanel) {
             val panel = buildPanelComponent(geomBounds, panelTheme)
@@ -85,29 +79,27 @@ internal class PolarFrameOfReference(
         }
 
         // First draw grid lines and then add axis to prevent axis overlapping by grid lines (esp in polar coord system).
-        if (drawGridlines) {
-            if (drawHAxis) {
-                // Top/Bottom axis
-                listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                    val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
+        if (drawHGrid) {
+            // Top/Bottom axis
+            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
-                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                    val gridBounds = geomBounds.origin
-                    gridComponent.moveTo(gridBounds)
-                    parent.add(gridComponent)
-                }
+                val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
+                val gridBounds = geomBounds.origin
+                gridComponent.moveTo(gridBounds)
+                parent.add(gridComponent)
             }
+        }
 
-            if (drawVAxis) {
-                // Left/Right axis
-                listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-                    val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
+        if (drawVGrid) {
+            // Left/Right axis
+            listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
-                    val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                    val gridBounds = geomBounds.origin
-                    gridComponent.moveTo(gridBounds)
-                    parent.add(gridComponent)
-                }
+                val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+                val gridBounds = geomBounds.origin
+                gridComponent.moveTo(gridBounds)
+                parent.add(gridComponent)
             }
         }
 

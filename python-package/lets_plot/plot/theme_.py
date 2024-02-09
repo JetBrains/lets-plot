@@ -49,6 +49,9 @@ def theme(*,
           # ToDo: other panel options...
 
           panel_grid=None,
+          panel_grid_ontop=None,
+          panel_grid_ontop_x=None,
+          panel_grid_ontop_y=None,
           panel_grid_major=None,
           panel_grid_minor=None,
           panel_grid_major_x=None,
@@ -171,6 +174,8 @@ def theme(*,
         Set `element_line()` to specify grid line parameters.
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
         which in turn inherits from `line`.
+    panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y : bool, default=False
+        Option to place major grid lines and minor grid lines  over the data layers.
     plot_background : str or dict
         Background of the entire plot.
         Set 'blank' or result of `element_blank()` to draw nothing.

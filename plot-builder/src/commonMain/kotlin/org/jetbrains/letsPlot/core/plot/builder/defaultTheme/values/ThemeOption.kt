@@ -64,6 +64,9 @@ object ThemeOption {
 
     // Panel grid
     const val PANEL_GRID = "panel_grid"  // a line
+    const val PANEL_GRID_ONTOP = "panel_grid_ontop"
+    const val PANEL_GRID_ONTOP_X = "panel_grid_ontop_x"
+    const val PANEL_GRID_ONTOP_Y = "panel_grid_ontop_y"
     const val PANEL_GRID_MAJOR = "panel_grid_major"
     const val PANEL_GRID_MINOR = "panel_grid_minor"
     const val PANEL_GRID_MAJOR_X = "panel_grid_major_x"

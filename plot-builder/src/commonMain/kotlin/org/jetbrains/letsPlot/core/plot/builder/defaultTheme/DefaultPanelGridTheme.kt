@@ -6,13 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_ONTOP
 
 internal class DefaultPanelGridTheme(
     axis: String,
@@ -21,10 +22,13 @@ internal class DefaultPanelGridTheme(
 ) : ThemeValuesAccess(options, fontFamilyRegistry), PanelGridTheme {
 
     private val suffix = "_$axis"
-    internal val majorLineKey =
-        listOf(PANEL_GRID_MAJOR + suffix, PANEL_GRID_MAJOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
-    internal val minorLineKey =
-        listOf(PANEL_GRID_MINOR + suffix, PANEL_GRID_MINOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
+    private val ontopKey = listOf(PANEL_GRID_ONTOP + suffix, PANEL_GRID_ONTOP)
+    internal val majorLineKey = listOf(PANEL_GRID_MAJOR + suffix, PANEL_GRID_MAJOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
+    internal val minorLineKey = listOf(PANEL_GRID_MINOR + suffix, PANEL_GRID_MINOR, PANEL_GRID + suffix, PANEL_GRID, LINE)
+
+    override fun isOntop(): Boolean {
+        return getBoolean(ontopKey)
+    }
 
     override fun showMajor(): Boolean {
         return !isElemBlank(majorLineKey)
