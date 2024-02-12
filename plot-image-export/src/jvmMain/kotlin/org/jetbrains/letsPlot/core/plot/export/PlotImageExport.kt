@@ -63,7 +63,7 @@ object PlotImageExport {
         targetDPI: Double
     ): ImageData {
         require(scalingFactor >= .1) { "scaling factor is too small: $scalingFactor, must be in range [0.1, 10.0]" }
-        require(scalingFactor < 10.0) { "scaling factor is too large: $scalingFactor, must be in range [0.1, 10.0]" }
+        require(scalingFactor <= 10.0) { "scaling factor is too large: $scalingFactor, must be in range [0.1, 10.0]" }
 
         val transcoder = when (format) {
             is Format.TIFF -> TIFFTranscoder()
