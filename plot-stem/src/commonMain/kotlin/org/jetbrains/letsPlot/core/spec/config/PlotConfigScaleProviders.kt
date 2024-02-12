@@ -73,14 +73,14 @@ internal object PlotConfigScaleProviders {
         if (zeroPositionalExpands) {
             val expandConfigs = scaleConfigs.associate { it.aes to it[EXPAND] }
 
-            scaleProviderBuilders
-                .filterKeys { Aes.isPositional(it) }
-                .forEach { (aes, builder) ->
-                    if (expandConfigs[aes] == null) {
-                        builder.additiveExpand(0.0)
-                        builder.multiplicativeExpand(0.0)
-                    }
-                }
+            //scaleProviderBuilders
+            //    .filterKeys { Aes.isPositional(it) }
+            //    .forEach { (aes, builder) ->
+            //        if (expandConfigs[aes] == null) {
+            //            builder.additiveExpand(0.0)
+            //            builder.multiplicativeExpand(0.0)
+            //        }
+            //    }
         }
 
         return scaleProviderBuilders.mapValues { (_, builder) ->

@@ -19,7 +19,8 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-private const val R_EXPAND = 1.15
+private const val R_EXPAND = 0.0//0.10
+private const val R_INSET = 0.0//0.10
 
 internal class PolarCoordProvider(
     xLim: DoubleSpan?,
@@ -59,7 +60,7 @@ internal class PolarCoordProvider(
         }
 
         val adjustedYRange = (yLim ?: realDomain.yRange()).let {
-            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * R_EXPAND)
+            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * (1 + R_EXPAND + R_INSET))
         }
 
         return DoubleRectangle(
@@ -118,9 +119,10 @@ internal class PolarCoordProvider(
     }
 
 
+    // TODO: replace with insets parameter for the theme
     fun gridDomain(adjustedDomain: DoubleRectangle): DoubleRectangle {
         val xRange = adjustedDomain.xRange() // either xLim or domain.xRange() with adjustments
-        val yRange = adjustedDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length / R_EXPAND) }
+        val yRange = adjustedDomain.yRange().let { DoubleSpan.withLowerEnd(it.lowerEnd, it.length / (1 + R_INSET)) }
 
         return DoubleRectangle(xRange, yRange)
     }
