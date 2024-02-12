@@ -162,9 +162,11 @@ internal class DataPointLiveMapAesthetics {
             else -> colorWithAlpha(myP.color()!!)
         }
 
+    private fun pointRadius(size: Double) = ceil(size / 2.0)
+
     val radius: Double
         get() = when (myLayerKind) {
-            POINT -> ceil(myP.shape()!!.size(myP) / 2.0)
+            POINT -> pointRadius(myP.shape()!!.size(myP))
             PIE -> AestheticsUtil.pieDiameter(myP) / 2.0
             else -> 0.0
         }
@@ -181,9 +183,9 @@ internal class DataPointLiveMapAesthetics {
         get() = myFillArray.map(::colorWithAlpha)
 
     val sizeStart: Double
-        get() = AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)) * 2.0
     val sizeEnd: Double
-        get() = AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeEnd)
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeEnd)) * 2.0
     val strokeStart: Double
         get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeStart)
     val strokeEnd: Double
