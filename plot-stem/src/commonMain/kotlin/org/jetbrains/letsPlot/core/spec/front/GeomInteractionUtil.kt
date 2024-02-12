@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomTooltipSetup
@@ -91,19 +92,34 @@ object GeomInteractionUtil {
                 hiddenAesList -
                 axisWithNoLabels
 
-        val sideTooltipAes = createSideTooltipAesList(
-            layerConfig.geomProto.geomKind
-        ).afterOrientation(yOrientation)
+        val tooltipAes: List<Aes<*>>
+        val sideTooltipAes: List<Aes<*>>
+        val tooltipSpecification: TooltipSpecification
 
-        val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
-        val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
-        val tooltipAes = createTooltipAesList(
-            layerConfig,
-            scaleMap,
-            layerRendersAesAfterOrientation,
-            axisAesFromFunctionTypeAfterOrientation,
-            hiddenAesList
-        )
+        if (theme.tooltips().show()) {
+            val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
+            val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
+            tooltipAes = createTooltipAesList(
+                layerConfig,
+                scaleMap,
+                layerRendersAesAfterOrientation,
+                axisAesFromFunctionTypeAfterOrientation,
+                hiddenAesList
+            )
+            sideTooltipAes = createSideTooltipAesList(layerConfig.geomProto.geomKind).afterOrientation(yOrientation)
+            tooltipSpecification = layerConfig.tooltips
+        } else {
+            tooltipAes = emptyList()
+            sideTooltipAes = emptyList()
+            // Need to keep specified formats to use for non-hidden tooltips:
+            tooltipSpecification = TooltipSpecification(
+                valueSources = layerConfig.tooltips.valueSources,
+                tooltipLinePatterns = null,
+                tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
+                tooltipTitle = null,
+                disableSplitting = false
+            )
+        }
 
         val builder = GeomInteractionBuilder(
             locatorLookupSpace = tooltipSetup.locatorLookupSpace,
@@ -114,7 +130,7 @@ object GeomInteractionUtil {
         )
 
         return builder
-            .tooltipLinesSpec(layerConfig.tooltips)
+            .tooltipLinesSpec(tooltipSpecification)
             .tooltipConstants(createConstantAesList(layerConfig))
             .enableCrosshair(isCrosshairEnabled(layerConfig))
     }

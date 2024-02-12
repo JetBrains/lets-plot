@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.SCALE_MAPPER_KIND
+import org.jetbrains.letsPlot.core.spec.Option.Theme.TOOLTIP_RECT
 import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -231,7 +232,7 @@ class GeomInteractionBuilderCreationTest {
     }
 
     @Test
-    fun `use 'theme' to control tooltips`() {
+    fun `use 'theme' to control axis tooltips`() {
         run {
             // default: X axis tooltip + Y value in the general tooltip
             val tooltipLines = histogramInteractionBuilder(data, themeOpts = emptyMap()).tooltipLines
@@ -244,11 +245,11 @@ class GeomInteractionBuilderCreationTest {
         }
         run {
             // if axis tooltip is hidden - remove value also from the general tooltip
-            val hideTooltips = mapOf(
+            val hideAxisTooltips = mapOf(
                 AXIS_TOOLTIP + "_x" to ELEMENT_BLANK,
                 AXIS_TOOLTIP + "_y" to ELEMENT_BLANK,
             )
-            val tooltipLines = histogramInteractionBuilder(data, themeOpts = hideTooltips).tooltipLines
+            val tooltipLines = histogramInteractionBuilder(data, themeOpts = hideAxisTooltips).tooltipLines
 
             val axis = getAesListInAxisTooltip(tooltipLines)
             assertNoTooltipForAes(Aes.X, axis)
@@ -269,6 +270,47 @@ class GeomInteractionBuilderCreationTest {
 
             val general = getAesListInGeneralTooltip(tooltipLines)
             assertTooltipForAes(Aes.Y, general)
+        }
+    }
+
+    @Test
+    fun `use 'theme' to control general and side tooltips`() {
+        val mappedData = data + mapOf(
+            Aes.FILL.name to listOf(4.0)
+        )
+
+        run {   // default
+            val tooltipLines = geomInteractionBuilder(
+                mappedData,
+                geom = Option.GeomName.BOX_PLOT,
+                themeOpts = emptyMap()
+            ).tooltipLines
+
+            val axis = getAesListInAxisTooltip(tooltipLines)
+            assertTooltipForAes(Aes.X, axis)
+
+            val general = getAesListInGeneralTooltip(tooltipLines)
+            assertTooltipForAes(Aes.FILL, general)
+
+            val side = getAesListInSideTooltips(tooltipLines)
+            assertAesList(listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN), side)
+        }
+
+        run {   // theme(tooltip='blank') => hide general and side tooltips, axis tooltips are visible
+            val tooltipLines = geomInteractionBuilder(
+                mappedData,
+                geom = Option.GeomName.BOX_PLOT,
+                themeOpts = mapOf(TOOLTIP_RECT to ELEMENT_BLANK)
+            ).tooltipLines
+
+            val axis = getAesListInAxisTooltip(tooltipLines)
+            assertTooltipForAes(Aes.X, axis)
+
+            val general = getAesListInGeneralTooltip(tooltipLines)
+            assertTrue(general.isEmpty())
+
+            val side = getAesListInSideTooltips(tooltipLines)
+            assertTrue(side.isEmpty())
         }
     }
 
@@ -352,16 +394,17 @@ class GeomInteractionBuilderCreationTest {
         return createGeomInteractionBuilder(plotOpts)
     }
 
-    private fun histogramInteractionBuilder(
+    private fun geomInteractionBuilder(
         mappedData: Map<String, Any>,
-        themeOpts: Map<String, Any> = emptyMap()
+        themeOpts: Map<String, Any> = emptyMap(),
+        geom: String
     ): GeomInteractionBuilder {
         val plotOpts = mutableMapOf(
             Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
             LAYERS to listOf(
                 mapOf(
-                    GEOM to Option.GeomName.HISTOGRAM
+                    GEOM to geom
                 )
             )
         )
@@ -370,6 +413,11 @@ class GeomInteractionBuilderCreationTest {
             theme = ThemeConfig(themeOpts, DefaultFontFamilyRegistry()).theme
         )
     }
+
+    private fun histogramInteractionBuilder(
+        mappedData: Map<String, Any>,
+        themeOpts: Map<String, Any> = emptyMap()
+    ) = geomInteractionBuilder(mappedData, themeOpts, Option.GeomName.HISTOGRAM)
 
     private fun createGeomInteractionBuilder(
         plotOpts: MutableMap<String, Any>,
@@ -404,6 +452,12 @@ class GeomInteractionBuilderCreationTest {
     private fun getAesListInGeneralTooltip(tooltipLines: List<LinePattern>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
             line.fields.filterIsInstance<MappingField>().filterNot(MappingField::isSide).map(MappingField::aes)
+        }
+    }
+
+    private fun getAesListInSideTooltips(tooltipLines: List<LinePattern>): List<Aes<*>> {
+        return tooltipLines.flatMap { line ->
+            line.fields.filterIsInstance<MappingField>().filter { it.isSide && !it.isAxis }.map(MappingField::aes)
         }
     }
 
