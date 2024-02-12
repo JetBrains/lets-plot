@@ -5,11 +5,10 @@
 
 package org.jetbrains.letsPlot.livemap.chart.path
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.padLineString
+import org.jetbrains.letsPlot.commons.intern.math.distance
+import org.jetbrains.letsPlot.commons.intern.math.distance2
+import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
@@ -51,11 +50,7 @@ class PathRenderer : Renderer {
         ).value
 
         for (lineString in geometry) {
-            val adjustedGeometry = padLineString(
-                lineString.map(Vec<World>::toDoubleVector),
-                startPadding,
-                endPadding
-            ).map<DoubleVector, Vec<World>>(DoubleVector::toVec)
+            val adjustedGeometry = padLineString(lineString, startPadding, endPadding)
 
             ctx.beginPath()
 
@@ -188,6 +183,55 @@ class PathRenderer : Renderer {
         if (arrowSpec.isOnLastEnd) {
             val (start, end) = geometry.takeLast(2)
             drawArrowAtEnd(start, end, arrowSpec)
+        }
+    }
+
+    companion object {
+        // TODO: fix duplication from padLineString(List<DoubleVector>)
+        private fun padLineString(
+            lineString: List<WorldPoint>,
+            startPadding: Double,
+            endPadding: Double
+        ): List<WorldPoint> {
+            val startPadded = padStart(lineString, startPadding)
+            return padEnd(startPadded, endPadding)
+        }
+
+        private fun pad(lineString: List<WorldPoint>, padding: Double): Pair<Int, WorldPoint>? {
+            if (lineString.size < 2) {
+                return null
+            }
+
+            val padding2 = padding * padding
+            val indexOutsidePadding = lineString.indexOfFirst {
+                distance2(lineString.first().x, lineString.first().y, it.x, it.y) >= padding2
+            }
+            if (indexOutsidePadding < 1) { // not found or first points already satisfy the padding
+                return null
+            }
+
+            val adjustedStartPoint = run {
+                val insidePadding = lineString[indexOutsidePadding - 1]
+                val outsidePadding = lineString[indexOutsidePadding]
+                val overPadding = distance(
+                    lineString.first().x, lineString.first().y,
+                    outsidePadding.x, outsidePadding.y
+                ) - padding
+
+                pointOnLine(outsidePadding.x, outsidePadding.y, insidePadding.x, insidePadding.y, overPadding)
+            }
+
+            return indexOutsidePadding to adjustedStartPoint.toVec()
+        }
+
+        private fun padStart(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+            val (index, adjustedStartPoint) = pad(lineString, padding) ?: return lineString
+            return listOf(adjustedStartPoint) + lineString.subList(index, lineString.size)
+        }
+
+        private fun padEnd(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+            val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
+            return lineString.subList(0, lineString.size - index) + adjustedEndPoint
         }
     }
 }

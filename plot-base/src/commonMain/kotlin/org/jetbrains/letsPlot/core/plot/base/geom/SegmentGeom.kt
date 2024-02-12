@@ -6,7 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.padLineString
+import org.jetbrains.letsPlot.commons.intern.math.distance
+import org.jetbrains.letsPlot.commons.intern.math.distance2
+import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
@@ -90,6 +92,47 @@ class SegmentGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+
+        private fun pad(lineString: List<DoubleVector>, padding: Double): Pair<Int, DoubleVector>? {
+            if (lineString.size < 2) {
+                return null
+            }
+
+            val padding2 = padding * padding
+            val indexOutsidePadding = lineString.indexOfFirst { distance2(lineString.first(), it) >= padding2 }
+            if (indexOutsidePadding < 1) { // not found or first points already satisfy the padding
+                return null
+            }
+
+            val adjustedStartPoint = run {
+                val insidePadding = lineString[indexOutsidePadding - 1]
+                val outsidePadding = lineString[indexOutsidePadding]
+                val overPadding = distance(lineString.first(), outsidePadding) - padding
+
+                pointOnLine(outsidePadding, insidePadding, overPadding)
+            }
+
+            return indexOutsidePadding to adjustedStartPoint
+        }
+
+        private fun padStart(lineString: List<DoubleVector>, padding: Double): List<DoubleVector> {
+            val (index, adjustedStartPoint) = pad(lineString, padding) ?: return lineString
+            return listOf(adjustedStartPoint) + lineString.subList(index, lineString.size)
+        }
+
+        private fun padEnd(lineString: List<DoubleVector>, padding: Double): List<DoubleVector> {
+            val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
+            return lineString.subList(0, lineString.size - index) + adjustedEndPoint
+        }
+
+        private fun padLineString(
+            lineString: List<DoubleVector>,
+            startPadding: Double,
+            endPadding: Double
+        ): List<DoubleVector> {
+            val startPadded = padStart(lineString, startPadding)
+            return padEnd(startPadded, endPadding)
+        }
 
         private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
             val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
