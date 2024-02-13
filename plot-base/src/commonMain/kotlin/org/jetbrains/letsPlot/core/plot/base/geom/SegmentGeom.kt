@@ -125,7 +125,7 @@ class SegmentGeom : GeomBase() {
             return lineString.subList(0, lineString.size - index) + adjustedEndPoint
         }
 
-        private fun padLineString(
+        fun padLineString(
             lineString: List<DoubleVector>,
             startPadding: Double,
             endPadding: Double
@@ -134,7 +134,7 @@ class SegmentGeom : GeomBase() {
             return padEnd(startPadded, endPadding)
         }
 
-        private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
+        fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
             val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
             val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
             return AesScaling.circleDiameter(p, sizeAes) / 2 + AesScaling.pointStrokeWidth(p, strokeAes)

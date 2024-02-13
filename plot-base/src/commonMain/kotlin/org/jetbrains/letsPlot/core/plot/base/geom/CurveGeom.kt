@@ -6,10 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.distance
-import org.jetbrains.letsPlot.commons.intern.math.lineSlope
-import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
-import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.intern.math.*
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
@@ -39,75 +36,54 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val x = finiteOrNull(p.x()) ?: continue
             val y = finiteOrNull(p.y()) ?: continue
             val xend = finiteOrNull(p.xend()) ?: continue
             val yend = finiteOrNull(p.yend()) ?: continue
-            val strokeWidth = AesScaling.strokeWidth(p)
 
-            val clientStart = helper.toClient(DoubleVector(x, y), p) ?: continue
-            val clientEnd = helper.toClient(DoubleVector(xend, yend), p) ?: continue
+            val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
+            val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-            // Target sizes to move the start/end of the curve
+            // Apply padding to curve geometry based on the target size and arrow spec
             val targetSizeStart = SegmentGeom.targetSize(p, atStart = true)
             val targetSizeEnd = SegmentGeom.targetSize(p, atStart = false)
 
-            // Total offsets: target sizes, 'spacer' and additional offset to avoid intersection with arrow
-            val startOffset = targetSizeStart + spacer +
-                    SegmentGeom.segmentOffsetByArrow(strokeWidth, arrowSpec, atStart = true)
-            val endOffset = targetSizeEnd + spacer +
-                    SegmentGeom.segmentOffsetByArrow(strokeWidth, arrowSpec, atStart = false)
+            val strokeWidth = AesScaling.strokeWidth(p)
+            val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
+            val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
+            val miterOffset = miterLength * miterSign / 2
+
+            // Total offsets
+            val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
+            val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
 
             // Create curve geometry
-            val geometry = createGeometry(clientStart, clientEnd).let { points ->
-                //filter points - remove all inner points located inside the target area
-                points.filter { pnt ->
-                    if (pnt == points.first() || pnt == points.last()) return@filter true
-                    val d1 = distance(points.first(), pnt)
-                    val d2 = distance(points.last(), pnt)
-                    d1 > startOffset && d2 > endOffset
-                }
+            val adjustedGeometry = createGeometry(clientStart, clientEnd).let { geometry ->
+                SegmentGeom.padLineString(geometry, startPadding, endPadding)
             }
 
-            // Apply offsets to the start/end
-            val curveGeometry = geometry
-                .indices.map { index ->
-                    when (index) {
-                        0 -> pointOnLine(geometry[index], geometry[index + 1], startOffset)
-                        geometry.lastIndex -> pointOnLine(geometry[index], geometry[index - 1], endOffset)
-                        else -> geometry[index]
-                    }
-                }
             // Draw curve
-            val curve = SvgPathElement().apply {
+            SvgPathElement().apply {
                 d().set(
                     SvgPathDataBuilder().apply {
-                        moveTo(curveGeometry.first())
+                        moveTo(adjustedGeometry.first())
                         interpolatePoints(
-                            curveGeometry,
+                            adjustedGeometry,
                             SvgPathDataBuilder.Interpolation.BSPLINE
                         )
                     }.build()
                 )
                 GeomHelper.decorate(this, p, applyAlphaToAll = true, filled = false)
             }
-            root.add(curve)
+                .also(root::add)
 
             // arrows
-            arrowSpec?.let { arrowSpec ->
-                // Add offset for arrow by geometry width
-                val angle = abs(arrowSpec.angle)
-                val arrowOffset = (strokeWidth / 2) / sin(angle) * sign(tan(angle))
-
-                val startPoint = pointOnLine(geometry.first(), geometry[1], targetSizeStart + arrowOffset)
-                val endPoint = pointOnLine(geometry.last(), geometry[geometry.lastIndex - 1], targetSizeEnd + arrowOffset)
-
-                val geometryForArrow = (listOf(startPoint) + geometry.drop(1).dropLast(1) + endPoint)
-                ArrowSpec.createArrows(p, geometryForArrow, arrowSpec).forEach(root::add)
-            }
+            arrowSpec
+                ?.let { ArrowSpec.createArrows(p, adjustedGeometry, it) }
+                ?.forEach(root::add)
         }
     }
 
