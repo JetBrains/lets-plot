@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
@@ -37,7 +37,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun titleJustification() = TextJustification(0.5, 1.0)
 
-    override fun titleMargins() = Margins()
+    override fun titleMargins() = Thickness()
 
     override fun lineWidth() = 1.0
 
@@ -60,7 +60,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkLength() = 4.0
 
-    override fun tickLabelMargins() = Margins(0.0, 0.0, 0.0, 0.0)
+    override fun tickLabelMargins() = Thickness(0.0, 0.0, 0.0, 0.0)
 
     override fun tooltipFill() = Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 

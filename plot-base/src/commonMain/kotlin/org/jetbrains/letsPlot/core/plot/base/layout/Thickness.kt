@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.layout
 
-class Margins(
+class Thickness(
     val top: Double = 0.0,
     val right: Double = 0.0,
     val bottom: Double = 0.0,
@@ -16,6 +16,6 @@ class Margins(
     fun height() = top + bottom
 
     override fun toString(): String {
-        return "Margins(top=$top, right=$right, bottom=$bottom, left=$left)"
+        return "Thickness(top=$top, right=$right, bottom=$bottom, left=$left)"
     }
 }

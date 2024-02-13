@@ -9,11 +9,11 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal open class ThemeValuesAccess(
     private val values: Map<String, Any>,
@@ -119,8 +119,8 @@ internal open class ThemeValuesAccess(
         return TextJustification(hjust, vjust)
     }
 
-    protected fun getMargins(elem: Map<String, Any>): Margins {
-        return Margins(
+    protected fun getMargins(elem: Map<String, Any>): Thickness {
+        return Thickness(
             top = getNumber(elem, Elem.Margin.TOP),
             right = getNumber(elem, Elem.Margin.RIGHT),
             bottom = getNumber(elem, Elem.Margin.BOTTOM),

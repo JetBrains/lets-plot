@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
@@ -26,7 +26,7 @@ internal class SingleTilePlotLayout constructor(
         hAxisTheme, vAxisTheme
     )
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Margins): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Thickness): PlotLayoutInfo {
         return if (tileLayout.insideOut) {
             layoutByGeomSize(preferredSize, coordProvider)
         } else {
@@ -34,7 +34,7 @@ internal class SingleTilePlotLayout constructor(
         }
     }
 
-    private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Margins): PlotLayoutInfo {
+    private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Thickness): PlotLayoutInfo {
         val tilePreferredSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)

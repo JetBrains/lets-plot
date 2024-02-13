@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
@@ -44,7 +44,7 @@ object TestUtil {
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
-        override fun titleMargins() = Margins()
+        override fun titleMargins() = Thickness()
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
@@ -53,7 +53,7 @@ object TestUtil {
         override fun labelAngle(): Double = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
-        override fun tickLabelMargins() = Margins()
+        override fun tickLabelMargins() = Thickness()
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0

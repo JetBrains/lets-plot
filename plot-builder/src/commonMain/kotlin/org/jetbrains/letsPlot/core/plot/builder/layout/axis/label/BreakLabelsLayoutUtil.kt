@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -109,7 +109,7 @@ internal object BreakLabelsLayoutUtil {
     fun applyLabelMargins(
         bounds: DoubleRectangle,
         tickLength: Double,
-        margins: Margins,
+        margins: Thickness,
         orientation: Orientation
     ): DoubleRectangle {
         val origin = alignToLabelMargin(bounds, tickLength, margins, orientation).let {
@@ -132,7 +132,7 @@ internal object BreakLabelsLayoutUtil {
     fun alignToLabelMargin(
         bounds: DoubleRectangle,
         tickLength: Double,
-        margins: Margins,
+        margins: Thickness,
         orientation: Orientation
     ): DoubleRectangle {
         val offset = tickLength + when (orientation) {
@@ -150,7 +150,7 @@ internal object BreakLabelsLayoutUtil {
         return bounds.add(offsetVector)
     }
 
-    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle? {
+    fun textBounds(elementRect: DoubleRectangle, margins: Thickness, orientation: Orientation): DoubleRectangle? {
         if (elementRect.width == 0.0 || elementRect.height == 0.0) {
             return null
         }

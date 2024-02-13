@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 
 interface PlotTheme {
     fun showBackground(): Boolean
@@ -30,8 +30,8 @@ interface PlotTheme {
     fun subtitleJustification(): TextJustification
     fun captionJustification(): TextJustification
 
-    fun titleMargins(): Margins
-    fun subtitleMargins(): Margins
-    fun captionMargins(): Margins
-    fun plotMargins(): Margins
+    fun titleMargins(): Thickness
+    fun subtitleMargins(): Thickness
+    fun captionMargins(): Thickness
+    fun plotMargins(): Thickness
 }

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
@@ -76,7 +76,7 @@ internal object PlotLayoutUtil {
         return textDimensions(title, labelSpec).y + margin
     }
 
-    internal fun titleThickness(title: String?, labelSpec: LabelSpec, margins: Margins): Double {
+    internal fun titleThickness(title: String?, labelSpec: LabelSpec, margins: Thickness): Double {
         return titleThickness(title, labelSpec, margin = margins.height())
     }
 

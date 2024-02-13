@@ -16,10 +16,10 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
@@ -264,7 +264,7 @@ class PlotSvgComponent constructor(
         //   xxxElementRect - rectangle for element, including margins
         //   xxxTextRect - for text only
 
-        fun textRectangle(elementRect: DoubleRectangle, margins: Margins) = createTextRectangle(
+        fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
             elementRect,
             topMargin = margins.top,
             bottomMargin = margins.bottom
@@ -452,7 +452,7 @@ class PlotSvgComponent constructor(
         overallGeomBounds: DoubleRectangle,  // geom bounds union
         labelSpec: LabelSpec,
         justification: TextJustification,
-        margins: Margins,
+        margins: Thickness,
         className: String
     ) {
         val referenceRect = when (orientation) {

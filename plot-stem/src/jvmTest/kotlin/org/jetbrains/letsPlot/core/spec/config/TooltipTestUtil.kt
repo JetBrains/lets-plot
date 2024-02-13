@@ -10,18 +10,18 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
-import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import kotlin.test.assertEquals
 
 object TooltipTestUtil {
@@ -37,7 +37,7 @@ object TooltipTestUtil {
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
-        override fun titleMargins() = Margins()
+        override fun titleMargins() = Thickness()
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
@@ -46,7 +46,7 @@ object TooltipTestUtil {
         override fun labelAngle() = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
-        override fun tickLabelMargins() = Margins()
+        override fun tickLabelMargins() = Thickness()
         override fun tooltipFill() = Color.WHITE
         override fun tooltipColor() = Color.BLACK
         override fun tooltipStrokeWidth() = 1.0

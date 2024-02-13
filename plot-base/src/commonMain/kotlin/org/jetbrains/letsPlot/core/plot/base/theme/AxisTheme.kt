@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.layout.Margins
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 
 interface AxisTheme {
     val axis: String
@@ -28,7 +28,7 @@ interface AxisTheme {
 
     fun titleJustification(): TextJustification
 
-    fun titleMargins(): Margins
+    fun titleMargins(): Thickness
 
     fun lineWidth(): Double
 
@@ -46,7 +46,7 @@ interface AxisTheme {
 
     fun tickMarkLength(): Double
 
-    fun tickLabelMargins(): Margins
+    fun tickLabelMargins(): Thickness
 
     fun tickLabelDistance(isHorizontalOrientation: Boolean): Double {
         var result = when {
