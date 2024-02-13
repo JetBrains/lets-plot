@@ -117,6 +117,11 @@ object PlotUtil {
                     } else {
                         val integerFunction = listMapper(numericValues, mapperOption)
                         aesBuilder.aes(aes, integerFunction)
+
+                        // For discrete aes resolution is always = 1.0
+                        if(layer.scaleMap.getValue(aes).transform is DiscreteTransform) {
+                            aesBuilder.resolution(aes, 1.0)
+                        }
                     }
                 } else {
                     // apply default

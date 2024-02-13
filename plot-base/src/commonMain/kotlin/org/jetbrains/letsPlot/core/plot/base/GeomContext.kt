@@ -18,7 +18,6 @@ interface GeomContext {
     val backgroundColor: Color
     val plotContext: PlotContext? // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
 
-    // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
     fun getResolution(aes: Aes<Double>): Double
 
     /**

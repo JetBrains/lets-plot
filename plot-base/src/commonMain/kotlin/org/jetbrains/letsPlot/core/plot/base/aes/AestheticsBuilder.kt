@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
@@ -18,27 +19,27 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.RADIUS
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
@@ -50,7 +51,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {
@@ -60,6 +60,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     private val myConstantAes = HashSet(Aes.values())  // initially contains all Aes;
     private var myColorAes: Aes<Color> = COLOR
     private var myFillAes: Aes<Color> = FILL
+    private var myResolutionByAes: MutableMap<Aes<*>, Double> = HashMap()
 
     init {
         myIndexFunctionMap = HashMap()
@@ -248,6 +249,11 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return this
     }
 
+    fun resolution(aes: Aes<Any>, v: Double): AestheticsBuilder {
+        myResolutionByAes[aes] = v
+        return this
+    }
+
     fun build(): Aesthetics {
         return MyAesthetics(this)
     }
@@ -259,7 +265,9 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         val group = b.myGroup
         private val myConstantAes: Set<Aes<*>> = HashSet(b.myConstantAes)
 
-        private val myResolutionByAes = HashMap<Aes<*>, Double>()
+        private val myResolutionByAes = HashMap<Aes<*>, Double>().also {
+            it.putAll(b.myResolutionByAes)
+        }
         private val myRangeByNumericAes = HashMap<Aes<Double>, DoubleSpan?>()
 
         val colorAes = b.myColorAes
