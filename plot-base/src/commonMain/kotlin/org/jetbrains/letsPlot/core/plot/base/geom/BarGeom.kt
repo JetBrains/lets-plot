@@ -94,7 +94,7 @@ open class BarGeom : GeomBase() {
                 clientBarCenter,
                 textParams = AnnotationsUtil.TextParams(
                     style = annotations.textStyle,
-                    color = AnnotationsUtil.chooseColor(p.fill()!!),
+                    color = AnnotationsUtil.chooseColor(annotations.textStyle.color, p.fill()!!),
                     hjust = "middle",
                     vjust = "center",
                     alpha = 0.0,
