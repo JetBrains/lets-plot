@@ -117,10 +117,6 @@ class PathRenderer : Renderer {
                 }
                 return ArrowSpec(arrowAngle, arrowLength, ends, type)
             }
-
-            fun miterLength(headAngle: Double, strokeWidth: Double): Double {
-                return strokeWidth / sin(headAngle / 2)
-            }
         }
     }
 

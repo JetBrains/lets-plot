@@ -134,7 +134,7 @@ class PathEntityBuilder(
             this@PathEntityBuilder.arrowAtEnds,
             this@PathEntityBuilder.arrowType,
         )
-        val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
+        val miterLength = arrowSpec?.angle?.let { strokeWidth / sin(it) } ?: 0.0
         val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
         val miterOffset = miterLength * miterSign / 2
 
