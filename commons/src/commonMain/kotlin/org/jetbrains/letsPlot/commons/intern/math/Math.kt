@@ -177,12 +177,12 @@ fun projection(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): DoubleVecto
     return projection(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
 }
 
-fun distance(p1: DoubleVector, p2: DoubleVector): Double {
-    return distance(p1.x, p1.y, p2.x, p2.y)
-}
-
 fun distance2(p1: DoubleVector, p2: DoubleVector): Double {
     return distance2(p1.x, p1.y, p2.x, p2.y)
+}
+
+fun distance(p1: DoubleVector, p2: DoubleVector): Double {
+    return distance(p1.x, p1.y, p2.x, p2.y)
 }
 
 fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
