@@ -59,6 +59,7 @@ object ThemeOption {
     const val AXIS_TOOLTIP_TEXT_Y = "axis_tooltip_text_y"
 
     // Panel
+    const val PANEL_PADDING = "panel_padding"
     const val PANEL_BKGR_RECT = "panel_background"
     const val PANEL_BORDER_RECT = "panel_border"
 
@@ -120,12 +121,20 @@ object ThemeOption {
         const val ANGLE = "angle"       // ToDo
         const val LINEHEIGHT = "lineheight" // ToDo
         const val MARGIN = "margin"
+        const val PADDING = "padding"
 
         object Margin {
             const val TOP = "margin_t"
             const val RIGHT = "margin_r"
             const val BOTTOM = "margin_b"
             const val LEFT = "margin_l"
+        }
+
+        object Padding {
+            const val TOP = "padding_t"
+            const val RIGHT = "padding_r"
+            const val BOTTOM = "padding_b"
+            const val LEFT = "padding_l"
         }
     }
 

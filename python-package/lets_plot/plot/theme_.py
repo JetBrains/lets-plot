@@ -58,6 +58,7 @@ def theme(*,
           panel_grid_minor_x=None,
           panel_grid_major_y=None,
           panel_grid_minor_y=None,
+          panel_padding=None,
 
           plot_background=None,
           plot_title=None,
@@ -174,6 +175,16 @@ def theme(*,
         Set `element_line()` to specify grid line parameters.
         `panel_grid_*_*` inherits from `panel_grid_*` which inherits from `panel_grid`,
         which in turn inherits from `line`.
+    panel_padding : number or list of numbers
+        Padding within panel.
+        The padding may be specified using a number or a list of numbers:
+
+        - a number or list of one number - the same padding it applied to all four sides;
+        - a list of two numbers - the first padding applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers - the first padding applies to the top, the second - to the right and left, the third - to the bottom;
+        - a list of four numbers - the padding are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default value for the plot padding side will be used.
     panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y : bool, default=False
         Option to place major grid lines and minor grid lines  over the data layers.
     plot_background : str or dict

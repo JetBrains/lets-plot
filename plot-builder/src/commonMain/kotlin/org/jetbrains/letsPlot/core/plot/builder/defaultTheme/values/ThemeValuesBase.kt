@@ -25,6 +25,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_ONTOP
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
@@ -115,6 +116,12 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PANEL_GRID_ONTOP to false,
+            PANEL_PADDING to mapOf(
+                Elem.Padding.TOP to 0.0,
+                Elem.Padding.RIGHT to 0.0,
+                Elem.Padding.BOTTOM to 0.0,
+                Elem.Padding.LEFT to 0.0
+            ),
 
             PANEL_GRID_MINOR to mapOf(
                 Elem.SIZE to 0.5,

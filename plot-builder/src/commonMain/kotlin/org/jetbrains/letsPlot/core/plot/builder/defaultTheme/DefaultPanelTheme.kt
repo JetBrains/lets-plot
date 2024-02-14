@@ -6,13 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultPanelTheme(
     options: Map<String, Any>,
@@ -24,6 +25,7 @@ internal class DefaultPanelTheme(
 
     internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
     internal val borderKey = listOf(PANEL_BORDER_RECT, RECT)
+    private val paddingKey = listOf(PANEL_PADDING)
 
     override fun showRect(): Boolean {
         return !isElemBlank(rectKey)
@@ -50,4 +52,6 @@ internal class DefaultPanelTheme(
     override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
 
     override fun gridY(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
+
+    override fun padding() = getPadding(getElemValue(paddingKey))
 }

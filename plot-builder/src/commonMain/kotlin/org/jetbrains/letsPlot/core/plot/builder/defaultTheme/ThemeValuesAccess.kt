@@ -127,4 +127,13 @@ internal open class ThemeValuesAccess(
             left = getNumber(elem, Elem.Margin.LEFT),
         )
     }
+
+    protected fun getPadding(elem: Map<String, Any>): Thickness {
+        return Thickness(
+            top = getNumber(elem, Elem.Padding.TOP),
+            right = getNumber(elem, Elem.Padding.RIGHT),
+            bottom = getNumber(elem, Elem.Padding.BOTTOM),
+            left = getNumber(elem, Elem.Padding.LEFT),
+        )
+    }
 }

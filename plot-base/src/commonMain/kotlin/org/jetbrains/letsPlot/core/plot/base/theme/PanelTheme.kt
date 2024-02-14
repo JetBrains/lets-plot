@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 
 /**
  * Plotting area, drawn underneath plot.
@@ -22,4 +23,6 @@ interface PanelTheme {
 
     fun gridX(flipAxis: Boolean = false): PanelGridTheme
     fun gridY(flipAxis: Boolean = false): PanelGridTheme
+
+    fun padding(): Thickness
 }
