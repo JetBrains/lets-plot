@@ -79,7 +79,7 @@ internal class GeomMarginsLayout(
             Orientation.BOTTOM -> {
                 if (isPolarCoordinateSystem) {
                     // Angle marks are placed from top to bottom. With a bottom alignment, they will go under a plot.
-                    DoubleVector(geomInnerBounds.left, outerBounds.top)
+                    DoubleVector(geomInnerBounds.left, geomInnerBounds.top)
                 } else {
                     DoubleVector(geomInnerBounds.left, outerBounds.bottom)
                 }
