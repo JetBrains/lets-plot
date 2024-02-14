@@ -51,18 +51,9 @@ class SegmentGeom : GeomBase() {
         for (p in aesthetics.dataPoints()) {
             val segmentGeometry = createSegmentGeometry(p, svgHelper) ?: continue
 
-            // Apply padding to segment geometry based on the target size and arrow spec
-            val targetSizeStart = targetSize(p, atStart = true)
-            val targetSizeEnd = targetSize(p, atStart = false)
-
-            val strokeWidth = AesScaling.strokeWidth(p)
-            val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
-            val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
-            val miterOffset = miterLength * miterSign / 2
-
-            // Total offsets
-            val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
-            val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+            // Apply padding to segment geometry based on the target size, spacer and arrow spec
+            val startPadding = padding(p, arrowSpec, spacer, atStart = true)
+            val endPadding = padding(p, arrowSpec, spacer, atStart = false)
 
             val adjustedSegmentGeometry = padLineString(segmentGeometry, startPadding, endPadding)
 
@@ -134,10 +125,33 @@ class SegmentGeom : GeomBase() {
             return padEnd(startPadded, endPadding)
         }
 
-        fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
+        private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
             val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
             val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
             return AesScaling.circleDiameter(p, sizeAes) / 2 + AesScaling.pointStrokeWidth(p, strokeAes)
+        }
+
+        fun padding(
+            p: DataPointAesthetics,
+            arrowSpec: ArrowSpec?,
+            spacer: Double,
+            atStart: Boolean
+        ): Double {
+            val targetSize = targetSize(p, atStart)
+
+            val miterOffset = arrowSpec?.let {
+                val hasArrow = if (atStart) arrowSpec.isOnFirstEnd else arrowSpec.isOnLastEnd
+                if (hasArrow) {
+                    val strokeWidth = AesScaling.strokeWidth(p)
+                    val miterLength = ArrowSpec.miterLength(arrowSpec.angle * 2, strokeWidth)
+                    val miterSign = sign(sin(arrowSpec.angle * 2))
+                    miterLength * miterSign / 2
+                } else {
+                    0.0
+                }
+            } ?: 0.0
+
+            return targetSize + spacer + miterOffset
         }
     }
 }

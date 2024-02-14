@@ -47,18 +47,9 @@ class CurveGeom : GeomBase() {
             val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
             val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-            // Apply padding to curve geometry based on the target size and arrow spec
-            val targetSizeStart = SegmentGeom.targetSize(p, atStart = true)
-            val targetSizeEnd = SegmentGeom.targetSize(p, atStart = false)
-
-            val strokeWidth = AesScaling.strokeWidth(p)
-            val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
-            val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
-            val miterOffset = miterLength * miterSign / 2
-
-            // Total offsets
-            val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
-            val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+            // Apply padding to curve geometry based on the target size, spacer and arrow spec
+            val startPadding = SegmentGeom.padding(p, arrowSpec, spacer, atStart = true)
+            val endPadding = SegmentGeom.padding(p, arrowSpec, spacer, atStart = false)
 
             // Create curve geometry
             val adjustedGeometry = createGeometry(clientStart, clientEnd).let { geometry ->
