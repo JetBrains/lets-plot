@@ -29,11 +29,8 @@ class ChartElementComponent : EcsComponent {
     var arrowSpec: ArrowSpec? = null
     var lineheight: Double? = null
 
-    var sizeStart: Double = 0.0
-    var sizeEnd: Double = 0.0
-    var strokeStart: Double = 0.0
-    var strokeEnd: Double = 0.0
-    var spacer: Double = 0.0
+    var startPadding: Double = 0.0
+    var endPadding: Double = 0.0
 
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
@@ -45,11 +42,8 @@ class ChartElementComponent : EcsComponent {
     fun scaledStrokeWidth() = scaledSize(strokeWidth, scalingSizeFactor)
     fun scaledLineDash() = scaledLineDash(lineDash!!, scalingSizeFactor)
 
-    fun scaledTargetSizeStart() = scaledPointSize(sizeStart, scalingSizeFactor) / 2.0 +
-            scaledSize(strokeStart, scalingSizeFactor)
-    fun scaledTargetSizeEnd() = scaledPointSize(sizeEnd, scalingSizeFactor)  / 2.0 +
-            scaledSize(strokeEnd, scalingSizeFactor)
-    fun scaledSpacer() = scaledSize(spacer, scalingSizeFactor)
+    fun scaledStartPadding() = scaledSize(startPadding, scalingSizeFactor)
+    fun scaledEndPadding() = scaledSize(endPadding, scalingSizeFactor)
 }
 
 class TextSpecComponent : EcsComponent {

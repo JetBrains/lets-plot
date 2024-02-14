@@ -30,24 +30,8 @@ class PathRenderer : Renderer {
         ctx.save()
         ctx.scale(renderHelper.zoomFactor)
 
-        // Apply padding to segment geometry based on the target size and arrow spec
-        val targetSizeStart = chartElement.scaledTargetSizeStart()
-        val targetSizeEnd = chartElement.scaledTargetSizeEnd()
-
-        val strokeWidth = chartElement.scaledStrokeWidth()
-        val arrowSpec = chartElement.arrowSpec
-
-        val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(it * 2, strokeWidth) } ?: 0.0
-        val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
-        val miterOffset = miterLength * miterSign / 2
-
-        // Total offsets
-        val startPadding = renderHelper.dimToWorld(
-            targetSizeStart + chartElement.scaledSpacer() + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
-        ).value
-        val endPadding = renderHelper.dimToWorld(
-            targetSizeEnd + chartElement.scaledSpacer() + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
-        ).value
+        val startPadding = renderHelper.dimToWorld(chartElement.scaledStartPadding()).value
+        val endPadding = renderHelper.dimToWorld(chartElement.scaledEndPadding()).value
 
         for (lineString in geometry) {
             val adjustedGeometry = padLineString(lineString, startPadding, endPadding)
@@ -64,7 +48,7 @@ class PathRenderer : Renderer {
             ctx.setLineWidth(chartElement.scaledStrokeWidth())
             ctx.stroke()
 
-            arrowSpec?.let {
+            chartElement.arrowSpec?.let {
                 drawArrows(it, adjustedGeometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
             }
         }
