@@ -5,53 +5,65 @@
 
 package org.jetbrains.letsPlot.core.plot.base.aes
 
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 
-open class AestheticsDefaults(geomTheme: GeomTheme) {
+class AestheticsDefaults private constructor(
+    private val defaults: TypedKeyHashMap,
+    private val defaultsInLegend: TypedKeyHashMap,
+) {
 
-    private val myDefaults = TypedKeyHashMap().apply {
-        for (aes in Aes.values()) {
-            // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
-            @Suppress("UNCHECKED_CAST")
-            put(aes as Aes<Any>, AesInitValue[aes])
+    constructor(geomTheme: GeomTheme) : this(
+        defaults = TypedKeyHashMap().apply {
+            for (aes in Aes.values()) {
+                // Safe cast because AesInitValue.get(aes) is guaranteed to return correct type.
+                @Suppress("UNCHECKED_CAST")
+                put(aes as Aes<Any>, AesInitValue[aes])
+            }
+            // defaults from geom theme:
+            put(Aes.COLOR, geomTheme.color())
+            put(Aes.FILL, geomTheme.fill())
+            put(Aes.ALPHA, geomTheme.alpha())
+            put(Aes.SIZE, geomTheme.size())
+            put(Aes.LINEWIDTH, geomTheme.lineWidth())
+            put(Aes.STROKE, geomTheme.lineWidth())
+        },
+        defaultsInLegend = TypedKeyHashMap().apply {
+            put(Aes.ALPHA, DEFAULT_ALPHA)
         }
-        // defaults from geom theme:
-        put(Aes.COLOR, geomTheme.color())
-        put(Aes.FILL, geomTheme.fill())
-        put(Aes.ALPHA, geomTheme.alpha())
-        put(Aes.SIZE, geomTheme.size())
-        put(Aes.LINEWIDTH, geomTheme.lineWidth())
-        put(Aes.STROKE, geomTheme.lineWidth())
-    }
-    private val myDefaultsInLegend = TypedKeyHashMap().apply {
-        put(Aes.ALPHA, DEFAULT_ALPHA)
-    }
+    )
 
     private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
-        myDefaults.put(aes, defaultValue)
+        defaults.put(aes, defaultValue)
         return this
     }
 
     private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
-        myDefaultsInLegend.put(aes, defaultValue)
+        defaultsInLegend.put(aes, defaultValue)
         return this
     }
 
     fun <T> defaultValue(aes: Aes<T>): T {
-        return myDefaults[aes]
+        return defaults[aes]
     }
 
     fun <T> defaultValueInLegend(aes: Aes<T>): T {
-        return if (myDefaultsInLegend.containsKey(aes)) {
-            myDefaultsInLegend[aes]
+        return if (defaultsInLegend.containsKey(aes)) {
+            defaultsInLegend[aes]
         } else {
             defaultValue(aes)
         }
+    }
+
+    fun <T> with(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+        return AestheticsDefaults(
+            defaults = this.defaults.makeCopy().also { it.put(aes, defaultValue) },
+            defaultsInLegend = this.defaultsInLegend
+        )
     }
 
     companion object {

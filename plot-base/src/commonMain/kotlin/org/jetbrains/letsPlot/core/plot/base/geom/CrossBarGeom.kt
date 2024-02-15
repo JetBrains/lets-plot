@@ -8,12 +8,16 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
-class CrossBarGeom(private val isVertical: Boolean) : GeomBase() {
+class CrossBarGeom(
+    private val isVertical: Boolean
+) : GeomBase() {
+
     private val flipHelper = FlippableGeomHelper(isVertical)
     var fattenMidline: Double = 2.5
 
@@ -24,6 +28,14 @@ class CrossBarGeom(private val isVertical: Boolean) : GeomBase() {
         get() {
             return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
         }
+
+    override fun updateAestheticsDefaults(aestheticDefaults: AestheticsDefaults): AestheticsDefaults {
+        return if (isVertical) {
+            aestheticDefaults.with(Aes.Y, Double.NaN) // The middle bar is optional
+        } else {
+            aestheticDefaults.with(Aes.X, Double.NaN)
+        }
+    }
 
     private fun afterRotation(aes: Aes<Double>): Aes<Double> {
         return flipHelper.getEffectiveAes(aes)
