@@ -5,13 +5,19 @@
 
 package org.jetbrains.letsPlot.commons.intern.json
 
-import kotlin.native.concurrent.SharedImmutable
 
 object JsonSupport {
     fun parseJson(jsonString: String): MutableMap<String, Any?> {
         @Suppress("UNCHECKED_CAST")
         return JsonParser(jsonString).parseJson() as MutableMap<String, Any?>
     }
+
+    // Do not add parameter 'pretty' with a default value because of JS compatibility:
+    // No function found for symbol 'org.jetbrains.letsPlot.commons.intern.json/JsonSupport.formatJson|formatJson(kotlin.Any){}[0]'
+    fun formatJson(o: Any): String {
+        return JsonFormatter(pretty = false).formatJson(o)
+    }
+
     fun formatJson(o: Any, pretty: Boolean = false): String {
         return JsonFormatter(pretty).formatJson(o)
     }
@@ -36,7 +42,6 @@ internal enum class Token {
     NULL,
 }
 
-@SharedImmutable
 internal val SPECIAL_CHARS = mapOf(
     '"' to '"',
     '\\' to '\\',
@@ -47,7 +52,7 @@ internal val SPECIAL_CHARS = mapOf(
     'r' to '\r',
     't' to '\t'
 )
-@SharedImmutable
+
 private val CONTROL_CHARS = (0 until 0x20).map(Int::toChar).toSet()
 
 fun String.escape(): String {
@@ -58,8 +63,8 @@ fun String.escape(): String {
         output = (output ?: StringBuilder(substring(0, i))).append(str)
     }
 
-    while(i < length) {
-        when(val ch = get(i)) {
+    while (i < length) {
+        when (val ch = get(i)) {
             '\\' -> appendOutput("""\\""")
             '"' -> appendOutput("""\"""")
             '\n' -> appendOutput("""\n""")
@@ -79,11 +84,11 @@ fun String.unescape(): String {
     val end = length - 1
 
     var i = start
-    while(i < end) {
+    while (i < end) {
         val ch = get(i)
         if (ch == '\\') {
             output = output ?: StringBuilder(substring(start, i))
-            when(val escapedChar = get(++i)) {
+            when (val escapedChar = get(++i)) {
                 in SPECIAL_CHARS -> SPECIAL_CHARS[escapedChar].also { i++ }
                 'u' -> substring(i + 1, i + 5).toInt(16).toChar().also { i += 5 }
                 else -> throw JsonParser.JsonException("Invalid escape character: ${escapedChar}")
