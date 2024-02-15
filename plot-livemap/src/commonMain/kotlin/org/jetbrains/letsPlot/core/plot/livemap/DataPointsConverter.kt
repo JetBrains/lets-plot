@@ -74,6 +74,7 @@ internal class DataPointsConverter(
         private var myAnimation: Int? = null
         private var myFlat: Boolean = false
         private var myGeodesic: Boolean = false
+        private var mySpacer: Double = 0.0
 
         private fun parsePathAnimation(animation: Any?): Int? {
             when (animation) {
@@ -99,6 +100,7 @@ internal class DataPointsConverter(
                 this.geometry = points
                 this.flat = myFlat
                 this.geodesic = myGeodesic
+                this.spacer = mySpacer
                 setArrowSpec(myArrowSpec)
                 setAnimation(myAnimation)
             }
@@ -117,6 +119,10 @@ internal class DataPointsConverter(
 
         fun setGeodesic(geodesic: Boolean) {
             myGeodesic = geodesic
+        }
+
+        fun setSpacer(spacer: Double) {
+            mySpacer = spacer
         }
     }
 
@@ -182,6 +188,7 @@ internal class DataPointsConverter(
             setAnimation(geom.animation)
             setFlat(geom.flat)
             setGeodesic(geom.geodesic)
+            setSpacer(geom.spacer)
 
             return process(isClosed = false) {
                 if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {

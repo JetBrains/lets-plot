@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
-import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
@@ -163,10 +162,12 @@ internal class DataPointLiveMapAesthetics {
             else -> colorWithAlpha(myP.color()!!)
         }
 
+    private fun pointRadius(size: Double) = ceil(size / 2.0)
+
     val radius: Double
         get() = when (myLayerKind) {
-            POINT -> ceil(myP.shape()!!.size(myP) / 2.0)
-            PIE -> AesScaling.pieDiameter(myP) / 2.0
+            POINT -> pointRadius(myP.shape()!!.size(myP))
+            PIE -> AestheticsUtil.pieDiameter(myP) / 2.0
             else -> 0.0
         }
 
@@ -180,6 +181,16 @@ internal class DataPointLiveMapAesthetics {
 
     val fillArray: List<Color>
         get() = myFillArray.map(::colorWithAlpha)
+
+    val sizeStart: Double
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)) * 2.0
+    val sizeEnd: Double
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeEnd)) * 2.0
+    val strokeStart: Double
+        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeStart)
+    val strokeEnd: Double
+        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeEnd)
+    var spacer = 0.0
 
     private var myLabelOptions: LabelOptions? = null
     val labelPadding: Double

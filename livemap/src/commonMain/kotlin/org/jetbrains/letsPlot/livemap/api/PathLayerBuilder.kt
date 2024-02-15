@@ -41,6 +41,8 @@ import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
 import org.jetbrains.letsPlot.livemap.mapengine.RenderableComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldDimensionComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
+import kotlin.math.sign
+import kotlin.math.sin
 
 @LiveMapDsl
 class PathLayerBuilder(
@@ -96,15 +98,20 @@ class PathEntityBuilder(
     var arrowAtEnds: String? = null
     var arrowType: String? = null
 
+    var sizeStart: Double = 0.0
+    var sizeEnd: Double = 0.0
+    var strokeStart: Double = 0.0
+    var strokeEnd: Double = 0.0
+    var spacer: Double = 0.0
+
     fun build(nonInteractive: Boolean): EcsEntity? {
         // flat can't be geodesic
         val geodesic = if (flat) false else geodesic
 
-        fun transformPath(points: List<Vec<LonLat>>): MultiLineString<org.jetbrains.letsPlot.livemap.World> =
-            when {
+        fun transformPath(points: List<Vec<LonLat>>): MultiLineString<World> = when {
                 flat ->
                     transformPoints(points, myMapProjection::apply, resamplingPrecision = null)
-                        .let { wrapPath(it, org.jetbrains.letsPlot.livemap.World.DOMAIN) }
+                        .let { wrapPath(it, World.DOMAIN) }
                         .let { MultiLineString(it.map(::LineString)) }
 
                 else ->
@@ -117,7 +124,25 @@ class PathEntityBuilder(
         val locGeometry = transformPath(points)
         val visGeometry = transformPath(points.takeUnless { geodesic } ?: Geodesic.createArcPath(points))
 
-        myFactory.incrementLayerPointsTotalCount(visGeometry.sumOf(LineString<org.jetbrains.letsPlot.livemap.World>::size))
+        // Calculate paddings based on the target size, spacer and arrow spec
+        val targetSizeStart = sizeStart / 2.0 + strokeStart
+        val targetSizeEnd = sizeEnd / 2.0 + strokeEnd
+
+        val arrowSpec = ArrowSpec.create(
+            this@PathEntityBuilder.arrowAngle,
+            this@PathEntityBuilder.arrowLength,
+            this@PathEntityBuilder.arrowAtEnds,
+            this@PathEntityBuilder.arrowType,
+        )
+        val miterLength = arrowSpec?.angle?.let { strokeWidth / sin(it) } ?: 0.0
+        val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
+        val miterOffset = miterLength * miterSign / 2
+
+        // Total offsets
+        val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
+        val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+
+        myFactory.incrementLayerPointsTotalCount(visGeometry.sumOf(LineString<World>::size))
         return visGeometry.bbox?.let { bbox ->
             val entity = myFactory
                 .createFeature("map_ent_path")
@@ -134,12 +159,9 @@ class PathEntityBuilder(
                         strokeColor = this@PathEntityBuilder.strokeColor
                         strokeWidth = this@PathEntityBuilder.strokeWidth
                         lineDash = this@PathEntityBuilder.lineDash.toDoubleArray()
-                        arrowSpec = ArrowSpec.create(
-                            this@PathEntityBuilder.arrowAngle,
-                            this@PathEntityBuilder.arrowLength,
-                            this@PathEntityBuilder.arrowAtEnds,
-                            this@PathEntityBuilder.arrowType,
-                        )
+                        this.arrowSpec = arrowSpec
+                        this.startPadding = startPadding
+                        this.endPadding = endPadding
                     }
                     +ChartElementLocationComponent().apply {
                         geometry = Geometry.of(locGeometry)

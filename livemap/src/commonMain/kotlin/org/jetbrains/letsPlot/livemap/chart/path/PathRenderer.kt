@@ -5,20 +5,21 @@
 
 package org.jetbrains.letsPlot.livemap.chart.path
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.math.distance
+import org.jetbrains.letsPlot.commons.intern.math.distance2
+import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.livemap.World
+import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
-import org.jetbrains.letsPlot.livemap.mapengine.lineTo
-import org.jetbrains.letsPlot.livemap.mapengine.moveTo
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 class PathRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
@@ -28,21 +29,28 @@ class PathRenderer : Renderer {
 
         ctx.save()
         ctx.scale(renderHelper.zoomFactor)
-        ctx.beginPath()
+
+        val startPadding = renderHelper.dimToWorld(chartElement.scaledStartPadding()).value
+        val endPadding = renderHelper.dimToWorld(chartElement.scaledEndPadding()).value
 
         for (lineString in geometry) {
-            lineString[0].let(ctx::moveTo)
-            lineString.drop(1).forEach(ctx::lineTo)
-        }
-        ctx.restore()
+            val adjustedGeometry = padLineString(lineString, startPadding, endPadding)
 
-        ctx.setStrokeStyle(color)
-        ctx.setLineDash(chartElement.scaledLineDash())
-        ctx.setLineWidth(chartElement.scaledStrokeWidth())
-        ctx.stroke()
+            ctx.beginPath()
 
-        chartElement.arrowSpec?.let { arrowSpec ->
-            drawArrows(arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
+            adjustedGeometry[0].let { ctx.moveTo(it.x, it.y) }
+            adjustedGeometry.drop(1).forEach { ctx.lineTo(it.x, it.y) }
+
+            ctx.restore()
+
+            ctx.setStrokeStyle(color)
+            ctx.setLineDash(chartElement.scaledLineDash())
+            ctx.setLineWidth(chartElement.scaledStrokeWidth())
+            ctx.stroke()
+
+            chartElement.arrowSpec?.let {
+                drawArrows(it, adjustedGeometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
+            }
         }
     }
 
@@ -62,7 +70,7 @@ class PathRenderer : Renderer {
             polarAngle: Double,
             x: Double,
             y: Double,
-            l: Scalar<org.jetbrains.letsPlot.livemap.World>,
+            l: Scalar<World>,
             scalingFactor: Double
         ): Pair<DoubleArray, DoubleArray> {
             val xs = doubleArrayOf(
@@ -114,14 +122,14 @@ class PathRenderer : Renderer {
 
     private fun drawArrows(
         arrowSpec: ArrowSpec,
-        geometry: MultiLineString<org.jetbrains.letsPlot.livemap.World>,
+        geometry: List<WorldPoint>,
         color: Color,
         scalingSizeFactor: Double,
         ctx: Context2d,
         renderHelper: RenderHelper
     ) {
 
-        fun drawArrowAtEnd(start: org.jetbrains.letsPlot.livemap.WorldPoint, end: org.jetbrains.letsPlot.livemap.WorldPoint, arrowSpec: ArrowSpec) {
+        fun drawArrowAtEnd(start: WorldPoint, end: WorldPoint, arrowSpec: ArrowSpec) {
             val abscissa = end.x - start.x
             val ordinate = end.y - start.y
             if (abscissa != 0.0 || ordinate != 0.0) {
@@ -148,16 +156,62 @@ class PathRenderer : Renderer {
             }
         }
 
-        for (lineString in geometry) {
-            if (arrowSpec.isOnFirstEnd) {
-                val (start, end) = lineString.take(2).reversed()
+        if (arrowSpec.isOnFirstEnd) {
+            val (start, end) = geometry.take(2).reversed()
+            drawArrowAtEnd(start, end, arrowSpec)
+        }
+        if (arrowSpec.isOnLastEnd) {
+            val (start, end) = geometry.takeLast(2)
+            drawArrowAtEnd(start, end, arrowSpec)
+        }
+    }
 
-                drawArrowAtEnd(start, end, arrowSpec)
+    companion object {
+        // TODO: fix duplication from padLineString(List<DoubleVector>)
+        private fun padLineString(
+            lineString: List<WorldPoint>,
+            startPadding: Double,
+            endPadding: Double
+        ): List<WorldPoint> {
+            val startPadded = padStart(lineString, startPadding)
+            return padEnd(startPadded, endPadding)
+        }
+
+        private fun pad(lineString: List<WorldPoint>, padding: Double): Pair<Int, WorldPoint>? {
+            if (lineString.size < 2) {
+                return null
             }
-            if (arrowSpec.isOnLastEnd) {
-                val (start, end) = lineString.takeLast(2)
-                drawArrowAtEnd(start, end, arrowSpec)
+
+            val padding2 = padding * padding
+            val indexOutsidePadding = lineString.indexOfFirst {
+                distance2(lineString.first().x, lineString.first().y, it.x, it.y) >= padding2
             }
+            if (indexOutsidePadding < 1) { // not found or first points already satisfy the padding
+                return null
+            }
+
+            val adjustedStartPoint = run {
+                val insidePadding = lineString[indexOutsidePadding - 1]
+                val outsidePadding = lineString[indexOutsidePadding]
+                val overPadding = distance(
+                    lineString.first().x, lineString.first().y,
+                    outsidePadding.x, outsidePadding.y
+                ) - padding
+
+                pointOnLine(outsidePadding.x, outsidePadding.y, insidePadding.x, insidePadding.y, overPadding)
+            }
+
+            return indexOutsidePadding to adjustedStartPoint.toVec()
+        }
+
+        private fun padStart(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+            val (index, adjustedStartPoint) = pad(lineString, padding) ?: return lineString
+            return listOf(adjustedStartPoint) + lineString.subList(index, lineString.size)
+        }
+
+        private fun padEnd(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+            val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
+            return lineString.subList(0, lineString.size - index) + adjustedEndPoint
         }
     }
 }

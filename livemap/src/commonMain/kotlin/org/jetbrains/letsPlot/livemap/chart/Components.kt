@@ -29,6 +29,9 @@ class ChartElementComponent : EcsComponent {
     var arrowSpec: ArrowSpec? = null
     var lineheight: Double? = null
 
+    var startPadding: Double = 0.0
+    var endPadding: Double = 0.0
+
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
     var scalingSizeFactor: Double = 1.0
@@ -38,6 +41,9 @@ class ChartElementComponent : EcsComponent {
     fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
     fun scaledStrokeWidth() = scaledSize(strokeWidth, scalingSizeFactor)
     fun scaledLineDash() = scaledLineDash(lineDash!!, scalingSizeFactor)
+
+    fun scaledStartPadding() = scaledSize(startPadding, scalingSizeFactor)
+    fun scaledEndPadding() = scaledSize(endPadding, scalingSizeFactor)
 }
 
 class TextSpecComponent : EcsComponent {
