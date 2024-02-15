@@ -12,8 +12,8 @@ object JsonSupport {
         @Suppress("UNCHECKED_CAST")
         return JsonParser(jsonString).parseJson() as MutableMap<String, Any?>
     }
-    fun formatJson(o: Any): String {
-        return JsonFormatter().formatJson(o)
+    fun formatJson(o: Any, pretty: Boolean = false): String {
+        return JsonFormatter(pretty).formatJson(o)
     }
 }
 
