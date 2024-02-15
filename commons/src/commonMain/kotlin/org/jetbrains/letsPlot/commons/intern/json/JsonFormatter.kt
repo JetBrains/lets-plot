@@ -5,25 +5,40 @@
 
 package org.jetbrains.letsPlot.commons.intern.json
 
-class JsonFormatter {
-    private lateinit var buffer: StringBuilder
+internal class JsonFormatter(pretty: Boolean = false) {
+    private val output: Output = if (pretty) Pretty() else Simple()
 
     fun formatJson(o: Any): String {
-        buffer = StringBuilder()
         handleValue(o)
-        return buffer.toString()
+        return output.asString()
     }
 
     private fun handleList(list: List<*>) {
-        append("[")
-        list.headTail(::handleValue) { tail -> tail.forEach { append(","); handleValue(it) } }
-        append("]")
+        output.startList()
+        list.headTail({
+            output.firstItem()
+            handleValue(it)
+        }) { tail ->
+            tail.forEach {
+                output.nextItem()
+                handleValue(it)
+            }
+        }
+        output.endList()
     }
 
     private fun handleMap(map: Map<*, *>) {
-        append("{")
-        map.entries.headTail(::handlePair) { tail -> tail.forEach { append(",\n"); handlePair(it) } }
-        append("}")
+        output.startMap()
+        map.entries.headTail({
+            output.firstItem()
+            handlePair(it)
+        }) { tail ->
+            tail.forEach {
+                output.nextItem()
+                handlePair(it)
+            }
+        }
+        output.endMap()
     }
 
     private fun handleValue(v: Any?) {
@@ -40,7 +55,7 @@ class JsonFormatter {
     }
 
     private fun handlePair(pair: Map.Entry<Any?, Any?>) {
-        handleString(pair.key); append(":"); handleValue(pair.value)
+        handleString(pair.key); append(": "); handleValue(pair.value)
     }
 
     private fun handleString(v: Any?) {
@@ -51,7 +66,7 @@ class JsonFormatter {
         }
     }
 
-    private fun append(s: String) = buffer.append(s)
+    private fun append(s: String) = output.append(s)
 
     private fun <E> Collection<E>.headTail(head: (E) -> Unit, tail: (Sequence<E>) -> Unit) {
         if (!isEmpty()) {
@@ -60,4 +75,90 @@ class JsonFormatter {
         }
     }
 
+    interface Output {
+        fun append(s: String)
+
+        fun startList()
+        fun endList()
+
+        fun startMap()
+        fun endMap()
+
+        fun firstItem()
+        fun nextItem()
+
+        fun asString(): String
+    }
+
+    class Simple : Output {
+        private var buffer: StringBuilder = StringBuilder()
+
+        override fun startList() = append("[")
+        override fun endList() = append("]")
+        override fun startMap() = append("{")
+        override fun endMap() = append("}")
+        override fun asString(): String = buffer.toString()
+        override fun firstItem() = Unit
+
+        override fun nextItem() {
+            buffer.append(",")
+        }
+
+        override fun append(s: String) {
+            buffer.append(s)
+        }
+    }
+
+
+    class Pretty : Output {
+        private var indent = 0
+        private var buffer: StringBuilder = StringBuilder()
+
+        override fun startList() {
+            buffer.append("[")
+            indent++
+        }
+
+        override fun endList() {
+            indent--
+            buffer.append("\n")
+            buffer.append(indent())
+            buffer.append("]")
+        }
+
+        override fun startMap() {
+            buffer.append("{")
+            indent++
+        }
+
+        override fun endMap() {
+            indent--
+            buffer.append("\n")
+            buffer.append(indent())
+            buffer.append("}")
+        }
+
+        override fun asString(): String {
+            return buffer.toString()
+        }
+
+        override fun append(s: String) {
+            buffer.append(s)
+        }
+
+        private fun indent(): String {
+            return "  ".repeat(indent * 2)
+        }
+
+        override fun firstItem() {
+            buffer.append("\n")
+            buffer.append(indent())
+        }
+
+        override fun nextItem() {
+            buffer.append(", ")
+            buffer.append("\n")
+            buffer.append(indent())
+        }
+    }
 }

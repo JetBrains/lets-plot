@@ -7,6 +7,7 @@ package demo.plot.batik.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import java.awt.Point
@@ -17,7 +18,7 @@ import javax.swing.*
 
 fun main() {
     // Plot spec can be set by PLOT_SPEC env var via IDEA run configuration.
-    val spec = System.getenv("PLOT_SPEC")
+    val specJson = System.getenv("PLOT_SPEC")
         ?: """
         {
             'kind': 'plot',
@@ -29,7 +30,8 @@ fun main() {
 
     // TODO: add pretty print for JsonSupport
     val plotSpecDebugger = PlotSpecDebugger()
-    plotSpecDebugger.setSpec(spec)
+    val spec = JsonSupport.parseJson(specJson)
+    plotSpecDebugger.setSpec(JsonSupport.formatJson(spec, pretty = true))
     plotSpecDebugger.evaluate()
     plotSpecDebugger.isVisible = true
 }
