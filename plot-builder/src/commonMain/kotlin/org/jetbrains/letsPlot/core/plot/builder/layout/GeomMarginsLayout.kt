@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
@@ -68,21 +69,24 @@ internal class GeomMarginsLayout(
     fun toAxisOrigin(
         geomInnerBounds: DoubleRectangle,
         axisOrientation: Orientation,
-        isPolarCoordinateSystem: Boolean
+        isPolarCoordinateSystem: Boolean,
+        panelPadding: Thickness = Thickness.ZERO,
     ): DoubleVector {
 
         val outerBounds = toOuterBounds(geomInnerBounds)
-        return when (axisOrientation) {
-            Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
-            Orientation.TOP -> geomInnerBounds.origin
-            Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top)
-            Orientation.BOTTOM -> {
-                if (isPolarCoordinateSystem) {
-                    // Angle marks are placed from top to bottom. With a bottom alignment, they will go under a plot.
-                    DoubleVector(geomInnerBounds.left, geomInnerBounds.top)
-                } else {
-                    DoubleVector(geomInnerBounds.left, outerBounds.bottom)
-                }
+
+        return if (isPolarCoordinateSystem) {
+            when (axisOrientation) {
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
+                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, geomInnerBounds.top)
+                Orientation.TOP, Orientation.RIGHT -> error("Polar coordinate system does not support top and right axis orientation")
+            }
+        } else {
+            when (axisOrientation) {
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
+                Orientation.TOP -> geomInnerBounds.origin
+                Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top)
+                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, outerBounds.bottom)
             }
         }
     }

@@ -60,14 +60,21 @@ class PolarAxisComponent(
             // Axis line
             if (!hideAxisBreaks && axisTheme.showLine()) {
                 if (orientation.isHorizontal) {
-                    val axisLine = SvgPathElement(SvgPathDataBuilder().lineString(breaksData.axisLine).build()).apply {
+                    val axisLine = SvgPathElement().apply {
+                        d().set(
+                            SvgPathDataBuilder()
+                                .lineString(breaksData.axisLine)
+                                .build()
+                        )
                         strokeWidth().set(axisTheme.lineWidth())
                         strokeColor().set(axisTheme.lineColor())
                         fillColor().set(Color.TRANSPARENT)
                     }
                     rootElement.children().add(axisLine)
                 } else {
-                    val axisLine = SvgLineElement(0.0, 0.0, 0.0, length / 2.0).apply {
+                    val axisLine = SvgLineElement().apply {
+                        y1().set(breaksData.center.y)
+                        y2().set(breaksData.center.y - length / 2.0)
                         strokeWidth().set(axisTheme.lineWidth())
                         strokeColor().set(axisTheme.lineColor())
                     }

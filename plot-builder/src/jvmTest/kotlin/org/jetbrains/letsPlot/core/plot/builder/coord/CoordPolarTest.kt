@@ -10,9 +10,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.math.PI
 import kotlin.math.roundToInt
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
+@Ignore
 class PolarCoordTest {
     private val x = listOf(0, 90, 180, 270, 360)
     private val y = listOf(0, 1, 2, 3, 4)

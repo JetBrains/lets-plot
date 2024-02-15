@@ -28,10 +28,11 @@ fun main() {
         }
         """.trimIndent()
 
-    // TODO: add pretty print for JsonSupport
-    val plotSpecDebugger = PlotSpecDebugger()
     val spec = JsonSupport.parseJson(specJson)
-    plotSpecDebugger.setSpec(JsonSupport.formatJson(spec, pretty = true))
+    val prettySpec = JsonSupport.formatJson(spec, pretty = true)
+
+    val plotSpecDebugger = PlotSpecDebugger()
+    plotSpecDebugger.setSpec(prettySpec)
     plotSpecDebugger.evaluate()
     plotSpecDebugger.isVisible = true
 }

@@ -24,7 +24,8 @@ class TileLayoutInfo constructor(
     val facetXLabels: List<String> = emptyList(),
     val facetYLabel: String? = null,
 
-    val trueIndex: Int     // tile index before re-ordering (in facet wrap)
+    val trueIndex: Int,     // tile index before re-ordering (in facet wrap)
+    val geomPlottingBounds: DoubleRectangle = geomInnerBounds,  // panel area excluding padding.
 ) {
     val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
     val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown

@@ -117,7 +117,7 @@ internal class PolarFrameOfReference(
                     labelAdjustments = labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -137,7 +137,7 @@ internal class PolarFrameOfReference(
                     labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }

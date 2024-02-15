@@ -7,15 +7,16 @@ package org.jetbrains.letsPlot.core.plot.base.coord
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
         coordMapper: CoordinatesMapper,
+        translate: DoubleVector = DoubleVector.ZERO,
     ): CoordinateSystem {
-        return DefaultCoordinateSystem(coordMapper)
+        return DefaultCoordinateSystem(coordMapper, translate)
     }
 
     object DemoAndTest {

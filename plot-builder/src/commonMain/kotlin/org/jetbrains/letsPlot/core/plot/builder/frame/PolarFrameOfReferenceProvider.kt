@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
@@ -91,7 +92,7 @@ internal class PolarFrameOfReferenceProvider(
             top = toAxisLayout(Orientation.TOP, hAxisPosition, hAxisSpec),
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().padding())
     }
 
     override fun createTileFrame(
@@ -102,16 +103,11 @@ internal class PolarFrameOfReferenceProvider(
         @Suppress("NAME_SHADOWING")
         val coordProvider = coordProvider as PolarCoordProvider
 
-        // Below use any of horizontal/vertical axis info in the "quad".
-        // ToDo: with non-rectangular coordinates this might not work as axis length (for example) might be different
-        // for top and botto, axis.
         val hAxisLayoutInfo = layoutInfo.axisInfos.bottom
-            ?: layoutInfo.axisInfos.top
-            ?: throw IllegalStateException("No top/bottom axis info.")
+            ?: throw IllegalStateException("Bottom axis info is required for polar coordinate system.")
 
         val vAxisLayoutInfo = layoutInfo.axisInfos.left
-            ?: layoutInfo.axisInfos.right
-            ?: throw IllegalStateException("No left/right axis info.")
+            ?: throw IllegalStateException("Left axis info is required for polar coordinate system.")
 
         // Set-up scales and coordinate system.
         val client = DoubleVector(
@@ -119,7 +115,10 @@ internal class PolarFrameOfReferenceProvider(
             vAxisLayoutInfo.axisLength
         )
 
-        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
+        val coord = coordProvider
+            .withTranslation(theme.panel().padding().leftTop)
+            .createCoordinateSystem(adjustedDomain, client)
+
         val gridDomain = coordProvider.gridDomain(adjustedDomain)
 
         val hScale = hScaleProto.with()
@@ -235,13 +234,15 @@ internal class PolarFrameOfReferenceProvider(
         private val axisLayoutQuad: AxisLayoutQuad,
         private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
+        private val panelPadding: Thickness,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
             return PolarTileLayout(
                 axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
-                marginsLayout
+                marginsLayout,
+                panelPadding
             )
         }
 
