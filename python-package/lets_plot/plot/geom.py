@@ -5711,6 +5711,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                arrow=None,
                curvature=None, angle=None, ncp=None,
+               spacer=None,
                color_by=None, **other_args):
     """
     Draw a curved line.
@@ -5751,6 +5752,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         and values greater than 90 skew the curve towards the end point.
     ncp : int, default=5
         The number of control points used to draw the curve. More control points creates a smoother curve.
+    spacer : float, default=0.0
+        Space to shorten a curve by moving the start/end.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -5778,6 +5781,10 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - size_start : offset from the start coordinate (usually equal to the size of the point object from which the curve starts to avoid overlapping with it).
+    - size_end : offset from the end coordinate (usually equal to the size of the point object from which the curve ends to avoid overlapping with it).
+    - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
+    - stroke_end : offset from the end coordinate (usually equal to the stroke of the point object from which the curve ends to avoid overlapping with it).
 
     Examples
     --------
@@ -5793,6 +5800,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  arrow=arrow,
                  curvature=curvature, angle=angle, ncp=ncp,
+                 spacer=spacer,
                  color_by=color_by,
                  **other_args)
 
