@@ -78,6 +78,7 @@ internal class DataPointLiveMapAesthetics {
     var flat: Boolean = false
     var geodesic: Boolean = false
     var animation = 0
+    var isCurve: Boolean = false
 
     private var myArrowSpec: ArrowSpec? = null
     val arrowAngle: Double?
