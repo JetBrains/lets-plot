@@ -24,7 +24,7 @@ class CurveGeom : GeomBase() {
     var angle: Double = DEF_ANGLE           // amount to skew the control points of the curve
     var ncp: Int = DEF_NCP                  // number of control points used to draw the curve
     var arrowSpec: ArrowSpec? = null
-    var spacer: Double = 0.0                // additional space to shorten segment by moving the start/end
+    var spacer: Double = DEF_SPACER         // additional space to shorten curve by moving the start/end
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -231,6 +231,7 @@ class CurveGeom : GeomBase() {
         const val DEF_ANGLE = 90.0
         const val DEF_CURVATURE = 0.5
         const val DEF_NCP = 5
+        const val DEF_SPACER = 0.0
     }
 }
 
