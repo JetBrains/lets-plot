@@ -373,7 +373,11 @@ object GeomMeta {
                 Aes.SIZE,
                 Aes.LINETYPE,
                 Aes.COLOR,
-                Aes.ALPHA
+                Aes.ALPHA,
+                Aes.SIZE_START,
+                Aes.SIZE_END,
+                Aes.STROKE_START,
+                Aes.STROKE_END
             )
 
             GeomKind.SPOKE -> listOf(

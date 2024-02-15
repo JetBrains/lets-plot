@@ -244,6 +244,7 @@ internal object GeomProviderFactory {
                     val arrowConfig = ArrowSpecConfig.create(layerConfig[Option.Geom.Curve.ARROW]!!)
                     geom.arrowSpec = arrowConfig.createArrowSpec()
                 }
+                layerConfig.getDouble(Option.Geom.Segment.SPACER)?.let { geom.spacer = it }
                 geom
             }
 

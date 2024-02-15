@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import kotlin.math.*
@@ -24,8 +23,8 @@ class CurveGeom : GeomBase() {
     var curvature: Double = DEF_CURVATURE   // amount of curvature
     var angle: Double = DEF_ANGLE           // amount to skew the control points of the curve
     var ncp: Int = DEF_NCP                  // number of control points used to draw the curve
-
     var arrowSpec: ArrowSpec? = null
+    var spacer: Double = DEF_SPACER         // additional space to shorten curve by moving the start/end
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
@@ -37,7 +36,7 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
+        val geomHelper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val x = finiteOrNull(p.x()) ?: continue
@@ -45,30 +44,37 @@ class CurveGeom : GeomBase() {
             val xend = finiteOrNull(p.xend()) ?: continue
             val yend = finiteOrNull(p.yend()) ?: continue
 
-            val clientStart = helper.toClient(DoubleVector(x, y), p) ?: continue
-            val clientEnd = helper.toClient(DoubleVector(xend, yend), p) ?: continue
+            val clientStart = geomHelper.toClient(DoubleVector(x, y), p) ?: continue
+            val clientEnd = geomHelper.toClient(DoubleVector(xend, yend), p) ?: continue
 
-            val geometry = createGeometry(clientStart, clientEnd)
+            // Apply padding to curve geometry based on the target size, spacer and arrow spec
+            val startPadding = SegmentGeom.padding(p, arrowSpec, spacer, atStart = true)
+            val endPadding = SegmentGeom.padding(p, arrowSpec, spacer, atStart = false)
 
-            val curve = SvgPathElement().apply {
+            // Create curve geometry
+            val adjustedGeometry = createGeometry(clientStart, clientEnd).let { geometry ->
+                SegmentGeom.padLineString(geometry, startPadding, endPadding)
+            }
+
+            // Draw curve
+            SvgPathElement().apply {
                 d().set(
                     SvgPathDataBuilder().apply {
-                        moveTo(geometry.first())
+                        moveTo(adjustedGeometry.first())
                         interpolatePoints(
-                            geometry,
+                            adjustedGeometry,
                             SvgPathDataBuilder.Interpolation.BSPLINE
                         )
                     }.build()
                 )
-                fill().set(SvgColors.NONE)
                 GeomHelper.decorate(this, p, applyAlphaToAll = true, filled = false)
             }
-            root.add(curve)
+                .also(root::add)
 
             // arrows
-            arrowSpec?.let { arrowSpec ->
-                ArrowSpec.createArrows(p, geometry, arrowSpec).forEach(root::add)
-            }
+            arrowSpec
+                ?.let { ArrowSpec.createArrows(p, adjustedGeometry, it) }
+                ?.forEach(root::add)
         }
     }
 
@@ -225,6 +231,7 @@ class CurveGeom : GeomBase() {
         const val DEF_ANGLE = 90.0
         const val DEF_CURVATURE = 0.5
         const val DEF_NCP = 5
+        const val DEF_SPACER = 0.0
     }
 }
 
