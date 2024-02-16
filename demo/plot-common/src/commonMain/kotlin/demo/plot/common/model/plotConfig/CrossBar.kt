@@ -13,7 +13,8 @@ class CrossBar {
         return listOf(
             basic(),
             adjustWidth(),
-            adjustMidlineAndFill()
+            adjustMidlineAndFill(),
+            undefinedY()
         )
     }
 
@@ -96,6 +97,28 @@ class CrossBar {
             |         ]
             |}
             """.trimMargin()
+        return parsePlotSpec(spec)
+    }
+
+    private fun undefinedY(): MutableMap<String, Any> {
+        val spec = """{
+            'data': {
+                'animal': ['cow', 'mouse', 'horse'],
+                'weight_l': [20, 5, 30],
+                'weight_h': [27, 10, 39],
+                'weight_m': [25, 7, 32]
+            },
+            'kind': 'plot',
+            'layers': [
+                {   
+                    'geom': 'crossbar',
+                    'tooltips': {'lines': ['Tooltip']},
+                    'mapping': {
+                        'x': 'animal', 'ymin': 'weight_l', 'ymax': 'weight_h'
+                    }
+                }
+            ]
+        }""".trimIndent()
         return parsePlotSpec(spec)
     }
 }
