@@ -22,6 +22,7 @@ internal class LiveMapTileLayout : TileLayout {
             geomWithAxisBounds = geomBounds,
             geomOuterBounds = geomBounds,
             geomInnerBounds = geomBounds,
+            geomContentBounds = geomBounds,
             axisInfos = AxisLayoutInfoQuad.EMPTY,
             hAxisShown = false,
             vAxisShown = false,

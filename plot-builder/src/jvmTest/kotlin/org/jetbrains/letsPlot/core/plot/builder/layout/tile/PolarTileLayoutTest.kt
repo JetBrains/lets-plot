@@ -32,7 +32,7 @@ class PolarTileLayoutTest {
             assertThat(it.geomOuterBounds.right).isLessThanOrEqualTo(preferredSize.x)
             assertThat(round(it.geomInnerBounds))
                 .isEqualTo(round(it.geomOuterBounds))
-                .isEqualTo(round(it.geomPlottingBounds))
+                .isEqualTo(round(it.geomContentBounds))
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 377, 377))
         }
     }
@@ -46,7 +46,7 @@ class PolarTileLayoutTest {
                 .isEqualTo(round(it.geomInnerBounds))
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 477, 377))
 
-            assertThat(round(it.geomPlottingBounds)).isEqualTo(DoubleRectangle.XYWH(85, 0, 377, 377))
+            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(85, 0, 377, 377))
 
         }
     }
@@ -60,7 +60,7 @@ class PolarTileLayoutTest {
                 .isEqualTo(round(it.geomInnerBounds))
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 765, 265))
 
-            assertThat(round(it.geomPlottingBounds)).isEqualTo(DoubleRectangle.XYWH(285, 0, 265, 265))
+            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(285, 0, 265, 265))
         }
     }
 
@@ -73,7 +73,7 @@ class PolarTileLayoutTest {
                 .isEqualTo(round(it.geomInnerBounds))
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 565, 665))
 
-            assertThat(round(it.geomPlottingBounds)).isEqualTo(DoubleRectangle.XYWH(35, 50, 565, 565))
+            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(35, 50, 565, 565))
         }
     }
 

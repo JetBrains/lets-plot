@@ -211,6 +211,7 @@ class PlotSvgComponent constructor(
 
             val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
             val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
+            val geomContentBoundsAbsolute = tileLayoutInfo.geomContentBounds.add(plotOriginAbsolute)
 
             // axis tooltip should appear on 'outer' bounds:
             val axisOrigin = DoubleVector(
@@ -218,7 +219,7 @@ class PlotSvgComponent constructor(
                 y = if (layoutInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
             )
             interactor?.onTileAdded(
-                geomInnerBoundsAbsolute,
+                geomContentBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
                 axisOrigin,

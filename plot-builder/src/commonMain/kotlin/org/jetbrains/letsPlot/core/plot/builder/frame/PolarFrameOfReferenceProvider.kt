@@ -115,9 +115,7 @@ internal class PolarFrameOfReferenceProvider(
             vAxisLayoutInfo.axisLength
         )
 
-        val coord = coordProvider
-            .withTranslation(theme.panel().padding().leftTop)
-            .createCoordinateSystem(adjustedDomain, client)
+        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
         val gridDomain = coordProvider.gridDomain(adjustedDomain)
 

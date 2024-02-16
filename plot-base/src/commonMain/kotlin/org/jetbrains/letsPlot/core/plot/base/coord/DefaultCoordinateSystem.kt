@@ -9,8 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 
 internal class DefaultCoordinateSystem(
-    private val coordMapper: CoordinatesMapper,
-    private val translate: DoubleVector = DoubleVector.ZERO
+    private val coordMapper: CoordinatesMapper
 ) : CoordinateSystem {
 
     private val clientLeft = coordMapper.clientBounds.xRange().lowerEnd
@@ -40,6 +39,6 @@ internal class DefaultCoordinateSystem(
     private fun toScreen(p: DoubleVector): DoubleVector {
         val x = p.x - clientLeft
         val y = clientBottom - p.y
-        return DoubleVector(x, y).add(translate)
+        return DoubleVector(x, y)
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
@@ -21,6 +22,7 @@ internal class TopDownTileLayout(
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
+    private val panelPadding: Thickness,
 ) : TileLayout {
     override val insideOut: Boolean = false
 
@@ -31,6 +33,7 @@ internal class TopDownTileLayout(
             preferredSize,
             hDomain, vDomain,
             marginsLayout,
+            panelPadding,
             coordProvider
         )
 
@@ -40,6 +43,7 @@ internal class TopDownTileLayout(
             hDomain,
             vDomain,
             marginsLayout,
+            panelPadding,
             coordProvider
         )
 
@@ -77,6 +81,7 @@ internal class TopDownTileLayout(
             geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomBoundsAfterLayout,
             geomInnerBounds = geomInnerBounds,
+            geomContentBounds = geomInnerBounds,
             axisInfos = axisInfosNew,
             hAxisShown = true,
             vAxisShown = true,
@@ -91,11 +96,12 @@ internal class TopDownTileLayout(
             hDomain: DoubleSpan,
             vDomain: DoubleSpan,
             marginsLayout: GeomMarginsLayout,
+            panelPadding: Thickness,
             coordProvider: CoordProvider
         ): GeomAreaInsets {
             val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
             val axisHeightEstim =
-                geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, coordProvider)
+                geomOuterBounds(insetsInitial, plotSize, hDomain, vDomain, marginsLayout, panelPadding, coordProvider)
                     .dimension
                     .let(marginsLayout::toInnerSize)
                     .y
@@ -107,6 +113,7 @@ internal class TopDownTileLayout(
                 hDomain,
                 vDomain,
                 marginsLayout,
+                panelPadding,
                 coordProvider
             )
 
@@ -128,6 +135,7 @@ internal class TopDownTileLayout(
                         hDomain,
                         vDomain,
                         marginsLayout,
+                        panelPadding,
                         coordProvider
                     ).dimension.let {
                         marginsLayout.toInnerSize(it).y

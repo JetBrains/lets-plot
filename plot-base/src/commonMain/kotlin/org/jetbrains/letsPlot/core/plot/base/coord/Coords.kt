@@ -13,10 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
-        coordMapper: CoordinatesMapper,
-        translate: DoubleVector = DoubleVector.ZERO,
+        coordMapper: CoordinatesMapper
     ): CoordinateSystem {
-        return DefaultCoordinateSystem(coordMapper, translate)
+        return DefaultCoordinateSystem(coordMapper)
     }
 
     object DemoAndTest {

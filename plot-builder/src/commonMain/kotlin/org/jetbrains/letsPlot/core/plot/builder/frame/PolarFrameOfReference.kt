@@ -74,7 +74,7 @@ internal class PolarFrameOfReference(
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
         if (drawPanel) {
-            val panel = buildPanelComponent(geomBounds, panelTheme)
+            val panel = buildPanelComponent(layoutInfo.geomInnerBounds, panelTheme)
             parent.add(panel)
         }
 
@@ -85,7 +85,7 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                val gridBounds = geomBounds.origin
+                val gridBounds = layoutInfo.geomContentBounds.origin
                 gridComponent.moveTo(gridBounds)
                 parent.add(gridComponent)
             }
@@ -97,7 +97,7 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                val gridBounds = geomBounds.origin
+                val gridBounds = layoutInfo.geomContentBounds.origin
                 gridComponent.moveTo(gridBounds)
                 parent.add(gridComponent)
             }
@@ -117,7 +117,7 @@ internal class PolarFrameOfReference(
                     labelAdjustments = labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
+                val axisOrigin = marginsLayout.toAxisOrigin(layoutInfo.geomContentBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -215,7 +215,7 @@ internal class PolarFrameOfReference(
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
         )
 
-        val geomBounds = layoutInfo.geomInnerBounds
+        val geomBounds = layoutInfo.geomContentBounds
         layerComponent.moveTo(geomBounds.origin)
         layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
         return layerComponent

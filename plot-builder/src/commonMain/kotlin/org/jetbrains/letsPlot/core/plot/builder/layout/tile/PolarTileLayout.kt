@@ -52,7 +52,7 @@ internal class PolarTileLayout(
             geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            geomPlottingBounds = geomContentBounds,
+            geomContentBounds = geomContentBounds,
             axisInfos = axisInfosNew,
             hAxisShown = true,
             vAxisShown = true,

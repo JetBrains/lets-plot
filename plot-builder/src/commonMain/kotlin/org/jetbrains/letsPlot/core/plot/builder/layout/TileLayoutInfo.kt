@@ -15,6 +15,7 @@ class TileLayoutInfo constructor(
     val geomWithAxisBounds: DoubleRectangle,    // Tile geom area, axis, axis ticks/labels.
     val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
     val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
+    val geomContentBounds: DoubleRectangle,  // panel area excluding padding.
 
     val axisInfos: AxisLayoutInfoQuad,
 
@@ -25,7 +26,6 @@ class TileLayoutInfo constructor(
     val facetYLabel: String? = null,
 
     val trueIndex: Int,     // tile index before re-ordering (in facet wrap)
-    val geomPlottingBounds: DoubleRectangle = geomInnerBounds,  // panel area excluding padding.
 ) {
     val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
     val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown
@@ -62,6 +62,7 @@ class TileLayoutInfo constructor(
             this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
+            this.geomContentBounds,
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,
@@ -75,6 +76,7 @@ class TileLayoutInfo constructor(
             this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
+            this.geomContentBounds,
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             xLabels, yLabel,
@@ -88,6 +90,7 @@ class TileLayoutInfo constructor(
             this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
+            this.geomContentBounds,
             this.axisInfos,
             hAxisShown, vAxisShown,
             this.facetXLabels, this.facetYLabel,
@@ -101,12 +104,14 @@ class TileLayoutInfo constructor(
         val geomWithAxisBounds = geomWithAxisBounds.subtract(geomWithAxisOrigin)
         val geomOuterBounds = geomOuterBounds.subtract(geomWithAxisOrigin)
         val geomInnerBounds = geomInnerBounds.subtract(geomWithAxisOrigin)
+        val geomContentBounds = geomContentBounds.subtract(geomWithAxisOrigin)
 
         return TileLayoutInfo(
             this.offset,
             geomWithAxisBounds,
             geomOuterBounds,
             geomInnerBounds,
+            geomContentBounds,
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,

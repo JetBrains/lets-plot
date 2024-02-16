@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.GeomAreaInsets
@@ -24,14 +25,17 @@ internal object TileLayoutUtil {
         hDomain: DoubleSpan,
         vDomain: DoubleSpan,
         marginsLayout: GeomMarginsLayout,
+        panelPadding: Thickness,
         coordProvider: CoordProvider
     ): DoubleRectangle {
         val plottingArea = geomInsets.subtractFrom(DoubleRectangle(ZERO, plotSize))
-        val geomInnerSize = marginsLayout.toInnerSize(plottingArea.dimension)
+        val panelSize = marginsLayout.toInnerSize(plottingArea.dimension)
+        val contentSize = panelPadding.shrinkSize(panelSize)
 
-        val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomInnerSize).let {
-            marginsLayout.toOuterSize(it)
-        }
+        val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, contentSize)
+            .let(panelPadding::inflateSize)
+            .let(marginsLayout::toOuterSize)
+
         return DoubleRectangle(plottingArea.origin, geomOuterSizeAdjusted)
     }
 }

@@ -27,8 +27,7 @@ internal class PolarCoordProvider(
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
-    private val isHScaleContinuous: Boolean = true,
-    private val translate: DoubleVector = DoubleVector.ZERO,
+    private val isHScaleContinuous: Boolean = true
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean = false
@@ -39,11 +38,7 @@ internal class PolarCoordProvider(
     }
 
     fun withHScaleContinuous(b: Boolean): PolarCoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous = b, translate = translate)
-    }
-
-    fun withTranslation(translate: DoubleVector): PolarCoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous, translate = translate)
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous = b)
     }
 
     override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
@@ -120,7 +115,7 @@ internal class PolarCoordProvider(
     override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinateSystem {
         val sign = if (clockwise) -1.0 else 1.0
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
-        return PolarCoordinateSystem(Coords.create(coordMapper, translate), start, sign)
+        return PolarCoordinateSystem(Coords.create(coordMapper), start, sign)
     }
 
 

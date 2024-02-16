@@ -77,7 +77,7 @@ internal class GeomMarginsLayout(
 
         return if (isPolarCoordinateSystem) {
             when (axisOrientation) {
-                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelPadding.top)
                 Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, geomInnerBounds.top)
                 Orientation.TOP, Orientation.RIGHT -> error("Polar coordinate system does not support top and right axis orientation")
             }

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
@@ -90,7 +91,7 @@ internal class SquareFrameOfReferenceProvider(
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
 
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().padding())
     }
 
     override fun createTileFrame(
@@ -230,13 +231,15 @@ internal class SquareFrameOfReferenceProvider(
         private val axisLayoutQuad: AxisLayoutQuad,
         private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
+        private val padding: Thickness,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
             return TopDownTileLayout(
                 axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
-                marginsLayout
+                marginsLayout,
+                padding
             )
         }
 
