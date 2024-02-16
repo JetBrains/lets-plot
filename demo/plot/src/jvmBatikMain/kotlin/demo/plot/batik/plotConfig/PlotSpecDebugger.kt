@@ -30,7 +30,7 @@ fun main() {
 
     // TODO: add pretty print for JsonSupport
     val plotSpecDebugger = PlotSpecDebugger()
-    val spec = JsonSupport.parseJson(specJson)
+    val spec = parsePlotSpec(specJson)
     plotSpecDebugger.setSpec(JsonSupport.formatJson(spec, pretty = true))
     plotSpecDebugger.evaluate()
     plotSpecDebugger.isVisible = true
