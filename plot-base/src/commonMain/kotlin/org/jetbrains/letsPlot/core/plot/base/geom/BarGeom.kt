@@ -71,13 +71,11 @@ open class BarGeom : GeomBase() {
         rectanglesHelper.iterateRectangleGeometry { p, rect ->
             val clientBarCenter = rectanglesHelper.toClient(rect.center, p) ?: return@iterateRectangleGeometry
 
-            val barBorder = with(rect) {
-                if (ctx.flipped) {
-                    listOf(DoubleVector(right, top), DoubleVector(right, bottom))
-                } else {
-                    listOf(DoubleVector(left, bottom), DoubleVector(right, bottom))
-                }
-            }.mapNotNull { rectanglesHelper.toClient(it, p) }
+            val barBorder = with(rect.flipIf(ctx.flipped)) {
+                listOf(DoubleVector(left, bottom), DoubleVector(right, bottom))
+            }.mapNotNull {
+                rectanglesHelper.toClient(it.flipIf(ctx.flipped), p)
+            }
 
             if (barBorder.size != 2) return@iterateRectangleGeometry
 
