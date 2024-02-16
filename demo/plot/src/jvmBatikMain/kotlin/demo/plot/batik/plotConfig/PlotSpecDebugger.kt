@@ -28,7 +28,7 @@ fun main() {
         }
         """.trimIndent()
 
-    val spec = JsonSupport.parseJson(specJson)
+    val spec = parsePlotSpec(specJson)
     val prettySpec = JsonSupport.formatJson(spec, pretty = true)
 
     val plotSpecDebugger = PlotSpecDebugger()

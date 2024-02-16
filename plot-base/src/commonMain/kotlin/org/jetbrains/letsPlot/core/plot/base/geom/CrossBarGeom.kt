@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
@@ -76,40 +77,38 @@ class CrossBarGeom(
         geomHelper: GeomHelper,
         isHintRect: Boolean
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        return { p ->
-            val xAes = afterRotation(Aes.X)
-            val yAes = afterRotation(Aes.Y)
-            val minAes = afterRotation(Aes.YMIN)
-            val maxAes = afterRotation(Aes.YMAX)
-            val sizeAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
-            val rect = if (!isHintRect &&
-                p.defined(xAes) &&
-                p.defined(minAes) &&
-                p.defined(maxAes) &&
-                p.defined(sizeAes)
-            ) {
-                val x = p[xAes]!!
-                val ymin = p[minAes]!!
-                val ymax = p[maxAes]!!
-                val width = p[sizeAes]!! * ctx.getResolution(xAes)
-                val origin = DoubleVector(x - width / 2, ymin)
-                val dimensions = DoubleVector(width, ymax - ymin)
-                DoubleRectangle(origin, dimensions)
-            } else if (isHintRect &&
-                p.defined(xAes) &&
-                p.defined(yAes) &&
-                p.defined(sizeAes)
-            ) {
-                val x = p[xAes]!!
-                val y = p[yAes]!!
-                val width = p[sizeAes]!! * ctx.getResolution(xAes)
-                val origin = DoubleVector(x - width / 2, y)
-                val dimensions = DoubleVector(width, 0.0)
-                DoubleRectangle(origin, dimensions)
+        val xAes = afterRotation(Aes.X)
+        val yAes = afterRotation(Aes.Y)
+        val minAes = afterRotation(Aes.YMIN)
+        val maxAes = afterRotation(Aes.YMAX)
+        val sizeAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
+
+        fun factory(p: DataPointAesthetics): DoubleRectangle? {
+            val x = finiteOrNull(p[xAes]) ?: return null
+            val ymin = finiteOrNull(p[minAes]) ?: return null
+            val ymax = finiteOrNull(p[maxAes]) ?: return null
+            val w = finiteOrNull(p[sizeAes]) ?: return null
+
+            val width = w * ctx.getResolution(xAes)
+
+            val origin: DoubleVector
+            val dimension: DoubleVector
+            if (isHintRect) {
+                // yAes (middle bar) is optional => use mid of interval for tooltip
+                val y = p[yAes] ?: ((ymin + ymax) / 2)
+                origin = DoubleVector(x - width / 2, y)
+                dimension = DoubleVector(width, 0.0)
             } else {
-                null
+                origin = DoubleVector(x - width / 2, ymin)
+                dimension = DoubleVector(width, ymax - ymin)
             }
-            rect?.let { geomHelper.toClient(afterRotation(it), p) }
+            return DoubleRectangle(origin, dimension)
+        }
+
+        return { p ->
+            factory(p)?.let { rect ->
+                geomHelper.toClient(afterRotation(rect), p)
+            }
         }
     }
 
