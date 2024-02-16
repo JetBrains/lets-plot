@@ -9,9 +9,11 @@ package org.jetbrains.letsPlot.core.commons.typedKey
  * Maps typed keys to not-null values.
  * The type parametr can't be a nullable type.
  */
-class TypedKeyHashMap {
+class TypedKeyHashMap private constructor(
+    private val map: MutableMap<TypedKey<*>, Any?>
+) {
 
-    val map = hashMapOf<TypedKey<*>, Any?>()
+    constructor() : this(hashMapOf<TypedKey<*>, Any?>())
 
     /**
      * Throws NoSuchElementException if key is not present.
@@ -56,5 +58,9 @@ class TypedKeyHashMap {
     fun <T> keys(): Set<TypedKey<T>> {
         @Suppress("UNCHECKED_CAST")
         return map.keys as Set<TypedKey<T>>
+    }
+
+    fun makeCopy(): TypedKeyHashMap {
+        return TypedKeyHashMap(HashMap(this.map))
     }
 }
