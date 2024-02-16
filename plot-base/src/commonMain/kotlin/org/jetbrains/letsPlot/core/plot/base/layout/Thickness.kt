@@ -23,19 +23,22 @@ class Thickness(
 
     val size = DoubleVector(width(), height())
 
-    fun addTo(r: DoubleRectangle): DoubleRectangle {
+    fun inflateRect(r: DoubleRectangle): DoubleRectangle {
         return DoubleRectangle(
             r.origin.subtract(leftTop),
             r.dimension.add(size)
         )
     }
 
-    fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
+    fun shrinkRect(r: DoubleRectangle): DoubleRectangle {
         return DoubleRectangle(
             r.origin.add(leftTop),
             r.dimension.subtract(size)
         )
     }
+
+    fun inflateSize(size: DoubleVector): DoubleVector = size.add(this.size)
+    fun shrinkSize(size: DoubleVector): DoubleVector = size.subtract(this.size)
 
     override fun toString(): String {
         return "Thickness(top=$top, right=$right, bottom=$bottom, left=$left)"
