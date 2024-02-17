@@ -10,12 +10,12 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 
 internal class MarginalLayerCoordProvider : CoordProviderBase(
-    xLim = null,
-    yLim = null,
+    xLim = Pair(null, null),
+    yLim = Pair(null, null),
     flipped = false
 ) {
 
-    override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
+    override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
         UNSUPPORTED("MarginalLayerCoordProvider.with()")
     }
 

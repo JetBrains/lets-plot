@@ -38,6 +38,6 @@ internal class CoordCartesianTest : CoordTestBase() {
     }
 
     companion object {
-        private val PROVIDER = CoordProviders.cartesian(null, null)
+        private val PROVIDER = CoordProviders.cartesian()
     }
 }

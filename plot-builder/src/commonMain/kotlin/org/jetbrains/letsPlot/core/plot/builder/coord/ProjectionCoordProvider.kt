@@ -13,14 +13,14 @@ import org.jetbrains.letsPlot.core.plot.base.coord.projectDomain
 
 internal class ProjectionCoordProvider(
     projection: Projection,
-    xLim: DoubleSpan?,
-    yLim: DoubleSpan?,
+    xLim: Pair<Double?, Double?>,
+    yLim: Pair<Double?, Double?>,
     flipped: Boolean
 ) : CoordProviderBase(xLim, yLim, flipped, projection) {
 
     override fun with(
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
         flipped: Boolean
     ): CoordProvider {
         return ProjectionCoordProvider(projection, xLim, yLim, flipped)

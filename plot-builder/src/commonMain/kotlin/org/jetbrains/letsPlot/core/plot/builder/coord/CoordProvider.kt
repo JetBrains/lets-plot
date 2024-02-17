@@ -18,8 +18,8 @@ interface CoordProvider {
     val isPolar: Boolean
 
     fun with(
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
         flipped: Boolean
     ): CoordProvider
 

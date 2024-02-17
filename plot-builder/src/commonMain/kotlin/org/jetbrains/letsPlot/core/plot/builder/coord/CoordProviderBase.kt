@@ -13,15 +13,21 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 
 internal abstract class CoordProviderBase(
-    protected val xLim: DoubleSpan?,
-    protected val yLim: DoubleSpan?,
+    protected val xLim: Pair<Double?, Double?>,
+    protected val yLim: Pair<Double?, Double?>,
     override val flipped: Boolean,
     protected val projection: Projection = identity(),
 ) : CoordProvider {
 
     init {
-        require(xLim == null || xLim.length > 0.0) { "Coord x-limits range should be > 0.0" }
-        require(yLim == null || yLim.length > 0.0) { "Coord y-limits range should be > 0.0" }
+        require(
+            xLim.first == null || xLim.second == null ||
+                    xLim.second!! > xLim.first!!
+        ) { "Invalid coord x-limits: $xLim " }
+        require(
+            yLim.first == null || yLim.second == null ||
+                    yLim.second!! > yLim.first!!
+        ) { "Invalid coord y-limits: $yLim" }
     }
 
     override val isLinear: Boolean = !projection.nonlinear
@@ -30,13 +36,24 @@ internal abstract class CoordProviderBase(
     /**
      * Reshape and flip the domain if necessary.
      */
-    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+    final override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+        val xSpan = DoubleSpan(
+            xLim.first ?: domain.left,
+            xLim.second ?: domain.right
+        )
+
+        val ySpan = DoubleSpan(
+            yLim.first ?: domain.top,
+            yLim.second ?: domain.bottom
+        )
+
+        return adjustXYDomains(xSpan, ySpan)
+    }
+
+    protected open fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
+        val domain = DoubleRectangle(xRange, yRange)
         val validDomain = domain.let {
-            val withLims = DoubleRectangle(
-                xLim ?: domain.xRange(),
-                yLim ?: domain.yRange(),
-            )
-            projection.validDomain().intersect(withLims)
+            projection.validDomain().intersect(it)
         }
 
         return if (validDomain != null && validDomain.height > 0.0 && validDomain.width > 0.0) {

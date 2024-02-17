@@ -9,13 +9,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 internal class CartesianCoordProvider(
-    xLim: DoubleSpan?,
-    yLim: DoubleSpan?,
+    xLim: Pair<Double?, Double?>,
+    yLim: Pair<Double?, Double?>,
     flipped: Boolean = false
 ) : CoordProviderBase(xLim, yLim, flipped) {
     override fun with(
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
         flipped: Boolean
     ): CoordProvider {
         return CartesianCoordProvider(xLim, yLim, flipped)

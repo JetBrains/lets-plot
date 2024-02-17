@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.azimuthalEqualA
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.conicEqualArea
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.spec.Option.Coord
@@ -24,8 +23,8 @@ internal object CoordProto {
 
     fun createCoordProvider(
         coordName: String,
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
         options: OptionsAccessor
     ): CoordProvider {
         val flipped = options.getBoolean(Coord.FLIPPED)

@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor.Companion.over
+import kotlin.math.max
+import kotlin.math.min
 
 object CoordConfig {
 
@@ -35,8 +36,18 @@ object CoordConfig {
 
         // Use "transformed" values for limits.
         val accessor = over(options)
-        val xLim = accessor.getRangeOrNull(Option.Coord.X_LIM)?.let { validateRange(it, transformX) }
-        val yLim = accessor.getRangeOrNull(Option.Coord.Y_LIM)?.let { validateRange(it, transformY) }
+        val xLim = accessor.getNumQPairDef(
+            Option.Coord.X_LIM,
+            def = null to null
+        ).let {
+            transformRange(it, transformX)
+        }
+        val yLim = accessor.getNumQPairDef(
+            Option.Coord.Y_LIM,
+            def = null to null
+        ).let {
+            transformRange(it, transformY)
+        }
 
         return when (val coordName = getCoordName(coordOpts)) {
             // Flip the 'default' coord system.
@@ -54,17 +65,31 @@ object CoordConfig {
         return coordName
     }
 
-    private fun validateRange(r: DoubleSpan, t: Transform): DoubleSpan {
+    private fun transformRange(r: Pair<Number?, Number?>, t: Transform): Pair<Double?, Double?> {
         return when (t) {
             is ContinuousTransform -> {
-                val ar = t.toApplicableDomain(r)
-                DoubleSpan(
-                    t.apply(ar.lowerEnd)!!,
-                    t.apply(ar.upperEnd)!!
+                val first = r.first?.let { if (t.isInDomain(it)) it.toDouble() else null }
+                val second = r.second?.let { if (t.isInDomain(it)) it.toDouble() else null }
+
+                val (lower, upper) = if (first != null && second != null) {
+                    Pair(
+                        min(first, second),
+                        max(first, second)
+                    )
+                } else {
+                    Pair(first, second)
+                }
+
+                Pair(
+                    t.apply(lower),
+                    t.apply(upper)
                 )
             }
 
-            else -> r
+            else -> Pair(
+                r.first?.toDouble(),
+                r.second?.toDouble(),
+            )
         }
     }
 }

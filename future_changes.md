@@ -17,3 +17,4 @@
 - Bar width is too large when x-domain is defined via x-scale limits [[#1013](https://github.com/JetBrains/lets-plot/issues/1013)].
 - How to hide only main tooltip? [[LPK-#232](https://github.com/JetBrains/lets-plot-kotlin/issues/232)].
 - Make middle strip in `geomCrossbar()` optional [[LPK-#233](https://github.com/JetBrains/lets-plot-kotlin/issues/233)].
+- Can't set None for coord limit [[#486](https://github.com/JetBrains/lets-plot/issues/486)].

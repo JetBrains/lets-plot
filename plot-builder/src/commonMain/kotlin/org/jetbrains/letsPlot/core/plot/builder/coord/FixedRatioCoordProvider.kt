@@ -16,13 +16,13 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
  */
 internal open class FixedRatioCoordProvider(
     private val ratio: Double,
-    xLim: DoubleSpan?,
-    yLim: DoubleSpan?,
+    xLim: Pair<Double?, Double?>,
+    yLim: Pair<Double?, Double?>,
     flipped: Boolean
 ) : CoordProviderBase(xLim, yLim, flipped) {
     override fun with(
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
+        xLim: Pair<Double?, Double?>,
+        yLim: Pair<Double?, Double?>,
         flipped: Boolean
     ): CoordProvider {
         return FixedRatioCoordProvider(ratio, xLim, yLim, flipped)
