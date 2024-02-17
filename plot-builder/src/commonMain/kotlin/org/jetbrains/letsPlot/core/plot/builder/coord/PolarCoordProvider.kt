@@ -69,8 +69,7 @@ internal class PolarCoordProvider(
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
-        //return min(geomSize.x, geomSize.y).let { DoubleVector(it, it) }
-        return geomSize
+        return min(geomSize.x, geomSize.y).let { DoubleVector(it, it) }
     }
 
     override fun createCoordinateMapper(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinatesMapper {
