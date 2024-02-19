@@ -22,8 +22,8 @@ import kotlin.math.sin
 private const val R_EXPAND = 1.15
 
 internal class PolarCoordProvider(
-    xLim: DoubleSpan?,
-    yLim: DoubleSpan?,
+    xLim: Pair<Double?, Double?>,
+    yLim: Pair<Double?, Double?>,
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
@@ -33,7 +33,7 @@ internal class PolarCoordProvider(
     override val isLinear: Boolean = false
     override val isPolar: Boolean = true
 
-    override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
+    override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
     }
 
@@ -41,7 +41,36 @@ internal class PolarCoordProvider(
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, isHScaleContinuous = b)
     }
 
-    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+//    override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+//        val realDomain = domain.flipIf(flipped)
+//
+//        // Domain of a data without any adjustments (i.e. no expand).
+//        // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
+//        // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
+//
+//        val adjustedXRange = realDomain.xRange().let {
+//            // For discrete scale add extra segment by increasing domain by 1
+//            // so that the last point won't overlap with the first one
+//            // in contrast to the continuous scale where the last point
+//            // has the same coordinate as the first one
+//            // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
+//            val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
+//            DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
+//        }
+//
+//        val adjustedYRange = (yLim ?: realDomain.yRange()).let {
+//            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * R_EXPAND)
+//        }
+//
+//        return DoubleRectangle(
+//            xLim ?: adjustedXRange, //theta
+//            adjustedYRange // r
+//        )
+//    }
+
+    override fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
+        val domain = DoubleRectangle(xRange, yRange)
+
         val realDomain = domain.flipIf(flipped)
 
         // Domain of a data without any adjustments (i.e. no expand).
@@ -58,12 +87,16 @@ internal class PolarCoordProvider(
             DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
         }
 
-        val adjustedYRange = (yLim ?: realDomain.yRange()).let {
+//        val adjustedYRange = (yLim ?: realDomain.yRange()).let {
+//            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * R_EXPAND)
+//        }
+        val adjustedYRange = realDomain.yRange().let {
             DoubleSpan.withLowerEnd(it.lowerEnd, it.length * R_EXPAND)
         }
 
         return DoubleRectangle(
-            xLim ?: adjustedXRange, //theta
+//            xLim ?: adjustedXRange, //theta
+            adjustedXRange, //theta
             adjustedYRange // r
         )
     }

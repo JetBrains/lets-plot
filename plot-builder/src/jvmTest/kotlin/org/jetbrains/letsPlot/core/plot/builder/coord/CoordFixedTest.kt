@@ -26,8 +26,8 @@ internal class CoordFixedTest : CoordTestBase() {
         fun squareCoord(
             xDomain: DoubleSpan,
             yDomain: DoubleSpan,
-            xLim: DoubleSpan? = null,
-            yLim: DoubleSpan? = null,
+            xLim: Pair<Double?, Double?> = Pair(null, null),
+            yLim: Pair<Double?, Double?> = Pair(null, null),
             displaySize: DoubleVector
         ): DoubleVector {
             val coordProvider = CoordProviders.fixed(1.0, xLim, yLim)
@@ -40,8 +40,8 @@ internal class CoordFixedTest : CoordTestBase() {
         }
 
         fun squareCoord_0_25(
-            xLim: DoubleSpan? = null,
-            yLim: DoubleSpan? = null,
+            xLim: Pair<Double?, Double?> = Pair(null, null),
+            yLim: Pair<Double?, Double?> = Pair(null, null),
             displaySize: DoubleVector
         ): DoubleVector {
             return squareCoord(
@@ -64,7 +64,7 @@ internal class CoordFixedTest : CoordTestBase() {
             squareCoord(
                 xDomain = DoubleSpan(0.0, 40.0),
                 yDomain = DoubleSpan(0.0, 20.0),
-                xLim = DoubleSpan(0.0, 10.0),
+                xLim = Pair(0.0, 10.0),
                 displaySize = DoubleVector(40.0, 40.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(20.0, 40.0), geomSize)
@@ -93,7 +93,7 @@ internal class CoordFixedTest : CoordTestBase() {
 //            squareCoord(
 //                xDomain = DoubleSpan(100.0, 120.0),
 //                yDomain = DoubleSpan(0.0, 0.0),
-//                xLim = DoubleSpan(80.0, 140.0),
+//                xLim = Pair(80.0, 140.0),
 //                displaySize = DoubleVector(40.0, 40.0)
 //            ).let { geomSize ->
 //                assertEquals(DoubleVector(40.0, 0.0), geomSize)
@@ -103,7 +103,7 @@ internal class CoordFixedTest : CoordTestBase() {
             squareCoord(
                 xDomain = DoubleSpan(1.0, 2.0),
                 yDomain = DoubleSpan(-10.0, 10.0),
-                xLim = DoubleSpan(0.0, 40.0),
+                xLim = Pair(0.0, 40.0),
                 displaySize = DoubleVector(40.0, 40.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(40.0, 20.0), geomSize)
@@ -111,7 +111,7 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // xLim in range
             squareCoord_0_25(
-                xLim = DoubleSpan(1.0, 6.0),
+                xLim = Pair(1.0, 6.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(2.0, 10.0), geomSize)
@@ -119,7 +119,7 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // xLim wider than range
             squareCoord_0_25(
-                xLim = DoubleSpan(-15.0, 10.0),
+                xLim = Pair(-15.0, 10.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 10.0), geomSize)
@@ -127,7 +127,7 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // xLim out of range
             squareCoord_0_25(
-                xLim = DoubleSpan(-30.0, -5.0),
+                xLim = Pair(-30.0, -5.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 10.0), geomSize)
@@ -138,7 +138,7 @@ internal class CoordFixedTest : CoordTestBase() {
         run {
             // yLim in range
             squareCoord_0_25(
-                yLim = DoubleSpan(1.0, 6.0),
+                yLim = Pair(1.0, 6.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 2.0), geomSize)
@@ -146,7 +146,7 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // yLim wider than range
             squareCoord_0_25(
-                yLim = DoubleSpan(-15.0, 10.0),
+                yLim = Pair(-15.0, 10.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 10.0), geomSize)
@@ -154,7 +154,7 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // yLim out of range
             squareCoord_0_25(
-                yLim = DoubleSpan(-30.0, -5.0),
+                yLim = Pair(-30.0, -5.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 10.0), geomSize)
@@ -166,8 +166,8 @@ internal class CoordFixedTest : CoordTestBase() {
         run {
             // wider yLim
             squareCoord_0_25(
-                xLim = DoubleSpan(10.0, 15.0),
-                yLim = DoubleSpan(10.0, 20.0),
+                xLim = Pair(10.0, 15.0),
+                yLim = Pair(10.0, 20.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(5.0, 10.0), geomSize)
@@ -175,8 +175,8 @@ internal class CoordFixedTest : CoordTestBase() {
 
             // wider xLim
             squareCoord_0_25(
-                xLim = DoubleSpan(10.0, 20.0),
-                yLim = DoubleSpan(10.0, 15.0),
+                xLim = Pair(10.0, 20.0),
+                yLim = Pair(10.0, 15.0),
                 displaySize = DoubleVector(10.0, 10.0)
             ).let { geomSize ->
                 assertEquals(DoubleVector(10.0, 5.0), geomSize)

@@ -22,7 +22,11 @@ class PolarCoordTest {
     private val clientSize = DoubleVector(200.0, 200.0)
 
     private fun applyPolarTransform(start: Double, clockwise: Boolean): List<Vector> {
-        val polarCoordProvider = PolarCoordProvider(xLim = null, yLim = null, flipped = true, start, clockwise)
+        val polarCoordProvider = PolarCoordProvider(
+            xLim = Pair(null, null),
+            yLim = Pair(null, null),
+            flipped = true, start, clockwise
+        )
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
         val polarMapper = polarCoordProvider.createCoordinateMapper(
@@ -36,7 +40,11 @@ class PolarCoordTest {
     }
 
     private fun applyPolarScreenTransform(start: Double, clockwise: Boolean): List<Vector> {
-        val polarCoordProvider = PolarCoordProvider(xLim = null, yLim = null, flipped = true, start, clockwise)
+        val polarCoordProvider = PolarCoordProvider(
+            xLim = Pair(null, null),
+            yLim = Pair(null, null),
+            flipped = true, start, clockwise
+        )
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
         val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
