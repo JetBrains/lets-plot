@@ -134,7 +134,6 @@ internal class PolarFrameOfReferenceProvider(
             hScaleBreaks = hScale.getScaleBreaks(),
             vScaleBreaks = vScale.getScaleBreaks(),
             gridDomain,
-            adjustedDomain,
             coord,
             layoutInfo,
             marginsLayout,

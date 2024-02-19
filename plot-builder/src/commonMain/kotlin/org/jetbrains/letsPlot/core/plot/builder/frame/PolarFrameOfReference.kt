@@ -33,7 +33,6 @@ internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
     private val gridDomain: DoubleRectangle,
-    private val adjustedDomain: DoubleRectangle,
     coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -85,8 +84,8 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                val gridBounds = layoutInfo.geomContentBounds.origin
-                gridComponent.moveTo(gridBounds)
+                val gridOrigin = layoutInfo.geomContentBounds.origin
+                gridComponent.moveTo(gridOrigin)
                 parent.add(gridComponent)
             }
         }
@@ -97,8 +96,8 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                val gridBounds = layoutInfo.geomContentBounds.origin
-                gridComponent.moveTo(gridBounds)
+                val gridOrigin = layoutInfo.geomContentBounds.origin
+                gridComponent.moveTo(gridOrigin)
                 parent.add(gridComponent)
             }
         }
