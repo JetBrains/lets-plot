@@ -3,6 +3,11 @@
 ### Added
 - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`
 
+
+- The `scale_mapper_kind` parameter in `scale_*_continuous()` and `scale_*_discrete()` to specify the scale type 
+('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area').
+
+
 ### Changed
 
 - [BREAKING] Function `geom_image()` is removed. Please use `geom_imshow()` instead.  

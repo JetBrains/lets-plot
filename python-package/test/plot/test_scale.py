@@ -163,10 +163,10 @@ def test_scale_color_continuous_with_mapper_kind():
 
 
 def test_scale_continuous_with_non_color_aesthetic():
-    spec = gg.scale_continuous('x', scale_mapper_kind='color_gradient')
+    spec = gg.scale_continuous('size', scale_mapper_kind='size_area')
     as_dict = spec.as_dict()
-    assert as_dict['aesthetic'] == 'x'
-    assert 'scale_mapper_kind' not in as_dict
+    assert as_dict['aesthetic'] == 'size'
+    assert as_dict['scale_mapper_kind'] == 'size_area'
 
 
 def test_scale_color_discrete():

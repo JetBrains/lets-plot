@@ -707,8 +707,9 @@ def scale_continuous(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_gradient' for color scale
-        The type of color scale.
+    scale_mapper_kind : {'identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'}
+        The type of the scale.
+        If None (the default) and the scale is color, then 'color_gradient' will be used.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -739,8 +740,6 @@ def scale_continuous(aesthetic, *,
     """
     if _is_color_scale(aesthetic):
         scale_mapper_kind = 'color_gradient' if scale_mapper_kind is None else scale_mapper_kind
-    else:
-        scale_mapper_kind = None
 
     return _scale(aesthetic,
                   name=name,
@@ -795,8 +794,9 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_gradient'
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
+        If None (the default), then 'color_gradient' will be used.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -873,8 +873,9 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_gradient'
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
+        If None (the default), then 'color_gradient' will be used.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -1973,8 +1974,9 @@ def scale_discrete(aesthetic, *,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_brewer' for color scale
-        The type of color scale.
+    scale_mapper_kind : {'identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'}
+        The type of the scale.
+        If None (the default) and the scale is color, then 'color_brewer' will be used.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -2005,9 +2007,6 @@ def scale_discrete(aesthetic, *,
             scale_discrete(aesthetic=['color', 'fill'], guide='none')
 
     """
-    if not _is_color_scale(aesthetic):
-        scale_mapper_kind = None
-
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -2064,8 +2063,9 @@ def scale_fill_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_brewer'
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
+        If None (the default), then 'color_brewer' will be used.
     kwargs :
         Additional parameters for the specified scale type.
 
@@ -2145,8 +2145,9 @@ def scale_color_discrete(direction=None,
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
         For more info see https://lets-plot.org/pages/formats.html.
-    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}, default='color_brewer'
+    scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
+        If None (the default), then 'color_brewer' will be used.
     kwargs:
         Additional parameters for the specified scale type.
 
