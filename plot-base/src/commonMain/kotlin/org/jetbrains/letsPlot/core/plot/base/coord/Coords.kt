@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
-        coordMapper: CoordinatesMapper
+        coordMapper: CoordinatesMapper,
     ): CoordinateSystem {
         return DefaultCoordinateSystem(coordMapper)
     }

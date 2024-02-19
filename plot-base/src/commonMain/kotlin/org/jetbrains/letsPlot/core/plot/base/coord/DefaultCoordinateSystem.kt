@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 
 internal class DefaultCoordinateSystem(
-    private val coordMapper: CoordinatesMapper
+    private val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
 
     private val clientLeft = coordMapper.clientBounds.xRange().lowerEnd
