@@ -160,7 +160,7 @@ internal class PolarCoordProvider(
 }
 
 
-class PolarCoordinateSystem(
+class PolarCoordinateSystem internal constructor(
     private val coordinateSystem: CoordinateSystem,
     val startAngle: Double,
     val direction: Double

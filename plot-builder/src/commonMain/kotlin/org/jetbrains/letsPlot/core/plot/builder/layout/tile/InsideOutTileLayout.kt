@@ -49,6 +49,7 @@ internal class InsideOutTileLayout(
             geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
+            geomContentBounds = geomInnerBounds,
             axisInfos = axisInfos,
             hAxisShown = true,
             vAxisShown = true,

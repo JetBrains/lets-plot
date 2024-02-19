@@ -33,7 +33,6 @@ internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
     private val gridDomain: DoubleRectangle,
-    private val adjustedDomain: DoubleRectangle,
     coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -74,7 +73,7 @@ internal class PolarFrameOfReference(
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
         if (drawPanel) {
-            val panel = buildPanelComponent(geomBounds, panelTheme)
+            val panel = buildPanelComponent(layoutInfo.geomInnerBounds, panelTheme)
             parent.add(panel)
         }
 
@@ -85,8 +84,8 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                val gridBounds = geomBounds.origin
-                gridComponent.moveTo(gridBounds)
+                val gridOrigin = layoutInfo.geomContentBounds.origin
+                gridComponent.moveTo(gridOrigin)
                 parent.add(gridComponent)
             }
         }
@@ -97,8 +96,8 @@ internal class PolarFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                val gridBounds = geomBounds.origin
-                gridComponent.moveTo(gridBounds)
+                val gridOrigin = layoutInfo.geomContentBounds.origin
+                gridComponent.moveTo(gridOrigin)
                 parent.add(gridComponent)
             }
         }
@@ -117,7 +116,7 @@ internal class PolarFrameOfReference(
                     labelAdjustments = labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(layoutInfo.geomContentBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -137,7 +136,7 @@ internal class PolarFrameOfReference(
                     labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -215,7 +214,7 @@ internal class PolarFrameOfReference(
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
         )
 
-        val geomBounds = layoutInfo.geomInnerBounds
+        val geomBounds = layoutInfo.geomContentBounds
         layerComponent.moveTo(geomBounds.origin)
         layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
         return layerComponent

@@ -18,7 +18,7 @@ import javax.swing.*
 
 fun main() {
     // Plot spec can be set by PLOT_SPEC env var via IDEA run configuration.
-    val specJson = System.getenv("PLOT_SPEC")
+    val specString = System.getenv("PLOT_SPEC")
         ?: """
         {
             'kind': 'plot',
@@ -28,10 +28,11 @@ fun main() {
         }
         """.trimIndent()
 
-    // TODO: add pretty print for JsonSupport
+    val spec = parsePlotSpec(specString)
+    val specPrettyString = JsonSupport.formatJson(spec, pretty = true)
+
     val plotSpecDebugger = PlotSpecDebugger()
-    val spec = parsePlotSpec(specJson)
-    plotSpecDebugger.setSpec(JsonSupport.formatJson(spec, pretty = true))
+    plotSpecDebugger.setSpec(specPrettyString)
     plotSpecDebugger.evaluate()
     plotSpecDebugger.isVisible = true
 }

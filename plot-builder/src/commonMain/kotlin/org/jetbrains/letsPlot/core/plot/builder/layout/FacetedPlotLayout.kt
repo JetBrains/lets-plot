@@ -185,6 +185,7 @@ internal class FacetedPlotLayout(
                 geomWithAxisBounds = tileBounds.add(originDelta),
                 geomOuterBounds = geomOuterBounds.add(originDelta),
                 geomInnerBounds = geomInnerBounds.add(originDelta),
+                geomContentBounds = geomInnerBounds.add(originDelta),
                 layoutInfo.axisInfos,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,

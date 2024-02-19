@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
@@ -147,6 +148,7 @@ internal object PlotAssemblerUtil {
         vAxisPosition: AxisPosition,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
+        panelTheme: PanelTheme
     ): PlotLayout {
         return if (facets.isDefined) {
             FacetedPlotLayout(
@@ -170,7 +172,8 @@ internal object PlotAssemblerUtil {
                 hAxisPosition,
                 vAxisPosition,
                 hAxisTheme,
-                vAxisTheme
+                vAxisTheme,
+                panelTheme
             )
         }
     }
