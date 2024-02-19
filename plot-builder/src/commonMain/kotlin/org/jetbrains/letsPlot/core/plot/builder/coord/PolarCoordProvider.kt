@@ -27,7 +27,7 @@ internal class PolarCoordProvider(
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
-    private val isHScaleContinuous: Boolean = true
+    private val isHScaleContinuous: Boolean = true // TODO: remove
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean = false
@@ -83,7 +83,7 @@ internal class PolarCoordProvider(
             // in contrast to the continuous scale where the last point
             // has the same coordinate as the first one
             // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
-            val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
+            val upperExpand = if (isHScaleContinuous) 0.0 else 0.0
             DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
         }
 
