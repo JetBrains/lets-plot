@@ -23,9 +23,20 @@ internal object PlotConfigMapperProviders {
         val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
 
         val defaultProviders = aesSet.associateWith { DefaultMapperProvider[it] }
-        val configuredProviders = scaleConfigs.map {
+        val configuredProviders: MutableMap<Aes<*>, MapperProvider<*>> = scaleConfigs.associate {
             it.aes to it.createMapperProvider()
-        }.toMap()
+        }.toMutableMap()
+
+        // Use the configured SIZE and STROKE providers for SIZE_START/END and STROKE_START/END
+        // (e.g. scale_size_area() will also be applied to size_start and size_end)
+        configuredProviders[Aes.SIZE]?.let { sizeMapper ->
+            configuredProviders.getOrPut(Aes.SIZE_START) { sizeMapper }
+            configuredProviders.getOrPut(Aes.SIZE_END) { sizeMapper }
+        }
+        configuredProviders[Aes.STROKE]?.let { strokeMapper ->
+            configuredProviders.getOrPut(Aes.STROKE_START) { strokeMapper }
+            configuredProviders.getOrPut(Aes.STROKE_END) { strokeMapper }
+        }
 
         return defaultProviders + configuredProviders
     }

@@ -124,30 +124,10 @@ class SegmentAndCurve {
                         "range": [20.0, 30.0]
                     },
                     {
-                        "aesthetic": "size_start",
-                        "guide": "none",
-                        "range": [20.0, 30.0]
-                    },
-                    {
-                        "aesthetic": "size_end",
-                        "guide": "none",
-                        "range": [20.0, 30.0]
-                    },
-                    {
                         "aesthetic": "stroke",
                         "guide": "none",
                         "range": [0.0, 10.0]
                     },
-                    {
-                        "aesthetic": "stroke_start",
-                        "guide": "none",
-                        "range": [0.0, 10.0]
-                    },
-                    {
-                        "aesthetic": "stroke_end",
-                        "guide": "none",
-                        "range": [0.0, 10.0]
-                    },                                
                     {
                         "aesthetic": "shape",
                         "guide": "none",
