@@ -20,7 +20,7 @@ import kotlin.math.abs
 import kotlin.math.atan2
 
 object Locator : Locator {
-    override fun search(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
+    override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         if (!target.contains(PieSpecComponent::class)) {
             return null
         }

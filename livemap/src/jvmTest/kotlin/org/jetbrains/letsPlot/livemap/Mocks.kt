@@ -15,55 +15,53 @@ import org.jetbrains.letsPlot.livemap.LiveMapTestBase.*
 import org.jetbrains.letsPlot.livemap.chart.fragments.FragmentSpec
 import org.jetbrains.letsPlot.livemap.tile.Mocks.ViewportGridSpec
 import org.jetbrains.letsPlot.gis.geoprotocol.Fragment
-import org.jetbrains.letsPlot.livemap.World
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.fragment.*
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import java.util.*
 
 
 object Mocks {
-    fun viewportGrid(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): ViewportGridSpec {
+    fun viewportGrid(testBase: LiveMapTestBase): ViewportGridSpec {
         return ViewportGridSpec(testBase)
     }
 
-    fun changedFragments(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): ChangedFragmentsSpec {
+    fun changedFragments(testBase: LiveMapTestBase): ChangedFragmentsSpec {
         return ChangedFragmentsSpec(testBase)
     }
 
-    fun emittedFragments(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): EmittedFragmentsSpec {
+    fun emittedFragments(testBase: LiveMapTestBase): EmittedFragmentsSpec {
         return EmittedFragmentsSpec(testBase)
     }
 
-    fun cachedFragments(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): CachedFragmentsSpec {
+    fun cachedFragments(testBase: LiveMapTestBase): CachedFragmentsSpec {
         return CachedFragmentsSpec(testBase)
     }
 
-    fun emptyFragments(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): EmptyFragmentsSpec {
+    fun emptyFragments(testBase: LiveMapTestBase): EmptyFragmentsSpec {
         return EmptyFragmentsSpec(testBase)
     }
 
-    fun downloadingFragments(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): DownloadingFragmentsSpec {
+    fun downloadingFragments(testBase: LiveMapTestBase): DownloadingFragmentsSpec {
         return DownloadingFragmentsSpec(testBase)
     }
 
-    fun camera(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): CameraSpec {
+    fun camera(testBase: LiveMapTestBase): CameraSpec {
         return CameraSpec(testBase)
     }
 
-    fun scheduler(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): SchedulerSpec {
+    fun scheduler(testBase: LiveMapTestBase): SchedulerSpec {
         return testBase.schedulerSpec()
     }
 
-    fun repeatUpdate(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase): RepeatSpec {
+    fun repeatUpdate(testBase: LiveMapTestBase): RepeatSpec {
         return testBase.repeatSpec()
     }
 
-    fun cameraUpdate(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase?): CameraUpdateSpec {
+    fun cameraUpdate(testBase: LiveMapTestBase?): CameraUpdateSpec {
         return CameraUpdateSpec(testBase)
     }
 
-    class ChangedFragmentsSpec internal constructor(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
+    class ChangedFragmentsSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
 
         private var myRequested = emptyList<FragmentKey>()
         private var myObsolete = emptyList<FragmentKey>()
@@ -92,7 +90,7 @@ object Mocks {
         }
     }
 
-    class EmptyFragmentsSpec(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
+    class EmptyFragmentsSpec(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private val myEmptyFragments = HashSet<FragmentKey>()
 
         fun add(vararg specs: FragmentSpec): EmptyFragmentsSpec {
@@ -109,7 +107,7 @@ object Mocks {
     }
 
     @Suppress("unused")
-    class CachedFragmentsSpec internal constructor(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
+    class CachedFragmentsSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private val myAddedFragments = HashMap<FragmentKey, EcsEntity>()
         private val myRemovedFragments = HashSet<FragmentKey>()
 
@@ -139,7 +137,7 @@ object Mocks {
         }
     }
 
-    class EmittedFragmentsSpec internal constructor(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
+    class EmittedFragmentsSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private val myReceivedFragments = HashSet<FragmentKey>()
 
         fun add(vararg fragmentSpecs: FragmentSpec): EmittedFragmentsSpec {
@@ -160,7 +158,7 @@ object Mocks {
         }
     }
 
-    class CameraUpdateSpec internal constructor(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase?) : MockSpec(testBase!!) {
+    class CameraUpdateSpec internal constructor(testBase: LiveMapTestBase?) : MockSpec(testBase!!) {
         private var myNone = false
         private var myIntegerZoomChanged = false
         private var myFractionZoomChanged = false
@@ -211,8 +209,8 @@ object Mocks {
         }
     }
 
-    class CameraSpec internal constructor(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
-        private var myPosition: Vec<org.jetbrains.letsPlot.livemap.World>? = null
+    class CameraSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
+        private var myPosition: Vec<World>? = null
         private var myZoom: Double? = null
 
         fun zoom(zoom: Double): CameraSpec {
@@ -220,7 +218,7 @@ object Mocks {
             return this
         }
 
-        fun position(p: org.jetbrains.letsPlot.livemap.WorldPoint): CameraSpec {
+        fun position(p: WorldPoint): CameraSpec {
             myPosition = p
             return this
         }
@@ -231,7 +229,7 @@ object Mocks {
         }
     }
 
-    class DownloadingFragmentsSpec(testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) : MockSpec(testBase) {
+    class DownloadingFragmentsSpec(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private var myDownloaded: MutableMap<FragmentKey, MultiPolygon<Untyped>> = HashMap()
 
         fun downloaded(vararg downloaded: FragmentSpec): DownloadingFragmentsSpec {

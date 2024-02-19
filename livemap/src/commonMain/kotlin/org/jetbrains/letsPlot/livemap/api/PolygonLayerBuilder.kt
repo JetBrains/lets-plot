@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.LocatorComponent
@@ -91,7 +92,7 @@ class PolygonEntityBuilder(
         val worldGeometry = transform(geometry!!, myMapProjection::apply, resamplingPrecision = null)
         val worldBbox = worldGeometry.bbox ?: error("Polygon bbox can't be null")
 
-        myFactory.incrementLayerPointsTotalCount(worldGeometry.sumOf { poly -> poly.sumOf(Ring<org.jetbrains.letsPlot.livemap.World>::size) })
+        myFactory.incrementLayerPointsTotalCount(worldGeometry.sumOf { poly -> poly.sumOf(Ring<World>::size) })
 
         return myFactory
             .createFeature("map_ent_s_polygon")

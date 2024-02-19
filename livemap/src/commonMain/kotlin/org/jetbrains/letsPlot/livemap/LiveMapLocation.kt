@@ -34,8 +34,8 @@ class LiveMapLocation(
             return DoubleRectangle(nw.x, se.y, se.x - nw.x, nw.y - se.y)
         }
 
-    private fun worldToLonLat(worldCoord: org.jetbrains.letsPlot.livemap.WorldPoint): LonLatPoint? {
-        val coord: Vec<org.jetbrains.letsPlot.livemap.World>
+    private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint? {
+        val coord: Vec<World>
         val shift: LonLatPoint
         val worldSize = myMapProjection.mapRect.dimension
 

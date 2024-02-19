@@ -19,10 +19,10 @@ import org.jetbrains.letsPlot.livemap.core.layers.LayerKind.UI
 abstract class LayerManager {
     abstract fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent
     abstract fun removeLayer(canvasLayer: CanvasLayer)
-    abstract fun pan(offset: Vec<org.jetbrains.letsPlot.livemap.Client>, dirtyLayers: List<CanvasLayer>)
+    abstract fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>)
     abstract fun repaint(dirtyLayers: List<CanvasLayer>)
 
-    protected abstract fun repaintLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client> = org.jetbrains.letsPlot.livemap.Client.ZERO_VEC)
+    protected abstract fun repaintLayer(layer: CanvasLayer, offset: Vec<Client> = Client.ZERO_VEC)
 
     private val children = HashMap<LayerKind, MutableList<CanvasLayer>>()
     val layers: MutableList<CanvasLayer> = mutableListOf()
@@ -43,9 +43,9 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
     private val singleCanvasControl: SingleCanvasControl = SingleCanvasControl(canvasControl)
     private val rect: DoubleRectangle = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
     private val myBackingStore = mutableMapOf<CanvasLayer, Canvas.Snapshot>()
-    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<org.jetbrains.letsPlot.livemap.Client>>()
+    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<Client>>()
 
-    override fun pan(offset: Vec<org.jetbrains.letsPlot.livemap.Client>, dirtyLayers: List<CanvasLayer>) {
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>) {
         singleCanvasControl.context.clearRect(rect)
 
         layers.forEach { layer ->
@@ -72,10 +72,10 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
         }
     }
 
-    private fun panLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client>) {
+    private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
         when (layer.kind) {
-            UI -> org.jetbrains.letsPlot.livemap.Client.ZERO_VEC
-            else -> offset - (myPanningOffsets[layer] ?: org.jetbrains.letsPlot.livemap.Client.ZERO_VEC)
+            UI -> Client.ZERO_VEC
+            else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
         }.let { p ->
             myBackingStore[layer]?.let { snapshot ->
                 singleCanvasControl.context.drawImage(snapshot, p)
@@ -83,7 +83,7 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
         }
     }
 
-    override fun repaintLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client>) {
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
         layer.clear()
         layer.render()
         myBackingStore[layer] = layer.snapshot()
@@ -105,9 +105,9 @@ class ScreenLayerManager(
     private val canvasControl: CanvasControl,
 ) : LayerManager() {
     private val myBackingStore = mutableMapOf<CanvasLayer, Canvas.Snapshot>()
-    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<org.jetbrains.letsPlot.livemap.Client>>()
+    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<Client>>()
 
-    override fun pan(offset: Vec<org.jetbrains.letsPlot.livemap.Client>, dirtyLayers: List<CanvasLayer>) {
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>) {
         layers.forEach { layer ->
             when (layer.panningPolicy) {
                 PanningPolicy.COPY -> panLayer(layer, offset)
@@ -151,20 +151,20 @@ class ScreenLayerManager(
         remove(canvasLayer)
     }
 
-    private fun panLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client>) {
+    private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
         when (layer.kind) {
             UI -> {}
             else -> {
                 myBackingStore.getOrPut(layer, layer::snapshot)
                     .let { snapshot ->
                         layer.clear()
-                        layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: org.jetbrains.letsPlot.livemap.Client.ZERO_VEC))
+                        layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC))
                 }
             }
         }
     }
 
-    override fun repaintLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client>) {
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
         layer.clear()
         layer.render()
     }

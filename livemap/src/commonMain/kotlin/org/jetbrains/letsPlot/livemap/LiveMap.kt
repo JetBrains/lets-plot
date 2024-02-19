@@ -71,7 +71,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportPositionUpdateS
 import org.jetbrains.letsPlot.livemap.ui.*
 
 class LiveMap(
-    private val myMapRuler: MapRuler<org.jetbrains.letsPlot.livemap.World>,
+    private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
     private val layers: List<FeatureLayerBuilder.() -> Unit>,
@@ -79,7 +79,7 @@ class LiveMap(
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
-    private val myMapLocationRect: Async<Rect<org.jetbrains.letsPlot.livemap.World>>?,
+    private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
     private val myAttribution: String?,
     private val myShowCoordPickTools: Boolean,

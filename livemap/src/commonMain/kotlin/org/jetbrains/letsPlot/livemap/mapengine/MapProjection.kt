@@ -10,6 +10,6 @@ import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.core.UnsafeTransform
 
-interface MapProjection : UnsafeTransform<LonLatPoint, org.jetbrains.letsPlot.livemap.WorldPoint> {
-    val mapRect: org.jetbrains.letsPlot.livemap.WorldRectangle
+interface MapProjection : UnsafeTransform<LonLatPoint, WorldPoint> {
+    val mapRect: WorldRectangle
 }

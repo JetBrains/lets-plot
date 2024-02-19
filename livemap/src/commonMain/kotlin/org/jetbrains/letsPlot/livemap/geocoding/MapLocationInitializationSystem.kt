@@ -25,11 +25,11 @@ import kotlin.math.min
 class MapLocationInitializationSystem(
     componentManager: EcsComponentManager,
     private val myZoom: Double?,
-    private val myLocationRect: Async<Rect<org.jetbrains.letsPlot.livemap.World>>?
+    private val myLocationRect: Async<Rect<World>>?
 ) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myLocation: LocationComponent
     private lateinit var myViewport: Viewport
-    private lateinit var myDefaultLocation: List<Rect<org.jetbrains.letsPlot.livemap.World>>
+    private lateinit var myDefaultLocation: List<Rect<World>>
     private var myNeedLocation = true
 
     override fun initImpl(context: LiveMapContext) {
@@ -63,7 +63,7 @@ class MapLocationInitializationSystem(
         }
     }
 
-    private fun Rect<org.jetbrains.letsPlot.livemap.World>.calculatePosition(positionConsumer: (zoom: Double, coordinates: Vec<org.jetbrains.letsPlot.livemap.World>) -> Unit) {
+    private fun Rect<World>.calculatePosition(positionConsumer: (zoom: Double, coordinates: Vec<World>) -> Unit) {
         val zoom: Double = myZoom
             ?: if (dimension.x != 0.0 || dimension.y != 0.0) {
                 calculateMaxZoom(dimension, myViewport.size)
@@ -77,7 +77,7 @@ class MapLocationInitializationSystem(
         positionConsumer(zoom, center)
     }
 
-    private fun initMapPoisition(ctx: LiveMapContext, zoom: Double, coordinates: Vec<org.jetbrains.letsPlot.livemap.World>) {
+    private fun initMapPoisition(ctx: LiveMapContext, zoom: Double, coordinates: Vec<World>) {
         val integerZoom = floor(zoom)
         ctx.camera.requestZoom(integerZoom)
         ctx.camera.requestPosition(coordinates)
@@ -86,7 +86,7 @@ class MapLocationInitializationSystem(
         ctx.initialZoom = integerZoom.toInt()
     }
 
-    private fun calculateMaxZoom(rectSize: Vec<org.jetbrains.letsPlot.livemap.World>, containerSize: Vec<org.jetbrains.letsPlot.livemap.Client>): Double {
+    private fun calculateMaxZoom(rectSize: Vec<World>, containerSize: Vec<Client>): Double {
         val xZoom = calculateMaxZoom(rectSize.x, containerSize.x)
         val yZoom = calculateMaxZoom(rectSize.y, containerSize.y)
         val zoom = min(xZoom, yZoom)

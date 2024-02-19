@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.Utils.square
 import org.jetbrains.letsPlot.gis.geoprotocol.Boundary
 import org.jetbrains.letsPlot.livemap.World
-import org.jetbrains.letsPlot.livemap.config.createMapProjection
 import org.jetbrains.letsPlot.livemap.core.Geographic
 import org.jetbrains.letsPlot.livemap.core.Projections.mercator
 import org.jetbrains.letsPlot.livemap.geometry.MicroTasks.transform
@@ -27,7 +26,7 @@ class MapProjectionTest {
     fun simplePointProjection() {
         val mapProjection = createMapProjection(mercator())
         assertThat(mapProjection.apply(Vec<LonLat>(0, 0)))
-            .isEqualTo(Vec<org.jetbrains.letsPlot.livemap.World>(x=127.99999999999999, y=127.99999999999997))
+            .isEqualTo(Vec<World>(x=127.99999999999999, y=127.99999999999997))
     }
 
     @Test

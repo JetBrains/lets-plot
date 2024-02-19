@@ -117,7 +117,7 @@ class FragmentEmitSystem(
 
         val projector = MicroTasks
             .resample(boundaries, mapProjection::apply)
-            .map { worldMultiPolygon: MultiPolygon<org.jetbrains.letsPlot.livemap.World> ->
+            .map { worldMultiPolygon: MultiPolygon<World> ->
                 val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
                 runLaterBySystem(fragmentEntity) { theEntity ->
                     theEntity

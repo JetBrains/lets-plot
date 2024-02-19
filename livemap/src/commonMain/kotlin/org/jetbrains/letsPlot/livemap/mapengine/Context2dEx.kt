@@ -14,13 +14,13 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.ClientPoint
 
 fun Context2d.scale(scale: DoubleVector) = scale(scale.x, scale.y)
-fun Context2d.scale(scale: org.jetbrains.letsPlot.livemap.ClientPoint) = scale(scale.x, scale.y)
+fun Context2d.scale(scale: ClientPoint) = scale(scale.x, scale.y)
 
 fun <T> Context2d.moveTo(p: Vec<T>) = moveTo(p.x, p.y)
 fun <T> Context2d.lineTo(p: Vec<T>) = lineTo(p.x, p.y)
 fun <T> Context2d.translate(p: Vec<T>) = translate(p.x, p.y)
-fun Context2d.fillRect(r: Rect<org.jetbrains.letsPlot.livemap.Client>) = fillRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
-fun Context2d.strokeRect(r: Rect<org.jetbrains.letsPlot.livemap.Client>) = strokeRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
+fun Context2d.fillRect(r: Rect<Client>) = fillRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
+fun Context2d.strokeRect(r: Rect<Client>) = strokeRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
 
 fun <T> Context2d.drawMultiPolygon(geometry: MultiPolygon<T>, afterPolygon: (Context2d) -> Unit) {
     for (polygon in geometry) {

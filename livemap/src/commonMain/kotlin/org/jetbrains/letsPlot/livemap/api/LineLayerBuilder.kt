@@ -25,7 +25,6 @@ import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
 import org.jetbrains.letsPlot.livemap.mapengine.RenderableComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldDimensionComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 @LiveMapDsl
 class LineLayerBuilder(
@@ -99,7 +98,7 @@ class LineEntityBuilder(
 
 }
 
-private fun createLineGeometry(point: org.jetbrains.letsPlot.livemap.WorldPoint, horizontal: Boolean, mapRect: org.jetbrains.letsPlot.livemap.WorldRectangle): LineString<org.jetbrains.letsPlot.livemap.World> =
+private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): LineString<World> =
     if (horizontal) {
         LineString.of(point.transform(newX = { mapRect.scalarLeft }), point.transform(newX = { mapRect.scalarRight }))
     } else {
@@ -107,18 +106,18 @@ private fun createLineGeometry(point: org.jetbrains.letsPlot.livemap.WorldPoint,
     }
 
 private fun createLineBBox(
-    point: org.jetbrains.letsPlot.livemap.WorldPoint,
+    point: WorldPoint,
     strokeWidth: Double,
     horizontal: Boolean,
-    mapRect: org.jetbrains.letsPlot.livemap.WorldRectangle,
-): org.jetbrains.letsPlot.livemap.WorldRectangle {
+    mapRect: WorldRectangle,
+): WorldRectangle {
     return if (horizontal) {
-        org.jetbrains.letsPlot.livemap.WorldRectangle(
+        WorldRectangle(
             explicitVec(mapRect.left, point.y - strokeWidth / 2),
             explicitVec(mapRect.width, strokeWidth)
         )
     } else {
-        org.jetbrains.letsPlot.livemap.WorldRectangle(
+        WorldRectangle(
             explicitVec(point.x - strokeWidth / 2, mapRect.top),
             explicitVec(strokeWidth, mapRect.height)
         )

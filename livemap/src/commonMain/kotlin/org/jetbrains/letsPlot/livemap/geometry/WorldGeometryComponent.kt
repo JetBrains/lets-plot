@@ -10,5 +10,5 @@ import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 
 class WorldGeometryComponent : EcsComponent {
-    lateinit var geometry: Geometry<org.jetbrains.letsPlot.livemap.World>
+    lateinit var geometry: Geometry<World>
 }

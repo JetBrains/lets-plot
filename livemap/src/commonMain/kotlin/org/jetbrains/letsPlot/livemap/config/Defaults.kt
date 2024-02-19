@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.livemap.core.GeoProjection
 const val MIN_ZOOM = 1
 const val MAX_ZOOM = 15
 const val TILE_PIXEL_SIZE = 256.0
-val WORLD_RECTANGLE = Rect.XYWH<org.jetbrains.letsPlot.livemap.World>(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
+val WORLD_RECTANGLE = Rect.XYWH<World>(0.0, 0.0, TILE_PIXEL_SIZE, TILE_PIXEL_SIZE)
 val DEFAULT_LOCATION = GeoRectangle(-124.76, 25.52, -66.94, 49.39)
 
 fun createMapProjection(geoProjection: GeoProjection) =

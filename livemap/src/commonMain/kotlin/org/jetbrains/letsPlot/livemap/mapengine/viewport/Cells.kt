@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
 
-typealias CellKey = QuadKey<org.jetbrains.letsPlot.livemap.World>
+typealias CellKey = QuadKey<World>
 
 fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Set<QuadKey<LonLat>> {
     val cellRect = cellKey.computeRect(mapProjection.mapRect)

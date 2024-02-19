@@ -8,14 +8,13 @@ package org.jetbrains.letsPlot.livemap.chart.donut
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.livemap.chart.SearchTestHelper
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.ClientPoint
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.PieSpecComponent
-import org.jetbrains.letsPlot.livemap.chart.donut.Locator
+import org.jetbrains.letsPlot.livemap.chart.SearchTestHelper
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
@@ -30,8 +29,8 @@ import kotlin.math.abs
 import kotlin.test.assertEquals
 
 class PieLocatorTest {
-    private val viewport = Viewport(ViewportHelper(org.jetbrains.letsPlot.livemap.World.DOMAIN, true, myLoopY = false),
-        org.jetbrains.letsPlot.livemap.ClientPoint(256, 256), 1, 15).apply {
+    private val viewport = Viewport(ViewportHelper(World.DOMAIN, true, myLoopY = false),
+        ClientPoint(256, 256), 1, 15).apply {
         position = Vec(128, 128)
         zoom = 6
     }
@@ -39,7 +38,7 @@ class PieLocatorTest {
     private val locator = Locator
     private val r = 10.0
     private val entities = createPie(listOf(2.0, 2.0, 2.0, 2.0))
-    private val pieCenter: Vec<org.jetbrains.letsPlot.livemap.Client> = Vec(128, 128)
+    private val pieCenter: Vec<Client> = Vec(128, 128)
 
     private fun createPie(vals: List<Double>): List<EcsEntity> {
         val pies = ArrayList<EcsEntity>()
@@ -62,7 +61,7 @@ class PieLocatorTest {
         return pies
     }
 
-    private fun checkMouseInPieSector(expectedSector: Int, mouseCoord: Vec<org.jetbrains.letsPlot.livemap.Client>) {
+    private fun checkMouseInPieSector(expectedSector: Int, mouseCoord: Vec<Client>) {
         assertEquals(
             expectedSector,
             SearchTestHelper.getTargetUnderCoord(mouseCoord, locator, entities, RenderHelper(viewport))

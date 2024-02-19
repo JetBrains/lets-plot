@@ -52,7 +52,7 @@ class GrowingPathTest {
     private lateinit var myAnimationComponent: AnimationComponent
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
-    private fun p(x: Double, y: Double): Vec<org.jetbrains.letsPlot.livemap.World> {
+    private fun p(x: Double, y: Double): Vec<World> {
         return explicitVec(x, y)
     }
 
@@ -64,7 +64,7 @@ class GrowingPathTest {
         return v.map(::index)
     }
 
-    private fun interpolated(i: Int, p: Vec<org.jetbrains.letsPlot.livemap.Client>): EffectState {
+    private fun interpolated(i: Int, p: Vec<Client>): EffectState {
         return EffectState(i, p)
     }
 
@@ -122,7 +122,7 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createEffect(vararg points: Vec<org.jetbrains.letsPlot.livemap.World>) {
+    private fun createEffect(vararg points: Vec<World>) {
         myComponentManager.createEntity("effect")
             .addComponents {
                 + myGrowingPathEffectComponent
@@ -216,7 +216,7 @@ class GrowingPathTest {
         )
     }
 
-    internal data class EffectState(private val endIndex: Int, private val endPoint: Vec<org.jetbrains.letsPlot.livemap.Client>?)
+    internal data class EffectState(private val endIndex: Int, private val endPoint: Vec<Client>?)
 }
 
 private fun <TypeT> Vec<TypeT>.roundDecimals(places: Int): Vec<TypeT> {

@@ -17,23 +17,23 @@ import kotlin.math.min
 
 open class Viewport internal constructor(
     private val helper: ViewportHelper,
-    val size: org.jetbrains.letsPlot.livemap.ClientPoint,
+    val size: ClientPoint,
     val minZoom: Int,
     val maxZoom: Int
 ) {
-    private val zoomTransform = Transforms.zoom<org.jetbrains.letsPlot.livemap.World, org.jetbrains.letsPlot.livemap.Client> { zoom }
-    private val viewportTransform = object : Transform<org.jetbrains.letsPlot.livemap.WorldPoint, org.jetbrains.letsPlot.livemap.ClientPoint> {
-        override fun apply(v: org.jetbrains.letsPlot.livemap.WorldPoint): org.jetbrains.letsPlot.livemap.ClientPoint = zoomTransform.apply(v) - zoomTransform.apply(position) + center
-        override fun invert(v: org.jetbrains.letsPlot.livemap.ClientPoint): org.jetbrains.letsPlot.livemap.WorldPoint = zoomTransform.invert(v) - zoomTransform.invert(center) + position
+    private val zoomTransform = Transforms.zoom<World, Client> { zoom }
+    private val viewportTransform = object : Transform<WorldPoint, ClientPoint> {
+        override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v) - zoomTransform.apply(position) + center
+        override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v) - zoomTransform.invert(center) + position
     }
 
-    val center: org.jetbrains.letsPlot.livemap.ClientPoint = size / 2.0
-    private var windowSize = org.jetbrains.letsPlot.livemap.World.ZERO_VEC
-    private var windowOrigin = org.jetbrains.letsPlot.livemap.World.ZERO_VEC
-    var window: org.jetbrains.letsPlot.livemap.WorldRectangle =
-        org.jetbrains.letsPlot.livemap.WorldRectangle(
-            org.jetbrains.letsPlot.livemap.World.ZERO_VEC,
-            org.jetbrains.letsPlot.livemap.World.ZERO_VEC
+    val center: ClientPoint = size / 2.0
+    private var windowSize = World.ZERO_VEC
+    private var windowOrigin = World.ZERO_VEC
+    var window: WorldRectangle =
+        WorldRectangle(
+            World.ZERO_VEC,
+            World.ZERO_VEC
         )
         private set
 
@@ -41,14 +41,14 @@ open class Viewport internal constructor(
         set(zoom) {
             field = max(minZoom, min(zoom, maxZoom))
             windowSize = zoomTransform.invert(size)
-            windowOrigin = viewportTransform.invert(org.jetbrains.letsPlot.livemap.Client.ZERO_VEC)
+            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
             updateWindow()
         }
 
-    open var position: org.jetbrains.letsPlot.livemap.WorldPoint = org.jetbrains.letsPlot.livemap.World.ZERO_VEC
+    open var position: WorldPoint = World.ZERO_VEC
         set(value) {
             field = helper.normalize(value)
-            windowOrigin = viewportTransform.invert(org.jetbrains.letsPlot.livemap.Client.ZERO_VEC)
+            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
             updateWindow()
         }
 
@@ -60,29 +60,29 @@ open class Viewport internal constructor(
     }
 
 
-    fun getMapCoord(viewCoord: org.jetbrains.letsPlot.livemap.ClientPoint): org.jetbrains.letsPlot.livemap.WorldPoint = helper.normalize(viewportTransform.invert(viewCoord))
-    fun getViewCoord(mapCoord: org.jetbrains.letsPlot.livemap.WorldPoint): org.jetbrains.letsPlot.livemap.ClientPoint = viewportTransform.apply(mapCoord)
-    fun toClientDimension(dimension: org.jetbrains.letsPlot.livemap.WorldPoint): org.jetbrains.letsPlot.livemap.ClientPoint = zoomTransform.apply(dimension)
-    fun toWorldDimension(dimension: org.jetbrains.letsPlot.livemap.ClientPoint): org.jetbrains.letsPlot.livemap.WorldPoint = zoomTransform.invert(dimension)
-    fun calculateBoundingBox(bBoxes: List<Rect<org.jetbrains.letsPlot.livemap.World>>): Rect<org.jetbrains.letsPlot.livemap.World> = helper.calculateBoundingBox(bBoxes)
+    fun getMapCoord(viewCoord: ClientPoint): WorldPoint = helper.normalize(viewportTransform.invert(viewCoord))
+    fun getViewCoord(mapCoord: WorldPoint): ClientPoint = viewportTransform.apply(mapCoord)
+    fun toClientDimension(dimension: WorldPoint): ClientPoint = zoomTransform.apply(dimension)
+    fun toWorldDimension(dimension: ClientPoint): WorldPoint = zoomTransform.invert(dimension)
+    fun calculateBoundingBox(bBoxes: List<Rect<World>>): Rect<World> = helper.calculateBoundingBox(bBoxes)
 
-    fun getMapOrigins(): List<org.jetbrains.letsPlot.livemap.ClientPoint> {
-        val origin = getViewCoord(org.jetbrains.letsPlot.livemap.World.ZERO_VEC)
-        val dim = toClientDimension(org.jetbrains.letsPlot.livemap.World.DOMAIN.dimension)
+    fun getMapOrigins(): List<ClientPoint> {
+        val origin = getViewCoord(World.ZERO_VEC)
+        val dim = toClientDimension(World.DOMAIN.dimension)
         return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dim))
             .let { helper.getOrigins(it, window) }
             .map(::getViewCoord)
     }
 
     private fun updateWindow() {
-        window = org.jetbrains.letsPlot.livemap.WorldRectangle(windowOrigin, windowSize)
+        window = WorldRectangle(windowOrigin, windowSize)
     }
 
     companion object {
         fun create(
             helper: ViewportHelper,
-            size: org.jetbrains.letsPlot.livemap.ClientPoint,
-            position: org.jetbrains.letsPlot.livemap.WorldPoint,
+            size: ClientPoint,
+            position: WorldPoint,
             minZoom: Int,
             maxZoom: Int
         ): Viewport {
@@ -91,8 +91,8 @@ open class Viewport internal constructor(
             }
         }
 
-        fun toClientDimension(dimension: org.jetbrains.letsPlot.livemap.WorldPoint, zoom: Int): org.jetbrains.letsPlot.livemap.ClientPoint {
-            return Transforms.zoom<org.jetbrains.letsPlot.livemap.World, org.jetbrains.letsPlot.livemap.Client> { zoom }.apply(dimension)
+        fun toClientDimension(dimension: WorldPoint, zoom: Int): ClientPoint {
+            return Transforms.zoom<World, Client> { zoom }.apply(dimension)
         }
     }
 }

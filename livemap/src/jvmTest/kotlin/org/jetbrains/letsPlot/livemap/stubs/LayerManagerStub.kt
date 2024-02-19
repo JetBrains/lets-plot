@@ -18,8 +18,8 @@ class LayerManagerStub: LayerManager() {
     }
 
     override fun removeLayer(canvasLayer: CanvasLayer): Unit = TODO("Not yet implemented")
-    override fun pan(offset: Vec<org.jetbrains.letsPlot.livemap.Client>, dirtyLayers: List<CanvasLayer>): Unit = TODO("Not yet implemented")
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>): Unit = TODO("Not yet implemented")
     override fun repaint(dirtyLayers: List<CanvasLayer>): Unit = TODO("Not yet implemented")
-    override fun repaintLayer(layer: CanvasLayer, offset: Vec<org.jetbrains.letsPlot.livemap.Client>): Unit = TODO("Not yet implemented")
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>): Unit = TODO("Not yet implemented")
 }
 

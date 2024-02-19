@@ -17,10 +17,9 @@ import org.jetbrains.letsPlot.livemap.mapengine.placement.ScreenDimensionCompone
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
 import org.jetbrains.letsPlot.livemap.mapengine.translate
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 class BasemapCellRenderer : Renderer {
-    private lateinit var myCellRect: Rect<org.jetbrains.letsPlot.livemap.Client>
+    private lateinit var myCellRect: Rect<Client>
     private lateinit var myCtx: Context2d
 
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
@@ -29,11 +28,11 @@ class BasemapCellRenderer : Renderer {
 
         entity.get<ScreenDimensionComponent>()
             .dimension
-            .run { Rect.XYWH(org.jetbrains.letsPlot.livemap.Client.ZERO_VEC, this) }
+            .run { Rect.XYWH(Client.ZERO_VEC, this) }
             .run { render(tile, this, ctx) }
     }
 
-    internal fun render(tile: Tile, cellRect: Rect<org.jetbrains.letsPlot.livemap.Client>, ctx: Context2d) {
+    internal fun render(tile: Tile, cellRect: Rect<Client>, ctx: Context2d) {
         myCellRect = cellRect
         myCtx = ctx
         renderTile(

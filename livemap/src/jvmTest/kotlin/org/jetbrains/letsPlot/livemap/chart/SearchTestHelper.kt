@@ -7,20 +7,18 @@ package org.jetbrains.letsPlot.livemap.chart
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.livemap.Client
-import org.jetbrains.letsPlot.livemap.chart.HoverObject
-import org.jetbrains.letsPlot.livemap.chart.Locator
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 
 object SearchTestHelper {
     const val UNDEFINED_SECTOR = -1
 
-    private fun isTargetUnderCoord(mouseCoord: Vec<org.jetbrains.letsPlot.livemap.Client>, locator: Locator, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
+    private fun isTargetUnderCoord(mouseCoord: Vec<Client>, locator: Locator, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         return locator.search(mouseCoord, target, renderHelper)
     }
 
     fun getTargetUnderCoord(
-        mouseCoord: Vec<org.jetbrains.letsPlot.livemap.Client>,
+        mouseCoord: Vec<Client>,
         locator: Locator,
         targets: List<EcsEntity>,
         renderHelper: RenderHelper

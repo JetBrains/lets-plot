@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.livemap.geocoding.MapLocationGeocoder
 
 interface MapLocation {
 
-    fun getBBox(geocoder: MapLocationGeocoder): Async<Rect<org.jetbrains.letsPlot.livemap.World>>
+    fun getBBox(geocoder: MapLocationGeocoder): Async<Rect<World>>
 
     companion object {
         fun create(geoRectangle: GeoRectangle): MapLocation {

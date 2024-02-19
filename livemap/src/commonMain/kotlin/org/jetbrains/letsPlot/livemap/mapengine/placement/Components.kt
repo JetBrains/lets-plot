@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 
-class WorldDimensionComponent(var dimension: org.jetbrains.letsPlot.livemap.WorldPoint) : EcsComponent
-class WorldOriginComponent(var origin: org.jetbrains.letsPlot.livemap.WorldPoint) : EcsComponent
+class WorldDimensionComponent(var dimension: WorldPoint) : EcsComponent
+class WorldOriginComponent(var origin: WorldPoint) : EcsComponent
 
 class ScreenDimensionComponent : EcsComponent {
-    var dimension: Vec<org.jetbrains.letsPlot.livemap.Client> = org.jetbrains.letsPlot.livemap.Client.ZERO_VEC
+    var dimension: Vec<Client> = Client.ZERO_VEC
 }

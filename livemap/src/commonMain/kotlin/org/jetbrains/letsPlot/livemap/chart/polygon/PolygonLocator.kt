@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 
 object PolygonLocator : Locator {
 
-    override fun search(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
+    override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         if (target.contains<RegionFragmentsComponent>()) {
             target.get<RegionFragmentsComponent>().fragments.forEach { fragment ->
                 if (isCoordinateOnEntity(coord, fragment, renderHelper)) {
@@ -52,7 +52,7 @@ object PolygonLocator : Locator {
     // but only highest polygon is visible and actually hovered.
     override fun reduce(hoverObjects: Collection<HoverObject>) = hoverObjects.maxByOrNull(HoverObject::index)
 
-    private fun isCoordinateOnEntity(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): Boolean {
+    private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): Boolean {
         if (!target.contains(WorldGeometryComponent::class)) {
             return false
         }
@@ -62,7 +62,7 @@ object PolygonLocator : Locator {
 
     }
 
-    private fun isCoordinateInPolygon(coord: Vec<org.jetbrains.letsPlot.livemap.World>, multiPolygon: MultiPolygon<org.jetbrains.letsPlot.livemap.World>): Boolean {
+    private fun isCoordinateInPolygon(coord: Vec<World>, multiPolygon: MultiPolygon<World>): Boolean {
         for (polygon in multiPolygon) {
             if (polygon.bbox?.contains(coord) == false) {
                 continue

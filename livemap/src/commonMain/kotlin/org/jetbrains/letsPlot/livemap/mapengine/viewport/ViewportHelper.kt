@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.core.MapRuler
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
@@ -22,10 +21,10 @@ import kotlin.math.min
 
 
 class ViewportHelper(
-    private val myMapRect: Rect<org.jetbrains.letsPlot.livemap.World>,
+    private val myMapRect: Rect<World>,
     private val myLoopX: Boolean,
     private val myLoopY: Boolean
-) : MapRuler<org.jetbrains.letsPlot.livemap.World> {
+) : MapRuler<World> {
 
     fun <T> normalize(v: Vec<T>): Vec<T> {
         fun normalize(v: Double, min: Double, max: Double, loop: Boolean): Double {
@@ -66,11 +65,11 @@ class ViewportHelper(
         }.let(::abs)
     }
 
-    override fun calculateBoundingBox(xyRects: List<Rect<org.jetbrains.letsPlot.livemap.World>>): Rect<org.jetbrains.letsPlot.livemap.World> {
+    override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
         return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
     }
 
-    internal fun getOrigins(objRect: org.jetbrains.letsPlot.livemap.WorldRectangle, viewRect: org.jetbrains.letsPlot.livemap.WorldRectangle): List<org.jetbrains.letsPlot.livemap.WorldPoint> {
+    internal fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {
         fun getOrigins(
             objRange: DoubleSpan,
             mapRange: DoubleSpan,
@@ -101,22 +100,22 @@ class ViewportHelper(
         val xOrigins = getOrigins(objRect.xRange(), myMapRect.xRange(), viewRect.xRange(), myLoopX)
         val yOrigins = getOrigins(objRect.yRange(), myMapRect.yRange(), viewRect.yRange(), myLoopY)
 
-        val result = ArrayList<org.jetbrains.letsPlot.livemap.WorldPoint>()
+        val result = ArrayList<WorldPoint>()
         for (xOrigin in xOrigins) {
             for (yOrigin in yOrigins) {
-                result.add(explicitVec<org.jetbrains.letsPlot.livemap.World>(xOrigin, yOrigin))
+                result.add(explicitVec<World>(xOrigin, yOrigin))
             }
         }
         return result
     }
 
-    fun getCells(viewRect: org.jetbrains.letsPlot.livemap.WorldRectangle, cellLevel: Int): Set<CellKey> =
+    fun getCells(viewRect: WorldRectangle, cellLevel: Int): Set<CellKey> =
         splitRect(viewRect)
             .map { calculateQuadKeys(myMapRect, it, cellLevel, ::CellKey) }
             .flatten()
             .toSet()
 
-    private fun splitRect(rect: org.jetbrains.letsPlot.livemap.WorldRectangle): List<Rect<org.jetbrains.letsPlot.livemap.World>> {
+    private fun splitRect(rect: WorldRectangle): List<Rect<World>> {
         fun splitRange(
             range: DoubleSpan,
             mapRange: DoubleSpan,
@@ -149,7 +148,7 @@ class ViewportHelper(
         val xRanges = splitRange(rect.xRange(), myMapRect.xRange(), myLoopX)
         val yRanges = splitRange(rect.yRange(), myMapRect.yRange(), myLoopY)
 
-        val rects = ArrayList<Rect<org.jetbrains.letsPlot.livemap.World>>()
+        val rects = ArrayList<Rect<World>>()
         xRanges.forEach { xRange ->
             yRanges.forEach { yRange ->
                 rects.add(

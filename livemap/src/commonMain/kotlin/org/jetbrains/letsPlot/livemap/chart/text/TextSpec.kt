@@ -43,7 +43,7 @@ class TextSpec(
         fontSize = size.toDouble(),
         fontFamily = family
     )
-    val dimension: Vec<org.jetbrains.letsPlot.livemap.Client>
+    val dimension: Vec<Client>
     val angle: Double = toRadians(-degreeAngle)
     val lineHeight = lineheight * size
     val textSize = textMeasurer.measure(lines, font, lineHeight)
@@ -68,7 +68,7 @@ class TextSpec(
         )
     }
 
-    private fun rotateTextSize(textSize: DoubleVector, angle: Double): Vec<org.jetbrains.letsPlot.livemap.Client> {
+    private fun rotateTextSize(textSize: DoubleVector, angle: Double): Vec<Client> {
         val p1 = DoubleVector(textSize.x / 2, +textSize.y / 2).rotate(angle)
         val p2 = DoubleVector(textSize.x / 2, -textSize.y / 2).rotate(angle)
 

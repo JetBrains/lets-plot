@@ -18,6 +18,6 @@ data class HoverObject(
 )
 
 interface Locator {
-    fun search(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject?
+    fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject?
     fun reduce(hoverObjects: Collection<HoverObject>): HoverObject?
 }

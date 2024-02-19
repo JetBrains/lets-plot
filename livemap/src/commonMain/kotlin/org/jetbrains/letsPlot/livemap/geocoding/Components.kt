@@ -21,9 +21,9 @@ object NeedCalculateLocationComponent : EcsComponent
 
 class LocationComponent: EcsComponent {
     private var myWaitingCount: Int? = null
-    val locations = ArrayList<Rect<org.jetbrains.letsPlot.livemap.World>>()
+    val locations = ArrayList<Rect<World>>()
 
-    fun add(rect: Rect<org.jetbrains.letsPlot.livemap.World>) {
+    fun add(rect: Rect<World>) {
         locations.add(rect)
     }
 
@@ -37,4 +37,4 @@ class LocationComponent: EcsComponent {
 }
 
 class LonLatComponent(val point: LonLatPoint): EcsComponent
-class PointInitializerComponent(val worldPointInitializer: ComponentsList.(worldPoint: org.jetbrains.letsPlot.livemap.WorldPoint) -> Unit): EcsComponent
+class PointInitializerComponent(val worldPointInitializer: ComponentsList.(worldPoint: WorldPoint) -> Unit): EcsComponent

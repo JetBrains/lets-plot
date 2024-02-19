@@ -38,8 +38,8 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         return MicroTaskUtil.join(microThreads).map { result }
     }
 
-    private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<org.jetbrains.letsPlot.livemap.Client>? {
-        val zoomProjection = Transforms.zoom<org.jetbrains.letsPlot.livemap.World, org.jetbrains.letsPlot.livemap.Client>(cellKey::length)
+    private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<Client>? {
+        val zoomProjection = Transforms.zoom<World, Client>(cellKey::length)
         val cellMapRect = cellKey.computeRect(myMapProjection.mapRect)
         val cellViewOrigin = zoomProjection.apply(cellMapRect.origin)
 
@@ -48,7 +48,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
 
     private fun parseTileLayer(
         tileLayer: TileLayer,
-        transform: (Vec<LonLat>) -> Vec<org.jetbrains.letsPlot.livemap.Client>?
+        transform: (Vec<LonLat>) -> Vec<Client>?
     ): MicroTask<List<TileFeature>> {
         return createMicroThread(TileGeometryParser(tileLayer.geometryCollection))
             .flatMap { tileGeometries ->
@@ -59,7 +59,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                     val geometry = tileGeometries[it]
                     microThreads.add(
                         MicroTasks.resample(geometry, transform)
-                            .map { worldMultiPolygon: Geometry<org.jetbrains.letsPlot.livemap.Client> ->
+                            .map { worldMultiPolygon: Geometry<Client> ->
                                 tileFeatures.add(
                                     TileFeature(
                                         worldMultiPolygon,

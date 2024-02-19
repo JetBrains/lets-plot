@@ -123,7 +123,7 @@ object GrowingPathEffect {
         var lengthIndex: List<Double> = emptyList()
         var length: Double = 0.0
         var endIndex: Int = 0
-        var interpolatedPoint: Vec<org.jetbrains.letsPlot.livemap.Client>? = null // can be null if no need in point interpolation
+        var interpolatedPoint: Vec<Client>? = null // can be null if no need in point interpolation
     }
 
     class GrowingPathRenderer : Renderer {
@@ -137,7 +137,7 @@ object GrowingPathEffect {
             ctx.scale(renderHelper.zoomFactor)
             ctx.beginPath()
 
-            var viewCoord: Vec<org.jetbrains.letsPlot.livemap.World> = lineString[0]
+            var viewCoord: Vec<World> = lineString[0]
             ctx.moveTo(viewCoord.x, viewCoord.y)
 
             for (i in 1..growingPath.endIndex) {

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.BasemapCellRenderer
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.DonorTileCalculator
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.Tile
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +21,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 
 class DonorTileCalculatorTest {
-    private val myCellRect = Rect.XYWH<org.jetbrains.letsPlot.livemap.Client>(
+    private val myCellRect = Rect.XYWH<Client>(
         explicitVec(0.0, 0.0),
         explicitVec(256.0, 256.0)
     )

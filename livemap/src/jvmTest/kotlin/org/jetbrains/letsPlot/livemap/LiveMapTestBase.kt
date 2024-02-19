@@ -7,11 +7,7 @@
 
 package org.jetbrains.letsPlot.livemap
 
-import org.jetbrains.letsPlot.livemap.core.ecs.ComponentManagerUtil
-import org.jetbrains.letsPlot.livemap.stubs.LayerManagerStub
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.livemap.ClientPoint
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.api.FeatureLayerBuilder
 import org.jetbrains.letsPlot.livemap.config.createMapProjection
 import org.jetbrains.letsPlot.livemap.core.Projections
@@ -26,6 +22,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.camera.MutableCamera
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.Viewport
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportHelper
+import org.jetbrains.letsPlot.livemap.stubs.LayerManagerStub
 import org.junit.Before
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -79,9 +76,7 @@ abstract class LiveMapTestBase {
 
         addSystem<EcsSystem>(
             SchedulerSystem(
-                MicroTaskCooperativeExecutor(liveMapContext,
-                    org.jetbrains.letsPlot.livemap.LiveMapTestBase.Companion.SCHEDULER_FRAME_TIME_LIMIT
-                ),
+                MicroTaskCooperativeExecutor(liveMapContext, SCHEDULER_FRAME_TIME_LIMIT),
                 componentManager
             )
         )
@@ -97,12 +92,12 @@ abstract class LiveMapTestBase {
         }
     }
 
-    protected fun update(specs: Iterable<org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec>) {
+    protected fun update(specs: Iterable<MockSpec>) {
         deltaTimeSpec().standard().apply()
         schedulerSpec().runAll().apply()
         repeatSpec().times(1).apply()
 
-        specs.forEach(org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec::apply)
+        specs.forEach(MockSpec::apply)
 
         while (updateRepeatTimes-- > 0) {
             systemsOrder.forEach { systemClass ->
@@ -110,17 +105,17 @@ abstract class LiveMapTestBase {
             }
         }
 
-        afterUpdateCleanup().forEach(org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec::apply)
+        afterUpdateCleanup().forEach(MockSpec::apply)
     }
 
     /**
      * By default, delta time is 16 and scheduler runs all microthreads
      */
-    protected fun update(vararg specs: org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec) {
+    protected fun update(vararg specs: MockSpec) {
         update(listOf(*specs))
     }
 
-    protected open fun afterUpdateCleanup(): List<org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec> {
+    protected open fun afterUpdateCleanup(): List<MockSpec> {
         return emptyList()
     }
 
@@ -151,23 +146,23 @@ abstract class LiveMapTestBase {
         return getEntity(name).get()
     }
 
-    fun schedulerSpec(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.SchedulerSpec {
-        return org.jetbrains.letsPlot.livemap.LiveMapTestBase.SchedulerSpec(this)
+    fun schedulerSpec(): SchedulerSpec {
+        return SchedulerSpec(this)
     }
 
-    private fun deltaTimeSpec(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.DeltaTimeSpec {
-        return org.jetbrains.letsPlot.livemap.LiveMapTestBase.DeltaTimeSpec(this)
+    private fun deltaTimeSpec(): DeltaTimeSpec {
+        return DeltaTimeSpec(this)
     }
 
-    internal fun repeatSpec(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.RepeatSpec {
-        return org.jetbrains.letsPlot.livemap.LiveMapTestBase.RepeatSpec(this)
+    internal fun repeatSpec(): RepeatSpec {
+        return RepeatSpec(this)
     }
 
-    protected fun assertEntityOrigin(name: String, p: org.jetbrains.letsPlot.livemap.WorldPoint) {
+    protected fun assertEntityOrigin(name: String, p: WorldPoint) {
         assertTrue { getEntityComponent<WorldOriginComponent>(name).origin == p }
     }
 
-    abstract class MockSpec protected constructor(internal val testBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) {
+    abstract class MockSpec protected constructor(internal val testBase: LiveMapTestBase) {
 
         protected val componentManager: EcsComponentManager
             get() = testBase.componentManager
@@ -178,14 +173,14 @@ abstract class LiveMapTestBase {
         abstract fun apply()
     }
 
-    protected class DeltaTimeSpec constructor(private val myTestBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) {
+    protected class DeltaTimeSpec constructor(private val myTestBase: LiveMapTestBase) {
 
-        internal fun standard(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
+        internal fun standard(): MockSpec {
             return constant(16.0)
         }
 
-        fun constant(dt: Double): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        fun constant(dt: Double): MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     testBase.dt = dt
                 }
@@ -193,30 +188,30 @@ abstract class LiveMapTestBase {
         }
     }
 
-    class SchedulerSpec internal constructor(private val myTestBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) {
+    class SchedulerSpec internal constructor(private val myTestBase: LiveMapTestBase) {
 
-        fun frameTime() : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        fun frameTime() : MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
-                    `when`(testBase.mySystemTime.getTimeMs()).thenReturn(org.jetbrains.letsPlot.livemap.LiveMapTestBase.Companion.SCHEDULER_FRAME_TIME_LIMIT + 1L)
+                    `when`(testBase.mySystemTime.getTimeMs()).thenReturn(SCHEDULER_FRAME_TIME_LIMIT + 1L)
                     `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }
 
-        fun skipAll(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        fun skipAll(): MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
-                    `when`(testBase.mySystemTime.getTimeMs()).thenReturn(org.jetbrains.letsPlot.livemap.LiveMapTestBase.Companion.SCHEDULER_FRAME_TIME_LIMIT + 1L)
+                    `when`(testBase.mySystemTime.getTimeMs()).thenReturn(SCHEDULER_FRAME_TIME_LIMIT + 1L)
                     `when`(testBase.liveMapContext.frameDurationMs).thenCallRealMethod()
                 }
             }
         }
 
-        fun runAll(): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        fun runAll(): MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(0L)
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(0L)
@@ -225,8 +220,8 @@ abstract class LiveMapTestBase {
             }
         }
 
-        fun runTimes(vararg times: Long): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        fun runTimes(vararg times: Long): MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     `when`(testBase.liveMapContext.frameStartTimeMs).thenReturn(times[0])
                     `when`(testBase.mySystemTime.getTimeMs()).thenReturn(times[0], *times.drop(1).toTypedArray())
@@ -236,10 +231,10 @@ abstract class LiveMapTestBase {
         }
     }
 
-    class RepeatSpec(private val myTestBase: org.jetbrains.letsPlot.livemap.LiveMapTestBase) {
+    class RepeatSpec(private val myTestBase: LiveMapTestBase) {
 
-        operator fun times(times: Int): org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec {
-            return object : org.jetbrains.letsPlot.livemap.LiveMapTestBase.MockSpec(myTestBase) {
+        operator fun times(times: Int): MockSpec {
+            return object : MockSpec(myTestBase) {
                 override fun apply() {
                     testBase.updateRepeatTimes = times
                 }

@@ -98,7 +98,7 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myCamera.requestedReset = null
     }
 
-    private fun updateCamera(requestedZoom: Double?, requestedPosition: Vec<org.jetbrains.letsPlot.livemap.World>?) {
+    private fun updateCamera(requestedZoom: Double?, requestedPosition: Vec<World>?) {
         requestedZoom?.let { myCamera.zoom = it }
         requestedPosition?.let { myCamera.position = it }
 

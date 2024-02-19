@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.TileFeature.Field
 
 
 class TileFeature(
-    val tileGeometry: Geometry<org.jetbrains.letsPlot.livemap.Client>,
+    val tileGeometry: Geometry<Client>,
     private val myKind: Int?,
     private val mySub: Int?,
     val label: String?,

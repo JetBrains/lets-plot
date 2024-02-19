@@ -21,7 +21,6 @@ import org.jetbrains.letsPlot.gis.geoprotocol.MapRegion
 import org.jetbrains.letsPlot.gis.tileprotocol.TileService
 import org.jetbrains.letsPlot.gis.tileprotocol.socket.TileWebSocketBuilder
 import org.jetbrains.letsPlot.livemap.LiveMap
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.fragment.newFragmentProvider
 import org.jetbrains.letsPlot.livemap.config.DevParams
 import org.jetbrains.letsPlot.livemap.config.MAX_ZOOM

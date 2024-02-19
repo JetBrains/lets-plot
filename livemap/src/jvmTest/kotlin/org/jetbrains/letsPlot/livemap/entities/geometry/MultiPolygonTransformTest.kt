@@ -154,7 +154,7 @@ class MultiPolygonTransformTest {
             transform.resume()
         }
 
-        val xyMultipolygon = ArrayList<Polygon<org.jetbrains.letsPlot.livemap.World>>()
+        val xyMultipolygon = ArrayList<Polygon<World>>()
         val xyBoundary = transform(input, mapProjection::apply)
         for (xyPolygon in xyBoundary) {
             if (!xyPolygon.isEmpty()) {

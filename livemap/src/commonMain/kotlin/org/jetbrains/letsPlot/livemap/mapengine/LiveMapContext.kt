@@ -23,7 +23,7 @@ open class LiveMapContext(
     open val camera: Camera,
     val layerManager: LayerManager,
 ) : EcsContext(mouseEventSource) {
-    var initialPosition: Vec<org.jetbrains.letsPlot.livemap.World>? = null
+    var initialPosition: Vec<World>? = null
     var initialZoom: Int? = null
     fun raiseError(error: Throwable) = errorHandler(error)
 }

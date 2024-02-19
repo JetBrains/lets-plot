@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.livemap.chart.path
 
 import org.jetbrains.letsPlot.commons.intern.math.distance2
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
@@ -17,7 +19,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import kotlin.math.pow
 
 object PathLocator : Locator {
-    override fun search(coord: Vec<org.jetbrains.letsPlot.livemap.Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
+    override fun search(coord: Vec<Client>, target: EcsEntity, renderHelper: RenderHelper): HoverObject? {
         if (!target.contains(WorldGeometryComponent::class)) {
             return null
         }
@@ -42,9 +44,9 @@ object PathLocator : Locator {
     override fun reduce(hoverObjects: Collection<HoverObject>): HoverObject? = hoverObjects.firstOrNull()
 
     private fun isCoordinateInPath(
-        coord: Vec<org.jetbrains.letsPlot.livemap.World>,
-        strokeRadius: Scalar<org.jetbrains.letsPlot.livemap.World>,
-        multiLineString: MultiLineString<org.jetbrains.letsPlot.livemap.World>
+        coord: Vec<World>,
+        strokeRadius: Scalar<World>,
+        multiLineString: MultiLineString<World>
     ): Boolean {
         for (lineString in multiLineString) {
             val bbox = lineString.bbox ?: continue

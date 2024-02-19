@@ -23,7 +23,7 @@ import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldDimensionComponen
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
 
 class LocationCalculateSystem(
-    private val mapRuler: MapRuler<org.jetbrains.letsPlot.livemap.World>,
+    private val mapRuler: MapRuler<World>,
     private val mapProjection: MapProjection,
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
@@ -40,8 +40,8 @@ class LocationCalculateSystem(
                     entity.contains<ChartElementLocationComponent>() -> {
                         with(entity.get<ChartElementLocationComponent>().geometry) {
                             when (type) {
-                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon<org.jetbrains.letsPlot.livemap.World>::bbox))
-                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<org.jetbrains.letsPlot.livemap.World>::bbox))
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }
@@ -50,8 +50,8 @@ class LocationCalculateSystem(
                     entity.contains<WorldGeometryComponent>() -> {
                         with(entity.get<WorldGeometryComponent>().geometry) {
                             when (type) {
-                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon<org.jetbrains.letsPlot.livemap.World>::bbox))
-                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<org.jetbrains.letsPlot.livemap.World>::bbox))
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }
@@ -60,7 +60,7 @@ class LocationCalculateSystem(
                     entity.contains<WorldOriginComponent>() -> {
                         Rect.XYWH(
                             entity.get<WorldOriginComponent>().origin,
-                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: org.jetbrains.letsPlot.livemap.World.ZERO_VEC
+                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: World.ZERO_VEC
                         )
                     }
                     entity.contains<RegionBBoxComponent>() -> {

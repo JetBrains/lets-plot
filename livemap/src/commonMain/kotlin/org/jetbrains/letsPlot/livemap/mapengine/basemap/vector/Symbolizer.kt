@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Style
 import org.jetbrains.letsPlot.livemap.Client
-import org.jetbrains.letsPlot.core.canvas.*
 import kotlin.math.round
 
 internal interface Symbolizer {
@@ -58,7 +57,7 @@ internal interface Symbolizer {
 
     class LineSymbolizer internal constructor(private val myStyle: Style) : Symbolizer {
 
-        private fun Context2d.drawMultiLine(multiLine: MultiLineString<org.jetbrains.letsPlot.livemap.Client>) {
+        private fun Context2d.drawMultiLine(multiLine: MultiLineString<Client>) {
             beginPath()
             multiLine.forEach { drawLine(it) }
         }

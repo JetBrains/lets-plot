@@ -129,7 +129,7 @@ class UiService(
         }
     }
 
-    fun containsElementAtCoord(p: Vec<org.jetbrains.letsPlot.livemap.Client>): Boolean {
+    fun containsElementAtCoord(p: Vec<Client>): Boolean {
         myComponentManager.onEachEntity<UiRenderComponent> { _, uiElement ->
             if (inside(p.x, p.y, uiElement.origin, uiElement.dimension)) {
                 return true

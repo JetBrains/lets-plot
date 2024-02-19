@@ -14,12 +14,11 @@ import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.core.*
 import org.jetbrains.letsPlot.livemap.core.Transforms
 import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.min
 
 internal class MapProjectionBuilder(
     private val geoProjection: GeoProjection,
-    private val mapRect: org.jetbrains.letsPlot.livemap.WorldRectangle
+    private val mapRect: WorldRectangle
 ) {
     var reverseX = false
     var reverseY = false
@@ -80,7 +79,7 @@ internal class MapProjectionBuilder(
         val scaleY = if (reverseY) -scale else scale
 
         val linearProjection =
-            Transforms.tuple<Geographic, org.jetbrains.letsPlot.livemap.World>(
+            Transforms.tuple<Geographic, World>(
                 linear(offsetX, scaleX),
                 linear(offsetY, scaleY)
             )
@@ -88,10 +87,10 @@ internal class MapProjectionBuilder(
         val proj = composite(geoProjection, linearProjection)
 
         return object : MapProjection {
-            override fun apply(v: LonLatPoint): org.jetbrains.letsPlot.livemap.WorldPoint? = proj.apply(v)
-            override fun invert(v: org.jetbrains.letsPlot.livemap.WorldPoint): LonLatPoint? = proj.invert(v)
+            override fun apply(v: LonLatPoint): WorldPoint? = proj.apply(v)
+            override fun invert(v: WorldPoint): LonLatPoint? = proj.invert(v)
 
-            override val mapRect: org.jetbrains.letsPlot.livemap.WorldRectangle
+            override val mapRect: WorldRectangle
                 get() = this@MapProjectionBuilder.mapRect
         }
     }

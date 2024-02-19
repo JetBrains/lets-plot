@@ -17,15 +17,14 @@ import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.core.MapRuler
 import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.min
 
 class MapLocationGeocoder(
     private val myGeocodingService: GeocodingService,
-    private val myMapRuler: MapRuler<org.jetbrains.letsPlot.livemap.World>,
+    private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection
 ) {
-    fun geocodeMapRegion(mapRegion: MapRegion): Async<org.jetbrains.letsPlot.livemap.WorldRectangle> {
+    fun geocodeMapRegion(mapRegion: MapRegion): Async<WorldRectangle> {
 
         return createRequestBuilder(mapRegion)
             .addFeature(GeoRequest.FeatureOption.CENTROID)
@@ -57,12 +56,12 @@ class MapLocationGeocoder(
         return ExplicitRequestBuilder().setIds(mapRegion.idList)
     }
 
-    internal fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<org.jetbrains.letsPlot.livemap.World> {
+    internal fun calculateBBoxOfGeoRect(geoRect: GeoRectangle): Rect<World> {
         return myMapRuler.calculateBoundingBox(geoRect.convertToWorldRects(myMapProjection))
     }
 
-    private fun calculateBBoxOfGeoRects(geoRects: List<GeoRectangle>): Rect<org.jetbrains.letsPlot.livemap.World> {
-        val xyRects = ArrayList<Rect<org.jetbrains.letsPlot.livemap.World>>()
+    private fun calculateBBoxOfGeoRects(geoRects: List<GeoRectangle>): Rect<World> {
+        val xyRects = ArrayList<Rect<World>>()
         geoRects.forEach { geoRect -> xyRects.addAll(geoRect.convertToWorldRects(myMapProjection)) }
         return myMapRuler.calculateBoundingBox(xyRects)
     }
@@ -111,7 +110,7 @@ class MapLocationGeocoder(
     }
 
     companion object {
-        fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<org.jetbrains.letsPlot.livemap.World>> {
+        fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
             return splitByAntiMeridian().mapNotNull { rect -> transform(rect, mapProjection::apply) }
         }
     }
