@@ -70,7 +70,7 @@ internal class GeomMarginsLayout(
         geomInnerBounds: DoubleRectangle,
         axisOrientation: Orientation,
         isPolarCoordinateSystem: Boolean,
-        panelPadding: Thickness = Thickness.ZERO,
+        panelPadding: Thickness,
     ): DoubleVector {
 
         val outerBounds = toOuterBounds(geomInnerBounds)
@@ -83,10 +83,10 @@ internal class GeomMarginsLayout(
             }
         } else {
             when (axisOrientation) {
-                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top)
-                Orientation.TOP -> geomInnerBounds.origin
-                Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top)
-                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, outerBounds.bottom)
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelPadding.top)
+                Orientation.TOP -> geomInnerBounds.origin.add(DoubleVector(panelPadding.left, 0.0))
+                Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top + panelPadding.top)
+                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left + panelPadding.left, outerBounds.bottom)
             }
         }
     }

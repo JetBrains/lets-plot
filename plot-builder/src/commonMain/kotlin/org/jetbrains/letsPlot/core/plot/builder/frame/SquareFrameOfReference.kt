@@ -80,7 +80,7 @@ internal class SquareFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                val gridBounds = geomBounds.origin
+                val gridBounds = layoutInfo.geomContentBounds.origin
                 gridComponent.moveTo(gridBounds)
                 parent.add(gridComponent)
             }
@@ -91,7 +91,7 @@ internal class SquareFrameOfReference(
                 val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
 
                 val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                val gridBounds = geomBounds.origin
+                val gridBounds = layoutInfo.geomContentBounds.origin
                 gridComponent.moveTo(gridBounds)
                 parent.add(gridComponent)
             }
@@ -112,7 +112,7 @@ internal class SquareFrameOfReference(
                     isDebugDrawing,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -133,7 +133,7 @@ internal class SquareFrameOfReference(
                     isDebugDrawing,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
@@ -213,7 +213,7 @@ internal class SquareFrameOfReference(
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
         )
 
-        val geomBounds = layoutInfo.geomInnerBounds
+        val geomBounds = layoutInfo.geomContentBounds
         layerComponent.moveTo(geomBounds.origin)
         layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
         return layerComponent
