@@ -62,7 +62,7 @@ interface Context2d {
     fun measureText(str: String): Double
 
     // https://github.com/d3/d3/blob/9364923ee2b35ec2eb80ffc4bdac12a7930097fc/src/svg/line.js#L236
-    fun bSplineInterpolation(points: List<Vec<*>>) {
+    fun drawBezierCurve(points: List<Vec<*>>) {
         fun lineDot4(a: List<Double>, b: List<Double>): Double {
             // returns the dot product of the given four-element vectors
             return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]

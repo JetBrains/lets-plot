@@ -234,7 +234,7 @@ class CurveRenderer : PathRenderer() {
             // linear
             super.drawPath(points, ctx)
         } else {
-            ctx.bSplineInterpolation(points)
+            ctx.drawBezierCurve(points)
         }
     }
 }
