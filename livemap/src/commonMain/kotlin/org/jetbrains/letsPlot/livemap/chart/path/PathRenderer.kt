@@ -49,6 +49,10 @@ class PathRenderer : Renderer {
             ctx.stroke()
 
             chartElement.arrowSpec?.let {
+                // set attribute `stroke-miterlimit` to avoid a bevelled corner
+                val miterLimit = ArrowSpec.miterLength(it.angle * 2, chartElement.scaledStrokeWidth())
+                ctx.setStrokeMiterLimit(abs(miterLimit))
+
                 drawArrows(it, adjustedGeometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
             }
         }
@@ -95,6 +99,10 @@ class PathRenderer : Renderer {
         }
 
         companion object {
+            fun miterLength(headAngle: Double, strokeWidth: Double): Double {
+                return strokeWidth / sin(headAngle / 2)
+            }
+
             fun create(
                 arrowAngle: Double?,
                 arrowLength: Double?,

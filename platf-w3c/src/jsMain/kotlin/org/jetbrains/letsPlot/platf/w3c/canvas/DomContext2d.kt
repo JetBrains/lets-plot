@@ -162,6 +162,10 @@ internal class DomContext2d(
         ctx.lineCap = convertLineCap(lineCap)
     }
 
+    override fun setStrokeMiterLimit(miterLimit: Double) {
+        ctx.miterLimit = miterLimit
+    }
+
     override fun setTextBaseline(baseline: TextBaseline) {
         ctx.textBaseline = convertTextBaseline(baseline)
     }

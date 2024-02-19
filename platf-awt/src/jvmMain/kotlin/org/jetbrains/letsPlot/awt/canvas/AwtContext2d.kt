@@ -309,6 +309,14 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
+    override fun setStrokeMiterLimit(miterLimit: Double) {
+        state.stroke = state.stroke.change(
+            miterlimit = miterLimit.toFloat()
+        )
+
+        graphics.stroke = state.stroke
+    }
+
     override fun setTextBaseline(baseline: TextBaseline) {
         state.textBaseline = baseline
     }

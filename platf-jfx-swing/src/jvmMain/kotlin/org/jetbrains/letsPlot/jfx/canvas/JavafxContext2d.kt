@@ -240,6 +240,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.lineCap = convertLineCap(lineCap)
     }
 
+    override fun setStrokeMiterLimit(miterLimit: Double) {
+        myContext2d.miterLimit = miterLimit
+    }
+
     override fun setTextBaseline(baseline: TextBaseline) {
         myContext2d.textBaseline = convertTextBaseline(baseline)
     }

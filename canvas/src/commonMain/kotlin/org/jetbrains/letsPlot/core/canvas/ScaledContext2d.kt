@@ -107,6 +107,7 @@ internal class ScaledContext2d(
 
     override fun setLineJoin(lineJoin: LineJoin) = ctx.setLineJoin(lineJoin)
     override fun setLineCap(lineCap: LineCap) = ctx.setLineCap(lineCap)
+    override fun setStrokeMiterLimit(miterLimit: Double) = ctx.setStrokeMiterLimit(miterLimit)
     override fun setTextBaseline(baseline: TextBaseline) = ctx.setTextBaseline(baseline)
     override fun setTextAlign(align: TextAlign) = ctx.setTextAlign(align)
 

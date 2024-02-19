@@ -50,6 +50,7 @@ class Context2dDelegate : Context2d {
     override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) { }
     override fun setLineJoin(lineJoin: LineJoin) { }
     override fun setLineCap(lineCap: LineCap) { }
+    override fun setStrokeMiterLimit(miterLimit: Double) { }
     override fun setTextBaseline(baseline: TextBaseline) { }
     override fun setTextAlign(align: TextAlign) { }
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { }

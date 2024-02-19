@@ -54,6 +54,7 @@ interface Context2d {
     fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
     fun setLineJoin(lineJoin: LineJoin)
     fun setLineCap(lineCap: LineCap)
+    fun setStrokeMiterLimit(miterLimit: Double)
     fun setTextBaseline(baseline: TextBaseline)
     fun setTextAlign(align: TextAlign)
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
