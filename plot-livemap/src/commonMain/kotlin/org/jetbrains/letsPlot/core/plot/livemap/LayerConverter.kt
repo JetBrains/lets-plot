@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.SegmentGeom
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.core.plot.base.geom.CurveGeom
 import org.jetbrains.letsPlot.livemap.api.*
 
 
@@ -39,6 +40,7 @@ object LayerConverter {
                 H_LINE -> MapLayerKind.H_LINE to dataPointsConverter.toHorizontalLine()
                 V_LINE -> MapLayerKind.V_LINE to dataPointsConverter.toVerticalLine()
                 SEGMENT -> MapLayerKind.PATH to dataPointsConverter.toSegment(layer.geom as SegmentGeom)
+                CURVE -> MapLayerKind.PATH to dataPointsConverter.toCurve(layer.geom as CurveGeom)
                 RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
@@ -137,6 +139,7 @@ object LayerConverter {
                             arrowLength = it.arrowLength
                             arrowAtEnds = it.arrowAtEnds
                             arrowType = it.arrowType
+                            isCurve = it.isCurve
                             sizeStart = it.sizeStart
                             sizeEnd = it.sizeEnd
                             strokeStart = it.strokeStart

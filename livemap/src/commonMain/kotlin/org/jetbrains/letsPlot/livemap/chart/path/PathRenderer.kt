@@ -19,9 +19,11 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
+import org.jetbrains.letsPlot.livemap.mapengine.lineTo
+import org.jetbrains.letsPlot.livemap.mapengine.moveTo
 import kotlin.math.*
 
-class PathRenderer : Renderer {
+open class PathRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val geometry = entity.get<WorldGeometryComponent>().geometry.multiLineString
         val chartElement = entity.get<ChartElementComponent>()
@@ -37,10 +39,7 @@ class PathRenderer : Renderer {
             val adjustedGeometry = padLineString(lineString, startPadding, endPadding)
 
             ctx.beginPath()
-
-            adjustedGeometry[0].let { ctx.moveTo(it.x, it.y) }
-            adjustedGeometry.drop(1).forEach { ctx.lineTo(it.x, it.y) }
-
+            drawPath(adjustedGeometry, ctx)
             ctx.restore()
 
             ctx.setStrokeStyle(color)
@@ -56,6 +55,11 @@ class PathRenderer : Renderer {
                 drawArrows(it, adjustedGeometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
             }
         }
+    }
+
+    open fun drawPath(points: List<WorldPoint>, ctx: Context2d) {
+        points[0].let(ctx::moveTo)
+        points.drop(1).forEach(ctx::lineTo)
     }
 
     class ArrowSpec private constructor(
@@ -220,6 +224,17 @@ class PathRenderer : Renderer {
         private fun padEnd(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
             val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
             return lineString.subList(0, lineString.size - index) + adjustedEndPoint
+        }
+    }
+}
+
+class CurveRenderer : PathRenderer() {
+    override fun drawPath(points: List<WorldPoint>, ctx: Context2d) {
+        if (points.size < 3) {
+            // linear
+            super.drawPath(points, ctx)
+        } else {
+            ctx.drawBezierCurve(points)
         }
     }
 }

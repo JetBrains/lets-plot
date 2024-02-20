@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.livemap.chart.GrowingPathEffect.GrowingPathEffectC
 import org.jetbrains.letsPlot.livemap.chart.GrowingPathEffect.GrowingPathRenderer
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.LocatorComponent
+import org.jetbrains.letsPlot.livemap.chart.path.CurveRenderer
 import org.jetbrains.letsPlot.livemap.chart.path.PathLocator
 import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer
 import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer.ArrowSpec
@@ -91,6 +92,7 @@ class PathEntityBuilder(
     var animation: Int = 0
     var speed: Double = 0.0
     var flow: Double = 0.0
+    var isCurve: Boolean = false
 
     // Arrow specification
     var arrowAngle: Double? = null
@@ -151,7 +153,7 @@ class PathEntityBuilder(
                         +IndexComponent(layerIndex!!, index!!)
                     }
                     +RenderableComponent().apply {
-                        renderer = PathRenderer()
+                        renderer = if (isCurve) CurveRenderer() else PathRenderer()
                     }
                     +ChartElementComponent().apply {
                         sizeScalingRange = this@PathEntityBuilder.sizeScalingRange

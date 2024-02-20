@@ -66,6 +66,7 @@ internal class DataPointsConverter(
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
     fun toPie(geom: PieGeom) = pieConverter(geom)
+    fun toCurve(geom: CurveGeom) = mySinglePathFeatureConverter.curve(geom)
 
     private abstract class PathFeatureConverterBase(
         val aesthetics: Aesthetics
@@ -75,6 +76,7 @@ internal class DataPointsConverter(
         private var myFlat: Boolean = false
         private var myGeodesic: Boolean = false
         private var mySpacer: Double = 0.0
+        private var myIsCurve: Boolean = false
 
         private fun parsePathAnimation(animation: Any?): Int? {
             when (animation) {
@@ -101,6 +103,7 @@ internal class DataPointsConverter(
                 this.flat = myFlat
                 this.geodesic = myGeodesic
                 this.spacer = mySpacer
+                this.isCurve = myIsCurve
                 setArrowSpec(myArrowSpec)
                 setAnimation(myAnimation)
             }
@@ -123,6 +126,10 @@ internal class DataPointsConverter(
 
         fun setSpacer(spacer: Double) {
             mySpacer = spacer
+        }
+
+        fun setIsCurve(isCurve: Boolean) {
+            myIsCurve = isCurve
         }
     }
 
@@ -195,6 +202,27 @@ internal class DataPointsConverter(
                     listOf(
                         DoubleVector(it.x()!!, it.y()!!),
                         DoubleVector(it.xend()!!, it.yend()!!)
+                    )
+                } else {
+                    emptyList()
+                }
+            }
+        }
+
+        fun curve(geom: CurveGeom): List<DataPointLiveMapAesthetics> {
+            setArrowSpec(geom.arrowSpec)
+            setSpacer(geom.spacer)
+            setIsCurve(true)
+            setFlat(true)
+
+            return process(isClosed = false) {
+                if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {
+                    CurveGeom.createGeometry(
+                        start = DoubleVector(it.x()!!, it.y()!!),
+                        end = DoubleVector(it.xend()!!, it.yend()!!),
+                        curvature = geom.curvature,
+                        angle = geom.angle,
+                        ncp = geom.ncp
                     )
                 } else {
                     emptyList()
