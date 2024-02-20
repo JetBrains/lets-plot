@@ -64,7 +64,7 @@ internal class PolarFrameOfReference(
         val vGridTheme = panelTheme.gridY(flipAxis)
 
         val drawPanel = panelTheme.showRect() && beforeGeomLayer
-        val drawPanelBorder = panelTheme.showBorder() && !beforeGeomLayer
+        val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
 
         val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
         val drawVGrid = beforeGeomLayer xor vGridTheme.isOntop()

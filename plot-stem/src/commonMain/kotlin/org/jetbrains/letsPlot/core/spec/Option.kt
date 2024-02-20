@@ -748,6 +748,7 @@ object Option {
         // Panel
         const val PANEL_BKGR_RECT = ThemeOption.PANEL_BKGR_RECT
         const val PANEL_BORDER_RECT = ThemeOption.PANEL_BORDER_RECT
+        const val PANEL_BORDER_ONTOP = ThemeOption.PANEL_BORDER_ONTOP
 
         // Panel grid
         const val PANEL_GRID = ThemeOption.PANEL_GRID

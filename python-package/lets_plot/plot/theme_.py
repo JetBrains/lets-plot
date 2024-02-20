@@ -46,6 +46,7 @@ def theme(*,
 
           panel_background=None,
           panel_border=None,
+          panel_border_ontop=None,
           # ToDo: other panel options...
 
           panel_grid=None,
@@ -114,7 +115,7 @@ def theme(*,
         All axis elements: lines, ticks, texts, titles.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_line()` to specify axes parameters.
-    axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=False
+    axis_ontop, axis_ontop_x, axis_ontop_y : bool, default=True
         Option to place axis (lines, tickmarks and labels) over the data layers.
     axis_title, axis_title_x, axis_title_y : str or dict
         Labels of axes.
@@ -169,6 +170,8 @@ def theme(*,
         Border around plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify border parameters, inherited from `rect`.
+    panel_border_ontop : bool, default=True
+        Option to place border around plotting area over the data layers.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
         Grid lines. Specify major grid lines or minor grid lines separately if needed.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -186,7 +189,7 @@ def theme(*,
 
         It is acceptable to use None for any side; in this case, the default value for the plot padding side will be used.
     panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y : bool, default=False
-        Option to place major grid lines and minor grid lines  over the data layers.
+        Option to place major grid lines and minor grid lines over the data layers.
     plot_background : str or dict
         Background of the entire plot.
         Set 'blank' or result of `element_blank()` to draw nothing.

@@ -62,6 +62,7 @@ object ThemeOption {
     const val PANEL_PADDING = "panel_padding"
     const val PANEL_BKGR_RECT = "panel_background"
     const val PANEL_BORDER_RECT = "panel_border"
+    const val PANEL_BORDER_ONTOP = "panel_border_ontop"
 
     // Panel grid
     const val PANEL_GRID = "panel_grid"  // a line

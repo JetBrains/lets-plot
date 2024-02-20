@@ -20,6 +20,7 @@ interface PanelTheme {
     fun showBorder(): Boolean
     fun borderColor(): Color
     fun borderWidth(): Double
+    fun borderIsOntop(): Boolean
 
     fun gridX(flipAxis: Boolean = false): PanelGridTheme
     fun gridY(flipAxis: Boolean = false): PanelGridTheme

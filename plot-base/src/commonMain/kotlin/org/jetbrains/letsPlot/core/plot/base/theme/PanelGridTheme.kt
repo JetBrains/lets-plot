@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 import org.jetbrains.letsPlot.commons.values.Color
 
 interface PanelGridTheme {
-    fun isOntop(): Boolean = false
+    fun isOntop(): Boolean
 
     fun showMajor(): Boolean
 

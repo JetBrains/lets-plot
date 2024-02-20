@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_ONTOP
@@ -80,6 +81,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 //            TEXT_WIDTH_FACTOR to 1.0,
             PANEL_BORDER_RECT to ELEMENT_BLANK,
+            PANEL_BORDER_ONTOP to true,
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.SIZE to 0.0,
@@ -91,7 +93,7 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FILL to SymbolicColor.WHITE,
             ),
 
-            AXIS_ONTOP to false,
+            AXIS_ONTOP to true,
             AXIS_TICKS_LENGTH to 4.0,
 
             AXIS_TEXT to mapOf(

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
@@ -25,6 +26,7 @@ internal class DefaultPanelTheme(
 
     internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
     internal val borderKey = listOf(PANEL_BORDER_RECT, RECT)
+    private val borderOntopKey = listOf(PANEL_BORDER_ONTOP)
     private val paddingKey = listOf(PANEL_PADDING)
 
     override fun showRect(): Boolean {
@@ -48,6 +50,8 @@ internal class DefaultPanelTheme(
     override fun borderColor() = getColor(getElemValue(borderKey), Elem.COLOR)
 
     override fun borderWidth() = getNumber(getElemValue(borderKey), Elem.SIZE)
+
+    override fun borderIsOntop(): Boolean = getBoolean(borderOntopKey)
 
     override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
 
