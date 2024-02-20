@@ -31,14 +31,14 @@ import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotAssembler constructor(
     val geomTiles: PlotGeomTiles,
-    private val facets: PlotFacets,
+    facets: PlotFacets,
     private val xAxisPosition: AxisPosition,
     private val yAxisPosition: AxisPosition,
     private val theme: Theme,
     title: String? = null,
     subtitle: String? = null,
     caption: String? = null,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap(),
+    guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap(),
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -228,7 +228,6 @@ class PlotAssembler constructor(
             return domainsXYByTile.mapIndexed { tileIndex, (xDomain, yDomain) ->
                 if (coordProvider.isPolar) {
                     val adjustedDomain = (coordProvider as PolarCoordProvider)
-                        .withHScaleContinuous(hScaleProtoByTile[tileIndex].isContinuous)
                         .adjustDomain(DoubleRectangle(xDomain, yDomain))
 
                     PolarFrameOfReferenceProvider(
