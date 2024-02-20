@@ -24,6 +24,8 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
         // Only for JFX. Workaround for implementation complexity of CLIP_PATH.
         val CLIP_BOUNDS_JFX: SvgAttributeSpec<DoubleRectangle> =
             SvgAttributeSpec.createSpec("clip-bounds-jfx")
+        val CLIP_CIRCLE_JFX: SvgAttributeSpec<DoubleRectangle> =
+            SvgAttributeSpec.createSpec("clip-circle-jfx")
     }
 
 

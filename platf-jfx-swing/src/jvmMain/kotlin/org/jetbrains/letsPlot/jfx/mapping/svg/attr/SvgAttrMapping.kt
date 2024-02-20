@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.jfx.mapping.svg.attr
 
 import javafx.scene.Node
+import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -17,6 +18,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgGraphicsElement.VISIBILITY.name -> target.isVisible = visibilityAsBoolean(value)
             SvgGraphicsElement.OPACITY.name -> target.opacity = asDouble(value)
             SvgGraphicsElement.CLIP_BOUNDS_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Rectangle(left, top, width, height) }
+            SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Circle(center.x, center.y, width / 2) }
             SvgGraphicsElement.CLIP_PATH.name -> Unit // TODO: ignored
 
             SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")

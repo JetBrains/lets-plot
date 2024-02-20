@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -216,7 +215,23 @@ internal class PolarFrameOfReference(
 
         val geomBounds = layoutInfo.geomContentBounds
         layerComponent.moveTo(geomBounds.origin)
-        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+
+        // Compute clip circle
+        val hAxisInfo = layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom ?: error("No top/bottom axis info")
+        val axisLine = prepareAxisData(hAxisInfo, hScaleBreaks).second.axisLine
+        var minX = axisLine.first().x
+        var maxX = axisLine.first().x
+        var minY = axisLine.first().y
+        var maxY = axisLine.first().y
+        for (point in axisLine) {
+            minX = minOf(minX, point.x)
+            maxX = maxOf(maxX, point.x)
+            minY = minOf(minY, point.y)
+            maxY = maxOf(maxY, point.y)
+        }
+
+        val r = minOf((maxX - minX), (maxY - minY)) / 2
+        layerComponent.clipCircle(geomBounds.dimension.mul(0.5), r)
         return layerComponent
     }
 
