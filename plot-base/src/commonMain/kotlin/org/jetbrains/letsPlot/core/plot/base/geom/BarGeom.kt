@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.AnnotationsUtil
@@ -16,6 +17,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.atan2
 
 open class BarGeom : GeomBase() {
 
@@ -46,8 +50,58 @@ open class BarGeom : GeomBase() {
         rectangles.reverse() // TODO: why reverse?
         rectangles.forEach(root::add)
 
-        if (coord.isLinear) {
-            ctx.annotations?.let { buildAnnotations(root, helper, coord, ctx) }
+        ctx.annotations?.let {
+            if (coord.isLinear) {
+                buildAnnotations(root, helper, coord, ctx)
+            } else {
+                buildNonLinearAnnotations(root, helper, coord, ctx)
+            }
+        }
+    }
+
+    private fun buildNonLinearAnnotations(
+        root: SvgRoot,
+        rectanglesHelper: RectanglesHelper,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
+        val annotations = ctx.annotations ?: return
+        val viewPort = overallAesBounds(ctx).let(coord::toClient) ?: return
+
+        rectanglesHelper.iterateRectangleGeometry { p, rect ->
+            val clientBarCenter = rectanglesHelper.toClient(rect.center, p) ?: return@iterateRectangleGeometry
+
+            val barBorder = with(rect.flipIf(ctx.flipped)) {
+                listOf(DoubleVector(left, bottom), DoubleVector(right, bottom))
+            }.mapNotNull {
+                rectanglesHelper.toClient(it.flipIf(ctx.flipped), p)
+            }
+
+            if (barBorder.size != 2) return@iterateRectangleGeometry
+
+            val v = barBorder[1].subtract(barBorder[0])
+            val angle = atan2(v.y, v.x).let {
+                when (abs(it)) {
+                    in PI / 2..3 * PI / 2 -> PI - it
+                    else -> 2 * PI - it
+                }
+            }
+            val text = annotations.getAnnotationText(p.index(), ctx.plotContext)
+            AnnotationsUtil.createLabelElement(
+                text,
+                clientBarCenter,
+                textParams = AnnotationsUtil.TextParams(
+                    style = annotations.textStyle,
+                    color = AnnotationsUtil.chooseColor(annotations.textStyle.color, p.fill()!!),
+                    hjust = "middle",
+                    vjust = "center",
+                    alpha = 0.0,
+                    angle = toDegrees(angle)
+                ),
+                geomContext = ctx,
+                boundsCenter = viewPort.center
+            )
+                .also(root::add)
         }
     }
 
