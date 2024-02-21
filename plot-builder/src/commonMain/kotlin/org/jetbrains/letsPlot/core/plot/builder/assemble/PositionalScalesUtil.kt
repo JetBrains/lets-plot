@@ -371,7 +371,15 @@ object PositionalScalesUtil {
             scale: Scale,
             layers: List<GeomLayer>
         ): DoubleSpan? {
-            val includeZero = layers.any { it.rangeIncludesZero(aes) }
+            val (lowerLim, upperLim) = scale.transform.let {
+                if (it is ContinuousTransform) it.definedLimits()
+                else Pair(null, null)
+            }
+
+            val includeZero = layers.any { it.rangeIncludesZero(aes) } &&
+                    lowerLim?.let { it <= 0.0 } ?: true &&
+                    upperLim?.let { it >= 0.0 } ?: true
+
 
             @Suppress("NAME_SHADOWING")
             val range = when (includeZero) {
