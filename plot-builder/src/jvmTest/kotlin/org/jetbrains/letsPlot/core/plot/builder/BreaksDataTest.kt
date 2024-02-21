@@ -23,7 +23,11 @@ class BreaksDataTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
-            flipped = false, start = 0.0, clockwise = true)
+            flipped = false,
+            start = 0.0,
+            clockwise = true,
+            transformBkgr = false
+        )
         val dataDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.0)
         val adjustedDomain = polarCoordProvider.adjustDomain(dataDomain)
         val gridDomain = polarCoordProvider.gridDomain(adjustedDomain)

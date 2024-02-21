@@ -78,7 +78,14 @@ class PolarTileLayoutTest {
     }
 
     private fun doLayout(preferredSize: DoubleVector, thickness: Thickness): TileLayoutInfo {
-        val coordProvider = PolarCoordProvider(xLim = Pair(null, null), yLim = Pair(null, null), flipped = false, start = 0.0, clockwise = true)
+        val coordProvider = PolarCoordProvider(
+            xLim = Pair(null, null),
+            yLim = Pair(null, null),
+            flipped = false,
+            start = 0.0,
+            clockwise = true,
+            transformBkgr = false
+        )
         val breaksProviderFactory: AxisBreaksProviderFactory =
             AxisBreaksProviderFactory.FixedBreaksProviderFactory(
                 FixedAxisBreaksProvider(

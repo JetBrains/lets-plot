@@ -58,7 +58,8 @@ internal object CoordProto {
                     -1 -> false
                     null -> true
                     else -> error("Unsupported direction. Expected 1 or -1, but was `$dir`")
-                }
+                },
+                transformBkgr = options.getBoolean(Coord.TRANSFORM_BKGR, def = true)
             )
 
             FLIP -> throw IllegalStateException("Don't try to instantiate coord FLIP, it's only a flag.")

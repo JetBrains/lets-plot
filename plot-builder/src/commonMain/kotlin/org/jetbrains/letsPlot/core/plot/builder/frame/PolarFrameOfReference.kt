@@ -17,12 +17,14 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.PolarBreaksData
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
+import org.jetbrains.letsPlot.core.plot.builder.coord.R_EXPAND
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.GridComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.PolarAxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 
 internal class PolarFrameOfReference(
     plotContext: PlotContext,
@@ -114,6 +116,54 @@ internal class PolarFrameOfReference(
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
             parent.add(gridComponent)
+        }
+    }
+
+    override fun doFillBkgr(parent: SvgComponent) {
+        if (coord.transformBkgr) {
+            val circle = createBkgrCircle().apply {
+                fillColor().set(theme.panel().rectFill())
+            }
+
+            parent.add(circle)
+        } else {
+            super.doFillBkgr(parent)
+        }
+    }
+
+    override fun doStrokeBkgr(parent: SvgComponent) {
+        if (coord.transformBkgr) {
+            val circle = createBkgrCircle().apply {
+                strokeColor().set(theme.panel().rectColor())
+                strokeWidth().set(theme.panel().rectStrokeWidth())
+                fillOpacity().set(0.0)
+            }
+
+            parent.add(circle)
+        } else {
+            super.doStrokeBkgr(parent)
+        }
+    }
+
+    override fun doDrawPanelBorder(parent: SvgComponent) {
+        if (coord.transformBkgr) {
+            val circle = createBkgrCircle().apply {
+                strokeColor().set(theme.panel().borderColor())
+                strokeWidth().set(theme.panel().borderWidth())
+                fillOpacity().set(0.0)
+            }
+
+            parent.add(circle)
+        } else {
+            super.doDrawPanelBorder(parent)
+        }
+    }
+
+    private fun createBkgrCircle(): SvgCircleElement {
+        return SvgCircleElement().apply {
+            cx().set(layoutInfo.geomContentBounds.center.x)
+            cy().set(layoutInfo.geomContentBounds.center.y)
+            r().set((layoutInfo.geomContentBounds.width / 2) / (1 + R_EXPAND))
         }
     }
 

@@ -191,7 +191,7 @@ def coord_flip(xlim=None, ylim=None):
     return _coord('flip', xlim=xlim, ylim=ylim, flip=True)
 
 
-def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None):
+def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None, transform_bkgr=None):
     """
     Polar coordinate system. It is used for pie charts and polar plots.
 
@@ -211,6 +211,8 @@ def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None):
         Offset relative to the starting angle (which is 12 o'clock), in radians.
     direction : {1, -1}, default=1
         Specify angle direction. 1 for clockwise, -1 for counterclockwise.
+    transform_bkgr : bool, default=True
+        If True, the background is transformed to a circle, rectangle otherwise.
 
     Examples
     --------
@@ -233,7 +235,7 @@ def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None):
             coord_polar(theta='y')
 
     """
-    return _coord('polar', xlim=xlim, ylim=ylim, theta=theta, start=start, direction=direction)
+    return _coord('polar', xlim=xlim, ylim=ylim, theta=theta, start=start, direction=direction, transform_bkgr=transform_bkgr)
 
 
 def _coord(name, **other):

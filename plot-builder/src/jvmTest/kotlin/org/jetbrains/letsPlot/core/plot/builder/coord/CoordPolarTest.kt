@@ -25,7 +25,10 @@ class PolarCoordTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
-            flipped = true, start, clockwise
+            flipped = true,
+            start,
+            clockwise,
+            transformBkgr = false
         )
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
@@ -43,7 +46,10 @@ class PolarCoordTest {
         val polarCoordProvider = PolarCoordProvider(
             xLim = Pair(null, null),
             yLim = Pair(null, null),
-            flipped = true, start, clockwise
+            flipped = true,
+            start,
+            clockwise,
+            transformBkgr = false
         )
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 

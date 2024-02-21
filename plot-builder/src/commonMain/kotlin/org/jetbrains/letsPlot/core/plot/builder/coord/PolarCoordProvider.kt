@@ -19,8 +19,8 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-private const val R_EXPAND = 0.15
-private const val R_PADDING = 0.06
+const val R_EXPAND = 0.15
+const val R_PADDING = 0.06
 
 internal class PolarCoordProvider(
     xLim: Pair<Double?, Double?>,
@@ -28,13 +28,14 @@ internal class PolarCoordProvider(
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
+    val transformBkgr: Boolean,
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean = false
     override val isPolar: Boolean = true
 
     override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr)
     }
 
     override fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
@@ -102,7 +103,7 @@ internal class PolarCoordProvider(
     override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinateSystem {
         val sign = if (clockwise) -1.0 else 1.0
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
-        return PolarCoordinateSystem(Coords.create(coordMapper), start, sign)
+        return PolarCoordinateSystem(Coords.create(coordMapper), start, sign, transformBkgr)
     }
 
 
@@ -118,7 +119,8 @@ internal class PolarCoordProvider(
 class PolarCoordinateSystem internal constructor(
     private val coordinateSystem: CoordinateSystem,
     val startAngle: Double,
-    val direction: Double
+    val direction: Double,
+    val transformBkgr: Boolean
 ) : CoordinateSystem {
     override val isLinear: Boolean get() = false
     override val isPolar: Boolean get() = true
@@ -127,5 +129,5 @@ class PolarCoordinateSystem internal constructor(
 
     override fun unitSize(p: DoubleVector): DoubleVector = coordinateSystem.unitSize(p)
 
-    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip(), startAngle, direction)
+    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip(), startAngle, direction, transformBkgr)
 }

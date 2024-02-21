@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
@@ -62,8 +61,8 @@ internal open class SquareFrameOfReference(
         val hGridTheme = panelTheme.gridX(flipAxis)
         val vGridTheme = panelTheme.gridY(flipAxis)
 
-        val fillPanelRect = panelTheme.showRect() && beforeGeomLayer
-        val drawPanelRectStroke = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
+        val fillBkgr = panelTheme.showRect() && beforeGeomLayer
+        val strokeBkgr = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
         val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
 
         val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
@@ -71,8 +70,8 @@ internal open class SquareFrameOfReference(
         val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
-        if (fillPanelRect) {
-            doFillPanelRect(geomInnerBounds, panelTheme, parent)
+        if (fillBkgr) {
+            doFillBkgr(parent)
         }
 
         if (drawHGrid) {
@@ -91,12 +90,12 @@ internal open class SquareFrameOfReference(
             doDrawVAxis(parent)
         }
 
-        if (drawPanelRectStroke) {
-            doStrokePanelRect(geomInnerBounds, panelTheme, parent)
+        if (strokeBkgr) {
+            doStrokeBkgr(parent)
         }
 
         if (drawPanelBorder) {
-            doDrawPanelBorder(geomInnerBounds, panelTheme, parent)
+            doDrawPanelBorder(parent)
         }
 
         if (isDebugDrawing && !beforeGeomLayer) {
@@ -104,30 +103,13 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    private fun doDrawPanelBorder(
-        geomInnerBounds: DoubleRectangle,
-        panelTheme: PanelTheme,
-        parent: SvgComponent
-    ) {
-        val panelBorder = SvgRectElement(geomInnerBounds).apply {
-            strokeColor().set(panelTheme.borderColor())
-            strokeWidth().set(panelTheme.borderWidth())
+    protected open fun doDrawPanelBorder(parent: SvgComponent) {
+        val panelBorder = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+            strokeColor().set(theme.panel().borderColor())
+            strokeWidth().set(theme.panel().borderWidth())
             fillOpacity().set(0.0)
         }
         parent.add(panelBorder)
-    }
-
-    private fun doStrokePanelRect(
-        geomInnerBounds: DoubleRectangle,
-        panelTheme: PanelTheme,
-        parent: SvgComponent
-    ) {
-        val panelRectStroke = SvgRectElement(geomInnerBounds).apply {
-            strokeColor().set(panelTheme.rectColor())
-            strokeWidth().set(panelTheme.rectStrokeWidth())
-            fillOpacity().set(0.0)
-        }
-        parent.add(panelRectStroke)
     }
 
     protected open fun doDrawVAxis(parent: SvgComponent) {
@@ -208,16 +190,22 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    private fun doFillPanelRect(
-        geomInnerBounds: DoubleRectangle,
-        panelTheme: PanelTheme,
-        parent: SvgComponent
-    ) {
-        val panel = SvgRectElement(geomInnerBounds).apply {
-            fillColor().set(panelTheme.rectFill())
+    protected open fun doFillBkgr(parent: SvgComponent) {
+        val panel = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+            fillColor().set(theme.panel().rectFill())
         }
         parent.add(panel)
     }
+
+    protected open fun doStrokeBkgr(parent: SvgComponent) {
+        val panelRectStroke = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+            strokeColor().set(theme.panel().rectColor())
+            strokeWidth().set(theme.panel().rectStrokeWidth())
+            fillOpacity().set(0.0)
+        }
+        parent.add(panelRectStroke)
+    }
+
 
     protected open fun prepareAxisData(
         axisInfo: AxisLayoutInfo,

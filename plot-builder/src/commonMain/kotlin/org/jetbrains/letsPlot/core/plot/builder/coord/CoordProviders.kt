@@ -50,8 +50,9 @@ object CoordProviders {
         yLim: Pair<Double?, Double?> = NO_LIM,
         flipped: Boolean,
         start: Double,
-        clockwise: Boolean
+        clockwise: Boolean,
+        transformBkgr: Boolean
     ): CoordProvider {
-        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise)
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr)
     }
 }

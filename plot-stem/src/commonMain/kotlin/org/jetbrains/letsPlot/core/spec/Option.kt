@@ -962,6 +962,7 @@ object Option {
         const val THETA = "theta"
         const val START = "start"
         const val DIRECTION = "direction"
+        const val TRANSFORM_BKGR = "transform_bkgr"
         const val CLIP = "clip"
 
         object Projections {
