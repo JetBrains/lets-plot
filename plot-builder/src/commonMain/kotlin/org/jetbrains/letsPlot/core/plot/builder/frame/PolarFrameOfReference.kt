@@ -53,7 +53,7 @@ internal class PolarFrameOfReference(
     }
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
-        val geomBounds: DoubleRectangle = layoutInfo.geomInnerBounds
+        val geomInnerBounds: DoubleRectangle = layoutInfo.geomInnerBounds
         val panelTheme = theme.panel()
 
         // Flip theme
@@ -63,7 +63,8 @@ internal class PolarFrameOfReference(
         val hGridTheme = panelTheme.gridX(flipAxis)
         val vGridTheme = panelTheme.gridY(flipAxis)
 
-        val drawPanel = panelTheme.showRect() && beforeGeomLayer
+        val drawPanelRectFill = panelTheme.showRect() && beforeGeomLayer
+        val drawPanelRectStroke = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
         val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
 
         val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
@@ -71,12 +72,11 @@ internal class PolarFrameOfReference(
         val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
-        if (drawPanel) {
-            val panel = buildPanelComponent(layoutInfo.geomInnerBounds, panelTheme)
+        if (drawPanelRectFill) {
+            val panel = buildPanelRectFillComponent(geomInnerBounds, panelTheme)
             parent.add(panel)
         }
 
-        // First draw grid lines and then add axis to prevent axis overlapping by grid lines (esp in polar coord system).
         if (drawHGrid) {
             // Top/Bottom axis
             listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
@@ -135,19 +135,24 @@ internal class PolarFrameOfReference(
                     labelAdjustments,
                 )
 
-                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
+                val axisOrigin = marginsLayout.toAxisOrigin(geomInnerBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
                 axisComponent.moveTo(axisOrigin)
                 parent.add(axisComponent)
             }
         }
 
+        if (drawPanelRectStroke) {
+            val panelRectStroke = buildPanelRectStrokeComponent(geomInnerBounds, panelTheme)
+            parent.add(panelRectStroke)
+        }
+
         if (drawPanelBorder) {
-            val panelBorder = buildPanelBorderComponent(geomBounds, panelTheme)
+            val panelBorder = buildPanelBorderComponent(geomInnerBounds, panelTheme)
             parent.add(panelBorder)
         }
 
         if (isDebugDrawing && !beforeGeomLayer) {
-            drawDebugShapes(parent, geomBounds)
+            drawDebugShapes(parent, geomInnerBounds)
         }
     }
 
@@ -256,11 +261,17 @@ internal class PolarFrameOfReference(
             )
         }
 
-        private fun buildPanelComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
+        private fun buildPanelRectFillComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
+            return SvgRectElement(bounds).apply {
+                fillColor().set(theme.rectFill())
+            }
+        }
+
+        private fun buildPanelRectStrokeComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
             return SvgRectElement(bounds).apply {
                 strokeColor().set(theme.rectColor())
                 strokeWidth().set(theme.rectStrokeWidth())
-                fillColor().set(theme.rectFill())
+                fillOpacity().set(0.0)
             }
         }
 
