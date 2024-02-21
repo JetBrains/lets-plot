@@ -5786,9 +5786,59 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
     - stroke_end : offset from the end coordinate (usually equal to the stroke of the point object from which the curve ends to avoid overlapping with it).
 
-    Examples
+ Examples
     --------
-    ToDo
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_curve(x=0, y=0, xend=1, yend=0, curvature=0.7, angle=30)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6-8
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': [-1, -1, 1, 1], 'y': [-1, 1, 1, -1]}
+        ggplot(data, aes(x='x', y='y')) + \\
+            geom_point(size=14) + \\
+            geom_curve(xend=0, yend=0, size_start=14, \\
+                       curvature = -0.5, \\
+                       arrow = arrow(ends='first')) + \\
+            coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 18-19
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        city = ["Moscow", "Oryol", "Novocherkassk", "Stavropol", \\
+               "Georgiyevsk", "Vladikavkaz", "Tiflis", "Kars", "Erzurum"]
+        latitude = [55.751244, 52.929697, 47.414101, 45.0428, \\
+                   44.1497667, 43.03667, 41.716667, 40.60199, 39.90861]
+        longitude = [37.618423, 36.098689, 40.110401, 41.9734, \\
+                    43.4577689, 44.66778, 44.783333, 43.09495, 41.27694]
+        pushkin_1829_cities = {"city": city, "latitude": latitude, "longitude": longitude}
+        pushkin_1829_path = {
+            "from_lon": longitude[:-1],
+            "from_lat": latitude[:-1],
+            "to_lon": longitude[1:],
+            "to_lat": latitude[1:]
+        }
+        ggplot() + \\
+            geom_livemap(const_size_zoomin=0) + \\
+            geom_curve(aes("from_lon", "from_lat", xend="to_lon", yend="to_lat"), data=pushkin_1829_path, \\
+                       size_end=3, color="#fc4e2a", curvature=-0.2, arrow=arrow(type='closed', length=5)) + \\
+            geom_point(aes("longitude", "latitude"), data=pushkin_1829_cities, \\
+                       size=3, color="#fc4e2a", tooltips=layer_tooltips().line("@city"))
 
     """
     return _geom('curve',
