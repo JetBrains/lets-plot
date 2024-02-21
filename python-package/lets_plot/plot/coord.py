@@ -11,6 +11,7 @@ __all__ = ['coord_cartesian',
            'coord_fixed',
            'coord_map',
            'coord_flip',
+           'coord_polar',
            ]
 
 
