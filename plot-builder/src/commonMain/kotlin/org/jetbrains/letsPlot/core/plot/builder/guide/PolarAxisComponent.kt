@@ -29,7 +29,6 @@ class PolarAxisComponent(
     private val breaksData: PolarAxisUtil.PolarBreaksData,
     private val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     private val axisTheme: AxisTheme,
-    private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
 ) : SvgComponent() {
     override fun buildComponent() {
@@ -40,48 +39,44 @@ class PolarAxisComponent(
         val rootElement = rootGroup
 
 
-        // Axis
-        if (!hideAxis) {
-            // Ticks and labels
-            if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
-                val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
+        // Ticks and labels
+        if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
+            val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
 
-                for ((i, v) in breaksData.majorBreaks.withIndex()) {
-                    val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                    val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+            for ((i, v) in breaksData.majorBreaks.withIndex()) {
+                val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
+                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
 
-                    val (tickLabel, tickMark) = buildTick(label, labelOffset, axisTheme, v, breaksData.center)
+                val (tickLabel, tickMark) = buildTick(label, labelOffset, axisTheme, v, breaksData.center)
 
-                    tickMark?.let { rootElement.children().add(it) }
-                    tickLabel?.let { rootElement.children().add(it.rootGroup) }
-                }
+                tickMark?.let { rootElement.children().add(it) }
+                tickLabel?.let { rootElement.children().add(it.rootGroup) }
             }
+        }
 
-            // Axis line
-            if (!hideAxisBreaks && axisTheme.showLine()) {
-                if (orientation.isHorizontal) {
-                    val axisLine = SvgPathElement().apply {
-                        d().set(
-                            SvgPathDataBuilder()
-                                .lineString(breaksData.axisLine)
-                                .build()
-                        )
-                        strokeWidth().set(axisTheme.lineWidth())
-                        strokeColor().set(axisTheme.lineColor())
-                        fillColor().set(Color.TRANSPARENT)
-                    }
-                    rootElement.children().add(axisLine)
-                } else {
-                    val axisLine = SvgLineElement().apply {
-                        y1().set(breaksData.center.y)
-                        y2().set(breaksData.center.y - length / 2.0)
-                        strokeWidth().set(axisTheme.lineWidth())
-                        strokeColor().set(axisTheme.lineColor())
-                    }
-                    rootElement.children().add(axisLine)
+        // Axis line
+        if (!hideAxisBreaks && axisTheme.showLine()) {
+            if (orientation.isHorizontal) {
+                val axisLine = SvgPathElement().apply {
+                    d().set(
+                        SvgPathDataBuilder()
+                            .lineString(breaksData.axisLine)
+                            .build()
+                    )
+                    strokeWidth().set(axisTheme.lineWidth())
+                    strokeColor().set(axisTheme.lineColor())
+                    fillColor().set(Color.TRANSPARENT)
                 }
+                rootElement.children().add(axisLine)
+            } else {
+                val axisLine = SvgLineElement().apply {
+                    y1().set(breaksData.center.y)
+                    y2().set(breaksData.center.y - length / 2.0)
+                    strokeWidth().set(axisTheme.lineWidth())
+                    strokeColor().set(axisTheme.lineColor())
+                }
+                rootElement.children().add(axisLine)
             }
-
         }
     }
 

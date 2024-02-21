@@ -27,12 +27,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TopDownTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
-internal class SquareFrameOfReferenceProvider(
+internal open class SquareFrameOfReferenceProvider(
     private val plotContext: PlotContext,
     private val hScaleProto: Scale,
     private val vScaleProto: Scale,
     private val adjustedDomain: DoubleRectangle,
-    override val flipAxis: Boolean,
+    final override val flipAxis: Boolean,
     private val hAxisPosition: AxisPosition,
     private val vAxisPosition: AxisPosition,
     private val theme: Theme,
@@ -42,6 +42,7 @@ internal class SquareFrameOfReferenceProvider(
 
     private val hAxisSpec: AxisSpec
     private val vAxisSpec: AxisSpec
+    protected open val isPolar: Boolean = false
 
     init {
         hAxisSpec = AxisSpec(
@@ -79,7 +80,7 @@ internal class SquareFrameOfReferenceProvider(
                     spec.breaksProviderFactory,
                     orientation,
                     spec.theme,
-                    false
+                    isPolar
                 )
             }
         }
@@ -91,6 +92,10 @@ internal class SquareFrameOfReferenceProvider(
             bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
 
+        return createTileLayoutProvider(axisLayoutQuad)
+    }
+
+    protected open fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
         return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().padding())
     }
 

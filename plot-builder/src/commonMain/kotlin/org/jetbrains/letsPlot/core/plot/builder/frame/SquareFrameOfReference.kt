@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -27,7 +28,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
-internal class SquareFrameOfReference(
+internal open class SquareFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
     private val adjustedDomain: DoubleRectangle,
@@ -40,6 +41,9 @@ internal class SquareFrameOfReference(
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
+    // Flip theme
+    protected val hAxisTheme = theme.horizontalAxis(flipAxis)
+    protected val vAxisTheme = theme.verticalAxis(flipAxis)
 
     // Rendering
 
@@ -51,18 +55,14 @@ internal class SquareFrameOfReference(
         drawPanelAndAxis(parent, beforeGeomLayer = false)
     }
 
-    private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
+    protected open fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
         val geomInnerBounds: DoubleRectangle = layoutInfo.geomInnerBounds
         val panelTheme = theme.panel()
-
-        // Flip theme
-        val hAxisTheme = theme.horizontalAxis(flipAxis)
-        val vAxisTheme = theme.verticalAxis(flipAxis)
 
         val hGridTheme = panelTheme.gridX(flipAxis)
         val vGridTheme = panelTheme.gridY(flipAxis)
 
-        val drawPanelRectFill = panelTheme.showRect() && beforeGeomLayer
+        val fillPanelRect = panelTheme.showRect() && beforeGeomLayer
         val drawPanelRectStroke = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
         val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
 
@@ -71,83 +71,32 @@ internal class SquareFrameOfReference(
         val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
-        if (drawPanelRectFill) {
-            val panel = buildPanelRectFillComponent(geomInnerBounds, panelTheme)
-            parent.add(panel)
+        if (fillPanelRect) {
+            doFillPanelRect(geomInnerBounds, panelTheme, parent)
         }
 
         if (drawHGrid) {
-            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
-
-                val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
-                val gridOrigin = layoutInfo.geomContentBounds.origin
-                gridComponent.moveTo(gridOrigin)
-                parent.add(gridComponent)
-            }
+            doDrawHGrid(hGridTheme, parent)
         }
 
         if (drawVGrid) {
-            listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-                val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
-
-                val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
-                val gridOrigin = layoutInfo.geomContentBounds.origin
-                gridComponent.moveTo(gridOrigin)
-                parent.add(gridComponent)
-            }
+            doDrawVGrid(vGridTheme, parent)
         }
 
         if (drawHAxis) {
-            // Top/Bottom axis
-            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
-
-                val axisComponent = buildAxis(
-                    breaksData = breaksData,
-                    info = axisInfo,
-                    hideAxis = !drawHAxis,
-                    hideAxisBreaks = !layoutInfo.hAxisShown,
-                    axisTheme = hAxisTheme,
-                    labelAdjustments = labelAdjustments,
-                    isDebugDrawing,
-                )
-
-                val axisOrigin = marginsLayout.toAxisOrigin(geomInnerBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
-                axisComponent.moveTo(axisOrigin)
-                parent.add(axisComponent)
-            }
+            doDrawHAxis(parent)
         }
 
         if (drawVAxis) {
-            // Left/Right axis
-            listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-                val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
-
-                val axisComponent = buildAxis(
-                    breaksData = breaksData,
-                    axisInfo,
-                    hideAxis = !drawVAxis,
-                    hideAxisBreaks = !layoutInfo.vAxisShown,
-                    vAxisTheme,
-                    labelAdjustments,
-                    isDebugDrawing,
-                )
-
-                val axisOrigin = marginsLayout.toAxisOrigin(geomInnerBounds, axisInfo.orientation, coord.isPolar, theme.panel().padding())
-                axisComponent.moveTo(axisOrigin)
-                parent.add(axisComponent)
-            }
+            doDrawVAxis(parent)
         }
 
         if (drawPanelRectStroke) {
-            val panelRectStroke = buildPanelRectStrokeComponent(geomInnerBounds, panelTheme)
-            parent.add(panelRectStroke)
+            doStrokePanelRect(geomInnerBounds, panelTheme, parent)
         }
 
         if (drawPanelBorder) {
-            val panelBorder = buildPanelBorderComponent(geomInnerBounds, panelTheme)
-            parent.add(panelBorder)
+            doDrawPanelBorder(geomInnerBounds, panelTheme, parent)
         }
 
         if (isDebugDrawing && !beforeGeomLayer) {
@@ -155,7 +104,122 @@ internal class SquareFrameOfReference(
         }
     }
 
-    private fun prepareAxisData(
+    private fun doDrawPanelBorder(
+        geomInnerBounds: DoubleRectangle,
+        panelTheme: PanelTheme,
+        parent: SvgComponent
+    ) {
+        val panelBorder = SvgRectElement(geomInnerBounds).apply {
+            strokeColor().set(panelTheme.borderColor())
+            strokeWidth().set(panelTheme.borderWidth())
+            fillOpacity().set(0.0)
+        }
+        parent.add(panelBorder)
+    }
+
+    private fun doStrokePanelRect(
+        geomInnerBounds: DoubleRectangle,
+        panelTheme: PanelTheme,
+        parent: SvgComponent
+    ) {
+        val panelRectStroke = SvgRectElement(geomInnerBounds).apply {
+            strokeColor().set(panelTheme.rectColor())
+            strokeWidth().set(panelTheme.rectStrokeWidth())
+            fillOpacity().set(0.0)
+        }
+        parent.add(panelRectStroke)
+    }
+
+    protected open fun doDrawVAxis(parent: SvgComponent) {
+        listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+
+            val axisComponent = buildAxis(
+                breaksData = breaksData,
+                axisInfo,
+                hideAxis = false,
+                hideAxisBreaks = !layoutInfo.vAxisShown,
+                vAxisTheme,
+                labelAdjustments,
+                isDebugDrawing,
+            )
+
+            val axisOrigin = marginsLayout.toAxisOrigin(
+                layoutInfo.geomInnerBounds,
+                axisInfo.orientation,
+                coord.isPolar,
+                theme.panel().padding()
+            )
+            axisComponent.moveTo(axisOrigin)
+            parent.add(axisComponent)
+        }
+    }
+
+    protected open fun doDrawHAxis(parent: SvgComponent) {
+        listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+
+            val axisComponent = buildAxis(
+                breaksData = breaksData,
+                info = axisInfo,
+                hideAxis = false,
+                hideAxisBreaks = !layoutInfo.hAxisShown,
+                axisTheme = hAxisTheme,
+                labelAdjustments = labelAdjustments,
+                isDebugDrawing,
+            )
+
+            val axisOrigin = marginsLayout.toAxisOrigin(
+                layoutInfo.geomInnerBounds,
+                axisInfo.orientation,
+                coord.isPolar,
+                theme.panel().padding()
+            )
+            axisComponent.moveTo(axisOrigin)
+            parent.add(axisComponent)
+        }
+    }
+
+    protected open fun doDrawVGrid(
+        vGridTheme: PanelGridTheme,
+        parent: SvgComponent
+    ) {
+        listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+            val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
+
+            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+            val gridOrigin = layoutInfo.geomContentBounds.origin
+            gridComponent.moveTo(gridOrigin)
+            parent.add(gridComponent)
+        }
+    }
+
+    protected open fun doDrawHGrid(
+        hGridTheme: PanelGridTheme,
+        parent: SvgComponent
+    ) {
+        listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+            val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
+
+            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
+            val gridOrigin = layoutInfo.geomContentBounds.origin
+            gridComponent.moveTo(gridOrigin)
+            parent.add(gridComponent)
+        }
+    }
+
+    private fun doFillPanelRect(
+        geomInnerBounds: DoubleRectangle,
+        panelTheme: PanelTheme,
+        parent: SvgComponent
+    ) {
+        val panel = SvgRectElement(geomInnerBounds).apply {
+            fillColor().set(panelTheme.rectFill())
+        }
+        parent.add(panel)
+    }
+
+    protected open fun prepareAxisData(
         axisInfo: AxisLayoutInfo,
         scaleBreaks: ScaleBreaks,
         axisTheme: AxisTheme
@@ -180,7 +244,7 @@ internal class SquareFrameOfReference(
         return Pair(labelAdjustments, breaksData)
     }
 
-    private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
+    protected fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
         run {
             val tileBounds = layoutInfo.geomWithAxisBounds
             val rect = SvgRectElement(tileBounds)
@@ -209,20 +273,23 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = buildGeom(
+        val layerComponent = buildGeom(layer, targetCollector)
+        layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
+        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, layoutInfo.geomContentBounds.dimension))
+
+        return layerComponent
+    }
+
+    protected fun buildGeom(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
+        return buildGeom(
             plotContext,
-            layer,
-            xyAesBounds = adjustedDomain, // positional aesthetics are the same as positional data.
+            layer,  // positional aesthetics are the same as positional data.
+            xyAesBounds = adjustedDomain,
             coord,
             flipAxis,
             targetCollector,
             backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
         )
-
-        val geomBounds = layoutInfo.geomContentBounds
-        layerComponent.moveTo(geomBounds.origin)
-        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
-        return layerComponent
     }
 
 
@@ -259,28 +326,6 @@ internal class SquareFrameOfReference(
                 info.tickLabelBoundsList?.forEach { drawDebugRect(it, Color.LIGHT_MAGENTA) }
             }
             return axis
-        }
-
-        private fun buildPanelRectFillComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
-            return SvgRectElement(bounds).apply {
-                fillColor().set(theme.rectFill())
-            }
-        }
-
-        private fun buildPanelRectStrokeComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
-            return SvgRectElement(bounds).apply {
-                strokeColor().set(theme.rectColor())
-                strokeWidth().set(theme.rectStrokeWidth())
-                fillOpacity().set(0.0)
-            }
-        }
-
-        private fun buildPanelBorderComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
-            return SvgRectElement(bounds).apply {
-                strokeColor().set(theme.borderColor())
-                strokeWidth().set(theme.borderWidth())
-                fillOpacity().set(0.0)
-            }
         }
 
         /**
