@@ -438,8 +438,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             )
         }
         val textColor = when (side) {
-            Side.INSIDE -> AnnotationsUtil.chooseColor(annotations.textStyle.color, sector.p.fill()!!)
-            else -> annotations.textStyle.color
+            Side.INSIDE -> annotations.getTextColor(sector.p.fill())
+            else -> annotations.getTextColor()
         }
         return AnnotationLabel(
             text,

@@ -7,4 +7,5 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 
 interface AnnotationsTheme {
     fun textStyle(): ThemeTextStyle
+    fun useCustomColor(): Boolean
 }

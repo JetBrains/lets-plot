@@ -18,7 +18,8 @@ object AnnotationsProviderUtil {
         spec: AnnotationSpecification,
         dataAccess: MappedDataAccess,
         dataFrame: DataFrame,
-        themeTextStyle: ThemeTextStyle
+        themeTextStyle: ThemeTextStyle,
+        useCustomColor: Boolean
     ): Annotations? {
         val mappedLines = LinePattern.prepareMappedLines(
             spec.linePatterns.map(::LinePattern),
@@ -35,7 +36,8 @@ object AnnotationsProviderUtil {
                 themeTextStyle.face,
                 spec.textSize ?: themeTextStyle.size,
                 themeTextStyle.color
-            )
+            ),
+            useCustomColor
         )
     }
 }

@@ -20,4 +20,9 @@ internal class DefaultAnnotationsTheme(
     override fun textStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(annotationTextKey))
     }
+
+    override fun useCustomColor(): Boolean {
+        val textElem = getElemValue(listOf(ThemeOption.ANNOTATION_TEXT))
+        return textElem.containsKey(ThemeOption.Elem.COLOR)
+    }
 }

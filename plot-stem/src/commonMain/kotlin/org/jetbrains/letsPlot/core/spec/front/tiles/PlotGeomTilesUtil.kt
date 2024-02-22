@@ -151,7 +151,11 @@ internal object PlotGeomTilesUtil {
                 .contextualMappingProvider(it)
         }
         // annotations
-        layerBuilder.annotationSpecification(layerConfig.annotations, theme.annotations().textStyle())
+        layerBuilder.annotationSpecification(
+            layerConfig.annotations,
+            theme.annotations().textStyle(),
+            theme.annotations().useCustomColor()
+        )
 
         return layerBuilder
     }

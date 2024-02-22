@@ -36,6 +36,7 @@ object AnnotationsUtil {
     // WCAG recommend a minimum contrast ratio of 4.5:1 for normal text and 3:1 for large text
     private const val CONTRAST_RATIO = 4.5
 
+    // Choose text color using the Lightness correction to make it readable on the given background
     fun chooseColor(textColor: Color, background: Color): Color {
         fun correctLightness(color: Color, newLightness: Double): Color {
             val hsl = hslFromRgb(color)

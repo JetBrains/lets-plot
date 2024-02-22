@@ -138,10 +138,11 @@ class GeomLayerBuilder(
 
     fun annotationSpecification(
         annotationSpec: AnnotationSpecification,
-        themeTextStyle: ThemeTextStyle
+        themeTextStyle: ThemeTextStyle,
+        useCustomColor: Boolean
     ): GeomLayerBuilder {
         myAnnotationsProvider = { dataAccess, dataFrame ->
-            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
+            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle, useCustomColor)
         }
         return this
     }

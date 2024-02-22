@@ -92,7 +92,7 @@ open class BarGeom : GeomBase() {
                 clientBarCenter,
                 textParams = AnnotationsUtil.TextParams(
                     style = annotations.textStyle,
-                    color = AnnotationsUtil.chooseColor(annotations.textStyle.color, p.fill()!!),
+                    color = annotations.getTextColor(p.fill()),
                     hjust = "middle",
                     vjust = "center",
                     alpha = 0.0,
@@ -157,11 +157,11 @@ open class BarGeom : GeomBase() {
                         val labelColor = when {
                             barRect.contains(textRect) -> {
                                 alpha = 0.0
-                                AnnotationsUtil.chooseColor(annotations.textStyle.color, p.fill()!!)
+                                annotations.getTextColor(p.fill())
                             }
                             else -> {
                                 alpha = 0.75
-                                annotations.textStyle.color
+                                annotations.getTextColor()
                             }
                         }
 
