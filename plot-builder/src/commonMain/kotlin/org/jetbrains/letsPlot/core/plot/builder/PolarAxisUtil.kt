@@ -120,7 +120,7 @@ object PolarAxisUtil {
         }
 
         private fun buildRadiusGrid(breaks: List<Double>): List<List<DoubleVector>> {
-            return (breaks + gridDomain.yRange().upperEnd)
+            return (breaks)
                 .filter { it in gridDomain.yRange() }
                 .map {
                     listOf(
@@ -133,7 +133,7 @@ object PolarAxisUtil {
         private fun buildAxis(): List<DoubleVector> {
             return when (!orientation.isHorizontal) {
                 true -> buildAngleGrid(listOf(gridDomain.xRange().upperEnd)).single()
-                false -> buildRadiusGrid(emptyList()).single() // buildRadiusGrid always builds axis grid line even without breaks
+                false -> buildRadiusGrid(listOf(gridDomain.yRange().upperEnd)).single()
             }
         }
 
