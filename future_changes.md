@@ -1,8 +1,12 @@
 ## [4.2.1] - 2024-mm-dd
 
 ### Added
+- polar coordinate system support with the `coord_polar()` function to create polar coordinate system  
+**[TODO: ADD NOTEBOOK]**
 - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`
 - `panel_border_ontop` parameter in `theme()`
+- `panel_inset` parameter in `theme()`  
+  **[TODO: ADD NOTEBOOK]**
 
 - The `scale_mapper_kind` parameter in `scale_*_continuous()` and `scale_*_discrete()` to specify the scale type 
 ('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area').
@@ -25,3 +29,5 @@
 - Make middle strip in `geomCrossbar()` optional [[LPK-233](https://github.com/JetBrains/lets-plot-kotlin/issues/233)].
 - Can't set None for coord limit [[#486](https://github.com/JetBrains/lets-plot/issues/486)].
 - Scale limits don't work for bars/area [[LPK-219](https://github.com/JetBrains/lets-plot-kotlin/issues/219)], [[#978](https://github.com/JetBrains/lets-plot/issues/978)]. 
+- No gridlines when axis_ontop=True [[#1012](https://github.com/JetBrains/lets-plot/issues/1012)].
+- bar-plot: do not draw bar border adjacent to the axis [[#845](https://github.com/JetBrains/lets-plot/issues/845)].
