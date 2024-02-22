@@ -194,20 +194,7 @@ internal class PolarFrameOfReference(
         layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
 
         // Compute clip circle
-        val hAxisInfo = layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom ?: error("No top/bottom axis info")
-        val axisLine = prepareAxisData(hAxisInfo, hScaleBreaks).second.axisLine
-        var minX = axisLine.first().x
-        var maxX = axisLine.first().x
-        var minY = axisLine.first().y
-        var maxY = axisLine.first().y
-        for (point in axisLine) {
-            minX = minOf(minX, point.x)
-            maxX = maxOf(maxX, point.x)
-            minY = minOf(minY, point.y)
-            maxY = maxOf(maxY, point.y)
-        }
-
-        val r = minOf((maxX - minX), (maxY - minY)) / 2
+        val r = layoutInfo.geomContentBounds.width / 2 / (1 + R_EXPAND)
         layerComponent.clipCircle(layoutInfo.geomContentBounds.dimension.mul(0.5), r)
         return layerComponent
     }
