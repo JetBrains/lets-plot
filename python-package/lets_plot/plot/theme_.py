@@ -240,6 +240,7 @@ def theme(*,
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip : str or dict
         General tooltip.
+        Set 'blank' or result of `element_blank()` to hide the tooltip (also hides side tooltips).
         Set `element_rect()` to specify tooltip rectangular parameters, inherited from `rect`.
     tooltip_text : str or dict
         Text in general tooltip.
