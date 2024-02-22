@@ -25,5 +25,5 @@ interface PanelTheme {
     fun gridX(flipAxis: Boolean = false): PanelGridTheme
     fun gridY(flipAxis: Boolean = false): PanelGridTheme
 
-    fun padding(): Thickness
+    fun inset(): Thickness
 }

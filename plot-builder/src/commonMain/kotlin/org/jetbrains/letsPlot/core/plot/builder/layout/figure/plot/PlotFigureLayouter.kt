@@ -103,7 +103,6 @@ internal class PlotFigureLayouter constructor(
                 hAxisPosition, vAxisPosition,
                 hAxisTheme = theme.horizontalAxis(flipAxis),
                 vAxisTheme = theme.verticalAxis(flipAxis),
-                panelTheme = theme.panel(),
             )
         }
     }
@@ -125,7 +124,6 @@ internal class PlotFigureLayouter constructor(
             vAxisPosition = AxisPosition.LEFT,    // Not used with Live Map
             hAxisTheme = LiveMapAxisTheme(),
             vAxisTheme = LiveMapAxisTheme(),
-            panelTheme = theme.panel(),
         )
     }
 

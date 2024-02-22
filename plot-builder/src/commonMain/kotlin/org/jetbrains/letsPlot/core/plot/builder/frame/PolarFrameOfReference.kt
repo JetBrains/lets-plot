@@ -25,6 +25,9 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 internal class PolarFrameOfReference(
     plotContext: PlotContext,
@@ -66,7 +69,7 @@ internal class PolarFrameOfReference(
                 layoutInfo.geomInnerBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().padding()
+                theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)
@@ -90,7 +93,7 @@ internal class PolarFrameOfReference(
                 layoutInfo.geomContentBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().padding()
+                theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)
@@ -120,51 +123,47 @@ internal class PolarFrameOfReference(
     }
 
     override fun doFillBkgr(parent: SvgComponent) {
-        if (coord.transformBkgr) {
-            val circle = createBkgrCircle().apply {
-                fillColor().set(theme.panel().rectFill())
-            }
-
-            parent.add(circle)
-        } else {
-            super.doFillBkgr(parent)
+        val fillBkgr = createPanelElement() {
+            it.fillColor().set(theme.panel().rectFill())
         }
+
+        parent.add(fillBkgr)
     }
 
     override fun doStrokeBkgr(parent: SvgComponent) {
-        if (coord.transformBkgr) {
-            val circle = createBkgrCircle().apply {
-                strokeColor().set(theme.panel().rectColor())
-                strokeWidth().set(theme.panel().rectStrokeWidth())
-                fillOpacity().set(0.0)
-            }
-
-            parent.add(circle)
-        } else {
-            super.doStrokeBkgr(parent)
+        val strokeBkgr = createPanelElement() {
+            it.strokeColor().set(theme.panel().rectColor())
+            it.strokeWidth().set(theme.panel().rectStrokeWidth())
+            it.fillOpacity().set(0.0)
         }
+
+        parent.add(strokeBkgr)
     }
 
     override fun doDrawPanelBorder(parent: SvgComponent) {
-        if (coord.transformBkgr) {
-            val circle = createBkgrCircle().apply {
-                strokeColor().set(theme.panel().borderColor())
-                strokeWidth().set(theme.panel().borderWidth())
-                fillOpacity().set(0.0)
-            }
-
-            parent.add(circle)
-        } else {
-            super.doDrawPanelBorder(parent)
+        val border = createPanelElement() {
+            it.strokeColor().set(theme.panel().borderColor())
+            it.strokeWidth().set(theme.panel().borderWidth())
+            it.fillOpacity().set(0.0)
         }
+
+        parent.add(border)
     }
 
-    private fun createBkgrCircle(): SvgCircleElement {
-        return SvgCircleElement().apply {
-            cx().set(layoutInfo.geomContentBounds.center.x)
-            cy().set(layoutInfo.geomContentBounds.center.y)
-            r().set((layoutInfo.geomContentBounds.width / 2) / (1 + R_EXPAND))
+    private fun createPanelElement(block: (SvgShape) -> Unit): SvgNode {
+        val shape = when (coord.transformBkgr) {
+            true -> SvgCircleElement().apply {
+                cx().set(layoutInfo.geomContentBounds.center.x)
+                cy().set(layoutInfo.geomContentBounds.center.y)
+                r().set((layoutInfo.geomContentBounds.width / 2) / (1 + R_EXPAND))
+            }
+
+            false -> SvgRectElement(layoutInfo.geomInnerBounds)
         }
+
+        block(shape)
+
+        return shape
     }
 
     private fun prepareAxisData(

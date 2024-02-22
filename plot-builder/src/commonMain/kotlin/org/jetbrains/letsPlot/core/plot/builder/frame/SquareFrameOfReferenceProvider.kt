@@ -96,7 +96,7 @@ internal open class SquareFrameOfReferenceProvider(
     }
 
     protected open fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().padding())
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset())
     }
 
     override fun createTileFrame(
@@ -236,7 +236,7 @@ internal open class SquareFrameOfReferenceProvider(
         private val axisLayoutQuad: AxisLayoutQuad,
         private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
-        private val padding: Thickness,
+        private val panelInset: Thickness,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
             return TopDownTileLayout(
@@ -244,7 +244,7 @@ internal open class SquareFrameOfReferenceProvider(
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
                 marginsLayout,
-                padding
+                panelInset
             )
         }
 

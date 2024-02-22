@@ -70,23 +70,23 @@ internal class GeomMarginsLayout(
         geomInnerBounds: DoubleRectangle,
         axisOrientation: Orientation,
         isPolarCoordinateSystem: Boolean,
-        panelPadding: Thickness,
+        panelInset: Thickness,
     ): DoubleVector {
 
         val outerBounds = toOuterBounds(geomInnerBounds)
 
         return if (isPolarCoordinateSystem) {
             when (axisOrientation) {
-                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelPadding.top)
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelInset.top)
                 Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left, geomInnerBounds.top)
                 Orientation.TOP, Orientation.RIGHT -> error("Polar coordinate system does not support top and right axis orientation")
             }
         } else {
             when (axisOrientation) {
-                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelPadding.top)
-                Orientation.TOP -> geomInnerBounds.origin.add(DoubleVector(panelPadding.left, 0.0))
-                Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top + panelPadding.top)
-                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left + panelPadding.left, outerBounds.bottom)
+                Orientation.LEFT -> DoubleVector(outerBounds.left, geomInnerBounds.top + panelInset.top)
+                Orientation.TOP -> geomInnerBounds.origin.add(DoubleVector(panelInset.left, 0.0))
+                Orientation.RIGHT -> DoubleVector(geomInnerBounds.right, geomInnerBounds.top + panelInset.top)
+                Orientation.BOTTOM -> DoubleVector(geomInnerBounds.left + panelInset.left, outerBounds.bottom)
             }
         }
     }

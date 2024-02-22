@@ -117,7 +117,7 @@ class PolarTileLayoutTest {
             hDomain = DoubleSpan.withLowerEnd(0.0, 1.0),
             vDomain = DoubleSpan.withLowerEnd(0.0, 1.0),
             marginsLayout = GeomMarginsLayout(0.0, 0.0, 0.0, 0.0),
-            panelPadding = thickness
+            panelInset = thickness
         )
 
         val layoutInfo = layout.doLayout(preferredSize, coordProvider)

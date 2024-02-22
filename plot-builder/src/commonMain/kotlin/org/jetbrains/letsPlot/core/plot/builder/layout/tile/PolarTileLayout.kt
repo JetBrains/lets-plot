@@ -20,13 +20,13 @@ internal class PolarTileLayout(
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
     marginsLayout: GeomMarginsLayout,
-    panelPadding: Thickness,
+    panelInset: Thickness,
 ) : TopDownTileLayout(
     axisLayoutQuad = axisLayoutQuad,
     hDomain = hDomain,
     vDomain = vDomain,
     marginsLayout = marginsLayout,
-    panelPadding = panelPadding
+    panelInset = panelInset
 ) {
 
     override fun computeGeomWithAxisBounds(

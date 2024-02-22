@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
@@ -20,15 +19,12 @@ internal class SingleTilePlotLayout(
     vAxisPosition: AxisPosition,
     hAxisTheme: AxisTheme,
     vAxisTheme: AxisTheme,
-    panelTheme: PanelTheme,
 ) : PlotLayout {
 
     private val insets: Insets = plotInsets(
         hAxisPosition, vAxisPosition,
         hAxisTheme, vAxisTheme
     )
-
-    private val panelPadding = panelTheme.padding()
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Thickness): PlotLayoutInfo {
         return if (tileLayout.insideOut) {

@@ -104,7 +104,7 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doDrawPanelBorder(parent: SvgComponent) {
-        val panelBorder = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+        val panelBorder = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().borderColor())
             strokeWidth().set(theme.panel().borderWidth())
             fillOpacity().set(0.0)
@@ -130,7 +130,7 @@ internal open class SquareFrameOfReference(
                 layoutInfo.geomInnerBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().padding()
+                theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)
@@ -155,17 +155,14 @@ internal open class SquareFrameOfReference(
                 layoutInfo.geomInnerBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().padding()
+                theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)
         }
     }
 
-    protected open fun doDrawVGrid(
-        vGridTheme: PanelGridTheme,
-        parent: SvgComponent
-    ) {
+    protected open fun doDrawVGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
 
@@ -176,10 +173,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawHGrid(
-        hGridTheme: PanelGridTheme,
-        parent: SvgComponent
-    ) {
+    protected open fun doDrawHGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
@@ -191,14 +185,14 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doFillBkgr(parent: SvgComponent) {
-        val panel = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+        val panel = SvgRectElement(layoutInfo.geomContentBounds).apply {
             fillColor().set(theme.panel().rectFill())
         }
         parent.add(panel)
     }
 
     protected open fun doStrokeBkgr(parent: SvgComponent) {
-        val panelRectStroke = SvgRectElement(layoutInfo.geomInnerBounds).apply {
+        val panelRectStroke = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().rectColor())
             strokeWidth().set(theme.panel().rectStrokeWidth())
             fillOpacity().set(0.0)

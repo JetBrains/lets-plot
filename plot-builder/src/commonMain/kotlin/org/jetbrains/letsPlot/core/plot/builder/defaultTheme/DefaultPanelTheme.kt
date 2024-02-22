@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_PADDING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 
 internal class DefaultPanelTheme(
@@ -27,7 +27,7 @@ internal class DefaultPanelTheme(
     internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
     internal val borderKey = listOf(PANEL_BORDER_RECT, RECT)
     private val borderOntopKey = listOf(PANEL_BORDER_ONTOP)
-    private val paddingKey = listOf(PANEL_PADDING)
+    private val insetKey = listOf(PANEL_INSET)
 
     override fun showRect(): Boolean {
         return !isElemBlank(rectKey)
@@ -57,5 +57,5 @@ internal class DefaultPanelTheme(
 
     override fun gridY(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
 
-    override fun padding() = getPadding(getElemValue(paddingKey))
+    override fun inset() = getPadding(getElemValue(insetKey))
 }

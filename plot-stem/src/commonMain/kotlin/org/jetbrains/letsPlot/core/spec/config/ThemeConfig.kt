@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_PADDING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
 import org.jetbrains.letsPlot.core.spec.Option
 
@@ -31,7 +31,7 @@ class ThemeConfig constructor(
         val userOptions: Map<String, Any> = themeSettings.mapValues { (key, value) ->
             var value = convertElementBlank(value)
             value = convertMargins(key, value)
-            value = convertPadding(key, value)
+            value = convertInset(key, value)
             value = convertExponentFormat(key, value)
             LegendThemeConfig.convertValue(key, value)
         }
@@ -145,26 +145,26 @@ class ThemeConfig constructor(
             }
         }
 
-        private fun convertPadding(key: String, value: Any): Any {
-            fun toPaddingSpec(value: Any?): Map<String, Any> {
+        private fun convertInset(key: String, value: Any): Any {
+            fun toInsetSpec(value: Any?): Map<String, Any> {
                 val (top, right, bottom, left) = toThickness(value)
 
                 return mapOf(
-                    ThemeOption.Elem.Padding.TOP to top,
-                    ThemeOption.Elem.Padding.RIGHT to right,
-                    ThemeOption.Elem.Padding.BOTTOM to bottom,
-                    ThemeOption.Elem.Padding.LEFT to left
+                    ThemeOption.Elem.Inset.TOP to top,
+                    ThemeOption.Elem.Inset.RIGHT to right,
+                    ThemeOption.Elem.Inset.BOTTOM to bottom,
+                    ThemeOption.Elem.Inset.LEFT to left
                 )
                     .filterValues { it != null }
                     .mapValues { (_, v) -> v as Any }
             }
 
             return when {
-                key == PANEL_PADDING -> toPaddingSpec(value)
-                value is Map<*, *> && value.containsKey(ThemeOption.Elem.PADDING) -> {
-                    val padding = toPaddingSpec(value[ThemeOption.Elem.PADDING])
+                key == PANEL_INSET -> toInsetSpec(value)
+                value is Map<*, *> && value.containsKey(ThemeOption.Elem.INSET) -> {
+                    val inset = toInsetSpec(value[ThemeOption.Elem.INSET])
                     // to keep other options
-                    value - ThemeOption.Elem.PADDING + padding
+                    value - ThemeOption.Elem.INSET + inset
                 }
                 else -> value
             }

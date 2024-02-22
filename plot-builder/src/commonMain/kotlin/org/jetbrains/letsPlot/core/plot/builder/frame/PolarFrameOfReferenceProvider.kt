@@ -46,7 +46,7 @@ internal class PolarFrameOfReferenceProvider(
     override val isPolar: Boolean = true
 
     override fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().padding())
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset())
     }
 
     override fun createTileFrame(
@@ -102,7 +102,7 @@ internal class PolarFrameOfReferenceProvider(
         private val axisLayoutQuad: AxisLayoutQuad,
         private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
-        private val panelPadding: Thickness,
+        private val panelInset: Thickness,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
             return PolarTileLayout(
@@ -110,7 +110,7 @@ internal class PolarFrameOfReferenceProvider(
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
                 marginsLayout,
-                panelPadding
+                panelInset
             )
         }
 

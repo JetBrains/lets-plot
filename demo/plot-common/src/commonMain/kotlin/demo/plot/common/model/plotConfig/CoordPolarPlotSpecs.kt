@@ -332,7 +332,7 @@ class CoordPolarPlotSpecs {
                   "data_meta": {},
                   "theme": {
                     "name": "grey",
-                    "panel_padding": [ 0.0, 20.0, 0.0, 20.0 ]
+                    "panel_inset": [ 0.0, 20.0, 0.0, 20.0 ]
                   },
                   "coord": {
                     "name": "polar",

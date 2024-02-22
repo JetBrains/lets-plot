@@ -18,7 +18,7 @@ internal open class TopDownTileLayout(
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
-    private val panelPadding: Thickness,
+    private val panelInset: Thickness,
 ) : TileLayout {
     override val insideOut: Boolean = false
 
@@ -27,7 +27,7 @@ internal open class TopDownTileLayout(
         val geomAreaInsets = computeAxisInfos(preferredSize, coordProvider)
 
         val geomContentBounds = computeGeomContentBounds(geomAreaInsets, preferredSize, coordProvider)
-        val geomInnerBounds = panelPadding.inflateRect(geomContentBounds)
+        val geomInnerBounds = panelInset.inflateRect(geomContentBounds)
         val geomOuterBounds = marginsLayout.toOuterBounds(geomInnerBounds)
 
         val axisInfos = geomAreaInsets.axisInfoQuad
@@ -109,7 +109,7 @@ internal open class TopDownTileLayout(
     ): DoubleRectangle {
         val plottingArea = geomInsets.subtractFrom(DoubleRectangle(DoubleVector.ZERO, plotSize))
         val panelBounds = marginsLayout.toInnerBounds(plottingArea)
-        val contentBounds = panelPadding.shrinkRect(panelBounds)
+        val contentBounds = panelInset.shrinkRect(panelBounds)
 
         val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, contentBounds.dimension)
 
