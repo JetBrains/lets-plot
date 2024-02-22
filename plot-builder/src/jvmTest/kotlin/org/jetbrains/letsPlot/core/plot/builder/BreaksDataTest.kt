@@ -13,10 +13,9 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
-@Ignore
+
 class BreaksDataTest {
     @Test
     fun simple() {
