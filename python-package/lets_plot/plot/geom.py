@@ -5786,7 +5786,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
     - stroke_end : offset from the end coordinate (usually equal to the stroke of the point object from which the curve ends to avoid overlapping with it).
 
- Examples
+    Examples
     --------
     .. jupyter-execute::
         :linenos:

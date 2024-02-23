@@ -11,6 +11,13 @@
 - The `scale_mapper_kind` parameter in `scale_*_continuous()` and `scale_*_discrete()` to specify the scale type 
 ('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area').
 
+- `geom_curve()`
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
+
+- Aesthetics to adjust start/end coordinate of segment/curve: `size_start, size_end, stroke_start, stroke_end`.
+ 
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
 
 ### Changed
 
