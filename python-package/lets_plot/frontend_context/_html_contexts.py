@@ -6,6 +6,7 @@ import os
 from ._frontend_ctx import FrontendContext
 from ._jupyter_notebook_ctx import JupyterNotebookContext
 from ._static_html_page_ctx import StaticHtmlPageContext
+from ._webbr_html_page_ctx import WebBrHtmlPageContext
 from .._global_settings import has_global_value, get_global_bool, HTML_ISOLATED_FRAME
 
 
@@ -31,6 +32,22 @@ def _create_html_frontend_context(isolated_frame: bool = None, offline: bool = N
         return StaticHtmlPageContext(offline)
     else:
         return JupyterNotebookContext(offline)
+
+
+def _create_wb_html_frontend_context(exec: str, new: bool) -> FrontendContext:
+    """
+    Configures Lets-Plot HTML output for showing in web browser.
+
+    Parameters
+    ----------
+    exec : str, optional
+        The name of the web browser to use.
+        If not specified, the default browser will be used.
+    new : bool, default=False
+        If `True`, the URL is opened in a new window of the web browser.
+        If `False`, the URL is opened in the already opened web browser window.
+    """
+    return WebBrHtmlPageContext(exec, new)
 
 
 def _use_isolated_frame() -> bool:

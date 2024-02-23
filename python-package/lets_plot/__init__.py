@@ -33,6 +33,58 @@ class LetsPlot:
     """
 
     @classmethod
+    def setup_show_ext(cls, *,
+                       exec: str = None,
+                       new: bool = False) -> None:
+        """
+        Configures Lets-Plot HTML output for showing in a browser.
+
+        Parameters
+        ----------
+        exec : str, optional
+            Command to execute to open the plot in a web browser.
+            If not specified, the default browser will be used.
+        new : bool, default=False
+            If `True`, the URL is opened in a new window of the web browser.
+            If `False`, the URL is opened in the already opened web browser window.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
+
+        from lets_plot import *
+        LetsPlot.setup_show_ext()
+        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+        p.show()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
+
+        from lets_plot import *
+        LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
+        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+        p.show()
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 2
+
+        from lets_plot import *
+        LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
+        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+        p.show()
+
+        """
+        cfg._setup_wb_html_context(exec=exec, new=new)
+
+    @classmethod
     def setup_html(cls, *,
                    isolated_frame: bool = None,
                    offline: bool = None,

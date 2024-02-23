@@ -5,10 +5,11 @@
 from typing import Dict, Any
 
 from ._frontend_ctx import FrontendContext
-from ._html_contexts import _create_html_frontend_context, _use_isolated_frame
+from ._html_contexts import _create_html_frontend_context, _use_isolated_frame, _create_wb_html_frontend_context
 from ._json_contexts import _create_json_frontend_context, _is_Intellij_Python_Lets_Plot_Plugin
 from ._mime_types import TEXT_HTML, LETS_PLOT_JSON
 from ._static_svg_ctx import StaticSvgImageContext
+from ._webbr_html_page_ctx import WebBrHtmlPageContext
 from .._version import __version__
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
@@ -68,6 +69,25 @@ def _setup_html_context(*,
     _frontend_contexts[TEXT_HTML] = ctx
 
 
+def _setup_wb_html_context(*,
+                           exec: str,
+                           new: bool) -> None:
+    """
+    Configures Lets-Plot HTML output for showing in a browser.
+
+    Parameters
+    ----------
+    exec : str, optional
+        Command to execute to open the plot in a web browser.
+        If not specified, the default browser will be used.
+    new : bool, default=False
+        If `True`, the URL is opened in a new window of the web browser.
+        If `False`, the URL is opened in the already opened web browser window.
+    """
+    ctx = _create_wb_html_frontend_context(exec, new)
+    _frontend_contexts[TEXT_HTML] = ctx
+
+
 def _display_plot(spec: Any):
     """
     Draw plot or `bunch` of plots in the current frontend context
@@ -77,6 +97,10 @@ def _display_plot(spec: Any):
         raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
 
     if _default_mimetype == TEXT_HTML:
+        if isinstance(_frontend_contexts[TEXT_HTML], WebBrHtmlPageContext):
+            _frontend_contexts[TEXT_HTML].show(spec.as_dict())
+            return
+
         plot_html = _as_html(spec.as_dict())
         try:
             from IPython.display import display_html
@@ -85,7 +109,6 @@ def _display_plot(spec: Any):
         except ImportError:
             pass
 
-        # ToDo: show HTML in a browser window.
         print(spec.as_dict())
         return
 
