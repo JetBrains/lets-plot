@@ -235,6 +235,10 @@ object Option {
             const val WHISKER_WIDTH = "whisker_width"
         }
 
+        object Area {
+            const val FLAT = "flat"
+        }
+
         object AreaRidges {
             const val SCALE = "scale"
             const val MIN_HEIGHT = "min_height"

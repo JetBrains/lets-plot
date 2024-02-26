@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
@@ -20,6 +21,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 open class AreaGeom : GeomBase() {
     var quantiles: List<Double> = DensityStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
+    var flat: Boolean = false
 
     override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
@@ -35,6 +37,8 @@ open class AreaGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
+        helper.setResamplingEnabled(!coord.isLinear && !flat)
+
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 
@@ -42,16 +46,13 @@ open class AreaGeom : GeomBase() {
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
                 quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
-                    val paths = helper.createBands(points, TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
-                    // If you want to retain the side edges of area: comment out the following codes,
-                    // and switch decorate method in LinesHelper.createBands
-                    root.appendNodes(paths)
+                    val upperPoints = helper.createPathData(points, TO_LOCATION_X_Y)
+                    val lowerPoints = helper.createPathData(points, TO_LOCATION_X_ZERO)
 
+                    root.appendNodes(helper.renderBands(upperPoints, lowerPoints))
                     helper.setAlphaEnabled(false)
-                    root.appendNodes(helper.createLines(points, TO_LOCATION_X_Y))
-
-                    val pathData = helper.createPathDataByGroup(points, TO_LOCATION_X_Y)
-                    targetCollectorHelper.addPaths(pathData)
+                    root.appendNodes(helper.renderPaths(upperPoints, closePath = false))
+                    targetCollectorHelper.addVariadicPaths(upperPoints)
                 }
 
                 if (quantileLines) {
@@ -65,7 +66,7 @@ open class AreaGeom : GeomBase() {
         quantilesHelper: QuantilesHelper
     ): List<SvgNode> {
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p -> TO_LOCATION_X_Y(p)!! }
-        val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p -> GeomUtil.TO_LOCATION_X_ZERO(p)!! }
+        val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p -> TO_LOCATION_X_ZERO(p)!! }
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 

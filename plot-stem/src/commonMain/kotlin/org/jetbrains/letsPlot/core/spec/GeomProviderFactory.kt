@@ -37,7 +37,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
         PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
         PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
-        PROVIDER[GeomKind.AREA] = GeomProvider.area()
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
@@ -58,6 +57,15 @@ internal object GeomProviderFactory {
         superscriptExponent: Boolean
     ): GeomProvider {
         return when (geomKind) {
+            GeomKind.AREA -> GeomProvider.area {
+                val geom = AreaGeom()
+
+                if (layerConfig.hasOwn(Option.Geom.Area.FLAT)) {
+                    geom.flat = layerConfig.getBoolean(Option.Geom.Area.FLAT)
+                }
+                geom
+            }
+
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
                 if (layerConfig.hasOwn(Option.Stat.Density.QUANTILES)) {
