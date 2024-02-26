@@ -1,7 +1,7 @@
 ## [4.2.1] - 2024-mm-dd
 
 ### Added
-- polar coordinate system support with the `coord_polar()` function to create polar coordinate system  
+- `coord_polar()` function for polar coordinate system  
 **[TODO: ADD NOTEBOOK]**
 - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`
 - `panel_border_ontop` parameter in `theme()`

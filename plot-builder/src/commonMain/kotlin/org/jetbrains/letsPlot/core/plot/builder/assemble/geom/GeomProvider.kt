@@ -220,11 +220,12 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun area(): GeomProvider {
+        fun area(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA,
-                AreaGeom.HANDLES_GROUPS
-            ) { AreaGeom() }
+                AreaGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
         fun density(supplier: (Context) -> Geom): GeomProvider {

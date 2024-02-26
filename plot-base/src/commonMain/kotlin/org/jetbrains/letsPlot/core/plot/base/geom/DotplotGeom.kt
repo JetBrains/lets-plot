@@ -15,12 +15,12 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat.Method
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -171,13 +171,13 @@ open class DotplotGeom : GeomBase(), WithWidth {
         return geomHelper.toClient(x, 0.0, p)!!.add(if (flip) shift.flip() else shift.negate())
     }
 
-    protected class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
-        LinesHelper(pos, coord, ctx) {
-        fun createDot(
-            p: DataPointAesthetics,
-            center: DoubleVector,
-            r: Double
-        ): LinePath {
+    internal class DotHelper(
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) : LinesHelper(pos, coord, ctx) {
+
+        fun createDot(p: DataPointAesthetics, center: DoubleVector, r: Double): LinePath {
             val leftBound = center.add(DoubleVector(-r, 0.0))
             val rightBound = center.add(DoubleVector(r, 0.0))
 

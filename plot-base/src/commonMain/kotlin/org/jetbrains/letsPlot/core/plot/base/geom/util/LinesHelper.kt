@@ -42,18 +42,18 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     ): List<LinePath> {
         // draw line for each group
         val pathDataByGroup = createPathDataByGroup(dataPoints, toLocation)
-        return createPaths(pathDataByGroup.values, closePath = false)
+        return renderPaths(pathDataByGroup.values, closePath = false)
     }
 
-    internal fun createPaths(paths: Map<Int, List<PathData>>, closePath: Boolean): List<LinePath> {
-        return createPaths(paths.values.flatten(), closePath)
+    fun renderPaths(paths: Map<Int, List<PathData>>, closePath: Boolean): List<LinePath> {
+        return renderPaths(paths.values.flatten(), closePath)
     }
 
-    internal fun createPaths(paths: Collection<PathData>, closePath: Boolean): List<LinePath> {
-        return paths.map { path -> createPaths(path.aes, path.coordinates, closePath) }
+    fun renderPaths(paths: Collection<PathData>, closePath: Boolean): List<LinePath> {
+        return paths.map { path -> renderPaths(path.aes, path.coordinates, closePath) }
     }
 
-    private fun createPaths(
+    private fun renderPaths(
         aes: DataPointAesthetics,
         points: List<DoubleVector>,
         closePath: Boolean
@@ -66,16 +66,19 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return element
     }
 
-    internal fun createPathData(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<PathData>> {
+    fun createPathData(
+        dataPoints: Iterable<DataPointAesthetics>,
+        locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y
+    ): Map<Int, List<PathData>> {
         return if (myResamplingEnabled) {
             // coords are in data space as they have to be resampled
-            val pathData = GeomUtil.createPathGroups(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            val pathData = GeomUtil.createPathGroups(dataPoints, locationTransform, sorted = true)
             val variadicPathData = variadicPathByStyle(pathData)
             val interpolatedData = interpolatePathData(variadicPathData)
             resamplePath(interpolatedData)
         } else {
             // coords are already in client space
-            val pathData = createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+            val pathData = createPathDataByGroup(dataPoints, locationTransform)
             val variadicPath = variadicPathByStyle(pathData)
             interpolatePathData(variadicPath)
         }
@@ -98,7 +101,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): Map<Int, PathData> {
-        return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation))
+        return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true)
     }
 
 
@@ -130,6 +133,39 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return linePaths
     }
 
+    fun renderBands(
+        upperPoints: Map<Int, List<PathData>>,
+        lowerPoints: Map<Int, List<PathData>>,
+        simplifyBorders: Boolean = false
+    ): List<LinePath> {
+        return upperPoints.mapNotNull { (group, upperPathData) ->
+            val lowerPathData = lowerPoints[group] ?: return@mapNotNull null
+
+            require(upperPathData.size == 1) { "Upper path data should contain only one path" }
+            require(lowerPathData.size == 1) { "Lower path data should contain only one path" }
+
+            val upperCoordinates = upperPathData.single().coordinates.let {
+                if (simplifyBorders) simplify(it) else it
+            }
+
+            val lowerCoordinates = lowerPathData.single().coordinates.let {
+                if (simplifyBorders) simplify(it) else it
+            }
+
+            val points = upperCoordinates + lowerCoordinates.reversed()
+
+            if (points.isEmpty()) {
+                return@mapNotNull null
+            }
+
+            val path = LinePath.polygon(points)
+            decorateFillingPart(path, upperPathData.single().aes)
+
+            path
+        }
+    }
+
+    // TODO: replace with PathData version
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
@@ -161,6 +197,23 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             }
         }
         return lines
+    }
+
+    protected fun project(
+        dataPoints: Iterable<DataPointAesthetics>,
+        projection: (DataPointAesthetics) -> DoubleVector?
+    ): List<DoubleVector> {
+        val points = ArrayList<DoubleVector>()
+        for (p in dataPoints) {
+            val location = projection(p)
+            if (location != null) {
+                val pp = toClient(location, p)
+                if (pp != null) {
+                    points.add(pp)
+                }
+            }
+        }
+        return points
     }
 
     private fun simplify(points: List<DoubleVector>): List<DoubleVector> {

@@ -3844,7 +3844,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
 
 
 def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              color_by=None, fill_by=None,
+              flat=None, color_by=None, fill_by=None,
               **other_args):
     """
     Display the development of quantitative values over an interval.
@@ -3877,6 +3877,9 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    flat : bool, default=False.
+        True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
+        False - allow a line to be reprojected, so it can become a curve.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3956,6 +3959,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 flat=flat,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

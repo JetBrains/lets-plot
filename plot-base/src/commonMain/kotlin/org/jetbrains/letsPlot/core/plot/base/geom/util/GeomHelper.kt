@@ -84,22 +84,6 @@ open class GeomHelper(
         return DoubleRectangle.span(leftTop, rightBottom)
     }
 
-    protected fun project(
-        dataPoints: Iterable<DataPointAesthetics>,
-        projection: (DataPointAesthetics) -> DoubleVector?
-    ): List<DoubleVector> {
-        val points = ArrayList<DoubleVector>()
-        for (p in dataPoints) {
-            val location = projection(p)
-            if (location != null) {
-                val pp = toClient(location, p)
-                if (pp != null) {
-                    points.add(pp)
-                }
-            }
-        }
-        return points
-    }
 
     internal fun toClientLocation(aesMapper: (DataPointAesthetics) -> DoubleVector?): (DataPointAesthetics) -> DoubleVector? {
         return { aes ->
