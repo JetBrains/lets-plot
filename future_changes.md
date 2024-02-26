@@ -19,6 +19,8 @@
  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
 
+- `setup_show_ext()` function is for display plots in an external browser when executing code in the console.
+
 ### Changed
 
 - [BREAKING] Function `geom_image()` is removed. Please use `geom_imshow()` instead.
@@ -38,4 +40,3 @@
 - Scale limits don't work for bars/area [[LPK-219](https://github.com/JetBrains/lets-plot-kotlin/issues/219)], [[#978](https://github.com/JetBrains/lets-plot/issues/978)]. 
 - No gridlines when axis_ontop=True [[#1012](https://github.com/JetBrains/lets-plot/issues/1012)].
 - bar-plot: do not draw bar border adjacent to the axis [[#845](https://github.com/JetBrains/lets-plot/issues/845)].
-- Displaying plots in an external browser when executing code in the console [[#738](https://github.com/JetBrains/lets-plot/issues/738)].
