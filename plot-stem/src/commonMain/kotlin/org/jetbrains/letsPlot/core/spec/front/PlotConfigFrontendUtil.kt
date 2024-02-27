@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
@@ -112,11 +113,17 @@ object PlotConfigFrontendUtil {
 
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
         val coordProvider = CoordConfig.createCoordProvider(
-            config.get(Option.Plot.COORD),
+            config[Option.Plot.COORD],
             scaleByAesBeforeFacets.getValue(Aes.X).transform,
             scaleByAesBeforeFacets.getValue(Aes.Y).transform,
             defaultCoordProvider
-        )
+        ).let {
+            if (it.isPolar) {
+                (it as PolarCoordProvider).withHScaleContinuous(scaleByAesBeforeFacets.getValue(Aes.X).isContinuousDomain)
+            } else {
+                it
+            }
+        }
 
         return PlotTilesConfig.createGeomTiles(
             config.layerConfigs,

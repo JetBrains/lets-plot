@@ -22,13 +22,14 @@ import kotlin.math.sin
 const val R_EXPAND = 0.15
 const val R_PADDING = 0.06
 
-internal class PolarCoordProvider(
+class PolarCoordProvider(
     xLim: Pair<Double?, Double?>,
     yLim: Pair<Double?, Double?>,
     flipped: Boolean,
     val start: Double,
     val clockwise: Boolean,
     val transformBkgr: Boolean,
+    val isHScaleContinuous: Boolean = true
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override val isLinear: Boolean = false
@@ -36,6 +37,10 @@ internal class PolarCoordProvider(
 
     override fun with(xLim: Pair<Double?, Double?>, yLim: Pair<Double?, Double?>, flipped: Boolean): CoordProvider {
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr)
+    }
+
+    fun withHScaleContinuous(b: Boolean): PolarCoordProvider {
+        return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr, isHScaleContinuous = b)
     }
 
     override fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
@@ -47,12 +52,22 @@ internal class PolarCoordProvider(
         // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
         // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
 
+        val adjustedXRange = realDomain.xRange().let {
+            // For discrete scale add extra segment by increasing domain by 1
+            // so that the last point won't overlap with the first one
+            // in contrast to the continuous scale where the last point
+            // has the same coordinate as the first one
+            // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
+            val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
+            DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
+        }
+
         val adjustedYRange = realDomain.yRange().let {
             DoubleSpan.withLowerEnd(it.lowerEnd, it.length * (1 + R_EXPAND + R_PADDING))
         }
 
         return DoubleRectangle(
-            realDomain.xRange(), //theta
+            adjustedXRange, //theta
             adjustedYRange // r
         )
     }

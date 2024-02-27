@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PositionalScalesUtil
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 object MarginalLayerUtil {
     private val MARGINAL_SCALE = Scales.continuousDomain("marginal", true)
@@ -35,6 +36,7 @@ object MarginalLayerUtil {
         marginalLayers: List<GeomLayer>,
         scaleXProto: Scale,
         scaleYProto: Scale,
+        coordProvider: CoordProvider,
     ): Map<MarginSide, DoubleSpan> {
 
         val scaleXYByMargin = scaleXYByMargin(scaleXProto, scaleYProto)
@@ -47,7 +49,8 @@ object MarginalLayerUtil {
                 listOf(layers),
                 listOf(marginScaleXProto),
                 listOf(marginScaleYProto),
-                PlotFacets.UNDEFINED
+                PlotFacets.UNDEFINED,
+                coordProvider
             )
 
             // All tiles share the same domain.

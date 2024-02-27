@@ -17,6 +17,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotUtil
+import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import kotlin.math.max
 import kotlin.math.min
 
@@ -31,7 +33,8 @@ object PositionalScalesUtil {
         layersByTile: List<List<GeomLayer>>,
         scaleProtoXByTile: List<Scale>,
         scaleProtoYByTile: List<Scale>,
-        facets: PlotFacets
+        facets: PlotFacets,
+        coordProvider: CoordProvider
     ): List<Pair<DoubleSpan, DoubleSpan>> {
 
         var xDomains = ArrayList<DoubleSpan?>()
@@ -43,7 +46,8 @@ object PositionalScalesUtil {
             val (xDomain, yDomain) = computeTileXYDomains(
                 tileLayers,
                 xInitialDomain,
-                yInitialDomain
+                yInitialDomain,
+                coordProvider
             )
 
             xDomains.add(xDomain)
@@ -110,7 +114,8 @@ object PositionalScalesUtil {
     private fun computeTileXYDomains(
         layers: List<GeomLayer>,
         xInitialDomain: DoubleSpan?,
-        yInitialDomain: DoubleSpan?
+        yInitialDomain: DoubleSpan?,
+        coordProvider: CoordProvider
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val positionaDryRunAestheticsByLayer: Map<GeomLayer, Aesthetics> = layers.associateWith {
             positionalDryRunAesthetics(it)
@@ -123,7 +128,7 @@ object PositionalScalesUtil {
         for ((layer, aesthetics) in positionaDryRunAestheticsByLayer) {
 
             // adjust X/Y range with 'pos adjustment' and 'expands'
-            val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
+            val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics, coordProvider)
 
             val xRangeLayer = RangeUtil.updateRange(xInitialDomain, xyRanges.first)
             val yRangeLayer = RangeUtil.updateRange(yInitialDomain, xyRanges.second)
@@ -151,7 +156,8 @@ object PositionalScalesUtil {
 
     private fun computeLayerDryRunXYRanges(
         layer: GeomLayer,
-        aesthetics: Aesthetics
+        aesthetics: Aesthetics,
+        coordProvider: CoordProvider
     ): Pair<DoubleSpan?, DoubleSpan?> {
 
         @Suppress("NAME_SHADOWING")
@@ -160,8 +166,7 @@ object PositionalScalesUtil {
             false -> aesthetics
         }.let { aesthetics ->
             val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
-            val rangesXY =
-                computeLayerDryRunXYRangesAfterPosAdjustment(layer, aesthetics, geomCtx)
+            val rangesXY = computeLayerDryRunXYRangesAfterPosAdjustment(layer, aesthetics, geomCtx)
 
             // return to "normal" orientation
             when (layer.isYOrientation) {
@@ -172,7 +177,7 @@ object PositionalScalesUtil {
 
         val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
         val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
-            computeLayerDryRunXYRangesAfterSizeExpand(layer, aesthetics, geomCtx)
+            computeLayerDryRunXYRangesAfterSizeExpand(layer, aesthetics, geomCtx, coordProvider)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
@@ -268,7 +273,8 @@ object PositionalScalesUtil {
     private fun computeLayerDryRunXYRangesAfterSizeExpand(
         layer: GeomLayer,
         aesthetics: Aesthetics,
-        geomCtx: GeomContext
+        geomCtx: GeomContext,
+        coordProvider: CoordProvider
     ): Pair<DoubleSpan?, DoubleSpan?> {
 
         val (widthAxis, heightAxis) = when (layer.isYOrientation) {
@@ -281,6 +287,8 @@ object PositionalScalesUtil {
 
         val xy = mapOf(
             widthAxis to when {
+                coordProvider is PolarCoordProvider && !coordProvider.isHScaleContinuous -> null
+
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)
                     val isDiscrete = !layer.scaleMap.getValue(widthAxis).isContinuousDomain

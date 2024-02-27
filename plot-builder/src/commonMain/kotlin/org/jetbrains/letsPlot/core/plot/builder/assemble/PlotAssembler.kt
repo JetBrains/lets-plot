@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponent
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.BogusFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.PolarFrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReferenceProvider
@@ -89,7 +88,8 @@ class PlotAssembler constructor(
                 geomTiles.coreLayersByTile(),
                 scaleXByTile,
                 scaleYByTile,
-                facets
+                facets,
+                geomTiles.coordProvider
             )
         }
 
@@ -213,7 +213,8 @@ class PlotAssembler constructor(
                 MarginalLayerUtil.marginalDomainByMargin(
                     tileMarginalLayers,
                     scaleXProtoByTile[tileIndex],
-                    scaleYProtoByTile[tileIndex]
+                    scaleYProtoByTile[tileIndex],
+                    coordProvider
                 )
             }
 
@@ -227,7 +228,7 @@ class PlotAssembler constructor(
             // Create frame of reference provider for each tile.
             return domainsXYByTile.mapIndexed { tileIndex, (xDomain, yDomain) ->
                 if (coordProvider.isPolar) {
-                    val adjustedDomain = (coordProvider as PolarCoordProvider)
+                    val adjustedDomain = coordProvider
                         .adjustDomain(DoubleRectangle(xDomain, yDomain))
 
                     PolarFrameOfReferenceProvider(

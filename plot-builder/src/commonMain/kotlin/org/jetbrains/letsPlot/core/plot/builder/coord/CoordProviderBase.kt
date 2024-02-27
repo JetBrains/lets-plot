@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 
-internal abstract class CoordProviderBase(
+abstract class CoordProviderBase(
     protected val xLim: Pair<Double?, Double?>,
     protected val yLim: Pair<Double?, Double?>,
     override val flipped: Boolean,

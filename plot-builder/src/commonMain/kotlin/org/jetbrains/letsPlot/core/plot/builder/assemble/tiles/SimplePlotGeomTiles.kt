@@ -49,7 +49,8 @@ class SimplePlotGeomTiles constructor(
             coreLayersByTile(),
             listOf(scaleXProto),   // Just one tile
             listOf(scaleYProto),
-            PlotFacets.UNDEFINED
+            PlotFacets.UNDEFINED,
+            coordProvider
         )
         val pair = xyTransformedDomains[0].let {
             val xTransform = scaleXProto.transform
