@@ -19,7 +19,7 @@
  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
 
-- `setup_show_ext()` function is for display plots in an external browser when executing code in the console.
+- `setup_show_ext()` function is for display plots in an external browser.
 
 ### Changed
 
