@@ -145,7 +145,7 @@ internal class DataPointsConverter(
             }
 
             val pathData = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
-            val variadicPathData = LinesHelper.variadicPathByStyle(pathData)
+            val variadicPathData = pathData.mapValues { (_, pathData) -> LinesHelper.splitByStyle(pathData) }
             val interpolatedPathData = LinesHelper.interpolatePathData(variadicPathData)
 
             return process(paths = interpolatedPathData.values.flatten(), isClosed = false)

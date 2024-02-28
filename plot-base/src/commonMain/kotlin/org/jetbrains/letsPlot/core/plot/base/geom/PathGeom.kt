@@ -37,11 +37,13 @@ open class PathGeom : GeomBase() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
 
-        val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+        val closePath = linesHelper.meetsRadarPlotReq()
+        val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y, closePath)
+
         val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
         targetCollectorHelper.addVariadicPaths(pathData)
 
-        val svgPath = linesHelper.renderPaths(pathData, closePath = false)
+        val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
     }
 

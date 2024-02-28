@@ -30,7 +30,7 @@ open class PolygonGeom : GeomBase() {
 
         val pathData = linesHelper.createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y)
         targetCollectorHelper.addPolygons(pathData)
-        val svgPath = linesHelper.renderPaths(pathData.values, closePath = true)
+        val svgPath = linesHelper.renderPaths(pathData.values, filled = true)
         root.appendNodes(svgPath)
     }
 

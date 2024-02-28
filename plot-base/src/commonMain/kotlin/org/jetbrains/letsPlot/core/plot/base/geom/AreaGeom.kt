@@ -43,15 +43,23 @@ open class AreaGeom : GeomBase() {
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
+        val closePath = helper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
                 quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
-                    val upperPoints = helper.createPathData(points, TO_LOCATION_X_Y)
-                    val lowerPoints = helper.createPathData(points, TO_LOCATION_X_ZERO)
+                    val bands = helper.renderBands(
+                        points,
+                        TO_LOCATION_X_Y,
+                        TO_LOCATION_X_ZERO,
+                        simplifyBorders = false,
+                        closePath = closePath
+                    )
+                    root.appendNodes(bands)
 
-                    root.appendNodes(helper.renderBands(upperPoints, lowerPoints))
-                    helper.setAlphaEnabled(false)
-                    root.appendNodes(helper.renderPaths(upperPoints, closePath = false))
+                    val upperPoints = helper.createPathData(points, TO_LOCATION_X_Y, closePath)
+
+                    val line = helper.renderPaths(upperPoints, filled = false)
+                    root.appendNodes(line)
                     targetCollectorHelper.addVariadicPaths(upperPoints)
                 }
 
