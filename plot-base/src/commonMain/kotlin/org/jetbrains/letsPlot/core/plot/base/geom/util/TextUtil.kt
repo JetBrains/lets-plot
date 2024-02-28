@@ -11,9 +11,11 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -165,10 +167,16 @@ object TextUtil {
     }
 
     fun decorate(label: MultilineLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
-        label.textColor().set(p.color())
-        if (applyAlpha) {
-            label.setTextOpacity(p.alpha())
+        val color = p.color()!!
+        label.textColor().set(color)
+        val alpha = if (applyAlpha) {
+            // apply alpha aes
+            AestheticsUtil.alpha(color, p)
+        } else {
+            // keep color's alpha
+            SvgUtils.alpha2opacity(color.alpha)
         }
+        label.setTextOpacity(alpha)
 
         label.setFontSize(fontSize(p, scale))
         label.setLineHeight(lineheight(p, scale))
