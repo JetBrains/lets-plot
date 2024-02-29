@@ -39,6 +39,9 @@ open class AreaGeom : GeomBase() {
         val helper = LinesHelper(pos, coord, ctx)
         helper.setResamplingEnabled(!coord.isLinear && !flat)
 
+        // Alpha is disabled for strokes (but still applies to fill).
+        helper.setAlphaEnabled(false)
+
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
 

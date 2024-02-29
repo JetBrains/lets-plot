@@ -27,11 +27,9 @@ open class LinesHelper(
     private var myAlphaEnabled = true
     private var myResamplingEnabled = false
 
+    // Polar coordinate system with discrete X scale.
     fun meetsRadarPlotReq(): Boolean {
-        if (!coord.isPolar) return false
-        if (ctx.plotContext?.getScale(Aes.X)?.isContinuous == true) return false
-
-        return true
+        return coord.isPolar && ctx.plotContext?.getScale(Aes.X)?.isContinuous != true
     }
 
     fun setAlphaEnabled(b: Boolean) {
@@ -107,6 +105,7 @@ open class LinesHelper(
         return linePaths
     }
 
+    // TODO: inline
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
