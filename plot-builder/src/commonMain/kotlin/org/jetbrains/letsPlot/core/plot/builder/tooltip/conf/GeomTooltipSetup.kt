@@ -30,10 +30,9 @@ class GeomTooltipSetup private constructor(
         const val AREA_GEOM = true
         const val NON_AREA_GEOM = false
 
-        private val AES_X = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X)
-        private val AES_Y = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
-        private val AES_XY =
-            listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        private val AES_X = listOf(Aes.X)
+        private val AES_Y = listOf(Aes.Y)
+        private val AES_XY = listOf(Aes.X, Aes.Y)
 
         fun xUnivariateFunction(
             lookupStrategy: GeomTargetLocator.LookupStrategy,
