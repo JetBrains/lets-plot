@@ -21,6 +21,11 @@
 
 - `setup_show_ext()` function is for display plots in an external browser.
 
+- `alpha_stroke` parameter in `geom_label()` to enable the applying of `alpha` to `color`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_label_alpha_stroke.ipynb).
+
+
 ### Changed
 
 - [BREAKING] Function `geom_image()` is removed. Please use `geom_imshow()` instead.
