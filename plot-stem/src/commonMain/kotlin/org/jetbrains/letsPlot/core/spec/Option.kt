@@ -320,6 +320,7 @@ object Option {
             const val LABEL_PADDING = "label_padding"
             const val LABEL_R = "label_r"
             const val LABEL_SIZE = "label_size"
+            const val ALPHA_STROKE = "alpha_stroke"
         }
 
         object Pie {

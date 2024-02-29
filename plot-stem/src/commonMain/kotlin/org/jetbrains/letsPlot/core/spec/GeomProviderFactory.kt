@@ -294,6 +294,9 @@ internal object GeomProviderFactory {
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
+                if (layerConfig.hasOwn(Option.Geom.Label.ALPHA_STROKE)) {
+                    geom.alphaStroke = layerConfig.getBoolean(Option.Geom.Label.ALPHA_STROKE)
+                }
 
                 geom
             }

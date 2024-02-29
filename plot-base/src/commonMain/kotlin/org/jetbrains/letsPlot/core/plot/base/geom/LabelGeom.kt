@@ -24,6 +24,7 @@ class LabelGeom : TextGeom() {
     var paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
     var borderWidth: Double = 1.0       //  Size of label border
+    var alphaStroke: Boolean = false    //  Apply alpha to text and border
 
     override fun buildTextComponent(
         p: DataPointAesthetics,
@@ -48,12 +49,12 @@ class LabelGeom : TextGeom() {
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
             )
         }
-        GeomHelper.decorate(backgroundRect, p)
+        GeomHelper.decorate(backgroundRect, p, applyAlphaToAll = alphaStroke)
         backgroundRect.strokeWidth().set(borderWidth)
 
         // Text element
         val label = MultilineLabel(text)
-        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = false)
+        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = alphaStroke)
 
         val xPosition = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x + padding

@@ -6158,6 +6158,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                na_text=None,
                nudge_x=None, nudge_y=None,
                label_padding=None, label_r=None, label_size=None,
+               alpha_stroke=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -6222,6 +6223,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Radius of rounded corners. Default is 0.15 of label height.
     label_size : float, default = 1.0
         Size of label border.
+    alpha_stroke : bool, default=False
+        Enable the applying of 'alpha' to 'color' (label text and border).
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -6351,6 +6354,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_padding=label_padding,
                  label_r=label_r,
                  label_size=label_size,
+                 alpha_stroke=alpha_stroke,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
