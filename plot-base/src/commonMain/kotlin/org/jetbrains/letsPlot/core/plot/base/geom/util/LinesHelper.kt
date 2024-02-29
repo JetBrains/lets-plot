@@ -237,7 +237,7 @@ open class LinesHelper(
                     groupPath.map { segment ->
                         // Note that PathPoint have to be recreated with the point aes, not with a segment aes
                         val points = segment.points.mapNotNull { p ->
-                            toClient(p.coord, segment.aes)
+                            toClient(p.coord, p.aes)
                                 ?.let { PathPoint(p.aes, coord = it) }
                         }
                         PathData(points)
