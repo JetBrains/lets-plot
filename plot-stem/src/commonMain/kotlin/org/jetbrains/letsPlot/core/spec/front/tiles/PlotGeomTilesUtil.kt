@@ -79,7 +79,13 @@ internal object PlotGeomTilesUtil {
             } else {
                 val otherLayerWithTooltips = layerConfigs
                     .filterIndexed { index, _ -> index != layerIndex }
-                    .any { !it.tooltips.hideTooltips() }
+                    .any { layer ->
+                        // Assume that a layer has tooltips
+                        // if it has mapping and tooltips are not hidden,
+                        // or if tooltips are explicitly specified
+                        (layer.varBindings.isNotEmpty() && !layer.tooltips.hideTooltips())
+                                || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty()
+                    }
 
                 GeomInteractionUtil.configGeomTargets(
                     layerConfig,
