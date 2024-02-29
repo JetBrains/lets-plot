@@ -200,6 +200,8 @@ internal class DataPointLiveMapAesthetics {
         get() = myLabelOptions?.radius ?: 0.0
     val labelSize: Double
         get() = myLabelOptions?.size ?: 0.0
+    val alphaStroke: Boolean
+        get() = myLabelOptions?.alphaStroke ?: false
 
     private var myPieOptions: PieOptions? = null
     val holeRatio: Double

@@ -296,7 +296,8 @@ internal class DataPointsConverter(
     data class LabelOptions(
         val padding: Double,
         val radius: Double,
-        val size: Double
+        val size: Double,
+        val alphaStroke: Boolean
     )
 
     private class PointFeatureConverter(
@@ -347,7 +348,8 @@ internal class DataPointsConverter(
                 myLabelOptions = LabelOptions(
                     padding = geom.paddingFactor,
                     radius = geom.radiusFactor,
-                    size = geom.borderWidth
+                    size = geom.borderWidth,
+                    alphaStroke = geom.alphaStroke
                 )
             }
             return process(MapLayerKind.TEXT) { explicitVec(it.x()!!, it.y()!!) }
