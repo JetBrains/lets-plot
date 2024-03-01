@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 
 internal object FacetedPlotLayoutUtil {
@@ -144,7 +145,8 @@ internal object FacetedPlotLayoutUtil {
         facetTiles: List<PlotFacets.FacetTileInfo>,
         showFacetStrip: Boolean,
         rowSpace: Double,
-        numRows: Int
+        numRows: Int,
+        facetsTheme: FacetsTheme
     ): List<Double> {
         val axisHeights = List<Double>(numRows) { row ->
             maxHAxisThickness(layoutInfos, facetTiles, row, numRows)
@@ -155,10 +157,10 @@ internal object FacetedPlotLayoutUtil {
             else rowSpace
         }
 
-        val tileLabelHights = colIndices(facetTiles, 0).map { i ->
+        val tileLabelHeights = colIndices(facetTiles, 0).map { i ->
             when {
                 i == 0 -> 0.0  // skip first (will be taken in account later)
-                showFacetStrip -> FacetedPlotLayout.facetColHeadHeight(facetTiles[i].colLabs.size)
+                showFacetStrip -> FacetedPlotLayout.facetColHeadHeight(facetTiles[i].colLabs, facetsTheme)
                 else -> 0.0
             }
         }
@@ -166,7 +168,7 @@ internal object FacetedPlotLayoutUtil {
         var baseOffset = 0.0
         val offsets = ArrayList<Double>()
         for (i in (0 until numRows)) {
-            val currOffset = baseOffset + spacesBefore[i] + tileLabelHights[i]
+            val currOffset = baseOffset + spacesBefore[i] + tileLabelHeights[i]
             offsets.add(currOffset)
             baseOffset = currOffset + layoutInfos[i].geomOuterHeight() + axisHeights[i]
         }

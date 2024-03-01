@@ -159,7 +159,8 @@ internal object PlotAssemblerUtil {
                 vAxisPosition,
                 hAxisTheme,
                 vAxisTheme,
-                plotTheme
+                plotTheme,
+                facetsTheme
             )
         } else {
             val tileLayout = if (insideOut) {

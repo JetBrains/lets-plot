@@ -10,19 +10,22 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
+import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_H_PADDING
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_TAB_HEIGHT
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_V_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadHeight
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColLabelSize
+import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetTabHeight
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetCollectorWithLocator
@@ -112,54 +115,86 @@ internal class PlotTile(
         // facet X label (on top of geom area)
         val xLabels = tileLayoutInfo.facetXLabels
         if (xLabels.isNotEmpty()) {
-            val labelSize = facetColLabelSize(geomBounds.width)
+            val totalHeadHeight = facetColHeadHeight(xLabels, theme)
             val labelOrig = DoubleVector(
                 geomBounds.left + FACET_H_PADDING,
-                geomBounds.top - facetColHeadHeight(xLabels.size) + FACET_V_PADDING
+                geomBounds.top - totalHeadHeight
             )
-            var labelBounds = DoubleRectangle(
-                labelOrig, labelSize
-            )
-            for (xLabel in xLabels) {
+            var curLabelOrig = labelOrig
+            xLabels.forEach { xLabel ->
+                val labelBounds = DoubleRectangle(
+                    curLabelOrig,
+                    DoubleVector(geomBounds.width, facetTabHeight(xLabel, theme))
+                )
+
                 // ToDo: Use "facet X" theme.
                 addFacetLabBackground(labelBounds, theme)
 
-                val x = labelBounds.center.x
-                val y = labelBounds.center.y
-                val lab = TextLabel(xLabel)
+                // without margins
+                val textBounds = DoubleRectangle(
+                    labelBounds.left,
+                    labelBounds.top + FACET_V_PADDING,
+                    labelBounds.width,
+                    labelBounds.height - 2 * FACET_V_PADDING
+                )
+
+                val textSize = FacetedPlotLayout.titleSize(xLabel, theme)
+                val labelSpec = PlotLabelSpecFactory.facetText(theme)
+                val lineHeight = labelSpec.height()
+
+                val lab = MultilineLabel(xLabel)
                 lab.addClassName("${Style.FACET_STRIP_TEXT}-x")
-                lab.moveTo(x, y)
-                lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-                lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+
+                val (pos, hAnchor) = applyJustification(
+                    textBounds,
+                    textSize,
+                    lineHeight,
+                    TextJustification(0.5, 0.5) // todo use theme's options
+                )
+                lab.setHorizontalAnchor(hAnchor)
+                lab.setLineHeight(lineHeight)
+                lab.moveTo(pos)
                 add(lab)
 
-                labelBounds = labelBounds.add(DoubleVector(0.0, labelSize.y))
+                curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labelBounds.height))
             }
         }
 
         // facet Y label (to the right from geom area)
         if (tileLayoutInfo.facetYLabel != null) {
+            val textSize = FacetedPlotLayout.titleSize(tileLayoutInfo.facetYLabel, theme)
 
             val hPad = FACET_V_PADDING
             val vPad = FACET_H_PADDING
 
             val labelBounds = DoubleRectangle(
                 geomBounds.right + hPad, geomBounds.top - vPad,
-                FACET_TAB_HEIGHT - hPad * 2, geomBounds.height - vPad * 2
+                textSize.y + hPad * 2,
+                geomBounds.height - vPad * 2
             )
 
             // ToDo: Use "facet Y" theme.
             addFacetLabBackground(labelBounds, theme)
 
-            val x = labelBounds.center.x
-            val y = labelBounds.center.y
-
-            val lab = TextLabel(tileLayoutInfo.facetYLabel)
+            val labelSpec = PlotLabelSpecFactory.facetText(theme)
+            val lineHeight = labelSpec.height()
+            val lab = MultilineLabel(tileLayoutInfo.facetYLabel)
             lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
-            lab.moveTo(x, y)
-            lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-            lab.rotate(90.0)
+
+            val rotation = TextRotation.CLOCKWISE
+            val (pos, hAnchor) = applyJustification(
+                labelBounds,
+                textSize,
+                lineHeight,
+                TextJustification(0.5, 0.5),
+                rotation
+            )
+
+            lab.setHorizontalAnchor(hAnchor)
+            lab.setLineHeight(lineHeight)
+            lab.setHorizontalAnchor(hAnchor)
+            lab.moveTo(pos)
+            lab.rotate(rotation.angle)
             add(lab)
         }
     }
