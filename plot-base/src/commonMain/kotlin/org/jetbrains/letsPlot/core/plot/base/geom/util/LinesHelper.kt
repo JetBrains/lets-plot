@@ -62,9 +62,7 @@ open class LinesHelper(
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
         closePath: Boolean = false,
     ): Map<Int, List<PathData>> {
-        @Suppress("NAME_SHADOWING")
-        val dataPoints = prepareDataPoints(dataPoints, closePath)
-        val domainInterpolatedData = preparePathData(dataPoints, locationTransform)
+        val domainInterpolatedData = preparePathData(dataPoints, locationTransform, closePath)
         return toClient(domainInterpolatedData)
     }
 
@@ -73,7 +71,7 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): Map<Int, PathData> {
-        return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true)
+        return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
     }
 
 
@@ -105,7 +103,7 @@ open class LinesHelper(
         return linePaths
     }
 
-    // TODO: inline
+    // TODO: inline. N.B.: for linear geoms, be careful with the closePath parameter
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
@@ -122,11 +120,8 @@ open class LinesHelper(
         simplifyBorders: Boolean,
         closePath: Boolean
     ): List<LinePath> {
-        @Suppress("NAME_SHADOWING")
-        val dataPoints = prepareDataPoints(dataPoints, closePath)
-
-        val domainUpperPathData = preparePathData(dataPoints, toLocationUpper)
-        val domainLowerPathData = preparePathData(dataPoints, toLocationLower)
+        val domainUpperPathData = preparePathData(dataPoints, toLocationUpper, closePath)
+        val domainLowerPathData = preparePathData(dataPoints, toLocationLower, closePath)
 
         val domainBandsPathData = domainUpperPathData.mapValues { (group, upperPathData) ->
             val lowerPathData = domainLowerPathData[group] ?: return@mapValues emptyList<PathData>()
@@ -211,18 +206,11 @@ open class LinesHelper(
 
     private fun preparePathData(
         dataPoints: Iterable<DataPointAesthetics>,
-        locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y
-    ): Map<Int, List<PathData>> {
-        val domainPathData = GeomUtil.createPathGroups(dataPoints, locationTransform, sorted = true)
-        return domainPathData.mapValues { (_, pathData) -> listOf(pathData) }
-    }
-
-    private fun prepareDataPoints(
-        dataPoints: Iterable<DataPointAesthetics>,
+        locationTransform: (DataPointAesthetics) -> DoubleVector?,
         closePath: Boolean
-    ) = when {
-        closePath -> dataPoints + dataPoints.first()
-        else -> dataPoints
+    ): Map<Int, List<PathData>> {
+        val domainPathData = GeomUtil.createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
+        return domainPathData.mapValues { (_, pathData) -> listOf(pathData) }
     }
 
     private fun toClient(domainPathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
