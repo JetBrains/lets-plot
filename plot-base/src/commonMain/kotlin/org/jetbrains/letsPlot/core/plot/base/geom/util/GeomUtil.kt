@@ -157,16 +157,9 @@ object GeomUtil {
     fun createPathGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),
-        sorted: Boolean,
-        closePath: Boolean = false
+        sorted: Boolean
     ): Map<Int, PathData> {
-        val groups = createGroups(dataPoints, sorted).let { groups ->
-            if (closePath) {
-                groups.mapValues { (_, group) -> group + group.first() }
-            } else {
-                groups
-            }
-        }
+        val groups = createGroups(dataPoints, sorted)
 
         return groups.mapValues { (_, group) ->
             PathData(
