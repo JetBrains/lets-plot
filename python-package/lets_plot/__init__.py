@@ -50,7 +50,7 @@ class LetsPlot:
 
         Examples
         --------
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
@@ -61,7 +61,7 @@ class LetsPlot:
 
         |
 
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
@@ -72,7 +72,7 @@ class LetsPlot:
 
         |
 
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
