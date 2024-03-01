@@ -10,7 +10,7 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "4.2.1-SNAPSHOT"
+    version = "4.3.0-rc1"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
