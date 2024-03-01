@@ -45,8 +45,8 @@ class LetsPlot:
             Command to execute to open the plot in a web browser.
             If not specified, the default browser will be used.
         new : bool, default=False
-            If `True`, the URL is opened in a new window of the web browser.
-            If `False`, the URL is opened in the already opened web browser window.
+            If True, the URL is opened in a new window of the web browser.
+            If False, the URL is opened in the already opened web browser window.
 
         Examples
         --------
@@ -54,10 +54,10 @@ class LetsPlot:
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext()
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext()
+            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p.show()
 
         |
 
@@ -65,10 +65,10 @@ class LetsPlot:
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
+            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p.show()
 
         |
 
@@ -76,10 +76,10 @@ class LetsPlot:
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
+            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p.show()
 
         """
         cfg._setup_wb_html_context(exec=exec, new=new)
