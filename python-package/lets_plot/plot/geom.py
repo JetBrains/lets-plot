@@ -6019,7 +6019,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     na_text : str, default='n/a'
         Text to show for missing values.
     nudge_x : float
@@ -6210,7 +6210,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
     nudge_y : float

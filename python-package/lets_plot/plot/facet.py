@@ -52,7 +52,7 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=No
     - 'Score: {.2f}' -> 'Score: 12.45',
     - 'Score: {}' -> 'Score: 12.454789'.
 
-    For more info see https://lets-plot.org/pages/formats.html.
+    For more info see https://lets-plot.org/python/pages/formats.html.
 
     Examples
     --------
@@ -139,7 +139,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
     - 'Score: {.2f}' -> 'Score: 12.45',
     - 'Score: {}' -> 'Score: 12.454789'.
 
-    For more info see https://lets-plot.org/pages/formats.html.
+    For more info see https://lets-plot.org/python/pages/formats.html.
 
     Examples
     --------

@@ -158,7 +158,7 @@ class LetsPlot:
     def set(cls, settings: Dict):
         """
         Set up library options.
-        For more info see https://lets-plot.org/pages/basemap_tiles.html#configuring-globally.
+        For more info see https://lets-plot.org/python/pages/basemap_tiles.html#configuring-globally.
 
         Parameters
         ----------
