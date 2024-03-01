@@ -37,7 +37,7 @@ class LetsPlot:
                        exec: str = None,
                        new: bool = False) -> None:
         """
-        Configures Lets-Plot HTML output for showing in a browser.
+        Configure Lets-Plot HTML output for showing in a browser.
 
         Parameters
         ----------

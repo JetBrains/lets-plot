@@ -210,7 +210,7 @@ def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None, tr
     start : float, default=0
         Offset relative to the starting angle (which is 12 o'clock), in radians.
     direction : {1, -1}, default=1
-        Specify angle direction. 1 for clockwise, -1 for counterclockwise.
+        Specify angle direction, 1=clockwise, -1=counter-clockwise.
     transform_bkgr : bool, default=True
         If True, the background is transformed to a circle, rectangle otherwise.
 
