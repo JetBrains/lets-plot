@@ -37,7 +37,7 @@ class LetsPlot:
                        exec: str = None,
                        new: bool = False) -> None:
         """
-        Configures Lets-Plot HTML output for showing in a browser.
+        Configure Lets-Plot HTML output for showing in a browser.
 
         Parameters
         ----------
@@ -45,41 +45,41 @@ class LetsPlot:
             Command to execute to open the plot in a web browser.
             If not specified, the default browser will be used.
         new : bool, default=False
-            If `True`, the URL is opened in a new window of the web browser.
-            If `False`, the URL is opened in the already opened web browser window.
+            If True, the URL is opened in a new window of the web browser.
+            If False, the URL is opened in the already opened web browser window.
 
         Examples
         --------
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext()
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext()
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
 
         |
 
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
 
         |
 
-        .. jupyter-execute::
+        .. code-block::
             :linenos:
             :emphasize-lines: 2
 
-        from lets_plot import *
-        LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
-        p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
-        p.show()
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
 
         """
         cfg._setup_wb_html_context(exec=exec, new=new)
@@ -158,7 +158,7 @@ class LetsPlot:
     def set(cls, settings: Dict):
         """
         Set up library options.
-        For more info see https://lets-plot.org/pages/basemap_tiles.html#configuring-globally.
+        For more info see https://lets-plot.org/python/pages/basemap_tiles.html#configuring-globally.
 
         Parameters
         ----------

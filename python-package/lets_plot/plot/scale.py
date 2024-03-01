@@ -56,7 +56,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, lablim=None, li
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -143,7 +143,7 @@ def scale_manual(aesthetic, values, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -239,7 +239,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, lablim=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -314,7 +314,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, lablim=None, 
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -387,7 +387,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, lablim=None, 
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -462,7 +462,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, lablim=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -537,7 +537,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, lablim=No
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -613,7 +613,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, lablim=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -706,7 +706,7 @@ def scale_continuous(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'}
         The type of the scale.
         If None (the default) and the scale is color, then 'color_gradient' will be used.
@@ -793,7 +793,7 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
         If None (the default), then 'color_gradient' will be used.
@@ -872,7 +872,7 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
         If None (the default), then 'color_gradient' will be used.
@@ -959,7 +959,7 @@ def scale_gradient(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1042,7 +1042,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1122,7 +1122,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1209,7 +1209,7 @@ def scale_gradient2(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1297,7 +1297,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1382,7 +1382,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1464,7 +1464,7 @@ def scale_gradientn(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1546,7 +1546,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, labl
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1625,7 +1625,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, labli
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1713,7 +1713,7 @@ def scale_hue(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1803,7 +1803,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1889,7 +1889,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -1973,7 +1973,7 @@ def scale_discrete(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'}
         The type of the scale.
         If None (the default) and the scale is color, then 'color_brewer' will be used.
@@ -2062,7 +2062,7 @@ def scale_fill_discrete(direction=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
         If None (the default), then 'color_brewer' will be used.
@@ -2144,7 +2144,7 @@ def scale_color_discrete(direction=None,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
     scale_mapper_kind : {'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap'}
         The type of color scale.
         If None (the default), then 'color_brewer' will be used.
@@ -2231,7 +2231,7 @@ def scale_grey(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2316,7 +2316,7 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2396,7 +2396,7 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2504,7 +2504,7 @@ def scale_brewer(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2607,7 +2607,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2707,7 +2707,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2824,7 +2824,7 @@ def scale_viridis(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -2933,7 +2933,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3037,7 +3037,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3116,7 +3116,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, lablim=None, li
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3190,7 +3190,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, lablim=None, lim
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3265,7 +3265,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, lablim=N
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3345,7 +3345,7 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, lablim=None
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
@@ -3419,7 +3419,7 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, lablim=None, l
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/pages/formats.html.
+        For more info see https://lets-plot.org/python/pages/formats.html.
 
     Returns
     -------
