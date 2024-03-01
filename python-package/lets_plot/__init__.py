@@ -56,7 +56,7 @@ class LetsPlot:
 
             from lets_plot import *
             LetsPlot.setup_show_ext()
-            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p = ggplot() + geom_point(x=0, y=0)
             p.show()
 
         |
@@ -67,7 +67,7 @@ class LetsPlot:
 
             from lets_plot import *
             LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
-            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p = ggplot() + geom_point(x=0, y=0)
             p.show()
 
         |
@@ -78,7 +78,7 @@ class LetsPlot:
 
             from lets_plot import *
             LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
-            p = ggplot({'x': [0], 'y': [0]}, aes('x', 'y')) + geom_point()
+            p = ggplot() + geom_point(x=0, y=0)
             p.show()
 
         """
