@@ -1,4 +1,4 @@
-## [4.2.1] - 2024-mm-dd
+## [4.3.0] - 2024-03-dd
 
 ### Added
 - `coord_polar()` function for polar coordinate system  
@@ -46,3 +46,4 @@
 - No gridlines when axis_ontop=True [[#1012](https://github.com/JetBrains/lets-plot/issues/1012)].
 - bar-plot: do not draw bar border adjacent to the axis [[#845](https://github.com/JetBrains/lets-plot/issues/845)].
 - Displaying tooltips on a multilayer plot [[#1030](https://github.com/JetBrains/lets-plot/issues/1030)].
+- Make segment geometry better suited for graphs visualization [[#572](https://github.com/JetBrains/lets-plot/issues/572)].
