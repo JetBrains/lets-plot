@@ -21,9 +21,9 @@ class WebBrHtmlPageContext(FrontendContext):
     def show(self, plot_spec: Dict) -> str:
         html_page = kbr._generate_static_html_page(plot_spec, iframe=False)
 
-        path = tempfile.NamedTemporaryFile(mode='w+t', suffix=".html", delete=False).name
+        path = tempfile.NamedTemporaryFile(mode='w+t', suffix=".html", delete=False)
         try:
-            io.open(path, 'w+t').write(html_page)
-            webbrowser.get(self.exec).open('file://' + path, new=1 if self.new else 2)
+            io.open(path.name, 'w+t').write(html_page)
+            webbrowser.get(self.exec).open('file://' + path.name, new=1 if self.new else 2)
         finally:
             path.close()
