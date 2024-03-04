@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
@@ -94,5 +95,14 @@ internal class PlotFigureBuildInfo constructor(
         }
 
         return newBuildInfo
+    }
+
+    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
+        return PlotFigureBuildInfo(
+            plotAssembler,
+            processedPlotSpec,
+            DoubleRectangle(DoubleVector.ZERO, size),
+            computationMessages
+        )
     }
 }

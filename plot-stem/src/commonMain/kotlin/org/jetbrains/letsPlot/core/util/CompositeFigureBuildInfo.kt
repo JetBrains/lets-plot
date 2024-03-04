@@ -98,4 +98,14 @@ internal class CompositeFigureBuildInfo constructor(
     override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): CompositeFigureBuildInfo {
         UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
+
+    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
+        return CompositeFigureBuildInfo(
+            elements,
+            layout,
+            DoubleRectangle(DoubleVector.ZERO, size),
+            theme,
+            computationMessages
+        )
+    }
 }

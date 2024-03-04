@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 interface FigureBuildInfo {
@@ -24,4 +25,6 @@ interface FigureBuildInfo {
     fun layoutedByOuterSize(): FigureBuildInfo
 
     fun layoutedByGeomBounds(geomBounds: DoubleRectangle): FigureBuildInfo
+
+    fun withPreferredSize(size: DoubleVector): FigureBuildInfo
 }

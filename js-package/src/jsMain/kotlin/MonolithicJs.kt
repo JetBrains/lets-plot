@@ -18,6 +18,8 @@ import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.get
+import sizing.SizingOption
+import sizing.SizingPolicy
 
 private val LOG = PortableLogging.logger("MonolithicJs")
 
@@ -32,14 +34,26 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 @Suppress("unused")
 @JsName("buildPlotFromRawSpecs")
 @JsExport
-fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
-    try {
+fun buildPlotFromRawSpecs(
+    plotSpecJs: dynamic,
+    width: Double,
+    height: Double,
+    parentElement: HTMLElement,
+    optionsJs: dynamic = null
+): LetsPlotFigureModel? {
+    return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
+        val options: Map<String, Any> = if (optionsJs != null) {
+            dynamicObjectToMap(optionsJs)
+        } else {
+            emptyMap()
+        }
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
+        null
     }
 }
 
@@ -51,16 +65,28 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
 @Suppress("unused")
 @JsName("buildPlotFromProcessedSpecs")
 @JsExport
-fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
-    try {
+fun buildPlotFromProcessedSpecs(
+    plotSpecJs: dynamic,
+    width: Double,
+    height: Double,
+    parentElement: HTMLElement,
+    optionsJs: dynamic = null
+): LetsPlotFigureModel? {
+    return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
         // we apply "frontend" transforms anyway, just to be sure that
         // we are going to use a truly processed specs.
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
+        val options: Map<String, Any> = if (optionsJs != null) {
+            dynamicObjectToMap(optionsJs)
+        } else {
+            emptyMap()
+        }
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
+        null
     }
 }
 
@@ -68,26 +94,41 @@ private fun buildPlotFromProcessedSpecsIntern(
     plotSpec: MutableMap<String, Any>,
     width: Double,
     height: Double,
-    parentElement: HTMLElement
-) {
-    val plotSize = if (width > 0 && height > 0) DoubleVector(width, height) else null
-    val preferredWidth: Double? = parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-    val parentWidth = when (val w = parentElement.clientWidth) {
-        0 -> null  // parent element wasn't yet layouted
-        else -> w
+    parentElement: HTMLElement,
+    options: Map<String, Any>
+): LetsPlotFigureModel? {
+
+    // Fixed plot size (not compatible with reactive sizing).
+    val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
+    // Datalore specific option - not compatible with reactive sizing.
+    val datalorePreferredWidth: Double? =
+        parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
+
+    val sizingPolicy = when (val sizingOptions = options[SizingOption.KEY]) {
+        is Map<*, *> -> SizingPolicy.create(sizingOptions)
+        else -> SizingPolicy.DEFAULT
     }
-    val maxWidth = if (preferredWidth == null) parentWidth?.toDouble() else null
+
+    val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
+    val (plotSize, plotMaxWidth) = if (plotSizeProvided != null) {
+        SizingPolicyAdapter.SizeAndMaxWidth(plotSizeProvided, null)
+    } else if (datalorePreferredWidth != null) {
+        SizingPolicyAdapter.SizeAndMaxWidth(null, null)
+    } else {
+        sizingPolicyAdapter.monolithicSizingParameters(parentElement)
+    }
+
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         plotSize,
-        maxWidth,
-        preferredWidth,
+        plotMaxWidth,
+        datalorePreferredWidth,
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
         showError(errorMessage, parentElement)
-        return
+        return null
     }
 
     val success = buildResult as Success
@@ -96,14 +137,23 @@ private fun buildPlotFromProcessedSpecsIntern(
         showInfo(it, parentElement)
     }
 
-    if (success.buildInfos.size == 1) {
+    val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        FigureToHtml(buildInfo, parentElement).eval()
+        val figureRegistration = FigureToHtml(buildInfo, parentElement).eval()
+        LetsPlotFigureModel(
+            parentElement,
+            sizingPolicy,
+            buildInfo,
+            figureRegistration
+        )
     } else {
         // a bunch
         buildGGBunchComponent(success.buildInfos, parentElement)
+        null
     }
+
+    return figureModel
 }
 
 fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {

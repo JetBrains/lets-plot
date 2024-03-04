@@ -9,6 +9,7 @@ import kotlinx.dom.createElement
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
@@ -32,7 +33,7 @@ import org.w3c.dom.svg.SVGSVGElement
 
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
-    containerElement: HTMLElement
+    private val containerElement: HTMLElement
 ) {
 
     private val parentElement: HTMLElement = if (buildInfo.isComposite) {
@@ -46,7 +47,7 @@ internal class FigureToHtml(
         containerElement
     }
 
-    fun eval() {
+    fun eval(): Registration {
 
         val buildInfo = buildInfo.layoutedByOuterSize()
 
@@ -68,6 +69,14 @@ internal class FigureToHtml(
                 svgRoot as PlotSvgRoot,
                 parentElement = parentElement
             )
+        }
+
+        return object : Registration() {
+            override fun doRemove() {
+                while (containerElement.firstChild != null) {
+                    containerElement.removeChild(containerElement.firstChild!!)
+                }
+            }
         }
     }
 

@@ -20,7 +20,7 @@ abstract class Registration : Disposable {
         doRemove()
     }
 
-    override fun dispose() {
+    final override fun dispose() {
         remove()
     }
 
@@ -32,8 +32,7 @@ abstract class Registration : Disposable {
     }
 
     companion object {
-        val EMPTY: Registration =
-            EmptyRegistration()
+        val EMPTY: Registration = EmptyRegistration()
 
         fun from(disposable: Disposable): Registration {
             return object : Registration() {

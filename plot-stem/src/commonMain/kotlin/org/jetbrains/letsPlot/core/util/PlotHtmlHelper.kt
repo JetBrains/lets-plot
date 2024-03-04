@@ -116,10 +116,29 @@ object PlotHtmlHelper {
             |           window.letsPlotCall(function() {{
             |               LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
             |           }});
-            |       })();    
+            |       })();
             |   </script>
         """.trimMargin()
     }
+
+/*
+This is for experimenting with responsive mode.
+
+            |               var figModel = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer,
+            |                   {
+            |                   "sizing": {
+            |                       "width_margin":100
+            |                   }});
+            |               console.info('info I: ' + figModel);
+            |               var resizeHandler = function() {
+            |                   console.info('info II: ' + figModel);
+            |                   if(figModel) {
+            |                       figModel.updateView();
+            |                   }
+            |               };
+            |               window.addEventListener('resize', resizeHandler)
+
+ */
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
         return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
