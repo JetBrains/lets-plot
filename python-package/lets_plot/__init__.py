@@ -37,16 +37,23 @@ class LetsPlot:
                        exec: str = None,
                        new: bool = False) -> None:
         """
-        Configure Lets-Plot HTML output for showing in a browser.
+        Configure Lets-Plot to show its HTML output in an external browser.
+
+        When the "show externally" is set up, an invocation of `figire.show()` will
+        - generate HTML output
+        - save it to a temporary file
+        - open the file in the default web browser or in a web browser specified by the `exec` parameter.
 
         Parameters
         ----------
         exec : str, optional
-            Command to execute to open the plot in a web browser.
+            Specify an app to open the generated temporary HTML file.
             If not specified, the default browser will be used.
         new : bool, default=False
             If True, the URL is opened in a new window of the web browser.
             If False, the URL is opened in the already opened web browser window.
+            The `new` parameter is only applicable when the `exec` parameter is not specified.
+            Please note that the `new` parameter is not supported by all web browsers and all OS-s.
 
         Examples
         --------
