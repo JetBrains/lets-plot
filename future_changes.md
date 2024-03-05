@@ -1,15 +1,18 @@
 ## [4.3.0] - 2024-03-dd
 
 ### Added
-- `coord_polar()` function for polar coordinate system  
-**[TODO: ADD NOTEBOOK]**
-- `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`
-- `panel_border_ontop` parameter in `theme()`
-- `panel_inset` parameter in `theme()`  
-  **[TODO: ADD NOTEBOOK]**
+- `coord_polar()` function for polar coordinate system.    
+  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).
+
+- `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`.
+- `panel_border_ontop` parameter in `theme()`.
+- `panel_inset` parameter in `theme()`.  
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/theme_panel_inset.ipynb).
 
 - The `scale_mapper_kind` parameter in `scale_*_continuous()` and `scale_*_discrete()` to specify the scale type 
-('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area').
+('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'). 
 
 - `geom_curve()`
 
