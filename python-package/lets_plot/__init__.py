@@ -229,11 +229,12 @@ class LetsPlot:
 
         .. code-block::
             :linenos:
-            :emphasize-lines: 3
+            :emphasize-lines: 4
 
             # Show the plot in the Chrome web browser for Windows.
+            # This is the default setup path. Replace the file path with your own if it differs.
             from lets_plot import *
-            LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
+            LetsPlot.setup_show_ext(exec = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe --app=%s')
             p = ggplot() + geom_point(x=0, y=0)
             p.show()
 
@@ -253,9 +254,10 @@ class LetsPlot:
 
         .. code-block::
             :linenos:
-            :emphasize-lines: 3
+            :emphasize-lines: 4
 
             # Show the plot in the Chrome web browser for macOS in the application mode.
+            # This is the default setup path. Replace the path with your own if it differs.
             from lets_plot import *
             LetsPlot.setup_show_ext(exec = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --app=%s')
             p = ggplot() + geom_point(x=0, y=0)
