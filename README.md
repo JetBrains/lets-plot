@@ -62,8 +62,8 @@ Also read:
     it can also be used for constructing **Spyder or Radar charts** using the `flat` option.
     
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/polar_coord_pie.png" alt="f-24a/images/polar_coord_pie.png" width="512" height="427">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/radar_chart.png" alt="f-24a/images/radar_chart.png" width="512" height="391">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/polar_coord_pie.png" alt="f-24a/images/polar_coord_pie.png" width="256" height="214">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/radar_chart.png" alt="f-24a/images/radar_chart.png" width="256" height="196">
     
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).  
 
@@ -79,7 +79,7 @@ Also read:
 - #### `geom_curve()` 
 
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/curve_annotation.png" alt="f-24a/images/curve_annotation.png" width="512" height="408">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/curve_annotation.png" alt="f-24a/images/curve_annotation.png" width="338" height="296">
     
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
 
@@ -91,8 +91,8 @@ Also read:
   - The `spacer` parameter allows for additional manual fine-tuning.
 
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_simple.png" alt="f-24a/images/graph_simple.png" width="512" height="335">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_on_map.png" alt="f-24a/images/graph_on_map.png" width="512" height="367">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_simple.png" alt="f-24a/images/graph_simple.png" width="256" height="168">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_on_map.png" alt="f-24a/images/graph_on_map.png" width="256" height="184">
 
   See:
   - [A simple graph example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/graph_edges.ipynb)
