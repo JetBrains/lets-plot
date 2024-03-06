@@ -1,39 +1,48 @@
 ## [4.3.0] - 2024-03-dd
 
 ### Added
-- `coord_polar()`     
+- `coord_polar()`
+
+  The polar coordinate system is most commonly used for pie charts, but </br>
+  it can also be used for constructing **Spyder or Radar charts** using the `flat` option.
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).
 
-- `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters in `theme()`.
-- `panel_border_ontop` parameter in `theme()`.
-- `panel_inset` parameter in `theme()`.  
+- In the `theme()` function:
+  - `panel_inset`  parameter - primarily used for plots with polar coordinates.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/theme_panel_inset.ipynb).
-
-- The `scale_mapper_kind` parameter in `scale_*_continuous()` and `scale_*_discrete()` to specify the scale type 
-('identity', 'color_gradient', 'color_gradient2', 'color_gradientn', 'color_hue', 'color_grey', 'color_brewer', 'color_cmap', 'size_area'). 
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/theme_panel_inset.ipynb).
+  
+  - `panel_border_ontop` parameter - enables the drawing of panel border on top of the plot geoms.
+  - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters - enable the drawing of grid lines on top of the plot geoms.
 
 - `geom_curve()`
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
+  
+- [**UNIQUE**] Visualizing graph-like data with `geom_segment()` and `geom_curve()`.
+  
+  - Aesthetics `size_start, size_end, stroke_start` and `stroke_end` enable better alignment of</br> 
+  segments/curves with nodes of the graph by considering the size of the nodes.
 
-- The `flat` parameter for `geom_area()`.  
+  - The `spacer` parameter allows for additional manual fine-tuning.
 
-- Aesthetics to adjust start/end coordinate of segment/curve: `size_start, size_end, stroke_start, stroke_end`.
- 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
-
-- `setup_show_ext()` function is for display plots in an external browser.
+  See:  
+    - [A simple graph example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/graph_edges.ipynb)
+    - [An interactive map example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve_on_map.ipynb)
 
 - `alpha_stroke` parameter in `geom_label()` to enable the applying of `alpha` to `color` [[#1029](https://github.com/JetBrains/lets-plot/issues/1029)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_label_alpha_stroke.ipynb).
 
+- Showing plots in external browser
+
+  The `LetsPlot.setup_show_ext()` directive allows plots to be displayed in an external browser window.
+
 
 ### Changed
 
-- [BREAKING] Function `geom_image()` is removed. Please use `geom_imshow()` instead.
+- [**BREAKING**] Function `geom_image()` is removed. Please use `geom_imshow()` instead.
 - Parameter `axis_ontop` in `theme()` is now `True` by default.
          
 
