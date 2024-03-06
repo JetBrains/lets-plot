@@ -1,7 +1,7 @@
 ## [4.3.0] - 2024-03-dd
 
 ### Added
-- `coord_polar()` function for polar coordinate system.    
+- `coord_polar()`     
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).
 
