@@ -33,65 +33,6 @@ class LetsPlot:
     """
 
     @classmethod
-    def setup_show_ext(cls, *,
-                       exec: str = None,
-                       new: bool = False) -> None:
-        """
-        Configure Lets-Plot to show its HTML output in an external browser.
-
-        When the "show externally" is set up, an invocation of `figire.show()` will
-        - generate HTML output
-        - save it to a temporary file
-        - open the file in the default web browser or in a web browser specified by the `exec` parameter.
-
-        Parameters
-        ----------
-        exec : str, optional
-            Specify an app to open the generated temporary HTML file.
-            If not specified, the default browser will be used.
-        new : bool, default=False
-            If True, the URL is opened in a new window of the web browser.
-            If False, the URL is opened in the already opened web browser window.
-            The `new` parameter is only applicable when the `exec` parameter is not specified.
-            Please note that the `new` parameter is not supported by all web browsers and all OS-s.
-
-        Examples
-        --------
-        .. code-block::
-            :linenos:
-            :emphasize-lines: 2
-
-            from lets_plot import *
-            LetsPlot.setup_show_ext()
-            p = ggplot() + geom_point(x=0, y=0)
-            p.show()
-
-        |
-
-        .. code-block::
-            :linenos:
-            :emphasize-lines: 2
-
-            from lets_plot import *
-            LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
-            p = ggplot() + geom_point(x=0, y=0)
-            p.show()
-
-        |
-
-        .. code-block::
-            :linenos:
-            :emphasize-lines: 2
-
-            from lets_plot import *
-            LetsPlot.setup_show_ext(exec = 'open -a safari %s', new=True)
-            p = ggplot() + geom_point(x=0, y=0)
-            p.show()
-
-        """
-        cfg._setup_wb_html_context(exec=exec, new=new)
-
-    @classmethod
     def setup_html(cls, *,
                    isolated_frame: bool = None,
                    offline: bool = None,
@@ -236,3 +177,101 @@ class LetsPlot:
         LetsPlot.set({
             PLOT_THEME: json.dumps(theme.as_dict())
         })
+
+    @classmethod
+    def setup_show_ext(cls, *,
+                       exec: str = None,
+                       new: bool = False) -> None:
+        """
+        Configure Lets-Plot to show its HTML output in an external browser.
+
+        When the "show externally" is set up, an invocation of `figire.show()` will
+        - generate HTML output
+        - save it to a temporary file
+        - open the file in the default web browser or in a web browser specified by the `exec` parameter.
+
+        Parameters
+        ----------
+        exec : str, optional
+            Specify an app to open the generated temporary HTML file.
+            If not specified, the default browser will be used.
+        new : bool, default=False
+            If True, the URL is opened in a new window of the web browser.
+            If False, the URL is opened in the already opened web browser window.
+            The `new` parameter is only applicable when the `exec` parameter is not specified.
+            Please note that the `new` parameter is not supported by all web browsers and all OS-s.
+
+        Examples
+        --------
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the default web browser.
+            from lets_plot import *
+            LetsPlot.setup_show_ext()
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        |
+
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the new window of the default web browser if possible.
+            from lets_plot import *
+            LetsPlot.setup_show_ext(new=True)
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        |
+
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the Chrome web browser for Windows.
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'chrome.exe --app=%s')
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        |
+
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the Safari web browser for macOS.
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'open -a safari %s')
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        |
+
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the Chrome web browser for macOS in the application mode.
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --app=%s')
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        |
+
+        .. code-block::
+            :linenos:
+            :emphasize-lines: 3
+
+            # Show the plot in the Chrome web browser for Linux.
+            from lets_plot import *
+            LetsPlot.setup_show_ext(exec = 'google-chrome --app=%s')
+            p = ggplot() + geom_point(x=0, y=0)
+            p.show()
+
+        """
+        cfg._setup_wb_html_context(exec=exec, new=new)
