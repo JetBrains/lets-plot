@@ -111,11 +111,7 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
                 override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
                         Aes.FILL -> if (filled) super.get(Aes.COLOR) else Color.TRANSPARENT
-                        Aes.LINETYPE -> if (filled) {
-                            NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
-                        } else {
-                            super.get(aes)
-                        }
+                        Aes.LINETYPE -> NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")
