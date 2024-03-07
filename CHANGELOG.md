@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `coord_polar()`
 
   The polar coordinate system is most commonly used for pie charts, but </br>
-  it can also be used for constructing **Spyder or Radar charts** using the `flat` option.
+  it can also be used for constructing **Spider or Radar charts** using the `flat` option [[#452](https://github.com/JetBrains/lets-plot/issues/452)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).
 
