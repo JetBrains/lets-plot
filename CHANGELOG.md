@@ -55,7 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- coord_map() should distort tiles size to account for different unit size at different latitudes[[#331](https://github.com/JetBrains/lets-plot/issues/331)].
+- coord_map() should distort tiles size to account for different unit size at different latitudes [[#331](https://github.com/JetBrains/lets-plot/issues/331)].
 - geom_errorbar(): wrong positioning of tooltips [[#992](https://github.com/JetBrains/lets-plot/issues/992)].
 - geom_path(): tooltip position interpolation [[#855](https://github.com/JetBrains/lets-plot/issues/855)].
 - Stacked bar-chart annotation: labels go out of the plot when zooming-in using coord_cartesian(xlim, ylim) [[#981](https://github.com/JetBrains/lets-plot/issues/981)].
