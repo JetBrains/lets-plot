@@ -5,7 +5,7 @@
 [![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
 
 
-**Lets-Plot** is a multiplatform plotting library based on the Grammar of Graphics. 
+**Lets-Plot** is a multiplatform plotting library built on the principles of the Grammar of Graphics. 
 
 The library' design is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
@@ -54,64 +54,75 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.2.0
+## What is new in 4.3.0
 
-- #### Support for `"Categoricals"`
+- #### `coord_polar()`
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/factor_levels.ipynb).
+    The polar coordinate system is most commonly used for pie charts, but</br>
+    it can also be used for constructing **Spyder or Radar charts** using the `flat` option.
+    
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/polar_coord_pie.png" alt="f-24a/images/polar_coord_pie.png" width="256" height="214">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/radar_chart.png" alt="f-24a/images/radar_chart.png" width="256" height="196">
+    
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).  
 
-- #### Superscript for Numbers in Scientific Notation
+- #### In the `theme()`:
 
-  > #### Warning!
-  >
-  > Do NOT(!) use `exponent_format='pow'` if you are planning to export plot to a raster format (PNG,PDF).
-  >
-  > The `CairoSVG` library (which is under the hood of our `ggsave()` function) does not handle `tspan` element properly end breaks superscript notation when transforming SVG to PNG/PDF.
-  >
-  > More details: https://github.com/Kozea/CairoSVG/issues/317
+    - `panel_inset`  parameter - primarily used for plots with polar coordinates.
+    
+        See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/theme_panel_inset.ipynb).
+    
+    - `panel_border_ontop` parameter - enables the drawing of panel border on top of the plot geoms.
+    - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters - enable the drawing of grid lines on top of the plot geoms.
 
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/superscript.png" alt="f-23f/images/superscript.png" width="328" height="241">
+- #### `geom_curve()` 
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/superscript_exponent.ipynb).
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/curve_annotation.png" alt="f-24a/images/curve_annotation.png" width="338" height="296">
+    
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
 
-- #### Exporting Plot to a File-Like Object. <br>
-  Convenience methods: `to_svg()`, `to_html()`, `to_png()`, `to_pdf()`
+- #### [**UNIQUE**] Visualizing Graph-like Data with `geom_segment()` and `geom_curve()`
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_export_methods.ipynb).
+  - Aesthetics `size_start, size_end, stroke_start` and `stroke_end` enable better alignment of</br>
+    segments/curves with nodes of the graph by considering the size of the nodes.
 
-- #### Sharing of X,Y-scale Limits Between Subplots in `gggrid()`
+  - The `spacer` parameter allows for additional manual fine-tuning.
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/gggrid_scale_share.ipynb).
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_simple.png" alt="f-24a/images/graph_simple.png" width="256" height="168">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_on_map.png" alt="f-24a/images/graph_on_map.png" width="256" height="184">
 
-- #### `geom_spoke()`
+  See:
+  - [A simple graph example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/graph_edges.ipynb)
+  - [An interactive map example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve_on_map.ipynb)
+  
 
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/geom_spoke.png" alt="f-23f/images/geom_spoke.png" width="248" height="272">
+- #### The `alpha_stroke` Parameter in `geom_label()`
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_spoke.ipynb).
+  Use the `alpha_stroke` parameter to apply `alpha` to entire `label`. By default, `alpha` is only applied to the label background.
 
-- #### High-contrast Tileset "BW" for `geom_livemap()`
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_label_alpha_stroke.ipynb).
 
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23f/images/tileset_BW.png" alt="f-23f/images/tileset_BW.png" width="512" height="312">
+- #### Showing Plots in External Browser
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/geom_livemap_bw_tiles.ipynb).<br>
-  See advanced example: [Spatial prediction of soil pollutants with multi-output Gaussian processes](https://nextjournal.com/asmirnov-horis/spatial-prediction-of-soil-pollutants-with-multi-output-gaussian-processes?token=26GT2sBa3Ycw6LGZxqdTay). Credits: Essi Parent ([@essicolo](https://github.com/essicolo)).
+  The `LetsPlot.setup_show_ext()` directive allows plots to be displayed in an external browser window.
                                           
-- #### Other New Features and Improvements
+- #### Updates in the Gallery
 
-  - `scale_x_log2()`, `scale_y_log2()`
-  - New variables computed by `'count'` and `'count2d'` statistics: `'..sumprop..'`, `'..sumpct..'`.
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/new_stat_count_vars.ipynb).
-  - Support using dictionaries for breaks/labels/values customization in `scale_xxx()` functions.
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_params_with_dict.ipynb).
-  - The `lablim` parameter in `scale_xxx()` functions.
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/scale_lablim.ipynb).
-  - `label_text` parameter in `theme()` for annotation text settings.
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23f/theme_label_text.ipynb).
-  - NumberFormat: new flag `~` to trim trailing zeros.
-
+  <a href="https://nextjournal.com/asmirnov-horis/bbc-visual-and-data-journalism-cookbook-for-lets-plot">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_bbc_cookbook.png" alt="f-24a/images/gal_bbc_cookbook.png" width="128" height="128">
+  </a>
+  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/palmer_penguins.ipynb">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_penguins.png" alt="f-24a/images/gal_penguins.png" width="128" height="128">
+  </a>
+  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/periodic_table.ipynb">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_periodic_table.png" alt="f-24a/images/gal_periodic_table.png" width="128" height="128">
+  </a>
+  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/wind_rose.ipynb">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_wind_rose.png" alt="f-24a/images/gal_wind_rose.png" width="128" height="128">
+  </a>
 
 ## Change Log
 
