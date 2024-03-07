@@ -123,6 +123,9 @@ Also read:
   <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/wind_rose.ipynb">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_wind_rose.png" alt="f-24a/images/gal_wind_rose.png" width="128" height="128">
   </a>
+  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/heatmap_in_polar_coord.ipynb">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_polar_heatmap.png" alt="f-24a/images/gal_polar_heatmap.png" width="128" height="128">
+  </a>
 
 ## Change Log
 
