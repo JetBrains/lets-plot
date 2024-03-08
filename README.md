@@ -107,9 +107,9 @@ Also read:
 
 - #### Showing Plots in External Browser
 
-  The `LetsPlot.setup_show_ext()` directive allows plots to be displayed in an external browser window.
+  The [setup_show_ext()](https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_show_ext) directive allows plots to be displayed in an external browser window.
                                           
-- #### Updates in the Gallery
+- #### Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
   <a href="https://nextjournal.com/asmirnov-horis/bbc-visual-and-data-journalism-cookbook-for-lets-plot">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/gal_bbc_cookbook.png" alt="f-24a/images/gal_bbc_cookbook.png" width="128" height="128">

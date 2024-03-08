@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Showing plots in external browser
 
-  The `LetsPlot.setup_show_ext()` directive allows plots to be displayed in an external browser window.
+  The [setup_show_ext()](https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_show_ext) directive allows plots to be displayed in an external browser window.
 
 
 ### Changed
