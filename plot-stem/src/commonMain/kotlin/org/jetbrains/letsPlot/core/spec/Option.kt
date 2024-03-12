@@ -751,6 +751,7 @@ object Option {
         const val AXIS_TOOLTIP_TEXT_Y = ThemeOption.AXIS_TOOLTIP_TEXT_Y
 
         // Panel
+        const val PANEL_INSET = ThemeOption.PANEL_INSET
         const val PANEL_BKGR_RECT = ThemeOption.PANEL_BKGR_RECT
         const val PANEL_BORDER_RECT = ThemeOption.PANEL_BORDER_RECT
         const val PANEL_BORDER_ONTOP = ThemeOption.PANEL_BORDER_ONTOP
