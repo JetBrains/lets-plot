@@ -67,6 +67,7 @@ internal class DataPointsConverter(
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
     fun toPie(geom: PieGeom) = pieConverter(geom)
     fun toCurve(geom: CurveGeom) = mySinglePathFeatureConverter.curve(geom)
+    fun toSpoke(geom: SpokeGeom) = mySinglePathFeatureConverter.spoke(geom)
 
     private abstract class PathFeatureConverterBase(
         val aesthetics: Aesthetics
@@ -224,6 +225,16 @@ internal class DataPointsConverter(
                         angle = geom.angle,
                         ncp = geom.ncp
                     )
+                } else {
+                    emptyList()
+                }
+            }
+        }
+
+        fun spoke(geom: SpokeGeom): List<DataPointLiveMapAesthetics> {
+            return process(isClosed = false) {
+                if (SeriesUtil.allFinite(it.x(), it.y(), it.angle(), it.radius())) {
+                    SpokeGeom.createGeometry(it.x()!!, it.y()!!, it.angle()!!, it.radius()!!, geom.pivot)
                 } else {
                     emptyList()
                 }

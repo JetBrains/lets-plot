@@ -15,10 +15,11 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.SegmentGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.CurveGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.SpokeGeom
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
-import org.jetbrains.letsPlot.core.plot.base.geom.CurveGeom
 import org.jetbrains.letsPlot.livemap.api.*
 
 
@@ -43,6 +44,7 @@ object LayerConverter {
                 CURVE -> MapLayerKind.PATH to dataPointsConverter.toCurve(layer.geom as CurveGeom)
                 RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
+                SPOKE -> MapLayerKind.PATH to dataPointsConverter.toSpoke(layer.geom as SpokeGeom)
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
