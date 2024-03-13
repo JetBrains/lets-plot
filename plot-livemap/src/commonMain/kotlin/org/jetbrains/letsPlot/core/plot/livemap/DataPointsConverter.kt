@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -233,11 +234,12 @@ internal class DataPointsConverter(
 
         fun spoke(geom: SpokeGeom): List<DataPointLiveMapAesthetics> {
             return process(isClosed = false) {
-                if (SeriesUtil.allFinite(it.x(), it.y(), it.angle(), it.radius())) {
-                    SpokeGeom.createGeometry(it.x()!!, it.y()!!, it.angle()!!, it.radius()!!, geom.pivot)
-                } else {
-                    emptyList()
-                }
+                val x = finiteOrNull(it.x()) ?: return@process emptyList()
+                val y = finiteOrNull(it.y()) ?: return@process emptyList()
+                val angle = finiteOrNull(it.angle()) ?: return@process emptyList()
+                val radius = finiteOrNull(it.radius()) ?: return@process emptyList()
+
+                SpokeGeom.createGeometry(x, y, angle, radius, geom.pivot)
             }
         }
 
