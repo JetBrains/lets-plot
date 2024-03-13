@@ -59,7 +59,9 @@ internal class FacetedPlotLayout(
                 .mapValues { it.value.max() }
                 .values.sum()
 
-            val width = facetTiles.mapNotNull { it.rowLab }.maxOfOrNull { facetTabHeight(it, facetsTheme) } ?: 0.0
+            val width = facetTiles
+                .mapNotNull { it.rowLab }
+                .maxOfOrNull { facetRowHeadHeight(it, facetsTheme) } ?: 0.0
             val labsTotalDim = DoubleVector(width, totalAddedHeight)
 
             tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
@@ -115,7 +117,7 @@ internal class FacetedPlotLayout(
 
             // Tile width
             val tileLabelWidth = if (facetTile.rowLab != null && showFacetStrip) {
-                facetTabHeight(facetTile.rowLab, facetsTheme)   // one label on the left side.
+                facetRowHeadHeight(facetTile.rowLab, facetsTheme)  // one label on the left side
             } else {
                 0.0
             }
@@ -211,17 +213,18 @@ internal class FacetedPlotLayout(
 
 
     companion object {
-        // todo use theme margins
-        const val FACET_H_PADDING = 0
-        const val FACET_V_PADDING = 3
-
+        const val FACET_PADDING = 3  // space between panel and facet title
         private const val PANEL_PADDING = 10.0
 
-        fun facetTabHeight(title: String, theme: FacetsTheme) = titleSize(title, theme).y + 2 * FACET_V_PADDING
+        fun facetTabHeight(title: String, theme: FacetsTheme, marginHeight: (Thickness) -> Double = Thickness::height ) =
+            titleSize(title, theme).y + marginHeight(theme.stripMargins())
+
+        fun facetRowHeadHeight(rowLab: String, facetsTheme: FacetsTheme) =
+            facetTabHeight(rowLab, facetsTheme, marginHeight = Thickness::width) + FACET_PADDING
 
         fun facetColHeadHeight(colLabs: List<String>, facetsTheme: FacetsTheme): Double {
             return if (colLabs.isNotEmpty()) {
-                colLabs.sumOf { facetTabHeight(it, facetsTheme) }
+                colLabs.sumOf { facetTabHeight(it, facetsTheme) } + FACET_PADDING
             } else {
                 0.0
             }

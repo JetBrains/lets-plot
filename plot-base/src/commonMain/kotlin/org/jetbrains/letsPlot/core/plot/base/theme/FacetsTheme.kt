@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 
 interface FacetsTheme {
     fun showStrip(): Boolean
@@ -15,4 +17,6 @@ interface FacetsTheme {
     fun stripColor(): Color
     fun stripStrokeWidth(): Double
     fun stripTextStyle(): ThemeTextStyle
+    fun stripMargins(): Thickness
+    fun stripTextJustification(): TextJustification
 }
