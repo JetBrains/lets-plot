@@ -58,7 +58,18 @@ class DomMouseEventMapper(
     }
 
     private fun dispatch(eventSpec: MouseEventSpec, domMouseEvent: DomMouseEvent) {
-        domMouseEvent.preventDefault() // Fix for Safari to prevent selection when user drags outside a canvas
+        // DON'T USE preventDefault() - Safari doesn't have selection bug anymore,
+        // but there is a Chrome bug that prevents dragging outside the canvas:
+        // https://issues.chromium.org/issues/41195706
+
+        // To test the Chrome bug do the following:
+        //  - launch the demo to generate the demo html file
+        //  - open the demo directory
+        //  - run http server in the demo directory
+        //  - create the iframe.html file with the content <html><body><iframe src="http://10.251.0.253:8181/demo.html"/></body></html>
+        //  - open iframe.html in Chrome
+        // Now dragging outside the iframe can be tested.
+        //domMouseEvent.preventDefault() // [OBSOLETE] Fix for Safari to prevent selection when user drags outside a canvas
 
         val targetClientOrigin = eventSource.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
         val targetAbsoluteOrigin = bounds?.origin ?: DoubleVector.ZERO
