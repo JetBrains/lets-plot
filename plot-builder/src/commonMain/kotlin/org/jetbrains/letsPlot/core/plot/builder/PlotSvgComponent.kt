@@ -131,8 +131,6 @@ class PlotSvgComponent constructor(
     }
 
     private fun buildPlotComponents() {
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, figureSize)
-
         fun SvgPathDataBuilder.rect(rect: DoubleRectangle) = apply {
             moveTo(rect.left, rect.top)
             lineTo(rect.left, rect.bottom)
@@ -170,7 +168,6 @@ class PlotSvgComponent constructor(
         val plotTheme = theme.plot()
 
         // build tiles
-        @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotAreaOrigin
         for (tileLayoutInfo in layoutInfo.tiles) {
             val tileIndex = tileLayoutInfo.trueIndex
@@ -238,7 +235,7 @@ class PlotSvgComponent constructor(
         }
 
         if (plotTheme.showBackground()) {
-            val backgroundAreaPath = SvgPathDataBuilder().rect(overallRect)
+            val backgroundAreaPath = SvgPathDataBuilder().rect(plotOuterBounds)
             backgroundLiveMapWindows.forEach(backgroundAreaPath::rect)
 
             backgroundArea.apply {
@@ -252,7 +249,7 @@ class PlotSvgComponent constructor(
                 fillColor().set(Color.TRANSPARENT)
                 strokeColor().set(plotTheme.backgroundColor())
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
-                d().set(SvgPathDataBuilder().rect(overallRect).build())
+                d().set(SvgPathDataBuilder().rect(plotOuterBounds).build())
             }
         }
 
