@@ -5949,6 +5949,26 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
             scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
             coord_fixed()
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        a, b = 10, 30
+        d = (b - a) / (n - 1)
+        space = np.linspace(a, b, n)
+        X, Y = np.meshgrid(space, space)
+        A = np.arctan2(*np.gradient(X * Y, d))
+        data = dict(x=X.reshape(-1), y=Y.reshape(-1), a=A.reshape(-1))
+        ggplot(data, aes('x', 'y')) + \\
+            geom_livemap() + \\
+            geom_spoke(aes(angle='a', radius='a'))
+
     """
     return _geom('spoke',
                  mapping=mapping,

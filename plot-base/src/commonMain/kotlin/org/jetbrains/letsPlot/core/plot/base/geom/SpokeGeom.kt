@@ -42,8 +42,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
             val y = finiteOrNull(p.y()) ?: continue
             val spoke = toSpoke(p) ?: continue
             val base = DoubleVector(x, y)
-            val start = getStart(base, spoke)
-            val end = getEnd(base, spoke)
+            val start = getStart(base, spoke, pivot)
+            val end = getEnd(base, spoke, pivot)
             val line = svgElementHelper.createLine(start, end, p) ?: continue
 
             root.add(line)
@@ -80,8 +80,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
             loc.flip()
         }
         val spoke = toSpoke(p) ?: return null
-        val start = getStart(base, spoke)
-        val end = getEnd(base, spoke)
+        val start = getStart(base, spoke, pivot)
+        val end = getEnd(base, spoke, pivot)
         return if (spanAxisAes == Aes.X) {
             DoubleSpan(start.x, end.x)
         } else {
@@ -93,23 +93,7 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val angle = finiteOrNull(p.angle()) ?: return null
         val radius = finiteOrNull(p.radius()) ?: return null
 
-        return DoubleVector(radius * cos(angle), radius * sin(angle))
-    }
-
-    private fun getStart(base: DoubleVector, spoke: DoubleVector): DoubleVector {
-        return when (pivot) {
-            Pivot.TAIL -> base
-            Pivot.MIDDLE -> base.subtract(spoke.mul(0.5))
-            Pivot.TIP -> base.subtract(spoke)
-        }
-    }
-
-    private fun getEnd(base: DoubleVector, spoke: DoubleVector): DoubleVector {
-        return when (pivot) {
-            Pivot.TAIL -> base.add(spoke)
-            Pivot.MIDDLE -> base.add(spoke.mul(0.5))
-            Pivot.TIP -> base
-        }
+        return getSpoke(angle, radius)
     }
 
     enum class Pivot {
@@ -118,6 +102,38 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
 
     companion object {
         val DEF_PIVOT = Pivot.TAIL
+
+        fun createGeometry(
+            x: Double,
+            y: Double,
+            angle: Double,
+            radius: Double,
+            pivot: Pivot
+        ): List<DoubleVector> {
+            val base = DoubleVector(x, y)
+            val spoke = getSpoke(angle, radius)
+            return listOf(getStart(base, spoke, pivot), getEnd(base, spoke, pivot))
+        }
+
+        private fun getStart(base: DoubleVector, spoke: DoubleVector, pivot: Pivot): DoubleVector {
+            return when (pivot) {
+                Pivot.TAIL -> base
+                Pivot.MIDDLE -> base.subtract(spoke.mul(0.5))
+                Pivot.TIP -> base.subtract(spoke)
+            }
+        }
+
+        private fun getEnd(base: DoubleVector, spoke: DoubleVector, pivot: Pivot): DoubleVector {
+            return when (pivot) {
+                Pivot.TAIL -> base.add(spoke)
+                Pivot.MIDDLE -> base.add(spoke.mul(0.5))
+                Pivot.TIP -> base
+            }
+        }
+
+        private fun getSpoke(angle: Double, radius: Double): DoubleVector {
+            return DoubleVector(radius * cos(angle), radius * sin(angle))
+        }
 
         const val HANDLES_GROUPS = false
     }
