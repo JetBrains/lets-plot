@@ -332,6 +332,10 @@ open class LinesHelper(
 data class PathData(
     val points: List<PathPoint>
 ) {
+    init {
+        require(points.isNotEmpty()) { "PathData should contain at least one point" }
+    }
+
     val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
     val coordinates by lazy { points.map(PathPoint::coord) }

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -168,11 +169,13 @@ object GeomUtil {
             }
         }
 
-        return groups.mapValues { (_, group) ->
-            PathData(
-                points = group.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
-            )
-        }
+        return groups.mapValues { (_, aesthetics) ->
+            val points = aesthetics.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
+            when (points.isEmpty()) {
+                true -> null
+                false -> PathData(points = points)
+            }
+        }.filterNotNullValues()
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {
