@@ -73,8 +73,8 @@ internal class CompositeFigureBuildInfo constructor(
             plotMargins.top,
         )
         val marginsSize = DoubleVector(
-            plotMargins.width(),
-            plotMargins.height(),
+            plotMargins.width,
+            plotMargins.height,
         )
         val outerSize = bounds.dimension
         val elementsBounts = DoubleRectangle(leftTop, outerSize.subtract(marginsSize))

@@ -50,8 +50,8 @@ interface AxisTheme {
 
     fun tickLabelDistance(isHorizontalOrientation: Boolean): Double {
         var result = when {
-            isHorizontalOrientation -> tickLabelMargins().height()
-            else -> tickLabelMargins().width()
+            isHorizontalOrientation -> tickLabelMargins().height
+            else -> tickLabelMargins().width
         }
         if (showTickMarks()) {
             result += tickMarkLength()

@@ -157,7 +157,7 @@ internal class PlotFigureLayouter(
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
             // center the overall rect (without margins)
             val figureOverallSize = figureLayoutedSize.add(
-                DoubleVector(plotMargins.width(), plotMargins.height())
+                DoubleVector(plotMargins.width, plotMargins.height)
             )
             val delta = figurePreferredBounds.center.subtract(
                 DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center

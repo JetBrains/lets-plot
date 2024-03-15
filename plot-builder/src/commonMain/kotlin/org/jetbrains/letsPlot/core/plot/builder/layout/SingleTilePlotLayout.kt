@@ -40,7 +40,7 @@ internal class SingleTilePlotLayout(
         val tilePreferredSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
-            .subtract(DoubleVector(plotMargins.width(), plotMargins.height()))
+            .subtract(DoubleVector(plotMargins.width, plotMargins.height))
 
         val tileInfo = tileLayout
             .doLayout(tilePreferredSize, coordProvider)

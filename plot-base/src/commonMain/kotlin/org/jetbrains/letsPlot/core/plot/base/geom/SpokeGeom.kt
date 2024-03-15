@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
@@ -38,8 +37,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         svgElementHelper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         for (p in aesthetics.dataPoints()) {
-            val x = finiteOrNull(p.x()) ?: continue
-            val y = finiteOrNull(p.y()) ?: continue
+            val x = p.finiteOrNull(Aes.X) ?: continue
+            val y = p.finiteOrNull(Aes.Y) ?: continue
             val spoke = toSpoke(p) ?: continue
             val base = DoubleVector(x, y)
             val start = getStart(base, spoke, pivot)
@@ -74,11 +73,7 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         spanAxisAes: Aes<Double>
     ): DoubleSpan? {
         val loc = GeomUtil.TO_LOCATION_X_Y(p) ?: return null
-        val base = if (coordAes == spanAxisAes) {
-            loc
-        } else {
-            loc.flip()
-        }
+        val base = loc.flipIf(coordAes != spanAxisAes)
         val spoke = toSpoke(p) ?: return null
         val start = getStart(base, spoke, pivot)
         val end = getEnd(base, spoke, pivot)
@@ -90,8 +85,8 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
     }
 
     private fun toSpoke(p: DataPointAesthetics): DoubleVector? {
-        val angle = finiteOrNull(p.angle()) ?: return null
-        val radius = finiteOrNull(p.radius()) ?: return null
+        val angle = p.finiteOrNull(Aes.ANGLE) ?: return null
+        val radius = p.finiteOrNull(Aes.RADIUS) ?: return null
 
         return getSpoke(angle, radius)
     }

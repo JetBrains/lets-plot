@@ -121,8 +121,8 @@ internal object BreakLabelsLayoutUtil {
         }
         val dimension = bounds.dimension.add(
             when {
-                orientation.isHorizontal -> DoubleVector(0.0, margins.height())
-                else -> DoubleVector(margins.width(), 0.0)
+                orientation.isHorizontal -> DoubleVector(0.0, margins.height)
+                else -> DoubleVector(margins.width, 0.0)
             }
         )
         return DoubleRectangle(origin, dimension)
@@ -160,7 +160,7 @@ internal object BreakLabelsLayoutUtil {
                     elementRect.left,
                     elementRect.top + margins.top,
                     elementRect.width,
-                    elementRect.height - margins.height()
+                    elementRect.height - margins.height
                 )
             }
 
@@ -168,7 +168,7 @@ internal object BreakLabelsLayoutUtil {
                 DoubleRectangle(
                     elementRect.left + margins.left,
                     elementRect.top,
-                    elementRect.width - margins.width(),
+                    elementRect.width - margins.width,
                     elementRect.height
                 )
             }

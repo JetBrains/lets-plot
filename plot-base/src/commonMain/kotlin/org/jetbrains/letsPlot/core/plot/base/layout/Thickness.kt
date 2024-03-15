@@ -18,10 +18,10 @@ class Thickness(
     val leftTop = DoubleVector(left, top)
     val rightBottom = DoubleVector(right, bottom)
 
-    fun width() = left + right
-    fun height() = top + bottom
+    val width = left + right
+    val height = top + bottom
 
-    val size = DoubleVector(width(), height())
+    val size = DoubleVector(width, height)
 
     fun inflateRect(r: DoubleRectangle): DoubleRectangle {
         return DoubleRectangle(

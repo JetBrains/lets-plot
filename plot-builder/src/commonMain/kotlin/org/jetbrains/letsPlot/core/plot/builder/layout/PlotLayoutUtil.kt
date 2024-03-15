@@ -77,7 +77,7 @@ internal object PlotLayoutUtil {
     }
 
     internal fun titleThickness(title: String?, labelSpec: LabelSpec, margins: Thickness): Double {
-        return titleThickness(title, labelSpec, margin = margins.height())
+        return titleThickness(title, labelSpec, margin = margins.height)
     }
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
@@ -189,8 +189,8 @@ internal object PlotLayoutUtil {
     }
 
     fun axisMarginDimensions(theme: Theme, flippedAxis: Boolean): DoubleVector {
-        val width = theme.verticalAxis(flippedAxis).titleMargins().width()
-        val height = theme.horizontalAxis(flippedAxis).titleMargins().height()
+        val width = theme.verticalAxis(flippedAxis).titleMargins().width
+        val height = theme.horizontalAxis(flippedAxis).titleMargins().height
         return DoubleVector(width, height)
     }
 

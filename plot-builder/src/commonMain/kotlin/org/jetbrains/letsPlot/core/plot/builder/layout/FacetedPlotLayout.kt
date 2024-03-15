@@ -47,7 +47,7 @@ internal class FacetedPlotLayout(
             preferredSize.x - (insets.left + insets.right),
             preferredSize.y - (insets.top + insets.bottom)
         )
-            .subtract(DoubleVector(plotMargins.width(), plotMargins.height()))
+            .subtract(DoubleVector(plotMargins.width, plotMargins.height))
 
         val facetTiles = facets.tileInfos()
 

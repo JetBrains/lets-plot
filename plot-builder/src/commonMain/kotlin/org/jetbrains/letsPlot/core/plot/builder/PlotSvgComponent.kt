@@ -484,9 +484,9 @@ class PlotSvgComponent constructor(
         val axisTitleElementRect = when (orientation) {
             Orientation.LEFT ->
                 DoubleRectangle(
-                    referenceRect.left - textHeight - margins.width(),
+                    referenceRect.left - textHeight - margins.width,
                     referenceRect.top,
-                    textHeight + margins.width(),
+                    textHeight + margins.width,
                     referenceRect.height
                 )
 
@@ -494,22 +494,22 @@ class PlotSvgComponent constructor(
                 DoubleRectangle(
                     referenceRect.right,
                     referenceRect.top,
-                    textHeight + margins.width(),
+                    textHeight + margins.width,
                     referenceRect.height
                 )
 
             Orientation.TOP -> DoubleRectangle(
                 referenceRect.left,
-                referenceRect.top - textHeight - margins.height(),
+                referenceRect.top - textHeight - margins.height,
                 referenceRect.width,
-                textHeight + margins.height()
+                textHeight + margins.height
             )
 
             Orientation.BOTTOM -> DoubleRectangle(
                 referenceRect.left,
                 referenceRect.bottom,
                 referenceRect.width,
-                textHeight + margins.height()
+                textHeight + margins.height
             )
         }
 
