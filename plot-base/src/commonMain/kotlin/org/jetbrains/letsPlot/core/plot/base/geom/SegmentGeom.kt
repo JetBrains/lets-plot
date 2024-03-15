@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -49,7 +50,9 @@ class SegmentGeom : GeomBase() {
             .setResamplingEnabled(!coord.isLinear && !flat)
 
         for (p in aesthetics.dataPoints()) {
-            val segmentGeometry = createSegmentGeometry(p, svgHelper) ?: continue
+            val start = p.toLocation(Aes.X, Aes.Y) ?: continue
+            val end = p.toLocation(Aes.XEND, Aes.YEND) ?: continue
+            val segmentGeometry = svgHelper.createLineGeometry(start, end, p) ?: continue
 
             // Apply padding to segment geometry based on the target size, spacer and arrow spec
             val startPadding = padding(p, arrowSpec, spacer, atStart = true)
@@ -67,18 +70,6 @@ class SegmentGeom : GeomBase() {
 
             tooltipHelper.addLine(adjustedSegmentGeometry, p)
         }
-    }
-
-    private fun createSegmentGeometry(p: DataPointAesthetics, geomHelper: GeomHelper.SvgElementHelper): List<DoubleVector>? {
-        val x = finiteOrNull(p.x()) ?: return null
-        val y = finiteOrNull(p.y()) ?: return null
-        val xend = finiteOrNull(p.xend()) ?: return null
-        val yend = finiteOrNull(p.yend()) ?: return null
-
-        val start = DoubleVector(x, y)
-        val end = DoubleVector(xend, yend)
-
-        return geomHelper.createLineGeometry(start, end, p)
     }
 
     companion object {
@@ -125,19 +116,13 @@ class SegmentGeom : GeomBase() {
             return padEnd(startPadded, endPadding)
         }
 
-        private fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
-            val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
-            val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
-            return AesScaling.circleDiameter(p, sizeAes) / 2 + AesScaling.pointStrokeWidth(p, strokeAes)
-        }
-
         fun padding(
             p: DataPointAesthetics,
             arrowSpec: ArrowSpec?,
             spacer: Double,
             atStart: Boolean
         ): Double {
-            val targetSize = targetSize(p, atStart)
+            val targetSize = AesScaling.targetSize(p, atStart)
 
             val miterOffset = arrowSpec?.let {
                 val hasArrow = if (atStart) arrowSpec.isOnFirstEnd else arrowSpec.isOnLastEnd

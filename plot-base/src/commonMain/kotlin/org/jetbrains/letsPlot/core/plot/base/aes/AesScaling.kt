@@ -57,4 +57,10 @@ object AesScaling {
         return p.size()!! * 2
     }
 
+    fun targetSize(p: DataPointAesthetics, atStart: Boolean): Double {
+        val sizeAes = if (atStart) DataPointAesthetics::sizeStart else DataPointAesthetics::sizeEnd
+        val strokeAes = if (atStart) DataPointAesthetics::strokeStart else DataPointAesthetics::strokeEnd
+        return circleDiameter(p, sizeAes) / 2 + pointStrokeWidth(p, strokeAes)
+    }
+
 }
