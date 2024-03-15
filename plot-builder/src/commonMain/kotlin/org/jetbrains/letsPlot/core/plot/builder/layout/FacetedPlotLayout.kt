@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
@@ -27,6 +27,7 @@ internal class FacetedPlotLayout(
     vAxisOrientation: AxisPosition,
     private val hAxisTheme: AxisTheme,
     private val vAxisTheme: AxisTheme,
+    private val plotTheme: PlotTheme,
 ) : PlotLayout {
     private val totalAddedHSize: Double = PANEL_PADDING * (facets.colCount - 1)
     private val totalAddedVSize: Double = PANEL_PADDING * (facets.rowCount - 1)
@@ -40,7 +41,8 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Thickness): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+        val plotMargins = plotTheme.plotMargins()
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (insets.left + insets.right),
             preferredSize.y - (insets.top + insets.bottom)

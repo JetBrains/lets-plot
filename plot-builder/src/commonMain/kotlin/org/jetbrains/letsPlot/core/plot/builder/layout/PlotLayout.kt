@@ -6,9 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 interface PlotLayout {
-    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, plotMargins: Thickness): PlotLayoutInfo
+    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo
 }

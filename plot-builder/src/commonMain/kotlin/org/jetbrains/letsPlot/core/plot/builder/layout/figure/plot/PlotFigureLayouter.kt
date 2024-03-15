@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapTileLayoutPro
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
-internal class PlotFigureLayouter constructor(
+internal class PlotFigureLayouter(
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val facets: PlotFacets,
     private val coordProvider: CoordProvider,
@@ -28,7 +28,7 @@ internal class PlotFigureLayouter constructor(
     private val vAxisPosition: AxisPosition,
     private val containsLiveMap: Boolean,
     private val theme: Theme,
-    private val legendBoxInfos: List<LegendBoxInfo>,
+    legendBoxInfos: List<LegendBoxInfo>,
     private var title: String?,
     private var subtitle: String?,
     private var caption: String?,
@@ -69,7 +69,7 @@ internal class PlotFigureLayouter constructor(
 
         // Layout plot inners
         val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider, theme.plot().plotMargins())
+        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
@@ -79,7 +79,7 @@ internal class PlotFigureLayouter constructor(
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, theme.plot().plotMargins())
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
 
         return createFigureLayoutInfo(
             figurePreferredSize = null,
@@ -103,6 +103,7 @@ internal class PlotFigureLayouter constructor(
                 hAxisPosition, vAxisPosition,
                 hAxisTheme = theme.horizontalAxis(flipAxis),
                 vAxisTheme = theme.verticalAxis(flipAxis),
+                plotTheme = theme.plot()
             )
         }
     }
@@ -124,6 +125,7 @@ internal class PlotFigureLayouter constructor(
             vAxisPosition = AxisPosition.LEFT,    // Not used with Live Map
             hAxisTheme = LiveMapAxisTheme(),
             vAxisTheme = LiveMapAxisTheme(),
+            plotTheme = theme.plot()
         )
     }
 
@@ -195,7 +197,7 @@ internal class PlotFigureLayouter constructor(
                 )
             )
 
-        // Geom area: plot withot axis and facet labels.
+        // Geom area: plot without axis and facet labels.
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
             .add(plotOrigin)
 
