@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
@@ -18,6 +19,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
+    var arrowSpec: ArrowSpec? = null
     var pivot: Pivot = DEF_PIVOT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -34,7 +36,15 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper.createSvgElementHelper()
         svgElementHelper.setStrokeAlphaEnabled(true)
-        svgElementHelper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
+
+        svgElementHelper.setGeometryHandler { aes, lineString ->
+            tooltipHelper.addLine(lineString, aes)
+
+            arrowSpec?.let {
+                val arrow = ArrowSpec.createArrows(aes, lineString, it)
+                arrow.forEach(root::add)
+            }
+        }
 
         for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue

@@ -372,8 +372,13 @@ internal object GeomProviderFactory {
                 }
             }
 
-            GeomKind.SPOKE ->  GeomProvider.spoke {
+            GeomKind.SPOKE -> GeomProvider.spoke {
                 val geom = SpokeGeom()
+                layerConfig[Spoke.ARROW]?.let {
+                    val arrowConfig = ArrowSpecConfig.create(it)
+                    geom.arrowSpec = arrowConfig.createArrowSpec()
+                }
+
                 layerConfig.getString(Spoke.PIVOT)?.let {
                     geom.pivot = when (it.lowercase()) {
                         "tail" -> SpokeGeom.Pivot.TAIL
@@ -381,7 +386,7 @@ internal object GeomProviderFactory {
                         "tip" -> SpokeGeom.Pivot.TIP
                         else -> throw IllegalArgumentException(
                             "Unsupported value for ${Spoke.PIVOT} parameter: '$it'. " +
-                            "Use one of: tail, middle, mid, tip."
+                                    "Use one of: tail, middle, mid, tip."
                         )
                     }
                 }
@@ -396,7 +401,8 @@ internal object GeomProviderFactory {
     }
 
     private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom, superscriptExponent: Boolean) {
-        opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
+        opts.getString(Option.Geom.Text.LABEL_FORMAT)
+            ?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }

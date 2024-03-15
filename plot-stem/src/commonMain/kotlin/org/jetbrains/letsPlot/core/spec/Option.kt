@@ -339,6 +339,7 @@ object Option {
         }
 
         object Spoke {
+            const val ARROW = "arrow"
             const val PIVOT = "pivot"
         }
 
