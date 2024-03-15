@@ -59,7 +59,7 @@ Also read:
 - #### `coord_polar()`
 
     The polar coordinate system is most commonly used for pie charts, but</br>
-    it can also be used for constructing **Spyder or Radar charts** using the `flat` option.
+    it can also be used for constructing **Spider or Radar charts** using the `flat` option.
     
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/polar_coord_pie.png" alt="f-24a/images/polar_coord_pie.png" width="256" height="214">
