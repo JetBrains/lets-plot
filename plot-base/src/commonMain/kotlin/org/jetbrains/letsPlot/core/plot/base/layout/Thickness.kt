@@ -40,11 +40,31 @@ class Thickness(
     fun inflateSize(size: DoubleVector): DoubleVector = size.add(this.size)
     fun shrinkSize(size: DoubleVector): DoubleVector = size.subtract(this.size)
 
+    operator fun plus(other: Thickness): Thickness {
+        return Thickness(
+            top + other.top,
+            right + other.right,
+            bottom + other.bottom,
+            left + other.left
+        )
+    }
+
+    operator fun minus(other: Thickness): Thickness {
+        return Thickness(
+            top - other.top,
+            right - other.right,
+            bottom - other.bottom,
+            left - other.left
+        )
+    }
+
     override fun toString(): String {
         return "Thickness(top=$top, right=$right, bottom=$bottom, left=$left)"
     }
 
     companion object {
         val ZERO = Thickness()
+
+        fun uniform(value: Double) = Thickness(value, value, value, value)
     }
 }

@@ -235,7 +235,10 @@ class PlotSvgComponent constructor(
         }
 
         if (plotTheme.showBackground()) {
-            val backgroundAreaPath = SvgPathDataBuilder().rect(plotOuterBounds)
+            val plotInset = plotTheme.plotMargins() - Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
+            val backgroundRect = plotInset.inflateRect(figureLayoutInfo.figureLayoutedBounds)
+
+            val backgroundAreaPath = SvgPathDataBuilder().rect(backgroundRect)
             backgroundLiveMapWindows.forEach(backgroundAreaPath::rect)
 
             backgroundArea.apply {
@@ -249,7 +252,7 @@ class PlotSvgComponent constructor(
                 fillColor().set(Color.TRANSPARENT)
                 strokeColor().set(plotTheme.backgroundColor())
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
-                d().set(SvgPathDataBuilder().rect(plotOuterBounds).build())
+                d().set(SvgPathDataBuilder().rect(backgroundRect).build())
             }
         }
 
