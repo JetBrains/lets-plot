@@ -232,6 +232,11 @@ abstract class DataPointAesthetics {
         return true
     }
 
+    fun finiteOrNull(aes: Aes<Double>): Double? {
+        if (!defined(aes)) return null
+        return get(aes)
+    }
+
     private fun <T> getNotNull(aes: Aes<T>): T {
         return get(aes) ?: throw IllegalStateException("No value for aesthetic $aes at index ${index()}")
     }
