@@ -139,7 +139,7 @@ internal class PlotTile(
                     labelBounds.left,
                     labelBounds.top + theme.stripMargins().top,
                     labelBounds.width,
-                    labelBounds.height - theme.stripMargins().height()
+                    labelBounds.height - theme.stripMargins().height
                 )
                 if (DEBUG_DRAWING) {
                     drawDebugRect(textBounds, Color.MAGENTA)
@@ -186,7 +186,7 @@ internal class PlotTile(
             val textBounds = DoubleRectangle(
                 labelBounds.left + theme.stripMargins().left,
                 labelBounds.top,
-                labelBounds.width - theme.stripMargins().width(),
+                labelBounds.width - theme.stripMargins().width,
                 labelBounds.height
             )
             if (DEBUG_DRAWING) {
