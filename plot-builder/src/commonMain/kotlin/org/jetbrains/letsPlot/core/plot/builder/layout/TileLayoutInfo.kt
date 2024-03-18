@@ -26,6 +26,10 @@ class TileLayoutInfo constructor(
     val facetYLabel: String? = null,
 
     val trueIndex: Int,     // tile index before re-ordering (in facet wrap)
+
+    // Tab sizes for labels in rows of columns/rows
+    val facetXTabHeights: List<Double>? = null,
+    val facetYTabWidth: Double? = null
 ) {
     val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
     val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown
@@ -70,7 +74,12 @@ class TileLayoutInfo constructor(
         )
     }
 
-    fun withFacetLabels(xLabels: List<String>, yLabel: String?): TileLayoutInfo {
+    fun withFacetLabels(
+        xLabels: List<String>,
+        yLabel: String?,
+        facetXTabHeights: List<Double>?,
+        facetYTabWidth: Double
+    ): TileLayoutInfo {
         return TileLayoutInfo(
             this.offset,
             this.geomWithAxisBounds,
@@ -80,7 +89,9 @@ class TileLayoutInfo constructor(
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             xLabels, yLabel,
-            this.trueIndex
+            this.trueIndex,
+            facetXTabHeights,
+            facetYTabWidth
         )
     }
 

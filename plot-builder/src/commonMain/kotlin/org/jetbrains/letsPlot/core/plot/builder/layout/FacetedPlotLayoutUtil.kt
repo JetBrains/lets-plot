@@ -146,7 +146,8 @@ internal object FacetedPlotLayoutUtil {
         showFacetStrip: Boolean,
         rowSpace: Double,
         numRows: Int,
-        facetsTheme: FacetsTheme
+        facetsTheme: FacetsTheme,
+        facetColTabHeights: Map<Int, List<Double>>
     ): List<Double> {
         val axisHeights = List<Double>(numRows) { row ->
             maxHAxisThickness(layoutInfos, facetTiles, row, numRows)
@@ -160,7 +161,10 @@ internal object FacetedPlotLayoutUtil {
         val tileLabelHeights = colIndices(facetTiles, 0).map { i ->
             when {
                 i == 0 -> 0.0  // skip first (will be taken in account later)
-                showFacetStrip -> FacetedPlotLayout.facetColHeadHeight(facetTiles[i].colLabs, facetsTheme)
+                showFacetStrip -> {
+                    facetColTabHeights[facetTiles[i].row]?.let(FacetedPlotLayout.Companion::facetColHeadTotalHeight)
+                        ?: FacetedPlotLayout.facetColHeadTotalHeight(facetTiles[i].colLabs, facetsTheme)
+                }
                 else -> 0.0
             }
         }

@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
+import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -22,8 +24,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_PADDING
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadHeight
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetTabHeight
+import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
+import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetLabelSize
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -114,16 +116,19 @@ internal class PlotTile(
         // facet X label (on top of geom area)
         val xLabels = tileLayoutInfo.facetXLabels
         if (xLabels.isNotEmpty()) {
-            val totalHeadHeight = facetColHeadHeight(xLabels, theme)
+            val totalHeadHeight = tileLayoutInfo.facetXTabHeights?.let(::facetColHeadTotalHeight)
+                ?: facetColHeadTotalHeight(xLabels, theme)
             val labelOrig = DoubleVector(
                 geomBounds.left,
                 geomBounds.top - totalHeadHeight
             )
             var curLabelOrig = labelOrig
-            xLabels.forEach { xLabel ->
+            xLabels.forEachIndexed { index, xLabel ->
+                val labHeight = tileLayoutInfo.facetXTabHeights?.get(index)
+                    ?: facetLabelSize(xLabel, theme, marginSize = Thickness::height)
                 val labelBounds = DoubleRectangle(
                     curLabelOrig,
-                    DoubleVector(geomBounds.width, facetTabHeight(xLabel, theme))
+                    DoubleVector(geomBounds.width,  labHeight)
                 )
 
                 // ToDo: Use "facet X" theme.
@@ -136,6 +141,9 @@ internal class PlotTile(
                     labelBounds.width,
                     labelBounds.height - theme.stripMargins().height()
                 )
+                if (DEBUG_DRAWING) {
+                    drawDebugRect(textBounds, Color.MAGENTA)
+                 }
 
                 val textSize = FacetedPlotLayout.titleSize(xLabel, theme)
                 val labelSpec = PlotLabelSpecFactory.facetText(theme)
@@ -161,8 +169,8 @@ internal class PlotTile(
 
         // facet Y label (to the right from geom area)
         if (tileLayoutInfo.facetYLabel != null) {
-            val headWidth = facetTabHeight(tileLayoutInfo.facetYLabel, theme, Thickness::width)
-            val textSize = FacetedPlotLayout.titleSize(tileLayoutInfo.facetYLabel, theme)
+            val headWidth = tileLayoutInfo.facetYTabWidth
+                ?: facetLabelSize(tileLayoutInfo.facetYLabel, theme, Thickness::width)
 
             val labelBounds = DoubleRectangle(
                 geomBounds.right + FACET_PADDING,
@@ -181,13 +189,17 @@ internal class PlotTile(
                 labelBounds.width - theme.stripMargins().width(),
                 labelBounds.height
             )
+            if (DEBUG_DRAWING) {
+                drawDebugRect(textBounds, Color.MAGENTA)
+            }
 
+            val textSize = FacetedPlotLayout.titleSize(tileLayoutInfo.facetYLabel, theme)
             val labelSpec = PlotLabelSpecFactory.facetText(theme)
             val lineHeight = labelSpec.height()
+            val rotation = TextRotation.CLOCKWISE
+
             val lab = MultilineLabel(tileLayoutInfo.facetYLabel)
             lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
-
-            val rotation = TextRotation.CLOCKWISE
             val (pos, hAnchor) = applyJustification(
                 textBounds,
                 textSize,
@@ -195,7 +207,6 @@ internal class PlotTile(
                 theme.stripTextJustification(),
                 rotation
             )
-
             lab.setHorizontalAnchor(hAnchor)
             lab.setLineHeight(lineHeight)
             lab.setHorizontalAnchor(hAnchor)
@@ -216,9 +227,19 @@ internal class PlotTile(
         }
     }
 
+    private fun drawDebugRect(r: DoubleRectangle, color: Color) {
+        val rect = SvgRectElement(r)
+        rect.strokeColor().set(color)
+        rect.strokeWidth().set(1.0)
+        rect.fillOpacity().set(0.0)
+        add(rect)
+    }
+
     companion object {
         private fun createCanvasFigure(layer: GeomLayer, bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
             return (layer.geom as LiveMapGeom).createCanvasFigure(bounds)
         }
+
+        private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 }
