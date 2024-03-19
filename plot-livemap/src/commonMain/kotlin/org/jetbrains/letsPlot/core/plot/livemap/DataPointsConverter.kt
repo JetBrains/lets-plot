@@ -227,7 +227,7 @@ internal class DataPointsConverter(
 
                 val start = it.toLocation(Aes.X, Aes.Y) ?: return@process emptyList()
                 val end = it.toLocation(Aes.XEND, Aes.YEND) ?: return@process emptyList()
-                val (_, geometry) = elementHelper.createCurve(start, end, geom.curvature, -geom.angle, geom.ncp, it) ?: return@process emptyList()
+                val (_, geometry) = elementHelper.createCurve(start, end, geom.curvature, geom.angle, geom.ncp, it) ?: return@process emptyList()
                 geometry
             }
         }

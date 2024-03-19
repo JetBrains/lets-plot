@@ -18,6 +18,17 @@ fun curve(
     angle: Double,
     ncp: Int
 ): List<DoubleVector> {
+    val controlPoints = calcControlPoints(start, end, curvature, angle, ncp)
+    return listOf(start) + controlPoints + listOf(end)
+}
+
+private fun calcControlPoints(
+    start: DoubleVector,
+    end: DoubleVector,
+    curvature: Double,
+    angle: Double,
+    ncp: Int
+): List<DoubleVector> {
     // straight line
     if (curvature == 0.0 || abs(angle) !in 1.0..179.0) {
         return emptyList()
@@ -89,12 +100,11 @@ fun curve(
             )
         }
 
-    val controlPoints = indices.map { index ->
+    return indices.map { index ->
         start.add(
             cp[index].subtract(start).rotate(-beta)
         )
     }
-    return listOf(start) + controlPoints + listOf(end)
 }
 
 private fun calcOrigin(
