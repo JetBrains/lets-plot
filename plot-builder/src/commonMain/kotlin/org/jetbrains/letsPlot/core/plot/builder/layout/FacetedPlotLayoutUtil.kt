@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 
 internal object FacetedPlotLayoutUtil {
@@ -146,8 +145,7 @@ internal object FacetedPlotLayoutUtil {
         showFacetStrip: Boolean,
         rowSpace: Double,
         numRows: Int,
-        facetsTheme: FacetsTheme,
-        facetColTabHeights: Map<Int, List<Double>>
+        facetColHeadHeight: (PlotFacets.FacetTileInfo) -> Double
     ): List<Double> {
         val axisHeights = List<Double>(numRows) { row ->
             maxHAxisThickness(layoutInfos, facetTiles, row, numRows)
@@ -161,10 +159,7 @@ internal object FacetedPlotLayoutUtil {
         val tileLabelHeights = colIndices(facetTiles, 0).map { i ->
             when {
                 i == 0 -> 0.0  // skip first (will be taken in account later)
-                showFacetStrip -> {
-                    facetColTabHeights[facetTiles[i].row]?.let(FacetedPlotLayout.Companion::facetColHeadTotalHeight)
-                        ?: FacetedPlotLayout.facetColHeadTotalHeight(facetTiles[i].colLabs, facetsTheme)
-                }
+                showFacetStrip -> facetColHeadHeight(facetTiles[i])
                 else -> 0.0
             }
         }

@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
@@ -25,7 +24,6 @@ import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayers
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.FACET_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetLabelSize
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -116,19 +114,16 @@ internal class PlotTile(
         // facet X label (on top of geom area)
         val xLabels = tileLayoutInfo.facetXLabels
         if (xLabels.isNotEmpty()) {
-            val totalHeadHeight = tileLayoutInfo.facetXTabHeights?.let(::facetColHeadTotalHeight)
-                ?: facetColHeadTotalHeight(xLabels, theme)
+            val totalHeadHeight = tileLayoutInfo.facetXLabels.map { it.second }.let(::facetColHeadTotalHeight)
             val labelOrig = DoubleVector(
                 geomBounds.left,
                 geomBounds.top - totalHeadHeight
             )
             var curLabelOrig = labelOrig
-            xLabels.forEachIndexed { index, xLabel ->
-                val labHeight = tileLayoutInfo.facetXTabHeights?.get(index)
-                    ?: facetLabelSize(xLabel, theme, marginSize = Thickness::height)
+            xLabels.forEach { (xLabel, labHeight) ->
                 val labelBounds = DoubleRectangle(
                     curLabelOrig,
-                    DoubleVector(geomBounds.width,  labHeight)
+                    DoubleVector(geomBounds.width, labHeight)
                 )
 
                 // ToDo: Use "facet X" theme.
@@ -169,13 +164,12 @@ internal class PlotTile(
 
         // facet Y label (to the right from geom area)
         if (tileLayoutInfo.facetYLabel != null) {
-            val headWidth = tileLayoutInfo.facetYTabWidth
-                ?: facetLabelSize(tileLayoutInfo.facetYLabel, theme, Thickness::width)
+            val (yLabel, labWidth) = tileLayoutInfo.facetYLabel
 
             val labelBounds = DoubleRectangle(
                 geomBounds.right + FACET_PADDING,
                 geomBounds.top,
-                headWidth,
+                labWidth,
                 geomBounds.height
             )
 
@@ -193,12 +187,12 @@ internal class PlotTile(
                 drawDebugRect(textBounds, Color.MAGENTA)
             }
 
-            val textSize = FacetedPlotLayout.titleSize(tileLayoutInfo.facetYLabel, theme)
+            val textSize = FacetedPlotLayout.titleSize(yLabel, theme)
             val labelSpec = PlotLabelSpecFactory.facetText(theme)
             val lineHeight = labelSpec.height()
             val rotation = TextRotation.CLOCKWISE
 
-            val lab = MultilineLabel(tileLayoutInfo.facetYLabel)
+            val lab = MultilineLabel(yLabel)
             lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
             val (pos, hAnchor) = applyJustification(
                 textBounds,
