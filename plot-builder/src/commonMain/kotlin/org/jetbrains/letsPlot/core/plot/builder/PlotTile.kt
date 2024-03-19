@@ -130,12 +130,7 @@ internal class PlotTile(
                 addFacetLabBackground(labelBounds, theme)
 
                 // without margins
-                val textBounds = DoubleRectangle(
-                    labelBounds.left,
-                    labelBounds.top + theme.stripMargins().top,
-                    labelBounds.width,
-                    labelBounds.height - theme.stripMargins().height
-                )
+                val textBounds = theme.stripMargins().shrinkRect(labelBounds)
                 if (DEBUG_DRAWING) {
                     drawDebugRect(textBounds, Color.MAGENTA)
                  }
@@ -177,12 +172,7 @@ internal class PlotTile(
             addFacetLabBackground(labelBounds, theme)
 
             // without margins
-            val textBounds = DoubleRectangle(
-                labelBounds.left + theme.stripMargins().left,
-                labelBounds.top,
-                labelBounds.width - theme.stripMargins().width,
-                labelBounds.height
-            )
+            val textBounds = theme.stripMargins().shrinkRect(labelBounds)
             if (DEBUG_DRAWING) {
                 drawDebugRect(textBounds, Color.MAGENTA)
             }
