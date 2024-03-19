@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder.Interpolation
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
-import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.sign
 import kotlin.math.sin
 
@@ -175,6 +175,20 @@ open class GeomHelper(
             return svgElement to lineString
         }
 
+        fun createSpoke(
+            base: DoubleVector,
+            angle: Double,
+            radius: Double,
+            pivot: Double,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            val spoke = DoubleVector(radius * cos(angle), radius * sin(angle))
+            val start = base.subtract(spoke.mul(pivot))
+            val end = base.add(spoke.mul(1 - pivot))
+            return createLine(start, end, p, strokeScaler)
+        }
+
         private fun renderSvgElement(
             p: DataPointAesthetics,
             lineString: List<DoubleVector>,
@@ -207,30 +221,46 @@ open class GeomHelper(
             }
             decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
 
-            val arrowElement = myArrowSpec?.let { arrowSpec ->
-                SvgPathElement().apply {
-                    ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec).let { (startHead, endHead) ->
-                        d().set(
-                            SvgPathDataBuilder()
-                                .lineString(startHead)
-                                .lineString(endHead)
-                                .build()
-                        )
-                        strokeMiterLimit().set(abs(ArrowSpec.miterLength(arrowSpec, p)))
-                    }
-                    decorate(this, arrowSpec.toArrowAes(p), applyAlphaToAll = true, strokeScaler, arrowSpec.type == CLOSED)
-                }
-            }
+            val arrowElements = myArrowSpec?.let { arrowSpec ->
+                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec)
+                val startHeadSvg = renderArrowHead(startHead, p, strokeScaler)
+                val endHeadSvg = renderArrowHead(endHead, p, strokeScaler)
+                listOfNotNull(startHeadSvg, endHeadSvg)
+            } ?: emptyList()
 
-            return if (arrowElement == null) {
+            return if (arrowElements.isEmpty()) {
                 lineElement
             } else {
                 SvgGElement().apply {
                     children().add(lineElement)
-                    children().add(arrowElement)
+                    children().addAll(arrowElements)
                 }
             }
         }
+
+        private fun renderArrowHead(points: List<DoubleVector>, p: DataPointAesthetics, strokeScaler: (DataPointAesthetics) -> Double): SvgNode? {
+            if (points.size < 2) return null
+            val arrowSpec = myArrowSpec ?: return null
+
+            val arrowSvg = SvgPathElement().apply {
+                d().set(SvgPathDataBuilder()
+                    .lineString(points)
+                    .also { if (arrowSpec.type == CLOSED) it.closePath()}
+                    .build()
+                )
+            }
+
+            decorate(
+                arrowSvg,
+                arrowSpec.toArrowAes(p),
+                myStrokeAlphaEnabled,
+                strokeScaler,
+                filled = arrowSpec.type == CLOSED
+            )
+
+            return arrowSvg
+        }
+
 
         private fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
             val startPadding = arrowPadding(p, atStart = true) + mySpacer + AesScaling.targetStartSize(p)

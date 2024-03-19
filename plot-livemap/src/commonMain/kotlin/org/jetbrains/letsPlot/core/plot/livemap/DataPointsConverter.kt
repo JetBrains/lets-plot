@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -219,27 +218,33 @@ internal class DataPointsConverter(
             setFlat(true)
 
             return process(isClosed = false) {
-
-                val elementHelper = GeomHelper.SvgElementHelper()
-                    .setSpacer(geom.spacer)
-                    .setArrowSpec(geom.arrowSpec)
-                    .noSvg()
-
                 val start = it.toLocation(Aes.X, Aes.Y) ?: return@process emptyList()
                 val end = it.toLocation(Aes.XEND, Aes.YEND) ?: return@process emptyList()
+
+                // not set arrowSpec - livemap handles it via setArrowSpec() call
+                val elementHelper = GeomHelper.SvgElementHelper()
+                    .setSpacer(geom.spacer)
+                    .noSvg()
+
                 val (_, geometry) = elementHelper.createCurve(start, end, geom.curvature, geom.angle, geom.ncp, it) ?: return@process emptyList()
                 geometry
             }
         }
 
         fun spoke(geom: SpokeGeom): List<DataPointLiveMapAesthetics> {
-            return process(isClosed = false) {
-                val x = finiteOrNull(it.x()) ?: return@process emptyList()
-                val y = finiteOrNull(it.y()) ?: return@process emptyList()
-                val angle = finiteOrNull(it.angle()) ?: return@process emptyList()
-                val radius = finiteOrNull(it.radius()) ?: return@process emptyList()
+            setArrowSpec(geom.arrowSpec)
+            setFlat(true)
 
-                SpokeGeom.createGeometry(x, y, angle, radius, geom.pivot)
+            return process(isClosed = false) {
+                val base = it.toLocation(Aes.X, Aes.Y) ?: return@process emptyList()
+                val angle = it.finiteOrNull(Aes.ANGLE) ?: return@process emptyList()
+                val radius = it.finiteOrNull(Aes.RADIUS) ?: return@process emptyList()
+
+                val elementHelper = GeomHelper.SvgElementHelper()
+                    .noSvg()
+
+                val (_, geometry) = elementHelper.createSpoke(base, angle, radius, geom.pivot.factor, it) ?: return@process emptyList()
+                geometry
             }
         }
 
