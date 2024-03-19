@@ -158,7 +158,7 @@ internal class PlotTile(
                 lab.moveTo(pos)
                 add(lab)
 
-                curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labelBounds.height))
+                curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labHeight))
             }
         }
 
