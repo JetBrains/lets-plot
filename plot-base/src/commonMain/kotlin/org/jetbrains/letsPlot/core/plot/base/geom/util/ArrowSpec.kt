@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
-import kotlin.math.*
+import kotlin.math.atan2
+import kotlin.math.min
+import kotlin.math.sin
 
 /**
  * @param angle  The angle of the arrow head in radians (smaller numbers produce narrower, pointier arrows).
@@ -43,105 +43,59 @@ class ArrowSpec(
     }
 
     companion object {
-        fun createArrows(
-            p: DataPointAesthetics,
+
+        fun createArrowHeads(
             geometry: List<DoubleVector>,
             arrowSpec: ArrowSpec
-        ): List<SvgPathElement> {
-            val arrows = mutableListOf<SvgPathElement?>()
-            if (arrowSpec.isOnFirstEnd) {
-                val (start, end) = geometry.take(2).reversed()
-                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+        ): Pair<List<DoubleVector>, List<DoubleVector>> {
+            val startHead = when (arrowSpec.isOnFirstEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry.take(2).reversed())
+                false -> emptyList()
             }
-            if (arrowSpec.isOnLastEnd) {
-                val (start, end) = geometry.takeLast(2)
-                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+
+            val endHead = when (arrowSpec.isOnLastEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry.takeLast(2))
+                false -> emptyList()
             }
-            return arrows.filterNotNull()
+
+            return startHead to endHead
         }
 
-        private fun createArrowAtEnd(
-            p: DataPointAesthetics,
-            start: DoubleVector,
-            end: DoubleVector,
-            arrowSpec: ArrowSpec
-        ): SvgPathElement? {
 
-            val abscissa = end.x - start.x
-            val ordinate = end.y - start.y
-            if (abscissa == 0.0 && ordinate == 0.0) return null
+        private fun createArrowHeadGeometry(
+            arrowSpec: ArrowSpec,
+            geometry: List<DoubleVector>
+        ): List<DoubleVector> {
+            if (geometry.size < 2) return emptyList()
 
-            // Compute the angle that the vector defined by this segment makes with the
-            // X-axis (radians)
-            val polarAngle = atan2(ordinate, abscissa)
-
-            val arrowAes = arrowSpec.toArrowAes(p)
-
-            val arrow = createElement(polarAngle, end, arrowSpec, listOf(start, end))
-            val strokeScaler = AesScaling::strokeWidth
-            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, strokeScaler, filled = arrowSpec.type == Type.CLOSED)
-            // Use 'stroke-miterlimit' attribute to avoid the bevelled corner
-            val miterLimit = miterLength(arrowSpec.angle * 2, strokeScaler(p))
-            arrow.strokeMiterLimit().set(abs(miterLimit))
-            return arrow
-        }
-
-        /**
-         * @param polarAngle Angle between X-axis and the arrowed vector.
-         */
-        private fun createElement(polarAngle: Double, tipPoint: DoubleVector, arrowSpec: ArrowSpec, geometry: List<DoubleVector>): SvgPathElement {
             val headLength = when {
                 geometry.size == 2 -> min(arrowSpec.length, distance(geometry[0], geometry[1]))
                 else -> arrowSpec.length
             }
 
-            if (true) {
-                val side = tipPoint.subtract(DoubleVector(headLength, 0))
-                val headSide1 = side.rotateAround(tipPoint, polarAngle - arrowSpec.angle)
-                val headSide2 = side.rotateAround(tipPoint, polarAngle + arrowSpec.angle)
+            val basePoint = geometry[geometry.lastIndex - 1]
+            val tipPoint = geometry.last()
 
-                val b = SvgPathDataBuilder(true)
-                    .moveTo(headSide1)
-                    .lineTo(tipPoint)
-                    .lineTo(headSide2)
+            val abscissa = tipPoint.x - basePoint.x
+            val ordinate = tipPoint.y - basePoint.y
+            if (abscissa == 0.0 && ordinate == 0.0) return emptyList()
 
-                if (arrowSpec.type == Type.CLOSED) {
-                    b.closePath()
-                }
+            // Compute the angle that the vector defined by this segment makes with the
+            // X-axis (radians)
+            val polarAngle = atan2(ordinate, abscissa)
 
-                return SvgPathElement(b.build())
-            } else {
-                val xs = with(arrowSpec) {
-                    doubleArrayOf(
-                        tipPoint.x - headLength * cos(polarAngle - angle),
-                        tipPoint.x,
-                        tipPoint.x - headLength * cos(polarAngle + angle)
-                    )
-                }
-                val ys = with(arrowSpec) {
-                    doubleArrayOf(
-                        tipPoint.y - headLength * sin(polarAngle - angle),
-                        tipPoint.y,
-                        tipPoint.y - headLength * sin(polarAngle + angle)
-                    )
-                }
+            val length = tipPoint.subtract(DoubleVector(headLength, 0))
 
-                val b = SvgPathDataBuilder(true)
-                    .moveTo(xs[0], ys[0])
+            val leftSide = length.rotateAround(tipPoint, polarAngle - arrowSpec.angle)
+            val rightSide = length.rotateAround(tipPoint, polarAngle + arrowSpec.angle)
 
-                for (i in 1..2) {
-                    b.lineTo(xs[i], ys[i], true)
-                }
-
-                if (arrowSpec.type == Type.CLOSED) {
-                    b.closePath()
-                }
-
-                return SvgPathElement(b.build())
+            return when (arrowSpec.type) {
+                Type.CLOSED -> listOf(leftSide, tipPoint, rightSide, leftSide)
+                Type.OPEN -> listOf(leftSide, tipPoint, rightSide)
             }
         }
 
-        private fun ArrowSpec.toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
+        internal fun ArrowSpec.toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
                 private val filled = (type == Type.CLOSED)
 
@@ -157,8 +111,12 @@ class ArrowSpec(
             }
         }
 
-        fun miterLength(headAngle: Double, strokeWidth: Double): Double {
-            return strokeWidth / sin(headAngle / 2)
+        fun miterLength(
+            arrowSpec: ArrowSpec,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Double {
+            return strokeScaler(p) / sin(arrowSpec.angle)
         }
     }
 }

@@ -60,7 +60,7 @@ class LineRangeGeom(private val isVertical: Boolean) : GeomBase() {
             // line
             val start = afterRotation(DoubleVector(x, ymin))
             val end = afterRotation(DoubleVector(x, ymax))
-            helper.createLine(start, end, p)?.let { root.add(it) }
+            helper.createLine(start, end, p)?.let { (svgElement, _) -> root.add(svgElement) }
         }
         // tooltip
         flipHelper.buildHints(

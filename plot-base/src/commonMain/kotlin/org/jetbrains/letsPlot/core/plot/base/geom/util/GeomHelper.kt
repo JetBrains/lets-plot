@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.curve
+import org.jetbrains.letsPlot.commons.geometry.padLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -15,10 +17,16 @@ import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Companion.toArrowAes
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec.Type.CLOSED
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder.Interpolation
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
+import kotlin.math.abs
+import kotlin.math.sign
+import kotlin.math.sin
 
 open class GeomHelper(
     protected val pos: PositionAdjustment,
@@ -92,45 +100,62 @@ open class GeomHelper(
     }
 
     fun createSvgElementHelper(): SvgElementHelper {
-        return SvgElementHelper()
+        return SvgElementHelper(::toClient)
     }
 
-    inner class SvgElementHelper {
-        private var geometryHandler: (DataPointAesthetics, List<DoubleVector>) -> Unit = { _, _ -> }
+    class SvgElementHelper(
+        private val toClient: (DoubleVector, DataPointAesthetics) -> DoubleVector? = { v, _ -> v }
+    ) {
+        private var myNoSvg: Boolean = false
+        private var myInterpolation: Interpolation? = null
+        private var myArrowSpec: ArrowSpec? = null
         private var myStrokeAlphaEnabled = false
         private var myResamplingEnabled = false
         private var myResamplingPrecision = 0.5
+        private var mySpacer: Double = 0.0
 
-        fun setStrokeAlphaEnabled(b: Boolean) {
-            myStrokeAlphaEnabled = b
-        }
+        fun setStrokeAlphaEnabled(b: Boolean) = apply { myStrokeAlphaEnabled = b }
+        fun setResamplingEnabled(b: Boolean) = apply { myResamplingEnabled = b }
+        fun setArrowSpec(arrowSpec: ArrowSpec?) = apply { myArrowSpec = arrowSpec }
+        fun setSpacer(spacer: Double) = apply { mySpacer = spacer }
+        fun setInterpolation(interpolation: Interpolation) = apply { myInterpolation = interpolation }
+        fun setResamplingPrecision(precision: Double) = apply { myResamplingPrecision = precision }
+        fun noSvg() = apply { myNoSvg = true }
 
-        fun setResamplingEnabled(b: Boolean): SvgElementHelper {
-            myResamplingEnabled = b
-            return this
-        }
-
-        fun setResamplingPrecision(precision: Double) {
-            myResamplingPrecision = precision
-        }
-
-        fun setGeometryHandler(handler: (DataPointAesthetics, List<DoubleVector>) -> Unit) {
-            geometryHandler = handler
-        }
-
-        fun createLineGeometry(
+        private fun createLineGeometry(
             start: DoubleVector,
             end: DoubleVector,
-            p: DataPointAesthetics,
+            aes: DataPointAesthetics,
         ): List<DoubleVector>? {
             if (myResamplingEnabled) {
-                return resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
+                return resample(listOf(start, end), myResamplingPrecision) { toClient(it, aes) }
             } else {
-                val from = toClient(start, p) ?: return null
-                val to = toClient(end, p) ?: return null
+                val from = toClient(start, aes) ?: return null
+                val to = toClient(end, aes) ?: return null
 
                 return listOf(from, to)
             }
+        }
+
+        fun createCurve(
+            start: DoubleVector,
+            end: DoubleVector,
+            curvature: Double,
+            angle: Double,
+            ncp: Int,
+            aes: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            if (start == end) {
+                return null
+            }
+            val lineString = curve(start, end, curvature, angle, ncp)
+
+            if (myNoSvg) return SvgGElement() to lineString
+
+            val svgElement = renderSvgElement(aes, lineString, strokeScaler) ?: return null
+
+            return svgElement to lineString
         }
 
         fun createLine(
@@ -138,31 +163,93 @@ open class GeomHelper(
             end: DoubleVector,
             p: DataPointAesthetics,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            val lineString = createLineGeometry(start, end, p) ?: return null
+            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+
+            return svgElement to lineString
+        }
+
+        private fun renderSvgElement(
+            p: DataPointAesthetics,
+            lineString: List<DoubleVector>,
+            strokeScaler: (DataPointAesthetics) -> Double
         ): SvgNode? {
-            if (myResamplingEnabled) {
-                val lineString = resample(listOf(start, end), myResamplingPrecision) { toClient(it, p) }
+            val lineStringAfterPadding = padLineString(lineString, p)
+            if (lineStringAfterPadding.isEmpty() || lineStringAfterPadding.size == 1) return null
 
-                geometryHandler(p, lineString)
-
-                val svgPathElement = SvgPathElement()
-                decorate(svgPathElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
-                svgPathElement.d().set(SvgPathDataBuilder().lineString(lineString).build())
-                return svgPathElement
+            val lineElement = if (lineStringAfterPadding.size == 2) {
+                // Simple SvgLineElement is enough for a straight line without arrow
+                SvgLineElement().apply {
+                    x1().set(lineStringAfterPadding.first().x)
+                    y1().set(lineStringAfterPadding.first().y)
+                    x2().set(lineStringAfterPadding.last().x)
+                    y2().set(lineStringAfterPadding.last().y)
+                }
             } else {
-                val from = toClient(start, p) ?: return null
-                val to = toClient(end, p) ?: return null
-
-                geometryHandler(p, listOf(from, to))
-
-                val svgLineElement = SvgLineElement(from.x, from.y, to.x, to.y)
-                decorate(svgLineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
-                return svgLineElement
+                SvgPathElement().apply {
+                    d().set(
+                        if (myInterpolation != null) {
+                            SvgPathDataBuilder()
+                                .moveTo(lineStringAfterPadding.first())
+                                .interpolatePoints(lineStringAfterPadding, myInterpolation!!)
+                                .build()
+                        } else {
+                            SvgPathDataBuilder().lineString(lineStringAfterPadding).build()
+                        }
+                    )
+                }
             }
+            decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
+
+            val arrowElement = myArrowSpec?.let { arrowSpec ->
+                SvgPathElement().apply {
+                    ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec).let { (startHead, endHead) ->
+                        d().set(
+                            SvgPathDataBuilder()
+                                .lineString(startHead)
+                                .lineString(endHead)
+                                .build()
+                        )
+                        strokeMiterLimit().set(abs(ArrowSpec.miterLength(arrowSpec, p)))
+                    }
+                    decorate(this, arrowSpec.toArrowAes(p), applyAlphaToAll = true, strokeScaler, arrowSpec.type == CLOSED)
+                }
+            }
+
+            return if (arrowElement == null) {
+                lineElement
+            } else {
+                SvgGElement().apply {
+                    children().add(lineElement)
+                    children().add(arrowElement)
+                }
+            }
+        }
+
+        private fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
+            val startPadding = arrowPadding(p, atStart = true) + mySpacer + AesScaling.targetStartSize(p)
+            val endPadding = arrowPadding(p, atStart = false) + mySpacer + AesScaling.targetEndSize(p)
+
+            return padLineString(lineString, startPadding, endPadding)
+        }
+
+        private fun arrowPadding(
+            aes: DataPointAesthetics,
+            atStart: Boolean
+        ): Double {
+            val arrowSpec = myArrowSpec ?: return 0.0
+
+            val hasArrow = if (atStart) arrowSpec.isOnFirstEnd else arrowSpec.isOnLastEnd
+            if (!hasArrow) return 0.0
+
+            val miterLength = ArrowSpec.miterLength(arrowSpec, aes)
+            val miterSign = sign(sin(arrowSpec.angle * 2))
+            return miterLength * miterSign / 2
         }
     }
 
     companion object {
-
         fun decorate(
             node: SvgNode,
             p: DataPointAesthetics,
@@ -171,13 +258,7 @@ open class GeomHelper(
             filled: Boolean = true
         ) {
             if (node is SvgShape) {
-                decorateShape(
-                    node as SvgShape,
-                    p,
-                    applyAlphaToAll,
-                    strokeScaler,
-                    filled
-                )
+                decorateShape(node as SvgShape, p, applyAlphaToAll, strokeScaler, filled)
             }
 
             if (node is SvgElement) {

@@ -30,7 +30,6 @@ class VLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
         helper.setResamplingEnabled(!coord.isLinear)
-        helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
 
         val viewPort = overallAesBounds(ctx)
 
@@ -42,7 +41,9 @@ class VLineGeom : GeomBase() {
             val start = DoubleVector(intercept, viewPort.top)
             val end = DoubleVector(intercept, viewPort.bottom)
 
-            val svg = helper.createLine(start, end, p) ?: continue
+            val (svg, geometry) = helper.createLine(start, end, p) ?: continue
+
+            tooltipHelper.addLine(geometry, p)
             root.add(svg)
         }
     }

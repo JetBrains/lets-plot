@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFa
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -35,27 +36,18 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val tooltipHelper = TargetCollectorHelper(GeomKind.SPOKE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper.createSvgElementHelper()
-        svgElementHelper.setStrokeAlphaEnabled(true)
-
-        svgElementHelper.setGeometryHandler { aes, lineString ->
-            tooltipHelper.addLine(lineString, aes)
-
-            arrowSpec?.let {
-                val arrow = ArrowSpec.createArrows(aes, lineString, it)
-                arrow.forEach(root::add)
-            }
-        }
+            .setStrokeAlphaEnabled(true)
+            .setArrowSpec(arrowSpec)
 
         for (p in aesthetics.dataPoints()) {
-            val x = p.finiteOrNull(Aes.X) ?: continue
-            val y = p.finiteOrNull(Aes.Y) ?: continue
             val spoke = toSpoke(p) ?: continue
-            val base = DoubleVector(x, y)
+            val base = p.toLocation(Aes.X, Aes.Y) ?: continue
             val start = getStart(base, spoke, pivot)
             val end = getEnd(base, spoke, pivot)
-            val line = svgElementHelper.createLine(start, end, p) ?: continue
+            val (svg, geometry) = svgElementHelper.createLine(start, end, p) ?: continue
 
-            root.add(line)
+            tooltipHelper.addLine(geometry, p)
+            root.add(svg)
         }
     }
 
