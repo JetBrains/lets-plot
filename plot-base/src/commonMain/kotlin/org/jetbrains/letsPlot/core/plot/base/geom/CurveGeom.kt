@@ -48,18 +48,12 @@ class CurveGeom : GeomBase() {
             val end = p.toLocation(Aes.XEND, Aes.YEND) ?: continue
 
             // Create curve geometry
-            val svgElement = svgElementHelper.createCurve(
-                start, end,
-                curvature,
-                -angle, // inverse because of using client coordinates
-                ncp,
-                p
-            )!!.first
+            // inverse angle because of using client coordinates
+            val (svg) = svgElementHelper.createCurve(start, end, curvature, -angle, ncp, p) ?: continue
 
-            root.add(svgElement)
+            root.add(svg)
         }
     }
-
 
     companion object {
         const val HANDLES_GROUPS = false

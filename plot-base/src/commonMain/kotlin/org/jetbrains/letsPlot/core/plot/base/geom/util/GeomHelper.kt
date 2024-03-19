@@ -149,6 +149,11 @@ open class GeomHelper(
             if (start == end) {
                 return null
             }
+            @Suppress("NAME_SHADOWING")
+            val start = toClient(start, aes) ?: return null
+            @Suppress("NAME_SHADOWING")
+            val end = toClient(end, aes) ?: return null
+
             val lineString = curve(start, end, curvature, angle, ncp)
 
             if (myNoSvg) return SvgGElement() to lineString
