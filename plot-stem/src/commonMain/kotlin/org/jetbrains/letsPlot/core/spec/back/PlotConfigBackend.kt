@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
