@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -53,6 +54,15 @@ open class PlotConfigBackend(
      */
     internal fun updatePlotSpec() {
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
+
+        layerConfigs.map { layerConfig ->
+            if (layerConfig.isOrientationApplicable()
+                && !isDiscreteAes(Aes.X, layerConfig)
+                && isDiscreteAes(Aes.Y, layerConfig)
+            ) {
+                layerConfig.setOrientationY()
+            }
+        }
 
         val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
@@ -106,6 +116,14 @@ open class PlotConfigBackend(
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                 }
         }
+    }
+
+    private fun isDiscreteAes(aes: Aes<*>, layerConfig: LayerConfig): Boolean {
+        val aesVar = layerConfig.getVariableForAes(aes)
+        //Check if aes is marked by as_discrete() in layer or plot data, or if aes is discrete in combined data
+        return DataMetaUtil.getAsDiscreteAesSet(layerConfig.getMap(DATA_META)).contains(aes.name)
+                || DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)).contains(aes.name)
+                || aesVar?.let { layerConfig.combinedData.isDiscrete(it) } ?: false
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
