@@ -62,7 +62,7 @@ class TextSpec(
         val height = textSize.y + padding * 2
         rectangle = DoubleRectangle(
             -width * hjust,
-            -height * (1 - vjust),
+            -height * vjust,
             width,
             height
         )
