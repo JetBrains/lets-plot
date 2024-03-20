@@ -49,12 +49,12 @@ class ArrowSpec(
             arrowSpec: ArrowSpec
         ): Pair<List<DoubleVector>, List<DoubleVector>> {
             val startHead = when (arrowSpec.isOnFirstEnd) {
-                true -> createArrowHeadGeometry(arrowSpec, geometry.take(2).reversed())
+                true -> createArrowHeadGeometry(arrowSpec, geometry.asReversed())
                 false -> emptyList()
             }
 
             val endHead = when (arrowSpec.isOnLastEnd) {
-                true -> createArrowHeadGeometry(arrowSpec, geometry.takeLast(2))
+                true -> createArrowHeadGeometry(arrowSpec, geometry)
                 false -> emptyList()
             }
 
@@ -68,9 +68,10 @@ class ArrowSpec(
         ): List<DoubleVector> {
             if (geometry.size < 2) return emptyList()
 
+            // Shorten the arrow head if the segment is shorter than the arrow head
             val headLength = when {
                 geometry.size == 2 -> min(arrowSpec.length, distance(geometry[0], geometry[1]))
-                else -> arrowSpec.length
+                else -> arrowSpec.length // yet not implemented for multi-segment lines (e.g. curves), so use full length
             }
 
             val basePoint = geometry[geometry.lastIndex - 1]
