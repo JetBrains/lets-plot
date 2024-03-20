@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import kotlin.math.atan2
-import kotlin.math.min
 import kotlin.math.sin
 
 /**
@@ -25,7 +24,8 @@ class ArrowSpec(
     val angle: Double,
     val length: Double,
     val end: End,
-    val type: Type
+    val type: Type,
+    val minTailLength: Double
 ) {
 
     val isOnFirstEnd: Boolean
@@ -79,20 +79,16 @@ class ArrowSpec(
         ): List<DoubleVector> {
             if (geometry.size < 2) return emptyList()
 
-            // Shorten the arrow head if the segment is shorter than the arrow head
-            val headLength = when (geometry.size) {
-                0, 1 -> error("Invalid geometry")
-                2 -> min(arrowSpec.length, distance(geometry[0], geometry[1]))
-                else -> arrowSpec.length // yet not implemented for multi-segment lines (e.g. curves), so use full length
-            }
+            val lineLength = geometry.windowed(2).sumOf { (a, b) -> distance(a, b) }
+            val headLength = adjustArrowHeadLength(lineLength, arrowSpec)
 
+            // basePoint affects direction of the arrow head. Important for curves.
             val basePoint = when (geometry.size) {
                 0, 1 -> error("Invalid geometry")
                 2 -> geometry.first()
                 else -> geometry[pointIndexAtDistance(geometry, distanceFromEnd = headLength)]
             }
 
-            //val basePoint = geometry[geometry.lastIndex - 1]
             val tipPoint = geometry.last()
 
             val abscissa = tipPoint.x - basePoint.x
@@ -111,6 +107,17 @@ class ArrowSpec(
             return when (arrowSpec.type) {
                 Type.CLOSED -> listOf(leftSide, tipPoint, rightSide, leftSide)
                 Type.OPEN -> listOf(leftSide, tipPoint, rightSide)
+            }
+        }
+
+        fun adjustArrowHeadLength(lineLength: Double, arrowSpec: ArrowSpec): Double {
+            val headsCount = listOf(arrowSpec.isOnFirstEnd, arrowSpec.isOnLastEnd).count { it }
+            val headsLength = arrowSpec.length * headsCount
+            val tailLength = lineLength - headsLength
+
+            return when (tailLength < arrowSpec.minTailLength) {
+                true -> maxOf((lineLength - arrowSpec.minTailLength) / headsCount, 5.0) // 5.0 so the arrow head never disappears
+                false -> arrowSpec.length
             }
         }
 

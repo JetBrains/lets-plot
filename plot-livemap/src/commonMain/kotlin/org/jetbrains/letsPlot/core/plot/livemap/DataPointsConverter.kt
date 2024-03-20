@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
@@ -106,8 +107,23 @@ internal class DataPointsConverter(
                 this.geodesic = myGeodesic
                 this.spacer = mySpacer
                 this.isCurve = myIsCurve
-                setArrowSpec(myArrowSpec)
                 setAnimation(myAnimation)
+
+                val adjustedArrowSpec = myArrowSpec?.let {
+                    val angle = it.angle
+                    val ends = it.end
+                    val type = it.type
+
+                    val geometryLength = when (points.size) {
+                        0, 1 -> 0.0
+                        else -> points.windowed(2).sumOf { (a, b) -> distance(a.x, a.y, b.x, b.y) }
+                    }
+
+                    val length = ArrowSpec.adjustArrowHeadLength(geometryLength, it)
+                    val minTailLength = 0.0 // we already adjusted arrow length, no need to store original minTailLength
+                    ArrowSpec(angle, length, ends, type, minTailLength)
+                }
+                setArrowSpec(adjustedArrowSpec)
             }
 
         fun setArrowSpec(arrowSpec: ArrowSpec?) {

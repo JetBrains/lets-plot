@@ -13,36 +13,28 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
 
     fun createArrowSpec(): ArrowSpec {
         // See R function arrow(): https://www.rdocumentation.org/packages/grid/versions/3.4.1/topics/arrow
-        var angle = DEF_ANGLE
-        var length = DEF_LENGTH
-        var end = DEF_END
-        var type = DEF_TYPE
+        val angle = getDouble(Option.Arrow.ANGLE) ?: DEF_ANGLE
+        val length = getDouble(Option.Arrow.LENGTH) ?: DEF_LENGTH
+        val minTailLength = getDouble(Option.Arrow.MIN_TAIL_LENGTH) ?: DEF_MIN_TAIL_LENGTH
 
-        if (has(Option.Arrow.ANGLE)) {
-            angle = getDouble(Option.Arrow.ANGLE)!!
-        }
-        if (has(Option.Arrow.LENGTH)) {
-            length = getDouble(Option.Arrow.LENGTH)!!
-        }
-        if (has(Option.Arrow.ENDS)) {
-            val s = getString(Option.Arrow.ENDS)
-            when (s) {
-                "last" -> end = ArrowSpec.End.LAST
-                "first" -> end = ArrowSpec.End.FIRST
-                "both" -> end = ArrowSpec.End.BOTH
+        val end = getString(Option.Arrow.ENDS)?.let {
+            when (it) {
+                "last" -> ArrowSpec.End.LAST
+                "first" -> ArrowSpec.End.FIRST
+                "both" -> ArrowSpec.End.BOTH
                 else -> throw IllegalArgumentException("Expected: first|last|both")
             }
-        }
-        if (has(Option.Arrow.TYPE)) {
-            val s = getString(Option.Arrow.TYPE)
-            when (s) {
-                "open" -> type = ArrowSpec.Type.OPEN
-                "closed" -> type = ArrowSpec.Type.CLOSED
+        } ?: DEF_END
+
+        val type = getString(Option.Arrow.TYPE)?.let {
+            when (it) {
+                "open" -> ArrowSpec.Type.OPEN
+                "closed" -> ArrowSpec.Type.CLOSED
                 else -> throw IllegalArgumentException("Expected: open|closed")
             }
-        }
+        } ?: DEF_TYPE
 
-        return ArrowSpec(toRadians(angle), length, end, type)
+        return ArrowSpec(toRadians(angle), length, end, type, minTailLength)
     }
 
     companion object {
@@ -50,6 +42,7 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
         private const val DEF_LENGTH = 10.0
         private val DEF_END = ArrowSpec.End.LAST
         private val DEF_TYPE = ArrowSpec.Type.OPEN
+        private const val DEF_MIN_TAIL_LENGTH = 5.0
 
         fun create(options: Any): ArrowSpecConfig {
             if (options is Map<*, *>) {
