@@ -61,6 +61,17 @@ class ArrowSpec(
             return startHead to endHead
         }
 
+        private fun pointIndexAtDistance(curve: List<DoubleVector>, distanceFromEnd: Double): Int {
+            var length = 0.0
+            var i = curve.lastIndex
+
+            while (i > 0 && length < distanceFromEnd) {
+                val cur = curve[i]
+                val prev = curve[--i]
+                length += distance(cur, prev)
+            }
+            return i
+        }
 
         private fun createArrowHeadGeometry(
             arrowSpec: ArrowSpec,
@@ -69,12 +80,19 @@ class ArrowSpec(
             if (geometry.size < 2) return emptyList()
 
             // Shorten the arrow head if the segment is shorter than the arrow head
-            val headLength = when {
-                geometry.size == 2 -> min(arrowSpec.length, distance(geometry[0], geometry[1]))
+            val headLength = when (geometry.size) {
+                0, 1 -> error("Invalid geometry")
+                2 -> min(arrowSpec.length, distance(geometry[0], geometry[1]))
                 else -> arrowSpec.length // yet not implemented for multi-segment lines (e.g. curves), so use full length
             }
 
-            val basePoint = geometry[geometry.lastIndex - 1]
+            val basePoint = when (geometry.size) {
+                0, 1 -> error("Invalid geometry")
+                2 -> geometry.first()
+                else -> geometry[pointIndexAtDistance(geometry, distanceFromEnd = headLength)]
+            }
+
+            //val basePoint = geometry[geometry.lastIndex - 1]
             val tipPoint = geometry.last()
 
             val abscissa = tipPoint.x - basePoint.x

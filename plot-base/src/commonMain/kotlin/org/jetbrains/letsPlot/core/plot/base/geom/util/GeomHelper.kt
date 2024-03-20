@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.curve
 import org.jetbrains.letsPlot.commons.geometry.padLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -113,6 +114,7 @@ open class GeomHelper(
         private var myResamplingEnabled = false
         private var myResamplingPrecision = 0.5
         private var mySpacer: Double = 0.0
+        private var myDebugRendering = false
 
         fun setStrokeAlphaEnabled(b: Boolean) = apply { myStrokeAlphaEnabled = b }
         fun setResamplingEnabled(b: Boolean) = apply { myResamplingEnabled = b }
@@ -121,6 +123,7 @@ open class GeomHelper(
         fun setInterpolation(interpolation: Interpolation) = apply { myInterpolation = interpolation }
         fun setResamplingPrecision(precision: Double) = apply { myResamplingPrecision = precision }
         fun noSvg() = apply { myNoSvg = true }
+        fun debugRendering(value: Boolean) = apply { myDebugRendering = value }
 
         private fun createLineGeometry(
             start: DoubleVector,
@@ -151,6 +154,7 @@ open class GeomHelper(
             }
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, aes) ?: return null
+
             @Suppress("NAME_SHADOWING")
             val end = toClient(end, aes) ?: return null
 
@@ -228,24 +232,40 @@ open class GeomHelper(
                 listOfNotNull(startHeadSvg, endHeadSvg)
             } ?: emptyList()
 
-            return if (arrowElements.isEmpty()) {
+            val debugPoints = if (myDebugRendering) {
+                lineStringAfterPadding.map {
+                    SvgCircleElement(it.x, it.y, 1.0).apply {
+                        fillColor().set(Color.LIGHT_GREEN)
+                        strokeColor().set(Color.GREEN)
+                    }
+                }
+            } else {
+                emptyList()
+            }
+
+            return if (arrowElements.isEmpty() && debugPoints.isEmpty()) {
                 lineElement
             } else {
                 SvgGElement().apply {
                     children().add(lineElement)
                     children().addAll(arrowElements)
+                    children().addAll(debugPoints)
                 }
             }
         }
 
-        private fun renderArrowHead(points: List<DoubleVector>, p: DataPointAesthetics, strokeScaler: (DataPointAesthetics) -> Double): SvgNode? {
+        private fun renderArrowHead(
+            points: List<DoubleVector>,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double
+        ): SvgNode? {
             if (points.size < 2) return null
             val arrowSpec = myArrowSpec ?: return null
 
             val arrowSvg = SvgPathElement().apply {
                 d().set(SvgPathDataBuilder()
                     .lineString(points)
-                    .also { if (arrowSpec.type == CLOSED) it.closePath()}
+                    .also { if (arrowSpec.type == CLOSED) it.closePath() }
                     .build()
                 )
             }
