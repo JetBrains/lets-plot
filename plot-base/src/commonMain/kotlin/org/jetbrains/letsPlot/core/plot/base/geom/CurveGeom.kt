@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
@@ -36,6 +37,7 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val tooltipHelper = TargetCollectorHelper(GeomKind.CURVE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper
             .createSvgElementHelper()
@@ -50,8 +52,12 @@ class CurveGeom : GeomBase() {
             // Create curve geometry
             // inverse angle because of using client coordinates
             val (svg) = svgElementHelper.createCurve(start, end, curvature, -angle, ncp, p) ?: continue
-
             root.add(svg)
+
+            // Add tooltips
+            val (_, geometry) = svgElementHelper
+                .createCurve(start, end, curvature, -angle, ncp = 15, p) ?: continue
+            tooltipHelper.addLine(geometry, p)
         }
     }
 
