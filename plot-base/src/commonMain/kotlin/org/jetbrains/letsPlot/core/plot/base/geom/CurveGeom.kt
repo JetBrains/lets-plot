@@ -9,9 +9,11 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import kotlin.math.max
 
 class CurveGeom : GeomBase() {
 
@@ -36,6 +38,7 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val tooltipHelper = TargetCollectorHelper(GeomKind.CURVE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper
             .createSvgElementHelper()
@@ -52,6 +55,19 @@ class CurveGeom : GeomBase() {
             val (svg) = svgElementHelper.createCurve(start, end, curvature, -angle, ncp, p) ?: continue
 
             root.add(svg)
+        }
+
+        // add tooltips
+        for (p in aesthetics.dataPoints()) {
+            val start = p.toLocation(Aes.X, Aes.Y) ?: continue
+            val end = p.toLocation(Aes.XEND, Aes.YEND) ?: continue
+
+            val (_, geometry) = svgElementHelper
+                .noSvg()
+                .createCurve(start, end, curvature, -angle, ncp = max(ncp, 15), p) ?: continue
+
+            val geometryAfterPadding = svgElementHelper.padLineString(geometry, p)
+            tooltipHelper.addLine(geometryAfterPadding, p)
         }
     }
 
