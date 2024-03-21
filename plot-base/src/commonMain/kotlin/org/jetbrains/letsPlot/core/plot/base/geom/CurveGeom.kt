@@ -59,7 +59,6 @@ class CurveGeom : GeomBase() {
                 .createCurve(start, end, curvature, -angle, ncp = 15, p) ?: continue
             tooltipHelper.addLine(geometry, p)
         }
-
     }
 
     companion object {
