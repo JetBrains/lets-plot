@@ -94,7 +94,7 @@ Examples
 
 OSM = _maptiles_zxy(
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    attribution='<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>',
+    attribution='map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>',
     min_zoom=1, max_zoom=19, subdomains='abc'
 )
 """
@@ -115,7 +115,7 @@ Examples
 
 OPEN_TOPO_MAP = _maptiles_zxy(
     url="https://tile.opentopomap.org/{z}/{x}/{y}.png",
-    attribution='Map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, <a href="http://viewfinderpanoramas.org/">SRTM</a> | map style: <a href="https://opentopomap.org/">© OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>) ',
+    attribution='map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, <a href="http://viewfinderpanoramas.org/">SRTM</a> | map style: <a href="https://opentopomap.org/">© OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>) ',
     min_zoom=1, max_zoom=16
 )
 """
@@ -146,7 +146,7 @@ def _carto_tiles(tileset, cdn):
 
         return _maptiles_zxy(
             base_url.format(tileset=tileset, hi_res=hi_res),
-            '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>',
+            'map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>',
             min_zoom=1, max_zoom=20, subdomains='abc'
         )
 
@@ -355,7 +355,7 @@ def _nasa_tiles(tileset, max_zoom, time=''):
     return _maptiles_zxy(
         url="https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/{tileset}/default/{time}/GoogleMapsCompatible_Level{max_zoom}/{{z}}/{{y}}/{{x}}.jpg" \
             .format(tileset=tileset, time=time, max_zoom=max_zoom),
-        attribution='<a href="https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">© NASA Global Imagery Browse Services (GIBS)</a>',
+        attribution='map data: <a href="https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs">© NASA Global Imagery Browse Services (GIBS)</a>',
         min_zoom=1, max_zoom=max_zoom
     )
 
