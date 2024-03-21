@@ -15,6 +15,10 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
 
 object GeomUtil {
+    fun DataPointAesthetics.toLocation(xAes: Aes<Double>, yAes: Aes<Double>): DoubleVector? {
+        return toLocationOrNull(get(xAes), get(yAes))
+    }
+
     val TO_LOCATION_X_Y = { p: DataPointAesthetics ->
         toLocationOrNull(
             p.x(),

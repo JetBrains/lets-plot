@@ -6,16 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
-import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.sin
 
 /**
@@ -23,7 +20,13 @@ import kotlin.math.sin
  * Essentially describes the width of the arrow head.
  * @param length The length of the arrow head (px).
  */
-class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: Type) {
+class ArrowSpec(
+    val angle: Double,
+    val length: Double,
+    val end: End,
+    val type: Type,
+    val minTailLength: Double
+) {
 
     val isOnFirstEnd: Boolean
         get() = end == End.FIRST || end == End.BOTH
@@ -40,71 +43,85 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
     }
 
     companion object {
-        fun createArrows(
-            p: DataPointAesthetics,
+
+        fun createArrowHeads(
             geometry: List<DoubleVector>,
             arrowSpec: ArrowSpec
-        ): List<SvgPathElement> {
-            val arrows = mutableListOf<SvgPathElement?>()
-            if (arrowSpec.isOnFirstEnd) {
-                val (start, end) = geometry.take(2).reversed()
-                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+        ): Pair<List<DoubleVector>, List<DoubleVector>> {
+            val startHead = when (arrowSpec.isOnFirstEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry.asReversed())
+                false -> emptyList()
             }
-            if (arrowSpec.isOnLastEnd) {
-                val (start, end) = geometry.takeLast(2)
-                arrows += createArrowAtEnd(p, start, end, arrowSpec)
+
+            val endHead = when (arrowSpec.isOnLastEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry)
+                false -> emptyList()
             }
-            return arrows.filterNotNull()
+
+            return startHead to endHead
         }
 
-        private fun createArrowAtEnd(
-            p: DataPointAesthetics,
-            start: DoubleVector,
-            end: DoubleVector,
-            arrowSpec: ArrowSpec
-        ): SvgPathElement? {
+        private fun pointIndexAtDistance(curve: List<DoubleVector>, distanceFromEnd: Double): Int {
+            var length = 0.0
+            var i = curve.lastIndex
 
-            val abscissa = end.x - start.x
-            val ordinate = end.y - start.y
-            if (abscissa == 0.0 && ordinate == 0.0) return null
+            while (i > 0 && length < distanceFromEnd) {
+                val cur = curve[i]
+                val prev = curve[--i]
+                length += distance(cur, prev)
+            }
+            return i
+        }
+
+        private fun createArrowHeadGeometry(
+            arrowSpec: ArrowSpec,
+            geometry: List<DoubleVector>
+        ): List<DoubleVector> {
+            if (geometry.size < 2) return emptyList()
+
+            val lineLength = geometry.windowed(2).sumOf { (a, b) -> distance(a, b) }
+            val headLength = adjustArrowHeadLength(lineLength, arrowSpec)
+
+            // basePoint affects direction of the arrow head. Important for curves.
+            val basePoint = when (geometry.size) {
+                0, 1 -> error("Invalid geometry")
+                2 -> geometry.first()
+                else -> geometry[pointIndexAtDistance(geometry, distanceFromEnd = headLength)]
+            }
+
+            val tipPoint = geometry.last()
+
+            val abscissa = tipPoint.x - basePoint.x
+            val ordinate = tipPoint.y - basePoint.y
+            if (abscissa == 0.0 && ordinate == 0.0) return emptyList()
 
             // Compute the angle that the vector defined by this segment makes with the
             // X-axis (radians)
             val polarAngle = atan2(ordinate, abscissa)
 
-            val arrowAes = arrowSpec.toArrowAes(p)
+            val length = tipPoint.subtract(DoubleVector(headLength, 0))
 
-            val arrow = createElement(polarAngle, end.x, end.y, arrowSpec)
-            val strokeScaler = AesScaling::strokeWidth
-            GeomHelper.decorate(arrow, arrowAes, applyAlphaToAll = true, strokeScaler, filled = arrowSpec.type == Type.CLOSED)
-            // Use 'stroke-miterlimit' attribute to avoid the bevelled corner
-            val miterLimit = miterLength(arrowSpec.angle * 2, strokeScaler(p))
-            arrow.strokeMiterLimit().set(abs(miterLimit))
-            return arrow
+            val leftSide = length.rotateAround(tipPoint, polarAngle - arrowSpec.angle)
+            val rightSide = length.rotateAround(tipPoint, polarAngle + arrowSpec.angle)
+
+            return when (arrowSpec.type) {
+                Type.CLOSED -> listOf(leftSide, tipPoint, rightSide, leftSide)
+                Type.OPEN -> listOf(leftSide, tipPoint, rightSide)
+            }
         }
 
-        /**
-         * @param polarAngle Angle between X-axis and the arrowed vector.
-         */
-        private fun createElement(polarAngle: Double, x: Double, y: Double, arrowSpec: ArrowSpec): SvgPathElement {
-            val xs = with(arrowSpec) { doubleArrayOf(x - length * cos(polarAngle - angle), x, x - length * cos(polarAngle + angle)) }
-            val ys = with(arrowSpec) { doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle)) }
+        fun adjustArrowHeadLength(lineLength: Double, arrowSpec: ArrowSpec): Double {
+            val headsCount = listOf(arrowSpec.isOnFirstEnd, arrowSpec.isOnLastEnd).count { it }
+            val headsLength = arrowSpec.length * headsCount
+            val tailLength = lineLength - headsLength
 
-            val b = SvgPathDataBuilder(true)
-                .moveTo(xs[0], ys[0])
-
-            for (i in 1..2) {
-                b.lineTo(xs[i], ys[i], true)
+            return when (tailLength < arrowSpec.minTailLength) {
+                true -> maxOf((lineLength - arrowSpec.minTailLength) / headsCount, 5.0) // 5.0 so the arrow head never disappears
+                false -> arrowSpec.length
             }
-
-            if (arrowSpec.type == Type.CLOSED) {
-                b.closePath()
-            }
-
-            return SvgPathElement(b.build())
         }
 
-        private fun ArrowSpec.toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
+        internal fun ArrowSpec.toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
                 private val filled = (type == Type.CLOSED)
 
@@ -120,8 +137,12 @@ class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: T
             }
         }
 
-        fun miterLength(headAngle: Double, strokeWidth: Double): Double {
-            return strokeWidth / sin(headAngle / 2)
+        fun miterLength(
+            arrowSpec: ArrowSpec,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Double {
+            return strokeScaler(p) / sin(arrowSpec.angle)
         }
     }
 }
