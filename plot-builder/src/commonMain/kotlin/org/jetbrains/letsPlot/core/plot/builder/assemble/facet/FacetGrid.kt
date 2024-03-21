@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import kotlin.math.max
 
-class FacetGrid constructor(
+class FacetGrid(
     private val xVar: String?,
     private val yVar: String?,
     xLevels: List<Any>,
@@ -20,7 +20,9 @@ class FacetGrid constructor(
     yOrder: Int,
     private val xFormatter: (Any) -> String = DEF_FORMATTER,
     private val yFormatter: (Any) -> String = DEF_FORMATTER,
-    scales: FacetScales = FacetScales.FIXED
+    scales: FacetScales = FacetScales.FIXED,
+    private val xLabWrapper: ((String) -> String)? = null,
+    private val yLabWrapper: ((String) -> String)? = null
 ) : PlotFacets() {
 
     override val isDefined: Boolean = xVar != null || yVar != null
@@ -84,10 +86,14 @@ class FacetGrid constructor(
      */
     override fun tileInfos(): List<FacetTileInfo> {
         val colLabels = (colLevels).map {
-            it?.let { xFormatter(it) }
+            it?.let {
+                xFormatter(it).let { lab -> xLabWrapper?.invoke(lab) ?: lab }
+            }
         }
         val rowLabels = (rowLevels).map {
-            it?.let { yFormatter(it) }
+            it?.let {
+                yFormatter(it).let { lab -> yLabWrapper?.invoke(lab) ?: lab }
+            }
         }
 
         val infos = ArrayList<FacetTileInfo>()

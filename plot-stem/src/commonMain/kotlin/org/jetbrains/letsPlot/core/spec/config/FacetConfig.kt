@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.commons.formatting.string.WordWrapper
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -17,8 +18,10 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetWrap
 import org.jetbrains.letsPlot.core.spec.Option.Facet
 import org.jetbrains.letsPlot.core.spec.Option.Facet.FACETS_FILL_DIR
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.Facet.X_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_ORDER
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
@@ -69,7 +72,9 @@ internal class FacetConfig(
             getOrderOption(Y_ORDER),
             getFormatterOption(X_FORMAT),
             getFormatterOption(Y_FORMAT),
-            scales
+            scales,
+            getWordWrapper(X_LABWIDTH),
+            getWordWrapper(Y_LABWIDTH)
         )
     }
 
@@ -107,10 +112,11 @@ internal class FacetConfig(
         }
         // Num of formatters must be same as num of factes.
         val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
+        val labWrapper = getWordWrapper(Facet.FACETS_LABWIDTH)
 
         val scales: FacetScales = getScalesOption()
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales)
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWrapper)
     }
 
 
@@ -151,6 +157,14 @@ internal class FacetConfig(
                 return { value: Any -> fmt.format(value) }
             }
         }
+    }
+
+    private fun getWordWrapper(optionName: String): ((String) -> String)? {
+        if (!has(optionName)) {
+            return null
+        }
+        val labWidth = getIntegerSafe(optionName)
+        return { lab: String -> WordWrapper.wrap(lab, labWidth) }
     }
 
     private fun getFormatterOption(optionName: String): (Any) -> String {

@@ -10,7 +10,9 @@ from .core import FeatureSpec
 __all__ = ['facet_grid', 'facet_wrap']
 
 
-def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=None, y_format=None):
+def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1,
+               x_format=None, y_format=None,
+               x_labwidth=None, y_labwidth=None):
     """
     Split data by one or two faceting variables.
     For each data subset creates a plot panel and lays out panels as grid.
@@ -34,6 +36,12 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=No
         Specify the format pattern for displaying faceting values in columns.
     y_format : str
         Specify the format pattern for displaying faceting values in rows.
+    x_labwidth : int, default=None
+        The maximum label length (in characters) before a line breaking is applied.
+        If the original facet label already contains `\\\\n` as a text separator, the line breaking is not applied.
+    y_labwidth : int, default=None
+        The maximum label length (in characters) before a line breaking is applied.
+        If the original facet label already contains `\\\\n` as a text separator, the line breaking is not applied.
 
     Returns
     -------
@@ -93,10 +101,11 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=No
                   x=x, y=y,
                   scales=scales,
                   x_order=x_order, y_order=y_order,
-                  x_format=x_format, y_format=y_format)
+                  x_format=x_format, y_format=y_format,
+                  x_labwidth=x_labwidth, y_labwidth=y_labwidth)
 
 
-def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, dir="h"):
+def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, dir="h", labwidth=None):
     """
     Split data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels
@@ -122,6 +131,9 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         The `format` values are positionally matched to variables in `facets`.
     dir : {'h', 'v'}, default='h'
         Direction: either 'h' for horizontal, or 'v' for vertical.
+    labwidth : int, default=None
+        The maximum label length (in characters) before a line breaking is applied.
+        If the original facet label already contains `\\\\n` as a text separator, the line breaking is not applied.
 
     Returns
     -------
@@ -182,7 +194,8 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
                   scales=scales,
                   order=order,
                   format=format,
-                  dir=dir)
+                  dir=dir,
+                  labwidth=labwidth)
 
 
 def _facet(name, **kwargs):
