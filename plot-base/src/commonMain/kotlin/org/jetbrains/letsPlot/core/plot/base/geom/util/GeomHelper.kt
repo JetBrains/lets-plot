@@ -283,7 +283,7 @@ open class GeomHelper(
         }
 
 
-        fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
+        private fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
             val startPadding = arrowPadding(p, atStart = true) + mySpacer + AesScaling.targetStartSize(p)
             val endPadding = arrowPadding(p, atStart = false) + mySpacer + AesScaling.targetEndSize(p)
 

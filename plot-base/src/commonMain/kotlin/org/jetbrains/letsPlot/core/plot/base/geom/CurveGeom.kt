@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import kotlin.math.max
 
 class CurveGeom : GeomBase() {
 
@@ -53,22 +52,14 @@ class CurveGeom : GeomBase() {
             // Create curve geometry
             // inverse angle because of using client coordinates
             val (svg) = svgElementHelper.createCurve(start, end, curvature, -angle, ncp, p) ?: continue
-
             root.add(svg)
-        }
 
-        // add tooltips
-        for (p in aesthetics.dataPoints()) {
-            val start = p.toLocation(Aes.X, Aes.Y) ?: continue
-            val end = p.toLocation(Aes.XEND, Aes.YEND) ?: continue
-
+            // Add tooltips
             val (_, geometry) = svgElementHelper
-                .noSvg()
-                .createCurve(start, end, curvature, -angle, ncp = max(ncp, 15), p) ?: continue
-
-            val geometryAfterPadding = svgElementHelper.padLineString(geometry, p)
-            tooltipHelper.addLine(geometryAfterPadding, p)
+                .createCurve(start, end, curvature, -angle, ncp = 15, p) ?: continue
+            tooltipHelper.addLine(geometry, p)
         }
+
     }
 
     companion object {
