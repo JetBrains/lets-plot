@@ -54,8 +54,8 @@ class TextRenderer : Renderer {
         } else {
             val yPosition = with(textSpec) {
                 when (vjust) {
-                    1.0 -> font.fontSize * 0.7
-                    0.0 -> -textSize.y + font.fontSize
+                    0.0 -> font.fontSize * 0.7
+                    1.0 -> -textSize.y + font.fontSize
                     else -> -textSize.y / 2 + font.fontSize * 0.8
                 }
             }
