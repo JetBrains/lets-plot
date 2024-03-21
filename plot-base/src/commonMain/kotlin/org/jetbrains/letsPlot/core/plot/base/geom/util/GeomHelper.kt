@@ -159,12 +159,13 @@ open class GeomHelper(
             val end = toClient(end, aes) ?: return null
 
             val lineString = curve(start, end, curvature, angle, ncp)
+            val lineStringAfterPadding = padLineString(lineString, aes)
 
-            if (myNoSvg) return SvgGElement() to lineString
+            if (myNoSvg) return SvgGElement() to lineStringAfterPadding
 
-            val svgElement = renderSvgElement(aes, lineString, strokeScaler) ?: return null
+            val svgElement = renderSvgElement(aes, lineStringAfterPadding, strokeScaler) ?: return null
 
-            return svgElement to lineString
+            return svgElement to lineStringAfterPadding
         }
 
         fun createLine(
@@ -174,9 +175,10 @@ open class GeomHelper(
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
         ): Pair<SvgNode, List<DoubleVector>>? {
             val lineString = createLineGeometry(start, end, p) ?: return null
-            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+            val lineStringAfterPadding = padLineString(lineString, p)
+            val svgElement = renderSvgElement(p, lineStringAfterPadding, strokeScaler) ?: return null
 
-            return svgElement to lineString
+            return svgElement to lineStringAfterPadding
         }
 
         fun createSpoke(
@@ -198,27 +200,26 @@ open class GeomHelper(
             lineString: List<DoubleVector>,
             strokeScaler: (DataPointAesthetics) -> Double
         ): SvgNode? {
-            val lineStringAfterPadding = padLineString(lineString, p)
-            if (lineStringAfterPadding.isEmpty() || lineStringAfterPadding.size == 1) return null
+            if (lineString.isEmpty() || lineString.size == 1) return null
 
-            val lineElement = if (lineStringAfterPadding.size == 2) {
+            val lineElement = if (lineString.size == 2) {
                 // Simple SvgLineElement is enough for a straight line without arrow
                 SvgLineElement().apply {
-                    x1().set(lineStringAfterPadding.first().x)
-                    y1().set(lineStringAfterPadding.first().y)
-                    x2().set(lineStringAfterPadding.last().x)
-                    y2().set(lineStringAfterPadding.last().y)
+                    x1().set(lineString.first().x)
+                    y1().set(lineString.first().y)
+                    x2().set(lineString.last().x)
+                    y2().set(lineString.last().y)
                 }
             } else {
                 SvgPathElement().apply {
                     d().set(
                         if (myInterpolation != null) {
                             SvgPathDataBuilder()
-                                .moveTo(lineStringAfterPadding.first())
-                                .interpolatePoints(lineStringAfterPadding, myInterpolation!!)
+                                .moveTo(lineString.first())
+                                .interpolatePoints(lineString, myInterpolation!!)
                                 .build()
                         } else {
-                            SvgPathDataBuilder().lineString(lineStringAfterPadding).build()
+                            SvgPathDataBuilder().lineString(lineString).build()
                         }
                     )
                 }
@@ -226,14 +227,14 @@ open class GeomHelper(
             decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
 
             val arrowElements = myArrowSpec?.let { arrowSpec ->
-                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec)
+                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineString, arrowSpec)
                 val startHeadSvg = renderArrowHead(startHead, p, strokeScaler)
                 val endHeadSvg = renderArrowHead(endHead, p, strokeScaler)
                 listOfNotNull(startHeadSvg, endHeadSvg)
             } ?: emptyList()
 
             val debugPoints = if (myDebugRendering) {
-                lineStringAfterPadding.map {
+                lineString.map {
                     SvgCircleElement(it.x, it.y, 1.0).apply {
                         fillColor().set(Color.LIGHT_GREEN)
                         strokeColor().set(Color.GREEN)
