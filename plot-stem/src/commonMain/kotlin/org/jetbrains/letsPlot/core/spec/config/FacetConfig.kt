@@ -112,11 +112,16 @@ internal class FacetConfig(
         }
         // Num of formatters must be same as num of factes.
         val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
-        val labWrapper = getWordWrapper(Facet.FACETS_LABWIDTH)
+
+        // wrappers
+        val wrapperOption = getAsList(Facet.FACETS_LABWIDTH).map {
+            toWordWrapper((it as? Number)?.toInt())
+        }
+        val labWrappers = (wrapperOption + List(facets.size) { null }).take(facets.size)
 
         val scales: FacetScales = getScalesOption()
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWrapper)
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWrappers)
     }
 
 
@@ -159,16 +164,17 @@ internal class FacetConfig(
         }
     }
 
-    private fun getWordWrapper(optionName: String): ((String) -> String)? {
-        if (!has(optionName)) {
-            return null
-        }
-        val labWidth = getIntegerSafe(optionName)
-        return { lab: String -> WordWrapper.wrap(lab, labWidth) }
-    }
-
     private fun getFormatterOption(optionName: String): (Any) -> String {
         return toFormatterVal(get(optionName))
+    }
+
+    private fun toWordWrapper(optionVal: Int?): ((String) -> String)? {
+        if (optionVal == null) return null
+        return { lab: String -> WordWrapper.wrap(lab, optionVal) }
+    }
+
+    private fun getWordWrapper(optionName: String): ((String) -> String)? {
+        return toWordWrapper(getInteger(optionName))
     }
 
     private fun getScalesOption(): FacetScales {

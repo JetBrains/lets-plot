@@ -131,7 +131,7 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
         The `format` values are positionally matched to variables in `facets`.
     dir : {'h', 'v'}, default='h'
         Direction: either 'h' for horizontal, or 'v' for vertical.
-    labwidth : int, default=None
+    labwidth : int or list
         The maximum label length (in characters) before a line breaking is applied.
         If the original facet label already contains `\\\\n` as a text separator, the line breaking is not applied.
 

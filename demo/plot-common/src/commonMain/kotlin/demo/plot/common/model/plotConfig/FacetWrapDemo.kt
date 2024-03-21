@@ -16,6 +16,7 @@ class FacetWrapDemo {
             oneFacet4rows(),
             twoFacets(),
             twoFacets_CylindersOrderDesc(),
+            twoFacets_LabWidth(),
         )
     }
 
@@ -23,7 +24,7 @@ class FacetWrapDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
-            "facets" to demo.plot.common.data.AutoMpg.cylinders.name,
+            "facets" to AutoMpg.cylinders.name,
             "format" to "{d} cyl"
         )
         return plotSpec
@@ -33,7 +34,7 @@ class FacetWrapDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
-            "facets" to listOf(demo.plot.common.data.AutoMpg.cylinders.name),     // one facet variant
+            "facets" to listOf(AutoMpg.cylinders.name),     // one facet variant
             "ncol" to 3,
             "format" to "{d} cyl"
         )
@@ -44,7 +45,7 @@ class FacetWrapDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
-            "facets" to demo.plot.common.data.AutoMpg.cylinders.name,
+            "facets" to AutoMpg.cylinders.name,
             "nrow" to 4,
             "format" to "{d} cyl",
             "dir" to "v"
@@ -57,8 +58,8 @@ class FacetWrapDemo {
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to listOf(
-                demo.plot.common.data.AutoMpg.origin.name,
-                demo.plot.common.data.AutoMpg.cylinders.name,
+                AutoMpg.origin.name,
+                AutoMpg.cylinders.name,
             ),
             "ncol" to 5,
             "format" to listOf(null, "{d} cyl")
@@ -72,12 +73,29 @@ class FacetWrapDemo {
         plotSpec["facet"] = mapOf(
             "name" to "wrap",
             "facets" to listOf(
-                demo.plot.common.data.AutoMpg.origin.name,
-                demo.plot.common.data.AutoMpg.cylinders.name,
+                AutoMpg.origin.name,
+                AutoMpg.cylinders.name,
             ),
             "ncol" to 5,
             "order" to listOf(null, -1),
             "format" to listOf(null, "{d} cyl")
+        )
+        return plotSpec
+    }
+
+    @Suppress("FunctionName")
+    private fun twoFacets_LabWidth(): MutableMap<String, Any> {
+        val plotSpec = commonSpecs()
+        plotSpec["facet"] = mapOf(
+            "name" to "wrap",
+            "facets" to listOf(
+                AutoMpg.origin.name,
+                AutoMpg.cylinders.name,
+            ),
+            "ncol" to 5,
+            "order" to listOf(null, -1),
+            "format" to listOf(null, "{d} cyl"),
+            "labwidth" to listOf(null, 3)
         )
         return plotSpec
     }
@@ -88,9 +106,9 @@ class FacetWrapDemo {
             {
                 'kind': 'plot',
                 'mapping': {
-                    'x': "${demo.plot.common.data.AutoMpg.horsepower.name}",
-                    'y': "${demo.plot.common.data.AutoMpg.mpg.name}",     
-                    'color': "${demo.plot.common.data.AutoMpg.origin.name}"     
+                    'x': "${AutoMpg.horsepower.name}",
+                    'y': "${AutoMpg.mpg.name}",     
+                    'color': "${AutoMpg.origin.name}"     
                 },
                 'layers': [
                     {
@@ -102,7 +120,7 @@ class FacetWrapDemo {
         """.trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = demo.plot.common.data.AutoMpg.df
+        plotSpec["data"] = AutoMpg.df
         return plotSpec
     }
 }

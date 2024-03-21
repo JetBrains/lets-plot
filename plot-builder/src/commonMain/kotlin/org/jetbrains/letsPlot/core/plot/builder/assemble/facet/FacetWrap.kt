@@ -11,7 +11,7 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class FacetWrap constructor(
+class FacetWrap(
     private val facets: List<String>,
     levels: List<List<Any>>,
     private val nrow: Int?,
@@ -20,7 +20,7 @@ class FacetWrap constructor(
     facetOrdering: List<Int>,
     private val facetFormatters: List<(Any) -> String>,
     scales: FacetScales = FacetScales.FIXED,
-    private val labWrapper: ((String) -> String)? = null,
+    private val labWrappers: List<((String) -> String)?>? = null
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
@@ -68,7 +68,7 @@ class FacetWrap constructor(
             .map { it.map { pair -> pair.second } }                    // get rid of 'pair'
             .map {
                 it.mapIndexed { i, level ->                           // to string tuples
-                    facetFormatters[i](level).let { lab -> labWrapper?.invoke(lab) ?: lab }
+                    facetFormatters[i](level).let { lab -> labWrappers?.get(i)?.invoke(lab) ?: lab }
                 }
             }
 
