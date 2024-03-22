@@ -58,10 +58,8 @@ class ABLineGeom : GeomBase() {
 
                 if (lineEnds.size == 2) {
                     val it = lineEnds.iterator()
-                    val line = helper.createLine(it.next(), it.next(), p)
-                    if (line != null) {
-                        lines.add(line)
-                    }
+                    val (svg) = helper.createLine(it.next(), it.next(), p) ?: continue
+                    lines.add(svg)
                 }
             }
         }

@@ -155,7 +155,7 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             elementHelper.setStrokeAlphaEnabled(true)
             segments.forEach { segment ->
                 g.children().add(
-                    elementHelper.createLine(segment.start, segment.end, p)!!
+                    elementHelper.createLine(segment.start, segment.end, p)!!.first
                 )
             }
             return g

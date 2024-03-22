@@ -124,6 +124,6 @@ open class QuantilesHelper(
         val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
         val start = toLocationBoundStart(dataPoint)
         val end = toLocationBoundEnd(dataPoint)
-        return svgElementHelper.createLine(start, end, dataPoint)!!
+        return svgElementHelper.createLine(start, end, dataPoint)!!.first
     }
 }

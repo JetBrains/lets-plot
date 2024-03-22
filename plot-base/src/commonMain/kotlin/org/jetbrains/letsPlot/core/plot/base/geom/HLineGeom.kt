@@ -28,9 +28,8 @@ class HLineGeom : GeomBase() {
         val tooltipHelper = TargetCollectorHelper(GeomKind.H_LINE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
-        helper.setStrokeAlphaEnabled(true)
-        helper.setResamplingEnabled(!coord.isLinear)
-        helper.setGeometryHandler { aes, lineString -> tooltipHelper.addLine(lineString, aes) }
+            .setStrokeAlphaEnabled(true)
+            .setResamplingEnabled(!coord.isLinear)
 
         val viewPort = overallAesBounds(ctx)
 
@@ -42,7 +41,9 @@ class HLineGeom : GeomBase() {
             val start = DoubleVector(viewPort.left, intercept)
             val end = DoubleVector(viewPort.right, intercept)
 
-            val svg = helper.createLine(start, end, p) ?: continue
+            val (svg, linestring) = helper.createLine(start, end, p) ?: continue
+
+            tooltipHelper.addLine(linestring, p)
             root.add(svg)
         }
     }

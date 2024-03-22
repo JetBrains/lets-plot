@@ -133,11 +133,11 @@ class CrossBarGeom(
             val middle = p[yAes]!!
             val width = p[sizeAes]!! * ctx.getResolution(xAes)
 
-            val line = elementHelper.createLine(
+            val (line) = elementHelper.createLine(
                 afterRotation(DoubleVector(x - width / 2, middle)),
                 afterRotation(DoubleVector(x + width / 2, middle)),
                 p
-            )!!
+            ) ?: continue
 
             // TODO: use strokeScale in createLine() function
             // adjust thickness
