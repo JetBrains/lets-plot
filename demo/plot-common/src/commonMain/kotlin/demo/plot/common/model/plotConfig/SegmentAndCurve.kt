@@ -11,9 +11,10 @@ class SegmentAndCurve {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
            // grid(curvature = 0.9, angle = 45.0),
-            grid(curvature = 1.3, angle = 135.0),
-            example(curvature = 0.9, angle = -45.0),
-            withArrow()
+           // grid(curvature = 1.3, angle = 135.0),
+           // example(curvature = 0.9, angle = -45.0),
+            withArrow(),
+            withTooltips(),
         )
     }
 
@@ -49,8 +50,9 @@ class SegmentAndCurve {
             return HashMap(parsePlotSpec(spec))
         }
 
-        private fun grid(curvature: Double, angle: Double): MutableMap<String, Any> {
-            fun plot(curvature: Double, angle: Double) = """{
+        private fun plot(curvature: Double, angle: Double, ncp: Int = 5, withTooltips: Boolean = false): String {
+            val tooltips = if (withTooltips) ",\n\"tooltips\": { \"lines\": [\"Tooltip\"]}" else ""
+            return """{
                 "data": {
                     "x": [-30.0, 30.0],
                     "y": [-3.0,  3.0]
@@ -59,7 +61,7 @@ class SegmentAndCurve {
                     "x": "x",
                     "y": "y"
                 },
-                "ggtitle": { "text": "curvature = $curvature, angle=$angle" },
+                "ggtitle": { "text": "curvature = $curvature, angle=$angle, ncp=$ncp" },
                 "kind": "plot",
                 'theme': { 'name' : 'grey' },
                 "layers": [
@@ -74,12 +76,15 @@ class SegmentAndCurve {
                         "yend": -1.0,
                         "curvature": $curvature,
                         "angle": $angle,
-                        "ncp": 5.0,
+                        "ncp": $ncp,
                         "arrow": {"name": "arrow", "ends": "both", "type": "open"}
+                        $tooltips
                     }
                 ]
             }""".trimIndent()
+        }
 
+        private fun grid(curvature: Double, angle: Double): MutableMap<String, Any> {
             val spec = """{
                 "kind": "subplots",
                 "layout": {
@@ -173,7 +178,8 @@ class SegmentAndCurve {
                             "length": 24.0,
                             "ends": "both",
                             "type": "open"
-                        }
+                        },
+                        "tooltips": "none"
                     },
                     {
                         "geom": "curve",
@@ -204,5 +210,23 @@ class SegmentAndCurve {
             return parsePlotSpec(spec)
         }
 
+        private fun withTooltips(): MutableMap<String, Any> {
+            val spec = """{
+                "kind": "subplots",
+                "layout": {
+                    "ncol": 2.0,
+                    "nrow": 2.0,
+                    "name": "grid"
+                },
+                "figures": [
+                    ${plot(0.9, 45.0, ncp = 1, withTooltips = true)},
+                    ${plot(0.9, 45.0, ncp = 2, withTooltips = true)},
+                    ${plot(0.9, 45.0, ncp = 5, withTooltips = true)},
+                    ${plot(0.9, 45.0, ncp = 7, withTooltips = true)}
+                ]
+           }""".trimIndent()
+
+            return parsePlotSpec(spec)
+        }
     }
 }

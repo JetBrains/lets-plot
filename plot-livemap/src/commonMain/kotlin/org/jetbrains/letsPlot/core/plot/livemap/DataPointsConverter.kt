@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import kotlin.math.abs
 import kotlin.math.min
@@ -106,8 +107,23 @@ internal class DataPointsConverter(
                 this.geodesic = myGeodesic
                 this.spacer = mySpacer
                 this.isCurve = myIsCurve
-                setArrowSpec(myArrowSpec)
                 setAnimation(myAnimation)
+
+                val adjustedArrowSpec = myArrowSpec?.let {
+                    val angle = it.angle
+                    val ends = it.end
+                    val type = it.type
+
+                    val geometryLength = when (points.size) {
+                        0, 1 -> 0.0
+                        else -> points.windowed(2).sumOf { (a, b) -> distance(a.x, a.y, b.x, b.y) }
+                    }
+
+                    val length = ArrowSpec.adjustArrowHeadLength(geometryLength, it)
+                    val minTailLength = 0.0 // we already adjusted arrow length, no need to store original minTailLength
+                    ArrowSpec(angle, length, ends, type, minTailLength)
+                }
+                setArrowSpec(adjustedArrowSpec)
             }
 
         fun setArrowSpec(arrowSpec: ArrowSpec?) {
@@ -218,28 +234,33 @@ internal class DataPointsConverter(
             setFlat(true)
 
             return process(isClosed = false) {
-                if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {
-                    CurveGeom.createGeometry(
-                        start = DoubleVector(it.x()!!, it.y()!!),
-                        end = DoubleVector(it.xend()!!, it.yend()!!),
-                        curvature = geom.curvature,
-                        angle = geom.angle,
-                        ncp = geom.ncp
-                    )
-                } else {
-                    emptyList()
-                }
+                val start = it.toLocation(Aes.X, Aes.Y) ?: return@process emptyList()
+                val end = it.toLocation(Aes.XEND, Aes.YEND) ?: return@process emptyList()
+
+                // not set arrowSpec - livemap handles it via setArrowSpec() call
+                val elementHelper = GeomHelper.SvgElementHelper()
+                    .setSpacer(geom.spacer)
+                    .noSvg()
+
+                val (_, geometry) = elementHelper.createCurve(start, end, geom.curvature, geom.angle, geom.ncp, it) ?: return@process emptyList()
+                geometry
             }
         }
 
         fun spoke(geom: SpokeGeom): List<DataPointLiveMapAesthetics> {
-            return process(isClosed = false) {
-                val x = finiteOrNull(it.x()) ?: return@process emptyList()
-                val y = finiteOrNull(it.y()) ?: return@process emptyList()
-                val angle = finiteOrNull(it.angle()) ?: return@process emptyList()
-                val radius = finiteOrNull(it.radius()) ?: return@process emptyList()
+            setArrowSpec(geom.arrowSpec)
+            setFlat(true)
 
-                SpokeGeom.createGeometry(x, y, angle, radius, geom.pivot)
+            return process(isClosed = false) {
+                val base = it.toLocation(Aes.X, Aes.Y) ?: return@process emptyList()
+                val angle = it.finiteOrNull(Aes.ANGLE) ?: return@process emptyList()
+                val radius = it.finiteOrNull(Aes.RADIUS) ?: return@process emptyList()
+
+                val elementHelper = GeomHelper.SvgElementHelper()
+                    .noSvg()
+
+                val (_, geometry) = elementHelper.createSpoke(base, angle, radius, geom.pivot.factor, it) ?: return@process emptyList()
+                geometry
             }
         }
 

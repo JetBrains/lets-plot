@@ -70,7 +70,7 @@ class PointRangeGeom(private val isVertical: Boolean) : GeomBase() {
             // vertical line
             val start = afterRotation(DoubleVector(x, ymin))
             val end = afterRotation(DoubleVector(x, ymax))
-            helper.createLine(start, end, p, strokeScaler = AesScaling::lineWidth)?.let { root.add(it) }
+            helper.createLine(start, end, p, strokeScaler = AesScaling::lineWidth)?.let { (svgElement, _) -> root.add(svgElement) }
 
             // mid-point
             val location = geomHelper.toClient(afterRotation(DoubleVector(x, y)), p)!!

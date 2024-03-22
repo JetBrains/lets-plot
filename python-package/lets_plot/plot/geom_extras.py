@@ -9,7 +9,7 @@ __all__ = ['arrow']
 #
 # See R doc: https://www.rdocumentation.org/packages/grid/versions/3.4.1/topics/arrow
 #
-def arrow(angle=None, length=None, ends=None, type=None):
+def arrow(angle=None, length=None, ends=None, type=None, min_tail_length=None):
     """
     Describe arrows to add to a line.
 
@@ -24,7 +24,11 @@ def arrow(angle=None, length=None, ends=None, type=None):
         Indicating which ends of the line to draw arrow heads.
     type : {'open', 'closed'}
         Indicating whether the arrow head should be a closed triangle.
-        
+    min_tail_length : int
+        The minimum length of the tail (line between arrow heads) in pixels. If the tail is shorter than this,
+        length of heads is reduced to fit. Yet there is a minimum length of 5 pixels for the tail, so the heads will
+        not disappear completely.
+
     Returns
     -------
     `FeatureSpec`

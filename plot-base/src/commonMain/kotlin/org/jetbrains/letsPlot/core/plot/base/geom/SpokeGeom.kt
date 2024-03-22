@@ -5,18 +5,16 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.HLineLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper.SvgElementHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import kotlin.math.cos
-import kotlin.math.sin
 
 class SpokeGeom : GeomBase(), WithWidth, WithHeight {
     var arrowSpec: ArrowSpec? = null
@@ -35,27 +33,17 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         val tooltipHelper = TargetCollectorHelper(GeomKind.SPOKE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper.createSvgElementHelper()
-        svgElementHelper.setStrokeAlphaEnabled(true)
-
-        svgElementHelper.setGeometryHandler { aes, lineString ->
-            tooltipHelper.addLine(lineString, aes)
-
-            arrowSpec?.let {
-                val arrow = ArrowSpec.createArrows(aes, lineString, it)
-                arrow.forEach(root::add)
-            }
-        }
+            .setStrokeAlphaEnabled(true)
+            .setArrowSpec(arrowSpec)
 
         for (p in aesthetics.dataPoints()) {
-            val x = p.finiteOrNull(Aes.X) ?: continue
-            val y = p.finiteOrNull(Aes.Y) ?: continue
-            val spoke = toSpoke(p) ?: continue
-            val base = DoubleVector(x, y)
-            val start = getStart(base, spoke, pivot)
-            val end = getEnd(base, spoke, pivot)
-            val line = svgElementHelper.createLine(start, end, p) ?: continue
+            val start = p.toLocation(Aes.X, Aes.Y) ?: continue
+            val angle = p.finiteOrNull(Aes.ANGLE) ?: continue
+            val radius = p.finiteOrNull(Aes.RADIUS) ?: continue
+            val (svg, geometry) = svgElementHelper.createSpoke(start, angle, radius, pivot.factor, p) ?: continue
 
-            root.add(line)
+            tooltipHelper.addLine(geometry, p)
+            root.add(svg)
         }
     }
 
@@ -82,11 +70,15 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         coordAes: Aes<Double>,
         spanAxisAes: Aes<Double>
     ): DoubleSpan? {
-        val loc = GeomUtil.TO_LOCATION_X_Y(p) ?: return null
-        val base = loc.flipIf(coordAes != spanAxisAes)
-        val spoke = toSpoke(p) ?: return null
-        val start = getStart(base, spoke, pivot)
-        val end = getEnd(base, spoke, pivot)
+        val base = p.toLocation(Aes.X, Aes.Y)?.flipIf(coordAes != spanAxisAes) ?: return null
+        val angle = p.finiteOrNull(Aes.ANGLE) ?: return null
+        val radius = p.finiteOrNull(Aes.RADIUS) ?: return null
+        val elementHelper = SvgElementHelper()
+        val (_, geometry) = elementHelper.createSpoke(base, angle, radius, pivot.factor, p) ?: return null
+
+        require(geometry.size == 2)
+        val (start, end) = geometry
+
         return if (spanAxisAes == Aes.X) {
             DoubleSpan(start.x, end.x)
         } else {
@@ -94,52 +86,14 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun toSpoke(p: DataPointAesthetics): DoubleVector? {
-        val angle = p.finiteOrNull(Aes.ANGLE) ?: return null
-        val radius = p.finiteOrNull(Aes.RADIUS) ?: return null
-
-        return getSpoke(angle, radius)
-    }
-
-    enum class Pivot {
-        TAIL, MIDDLE, TIP
+    enum class Pivot(
+        val factor: Double
+    ) {
+        TAIL(0.0), MIDDLE(0.5), TIP(1.0)
     }
 
     companion object {
         val DEF_PIVOT = Pivot.TAIL
-
-        fun createGeometry(
-            x: Double,
-            y: Double,
-            angle: Double,
-            radius: Double,
-            pivot: Pivot
-        ): List<DoubleVector> {
-            val base = DoubleVector(x, y)
-            val spoke = getSpoke(angle, radius)
-            return listOf(getStart(base, spoke, pivot), getEnd(base, spoke, pivot))
-        }
-
-        private fun getStart(base: DoubleVector, spoke: DoubleVector, pivot: Pivot): DoubleVector {
-            return when (pivot) {
-                Pivot.TAIL -> base
-                Pivot.MIDDLE -> base.subtract(spoke.mul(0.5))
-                Pivot.TIP -> base.subtract(spoke)
-            }
-        }
-
-        private fun getEnd(base: DoubleVector, spoke: DoubleVector, pivot: Pivot): DoubleVector {
-            return when (pivot) {
-                Pivot.TAIL -> base.add(spoke)
-                Pivot.MIDDLE -> base.add(spoke.mul(0.5))
-                Pivot.TIP -> base
-            }
-        }
-
-        private fun getSpoke(angle: Double, radius: Double): DoubleVector {
-            return DoubleVector(radius * cos(angle), radius * sin(angle))
-        }
-
         const val HANDLES_GROUPS = false
     }
 }

@@ -75,7 +75,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
                         p
-                    )!!
+                    )!!.first
                 )
                 // fence line
                 lines.add(
@@ -83,7 +83,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
                         p
-                    )!!
+                    )!!.first
                 )
             }
 
@@ -97,7 +97,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
                         p
-                    )!!
+                    )!!.first
                 )
                 // fence line
                 lines.add(
@@ -105,7 +105,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
                         p
-                    )!!
+                    )!!.first
                 )
 
                 lines.forEach { root.add(it) }

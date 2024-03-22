@@ -143,7 +143,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     DoubleRectangle.XYWH(0, 0, DEMO_BOX_SIZE.x, DEMO_BOX_SIZE.y),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = 100.0,
                 //gridLineDistance = 0.0,

@@ -50,11 +50,11 @@ object BoxHelper {
             val middle = p[middleAesthetic]!!
             val width = p.width()!! * ctx.getResolution(Aes.X)
 
-            val line = elementHelper.createLine(
+            val (line) = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),
                 DoubleVector(x + width / 2, middle),
                 p
-            )!!
+            ) ?: continue
 
             // TODO: use strokeScale in createLine() function
             // adjust thickness

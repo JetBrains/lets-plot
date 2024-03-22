@@ -148,7 +148,7 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
     return {
         MAPTILES_KIND: TILES_RASTER_ZXY,
         MAPTILES_URL: url,
-        MAPTILES_ATTRIBUTION: attribution,
+        MAPTILES_ATTRIBUTION: _build_attribution(attribution),
         MAPTILES_MIN_ZOOM: min_zoom,
         MAPTILES_MAX_ZOOM: max_zoom
     }
@@ -234,3 +234,11 @@ def geocoding_service(url: str):
     return {
         GEOCODING_PROVIDER_URL: url
     }
+
+
+def _build_attribution(other_attributions):
+    map_attribution = 'map: <a href="https://lets-plot.org">\u00a9 Lets-Plot</a>'
+    if other_attributions is None:
+        return map_attribution
+    else:
+        return map_attribution + ', ' + other_attributions
