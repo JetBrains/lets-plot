@@ -63,7 +63,7 @@ GEOCODING_ROUTE = '/map_data/geocoding'
 FRAGMENTS_ENABLED = 'fragments_enabled'
 
 _DATALORE_TILES_SERVICE = 'wss://tiles.datalore.jetbrains.com'
-_DATALORE_TILES_ATTRIBUTION = 'map: <a href="https://lets-plot.org">\u00a9 Lets-Plot</a>, map data: <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap contributors</a>.'
+_DATALORE_TILES_ATTRIBUTION = '<a href="https://lets-plot.org">\u00a9 Lets-Plot</a>, map data: <a href="https://www.openstreetmap.org/copyright">\u00a9 OpenStreetMap contributors</a>.'
 _DATALORE_TILES_THEME = 'color'
 _DATALORE_TILES_MIN_ZOOM = 1
 _DATALORE_TILES_MAX_ZOOM = 15

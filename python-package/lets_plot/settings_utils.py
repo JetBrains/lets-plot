@@ -237,7 +237,7 @@ def geocoding_service(url: str):
 
 
 def _build_attribution(other_attributions):
-    map_attribution = 'map: <a href="https://lets-plot.org">\u00a9 Lets-Plot</a>'
+    map_attribution = '<a href="https://lets-plot.org">\u00a9 Lets-Plot</a>'
     if other_attributions is None:
         return map_attribution
     else:
