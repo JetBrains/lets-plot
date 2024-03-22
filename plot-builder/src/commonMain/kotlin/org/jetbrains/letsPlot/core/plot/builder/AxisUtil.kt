@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.pickAtIndices
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -35,6 +36,7 @@ object AxisUtil {
         flipAxis: Boolean,
         orientation: Orientation,
         axisTheme: AxisTheme,
+        panelTheme: PanelTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
         val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
@@ -77,8 +79,8 @@ object AxisUtil {
             toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
                 .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
 
-        val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
-        val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal, panelTheme)
+        val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal, panelTheme)
 
         return AxisComponent.BreaksData(
             majorBreaks = visibleMajorClientBreaks,
@@ -117,7 +119,8 @@ object AxisUtil {
         domain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
-        horizontal: Boolean
+        horizontal: Boolean,
+        panelTheme: PanelTheme
     ): List<List<DoubleVector>> {
         val domainGrid = breaks.map { breakCoord ->
             when (horizontal) {
@@ -134,8 +137,12 @@ object AxisUtil {
         }
 
         val clientGrid = domainGrid.map { line -> line.mapNotNull { toClient(it, coordinateSystem, flipAxis) } }
-        val gridArea =
-            toClient(domain, coordinateSystem, flipAxis)?.inflate(-6.0) ?: error("Cannot transform domain")
+        val gridArea = toClient(domain, coordinateSystem, flipAxis)?.let { rect ->
+            when (panelTheme.showRect() || panelTheme.showBorder()) {
+                true -> rect.inflate(-6.0)
+                false -> rect
+            }
+        } ?: error("Cannot transform domain")
 
         return clientGrid.filter { line ->
             line.any {

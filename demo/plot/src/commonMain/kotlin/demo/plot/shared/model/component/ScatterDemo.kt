@@ -115,7 +115,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -142,7 +143,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
@@ -309,7 +311,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -336,7 +339,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
@@ -445,7 +449,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeY,
                 //gridLineDistance = 0.0,
@@ -472,7 +477,8 @@ open class ScatterDemo : SimpleDemoBase() {
                     domain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
-                    axisTheme
+                    axisTheme,
+                    theme.panel()
                 ),
                 //gridLineLength = rangeX,
                 //gridLineDistance = 0.0,
