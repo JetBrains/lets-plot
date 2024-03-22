@@ -107,6 +107,7 @@ open class GeomHelper(
     class SvgElementHelper(
         private val toClient: (DoubleVector, DataPointAesthetics) -> DoubleVector? = { v, _ -> v }
     ) {
+        private var myGeometryWithPadding: Boolean = true
         private var myNoSvg: Boolean = false
         private var myInterpolation: Interpolation? = null
         private var myArrowSpec: ArrowSpec? = null
@@ -124,6 +125,61 @@ open class GeomHelper(
         fun setResamplingPrecision(precision: Double) = apply { myResamplingPrecision = precision }
         fun noSvg() = apply { myNoSvg = true }
         fun debugRendering(value: Boolean) = apply { myDebugRendering = value }
+        fun geometryWithPadding(value: Boolean) = apply { myGeometryWithPadding = value }
+
+        fun createCurve(
+            start: DoubleVector,
+            end: DoubleVector,
+            curvature: Double,
+            angle: Double,
+            ncp: Int,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            if (start == end) {
+                return null
+            }
+            @Suppress("NAME_SHADOWING")
+            val start = toClient(start, p) ?: return null
+
+            @Suppress("NAME_SHADOWING")
+            val end = toClient(end, p) ?: return null
+
+            val lineString = curve(start, end, curvature, angle, ncp)
+
+            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+            val geometry = takeGeometry(lineString, p)
+
+            return svgElement to geometry
+        }
+
+        fun createLine(
+            start: DoubleVector,
+            end: DoubleVector,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            val lineString = createLineGeometry(start, end, p) ?: return null
+            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+            val geometry = takeGeometry(lineString, p)
+
+            return svgElement to geometry
+        }
+
+        fun createSpoke(
+            base: DoubleVector,
+            angle: Double,
+            radius: Double,
+            pivot: Double,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            val spoke = DoubleVector(radius * cos(angle), radius * sin(angle))
+            val start = base.subtract(spoke.mul(pivot))
+            val end = base.add(spoke.mul(1 - pivot))
+
+            return createLine(start, end, p, strokeScaler)
+        }
 
         private fun createLineGeometry(
             start: DoubleVector,
@@ -140,59 +196,8 @@ open class GeomHelper(
             }
         }
 
-        fun createCurve(
-            start: DoubleVector,
-            end: DoubleVector,
-            curvature: Double,
-            angle: Double,
-            ncp: Int,
-            aes: DataPointAesthetics,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
-        ): Pair<SvgNode, List<DoubleVector>>? {
-            if (start == end) {
-                return null
-            }
-            @Suppress("NAME_SHADOWING")
-            val start = toClient(start, aes) ?: return null
-
-            @Suppress("NAME_SHADOWING")
-            val end = toClient(end, aes) ?: return null
-
-            val lineString = curve(start, end, curvature, angle, ncp)
-            val lineStringAfterPadding = padLineString(lineString, aes)
-
-            if (myNoSvg) return SvgGElement() to lineStringAfterPadding
-
-            val svgElement = renderSvgElement(aes, lineStringAfterPadding, strokeScaler) ?: return null
-
-            return svgElement to lineStringAfterPadding
-        }
-
-        fun createLine(
-            start: DoubleVector,
-            end: DoubleVector,
-            p: DataPointAesthetics,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
-        ): Pair<SvgNode, List<DoubleVector>>? {
-            val lineString = createLineGeometry(start, end, p) ?: return null
-            val lineStringAfterPadding = padLineString(lineString, p)
-            val svgElement = renderSvgElement(p, lineStringAfterPadding, strokeScaler) ?: return null
-
-            return svgElement to lineStringAfterPadding
-        }
-
-        fun createSpoke(
-            base: DoubleVector,
-            angle: Double,
-            radius: Double,
-            pivot: Double,
-            p: DataPointAesthetics,
-            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
-        ): Pair<SvgNode, List<DoubleVector>>? {
-            val spoke = DoubleVector(radius * cos(angle), radius * sin(angle))
-            val start = base.subtract(spoke.mul(pivot))
-            val end = base.add(spoke.mul(1 - pivot))
-            return createLine(start, end, p, strokeScaler)
+        private fun takeGeometry(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
+            return if (myGeometryWithPadding) padLineString(lineString, p, padArrow = false) else lineString
         }
 
         private fun renderSvgElement(
@@ -200,26 +205,30 @@ open class GeomHelper(
             lineString: List<DoubleVector>,
             strokeScaler: (DataPointAesthetics) -> Double
         ): SvgNode? {
+            if (myNoSvg) return SvgGElement()
+
             if (lineString.isEmpty() || lineString.size == 1) return null
 
-            val lineElement = if (lineString.size == 2) {
+            val lineStringAfterPadding = padLineString(lineString, p, padArrow = true)
+
+            val lineElement = if (lineStringAfterPadding.size == 2) {
                 // Simple SvgLineElement is enough for a straight line without arrow
                 SvgLineElement().apply {
-                    x1().set(lineString.first().x)
-                    y1().set(lineString.first().y)
-                    x2().set(lineString.last().x)
-                    y2().set(lineString.last().y)
+                    x1().set(lineStringAfterPadding.first().x)
+                    y1().set(lineStringAfterPadding.first().y)
+                    x2().set(lineStringAfterPadding.last().x)
+                    y2().set(lineStringAfterPadding.last().y)
                 }
             } else {
                 SvgPathElement().apply {
                     d().set(
                         if (myInterpolation != null) {
                             SvgPathDataBuilder()
-                                .moveTo(lineString.first())
-                                .interpolatePoints(lineString, myInterpolation!!)
+                                .moveTo(lineStringAfterPadding.first())
+                                .interpolatePoints(lineStringAfterPadding, myInterpolation!!)
                                 .build()
                         } else {
-                            SvgPathDataBuilder().lineString(lineString).build()
+                            SvgPathDataBuilder().lineString(lineStringAfterPadding).build()
                         }
                     )
                 }
@@ -227,14 +236,14 @@ open class GeomHelper(
             decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
 
             val arrowElements = myArrowSpec?.let { arrowSpec ->
-                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineString, arrowSpec)
+                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec)
                 val startHeadSvg = renderArrowHead(startHead, p, strokeScaler)
                 val endHeadSvg = renderArrowHead(endHead, p, strokeScaler)
                 listOfNotNull(startHeadSvg, endHeadSvg)
             } ?: emptyList()
 
             val debugPoints = if (myDebugRendering) {
-                lineString.map {
+                lineStringAfterPadding.map {
                     SvgCircleElement(it.x, it.y, 1.0).apply {
                         fillColor().set(Color.LIGHT_GREEN)
                         strokeColor().set(Color.GREEN)
@@ -264,6 +273,7 @@ open class GeomHelper(
             val arrowSpec = myArrowSpec ?: return null
 
             val arrowSvg = SvgPathElement().apply {
+                strokeMiterLimit().set(ArrowSpec.miterLength(arrowSpec, p))
                 d().set(SvgPathDataBuilder()
                     .lineString(points)
                     .also { if (arrowSpec.type == CLOSED) it.closePath() }
@@ -282,10 +292,9 @@ open class GeomHelper(
             return arrowSvg
         }
 
-
-        private fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
-            val startPadding = arrowPadding(p, atStart = true) + mySpacer + AesScaling.targetStartSize(p)
-            val endPadding = arrowPadding(p, atStart = false) + mySpacer + AesScaling.targetEndSize(p)
+        private fun padLineString(lineString: List<DoubleVector>, p: DataPointAesthetics, padArrow: Boolean): List<DoubleVector> {
+            val startPadding = mySpacer + AesScaling.targetStartSize(p) + if (padArrow) arrowPadding(p, atStart = true) else 0.0
+            val endPadding = mySpacer + AesScaling.targetEndSize(p) + if (padArrow) arrowPadding(p, atStart = false) else 0.0
 
             return padLineString(lineString, startPadding, endPadding)
         }

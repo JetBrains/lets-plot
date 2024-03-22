@@ -239,8 +239,8 @@ internal class DataPointsConverter(
 
                 // not set arrowSpec - livemap handles it via setArrowSpec() call
                 val elementHelper = GeomHelper.SvgElementHelper()
-                    .setSpacer(geom.spacer)
                     .noSvg()
+                    .geometryWithPadding(false) // padding should be re-computed on each zoom level
 
                 val (_, geometry) = elementHelper.createCurve(start, end, geom.curvature, geom.angle, geom.ncp, it) ?: return@process emptyList()
                 geometry
