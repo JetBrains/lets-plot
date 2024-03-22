@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import kotlin.math.max
 
-class FacetGrid(
+class FacetGrid constructor(
     private val xVar: String?,
     private val yVar: String?,
     xLevels: List<Any>,

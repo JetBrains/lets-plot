@@ -129,29 +129,7 @@ internal class PlotTile(
                 // ToDo: Use "facet X" theme.
                 addFacetLabBackground(labelBounds, theme)
 
-                // without margins
-                val textBounds = theme.stripMargins().shrinkRect(labelBounds)
-                if (DEBUG_DRAWING) {
-                    drawDebugRect(textBounds, Color.MAGENTA)
-                 }
-
-                val textSize = FacetedPlotLayout.titleSize(xLabel, theme)
-                val labelSpec = PlotLabelSpecFactory.facetText(theme)
-                val lineHeight = labelSpec.height()
-
-                val lab = MultilineLabel(xLabel)
-                lab.addClassName("${Style.FACET_STRIP_TEXT}-x")
-
-                val (pos, hAnchor) = applyJustification(
-                    textBounds,
-                    textSize,
-                    lineHeight,
-                    theme.stripTextJustification()
-                )
-                lab.setHorizontalAnchor(hAnchor)
-                lab.setLineHeight(lineHeight)
-                lab.moveTo(pos)
-                add(lab)
+                addLabelElement(labelBounds, theme, xLabel, isColumnLabel = true)
 
                 curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labHeight))
             }
@@ -171,32 +149,7 @@ internal class PlotTile(
             // ToDo: Use "facet Y" theme.
             addFacetLabBackground(labelBounds, theme)
 
-            // without margins
-            val textBounds = theme.stripMargins().shrinkRect(labelBounds)
-            if (DEBUG_DRAWING) {
-                drawDebugRect(textBounds, Color.MAGENTA)
-            }
-
-            val textSize = FacetedPlotLayout.titleSize(yLabel, theme)
-            val labelSpec = PlotLabelSpecFactory.facetText(theme)
-            val lineHeight = labelSpec.height()
-            val rotation = TextRotation.CLOCKWISE
-
-            val lab = MultilineLabel(yLabel)
-            lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
-            val (pos, hAnchor) = applyJustification(
-                textBounds,
-                textSize,
-                lineHeight,
-                theme.stripTextJustification(),
-                rotation
-            )
-            lab.setHorizontalAnchor(hAnchor)
-            lab.setLineHeight(lineHeight)
-            lab.setHorizontalAnchor(hAnchor)
-            lab.moveTo(pos)
-            lab.rotate(rotation.angle)
-            add(lab)
+            addLabelElement(labelBounds, theme, yLabel, isColumnLabel = false)
         }
     }
 
@@ -211,12 +164,44 @@ internal class PlotTile(
         }
     }
 
-    private fun drawDebugRect(r: DoubleRectangle, color: Color) {
-        val rect = SvgRectElement(r)
-        rect.strokeColor().set(color)
-        rect.strokeWidth().set(1.0)
-        rect.fillOpacity().set(0.0)
-        add(rect)
+    private fun addLabelElement(
+        labelBounds: DoubleRectangle,
+        theme: FacetsTheme,
+        label: String,
+        isColumnLabel: Boolean
+    ) {
+        val textBounds = theme.stripMargins().shrinkRect(labelBounds)
+        if (DEBUG_DRAWING) {
+            val rect = SvgRectElement(textBounds).apply {
+                strokeWidth().set(1.0)
+                fillOpacity().set(0.0)
+                strokeColor().set(Color.MAGENTA)
+            }
+            add(rect)
+        }
+
+        val textSize = FacetedPlotLayout.titleSize(label, theme)
+        val labelSpec = PlotLabelSpecFactory.facetText(theme)
+        val lineHeight = labelSpec.height()
+        val className = if (isColumnLabel) "x" else "y"
+        val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
+
+        val lab = MultilineLabel(label)
+        lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
+
+        val (pos, hAnchor) = applyJustification(
+            textBounds,
+            textSize,
+            lineHeight,
+            theme.stripTextJustification(),
+            rotation
+        )
+        lab.setHorizontalAnchor(hAnchor)
+        lab.setLineHeight(lineHeight)
+        lab.moveTo(pos)
+        rotation?.let { lab.rotate(it.angle) }
+
+        add(lab)
     }
 
     companion object {

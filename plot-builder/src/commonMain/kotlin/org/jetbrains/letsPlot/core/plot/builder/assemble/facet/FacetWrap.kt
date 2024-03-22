@@ -11,11 +11,11 @@ import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-class FacetWrap(
+class FacetWrap constructor(
     private val facets: List<String>,
     levels: List<List<Any>>,
-    private val nrow: Int?,
-    private val ncol: Int?,
+    nrow: Int?,
+    ncol: Int?,
     private val direction: Direction,
     facetOrdering: List<Int>,
     private val facetFormatters: List<(Any) -> String>,
