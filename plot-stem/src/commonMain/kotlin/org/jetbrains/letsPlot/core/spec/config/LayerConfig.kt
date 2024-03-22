@@ -283,7 +283,6 @@ class LayerConfig(
         val isSuitableGeomKind = geomProto.geomKind in listOf(
             GeomKind.BAR,
             GeomKind.BOX_PLOT,
-            GeomKind.CROSS_BAR,
             GeomKind.VIOLIN,
             GeomKind.LOLLIPOP
         )

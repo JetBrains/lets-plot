@@ -1,7 +1,7 @@
 ## [4.3.1] - 2024-mm-dd
 
 ### Added
-- Automatic geom rotation of `geom_bar()`, `geom_lollipop()`, `geom_boxplot()` and `geom_violin()` for discrete y.
+- Automatically choose orientation="y" when aes y is discrete [[#558](https://github.com/JetBrains/lets-plot/issues/558)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/auto_rotate.ipynb).
   
