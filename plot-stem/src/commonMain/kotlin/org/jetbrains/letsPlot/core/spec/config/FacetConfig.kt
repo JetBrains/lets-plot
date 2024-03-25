@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.string.WordWrapper
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
@@ -170,7 +170,7 @@ internal class FacetConfig(
 
     private fun toWordWrapper(optionVal: Int?): ((String) -> String)? {
         if (optionVal == null) return null
-        return { lab: String -> WordWrapper.wrap(lab, optionVal) }
+        return { lab: String -> wrap(lab, optionVal) }
     }
 
     private fun getWordWrapper(optionName: String): ((String) -> String)? {
