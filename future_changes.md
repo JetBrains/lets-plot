@@ -13,4 +13,5 @@
 - Support geom_spoke() in geom_livemap() [[#988](https://github.com/JetBrains/lets-plot/issues/988)].
 - arrow on curve sometimes looks weird [[#1041](https://github.com/JetBrains/lets-plot/issues/1041)].
 - Livemap: `vjust` implemented incorrectly [[#1051](https://github.com/JetBrains/lets-plot/issues/1051)].
+- `geom_density2d`: the doc missing some 'computed' variables [[#1062](https://github.com/JetBrains/lets-plot/issues/1062)]
 - Missing marginal gridlines.
