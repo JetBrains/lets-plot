@@ -1,29 +1,29 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.assemble
+package org.jetbrains.letsPlot.commons.formatting.string
 
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 
-class LegendAssemblerTest {
+class WordWrapperTest {
 
     @Test
     fun skipWrappingForShortText() {
-        assertThat(LegendAssembler.wrap("abc", 7))
+        assertThat(wrap("abc", 7))
             .isEqualTo("abc")
-        assertThat(LegendAssembler.wrap("abcdefg", 7))
+        assertThat(wrap("abcdefg", 7))
             .isEqualTo("abcdefg")
-        assertThat(LegendAssembler.wrap("ab cd e", 7))
+        assertThat(wrap("ab cd e", 7))
             .isEqualTo("ab cd e")
     }
 
     @Test
     fun skipWrappingIfTextHaveDividers() {
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "Lorem ipsum dolor sit amet,\n"
                         + "consectetur adipiscing elit.", 7, 7
             )
@@ -33,7 +33,7 @@ class LegendAssemblerTest {
 
     @Test
     fun wrapWordsSimple() {
-        assertThat(LegendAssembler.wrap("Lorem ipsum dolor sit amet", 10))
+        assertThat(wrap("Lorem ipsum dolor sit amet", 10))
             .isEqualTo(
                 """
                 |Lorem
@@ -42,7 +42,7 @@ class LegendAssemblerTest {
                 |amet
                 """.trimMargin()
             )
-        assertThat(LegendAssembler.wrap("Lorem ipsum dolor sit amet, consectetur adipiscing elit", 15))
+        assertThat(wrap("Lorem ipsum dolor sit amet, consectetur adipiscing elit", 15))
             .isEqualTo(
                 """
                 |Lorem ipsum
@@ -55,7 +55,7 @@ class LegendAssemblerTest {
 
     @Test
     fun wrapWithoutSpaces() {
-        assertThat(LegendAssembler.wrap("abcdefghijklmnopqrstuvwxyz", 7))
+        assertThat(wrap("abcdefghijklmnopqrstuvwxyz", 7))
             .isEqualTo(
                 """
                 |abcdefg
@@ -68,7 +68,7 @@ class LegendAssemblerTest {
 
     @Test
     fun wrapWithLimitOverflow() {
-        assertThat(LegendAssembler.wrap("abcdefghijklmnopqrstuvwxyz", 7, 3))
+        assertThat(wrap("abcdefghijklmnopqrstuvwxyz", 7, 3))
             .isEqualTo(
                 """
                 |abcdefg
@@ -77,7 +77,7 @@ class LegendAssemblerTest {
                 |...
                 """.trimMargin()
             )
-        assertThat(LegendAssembler.wrap("abcde fghijk lmno pqrstuv", 7, 3))
+        assertThat(wrap("abcde fghijk lmno pqrstuv", 7, 3))
             .isEqualTo(
                 """
                 |abcde
@@ -90,7 +90,7 @@ class LegendAssemblerTest {
 
     @Test
     fun wrapLongWords() {
-        assertThat(LegendAssembler.wrap("amet, consectetur adipiscing elit", 11))
+        assertThat(wrap("amet, consectetur adipiscing elit", 11))
             .isEqualTo(
                 """
                 |amet,
@@ -102,7 +102,7 @@ class LegendAssemblerTest {
 
         //If long word stay after space character, what have position index greater than string.length / 3,
         //then long word will be wrap at new line
-        assertThat(LegendAssembler.wrap("Lorem ipsum abcdefghijklmnopqrstuvwxyz, abcdefghijklmnopqrstuvwxyz elit.", 20))
+        assertThat(wrap("Lorem ipsum abcdefghijklmnopqrstuvwxyz, abcdefghijklmnopqrstuvwxyz elit.", 20))
             .isEqualTo(
                 """
                 |Lorem ipsum abcdefgh
@@ -113,7 +113,7 @@ class LegendAssemblerTest {
             )
         //If long word stay after space character, what have position index lower than string.length / 3,
         //then long word will be cut and wrap at current line
-        assertThat(LegendAssembler.wrap("Lorem abcdefghijklmnopqrstuvwxyz, abcdefghijklmnopqrstuvwxyz elit.", 20))
+        assertThat(wrap("Lorem abcdefghijklmnopqrstuvwxyz, abcdefghijklmnopqrstuvwxyz elit.", 20))
             .isEqualTo(
                 """
                 |Lorem abcdefghijklmn
@@ -124,7 +124,7 @@ class LegendAssemblerTest {
             )
 
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "XYABAACYYDBASXXYAUAOKXYABAACYYXYABAACYYDBASXXYAUAOKDBASXXYAUAOK a scale ASSDASDASDASDASDASDASDASDASDAS benzimidazole QWQWQWQWQWEQEQEQWQWQEQEQWQWQEQ",
                 30
             )
@@ -141,7 +141,7 @@ class LegendAssemblerTest {
             )
 
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "XYABAACYYDBASXXYAUAOKXYABAACYYXYABAACYYDBASXXYAUAOKDBASXXYAUAOK a scale ASSDASDASDASDASDASDASDASDASDASASDAS benzimidazole QWQWQWQWQWEQEQEQWQWQEQEQWQWQEQQWQWQWQWQWQWQW",
                 30
             )
@@ -157,7 +157,7 @@ class LegendAssemblerTest {
                 """.trimMargin()
             )
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "XYABAACYYDBASXXYAUAOKXYABAACYYXYABAACYYDBASXXYAUAOKDBASXXYAUAOK a scale ASSDASDASDASDASDASDASDASDASDASASDAS benzimidazole QWQWQWQWQWEQEQEQWQWQEQEQWQWQEQQWQWQWQWQWQWQW",
                 31
             )
@@ -173,7 +173,7 @@ class LegendAssemblerTest {
                 """.trimMargin()
             )
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "XYABAACYYDBASXXYAUAOKXYABAACYYXYABAACYYDBASXXYAUAOKDBASXXYAUAOK a scale ASSDASDASDASDASDASDASDASDASDASASDAS benzimidazole QWQWQWQWQWEQEQEQWQWQEQEQWQWQEQQWQWQWQWQWQWQW",
                 31
             )
@@ -193,7 +193,7 @@ class LegendAssemblerTest {
     @Test
     fun wrapLongWordsWhenLineLengthEqualLimit() {
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "XYABAACYYDBASXXYAUAOKXYABAACYYXYABAACYYDBASXXYAUAOKDBASXXYAUAOK a scale ASSDASDASDASDASDASDASDASDASDASASDA benzimidazole QWQWQWQWQWEQEQEQWQWQEQEQWQWQEQQWQWQWQWQWQWQW",
                 30
             )
@@ -213,7 +213,7 @@ class LegendAssemblerTest {
     @Test
     fun wrapRealText() {
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                         "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
                         "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
@@ -233,7 +233,7 @@ class LegendAssemblerTest {
                 """.trimMargin()
             )
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                         "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, " +
                         "quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
@@ -253,7 +253,7 @@ class LegendAssemblerTest {
                 """.trimMargin()
             )
         assertThat(
-            LegendAssembler.wrap(
+            wrap(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, " +
                         "https://github.com/JetBrains/lets-plot/issues/315, quis nostrud exercitation " +
                         "ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute " +
