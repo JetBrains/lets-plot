@@ -4242,6 +4242,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..group.. : number of density estimate contour line.
+    - ..level.. : calculated value of the density estimate for given contour line.
 
     `geom_density2d()` understands the following aesthetics mappings:
 
@@ -4455,7 +4456,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Computed variables:
 
-    - ..group.. : number of density estimate contour line.
+    - ..group.. : number of density estimate contour band.
+    - ..level.. : calculated value of the density estimate for given contour band.
 
     `geom_density2df()` understands the following aesthetics mappings:
 
