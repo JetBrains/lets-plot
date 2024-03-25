@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.FeatureSwitch
@@ -160,38 +161,6 @@ class LegendAssembler(
 
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
-
-        fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
-            if (text.length <= lengthLimit || text.contains("\n")) {
-                return text
-            }
-
-            return text.split(" ")
-                .let { words ->
-                    val lines = mutableListOf(mutableListOf<String>())
-                    words.forEach { word ->
-                        val freeSpace =
-                            lengthLimit - lines.last().let { line -> line.sumOf(String::length) + line.size }
-                                .coerceAtMost(lengthLimit)
-                        when {
-                            freeSpace >= word.length -> lines.last().add(word)
-                            word.length <= lengthLimit -> lines.add(mutableListOf(word))
-                            else -> {
-                                lines.last().takeIf { freeSpace > 0 }?.add(word.take(freeSpace))
-                                word.drop(freeSpace)
-                                    .chunked(lengthLimit)
-                                    .forEach {
-                                        lines.add(mutableListOf<String>(it))
-                                    }
-                            }
-                        }
-                    }
-                    lines
-                }
-                .joinToString(separator = "\n", limit = countLimit) {
-                    it.joinToString(separator = " ")
-                }
-        }
 
         fun createLegendSpec(
             title: String,
