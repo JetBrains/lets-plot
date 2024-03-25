@@ -6184,7 +6184,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         }).assign(
             label=lambda r: ("hjust=" + r["hjust"].astype(str)).str.cat(
                 "vjust=" + r["vjust"].astype(str),
-                sep='\n'
+                sep='\\n'
             )
         )
         ggplot(df, aes("x", "y")) + \\
@@ -6412,7 +6412,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         }).assign(
             label=lambda r: ("hjust=" + r["hjust"].astype(str)).str.cat(
                 "vjust=" + r["vjust"].astype(str),
-                sep='\n'
+                sep='\\n'
             )
         )
         ggplot(df, aes("x", "y")) + \\
