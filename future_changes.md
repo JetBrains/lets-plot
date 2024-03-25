@@ -2,6 +2,11 @@
 
 ### Added
 
+- Parameter `labwidth` in `facet_wrap()` and `x_labwidth/y_labwidth` in `facet_grid()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).
+
+
 ### Changed
       
 ### Fixed
@@ -15,4 +20,5 @@
 - Livemap: `vjust` implemented incorrectly [[#1051](https://github.com/JetBrains/lets-plot/issues/1051)].
 - Add tooltips for `geom_curve()` [[#1053](https://github.com/JetBrains/lets-plot/issues/1053)].
 - `geom_density2d`: the doc missing some 'computed' variables [[#1062](https://github.com/JetBrains/lets-plot/issues/1062)].
+- Any way to line-wrap facet labels? [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 - Missing marginal gridlines.
