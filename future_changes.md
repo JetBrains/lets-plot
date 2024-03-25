@@ -14,3 +14,4 @@
 - arrow on curve sometimes looks weird [[#1041](https://github.com/JetBrains/lets-plot/issues/1041)].
 - Livemap: `vjust` implemented incorrectly [[#1051](https://github.com/JetBrains/lets-plot/issues/1051)].
 - Missing marginal gridlines.
+- Add tooltips for geom_curve() [[#1053](https://github.com/JetBrains/lets-plot/issues/1053)].
