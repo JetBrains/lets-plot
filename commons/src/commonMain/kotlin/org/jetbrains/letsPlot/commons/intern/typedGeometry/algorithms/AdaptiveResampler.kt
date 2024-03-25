@@ -18,6 +18,7 @@ class AdaptiveResampler<T> private constructor(
     private val precisionSqr: Double = precision * precision
 
     companion object {
+        const val PIXEL_RESAMPLING_PRECISION = 0.95
         private const val MAX_DEPTH_LIMIT = 9 // 1_025 points maximum (2^(LIMIT + 1) + 1)
 
         private val DOUBLE_VECTOR_ADAPTER = object : DataAdapter<DoubleVector> {

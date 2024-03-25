@@ -7,16 +7,16 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
-import kotlin.math.abs
 
 open class LinesHelper(
     pos: PositionAdjustment,
@@ -197,8 +197,13 @@ open class LinesHelper(
         filled: Boolean
     ): LinePath {
         val element = when (filled) {
-            true -> LinePath.polygon(splitRings(points).map(::reduce).let(::insertPathSeparators))
-            false -> LinePath.line(reduce(points))
+            true -> LinePath
+                .polygon(
+                    splitRings(points)
+                        .map { PolylineSimplifier.douglasPeucker(it, DOUGLAS_PEUCKER_PIXEL_THRESHOLD) }
+                        .let(::insertPathSeparators)
+                )
+            false -> LinePath.line(PolylineSimplifier.douglasPeucker(points, DOUGLAS_PEUCKER_PIXEL_THRESHOLD))
         }
         decorate(element, aes, filled)
         return element
@@ -244,7 +249,7 @@ open class LinesHelper(
             path.map { segment ->
                 val smoothed = segment.points
                     .windowed(size = 2)
-                    .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, 0.5) { toClient(it, p1.aes) } }
+                    .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, AdaptiveResampler.PIXEL_RESAMPLING_PRECISION) { toClient(it, p1.aes) } }
                     .flatMap { (aes, points) -> points.map { PathPoint(aes, it) } }
                 PathData(smoothed)
             }
@@ -252,10 +257,6 @@ open class LinesHelper(
     }
 
     companion object {
-        private fun reduce(points: List<DoubleVector>): List<DoubleVector> {
-            return reduce(points, 0.999) { e1, e2 -> maxOf(abs(e1.x - e2.x), abs(e1.y - e2.y)) }
-        }
-
         private fun insertPathSeparators(rings: Iterable<List<DoubleVector>>): List<DoubleVector?> {
             val result = ArrayList<DoubleVector?>()
             for (ring in rings) {

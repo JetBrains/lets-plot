@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
@@ -205,7 +206,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
             val segmentLength = startPoint.subtract(endPoint).length()
 
-            return resample(startPoint, endPoint, 2.0) { p: DoubleVector ->
+            return resample(startPoint, endPoint, AdaptiveResampler.PIXEL_RESAMPLING_PRECISION) { p: DoubleVector ->
                 val ratio = p.subtract(startPoint).length() / segmentLength
                 if (ratio.isFinite()) {
                     arcPoint(sector.startAngle + sector.angle * ratio)

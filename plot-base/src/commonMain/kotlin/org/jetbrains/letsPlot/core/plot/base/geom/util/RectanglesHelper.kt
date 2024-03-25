@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -24,11 +26,12 @@ class RectanglesHelper(
     ctx: GeomContext,
     private val geometryFactory: (DataPointAesthetics) -> DoubleRectangle?
 ) : GeomHelper(pos, coord, ctx) {
+    // TODO: Replace with SvgRectHelper
     fun createNonLinearRectangles(handler: (DataPointAesthetics, SvgNode, List<DoubleVector>) -> Unit) {
         myAesthetics.dataPoints().forEach { p ->
             geometryFactory(p)?.let { rect ->
                 val polyRect = resample(
-                    precision = 0.5,
+                    precision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION,
                     points = listOf(
                         DoubleVector(rect.left, rect.top),
                         DoubleVector(rect.right, rect.top),
@@ -92,7 +95,7 @@ class RectanglesHelper(
     inner class SvgRectHelper {
         private var onGeometry: (DataPointAesthetics, DoubleRectangle?, List<DoubleVector>?) -> Unit = { _, _, _ -> }
         private var myResamplingEnabled = false
-        private var myResamplingPrecision = 0.5
+        private var myResamplingPrecision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION
 
         fun setResamplingEnabled(b: Boolean) {
             myResamplingEnabled = b
@@ -126,9 +129,12 @@ class RectanglesHelper(
                         )
                     ) { toClient(it, p) }
 
-                    onGeometry(p, null, polyRect)
+                    // Resampling of a tiny rectangle still can produce a very small polygon - simplify it.
+                    val simplified = PolylineSimplifier.douglasPeucker(polyRect).setWeightLimit(PolylineSimplifier.DOUGLAS_PEUCKER_PIXEL_THRESHOLD).points
 
-                    val slimShape = SvgSlimElements.path(SvgPathDataBuilder().lineString(polyRect).build())
+                    onGeometry(p, null, simplified)
+
+                    val slimShape = SvgSlimElements.path(SvgPathDataBuilder().lineString(simplified).build())
                     decorateSlimShape(slimShape, p)
                     slimShape.appendTo(group)
                 } else {

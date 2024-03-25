@@ -67,6 +67,7 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
     }
 
     companion object {
+        const val DOUGLAS_PEUCKER_PIXEL_THRESHOLD = 0.25
 
         fun visvalingamWhyatt(points: List<DoubleVector>): PolylineSimplifier {
             return PolylineSimplifier(
@@ -81,5 +82,10 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
                 DouglasPeuckerSimplification()
             )
         }
+
+        fun douglasPeucker(points: List<DoubleVector>, threshold: Double): List<DoubleVector> {
+            return douglasPeucker(points).setWeightLimit(threshold).points
+        }
+
     }
 }

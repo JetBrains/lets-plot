@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.curve
 import org.jetbrains.letsPlot.commons.geometry.padLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
@@ -113,7 +114,7 @@ open class GeomHelper(
         private var myArrowSpec: ArrowSpec? = null
         private var myStrokeAlphaEnabled = false
         private var myResamplingEnabled = false
-        private var myResamplingPrecision = 0.5
+        private var myResamplingPrecision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION
         private var mySpacer: Double = 0.0
         private var myDebugRendering = false
 
