@@ -6171,6 +6171,31 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 16
+
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        df = pd.DataFrame({
+            "x": [0, -1, -1, -1, 0, 0, 1, 1, 1],
+            "y": [0, -1, 1, 0, -1, 1, -1, 0, 1],
+            "hjust": [.5, 1, 1, 1, .5, .5, 0, 0, 0],
+            "vjust": [.5, 1, 0, .5, 1, 0, 1, .5, 0],
+        }).assign(
+            label=lambda r: ("hjust=" + r["hjust"].astype(str)).str.cat(
+                "vjust=" + r["vjust"].astype(str),
+                sep='\n'
+            )
+        )
+        ggplot(df, aes("x", "y")) + \\
+            geom_text(aes(label="label", hjust="hjust", vjust="vjust")) + \\
+            geom_point() + \\
+            xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-11
 
         import numpy as np
@@ -6369,6 +6394,31 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         from lets_plot import *
         LetsPlot.setup_html()
         ggplot() + geom_label(x=0, y=0, label='Lorem ipsum', size=14)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 16
+
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        df = pd.DataFrame({
+            "x": [0, -1, -1, -1, 0, 0, 1, 1, 1],
+            "y": [0, -1, 1, 0, -1, 1, -1, 0, 1],
+            "hjust": [.5, 1, 1, 1, .5, .5, 0, 0, 0],
+            "vjust": [.5, 1, 0, .5, 1, 0, 1, .5, 0],
+        }).assign(
+            label=lambda r: ("hjust=" + r["hjust"].astype(str)).str.cat(
+                "vjust=" + r["vjust"].astype(str),
+                sep='\n'
+            )
+        )
+        ggplot(df, aes("x", "y")) + \\
+            geom_label(aes(label="label", hjust="hjust", vjust="vjust")) + \\
+            geom_point() + \\
+            xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
 
     |
 
