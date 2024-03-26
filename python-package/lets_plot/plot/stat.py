@@ -31,8 +31,8 @@ def stat_summary(mapping=None, *, data=None, geom=None,
         The geometry to display the summary stat for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -172,8 +172,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         The geometry to display the summary stat for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -322,8 +322,8 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
         The geometry to display the ecdf stat for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -453,8 +453,8 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
         The geometry to display the sum stat for this layer, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`

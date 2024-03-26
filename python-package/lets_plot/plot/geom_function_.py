@@ -100,8 +100,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         The geometry to display the function, as a string.
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     tooltips : `layer_tooltips`

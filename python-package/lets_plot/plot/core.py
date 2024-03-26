@@ -96,8 +96,8 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
         mapped to plot "aesthetics".
     position : str or `FeatureSpec`
         Position adjustment.
-        Either a position adjustment name: ‘dodge’, ‘dodgev’, ‘jitter’, ‘nudge’, ‘jitterdodge’, ‘fill’,
-        ‘stack’ or ‘identity’, or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
     kwargs:
         Other arguments passed on to layer. These are often aesthetics settings, used to set an aesthetic to a fixed
         value, like color = "red", fill = "blue", size = 3 or shape = 21. They may also be parameters to the
