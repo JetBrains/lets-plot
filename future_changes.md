@@ -1,7 +1,6 @@
 ## [4.3.1] - 2024-mm-dd
 
 ### Added
-- Parameter `min_tail_length` for `arrow()` function [[#1040](https://github.com/JetBrains/lets-plot/issues/1040)].
 
 ### Changed
       
