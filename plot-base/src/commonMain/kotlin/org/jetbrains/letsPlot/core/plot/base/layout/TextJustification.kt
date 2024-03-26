@@ -61,8 +61,8 @@ class TextJustification(val x: Double, val y: Double) {
             vjust: Double,
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-            // use 0.7 for better alignment: like vertical_anchor = 'top' (dy="0.7em")
-            return y - textSize.y + lineHeight * 0.7
+            // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
+            return y - textSize.y + lineHeight * 0.8
         }
     }
 }
