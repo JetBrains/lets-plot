@@ -6418,7 +6418,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         ggplot(df, aes("x", "y")) + \\
             geom_label(aes(label="label", hjust="hjust", vjust="vjust")) + \\
             geom_point() + \\
-            xlim(-1.2, 1.2) + ylim(-1.2, 1.2)
+            xlim(-1.4, 1.4) + ylim(-1.2, 1.2)
 
     |
 
