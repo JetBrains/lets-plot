@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetGrid
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
@@ -73,8 +73,8 @@ internal class FacetConfig(
             getFormatterOption(X_FORMAT),
             getFormatterOption(Y_FORMAT),
             scales,
-            getWordWrapper(X_LABWIDTH),
-            getWordWrapper(Y_LABWIDTH)
+            getLabWidthOption(X_LABWIDTH),
+            getLabWidthOption(Y_LABWIDTH)
         )
     }
 
@@ -113,15 +113,13 @@ internal class FacetConfig(
         // Num of formatters must be same as num of factes.
         val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
 
-        // wrappers
-        val wrapperOption = getAsList(Facet.FACETS_LABWIDTH).map {
-            toWordWrapper((it as? Number)?.toInt())
-        }
-        val labWrappers = (wrapperOption + List(facets.size) { null }).take(facets.size)
+        // Label length limit
+        val labWidthOption = getAsList(Facet.FACETS_LABWIDTH).map { (it as? Number)?.toInt() ?: DEF_LAB_WIDTH }
+        val labWidths = (labWidthOption + List(facets.size) { DEF_LAB_WIDTH }).take(facets.size)
 
         val scales: FacetScales = getScalesOption()
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWrappers)
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWidths)
     }
 
 
@@ -168,14 +166,7 @@ internal class FacetConfig(
         return toFormatterVal(get(optionName))
     }
 
-    private fun toWordWrapper(optionVal: Int?): ((String) -> String)? {
-        if (optionVal == null) return null
-        return { lab: String -> wrap(lab, optionVal) }
-    }
-
-    private fun getWordWrapper(optionName: String): ((String) -> String)? {
-        return toWordWrapper(getInteger(optionName))
-    }
+    private fun getLabWidthOption(optionName: String) = getIntegerDef(optionName, DEF_LAB_WIDTH)
 
     private fun getScalesOption(): FacetScales {
         return getString(Facet.SCALES)?.let {

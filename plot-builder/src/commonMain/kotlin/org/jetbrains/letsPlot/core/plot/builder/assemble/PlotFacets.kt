@@ -67,6 +67,7 @@ abstract class PlotFacets {
     companion object {
         const val DEF_ORDER_DIR = 0 // no ordering
         val DEF_FORMATTER: (Any) -> String = { it.toString() }
+        const val DEF_LAB_WIDTH = -1
 
         val UNDEFINED: PlotFacets = FacetGrid(null, null, emptyList<Any>(), emptyList<Any>(), 1, 1)
 
