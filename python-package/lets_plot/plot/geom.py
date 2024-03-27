@@ -56,7 +56,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -228,7 +228,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -406,7 +406,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -522,7 +522,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -694,7 +694,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     position : str or `FeatureSpec`, default='stack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -847,7 +847,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     position : str or `FeatureSpec`, default='stack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1150,7 +1150,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1309,7 +1309,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1447,7 +1447,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1537,7 +1537,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1670,7 +1670,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='dodge'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1801,7 +1801,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1927,7 +1927,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2039,7 +2039,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2178,7 +2178,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2318,7 +2318,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2500,7 +2500,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2663,7 +2663,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2771,7 +2771,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -2886,7 +2886,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3008,7 +3008,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='dodge'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     tooltips : `layer_tooltips`
@@ -3217,7 +3217,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='dodge'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3603,7 +3603,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3776,7 +3776,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3893,7 +3893,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='gstack'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4023,7 +4023,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4224,7 +4224,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4438,7 +4438,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4658,7 +4658,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     position : str or `FeatureSpec`, default='jitter'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4787,7 +4787,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -4914,7 +4914,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5017,7 +5017,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5142,7 +5142,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5236,7 +5236,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5350,7 +5350,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5457,7 +5457,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5626,7 +5626,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5778,7 +5778,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -5921,7 +5921,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -6060,7 +6060,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -6277,7 +6277,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -6506,7 +6506,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -6747,7 +6747,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -6887,7 +6887,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     position : str or `FeatureSpec`, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
-        'stack' or 'identity', or the result of calling a position adjustment function (e.g., position_dodge() etc.).
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
