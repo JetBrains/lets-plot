@@ -8,13 +8,13 @@ package org.jetbrains.letsPlot.core.plot.base
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface GeomContext {
     val flipped: Boolean
     val targetCollector: GeomTargetCollector
-    val annotations: Annotations?
+    val annotation: Annotation?
     val backgroundColor: Color
     val plotContext: PlotContext? // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
 

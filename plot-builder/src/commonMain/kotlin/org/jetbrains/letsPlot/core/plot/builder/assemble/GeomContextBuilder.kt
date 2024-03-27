@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
@@ -28,7 +28,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var aesBounds: DoubleRectangle? = null
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
-    private var annotations: Annotations? = null
+    private var annotation: Annotation? = null
     private var backgroundColor: Color = Color.WHITE
     private var plotContext: PlotContext? = null
 
@@ -40,7 +40,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         aestheticMappers = ctx.aestheticMappers
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
-        annotations = ctx.annotations
+        annotation = ctx.annotation
         backgroundColor = ctx.backgroundColor
         plotContext = ctx.plotContext
     }
@@ -75,8 +75,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun annotations(annotations: Annotations?): ImmutableGeomContext.Builder {
-        this.annotations = annotations
+    override fun annotation(annotation: Annotation?): ImmutableGeomContext.Builder {
+        this.annotation = annotation
         return this
     }
 
@@ -102,7 +102,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
-        override val annotations = b.annotations
+        override val annotation = b.annotation
         override val backgroundColor = b.backgroundColor
         override val plotContext: PlotContext? = b.plotContext
 

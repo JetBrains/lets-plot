@@ -8,7 +8,7 @@ package demo.plot.common.model
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
-    override val annotations: Annotations? = null
+    override val annotation: Annotation? = null
     override val backgroundColor: Color = Color.WHITE
     override val plotContext: PlotContext? = null
 

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 object BogusContext : GeomContext {
@@ -16,7 +16,7 @@ object BogusContext : GeomContext {
         get() = error("Not available in a bogus geom context")
     override val targetCollector: GeomTargetCollector
         get() = error("Not available in a bogus geom context")
-    override val annotations: Annotations
+    override val annotation: Annotation
         get() = error("Not available in a bogus geom context")
     override val backgroundColor: Color
         get() = error("Not available in a bogus geom context")

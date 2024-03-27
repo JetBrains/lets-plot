@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.base.geom.util
+package org.jetbrains.letsPlot.core.plot.base.geom.annotation
 
 import org.jetbrains.letsPlot.commons.colorspace.HSL
 import org.jetbrains.letsPlot.commons.colorspace.hslFromRgb
@@ -15,10 +15,12 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.geom.LabelGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.util.DataPointAestheticsDelegate
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-object AnnotationsUtil {
+object AnnotationUtil {
 
     fun textSizeGetter(textStyle: TextStyle, ctx: GeomContext): (String, DataPointAesthetics) -> DoubleVector = { text, p ->
         TextUtil.measure(
@@ -115,18 +117,17 @@ object AnnotationsUtil {
         text: String,
         location: DoubleVector,
         textParams: TextParams,
-        geomContext: GeomContext,
-        boundsCenter: DoubleVector?,
+        geomContext: GeomContext
     ): SvgGElement {
         return LabelGeom()
-            .apply { borderWidth = 0.0; paddingFactor = 0.0;  }
+            .apply { borderWidth = 0.0; paddingFactor = 0.0 }
             .buildTextComponent(
                 toTextDataPointAesthetics(textParams),
                 location,
                 text,
                 sizeUnitRatio = 1.0,
                 geomContext,
-                boundsCenter = boundsCenter
+                boundsCenter = null
             )
     }
 }

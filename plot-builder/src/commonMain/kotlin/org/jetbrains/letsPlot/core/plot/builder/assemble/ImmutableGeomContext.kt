@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.commons.values.Color
@@ -33,7 +33,7 @@ interface ImmutableGeomContext : GeomContext {
 
         fun fontFamilyRegistry(v: FontFamilyRegistry): Builder
 
-        fun annotations(annotations: Annotations?): Builder
+        fun annotation(annotation: Annotation?): Builder
 
         fun backgroundColor(color: Color): Builder
 

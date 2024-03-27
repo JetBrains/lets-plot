@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
@@ -54,7 +54,7 @@ object LayerRendererUtil {
             pos = pos,
             contextualMapping = layer.createContextualMapping(),
             mappedAes = mappedAes,
-            annotations = layer.createAnnotations()
+            annotation = layer.createAnnotation()
         )
     }
 
@@ -66,6 +66,6 @@ object LayerRendererUtil {
         val pos: PositionAdjustment,
         val contextualMapping: ContextualMapping,
         val mappedAes: Set<Aes<*>>,
-        val annotations: Annotations?
+        val annotation: Annotation?
     )
 }

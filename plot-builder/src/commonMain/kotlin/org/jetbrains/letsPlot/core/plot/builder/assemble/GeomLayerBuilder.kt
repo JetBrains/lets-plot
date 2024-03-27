@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
@@ -33,7 +33,7 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
-import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationsProviderUtil
+import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationProviderUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.PointDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
@@ -70,7 +70,7 @@ class GeomLayerBuilder(
     private var colorByAes: Aes<Color> = Aes.COLOR
     private var fillByAes: Aes<Color> = Aes.FILL
 
-    private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
+    private var myAnnotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)? = null
 
     private var myGeomTheme: GeomTheme = GeomTheme.NONE
 
@@ -141,8 +141,8 @@ class GeomLayerBuilder(
         themeTextStyle: ThemeTextStyle,
         useCustomColor: Boolean
     ): GeomLayerBuilder {
-        myAnnotationsProvider = { dataAccess, dataFrame ->
-            AnnotationsProviderUtil.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle, useCustomColor)
+        myAnnotationProvider = { dataAccess, dataFrame ->
+            AnnotationProviderUtil.createAnnotation(annotationSpec, dataAccess, dataFrame, themeTextStyle, useCustomColor)
         }
         return this
     }
@@ -249,7 +249,7 @@ class GeomLayerBuilder(
             fontFamilyRegistry = fontFamilyRegistry,
             colorByAes = colorByAes,
             fillByAes = fillByAes,
-            annotationsProvider = myAnnotationsProvider
+            annotationProvider = myAnnotationProvider
         )
     }
 
@@ -278,7 +278,7 @@ class GeomLayerBuilder(
         override val fontFamilyRegistry: FontFamilyRegistry,
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
+        private val annotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
@@ -359,8 +359,8 @@ class GeomLayerBuilder(
             return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
         }
 
-        override fun createAnnotations(): Annotations? {
-            return annotationsProvider?.let { provider ->
+        override fun createAnnotation(): Annotation? {
+            return annotationProvider?.let { provider ->
                 val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
                 provider(dataAccess, dataFrame)
             }

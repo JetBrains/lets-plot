@@ -6,21 +6,21 @@
 package org.jetbrains.letsPlot.core.plot.builder.annotation
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
-object AnnotationsProviderUtil {
+object AnnotationProviderUtil {
 
-    fun createAnnotations(
+    fun createAnnotation(
         spec: AnnotationSpecification,
         dataAccess: MappedDataAccess,
         dataFrame: DataFrame,
         themeTextStyle: ThemeTextStyle,
         useCustomColor: Boolean
-    ): Annotations? {
+    ): Annotation? {
         val mappedLines = LinePattern.prepareMappedLines(
             spec.linePatterns.map(::LinePattern),
             dataAccess, dataFrame
@@ -29,7 +29,7 @@ object AnnotationsProviderUtil {
             return null
         }
 
-        return Annotations(
+        return Annotation(
             mappedLines,
             textStyle = TextStyle(
                 themeTextStyle.family.name,
