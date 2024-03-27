@@ -25,17 +25,18 @@ fun <T> splitRings(points: List<T>, eq: (T, T) -> Boolean): List<List<T>> {
     val rings = findRingIntervals(points, eq).map(points::sublist).toMutableList()
 
     if (rings.isNotEmpty()) {
-        if (!rings.last().isClosed()) {
+        if (!rings.last().isClosed(eq)) {
             rings[rings.lastIndex] = makeClosed(rings.last())
         }
     }
 
+    //require(rings.sumOf { it.size } == points.size) { "Split rings error: ${rings.sumOf { it.size }} != ${points.size}" }
     return rings
 }
 
 private fun <T> makeClosed(path: List<T>) = path.toMutableList() + path.first()
 
-fun <T> List<T>.isClosed() = first() == last()
+fun <T> List<T>.isClosed(eq: (T, T) -> Boolean = { p1, p2 -> p1 == p2 }) = eq(first(), last())
 
 private fun <T> findRingIntervals(path: List<T>, eq: (T, T) -> Boolean): List<IntSpan> {
     val intervals = ArrayList<IntSpan>()

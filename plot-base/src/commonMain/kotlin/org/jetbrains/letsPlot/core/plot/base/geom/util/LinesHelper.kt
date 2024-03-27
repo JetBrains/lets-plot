@@ -7,16 +7,18 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
-import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class LinesHelper(
     pos: PositionAdjustment,
@@ -49,12 +51,23 @@ open class LinesHelper(
         return renderPaths(pathDataByGroup.values, filled = false)
     }
 
+    // TODO: filled parameter is always false
     fun renderPaths(paths: Map<Int, List<PathData>>, filled: Boolean): List<LinePath> {
         return renderPaths(paths.values.flatten(), filled)
     }
 
-    fun renderPaths(paths: Collection<PathData>, filled: Boolean): List<LinePath> {
-        return paths.map { path -> renderPaths(path.aes, path.coordinates, filled) }
+    // TODO: filled parameter is always false
+    private fun renderPaths(paths: Collection<PathData>, filled: Boolean): List<LinePath> {
+        return paths.map { path ->
+            val visualPath = douglasPeucker(path.coordinates, DOUGLAS_PEUCKER_PIXEL_THRESHOLD)
+            val element = when (filled) {
+                true -> LinePath.polygon(visualPath)
+                false -> LinePath.line(visualPath)
+            }
+
+            decorate(element, path.aes, filled)
+            element
+        }
     }
 
     fun createPathData(
@@ -62,8 +75,44 @@ open class LinesHelper(
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
         closePath: Boolean = false,
     ): Map<Int, List<PathData>> {
-        val domainInterpolatedData = preparePathData(dataPoints, locationTransform, closePath)
-        return toClient(domainInterpolatedData)
+        val domainData = preparePathData(dataPoints, locationTransform, closePath)
+        return toClient(domainData)
+    }
+
+    fun createPolygon(
+        dataPoints: Iterable<DataPointAesthetics>,
+        locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
+    ): List<Pair<SvgNode, PolygonData>> {
+        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = true).values
+
+        // split in domain space! after resampling coordinates may repeat and splitRings will return wrong results
+        val domainPolygonData = domainPathData
+            .map { splitRings(it.points) { p1, p2 -> p1.coord == p2.coord } }
+            .map { PolygonData(it) }
+
+        val clientPolygonData = domainPolygonData.map { polygon ->
+            polygon.rings
+                .map { resample(it) + it.last().let { (aes, coord) -> PathPoint(aes, toClient(coord, aes)!!) } }
+                .let { PolygonData(it) }
+        }
+
+        val svg = clientPolygonData.map { polygon ->
+            val element = polygon.coordinates
+                .map { douglasPeucker(it, DOUGLAS_PEUCKER_PIXEL_THRESHOLD) }
+                .let(::insertPathSeparators)
+                .let { LinePath.polygon(it) }
+
+            decorate(element, polygon.aes, filled = true)
+            element.rootGroup
+        }
+
+        return svg.zip(clientPolygonData)
+    }
+
+    private fun resample(linestring: List<PathPoint>): List<PathPoint> {
+        return linestring.windowed(size = 2)
+            .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, PIXEL_PRECISION) { p -> toClient(p, p1.aes) } }
+            .flatMap { (aes, coords) -> coords.map { PathPoint(aes, it) } }
     }
 
     // TODO: return list of PathData for consistency
@@ -71,9 +120,8 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): Map<Int, PathData> {
-        return GeomUtil.createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
+        return createPathGroups(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
     }
-
 
     fun createSteps(paths: Map<Int, PathData>, horizontalThenVertical: Boolean): List<LinePath> {
         val linePaths = ArrayList<LinePath>()
@@ -145,18 +193,18 @@ open class LinesHelper(
             val points = pathData.coordinates
 
             if (points.isNotEmpty()) {
-                val path = LinePath.polygon(if (simplifyBorders) simplify(points) else points)
+                val path = LinePath.polygon(
+                    when {
+                        simplifyBorders -> douglasPeucker(points, DOUGLAS_PEUCKER_PIXEL_THRESHOLD)
+                        else -> points
+                    }
+                )
                 decorateFillingPart(path, pathData.aes)
                 path
             } else {
                 null
             }
         }
-    }
-
-    private fun simplify(points: List<DoubleVector>): List<DoubleVector> {
-        val weightLimit = 0.25 // in px for Douglas–Peucker algorithm
-        return PolylineSimplifier.douglasPeucker(points).setWeightLimit(weightLimit).points
     }
 
     fun decorate(
@@ -191,40 +239,24 @@ open class LinesHelper(
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
-    private fun renderPaths(
-        aes: DataPointAesthetics,
-        points: List<DoubleVector>,
-        filled: Boolean
-    ): LinePath {
-        val element = when (filled) {
-            true -> LinePath
-                .polygon(
-                    splitRings(points)
-                        .map { PolylineSimplifier.douglasPeucker(it, DOUGLAS_PEUCKER_PIXEL_THRESHOLD) }
-                        .let(::insertPathSeparators)
-                )
-            false -> LinePath.line(PolylineSimplifier.douglasPeucker(points, DOUGLAS_PEUCKER_PIXEL_THRESHOLD))
-        }
-        decorate(element, aes, filled)
-        return element
-    }
-
     private fun preparePathData(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector?,
         closePath: Boolean
     ): Map<Int, List<PathData>> {
-        val domainPathData = GeomUtil.createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
+        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = closePath)
         return domainPathData.mapValues { (_, pathData) -> listOf(pathData) }
     }
 
     private fun toClient(domainPathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
         return when (myResamplingEnabled) {
             true -> {
-                val domainVariadicPathData = domainPathData.mapValues { (_, groupPath) -> groupPath.flatMap(::splitByStyle) }
-                val domainInterpolatedPathData = interpolatePathData(domainVariadicPathData)
-                resamplePathData(domainInterpolatedPathData)
+                domainPathData
+                    .mapValues { (_, groupPath) -> groupPath.flatMap(::splitByStyle) }
+                    .let { interpolatePathData(it) }
+                    .mapValues { (_, paths) -> paths.map { PathData(resample(it.points)) } }
             }
+
             false -> {
                 val clientPathData = domainPathData.mapValues { (_, groupPath) ->
                     groupPath.map { segment ->
@@ -237,21 +269,9 @@ open class LinesHelper(
                     }
                 }
 
-                val clientVariadicPathData = clientPathData.mapValues { (_, pathData) -> pathData.flatMap(::splitByStyle) }
+                val clientVariadicPathData =
+                    clientPathData.mapValues { (_, pathData) -> pathData.flatMap(::splitByStyle) }
                 interpolatePathData(clientVariadicPathData)
-            }
-        }
-    }
-
-    // TODO: refactor - inconsistent and implicit usage of the toClient method in a whole LinesHelper class
-    private fun resamplePathData(pathData: Map<Int, List<PathData>>): Map<Int, List<PathData>> {
-        return pathData.mapValues { (_, path) ->
-            path.map { segment ->
-                val smoothed = segment.points
-                    .windowed(size = 2)
-                    .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, AdaptiveResampler.PIXEL_RESAMPLING_PRECISION) { toClient(it, p1.aes) } }
-                    .flatMap { (aes, points) -> points.map { PathPoint(aes, it) } }
-                PathData(smoothed)
             }
         }
     }
@@ -339,7 +359,37 @@ data class PathData(
 
     val aes: DataPointAesthetics by lazy(points.first()::aes) // decoration aes (only for color, fill, size, stroke)
     val aesthetics by lazy { points.map(PathPoint::aes) }
-    val coordinates by lazy { points.map(PathPoint::coord) }
+    val coordinates by lazy { points.map(PathPoint::coord) } // may contain duplicates, don't work well for polygon
+}
+
+data class PolygonData(
+    val rings: List<List<PathPoint>>
+) {
+    init {
+        require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
+        require(rings.all { it.size >= 3 }) { "PolygonData ring should contain at least 3 points" }
+    }
+
+    val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)
+    val aesthetics by lazy { rings.map { ring -> ring.map { it.aes } } }
+    val coordinates by lazy { rings.map { ring -> ring.map { it.coord } } }
+    val flattenCoordinates by lazy { // guaranteed to have no duplicates on ends caused by resampling
+        val output = mutableListOf<DoubleVector>()
+        rings.forEach { ring ->
+            val firstPoint = ring.first().coord
+            val lastPoint = ring.last().coord
+
+            // trim duplications at start and end to make the ring detection work
+
+            output.add(firstPoint)
+            output.addAll(ring.asSequence().dropWhile { it.coord == firstPoint }.map { it.coord })
+            while (output.last() == lastPoint) {
+                output.removeLast()
+            }
+            output.add(lastPoint)
+        }
+        output
+    }
 }
 
 data class PathPoint(
