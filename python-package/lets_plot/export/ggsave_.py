@@ -40,7 +40,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         Some browsers may not display some UTF-8 characters correctly when setting iframe=True
     scale : float, default=2.0
         Scaling factor for raster output.
-        Only applicable when exporting to PNG.
+        Only applicable when exporting to PNG or PDF.
 
     Returns
     -------
