@@ -114,7 +114,7 @@ open class GeomHelper(
         private var myArrowSpec: ArrowSpec? = null
         private var myStrokeAlphaEnabled = false
         private var myResamplingEnabled = false
-        private var myResamplingPrecision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION
+        private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
         private var mySpacer: Double = 0.0
         private var myDebugRendering = false
 

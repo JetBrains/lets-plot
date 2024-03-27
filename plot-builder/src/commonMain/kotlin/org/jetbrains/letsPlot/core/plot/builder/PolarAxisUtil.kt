@@ -127,7 +127,7 @@ object PolarAxisUtil {
                         DoubleVector(gridDomain.xRange().lowerEnd, it),
                         DoubleVector(gridDomain.xRange().upperEnd, it)
                     )
-                }.map { line -> AdaptiveResampler.resample(line, AdaptiveResampler.PIXEL_RESAMPLING_PRECISION) { toClient(it) } }
+                }.map { line -> AdaptiveResampler.resample(line, AdaptiveResampler.PIXEL_PRECISION, ::toClient) }
         }
 
         private fun buildAxis(): List<DoubleVector> {

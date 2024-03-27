@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.distance2
 import org.jetbrains.letsPlot.commons.intern.math.distance2ToLine
 
-
+// Note that resampled points may contain duplicates, i.e. rings detection may fail.
 class AdaptiveResampler<T> private constructor(
     private val transform: (T) -> T?,
     precision: Double,
@@ -18,7 +18,7 @@ class AdaptiveResampler<T> private constructor(
     private val precisionSqr: Double = precision * precision
 
     companion object {
-        const val PIXEL_RESAMPLING_PRECISION = 0.95
+        const val PIXEL_PRECISION = 0.95
         private const val MAX_DEPTH_LIMIT = 9 // 1_025 points maximum (2^(LIMIT + 1) + 1)
 
         private val DOUBLE_VECTOR_ADAPTER = object : DataAdapter<DoubleVector> {

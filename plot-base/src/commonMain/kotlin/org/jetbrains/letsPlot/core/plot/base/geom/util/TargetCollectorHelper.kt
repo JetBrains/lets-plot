@@ -51,15 +51,13 @@ class TargetCollectorHelper(
         }
     }
 
-    fun addPolygons(pathDataList: Map<Int, PathData>) {
-        pathDataList.values.forEach { pathData ->
-            targetCollector.addPolygon(
-                pathData.coordinates,
-                pathData.aes.index(),
-                TooltipParams(markerColors = colorMarkerMapper(pathData.aes)),
-                TipLayoutHint.Kind.CURSOR_TOOLTIP
-            )
-        }
+    fun addPolygons(polygonData: PolygonData) {
+        targetCollector.addPolygon(
+            polygonData.flattenCoordinates,
+            polygonData.aes.index(),
+            TooltipParams(markerColors = colorMarkerMapper(polygonData.aes)),
+            TipLayoutHint.Kind.CURSOR_TOOLTIP
+        )
     }
 
     private fun addPath(path: PathData, tooltipParams: TooltipParams) {

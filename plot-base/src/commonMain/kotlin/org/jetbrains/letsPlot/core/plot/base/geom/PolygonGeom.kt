@@ -26,12 +26,14 @@ open class PolygonGeom : GeomBase() {
     ) {
         val dataPoints = dataPoints(aesthetics)
         val linesHelper = LinesHelper(pos, coord, ctx)
+        linesHelper.setResamplingEnabled(coord.isPolar)
+
         val targetCollectorHelper = TargetCollectorHelper(GeomKind.POLYGON, ctx)
 
-        val pathData = linesHelper.createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        targetCollectorHelper.addPolygons(pathData)
-        val svgPath = linesHelper.renderPaths(pathData.values, filled = true)
-        root.appendNodes(svgPath)
+        linesHelper.createPolygon(dataPoints, GeomUtil.TO_LOCATION_X_Y).forEach { (svg, polygonData) ->
+            targetCollectorHelper.addPolygons(polygonData)
+            root.add(svg)
+        }
     }
 
     companion object {

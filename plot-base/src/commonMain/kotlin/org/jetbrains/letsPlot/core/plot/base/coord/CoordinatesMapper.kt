@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_RESAMPLING_PRECISION
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
@@ -140,7 +140,7 @@ fun projectDomain(
 
         val hLines = points(domain.top, domain.bottom).map { DoubleVector(domain.left, it) to DoubleVector(domain.right, it) }
         val vLines = points(domain.left, domain.right).map { DoubleVector(it, domain.top) to DoubleVector(it, domain.bottom) }
-        val grid = (hLines + vLines).map { (p1, p2) -> resample(p1, p2, PIXEL_RESAMPLING_PRECISION, projection::project) }
+        val grid = (hLines + vLines).map { (p1, p2) -> resample(p1, p2, PIXEL_PRECISION, projection::project) }
 
         val projectedDomain = boundingBox(grid.flatten()) ?: error("Can't calculate bounding box for projected domain")
 

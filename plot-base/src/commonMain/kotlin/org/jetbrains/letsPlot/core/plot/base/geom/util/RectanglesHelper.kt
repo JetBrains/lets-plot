@@ -31,7 +31,7 @@ class RectanglesHelper(
         myAesthetics.dataPoints().forEach { p ->
             geometryFactory(p)?.let { rect ->
                 val polyRect = resample(
-                    precision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION,
+                    precision = AdaptiveResampler.PIXEL_PRECISION,
                     points = listOf(
                         DoubleVector(rect.left, rect.top),
                         DoubleVector(rect.right, rect.top),
@@ -95,7 +95,7 @@ class RectanglesHelper(
     inner class SvgRectHelper {
         private var onGeometry: (DataPointAesthetics, DoubleRectangle?, List<DoubleVector>?) -> Unit = { _, _, _ -> }
         private var myResamplingEnabled = false
-        private var myResamplingPrecision = AdaptiveResampler.PIXEL_RESAMPLING_PRECISION
+        private var myResamplingPrecision = AdaptiveResampler.PIXEL_PRECISION
 
         fun setResamplingEnabled(b: Boolean) {
             myResamplingEnabled = b

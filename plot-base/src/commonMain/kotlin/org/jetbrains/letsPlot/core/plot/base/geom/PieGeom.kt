@@ -208,7 +208,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
             val segmentLength = startPoint.subtract(endPoint).length()
 
-            return resample(startPoint, endPoint, AdaptiveResampler.PIXEL_RESAMPLING_PRECISION) { p: DoubleVector ->
+            return resample(startPoint, endPoint, AdaptiveResampler.PIXEL_PRECISION) { p: DoubleVector ->
                 val ratio = p.subtract(startPoint).length() / segmentLength
                 if (ratio.isFinite()) {
                     arcPoint(sector.startAngle + sector.angle * ratio)
