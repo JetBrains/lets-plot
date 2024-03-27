@@ -96,8 +96,8 @@ object BarAnnotation {
                 ?.intersect(viewPort)   // use the visible part of bar to place annotation on it
                 ?: return@iterateRectangleGeometry
 
-            val isNegative = rect.dimension.y < 0
-            rectangles.add(Triple(p, clientRect, isNegative))
+            val isUpsideDown = with(rect) { dimension.y < 0 || top < 0 } // bar with base at the top
+            rectangles.add(Triple(p, clientRect, isUpsideDown))
         }
 
         rectangles
@@ -110,7 +110,7 @@ object BarAnnotation {
                     .sortedBy { (_, rect) ->
                         if (isHorizontallyOriented) rect.center.x else rect.center.y
                     }
-                    .forEachIndexed { index, (p, barRect, isNegative) ->
+                    .forEachIndexed { index, (p, barRect, isUpsideDown) ->
                         val text = annotation.getAnnotationText(p.index(), ctx.plotContext)
                         val textSize = AnnotationUtil.textSizeGetter(annotation.textStyle, ctx).invoke(text, p)
 
@@ -122,7 +122,7 @@ object BarAnnotation {
                             padding,
                             viewPort,
                             isHorizontallyOriented,
-                            isNegative
+                            isUpsideDown
                         )
                             ?: return@forEachIndexed
 
@@ -182,7 +182,7 @@ object BarAnnotation {
         padding: Double,
         viewPort: DoubleRectangle,
         isHorizontallyOriented: Boolean,
-        isNegative: Boolean
+        isUpsideDown: Boolean
     ): Pair<Text.HorizontalAnchor, DoubleRectangle>? {
 
         val coordSelector: (DoubleVector) -> Double =
@@ -191,9 +191,10 @@ object BarAnnotation {
         var insideBar = when {
             barsCount == 1 -> {
                 // use left (for horizontally orientated) or bottom (of the vertical bar)
-                if (isHorizontallyOriented) PlacementInsideBar.MIN else PlacementInsideBar.MAX
+                (if (isHorizontallyOriented) PlacementInsideBar.MIN else PlacementInsideBar.MAX).let {
+                    if (isUpsideDown) it.flip() else it
+                }
             }
-
             index == 0 -> PlacementInsideBar.MIN
             index == barsCount - 1 -> PlacementInsideBar.MAX
             else -> PlacementInsideBar.MIDDLE
@@ -231,7 +232,7 @@ object BarAnnotation {
         if (barsCount == 1) {
             // move to the right (for horizontally orientated) or to the top (of the vertical bar)
             insideBar = if (isHorizontallyOriented) PlacementInsideBar.MAX else PlacementInsideBar.MIN
-            if (isNegative) insideBar = insideBar.flip()
+            if (isUpsideDown) insideBar = insideBar.flip()
         }
 
         fun DoubleRectangle.moveTo(value: Double): DoubleRectangle {

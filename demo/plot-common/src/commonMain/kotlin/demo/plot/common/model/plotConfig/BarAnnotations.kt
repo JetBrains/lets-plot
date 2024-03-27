@@ -10,7 +10,9 @@ import demoAndTestShared.parsePlotSpec
 class BarAnnotations {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            //barPlot(grouped = false, flip = false),
+            barPlot(grouped = false, flip = false),
+            barPlot(grouped = false, flip = false, reversed = true),
+
             barPlot("dodge", flip = false),
             barPlot("stack", flip = false),
             barPlot("stack", flip = false, yLim = "[3, 30]"),
@@ -20,7 +22,7 @@ class BarAnnotations {
             //barPlot("dodge", flip = true),
             //barPlot("stack", flip = true),
             barPlot("fill", flip = true),
-            barPlot("fill", flip = true, yLim = "[0.4, 0.8]"),
+            //barPlot("fill", flip = true, yLim = "[0.4, 0.8]"),
 
             withNegativeValues("stack", flip = false),
             withNegativeValues("stack", flip = false, yLim = "[2, 8]"),
@@ -28,8 +30,8 @@ class BarAnnotations {
             //withNegativeValues("dodge", flip = false),
 
             //withNegativeValues("stack", flip = true),
-            withNegativeValues("fill", flip = true),
-            withNegativeValues("fill", flip = true, yLim = "[-0.5, 0.5]"),
+            //withNegativeValues("fill", flip = true),
+            //withNegativeValues("fill", flip = true, yLim = "[-0.5, 0.5]"),
             //withNegativeValues("dodge", flip = true),
         )
     }
@@ -45,7 +47,8 @@ class BarAnnotations {
         position: String = "stack",
         flip: Boolean = false,
         grouped: Boolean = true,
-        yLim: String? = null
+        yLim: String? = null,
+        reversed: Boolean = false
     ): MutableMap<String, Any> {
         val coordSpec = when {
             flip -> "'coord': {'name': 'flip', 'flip': true, 'ylim': $yLim},"
@@ -53,12 +56,15 @@ class BarAnnotations {
             else -> ""
         }
         val mappingSpec = "'x': 'x'" + if (grouped) ", 'fill': 'v'" else ""
+        val scales = if (reversed) "'scales': [{'aesthetic': 'y', 'trans': 'reverse'}]," else ""
+
         val spec = """
           {
              'kind': 'plot',
              'ggtitle': { 'text': 'position=\'$position\', coord_cartesian(ylim=$yLim)'},
               $coordSpec
              'mapping': { $mappingSpec },
+             $scales
              'layers': [
                {
                  'geom': 'bar',
@@ -83,18 +89,25 @@ class BarAnnotations {
         "value" to listOf(0.5, 5, -1.5, 3, 1, 2, 4, 0.5, -1, 6, 5, -0.2, 5, -2, 5, 4)
     )
 
-    private fun withNegativeValues(position: String, flip: Boolean, yLim: String? = null): MutableMap<String, Any> {
+    private fun withNegativeValues(
+        position: String,
+        flip: Boolean,
+        yLim: String? = null,
+        reversed: Boolean = false
+    ): MutableMap<String, Any> {
         val coordSpec = when {
             flip -> "'coord': {'name': 'flip', 'flip': true, 'ylim': $yLim},"
             yLim != null -> "'coord': {'name': 'cartesian', 'ylim': $yLim},"
             else -> ""
         }
+        val scales = if (reversed) "'scales': [{'aesthetic': 'y', 'trans': 'reverse'}]," else ""
         val spec = """
         {
           'kind': 'plot',
           'ggtitle': { 'text': 'position=\'$position\', coord_cartesian(ylim=$yLim)'},
           'mapping': { 'x': 'x', 'y': 'value', 'fill': 'group' },
            $coordSpec
+           $scales
           'layers': [
             {
                 'geom': 'bar',
