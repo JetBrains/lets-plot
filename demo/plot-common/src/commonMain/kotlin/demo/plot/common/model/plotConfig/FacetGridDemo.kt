@@ -18,6 +18,7 @@ class FacetGridDemo {
             both(),
             bothFlipped(),
             both_YOrderingDesc(),
+            withLabWidth(),
             numericFacetVariable(),
         )
     }
@@ -26,7 +27,7 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to demo.plot.common.data.AutoMpg.cylinders.name,
+            "x" to AutoMpg.cylinders.name,
             "x_format" to "{d} cyl"
         )
 
@@ -45,7 +46,7 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "y" to demo.plot.common.data.AutoMpg.origin.name
+            "y" to AutoMpg.origin.name
         )
         return plotSpec
     }
@@ -54,8 +55,8 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to demo.plot.common.data.AutoMpg.cylinders.name,
-            "y" to demo.plot.common.data.AutoMpg.origin.name,
+            "x" to AutoMpg.cylinders.name,
+            "y" to AutoMpg.origin.name,
             "x_format" to "{d} cyl"
         )
         return plotSpec
@@ -65,8 +66,8 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to demo.plot.common.data.AutoMpg.origin.name,
-            "y" to demo.plot.common.data.AutoMpg.cylinders.name,
+            "x" to AutoMpg.origin.name,
+            "y" to AutoMpg.cylinders.name,
             "y_format" to "{d} cyl"
         )
         return plotSpec
@@ -77,10 +78,23 @@ class FacetGridDemo {
         val plotSpec = commonSpecs()
         plotSpec["facet"] = mapOf(
             "name" to "grid",
-            "x" to demo.plot.common.data.AutoMpg.cylinders.name,
-            "y" to demo.plot.common.data.AutoMpg.origin.name,
+            "x" to AutoMpg.cylinders.name,
+            "y" to AutoMpg.origin.name,
             "y_order" to -1,
             "x_format" to "{d} cyl"
+        )
+        return plotSpec
+    }
+
+    private fun withLabWidth(): MutableMap<String, Any> {
+        val plotSpec = commonSpecs()
+        plotSpec["facet"] = mapOf(
+            "name" to "grid",
+            "x" to AutoMpg.cylinders.name,
+            "y" to AutoMpg.origin.name,
+            "x_format" to "{d} cyl",
+            "x_labwidth" to 3,
+            "y_labwidth" to 1
         )
         return plotSpec
     }
@@ -90,9 +104,9 @@ class FacetGridDemo {
             {
                 'kind': 'plot',
                 'mapping': {
-                    'x': "${demo.plot.common.data.AutoMpg.horsepower.name}",
-                    'y': "${demo.plot.common.data.AutoMpg.mpg.name}",     
-                    'color': "${demo.plot.common.data.AutoMpg.origin.name}"     
+                    'x': "${AutoMpg.horsepower.name}",
+                    'y': "${AutoMpg.mpg.name}",     
+                    'color': "${AutoMpg.origin.name}"     
                 },
                 'layers': [
                     {
@@ -104,7 +118,7 @@ class FacetGridDemo {
         """.trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = demo.plot.common.data.AutoMpg.df
+        plotSpec["data"] = AutoMpg.df
         return plotSpec
     }
 

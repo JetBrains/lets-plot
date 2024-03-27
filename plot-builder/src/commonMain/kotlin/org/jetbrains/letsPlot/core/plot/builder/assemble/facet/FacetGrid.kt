@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble.facet
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -20,7 +21,9 @@ class FacetGrid constructor(
     yOrder: Int,
     private val xFormatter: (Any) -> String = DEF_FORMATTER,
     private val yFormatter: (Any) -> String = DEF_FORMATTER,
-    scales: FacetScales = FacetScales.FIXED
+    scales: FacetScales = FacetScales.FIXED,
+    private val xLabWidth: Int = DEF_LAB_WIDTH,
+    private val yLabWidth: Int = DEF_LAB_WIDTH
 ) : PlotFacets() {
 
     override val isDefined: Boolean = xVar != null || yVar != null
@@ -84,10 +87,10 @@ class FacetGrid constructor(
      */
     override fun tileInfos(): List<FacetTileInfo> {
         val colLabels = (colLevels).map {
-            it?.let { xFormatter(it) }
+            it?.let { wrap(xFormatter(it), xLabWidth) }
         }
         val rowLabels = (rowLevels).map {
-            it?.let { yFormatter(it) }
+            it?.let { wrap(yFormatter(it), yLabWidth) }
         }
 
         val infos = ArrayList<FacetTileInfo>()

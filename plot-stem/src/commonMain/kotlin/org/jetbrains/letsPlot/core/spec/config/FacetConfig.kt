@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetGrid
 import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetScales
@@ -17,8 +18,10 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.facet.FacetWrap
 import org.jetbrains.letsPlot.core.spec.Option.Facet
 import org.jetbrains.letsPlot.core.spec.Option.Facet.FACETS_FILL_DIR
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.Facet.X_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.X_ORDER
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_FORMAT
+import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_LABWIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
@@ -69,7 +72,9 @@ internal class FacetConfig(
             getOrderOption(Y_ORDER),
             getFormatterOption(X_FORMAT),
             getFormatterOption(Y_FORMAT),
-            scales
+            scales,
+            getLabWidthOption(X_LABWIDTH),
+            getLabWidthOption(Y_LABWIDTH)
         )
     }
 
@@ -108,9 +113,13 @@ internal class FacetConfig(
         // Num of formatters must be same as num of factes.
         val formatters = (formatterOption + List(facets.size) { DEF_FORMATTER }).take(facets.size)
 
+        // Label length limit
+        val labWidthOption = getAsList(Facet.FACETS_LABWIDTH).map { (it as? Number)?.toInt() ?: DEF_LAB_WIDTH }
+        val labWidths = (labWidthOption + List(facets.size) { DEF_LAB_WIDTH }).take(facets.size)
+
         val scales: FacetScales = getScalesOption()
 
-        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales)
+        return FacetWrap(facets, facetLevels, nrow, ncol, getDirOption(), ordering, formatters, scales, labWidths)
     }
 
 
@@ -156,6 +165,8 @@ internal class FacetConfig(
     private fun getFormatterOption(optionName: String): (Any) -> String {
         return toFormatterVal(get(optionName))
     }
+
+    private fun getLabWidthOption(optionName: String) = getIntegerDef(optionName, DEF_LAB_WIDTH)
 
     private fun getScalesOption(): FacetScales {
         return getString(Facet.SCALES)?.let {

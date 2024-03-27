@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble.facet
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import kotlin.math.ceil
@@ -14,12 +15,13 @@ import kotlin.math.min
 class FacetWrap constructor(
     private val facets: List<String>,
     levels: List<List<Any>>,
-    private val nrow: Int?,
-    private val ncol: Int?,
+    nrow: Int?,
+    ncol: Int?,
     private val direction: Direction,
     facetOrdering: List<Int>,
     private val facetFormatters: List<(Any) -> String>,
-    scales: FacetScales = FacetScales.FIXED
+    scales: FacetScales = FacetScales.FIXED,
+    private val labWidths: List<Int>
 ) : PlotFacets() {
 
     override val isDefined: Boolean = true
@@ -65,7 +67,9 @@ class FacetWrap constructor(
         val levelTuples = createNameLevelTuples(facets, levels)
         val tileLabels = levelTuples
             .map { it.map { pair -> pair.second } }                    // get rid of 'pair'
-            .map { it.mapIndexed { i, level -> facetFormatters[i](level) } }                // to string tuples
+            .map {
+                it.mapIndexed { i, level -> wrap(facetFormatters[i](level), labWidths[i]) }   // to string tuples
+            }
 
         fun toCol(index: Int): Int {
             return when (direction) {

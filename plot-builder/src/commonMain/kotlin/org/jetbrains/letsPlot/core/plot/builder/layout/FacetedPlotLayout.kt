@@ -7,8 +7,10 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
@@ -18,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLay
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
+import kotlin.math.max
 
 internal class FacetedPlotLayout(
     private val facets: PlotFacets,
@@ -28,6 +31,7 @@ internal class FacetedPlotLayout(
     private val hAxisTheme: AxisTheme,
     private val vAxisTheme: AxisTheme,
     private val plotTheme: PlotTheme,
+    private val facetsTheme: FacetsTheme
 ) : PlotLayout {
     private val totalAddedHSize: Double = PANEL_PADDING * (facets.colCount - 1)
     private val totalAddedVSize: Double = PANEL_PADDING * (facets.rowCount - 1)
@@ -51,16 +55,41 @@ internal class FacetedPlotLayout(
 
         val facetTiles = facets.tileInfos()
 
+        // Calc sizes of facet tabs
+        val facetColTabHeights: Map<Int, List<Double>> // facet tab heights for column labels
+        val facetRowTabWidth: Double                   // max width of row labels
         if (showFacetStrip) {
-            val tileColLabCounts = facetTiles.firstOrNull { it.colLabs.isNotEmpty() }?.colLabs?.size ?: 0
-            val tileWithColLabInRowCount = facetTiles
-                .filter { it.colLabs.isNotEmpty() }
-                .distinctBy { it.row }.count()
+            facetColTabHeights = facetTiles
+                .groupBy({ it.row }, { it.colLabs })
+                .mapValues {
+                    val subColLabels = HashMap<Int, Double>()
+                    it.value.forEach { colLabs ->
+                        colLabs.forEachIndexed { index, colLab ->
+                            val labHeight = facetLabelSize(colLab, facetsTheme, marginSize = Thickness::height)
+                            subColLabels[index] = max(labHeight, subColLabels[index] ?: 0.0)
+                        }
+                    }
+                    subColLabels.values.toList()
+                }
 
-            val totalAddedHeight = facetColHeadHeight(tileColLabCounts) * tileWithColLabInRowCount
+            facetRowTabWidth =  facetTiles
+                .mapNotNull { it.rowLab }
+                .maxOfOrNull { facetLabelSize(it, facetsTheme, marginSize = Thickness::width) }
+                ?: 0.0
+        } else {
+            facetColTabHeights = emptyMap()
+            facetRowTabWidth = 0.0
+        }
+        val facetColHeadHeightGetter = { facetTile: PlotFacets.FacetTileInfo ->
+            facetColTabHeights[facetTile.row]?.let(::facetColHeadTotalHeight)
+                ?: facetColHeadTotalHeight(facetTile.colLabs, facetsTheme)
+        }
 
-            val labsInRow = if (facetTiles.any { it.rowLab != null }) 1 else 0
-            val labsTotalDim = DoubleVector(labsInRow * FACET_TAB_HEIGHT, totalAddedHeight)
+        if (showFacetStrip) {
+            val totalAddedHeight = facetColTabHeights.values.sumOf(::facetColHeadTotalHeight)
+            val totalAddedWidth = facetRowTabWidth + FACET_PADDING
+            val labsTotalDim = DoubleVector(totalAddedWidth, totalAddedHeight)
+
             tilesAreaSize = tilesAreaSize.subtract(labsTotalDim)
         }
 
@@ -97,7 +126,8 @@ internal class FacetedPlotLayout(
         val geomOffsetByCol = geomOffsetsByCol(layoutInfos, facetTiles, PANEL_PADDING, facets.colCount)
         val geomOffsetByRow = geomOffsetsByRow(
             layoutInfos, facetTiles, showFacetStrip,
-            PANEL_PADDING, facets.rowCount
+            PANEL_PADDING, facets.rowCount,
+            facetColHeadHeightGetter
         )
 
         val tileBoundsList = ArrayList<DoubleRectangle>()
@@ -113,7 +143,7 @@ internal class FacetedPlotLayout(
 
             // Tile width
             val tileLabelWidth = if (facetTile.rowLab != null && showFacetStrip) {
-                FACET_TAB_HEIGHT  // one label on the left side.
+                facetRowTabWidth + FACET_PADDING // one label on the left side
             } else {
                 0.0
             }
@@ -129,7 +159,7 @@ internal class FacetedPlotLayout(
 
             // Tile height
             val tileLabelHeight = if (showFacetStrip) {
-                facetColHeadHeight(facetTile.colLabs.size)
+                facetColHeadHeightGetter(facetTile)
             } else {
                 0.0
             }
@@ -196,7 +226,13 @@ internal class FacetedPlotLayout(
 
             finalLayoutInfos.add(
                 if (showFacetStrip) {
-                    newLayoutInfo.withFacetLabels(facetTile.colLabs, facetTile.rowLab)
+                    val colHeights = facetColTabHeights[facetTile.row] ?:
+                        facetTile.colLabs.map { facetLabelSize(it, facetsTheme, marginSize = Thickness::height) }
+
+                    newLayoutInfo.withFacetLabels(
+                        facetTile.colLabs.zip(colHeights),
+                        facetTile.rowLab?.let { it to facetRowTabWidth }
+                    )
                 } else {
                     newLayoutInfo
                 }
@@ -209,22 +245,28 @@ internal class FacetedPlotLayout(
 
 
     companion object {
-        const val FACET_TAB_HEIGHT = 30.0
-        const val FACET_H_PADDING = 0
-        const val FACET_V_PADDING = 6 //5
-
+        const val FACET_PADDING = 3  // space between panel and facet title
         private const val PANEL_PADDING = 10.0
 
-        fun facetColLabelSize(colWidth: Double): DoubleVector {
-            return DoubleVector(colWidth - FACET_H_PADDING * 2, FACET_TAB_HEIGHT - FACET_V_PADDING * 2.0)
-        }
+        // label height + margins
+        fun facetLabelSize(title: String, theme: FacetsTheme, marginSize: (Thickness) -> Double) =
+            titleSize(title, theme).y + marginSize(theme.stripMargins())
 
-        fun facetColHeadHeight(labCount: Int): Double {
-            return if (labCount > 0) {
-                facetColLabelSize(0.0).y * labCount + FACET_V_PADDING * 2
+        // Total head sizes: tab size with additional padding
+
+        private fun facetColHeadTotalHeight(colLabs: List<String>, facetsTheme: FacetsTheme): Double {
+            return if (colLabs.isNotEmpty()) {
+                colLabs.sumOf { facetLabelSize(it, facetsTheme, Thickness::height) } + FACET_PADDING
             } else {
                 0.0
             }
         }
+
+        fun facetColHeadTotalHeight(colLabHeights: List<Double>) = colLabHeights.sum().let { labHeight ->
+            if (labHeight > 0) labHeight + FACET_PADDING else labHeight
+        }
+
+        fun titleSize(title: String, theme: FacetsTheme) =
+            PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.facetText(theme))
     }
 }

@@ -625,7 +625,8 @@ object Option {
         const val Y_ORDER = "y_order"
         const val X_FORMAT = "x_format"
         const val Y_FORMAT = "y_format"
-
+        const val X_LABWIDTH = "x_labwidth"
+        const val Y_LABWIDTH = "y_labwidth"
         // wrap
         const val FACETS = "facets"
         const val NCOL = "ncol"
@@ -633,6 +634,7 @@ object Option {
         const val FACETS_ORDER = "order"
         const val FACETS_FILL_DIR = "dir"
         const val FACETS_FORMAT = "format"
+        const val FACETS_LABWIDTH = "labwidth"
 
         const val FACET_ORDER_ASC = 1
         const val FACET_ORDER_DESC = -1

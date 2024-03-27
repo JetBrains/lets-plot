@@ -46,4 +46,8 @@ internal class DefaultFacetsTheme(
     override fun stripTextStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }
+
+    override fun stripMargins() = getMargins(getElemValue(textKey))
+
+    override fun stripTextJustification() = getTextJustification(getElemValue(textKey))
 }

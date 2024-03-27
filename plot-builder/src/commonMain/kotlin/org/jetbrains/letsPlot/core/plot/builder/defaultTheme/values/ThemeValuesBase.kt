@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
@@ -136,6 +137,14 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,
+
+            FACET_STRIP_TEXT to mapOf(
+                Elem.HJUST to 0.5,
+                Elem.Margin.TOP to 3.0,
+                Elem.Margin.RIGHT to 3.0,
+                Elem.Margin.BOTTOM to 3.0,
+                Elem.Margin.LEFT to 3.0,
+            ),
 
             // Tooltip
             TOOLTIP_RECT to mapOf(
