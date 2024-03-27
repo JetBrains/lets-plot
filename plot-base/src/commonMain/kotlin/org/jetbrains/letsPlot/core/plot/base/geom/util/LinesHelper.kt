@@ -83,7 +83,7 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
     ): List<Pair<SvgNode, PolygonData>> {
-        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = true).values
+        val domainPathData = createPathGroups(dataPoints, locationTransform, sorted = true, closePath = false).values
 
         // split in domain space! after resampling coordinates may repeat and splitRings will return wrong results
         val domainPolygonData = domainPathData
@@ -92,7 +92,7 @@ open class LinesHelper(
 
         val clientPolygonData = domainPolygonData.map { polygon ->
             polygon.rings
-                .map { resample(it) + it.last().let { (aes, coord) -> PathPoint(aes, toClient(coord, aes)!!) } }
+                .map { resample(it) }
                 .let { PolygonData(it) }
         }
 
@@ -110,9 +110,14 @@ open class LinesHelper(
     }
 
     private fun resample(linestring: List<PathPoint>): List<PathPoint> {
-        return linestring.windowed(size = 2)
+        val smoothed = linestring.windowed(size = 2)
             .map { (p1, p2) -> p1.aes to resample(p1.coord, p2.coord, PIXEL_PRECISION) { p -> toClient(p, p1.aes) } }
             .flatMap { (aes, coords) -> coords.map { PathPoint(aes, it) } }
+
+        // smoothed path doesn't contain PathPoint for the last point - append it
+        val lastPoint = linestring.last().let { (aes, coord) -> PathPoint(aes, toClient(coord, aes)!!) }
+
+        return smoothed + lastPoint
     }
 
     // TODO: return list of PathData for consistency
@@ -368,6 +373,7 @@ data class PolygonData(
     init {
         require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
         require(rings.all { it.size >= 3 }) { "PolygonData ring should contain at least 3 points" }
+        require(rings.all { it.first().coord == it.last().coord }) { "PolygonData ring should be closed" }
     }
 
     val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)
