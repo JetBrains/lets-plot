@@ -40,7 +40,7 @@ object BoxHelper {
         fatten: Double
     ) {
         val elementHelper = geomHelper.createSvgElementHelper()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, middleAesthetic, Aes.WIDTH)) {
+        for (p in aesthetics.dataPoints()) {
             val x = p.finiteOrNull(Aes.X) ?: continue
             val middle = p.finiteOrNull(middleAesthetic) ?: continue
             val w = p.finiteOrNull(Aes.WIDTH) ?: continue
