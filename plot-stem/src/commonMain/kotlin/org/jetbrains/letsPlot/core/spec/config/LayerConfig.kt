@@ -279,6 +279,28 @@ class LayerConfig(
         combinedDataValid = false
     }
 
+    fun isOrientationApplicable(): Boolean {
+        val isSuitableGeomKind = geomProto.geomKind in listOf(
+            GeomKind.BAR,
+            GeomKind.BOX_PLOT,
+            GeomKind.VIOLIN,
+            GeomKind.LOLLIPOP
+        )
+        val isSuitableStatKind = statKind in listOf(
+            StatKind.COUNT,
+            StatKind.SUMMARY,
+            StatKind.BOXPLOT,
+            StatKind.BOXPLOT_OUTLIER
+        )
+
+        return isSuitableGeomKind || isSuitableStatKind
+    }
+
+    fun setOrientationY() {
+        check(!clientSide)
+        update(ORIENTATION, "y")
+    }
+
     fun hasExplicitGrouping(): Boolean {
         return explicitGroupingVarName != null
     }
