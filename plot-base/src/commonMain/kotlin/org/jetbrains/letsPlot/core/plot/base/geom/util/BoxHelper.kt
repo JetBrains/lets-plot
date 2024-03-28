@@ -40,15 +40,12 @@ object BoxHelper {
         fatten: Double
     ) {
         val elementHelper = geomHelper.createSvgElementHelper()
-        for (p in GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            Aes.X,
-            middleAesthetic,
-            Aes.WIDTH
-        )) {
-            val x = p.x()!!
-            val middle = p[middleAesthetic]!!
-            val width = p.width()!! * ctx.getResolution(Aes.X)
+        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, middleAesthetic, Aes.WIDTH)) {
+            val x = p.finiteOrNull(Aes.X) ?: continue
+            val middle = p.finiteOrNull(middleAesthetic) ?: continue
+            val w = p.finiteOrNull(Aes.WIDTH) ?: continue
+
+            val width = w * ctx.getResolution(Aes.X)
 
             val (line) = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),

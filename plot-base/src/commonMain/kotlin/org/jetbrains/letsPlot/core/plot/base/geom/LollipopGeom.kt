@@ -12,14 +12,13 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.LollipopLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import kotlin.math.pow
@@ -54,10 +53,8 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LOLLIPOP, ctx)
 
         val lollipops = mutableListOf<Lollipop>()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
-            val x = p.x()!!
-            val y = p.y()!!
-            val head = DoubleVector(x, y)
+        for (p in aesthetics.dataPoints()) {
+            val head = p.toLocation(Aes.X, Aes.Y) ?: continue
             val base = getBase(head)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
             lollipops.add(Lollipop(p, head, base, stickLength))
@@ -95,8 +92,9 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == Aes.Y
-        val head = xyVec(p, flip) ?: return null
+        val loc = p.toLocation(Aes.X, Aes.Y) ?: return null
+
+        val head = loc.flipIf(coordAes == Aes.Y)
         return DoubleSpan(getBase(head).x, head.x)
     }
 
@@ -106,19 +104,10 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val flip = coordAes == Aes.X
-        val head = xyVec(p, flip) ?: return null
+        val loc = p.toLocation(Aes.X, Aes.Y) ?: return null
+
+        val head = loc.flipIf(coordAes == Aes.X)
         return DoubleSpan(getBase(head).y, head.y)
-    }
-
-    private fun xyVec(p: DataPointAesthetics, flip: Boolean): DoubleVector? {
-        val x = p.x().takeUnless { flip } ?: p.y()
-        val y = p.y().takeUnless { flip } ?: p.x()
-        if (!SeriesUtil.allFinite(x, y)) {
-            return null
-        }
-
-        return DoubleVector(x!!, y!!)
     }
 
     private fun getBase(head: DoubleVector): DoubleVector {

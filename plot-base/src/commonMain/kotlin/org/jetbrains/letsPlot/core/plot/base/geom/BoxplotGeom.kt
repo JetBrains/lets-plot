@@ -11,13 +11,11 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BarTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.extendHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class BoxplotGeom : GeomBase() {
 
@@ -58,19 +56,17 @@ class BoxplotGeom : GeomBase() {
         BoxHelper.buildMidlines(root, aesthetics, middleAesthetic = Aes.MIDDLE, ctx, geomHelper, fatten = fattenMidline)
 
         val elementHelper = geomHelper.createSvgElementHelper()
-        for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
-            val x = p.x()!!
-            val halfWidth = p.width()?.let { it * ctx.getResolution(Aes.X) / 2 } ?: 0.0
+        for (p in aesthetics.dataPoints()) {
+            val x = p.finiteOrNull(Aes.X) ?: continue
+            val width = p.finiteOrNull(Aes.WIDTH) ?: 0.0
+
+            val halfWidth = width * ctx.getResolution(Aes.X) / 2
             val halfFenceWidth = halfWidth * whiskerWidth
 
-            val lines = ArrayList<SvgNode>()
-
             // lower whisker
-            if (p.defined(Aes.LOWER) && p.defined(Aes.YMIN)) {
-                val hinge = p.lower()!!
-                val fence = p.ymin()!!
+            p.finiteOrNull(Aes.LOWER, Aes.YMIN)?.let { (hinge, fence) ->
                 // whisker line
-                lines.add(
+                root.add(
                     elementHelper.createLine(
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
@@ -78,7 +74,7 @@ class BoxplotGeom : GeomBase() {
                     )!!.first
                 )
                 // fence line
-                lines.add(
+                root.add(
                     elementHelper.createLine(
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
@@ -88,11 +84,9 @@ class BoxplotGeom : GeomBase() {
             }
 
             // upper whisker
-            if (p.defined(Aes.UPPER) && p.defined(Aes.YMAX)) {
-                val hinge = p.upper()!!
-                val fence = p.ymax()!!
+            p.finiteOrNull(Aes.UPPER, Aes.YMAX)?.let { (hinge, fence) ->
                 // whisker line
-                lines.add(
+                root.add(
                     elementHelper.createLine(
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
@@ -100,15 +94,13 @@ class BoxplotGeom : GeomBase() {
                     )!!.first
                 )
                 // fence line
-                lines.add(
+                root.add(
                     elementHelper.createLine(
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
                         p
                     )!!.first
                 )
-
-                lines.forEach { root.add(it) }
             }
         }
     }
@@ -125,32 +117,26 @@ class BoxplotGeom : GeomBase() {
             geomHelper: GeomHelper,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
-            return { p ->
-                val clientRect = if (p.defined(Aes.X) &&
-                    p.defined(Aes.LOWER) &&
-                    p.defined(Aes.UPPER) &&
-                    p.defined(Aes.WIDTH)
-                ) {
-                    val x = p.x()!!
-                    val lower = p.lower()!!
-                    val upper = p.upper()!!
-                    val width = p.width()!! * ctx.getResolution(Aes.X)
-                    geomHelper.toClient(
-                        DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower),
-                        p
-                    )?.let {
-                        if (isHintRect && upper == lower) {
-                            // Add tooltips for geom_boxplot with zero height (issue #563)
-                            extendHeight(it, 2.0, ctx.flipped)
-                        } else {
-                            it
-                        }
+            fun factory(p: DataPointAesthetics): DoubleRectangle? {
+                val x = p.finiteOrNull(Aes.X) ?: return null
+                val lower = p.finiteOrNull(Aes.LOWER) ?: return null
+                val upper = p.finiteOrNull(Aes.UPPER) ?: return null
+                val w = p.finiteOrNull(Aes.WIDTH) ?: return null
+
+                val width = w * ctx.getResolution(Aes.X)
+                val rect = DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
+
+                return geomHelper.toClient(rect, p)?.let {
+                    if (isHintRect && upper == lower) {
+                        // Add tooltips for geom_boxplot with zero height (issue #563)
+                        extendHeight(it, 2.0, ctx.flipped)
+                    } else {
+                        it
                     }
-                } else {
-                    null
                 }
-                clientRect
             }
+
+            return ::factory
         }
     }
 }

@@ -11,7 +11,10 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.CompositeLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.VLineLegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
@@ -60,21 +63,21 @@ class PointRangeGeom(private val isVertical: Boolean) : GeomBase() {
         val minAes = afterRotation(Aes.YMIN)
         val maxAes = afterRotation(Aes.YMAX)
 
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), xAes, yAes, minAes, maxAes)
-        for (p in dataPoints) {
-            val x = p[xAes]!!
-            val y = p[yAes]!!
-            val ymin = p[minAes]!!
-            val ymax = p[maxAes]!!
+        for (p in aesthetics.dataPoints()) {
+            val x = p.finiteOrNull(xAes) ?: continue
+            val y = p.finiteOrNull(yAes) ?: continue
+            val ymin = p.finiteOrNull(minAes) ?: continue
+            val ymax = p.finiteOrNull(maxAes) ?: continue
+            val shape = p.shape() ?: continue
 
             // vertical line
             val start = afterRotation(DoubleVector(x, ymin))
             val end = afterRotation(DoubleVector(x, ymax))
-            helper.createLine(start, end, p, strokeScaler = AesScaling::lineWidth)?.let { (svgElement, _) -> root.add(svgElement) }
+            val (svg) = helper.createLine(start, end, p, strokeScaler = AesScaling::lineWidth) ?: continue
+            root.add(svg)
 
             // mid-point
             val location = geomHelper.toClient(afterRotation(DoubleVector(x, y)), p)!!
-            val shape = p.shape()!!
             val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
             root.add(wrap(o))
         }
@@ -93,33 +96,29 @@ class PointRangeGeom(private val isVertical: Boolean) : GeomBase() {
         geomHelper: GeomHelper,
         fatten: Double
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        return { p ->
+        fun factory(p: DataPointAesthetics) : DoubleRectangle? {
             val xAes = afterRotation(Aes.X)
             val yAes = afterRotation(Aes.Y)
-            if (p.defined(xAes) &&
-                p.defined(yAes)
-            ) {
-                val x = p[xAes]!!
-                val y = p[yAes]!!
-                val shape = p.shape()!!
 
-                val rect = geomHelper.toClient(
-                    afterRotation(DoubleRectangle(DoubleVector(x, y), DoubleVector.ZERO)),
-                    p
-                )!!
+            val x = p.finiteOrNull(xAes) ?: return null
+            val y = p.finiteOrNull(yAes) ?: return null
+            val shape = p.shape() ?: return null
 
-                val shapeSize = shape.size(p, fatten)
-                val strokeWidth = shape.strokeWidth(p)
-                val width = shapeSize + strokeWidth
-                val needToFlip = when {
-                    isVertical -> ctx.flipped
-                    else -> !ctx.flipped
-                }
-                GeomUtil.extendWidth(rect, width, needToFlip)
-            } else {
-                null
+            val rect = DoubleRectangle(DoubleVector(x, y), DoubleVector.ZERO)
+                .let { afterRotation(it) }
+                .let { geomHelper.toClient(it, p) }!!
+
+            val shapeSize = shape.size(p, fatten)
+            val strokeWidth = shape.strokeWidth(p)
+            val width = shapeSize + strokeWidth
+            val needToFlip = when {
+                isVertical -> ctx.flipped
+                else -> !ctx.flipped
             }
+            return GeomUtil.extendWidth(rect, width, needToFlip)
         }
+
+        return ::factory
     }
 
     companion object {

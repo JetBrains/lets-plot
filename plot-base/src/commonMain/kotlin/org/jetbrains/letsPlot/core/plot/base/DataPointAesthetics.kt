@@ -237,6 +237,19 @@ abstract class DataPointAesthetics {
         return get(aes)
     }
 
+    fun finiteOrNull(aes0: Aes<Double>, aes1: Aes<Double>): Pair<Double, Double>? {
+        val v0 = finiteOrNull(aes0) ?: return null
+        val v1 = finiteOrNull(aes1) ?: return null
+        return Pair(v0, v1)
+    }
+
+    fun finiteOrNull(aes0: Aes<Double>, aes1: Aes<Double>, aes2: Aes<Double>): Triple<Double, Double, Double>? {
+        val v0 = finiteOrNull(aes0) ?: return null
+        val v1 = finiteOrNull(aes1) ?: return null
+        val v2 = finiteOrNull(aes2) ?: return null
+        return Triple(v0, v1, v2)
+    }
+
     private fun <T> getNotNull(aes: Aes<T>): T {
         return get(aes) ?: throw IllegalStateException("No value for aesthetic $aes at index ${index()}")
     }

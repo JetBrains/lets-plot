@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.math.*
 
 object BinStatUtil {
@@ -18,10 +18,7 @@ object BinStatUtil {
     fun weightAtIndex(data: DataFrame): (Int) -> Double {
         if (data.has(TransformVar.WEIGHT)) {
             val weights = data.getNumeric(TransformVar.WEIGHT)
-            return { index ->
-                val weight = weights[index]
-                SeriesUtil.asFinite(weight, 0.0)
-            }
+            return { index -> SeriesUtil.finiteOrNull(weights[index]) ?: 0.0 }
         }
         return { 1.0 }
     }

@@ -10,7 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -50,17 +52,17 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         val minAes = afterRotation(Aes.YMIN)
         val maxAes = afterRotation(Aes.YMAX)
         val widthAes = afterRotation(Aes.WIDTH)
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), xAes, minAes, maxAes, widthAes)
 
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        for (p in dataPoints) {
-            val x = p[xAes]!!
-            val ymin = p[minAes]!!
-            val ymax = p[maxAes]!!
+        for (p in aesthetics.dataPoints()) {
+            val x = p.finiteOrNull(xAes) ?: continue
+            val ymin = p.finiteOrNull(minAes) ?: continue
+            val ymax = p.finiteOrNull(maxAes) ?: continue
+            val w = p.finiteOrNull(widthAes) ?: continue
 
-            val width = p[widthAes]!! * ctx.getResolution(xAes)
+            val width = w * ctx.getResolution(xAes)
             val height = ymax - ymin
 
             val rect = DoubleRectangle(x - width / 2, ymin, width, height)
@@ -82,30 +84,27 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
         ctx: GeomContext,
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        return { p ->
+        fun factory(p: DataPointAesthetics): DoubleRectangle? {
             val xAes = afterRotation(Aes.X)
             val minAes = afterRotation(Aes.YMIN)
             val maxAes = afterRotation(Aes.YMAX)
             val widthAes = afterRotation(Aes.WIDTH)
-            if (p.defined(xAes) &&
-                p.defined(minAes) &&
-                p.defined(maxAes) &&
-                p.defined(widthAes)
-            ) {
-                val x = p[xAes]!!
-                val ymin = p[minAes]!!
-                val ymax = p[maxAes]!!
-                val width = p[widthAes]!! * ctx.getResolution(xAes)
-                val height = ymax - ymin
-                val rect = geomHelper.toClient(
-                    afterRotation(DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)),
-                    p
-                )!!
-                rect
-            } else {
-                null
-            }
+
+            val x = p.finiteOrNull(xAes) ?: return null
+            val ymin = p.finiteOrNull(minAes) ?: return null
+            val ymax = p.finiteOrNull(maxAes) ?: return null
+            val w = p.finiteOrNull(widthAes) ?: return null
+
+            val width = w * ctx.getResolution(xAes)
+            val height = ymax - ymin
+            val rect = geomHelper.toClient(
+                afterRotation(DoubleRectangle(x - width / 2.0, ymax - height / 2.0, width, 0.0)),
+                p
+            )!!
+            return rect
         }
+
+        return ::factory
     }
 
     internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {

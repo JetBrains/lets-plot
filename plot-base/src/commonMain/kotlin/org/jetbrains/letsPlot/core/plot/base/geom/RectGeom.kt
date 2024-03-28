@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
@@ -43,10 +42,10 @@ class RectGeom : GeomBase() {
         const val HANDLES_GROUPS = true
 
         private fun clientRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-            val xmin = finiteOrNull(p.xmin()) ?: return null
-            val xmax = finiteOrNull(p.xmax()) ?: return null
-            val ymin = finiteOrNull(p.ymin()) ?: return null
-            val ymax = finiteOrNull(p.ymax()) ?: return null
+            val xmin = p.finiteOrNull(Aes.XMIN) ?: return null
+            val xmax = p.finiteOrNull(Aes.XMAX) ?: return null
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: return null
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: return null
 
             return DoubleRectangle.LTRB(xmin, ymin, xmax, ymax)
         }

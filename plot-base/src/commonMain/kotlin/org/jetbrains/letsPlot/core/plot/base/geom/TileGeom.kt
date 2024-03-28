@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
@@ -47,10 +46,10 @@ open class TileGeom : GeomBase() {
 
         private fun clientRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val x = finiteOrNull(p.x()) ?: return null
-                val y = finiteOrNull(p.y()) ?: return null
-                val w = finiteOrNull(p.width()) ?: return null
-                val h = finiteOrNull(p.height()) ?: return null
+                val x = p.finiteOrNull(Aes.X) ?: return null
+                val y = p.finiteOrNull(Aes.Y) ?: return null
+                val w = p.finiteOrNull(Aes.WIDTH) ?: return null
+                val h = p.finiteOrNull(Aes.HEIGHT) ?: return null
 
                 val width = w * ctx.getResolution(Aes.X)
                 val height = h * ctx.getResolution(Aes.Y)

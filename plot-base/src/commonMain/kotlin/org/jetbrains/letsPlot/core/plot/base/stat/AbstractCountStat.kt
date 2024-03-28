@@ -101,7 +101,7 @@ abstract class AbstractCountStat(
             return groups.zip(values)
                 .groupBy { (g, _) -> g }
                 .filterNotNullKeys()
-                .mapValues { (_, groupValues) -> groupValues.sumOf { (_, v) -> SeriesUtil.asFinite(v, 0.0) } }
+                .mapValues { (_, groupValues) -> groupValues.sumOf { (_, v) -> SeriesUtil.finiteOrNull(v) ?: 0.0 } }
         }
     }
 }

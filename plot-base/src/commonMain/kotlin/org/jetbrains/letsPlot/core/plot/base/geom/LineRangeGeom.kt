@@ -9,7 +9,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import kotlin.math.max
@@ -45,26 +49,22 @@ class LineRangeGeom(private val isVertical: Boolean) : GeomBase() {
         ctx: GeomContext
     ) {
         val xAes = afterRotation(Aes.X)
-        val minAes = afterRotation(Aes.YMIN)
-        val maxAes = afterRotation(Aes.YMAX)
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), xAes, minAes, maxAes)
+        val yMinAes = afterRotation(Aes.YMIN)
+        val yMaxAes = afterRotation(Aes.YMAX)
 
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LINE_RANGE, ctx)
-        for (p in dataPoints) {
-            val x = p[xAes]!!
-            val ymin = p[minAes]!!
-            val ymax = p[maxAes]!!
-            // line
-            val start = afterRotation(DoubleVector(x, ymin))
-            val end = afterRotation(DoubleVector(x, ymax))
+        for (p in aesthetics.dataPoints()) {
+            val start = p.toLocation(xAes, yMinAes)?.let(::afterRotation) ?: continue
+            val end = p.toLocation(xAes, yMaxAes)?.let(::afterRotation) ?: continue
+
             helper.createLine(start, end, p)?.let { (svgElement, _) -> root.add(svgElement) }
         }
         // tooltip
         flipHelper.buildHints(
-            listOf(minAes, maxAes),
+            listOf(yMinAes, yMaxAes),
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper),
             { HintColorUtil.colorWithAlpha(it) },
@@ -76,33 +76,31 @@ class LineRangeGeom(private val isVertical: Boolean) : GeomBase() {
         ctx: GeomContext,
         geomHelper: GeomHelper
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        return { p ->
+        fun factory(p: DataPointAesthetics): DoubleRectangle? {
             val xAes = afterRotation(Aes.X)
-            val minAes = afterRotation(Aes.YMIN)
-            val maxAes = afterRotation(Aes.YMAX)
-            if (p.defined(xAes) &&
-                p.defined(minAes) &&
-                p.defined(maxAes)
-            ) {
-                val x = p[xAes]!!
-                val ymin = p[minAes]!!
-                val ymax = p[maxAes]!!
-                val height = ymax - ymin
+            val yMinAes = afterRotation(Aes.YMIN)
+            val yMaxAes = afterRotation(Aes.YMAX)
 
-                val rect = geomHelper.toClient(
-                    afterRotation(DoubleRectangle(DoubleVector(x, ymax - height / 2.0), DoubleVector.ZERO)),
-                    p
-                )!!
-                val width = max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
-                val needToFlip = when {
-                    isVertical -> ctx.flipped
-                    else -> !ctx.flipped
-                }
-                GeomUtil.extendWidth(rect, width, needToFlip)
-            } else {
-                null
+            val x = p.finiteOrNull(xAes) ?: return null
+            val ymin = p.finiteOrNull(yMinAes) ?: return null
+            val ymax = p.finiteOrNull(yMaxAes) ?: return null
+
+            val height = ymax - ymin
+
+            val rect = geomHelper.toClient(
+                afterRotation(DoubleRectangle(DoubleVector(x, ymax - height / 2.0), DoubleVector.ZERO)),
+                p
+            )!!
+            val width = max(AesScaling.strokeWidth(p), MIN_TOOLTIP_RECTANGLE_WIDTH)
+            val needToFlip = when {
+                isVertical -> ctx.flipped
+                else -> !ctx.flipped
             }
+
+            return GeomUtil.extendWidth(rect, width, needToFlip)
         }
+
+        return ::factory
     }
 
     companion object {

@@ -117,10 +117,6 @@ object GeomUtil {
         return ordering.sortedCopy(dataPoints)
     }
 
-    fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: Aes<*>): Iterable<DataPointAesthetics> {
-        return dataPoints.filter { p -> p.defined(aes) }
-    }
-
     fun withDefined(
         dataPoints: Iterable<DataPointAesthetics>,
         aes0: Aes<*>,

@@ -20,8 +20,6 @@ object SeriesUtil {
 
     private val REAL_NUMBER = { it: Double? -> isFinite(it) }
 
-    val NEGATIVE_NUMBER = { input: Double -> input < 0 }
-
     fun isBeyondPrecision(range: DoubleSpan): Boolean {
         val delta = range.length
         return delta < TINY ||                       // ??
@@ -47,22 +45,11 @@ object SeriesUtil {
         return v != null && v.isFinite()
     }
 
-    fun asFinite(v: Double?, defaultValue: Double): Double {
-        return if (v != null && v.isFinite())
-            v
-        else
-            defaultValue
-    }
-
     fun finiteOrNull(v: Double?): Double? {
         return if (v != null && v.isFinite())
             v
         else
             null
-    }
-
-    fun isFinite(v: Double): Boolean {
-        return v.isFinite()
     }
 
     fun isFinite(v: DoubleVector): Boolean {

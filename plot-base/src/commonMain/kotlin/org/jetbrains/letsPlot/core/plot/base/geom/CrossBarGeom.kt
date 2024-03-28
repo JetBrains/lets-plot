@@ -7,10 +7,12 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
@@ -79,15 +81,15 @@ class CrossBarGeom(
     ): (DataPointAesthetics) -> DoubleRectangle? {
         val xAes = afterRotation(Aes.X)
         val yAes = afterRotation(Aes.Y)
-        val minAes = afterRotation(Aes.YMIN)
-        val maxAes = afterRotation(Aes.YMAX)
-        val sizeAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
+        val yMinAes = afterRotation(Aes.YMIN)
+        val yMaxAes = afterRotation(Aes.YMAX)
+        val widthAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
 
         fun factory(p: DataPointAesthetics): DoubleRectangle? {
-            val x = finiteOrNull(p[xAes]) ?: return null
-            val ymin = finiteOrNull(p[minAes]) ?: return null
-            val ymax = finiteOrNull(p[maxAes]) ?: return null
-            val w = finiteOrNull(p[sizeAes]) ?: return null
+            val x = p.finiteOrNull(xAes) ?: return null
+            val ymin = p.finiteOrNull(yMinAes) ?: return null
+            val ymax = p.finiteOrNull(yMaxAes) ?: return null
+            val w = p.finiteOrNull(widthAes) ?: return null
 
             val width = w * ctx.getResolution(xAes)
 
@@ -123,16 +125,12 @@ class CrossBarGeom(
         val xAes = afterRotation(Aes.X)
         val yAes = afterRotation(Aes.Y)
         val sizeAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
-        for (p in GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            xAes,
-            yAes,
-            sizeAes
-        )) {
-            val x = p[xAes]!!
-            val middle = p[yAes]!!
-            val width = p[sizeAes]!! * ctx.getResolution(xAes)
+        for (p in aesthetics.dataPoints()) {
+            val x = p.finiteOrNull(xAes) ?: continue
+            val middle = p.finiteOrNull(yAes) ?: continue
+            val w = p.finiteOrNull(sizeAes) ?: continue
 
+            val width = w * ctx.getResolution(xAes)
             val (line) = elementHelper.createLine(
                 afterRotation(DoubleVector(x - width / 2, middle)),
                 afterRotation(DoubleVector(x + width / 2, middle)),

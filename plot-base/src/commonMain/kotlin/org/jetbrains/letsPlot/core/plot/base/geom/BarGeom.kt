@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.BarAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
@@ -49,17 +48,11 @@ open class BarGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-        private fun xyw(p: DataPointAesthetics, ctx: GeomContext): Triple<Double, Double, Double>? {
-            val x = finiteOrNull(p.x()) ?: return null
-            val y = finiteOrNull(p.y()) ?: return null
-            val w = finiteOrNull(p.width()) ?: return null
-
-            return Triple(x, y, w * ctx.getResolution(Aes.X))
-        }
-
         private fun hintRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val (x, y, w) = xyw(p, ctx) ?: return null
+                val (x, y, width ) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
+
+                val w = width * ctx.getResolution(Aes.X)
                 val origin = DoubleVector(x - w / 2, y)
                 val dimension = DoubleVector(w, 0.0)
                 return DoubleRectangle(origin, dimension)
@@ -70,8 +63,9 @@ open class BarGeom : GeomBase() {
 
         private fun visualRectByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val (x, y, w) = xyw(p, ctx) ?: return null
+                val (x, y, width ) = p.finiteOrNull(Aes.X, Aes.Y, Aes.WIDTH) ?: return null
 
+                val w = width * ctx.getResolution(Aes.X)
                 val origin: DoubleVector
                 val dimension: DoubleVector
 
