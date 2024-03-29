@@ -135,6 +135,28 @@ internal object DataConfigUtil {
         )
     }
 
+    fun isAesDiscrete(
+        aes: Aes<*>,
+        sharedData: DataFrame,
+        layerData: DataFrame,
+        sharedMappings: Map<String, String>,
+        layerMappings: Map<String, String>,
+        combinedDiscreteMappings: Map<String, String>
+    ): Boolean {
+        // Checking if the y-axis mark as_discrete
+        if (combinedDiscreteMappings.containsKey(aes.name)) return true
+
+        // Checking if the y-axis is discrete
+        val aesName = layerMappings[aes.name] ?: sharedMappings[aes.name] ?: return false
+        // The logic of choosing the data frame is the same as in the layerMappingsAndCombinedData function
+        if (DataFrameUtil.hasVariable(layerData, aesName)
+            && DataFrameUtil.findVariableOrFail(layerData, aesName).let(layerData::isDiscrete)
+        ) return true
+
+        return (DataFrameUtil.hasVariable(sharedData, aesName)
+                && DataFrameUtil.findVariableOrFail(sharedData, aesName).let(sharedData::isDiscrete))
+    }
+
     fun combinedDataWithDataMeta(
         rawCombinedData: DataFrame,
         varBindings: List<VarBinding>,
