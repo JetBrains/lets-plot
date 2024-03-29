@@ -59,7 +59,11 @@ open class LinesHelper(
     // TODO: filled parameter is always false
     private fun renderPaths(paths: Collection<PathData>, filled: Boolean): List<LinePath> {
         return paths.map { path ->
-            val visualPath = douglasPeucker(path.coordinates, DOUGLAS_PEUCKER_PIXEL_THRESHOLD)
+            val visualPath = when (myResamplingEnabled) {
+                true -> douglasPeucker(path.coordinates, DOUGLAS_PEUCKER_PIXEL_THRESHOLD)
+                false -> path.coordinates
+            }
+
             val element = when (filled) {
                 true -> LinePath.polygon(visualPath)
                 false -> LinePath.line(visualPath)
