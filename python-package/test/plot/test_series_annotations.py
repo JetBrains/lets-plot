@@ -29,6 +29,12 @@ def test_as_annotated_data_dataframe():
     assert_series_annotations(df, expected_series_annotations)
 
 
+def test_as_annotated_data_polars_dataframe():
+    from polars import DataFrame as plDataFrame
+    df = plDataFrame(data_dict)
+    assert_series_annotations(df, expected_series_annotations)
+
+
 def test_as_annotated_data_list():
     data = [dt_value]
     assert {} == get_data_meta(data)

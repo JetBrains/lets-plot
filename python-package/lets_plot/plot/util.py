@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from typing import Any, Tuple, Sequence, Optional, Dict
 
-from lets_plot._type_utils import is_dict_or_dataframe
+from lets_plot._type_utils import is_dict_or_dataframe, is_polars_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes
@@ -94,8 +94,14 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
                         'parameters': value.parameters
                     })
 
+    data_as_dict = None
     if is_dict_or_dataframe(data):
-        for column_name, values in data.items():
+        data_as_dict = data
+    elif is_polars_dataframe(data):
+        data_as_dict = data.to_dict()
+
+    if data_as_dict is not None:
+        for column_name, values in data_as_dict.items():
             if isinstance(values, Iterable):
                 not_empty_series = any(True for _ in values)
                 if not_empty_series and all(isinstance(val, datetime) for val in values):
