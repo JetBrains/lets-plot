@@ -11,5 +11,6 @@ enum class CssDisplay constructor(override val stringQualifier: String) : CssBas
     BLOCK("block"),
     FLEX("flex"),
     GRID("grid"),
+    INLINE("inline"),
     INLINE_BLOCK("inline-block");
 }

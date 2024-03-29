@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
 import org.jetbrains.letsPlot.platf.w3c.dom.css.*
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssCursor
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssDisplay
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.SvgRootDocumentMapper
 import org.w3c.dom.Element
@@ -194,6 +195,7 @@ internal class FigureToHtml(
                     setTop(bounds.origin.y.toDouble())
                     setWidth(bounds.dimension.x)
                     setPosition(CssPosition.RELATIVE)
+                    setDisplay(CssDisplay.INLINE)
                 }
 
                 val canvasControl = DomCanvasControl(
@@ -211,7 +213,6 @@ internal class FigureToHtml(
                 )
 
                 val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
-                liveMapDiv.style.display = "inline"
                 parentElement.appendChild(liveMapDiv)
 
                 liveMapDiv.onDisconnect(liveMapReg::dispose)
