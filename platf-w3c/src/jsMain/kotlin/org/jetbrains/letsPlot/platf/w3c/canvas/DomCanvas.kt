@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setTop
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import kotlinx.browser.document
@@ -58,8 +56,6 @@ internal class DomCanvas private constructor(
             val canvasElement = document.createElement("canvas") as HTMLCanvasElement
             canvasElement.style.setWidth(size.x)
             canvasElement.style.setHeight(size.y)
-            canvasElement.style.setLeft(0.0)
-            canvasElement.style.setTop(0.0)
 
             // TODO: fix it. With floor() there are gaps between tiles.
             // element size type is int so use floor to make sure that the context2d will cover whole canvas

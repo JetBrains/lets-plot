@@ -211,6 +211,7 @@ internal class FigureToHtml(
                 )
 
                 val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
+                liveMapDiv.style.display = "inline"
                 parentElement.appendChild(liveMapDiv)
 
                 liveMapDiv.onDisconnect(liveMapReg::dispose)
