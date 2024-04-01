@@ -197,6 +197,7 @@ internal interface Symbolizer {
             )
             ctx.setTextAlign(TextAlign.CENTER)
             ctx.setTextBaseline(TextBaseline.MIDDLE)
+            ctx.setStrokeMiterLimit(0.0)
 
             setBaseStyle(ctx, myStyle)
         }
