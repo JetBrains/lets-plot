@@ -175,7 +175,9 @@ class LayerConfig(
                 layerMappings,
                 combinedDiscreteMappings
             )
-        ) setOrientationY()
+        ) {
+            setOrientationY()
+        }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {

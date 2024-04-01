@@ -55,6 +55,11 @@ object DataFrameUtil {
         )
     }
 
+    fun findVariableOrNull(data: DataFrame, varName: String): DataFrame.Variable? {
+        if (!hasVariable(data, varName)) return null
+        return findVariableOrFail(data, varName)
+    }
+
     fun isNumeric(data: DataFrame, varName: String): Boolean {
         return data.isNumeric(findVariableOrFail(data, varName))
     }
