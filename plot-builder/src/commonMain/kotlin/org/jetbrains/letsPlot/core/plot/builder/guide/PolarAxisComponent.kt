@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
@@ -63,8 +64,10 @@ class PolarAxisComponent(
                             .lineString(breaksData.axisLine)
                             .build()
                     )
-                    strokeWidth().set(axisTheme.lineWidth())
+                    val width = axisTheme.lineWidth()
+                    strokeWidth().set(width)
                     strokeColor().set(axisTheme.lineColor())
+                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
                     fillColor().set(Color.TRANSPARENT)
                 }
                 rootElement.children().add(axisLine)
@@ -72,8 +75,10 @@ class PolarAxisComponent(
                 val axisLine = SvgLineElement().apply {
                     y1().set(breaksData.center.y)
                     y2().set(breaksData.center.y - length / 2.0)
-                    strokeWidth().set(axisTheme.lineWidth())
+                    val width = axisTheme.lineWidth()
+                    strokeWidth().set(width)
                     strokeColor().set(axisTheme.lineColor())
+                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
                 }
                 rootElement.children().add(axisLine)
             }
@@ -91,8 +96,10 @@ class PolarAxisComponent(
 
         val tickMark: SvgLineElement? = if (axisTheme.showTickMarks()) {
             val tickMark = SvgLineElement()
-            tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
+            val width = axisTheme.tickMarkWidth()
+            tickMark.strokeWidth().set(width)
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
+            StrokeDashArraySupport.apply(tickMark, width, axisTheme.tickMarkLineType())
             val markLength = axisTheme.tickMarkLength()
 
             when (orientation) {

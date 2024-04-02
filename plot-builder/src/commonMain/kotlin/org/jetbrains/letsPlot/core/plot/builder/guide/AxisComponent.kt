@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
@@ -68,8 +69,10 @@ class AxisComponent(
             // Axis line
             if (!hideAxisBreaks && axisTheme.showLine()) {
                 val axisLine = SvgLineElement(x1, y1, x2, y2).apply {
-                    strokeWidth().set(axisTheme.lineWidth())
+                    val width = axisTheme.lineWidth()
+                    strokeWidth().set(width)
                     strokeColor().set(axisTheme.lineColor())
+                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
                 }
                 rootElement.children().add(axisLine)
             }
@@ -85,8 +88,10 @@ class AxisComponent(
         var tickMark: SvgLineElement? = null
         if (axisTheme.showTickMarks()) {
             tickMark = SvgLineElement()
-            tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
+            val width = axisTheme.tickMarkWidth()
+            tickMark.strokeWidth().set(width)
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
+            StrokeDashArraySupport.apply(tickMark, width, axisTheme.tickMarkLineType())
         }
 
         var tickLabel: TextLabel? = null

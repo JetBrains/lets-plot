@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
@@ -44,6 +45,10 @@ internal class LiveMapAxisTheme : AxisTheme {
     override fun lineColor() = Defaults.Plot.Axis.LINE_COLOR
 
     override fun tickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
+
+    override fun lineType() = NamedLineType.SOLID
+
+    override fun tickMarkLineType() = NamedLineType.SOLID
 
     override fun labelStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
