@@ -84,5 +84,5 @@ internal class DefaultLegendTheme(
         return getNumber(getElemValue(backgroundKey), ThemeOption.Elem.SIZE)
     }
 
-    override fun backgroundRectLineType() = getLineType(getElemValue(backgroundKey))
+    override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
 }

@@ -68,7 +68,7 @@ class DefaultTheme internal constructor(
                         FILL to containerTheme.plot.backgroundFill(),
                         COLOR to this.plot.backgroundColor(),
                         SIZE to this.plot.backgroundStrokeWidth(),
-                        LINETYPE to this.plot.backgroundRectLineType()
+                        LINETYPE to this.plot.backgroundLineType()
                     )
                 }
 

@@ -50,9 +50,7 @@ internal class DefaultPlotTheme(
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
-    override fun backgroundRectLineType(): LineType {
-        return getLineType(getElemValue(backgroundKey))
-    }
+    override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
 
     override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))

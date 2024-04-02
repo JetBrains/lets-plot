@@ -16,7 +16,7 @@ interface PlotTheme {
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
-    fun backgroundRectLineType(): LineType
+    fun backgroundLineType(): LineType
     fun titleStyle(): ThemeTextStyle
     fun subtitleStyle(): ThemeTextStyle
     fun captionStyle(): ThemeTextStyle

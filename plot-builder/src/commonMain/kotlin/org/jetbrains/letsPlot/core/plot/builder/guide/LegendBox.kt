@@ -45,7 +45,7 @@ abstract class LegendBox : SvgComponent() {
                 strokeColor().set(theme.backgroundColor())
                 val width = theme.backgroundStrokeWidth()
                 strokeWidth().set(width)
-                StrokeDashArraySupport.apply(this, width, theme.backgroundRectLineType())
+                StrokeDashArraySupport.apply(this, width, theme.backgroundLineType())
                 fillColor().set(theme.backgroundFill())
             })
         }

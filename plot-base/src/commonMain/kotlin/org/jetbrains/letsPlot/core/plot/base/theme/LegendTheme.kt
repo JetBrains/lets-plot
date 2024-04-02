@@ -41,5 +41,5 @@ interface LegendTheme {
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
-    fun backgroundRectLineType(): LineType
+    fun backgroundLineType(): LineType
 }
