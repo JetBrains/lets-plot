@@ -64,10 +64,9 @@ class PolarAxisComponent(
                             .lineString(breaksData.axisLine)
                             .build()
                     )
-                    val width = axisTheme.lineWidth()
-                    strokeWidth().set(width)
+                    strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
-                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
+                    StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())
                     fillColor().set(Color.TRANSPARENT)
                 }
                 rootElement.children().add(axisLine)
@@ -75,10 +74,9 @@ class PolarAxisComponent(
                 val axisLine = SvgLineElement().apply {
                     y1().set(breaksData.center.y)
                     y2().set(breaksData.center.y - length / 2.0)
-                    val width = axisTheme.lineWidth()
-                    strokeWidth().set(width)
+                    strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
-                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
+                    StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())
                 }
                 rootElement.children().add(axisLine)
             }
@@ -96,10 +94,9 @@ class PolarAxisComponent(
 
         val tickMark: SvgLineElement? = if (axisTheme.showTickMarks()) {
             val tickMark = SvgLineElement()
-            val width = axisTheme.tickMarkWidth()
-            tickMark.strokeWidth().set(width)
+            tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
-            StrokeDashArraySupport.apply(tickMark, width, axisTheme.tickMarkLineType())
+            StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
             val markLength = axisTheme.tickMarkLength()
 
             when (orientation) {

@@ -134,9 +134,8 @@ internal class PolarFrameOfReference(
     override fun doStrokeBkgr(parent: SvgComponent) {
         val strokeBkgr = createPanelElement() {
             it.strokeColor().set(theme.panel().rectColor())
-            val width = theme.panel().rectStrokeWidth()
-            it.strokeWidth().set(width)
-            StrokeDashArraySupport.apply(it, width, theme.panel().rectLineType())
+            it.strokeWidth().set(theme.panel().rectStrokeWidth())
+            StrokeDashArraySupport.apply(it, theme.panel().rectStrokeWidth(), theme.panel().rectLineType())
             it.fillOpacity().set(0.0)
         }
 
@@ -146,9 +145,8 @@ internal class PolarFrameOfReference(
     override fun doDrawPanelBorder(parent: SvgComponent) {
         val border = createPanelElement() {
             it.strokeColor().set(theme.panel().borderColor())
-            val width = theme.panel().borderWidth()
-            it.strokeWidth().set(width)
-            StrokeDashArraySupport.apply(it, width, theme.panel().borderLineType())
+            it.strokeWidth().set(theme.panel().borderWidth())
+            StrokeDashArraySupport.apply(it, theme.panel().borderWidth(), theme.panel().borderLineType())
             it.fillOpacity().set(0.0)
         }
 

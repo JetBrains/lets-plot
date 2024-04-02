@@ -43,9 +43,8 @@ abstract class LegendBox : SvgComponent() {
         if (theme.showBackground()) {
             add(SvgRectElement(spec.innerBounds).apply {
                 strokeColor().set(theme.backgroundColor())
-                val width = theme.backgroundStrokeWidth()
-                strokeWidth().set(width)
-                StrokeDashArraySupport.apply(this, width, theme.backgroundLineType())
+                strokeWidth().set(theme.backgroundStrokeWidth())
+                StrokeDashArraySupport.apply(this, theme.backgroundStrokeWidth(), theme.backgroundLineType())
                 fillColor().set(theme.backgroundFill())
             })
         }

@@ -252,9 +252,8 @@ class PlotSvgComponent constructor(
             backgroundBorder.apply {
                 fillColor().set(Color.TRANSPARENT)
                 strokeColor().set(plotTheme.backgroundColor())
-                val width = plotTheme.backgroundStrokeWidth()
-                strokeWidth().set(width)
-                StrokeDashArraySupport.apply(this, width, plotTheme.backgroundLineType())
+                strokeWidth().set(plotTheme.backgroundStrokeWidth())
+                StrokeDashArraySupport.apply(this, plotTheme.backgroundStrokeWidth(), plotTheme.backgroundLineType())
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
             }
         }

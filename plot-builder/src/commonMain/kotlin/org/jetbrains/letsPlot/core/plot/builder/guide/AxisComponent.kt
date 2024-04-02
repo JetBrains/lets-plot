@@ -69,10 +69,9 @@ class AxisComponent(
             // Axis line
             if (!hideAxisBreaks && axisTheme.showLine()) {
                 val axisLine = SvgLineElement(x1, y1, x2, y2).apply {
-                    val width = axisTheme.lineWidth()
-                    strokeWidth().set(width)
+                    strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
-                    StrokeDashArraySupport.apply(this, width, axisTheme.lineType())
+                    StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())
                 }
                 rootElement.children().add(axisLine)
             }
@@ -88,10 +87,9 @@ class AxisComponent(
         var tickMark: SvgLineElement? = null
         if (axisTheme.showTickMarks()) {
             tickMark = SvgLineElement()
-            val width = axisTheme.tickMarkWidth()
-            tickMark.strokeWidth().set(width)
+            tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
-            StrokeDashArraySupport.apply(tickMark, width, axisTheme.tickMarkLineType())
+            StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
         }
 
         var tickLabel: TextLabel? = null

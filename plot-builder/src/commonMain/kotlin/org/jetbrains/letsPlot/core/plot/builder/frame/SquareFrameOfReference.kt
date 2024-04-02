@@ -108,9 +108,8 @@ internal open class SquareFrameOfReference(
     protected open fun doDrawPanelBorder(parent: SvgComponent) {
         val panelBorder = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().borderColor())
-            val width = theme.panel().borderWidth()
-            strokeWidth().set(width)
-            StrokeDashArraySupport.apply(this, width, theme.panel().borderLineType())
+            strokeWidth().set(theme.panel().borderWidth())
+            StrokeDashArraySupport.apply(this, theme.panel().borderWidth(), theme.panel().borderLineType())
             fillOpacity().set(0.0)
         }
         parent.add(panelBorder)
@@ -198,9 +197,8 @@ internal open class SquareFrameOfReference(
     protected open fun doStrokeBkgr(parent: SvgComponent) {
         val panelRectStroke = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().rectColor())
-            val width = theme.panel().rectStrokeWidth()
-            strokeWidth().set(width)
-            StrokeDashArraySupport.apply(this, width, theme.panel().rectLineType())
+            strokeWidth().set(theme.panel().rectStrokeWidth())
+            StrokeDashArraySupport.apply(this, theme.panel().rectStrokeWidth(), theme.panel().rectLineType())
             fillOpacity().set(0.0)
         }
         parent.add(panelRectStroke)

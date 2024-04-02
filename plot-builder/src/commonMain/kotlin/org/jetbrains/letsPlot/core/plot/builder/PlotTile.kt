@@ -157,11 +157,10 @@ internal class PlotTile(
     private fun addFacetLabBackground(labelBounds: DoubleRectangle, facetTheme: FacetsTheme) {
         if (facetTheme.showStripBackground()) {
             val rect = SvgRectElement(labelBounds).apply {
-                val width = facetTheme.stripStrokeWidth()
-                strokeWidth().set(width)
+                strokeWidth().set(facetTheme.stripStrokeWidth())
                 fillColor().set(facetTheme.stripFill())
                 strokeColor().set(facetTheme.stripColor())
-                StrokeDashArraySupport.apply(this, width, facetTheme.stripLineType())
+                StrokeDashArraySupport.apply(this, facetTheme.stripStrokeWidth(), facetTheme.stripLineType())
             }
             add(rect)
         }
