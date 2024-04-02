@@ -30,7 +30,7 @@ class CompositeFigureSvgComponent constructor(
                 strokeColor().set(plotTheme.backgroundColor())
                 val width = plotTheme.backgroundStrokeWidth()
                 strokeWidth().set(width)
-                StrokeDashArraySupport.apply(this, width, plotTheme.backgroundStrokeLineType())
+                StrokeDashArraySupport.apply(this, width, plotTheme.backgroundRectLineType())
             })
         }
     }
