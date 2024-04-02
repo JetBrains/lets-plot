@@ -7,6 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
@@ -21,7 +23,12 @@ class GridComponent(
 
         if (gridTheme.showMinor()) {
             for (lineString in minorGrid) {
-                val elem = buildGridLine(lineString, gridTheme.minorLineWidth(), gridTheme.minorLineColor())
+                val elem = buildGridLine(
+                    lineString,
+                    gridTheme.minorLineWidth(),
+                    gridTheme.minorLineColor(),
+                    gridTheme.minorLineType()
+                )
                 rootGroup.children().add(elem)
             }
         }
@@ -29,13 +36,18 @@ class GridComponent(
         // Major grid.
         if (gridTheme.showMajor()) {
             for (lineString in majorGrid) {
-                val elem = buildGridLine(lineString, gridTheme.majorLineWidth(), gridTheme.majorLineColor())
+                val elem = buildGridLine(
+                    lineString,
+                    gridTheme.majorLineWidth(),
+                    gridTheme.majorLineColor(),
+                    gridTheme.majorLineType()
+                )
                 rootGroup.children().add(elem)
             }
         }
     }
 
-    private fun buildGridLine(lineString: List<DoubleVector>, width: Double, color: Color): SvgNode {
+    private fun buildGridLine(lineString: List<DoubleVector>, width: Double, color: Color, lineType: LineType): SvgNode {
         val shapeElem: SvgShape = when {
             lineString.size == 2 -> SvgLineElement(lineString[0].x, lineString[0].y, lineString[1].x, lineString[1].y )
             lineString.size < 2 -> SvgPathElement()
@@ -44,6 +56,7 @@ class GridComponent(
 
         shapeElem.strokeColor().set(color)
         shapeElem.strokeWidth().set(width)
+        StrokeDashArraySupport.apply(shapeElem, width, lineType)
         shapeElem.fill().set(SvgColors.NONE)
         return shapeElem as SvgNode
     }

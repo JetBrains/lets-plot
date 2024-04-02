@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
@@ -133,7 +134,9 @@ internal class PolarFrameOfReference(
     override fun doStrokeBkgr(parent: SvgComponent) {
         val strokeBkgr = createPanelElement() {
             it.strokeColor().set(theme.panel().rectColor())
-            it.strokeWidth().set(theme.panel().rectStrokeWidth())
+            val width = theme.panel().rectStrokeWidth()
+            it.strokeWidth().set(width)
+            StrokeDashArraySupport.apply(it, width, theme.panel().rectLineType())
             it.fillOpacity().set(0.0)
         }
 
@@ -143,7 +146,9 @@ internal class PolarFrameOfReference(
     override fun doDrawPanelBorder(parent: SvgComponent) {
         val border = createPanelElement() {
             it.strokeColor().set(theme.panel().borderColor())
-            it.strokeWidth().set(theme.panel().borderWidth())
+            val width = theme.panel().borderWidth()
+            it.strokeWidth().set(width)
+            StrokeDashArraySupport.apply(it, width, theme.panel().borderLineType())
             it.fillOpacity().set(0.0)
         }
 

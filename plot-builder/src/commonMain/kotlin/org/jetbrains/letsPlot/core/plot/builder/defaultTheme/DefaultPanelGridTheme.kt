@@ -53,4 +53,8 @@ internal class DefaultPanelGridTheme(
     override fun minorLineColor(): Color {
         return getColor(getElemValue(minorLineKey), Elem.COLOR)
     }
+
+    override fun majorLineType() = getLineType(getElemValue(majorLineKey))
+
+    override fun minorLineType() = getLineType(getElemValue(minorLineKey))
 }

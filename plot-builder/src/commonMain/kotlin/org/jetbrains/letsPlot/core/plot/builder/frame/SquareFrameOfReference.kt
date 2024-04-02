@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -107,7 +108,9 @@ internal open class SquareFrameOfReference(
     protected open fun doDrawPanelBorder(parent: SvgComponent) {
         val panelBorder = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().borderColor())
-            strokeWidth().set(theme.panel().borderWidth())
+            val width = theme.panel().borderWidth()
+            strokeWidth().set(width)
+            StrokeDashArraySupport.apply(this, width, theme.panel().borderLineType())
             fillOpacity().set(0.0)
         }
         parent.add(panelBorder)
@@ -195,7 +198,9 @@ internal open class SquareFrameOfReference(
     protected open fun doStrokeBkgr(parent: SvgComponent) {
         val panelRectStroke = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().rectColor())
-            strokeWidth().set(theme.panel().rectStrokeWidth())
+            val width = theme.panel().rectStrokeWidth()
+            strokeWidth().set(width)
+            StrokeDashArraySupport.apply(this, width, theme.panel().rectLineType())
             fillOpacity().set(0.0)
         }
         parent.add(panelRectStroke)

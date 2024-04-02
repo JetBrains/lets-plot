@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface PanelGridTheme {
     fun isOntop(): Boolean
@@ -21,4 +22,8 @@ interface PanelGridTheme {
     fun majorLineColor(): Color
 
     fun minorLineColor(): Color
+
+    fun majorLineType(): LineType
+
+    fun minorLineType(): LineType
 }
