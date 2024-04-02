@@ -39,35 +39,24 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
             throw IllegalStateException("No dash array in " + name.lowercase() + " linetype")
         }
 
-    companion object {
-        private val LINE_TYPE_BY_CODE = HashMap<Int, NamedLineType>()
-        private val LINE_TYPE_BY_NAME = HashMap<String, NamedLineType>()
+}
 
-        init {
-            for (lineType in NamedLineType.values()) {
-                LINE_TYPE_BY_CODE[lineType.code] = lineType
-                LINE_TYPE_BY_NAME[lineType.name.lowercase()] = lineType
-            }
-        }
+private val LINE_TYPE_BY_CODE = NamedLineType.values().associateBy { it.code }
+private val LINE_TYPE_BY_NAME = NamedLineType.values().associateBy { it.name.lowercase() }
 
-        fun parse(value: Any?): LineType {
-            /*
-            * Line type is specified with either an integer (code 0..6), a name, or with a string of
-            * an even number (up to eight) of hexadecimal digits which give the lengths in
-            * consecutive positions in the string.
-            * <p/>
-            * Codes and names:
-            * 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
-            */
-            return when {
-                value == null -> SOLID
-                value is LineType -> value
-                value is String && LINE_TYPE_BY_NAME.containsKey(value) -> LINE_TYPE_BY_NAME[value]!!
-                value is Number && LINE_TYPE_BY_CODE.containsKey(value.toInt()) -> LINE_TYPE_BY_CODE[value.toInt()]!!
-                else -> SOLID
-
-                // todo: could be string of hexadecimal digits (not implemented)
-            }
-        }
+fun parse(value: Any?): LineType {
+    /*
+    * The line type is specified by either an integer (code 0..6) or a name.
+    * Codes and names:
+    * 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
+    *
+    * ToDo: could be string of hexadecimal digits (not implemented)
+    */
+    return when {
+        value == null -> NamedLineType.SOLID
+        value is LineType -> value
+        value is String && LINE_TYPE_BY_NAME.containsKey(value) -> LINE_TYPE_BY_NAME[value]!!
+        value is Number && LINE_TYPE_BY_CODE.containsKey(value.toInt()) -> LINE_TYPE_BY_CODE[value.toInt()]!!
+        else -> NamedLineType.SOLID
     }
 }
