@@ -66,7 +66,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     linetype : int or str
         Type of the fitting line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
-        3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Returns
     -------
