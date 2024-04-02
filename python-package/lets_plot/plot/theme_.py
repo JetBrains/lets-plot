@@ -375,7 +375,7 @@ def element_rect(
         Border size.
     linetype : int or str
         Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -421,7 +421,7 @@ def element_line(
         Line size.
     linetype : int or str
         Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
