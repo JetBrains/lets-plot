@@ -2,6 +2,9 @@
 
 ### Added
 
+- Parameter `dpi` in `ggsave()`, `to_png()` and `to_pdf()` functions [[#839](https://github.com/JetBrains/lets-plot/issues/839)].
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/parameter_dpi.ipynb).
 - Parameter `labwidth` in `facet_wrap()` and `x_labwidth/y_labwidth` in `facet_grid()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).

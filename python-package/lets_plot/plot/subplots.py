@@ -197,7 +197,7 @@ class SupPlotsSpec(FeatureSpec):
         """
         return _to_html(self, path, iframe)
 
-    def to_png(self, path, scale=None) -> str:
+    def to_png(self, path, scale=None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export all plots currently in this 'bunch' to a file or file-like object in PNG format.
 
@@ -211,6 +211,17 @@ class SupPlotsSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+        w : float, default=None
+            Only applicable when exporting to PNG or PDF.
+        h : float, default=None
+            Height of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        unit : {'in', 'cm', 'mm'}, default=None
+            Unit of the output image. One of: 'in', 'cm', 'mm'.
+            Only applicable when exporting to PNG or PDF.
+        dpi : int, default=None
+            Resolution in dots per inch.
+            Only applicable when exporting to PNG or PDF.
 
         Returns
         -------
@@ -244,9 +255,9 @@ class SupPlotsSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        return _export_as_raster(self, path, scale, 'png')
+        return _export_as_raster(self, path, scale, 'png', w=w, h=h, unit=unit, dpi=dpi)
 
-    def to_pdf(self, path, scale=None) -> str:
+    def to_pdf(self, path, scale=None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export all plots currently in this 'bunch' to a file or file-like object in PDF format.
 
@@ -260,6 +271,18 @@ class SupPlotsSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+        w : float, default=None
+            Width of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        h : float, default=None
+            Height of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        unit : {'in', 'cm', 'mm'}, default=None
+            Unit of the output image. One of: 'in', 'cm', 'mm'.
+            Only applicable when exporting to PNG or PDF.
+        dpi : int, default=None
+            Resolution in dots per inch.
+            Only applicable when exporting to PNG or PDF.
 
         Returns
         -------
@@ -291,4 +314,4 @@ class SupPlotsSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        return _export_as_raster(self, path, scale, 'pdf')
+        return _export_as_raster(self, path, scale, 'pdf', w=w, h=h, unit=unit, dpi=dpi)
