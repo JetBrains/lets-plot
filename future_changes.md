@@ -15,6 +15,7 @@
 - DateTime is not recognised in polars.DataFrame [[#961](https://github.com/JetBrains/lets-plot/issues/961)].
 - Support arrow() in geom_spoke() [[#986](https://github.com/JetBrains/lets-plot/issues/986)].
 - Support geom_spoke() in geom_livemap() [[#988](https://github.com/JetBrains/lets-plot/issues/988)].
+- NASA BlueMarble tiles have become blank [[#1000](https://github.com/JetBrains/lets-plot/issues/1000)].
 - Line segments in geom_density2df() do not get interpolated when used with coord_polar() [[#1037](https://github.com/JetBrains/lets-plot/issues/1037)].
 - arrow on segment: reduce arrow size for short segments [[#1040](https://github.com/JetBrains/lets-plot/issues/1040)].
 - arrow on curve sometimes looks weird [[#1041](https://github.com/JetBrains/lets-plot/issues/1041)].

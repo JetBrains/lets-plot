@@ -377,23 +377,6 @@ Examples
 
 """
 
-NASA_BLUEMARBLE_NEXTGENERATION = _nasa_tiles('BlueMarble_NextGeneration', max_zoom=8)
-"""
-NASA tiles, BlueMarble NextGeneration theme.
-
-Examples
---------
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.NASA_BLUEMARBLE_NEXTGENERATION)
-
-"""
-
 NASA_GREYSCALE_SHADED_RELIEF_30M = _nasa_tiles('ASTER_GDEM_Greyscale_Shaded_Relief', max_zoom=12)
 """
 NASA tiles, greyscale shaded relief (30m) theme.
