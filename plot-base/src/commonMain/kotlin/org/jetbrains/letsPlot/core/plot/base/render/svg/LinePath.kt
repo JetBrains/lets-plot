@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -18,7 +19,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
 
     private val myPath: SvgPathElement
-    private var myDashArray: List<Double>? = null
+    private var myLineType: LineType? = null
 
     init {
         myPath = SvgPathElement(builder.build())
@@ -81,24 +82,19 @@ class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
         }
     }
 
-    fun dashArray(): WritableProperty<List<Double>> {
-        return object : WritableProperty<List<Double>> {
-            override fun set(value: List<Double>) {
-                myDashArray = ArrayList(value)
+    fun lineType(): WritableProperty<LineType> {
+        return object : WritableProperty<LineType> {
+            override fun set(value: LineType) {
+                myLineType = value
                 updatePathDashArray()
             }
         }
     }
 
     private fun updatePathDashArray() {
-        if (!(myDashArray == null || myDashArray!!.isEmpty())) {
-            val w = myPath.strokeWidth().get()
-            val width = w ?: 1.0
-            StrokeDashArraySupport.apply(
-                myPath,
-                width,
-                myDashArray!!
-            )
+        if (myLineType != null) {
+            val width = myPath.strokeWidth().get() ?: 1.0
+            StrokeDashArraySupport.apply(myPath, width, myLineType!!)
         }
     }
 

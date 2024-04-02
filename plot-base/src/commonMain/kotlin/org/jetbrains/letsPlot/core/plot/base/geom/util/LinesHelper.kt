@@ -237,9 +237,7 @@ open class LinesHelper(
         path.width().set(size)
 
         val lineType = p.lineType()
-        if (!(lineType.isBlank || lineType.isSolid)) {
-            path.dashArray().set(lineType.dashArray)
-        }
+        path.lineType().set(lineType)
     }
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
