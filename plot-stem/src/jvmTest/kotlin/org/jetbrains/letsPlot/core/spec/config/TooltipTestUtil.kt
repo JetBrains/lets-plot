@@ -53,6 +53,7 @@ object TooltipTestUtil {
         override fun tooltipFill() = Color.WHITE
         override fun tooltipColor() = Color.BLACK
         override fun tooltipStrokeWidth() = 1.0
+        override fun tooltipLineType() = NamedLineType.SOLID
         override fun tooltipTextStyle(): ThemeTextStyle =
             ThemeTextStyle(
 //                    Defaults.FONT_FAMILY_NORMAL,

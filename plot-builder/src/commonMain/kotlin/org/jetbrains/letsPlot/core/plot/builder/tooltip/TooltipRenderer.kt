@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
@@ -128,6 +129,13 @@ internal class TooltipRenderer constructor(
                     else -> tooltipsTheme.tooltipStrokeWidth()
                 }
 
+                val lineType = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipLineType()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipLineType()
+                    spec.isSide -> NamedLineType.SOLID
+                    else -> tooltipsTheme.tooltipLineType()
+                }
+
                 val borderRadius = when (spec.layoutHint.kind) {
                     X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
                     else -> BORDER_RADIUS
@@ -142,6 +150,7 @@ internal class TooltipRenderer constructor(
                         textColor = textColor,
                         borderColor = borderColor,
                         strokeWidth = strokeWidth,
+                        lineType = lineType,
                         lines = spec.lines,
                         title = spec.title,
                         textClassName = spec.style,

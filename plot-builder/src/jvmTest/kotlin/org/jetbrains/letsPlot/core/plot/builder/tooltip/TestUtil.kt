@@ -60,6 +60,7 @@ object TestUtil {
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
+        override fun tooltipLineType() = NamedLineType.SOLID
         override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
 //            Defaults.FONT_FAMILY_NORMAL,
             FontFamily.SERIF,

@@ -73,6 +73,8 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tooltipStrokeWidth() = 1.0
 
+    override fun tooltipLineType() = NamedLineType.SOLID
+
     override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,

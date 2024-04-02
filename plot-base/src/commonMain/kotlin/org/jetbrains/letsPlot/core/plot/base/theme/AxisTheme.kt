@@ -67,6 +67,7 @@ interface AxisTheme {
     fun tooltipFill(): Color
     fun tooltipColor(): Color
     fun tooltipStrokeWidth(): Double
+    fun tooltipLineType(): LineType
 
     fun tooltipTextStyle(): ThemeTextStyle
 }

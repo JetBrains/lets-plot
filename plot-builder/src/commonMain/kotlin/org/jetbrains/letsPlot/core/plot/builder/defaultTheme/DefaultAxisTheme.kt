@@ -128,6 +128,8 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
 
+    override fun tooltipLineType() = getLineType(getElemValue(tooltipKey))
+
     override fun tooltipTextStyle(): ThemeTextStyle {
         val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
         val textStyle = getTextStyle(getElemValue(tooltipTextKey))

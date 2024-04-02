@@ -32,6 +32,8 @@ internal class DefaultTooltipsTheme(
 
     override fun tooltipStrokeWidth() = getNumber(getElemValue(tooltipKey), Elem.SIZE)
 
+    override fun tooltipLineType() = getLineType(getElemValue(tooltipKey))
+
     override fun textStyle(): ThemeTextStyle = getTextStyle(getElemValue(textKey))
 
     override fun titleStyle(): ThemeTextStyle {
