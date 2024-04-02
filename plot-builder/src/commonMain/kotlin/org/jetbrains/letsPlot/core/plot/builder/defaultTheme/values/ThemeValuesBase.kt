@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
@@ -48,11 +49,13 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LINE to mapOf(
                 Elem.SIZE to 1.0,
                 Elem.COLOR to SymbolicColor.BLACK,
+                Elem.LINETYPE to NamedLineType.SOLID
             ),
             RECT to mapOf(
                 Elem.SIZE to 1.0,
                 Elem.COLOR to SymbolicColor.BLACK,
-                Elem.FILL to SymbolicColor.WHITE
+                Elem.FILL to SymbolicColor.WHITE,
+                Elem.LINETYPE to NamedLineType.SOLID
             ),
             TEXT to mapOf(
                 Elem.SIZE to Defaults.FONT_SMALL,
