@@ -61,38 +61,34 @@ internal object PlotAssemblerUtil {
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
-                var colorBar = false
                 val scale = ctx.getScale(aes)
                 val scaleName = scale.name
-                if (guideOptionsMap.containsKey(aes)) {
-                    val guideOptions = guideOptionsMap[aes]
-                    if (guideOptions is ColorBarOptions) {
+
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
+                    if (it is ColorBarOptions) {
                         checkFitsColorBar(aes, scale)
-                        colorBar = true
-                        @Suppress("UNCHECKED_CAST")
-                        colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
-                            scaleName,
-                            ctx.overallTransformedDomain(aes),
-                            scale,
-                            scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
-                            guideOptions,
-                            theme
-                        )
+                        it
+                    } else {
+                        null
                     }
-                } else if (fitsColorBar(aes, scale)) {
-                    colorBar = true
+                }
+
+                if (colorBarOptions != null || fitsColorBar(aes, scale)) {
+                    // Colorbar
                     @Suppress("UNCHECKED_CAST")
-                    colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
+                    val colorBarAssembler = createColorBarAssembler(
                         scaleName,
                         ctx.overallTransformedDomain(aes),
                         scale,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
-                        null,
+                        colorBarOptions,
                         theme
                     )
-                }
 
-                if (!colorBar) {
+                    // ToDo: don't just replace an existing color-bar-assembler (see LP-760: ggmarginal(): broken coloring)
+                    colorBarAssemblerByTitle[scaleName] = colorBarAssembler
+                } else {
+                    // Legend
                     aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
                 }
             }
@@ -124,14 +120,14 @@ internal object PlotAssemblerUtil {
 
         val legendBoxInfos = ArrayList<LegendBoxInfo>()
         for (legendTitle in colorBarAssemblerByTitle.keys) {
-            val boxInfo = colorBarAssemblerByTitle[legendTitle]!!.createColorBar()
+            val boxInfo = colorBarAssemblerByTitle.getValue(legendTitle).createColorBar()
             if (!boxInfo.isEmpty) {
                 legendBoxInfos.add(boxInfo)
             }
         }
 
         for (legendTitle in legendAssemblerByTitle.keys) {
-            val boxInfo = legendAssemblerByTitle[legendTitle]!!.createLegend()
+            val boxInfo = legendAssemblerByTitle.getValue(legendTitle).createLegend()
             if (!boxInfo.isEmpty) {
                 legendBoxInfos.add(boxInfo)
             }
