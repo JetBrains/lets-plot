@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -42,7 +43,9 @@ abstract class LegendBox : SvgComponent() {
         if (theme.showBackground()) {
             add(SvgRectElement(spec.innerBounds).apply {
                 strokeColor().set(theme.backgroundColor())
-                strokeWidth().set(theme.backgroundStrokeWidth())
+                val width = theme.backgroundStrokeWidth()
+                strokeWidth().set(width)
+                StrokeDashArraySupport.apply(this, width, theme.backgroundRectLineType())
                 fillColor().set(theme.backgroundFill())
             })
         }

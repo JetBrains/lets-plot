@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -156,9 +157,11 @@ internal class PlotTile(
     private fun addFacetLabBackground(labelBounds: DoubleRectangle, facetTheme: FacetsTheme) {
         if (facetTheme.showStripBackground()) {
             val rect = SvgRectElement(labelBounds).apply {
-                strokeWidth().set(facetTheme.stripStrokeWidth())
+                val width = facetTheme.stripStrokeWidth()
+                strokeWidth().set(width)
                 fillColor().set(facetTheme.stripFill())
                 strokeColor().set(facetTheme.stripColor())
+                StrokeDashArraySupport.apply(this, width, facetTheme.stripLineType())
             }
             add(rect)
         }
