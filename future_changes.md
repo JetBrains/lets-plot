@@ -6,6 +6,11 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).
 
+- Parameter `linetype` in `element_text()` and `element_rect()`  in `theme()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/theme_linetype.ipynb).
+
+
 
 ### Changed
       
@@ -27,6 +32,7 @@
 - Missing outer bar annotations when specifying `scale_x_reverse()/scale_y_reverse()` [[#1058](https://github.com/JetBrains/lets-plot/issues/1058)].
 - `geom_density2d`: the doc missing some 'computed' variables [[#1062](https://github.com/JetBrains/lets-plot/issues/1062)].
 - Weird and problematic behavior : lets-plot does not respect x and y. Sizing problem ?[[#1068](https://github.com/JetBrains/lets-plot/issues/1068)].
+- Add `linetype` parameter in `elementLine()` and `elementRect()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
 - Any way to line-wrap facet labels? [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 - Missing marginal gridlines.
  
