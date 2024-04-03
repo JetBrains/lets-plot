@@ -78,6 +78,27 @@ class DoubleSpan(
         return lowerEnd to upperEnd
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+        if (!super.equals(other)) return false
+
+        other as DoubleSpan
+
+        if (lowerEnd != other.lowerEnd) return false
+        if (upperEnd != other.upperEnd) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + lowerEnd.hashCode()
+        result = 31 * result + upperEnd.hashCode()
+        return result
+    }
+
+
     companion object {
         fun withLowerEnd(lowerEnd: Double, length: Double) = DoubleSpan(lowerEnd, lowerEnd + length)
         fun withUpperEnd(upperEnd: Double, length: Double) = DoubleSpan(upperEnd - length, upperEnd)

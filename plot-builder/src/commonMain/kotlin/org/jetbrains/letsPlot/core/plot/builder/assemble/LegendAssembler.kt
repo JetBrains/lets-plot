@@ -198,10 +198,10 @@ class LegendAssembler(
             val breakCount = breaks.size
             val colCount: Int
             val rowCount: Int
-            if (options.isByRow) {
+            if (options.byRow) {
                 colCount = when {
-                    options.hasColCount() -> min(options.colCount, breakCount)
-                    options.hasRowCount() -> ceil(breakCount / options.rowCount.toDouble()).toInt()
+                    options.hasColCount() -> min(options.colCount!!, breakCount)
+                    options.hasRowCount() -> ceil(breakCount / options.rowCount!!.toDouble()).toInt()
                     legendDirection === LegendDirection.HORIZONTAL -> breakCount
                     else -> 1
                 }
@@ -209,8 +209,8 @@ class LegendAssembler(
             } else {
                 // by column
                 rowCount = when {
-                    options.hasRowCount() -> min(options.rowCount, breakCount)
-                    options.hasColCount() -> ceil(breakCount / options.colCount.toDouble()).toInt()
+                    options.hasRowCount() -> min(options.rowCount!!, breakCount)
+                    options.hasColCount() -> ceil(breakCount / options.colCount!!.toDouble()).toInt()
                     legendDirection !== LegendDirection.HORIZONTAL -> breakCount
                     else -> 1
                 }
@@ -220,7 +220,7 @@ class LegendAssembler(
             val layout: LegendComponentLayout
             @Suppress("LiftReturnOrAssignment")
             if (legendDirection === LegendDirection.HORIZONTAL) {
-                if (options.hasRowCount() || options.hasColCount() && options.colCount < breakCount) {
+                if (options.hasRowCount() || options.hasColCount() && options.colCount!! < breakCount) {
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
                         breaks,
@@ -236,7 +236,7 @@ class LegendAssembler(
 
             layout.colCount = colCount
             layout.rowCount = rowCount
-            layout.isFillByRow = options.isByRow
+            layout.isFillByRow = options.byRow
 
             return LegendComponentSpec(
                 title,

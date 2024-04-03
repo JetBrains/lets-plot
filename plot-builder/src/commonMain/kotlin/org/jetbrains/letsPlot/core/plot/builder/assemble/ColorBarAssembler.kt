@@ -68,6 +68,18 @@ class ColorBarAssembler(
         colorBarOptions = options
     }
 
+    fun equalScalesAndOptions(other: ColorBarAssembler): Boolean {
+        if (transformedDomain != other.transformedDomain) return false
+
+        if(scale.transform::class != other.scale.transform::class) return false
+        if (scaleMapper::class != other.scaleMapper::class) return false
+
+        if (colorBarOptions != other.colorBarOptions) return false
+
+        return true
+    }
+
+
     companion object {
         private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
 

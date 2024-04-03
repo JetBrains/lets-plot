@@ -5,18 +5,19 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import kotlin.native.concurrent.ThreadLocal
+abstract class GuideOptions(
+    val isReverse: Boolean
+) {
+    abstract fun withReverse(reverse: Boolean): GuideOptions
 
-abstract class GuideOptions {
-
-    var isReverse: Boolean = false
-
-    // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
-    // @link https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
-    // Required mutations:
-    //      -   `isReverse` in the 'outer' class
-    @ThreadLocal
+    //    // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
+//    // @link https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
+//    // Required mutations:
+//    //      -   `isReverse` in the 'outer' class
+//    @ThreadLocal
     companion object {
-        val NONE: GuideOptions = object : GuideOptions() {}
+        val NONE: GuideOptions = object : GuideOptions(false) {
+            override fun withReverse(reverse: Boolean): GuideOptions = this // Do nothing
+        }
     }
 }

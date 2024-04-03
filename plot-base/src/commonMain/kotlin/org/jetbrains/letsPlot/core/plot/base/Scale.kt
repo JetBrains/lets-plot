@@ -35,14 +35,6 @@ interface Scale {
     // For axis and legend (truncated labels). For tooltips the getScaleBreaks functions should be used (full labels).
     fun getShortenedScaleBreaks(): ScaleBreaks
 
-//    fun attrs(): Attrs = Attrs(
-//        name = name,
-//        isContinuous = isContinuous,
-//        isContinuousDomain = isContinuousDomain,
-//        multiplicativeExpand = multiplicativeExpand,
-//        additiveExpand = additiveExpand
-//    )
-
     fun with(): Builder
 
     interface Builder {
@@ -70,18 +62,4 @@ interface Scale {
 
         fun build(): Scale
     }
-
-//    class Attrs(
-//        val name: String,
-//
-////        val labelFormatter: ((Any) -> String)?,
-//
-//        val isContinuous: Boolean, // TRUE if both, domain and range are continuous
-//
-//        val isContinuousDomain: Boolean,
-//
-//        val multiplicativeExpand: Double,
-//
-//        val additiveExpand: Double,
-//    )
 }
