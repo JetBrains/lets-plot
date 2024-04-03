@@ -14,6 +14,8 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setLeft
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setTop
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -56,6 +58,8 @@ internal class DomCanvas private constructor(
             val canvasElement = document.createElement("canvas") as HTMLCanvasElement
             canvasElement.style.setWidth(size.x)
             canvasElement.style.setHeight(size.y)
+            canvasElement.style.setLeft(0.0)
+            canvasElement.style.setTop(0.0)
             canvasElement.style.setProperty("-webkit-user-select", "none")
             canvasElement.style.setProperty("-moz-user-select", "none")
             canvasElement.style.setProperty("-ms-user-select", "none")
