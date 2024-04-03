@@ -551,7 +551,7 @@ class PlotSpec(FeatureSpec):
         """
         return _to_html(self, path, iframe)
 
-    def to_png(self, path, scale: float = None) -> str:
+    def to_png(self, path, scale: float = None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export a plot to a file or to a file-like object in PNG format.
 
@@ -565,6 +565,18 @@ class PlotSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+        w : float, default=None
+            Width of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        h : float, default=None
+            Height of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        unit : {'in', 'cm', 'mm'}, default=None
+            Unit of the output image. One of: 'in', 'cm', 'mm'.
+            Only applicable when exporting to PNG or PDF.
+        dpi : int, default=None
+            Resolution in dots per inch.
+            Only applicable when exporting to PNG or PDF.
 
         Returns
         -------
@@ -594,9 +606,9 @@ class PlotSpec(FeatureSpec):
             p.to_png(file_like)
             display.Image(file_like.getvalue())
         """
-        return _export_as_raster(self, path, scale, 'png')
+        return _export_as_raster(self, path, scale, 'png', w=w, h=h, unit=unit, dpi=dpi)
 
-    def to_pdf(self, path, scale: float = None) -> str:
+    def to_pdf(self, path, scale: float = None, w=None, h=None, unit=None, dpi=None) -> str:
         """
         Export a plot to a file or to a file-like object in PDF format.
 
@@ -610,6 +622,18 @@ class PlotSpec(FeatureSpec):
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
+        w : float, default=None
+            Width of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        h : float, default=None
+            Height of the output image in units.
+            Only applicable when exporting to PNG or PDF.
+        unit : {'in', 'cm', 'mm'}, default=None
+            Unit of the output image. One of: 'in', 'cm', 'mm'.
+            Only applicable when exporting to PNG or PDF.
+        dpi : int, default=None
+            Resolution in dots per inch.
+            Only applicable when exporting to PNG or PDF.
 
         Returns
         -------
@@ -642,7 +666,7 @@ class PlotSpec(FeatureSpec):
             file_like = io.BytesIO()
             p.to_pdf(file_like)
         """
-        return _export_as_raster(self, path, scale, 'pdf')
+        return _export_as_raster(self, path, scale, 'pdf', w=w, h=h, unit=unit, dpi=dpi)
 
 
 class LayerSpec(FeatureSpec):
@@ -833,10 +857,7 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str) -> Union[str, None]:
-    if scale is None:
-        scale = 2.0
-
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
     try:
         import cairosvg
     except ImportError:
@@ -864,7 +885,17 @@ def _export_as_raster(spec, path, scale: float, export_format: str) -> Union[str
         result = abspath
     else:
         result = None  # file-like object is provided. No path to return.
-    export_function(bytestring=svg, write_to=path, scale=scale)
+
+    if any(it is not None for it in [w, h, unit, dpi]):
+        if w is None or h is None or unit is None or dpi is None:
+            raise ValueError("w, h, unit and dpi must be specified")
+
+        w, h = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
+        export_function(bytestring=svg, write_to=path, dpi=dpi, output_width=w, output_height=h)
+    else:
+        scale = scale if scale is not None else 2.0
+        export_function(bytestring=svg, write_to=path, scale=scale)
+
     return result
 
 
@@ -875,3 +906,19 @@ def _makedirs(path: str) -> str:
     if dirname and not os.path.exists(dirname):
         os.makedirs(dirname)
     return abspath
+
+
+def _to_inches(size, size_unit):
+    if size_unit is None:
+        raise ValueError("Unit must be specified")
+
+    if size_unit == 'in':
+        inches = size
+    elif size_unit == 'cm':
+        inches = size / 2.54
+    elif size_unit == 'mm':
+        inches = size / 25.4
+    else:
+        raise ValueError("Unknown unit: {}. Expected one of: 'in', 'cm', 'mm'".format(size_unit))
+
+    return inches

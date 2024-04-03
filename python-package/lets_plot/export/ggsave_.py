@@ -3,10 +3,10 @@
 
 import os
 from os.path import join
-from typing import Union
+from typing import Union, Optional
 
-from ..plot.core import _to_svg, _to_html, _export_as_raster
 from ..plot.core import PlotSpec
+from ..plot.core import _to_svg, _to_html, _export_as_raster
 from ..plot.plot import GGBunch
 from ..plot.subplots import SupPlotsSpec
 
@@ -16,7 +16,8 @@ _DEF_EXPORT_DIR = "lets-plot-images"
 
 
 def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
-           scale: float = 2.0) -> str:
+           scale: float = None, w: Optional[float] = None, h: Optional[float] = None, unit: Optional[str] = None,
+           dpi: Optional[int] = None) -> str:
     """
     Export plot or `bunch` to a file.
     Supported formats: PNG, SVG, PDF, HTML.
@@ -41,6 +42,18 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     scale : float, default=2.0
         Scaling factor for raster output.
         Only applicable when exporting to PNG or PDF.
+    w : float, default=None
+        Width of the output image in units.
+        Only applicable when exporting to PNG or PDF.
+    h : float, default=None
+        Height of the output image in units.
+        Only applicable when exporting to PNG or PDF.
+    unit : {'in', 'cm', 'mm'}, default=None
+        Unit of the output image. One of: 'in', 'cm', 'mm'.
+        Only applicable when exporting to PNG or PDF.
+    dpi : int, default=None
+        Resolution in dots per inch.
+        Only applicable when exporting to PNG or PDF.
 
     Returns
     -------
@@ -57,6 +70,17 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         LetsPlot.setup_html()
         plot = ggplot() + geom_point(x=0, y=0)
         ggsave(plot, 'plot.html', path='.', iframe=False)
+
+    |
+
+    .. code-block::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        plot = ggplot() + geom_point(x=0, y=0) + ggsize(800, 400)
+        ggsave(plot, 'plot.png', w=8, h=4, unit='in', dpi=300)
 
     """
 
@@ -81,10 +105,8 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         return _to_svg(plot, pathname)
     elif ext in ['html', 'htm']:
         return _to_html(plot, pathname, iframe=iframe)
-    elif ext == 'png':
-        return _export_as_raster(plot, pathname, scale, 'png')
-    elif ext == 'pdf':
-        return _export_as_raster(plot, pathname, scale, 'pdf')
+    elif ext in ['png', 'pdf']:
+        return _export_as_raster(plot, pathname, scale, export_format=ext, w=w, h=h, unit=unit, dpi=dpi)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'pdf', 'html', 'htm'".format(ext)
