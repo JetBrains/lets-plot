@@ -5,16 +5,16 @@
 
 package org.jetbrains.letsPlot.platf.w3c.canvas
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.Asyncs
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil
@@ -56,6 +56,10 @@ internal class DomCanvas private constructor(
             val canvasElement = document.createElement("canvas") as HTMLCanvasElement
             canvasElement.style.setWidth(size.x)
             canvasElement.style.setHeight(size.y)
+            canvasElement.style.setProperty("-webkit-user-select", "none")
+            canvasElement.style.setProperty("-moz-user-select", "none")
+            canvasElement.style.setProperty("-ms-user-select", "none")
+            canvasElement.style.setProperty("user-select", "none")
 
             // TODO: fix it. With floor() there are gaps between tiles.
             // element size type is int so use floor to make sure that the context2d will cover whole canvas
