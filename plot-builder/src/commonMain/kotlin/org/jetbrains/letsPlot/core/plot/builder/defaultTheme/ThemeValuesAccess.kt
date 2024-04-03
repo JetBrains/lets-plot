@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.parse
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -135,5 +137,9 @@ internal open class ThemeValuesAccess(
             bottom = getNumber(elem, Elem.Inset.BOTTOM),
             left = getNumber(elem, Elem.Inset.LEFT),
         )
+    }
+
+    protected fun getLineType(elem: Map<String, Any>): LineType {
+        return parse(elem.getValue(Elem.LINETYPE))
     }
 }

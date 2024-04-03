@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface PlotTheme {
     fun showBackground(): Boolean
@@ -15,6 +16,7 @@ interface PlotTheme {
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
+    fun backgroundLineType(): LineType
     fun titleStyle(): ThemeTextStyle
     fun subtitleStyle(): ThemeTextStyle
     fun captionStyle(): ThemeTextStyle

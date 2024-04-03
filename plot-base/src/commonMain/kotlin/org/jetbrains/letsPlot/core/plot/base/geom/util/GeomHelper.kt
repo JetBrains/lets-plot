@@ -317,30 +317,11 @@ open class GeomHelper(
 
     companion object {
         fun decorate(
-            node: SvgNode,
+            shape: SvgShape,
             p: DataPointAesthetics,
             applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH,
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth,
             filled: Boolean = true
-        ) {
-            if (node is SvgShape) {
-                decorateShape(node as SvgShape, p, applyAlphaToAll, strokeScaler, filled)
-            }
-
-            if (node is SvgElement) {
-                val lineType = p.lineType()
-                if (!(lineType.isBlank || lineType.isSolid)) {
-                    StrokeDashArraySupport.apply(node, strokeScaler(p), lineType.dashArray)
-                }
-            }
-        }
-
-        private fun decorateShape(
-            shape: SvgShape,
-            p: DataPointAesthetics,
-            applyAlphaToAll: Boolean,
-            strokeScaler: (DataPointAesthetics) -> Double,
-            filled: Boolean
         ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
             if (filled) {
@@ -348,7 +329,9 @@ open class GeomHelper(
             } else {
                 shape.fill().set(SvgColors.NONE)
             }
-            shape.strokeWidth().set(strokeScaler(p))
+            val strokeWidth = strokeScaler(p)
+            shape.strokeWidth().set(strokeWidth)
+            StrokeDashArraySupport.apply(shape, strokeWidth, p.lineType())
         }
 
         internal fun decorateSlimShape(

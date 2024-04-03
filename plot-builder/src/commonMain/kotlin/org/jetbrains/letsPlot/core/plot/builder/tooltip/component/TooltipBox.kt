@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
@@ -78,6 +80,7 @@ class TooltipBox : SvgComponent() {
         textColor: Color?,
         borderColor: Color,
         strokeWidth: Double,
+        lineType: LineType,
         lines: List<TooltipSpec.Line>,
         title: String?,
         textClassName: String,
@@ -101,7 +104,7 @@ class TooltipBox : SvgComponent() {
             markerColors,
             textClassName
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, pointMarkerStrokeColor)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, lineType, borderRadius, pointMarkerStrokeColor)
     }
 
     fun setPosition(
@@ -141,6 +144,7 @@ class TooltipBox : SvgComponent() {
             fillColor: Color,
             borderColor: Color,
             strokeWidth: Double,
+            lineType: LineType,
             borderRadius: Double,
             pointMarkerStrokeColor: Color
         ) {
@@ -150,6 +154,7 @@ class TooltipBox : SvgComponent() {
                 strokeColor().set(borderColor)
                 strokeWidth().set(strokeWidth)
                 fillColor().set(fillColor)
+                StrokeDashArraySupport.apply(this, strokeWidth, lineType)
             }
 
             myHighlightPoint.apply {

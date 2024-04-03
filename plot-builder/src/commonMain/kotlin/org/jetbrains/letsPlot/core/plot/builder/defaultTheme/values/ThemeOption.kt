@@ -109,7 +109,7 @@ object ThemeOption {
         const val FILL = "fill"
         const val COLOR = "color"
         const val SIZE = "size"
-        const val LINETYPE = "linetype" // ToDo
+        const val LINETYPE = "linetype"
         const val ARROW = "arrow"       // ToDo
 
         // text

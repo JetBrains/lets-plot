@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
@@ -41,6 +42,8 @@ object TooltipTestUtil {
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
+        override fun lineType() = NamedLineType.SOLID
+        override fun tickMarkLineType() = NamedLineType.SOLID
         override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun rotateLabels() = TODO("Not yet implemented")
         override fun labelAngle() = TODO("Not yet implemented")
@@ -50,6 +53,7 @@ object TooltipTestUtil {
         override fun tooltipFill() = Color.WHITE
         override fun tooltipColor() = Color.BLACK
         override fun tooltipStrokeWidth() = 1.0
+        override fun tooltipLineType() = NamedLineType.SOLID
         override fun tooltipTextStyle(): ThemeTextStyle =
             ThemeTextStyle(
 //                    Defaults.FONT_FAMILY_NORMAL,

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -48,6 +49,8 @@ internal class DefaultPlotTheme(
     override fun backgroundStrokeWidth(): Double {
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
+
+    override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
 
     override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))

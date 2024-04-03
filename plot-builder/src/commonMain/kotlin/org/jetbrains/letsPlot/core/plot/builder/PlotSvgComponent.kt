@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
@@ -252,6 +253,7 @@ class PlotSvgComponent constructor(
                 fillColor().set(Color.TRANSPARENT)
                 strokeColor().set(plotTheme.backgroundColor())
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
+                StrokeDashArraySupport.apply(this, plotTheme.backgroundStrokeWidth(), plotTheme.backgroundLineType())
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
             }
         }

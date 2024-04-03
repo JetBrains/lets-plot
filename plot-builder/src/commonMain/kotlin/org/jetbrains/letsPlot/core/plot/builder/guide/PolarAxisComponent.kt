@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
@@ -65,6 +66,7 @@ class PolarAxisComponent(
                     )
                     strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
+                    StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())
                     fillColor().set(Color.TRANSPARENT)
                 }
                 rootElement.children().add(axisLine)
@@ -74,6 +76,7 @@ class PolarAxisComponent(
                     y2().set(breaksData.center.y - length / 2.0)
                     strokeWidth().set(axisTheme.lineWidth())
                     strokeColor().set(axisTheme.lineColor())
+                    StrokeDashArraySupport.apply(this, axisTheme.lineWidth(), axisTheme.lineType())
                 }
                 rootElement.children().add(axisLine)
             }
@@ -93,6 +96,7 @@ class PolarAxisComponent(
             val tickMark = SvgLineElement()
             tickMark.strokeWidth().set(axisTheme.tickMarkWidth())
             tickMark.strokeColor().set(axisTheme.tickMarkColor())
+            StrokeDashArraySupport.apply(tickMark, axisTheme.tickMarkWidth(), axisTheme.tickMarkLineType())
             val markLength = axisTheme.tickMarkLength()
 
             when (orientation) {

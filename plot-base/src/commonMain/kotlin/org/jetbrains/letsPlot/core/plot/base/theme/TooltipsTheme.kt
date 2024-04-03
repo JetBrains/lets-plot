@@ -6,11 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface TooltipsTheme {
     fun tooltipColor(): Color
     fun tooltipFill(): Color
     fun tooltipStrokeWidth(): Double
+    fun tooltipLineType(): LineType
 
     fun textStyle(): ThemeTextStyle
     fun titleStyle(): ThemeTextStyle

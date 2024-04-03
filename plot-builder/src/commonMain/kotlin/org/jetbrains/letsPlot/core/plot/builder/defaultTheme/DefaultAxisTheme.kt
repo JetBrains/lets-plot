@@ -88,6 +88,8 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(lineKey), Elem.COLOR)
     }
 
+    override fun lineType() = getLineType(getElemValue(lineKey))
+
     override fun tickMarkWidth(): Double {
         return getNumber(getElemValue(tickKey), Elem.SIZE)
     }
@@ -99,6 +101,8 @@ internal class DefaultAxisTheme(
     override fun tickMarkColor(): Color {
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
+
+    override fun tickMarkLineType() = getLineType(getElemValue(tickKey))
 
     override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 
@@ -123,6 +127,8 @@ internal class DefaultAxisTheme(
     override fun tooltipStrokeWidth(): Double {
         return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
+
+    override fun tooltipLineType() = getLineType(getElemValue(tooltipKey))
 
     override fun tooltipTextStyle(): ThemeTextStyle {
         val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)

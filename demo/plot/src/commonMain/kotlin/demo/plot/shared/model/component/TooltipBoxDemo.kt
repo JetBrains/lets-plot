@@ -14,6 +14,8 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import demo.plot.common.model.SimpleDemoBase
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
@@ -59,6 +61,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 textColor,
                 borderColor,
                 strokeWidth,
+                lineType,
                 lines,
                 title,
                 textClassName,
@@ -90,6 +93,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val textColor: Color? = Color.BLACK,
             val borderColor: Color = Color.BLACK,
             val strokeWidth: Double = 2.0,
+            val lineType: LineType = NamedLineType.SOLID,
             val lines: List<TooltipSpec.Line>,
             val title: String? = null,
             val textClassName: String = TOOLTIP_TEXT_CLASS,

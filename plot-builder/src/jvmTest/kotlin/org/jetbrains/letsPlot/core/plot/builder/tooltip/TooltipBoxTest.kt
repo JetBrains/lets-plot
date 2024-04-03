@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.HORIZONTAL
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.VERTICAL
@@ -45,6 +46,7 @@ class TooltipBoxTest {
                 textColor = Color.WHITE,
                 borderColor = Color.BLACK,
                 strokeWidth = 1.0,
+                lineType = NamedLineType.SOLID,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
                 title = null,
                 textClassName = "anyStyle",

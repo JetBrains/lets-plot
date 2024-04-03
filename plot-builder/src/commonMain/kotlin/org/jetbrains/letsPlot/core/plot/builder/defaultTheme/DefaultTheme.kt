@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.FILL
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.LINETYPE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.Margin
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
@@ -67,6 +68,7 @@ class DefaultTheme internal constructor(
                         FILL to containerTheme.plot.backgroundFill(),
                         COLOR to this.plot.backgroundColor(),
                         SIZE to this.plot.backgroundStrokeWidth(),
+                        LINETYPE to this.plot.backgroundLineType()
                     )
                 }
 

@@ -43,6 +43,8 @@ internal class DefaultFacetsTheme(
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 
+    override fun stripLineType() = getLineType(getElemValue(rectKey))
+
     override fun stripTextStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }

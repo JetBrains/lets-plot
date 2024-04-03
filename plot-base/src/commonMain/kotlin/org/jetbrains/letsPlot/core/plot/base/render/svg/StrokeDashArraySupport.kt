@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 /**
  * The counterpart of SVG 'stroke-dasharray' attribute but
@@ -14,15 +14,25 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
  * is defined as multiples of line width
  */
 object StrokeDashArraySupport {
-    fun apply(element: SvgElement, strokeWidth: Double, dashArray: List<Double>) {
+    fun apply(element: SvgShape, strokeWidth: Double, lineType: LineType) {
+        val dashArray = toStrokeDashArray(strokeWidth, lineType)
+        if (dashArray != null) {
+            element.strokeDashArray().set(dashArray)
+        }
+    }
+
+    private fun toStrokeDashArray(strokeWidth: Double, lineType: LineType): String? {
+        if (lineType.isBlank || lineType.isSolid) {
+            return null
+        }
         val sb = StringBuilder()
-        for (relativeLength in dashArray) {
+        lineType.dashArray.forEach { relativeLength ->
             val length = relativeLength * strokeWidth
-            if (sb.length > 0) {
+            if (sb.isNotEmpty()) {
                 sb.append(',')
             }
             sb.append(length.toString())
         }
-        element.getAttribute(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE).set(sb.toString())
+        return sb.toString()
     }
 }

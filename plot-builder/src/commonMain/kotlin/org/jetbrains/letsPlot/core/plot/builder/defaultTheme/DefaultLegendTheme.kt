@@ -83,4 +83,6 @@ internal class DefaultLegendTheme(
     override fun backgroundStrokeWidth(): Double {
         return getNumber(getElemValue(backgroundKey), ThemeOption.Elem.SIZE)
     }
+
+    override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
 }

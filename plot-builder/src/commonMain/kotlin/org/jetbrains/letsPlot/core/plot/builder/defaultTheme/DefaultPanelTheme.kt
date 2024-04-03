@@ -45,6 +45,8 @@ internal class DefaultPanelTheme(
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 
+    override fun rectLineType() = getLineType(getElemValue(rectKey))
+
     override fun showBorder() = !isElemBlank(borderKey)
 
     override fun borderColor() = getColor(getElemValue(borderKey), Elem.COLOR)
@@ -52,6 +54,8 @@ internal class DefaultPanelTheme(
     override fun borderWidth() = getNumber(getElemValue(borderKey), Elem.SIZE)
 
     override fun borderIsOntop(): Boolean = getBoolean(borderOntopKey)
+
+    override fun borderLineType() = getLineType(getElemValue(borderKey))
 
     override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
 

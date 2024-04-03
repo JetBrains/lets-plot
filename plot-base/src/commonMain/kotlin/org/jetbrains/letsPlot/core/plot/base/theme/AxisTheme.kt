@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface AxisTheme {
     val axis: String
@@ -36,6 +37,10 @@ interface AxisTheme {
 
     fun tickMarkColor(): Color
 
+    fun lineType(): LineType
+
+    fun tickMarkLineType(): LineType
+
     fun labelStyle(): ThemeTextStyle
 
     fun rotateLabels(): Boolean
@@ -62,6 +67,7 @@ interface AxisTheme {
     fun tooltipFill(): Color
     fun tooltipColor(): Color
     fun tooltipStrokeWidth(): Double
+    fun tooltipLineType(): LineType
 
     fun tooltipTextStyle(): ThemeTextStyle
 }

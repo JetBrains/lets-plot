@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface LegendTheme {
     fun keySize(): Double
@@ -40,4 +41,5 @@ interface LegendTheme {
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
+    fun backgroundLineType(): LineType
 }
