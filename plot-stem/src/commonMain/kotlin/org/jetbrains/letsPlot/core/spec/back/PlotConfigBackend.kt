@@ -77,7 +77,7 @@ open class PlotConfigBackend(
 
             val scaleUpdated = (fromDiscreteScales + fromAsDiscrete).mapNotNull { binding ->
                 val values = layerConfig.combinedData.distinctValues(binding.variable).toList()
-                getDateTimeFormat(values)?.let { format ->
+                selectDateTimeFormat(values)?.let { format ->
                     mapOf(
                         Option.Scale.AES to binding.aes.name,
                         Option.Scale.DATE_TIME to true,
@@ -148,14 +148,34 @@ open class PlotConfigBackend(
         }
     }
 
-    private fun getDateTimeFormat(values: List<Any>): String? {
-        if (values.all { it is Number }) {
-            val range = SeriesUtil.toDoubleList(values)?.let { doubleList -> SeriesUtil.range(doubleList) }
-            if (range != null) {
-                return DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, values.size).pattern
+    private fun selectDateTimeFormat(values: List<Any>): String? {
+        if (values.any { it !is Number }) {
+            return null
+        }
+        // Try the same formatter that is used for continuous scaling
+        val range = SeriesUtil.toDoubleList(values)?.let { doubleList -> SeriesUtil.range(doubleList) }
+        if (range != null) {
+            val breaksHelper = DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, values.size)
+            val formatted = values.map { breaksHelper.formatter.invoke(it as Number) }.distinct()
+            if (formatted.size == values.size) {
+                return breaksHelper.pattern
             }
         }
-        return null
+        // Select better pattern
+        val patterns = listOf(
+            "%Y",
+            "%Y-%m",
+            "%Y-%m-%d",
+            "%Y-%m-%d %H:%M",
+            "%Y-%m-%d %H:%M:%S",
+        )
+        patterns.forEach { pattern ->
+            val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
+            if (values.map(formatter::format).distinct().size == values.size) {
+                return pattern
+            }
+        }
+        return patterns.last()
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
