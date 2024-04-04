@@ -18,7 +18,7 @@ internal class TimeScaleTickFormatterFactory(
         return formatterDateUTC(formatPattern(step))
     }
 
-    private fun formatPattern(step: Double): String {
+    internal fun formatPattern(step: Double): String {
         if (step < 1000) {        // milliseconds
             return TimeInterval.milliseconds(1).tickFormatPattern
         }

@@ -20,12 +20,14 @@ class DateTimeBreaksHelper(
 
     override val breaks: List<Double>
     val formatter: (Number) -> String
+    val pattern: String
 
     init {
-
         val step = targetStep
         if (step < 1000) {        // milliseconds
-            formatter = TimeScaleTickFormatterFactory(minInterval).getFormatter(step)
+            val interval = TimeScaleTickFormatterFactory(minInterval)
+            formatter = interval.getFormatter(step)
+            pattern = interval.formatPattern(step)
             // compute step so that it is multiple of automatic time steps
             breaks = LinearBreaksHelper(rangeStart, rangeEnd, count).breaks
 
@@ -42,9 +44,11 @@ class DateTimeBreaksHelper(
             if (ticks != null && ticks.size <= count) {
                 // same or smaller interval requested -> stay with min interval
                 formatter = minInterval!!.tickFormatter
+                pattern = minInterval.tickFormatPattern
                 // otherwise - larger step requested -> compute ticks
             } else if (step > YearInterval.MS) {        // years
                 formatter = YearInterval.TICK_FORMATTER
+                pattern = YearInterval.TICK_FORMAT
                 ticks = ArrayList()
                 val startDateTime = TimeUtil.asDateTimeUTC(start)
                 var startYear = startDateTime.year
@@ -64,6 +68,7 @@ class DateTimeBreaksHelper(
             } else {
                 val interval = NiceTimeInterval.forMillis(step)
                 formatter = interval.tickFormatter
+                pattern = interval.tickFormatPattern
                 ticks = interval.range(start, end).toMutableList()
             }
 

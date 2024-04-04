@@ -7,9 +7,11 @@ package org.jetbrains.letsPlot.core.spec.back
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksHelper
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -73,14 +75,15 @@ open class PlotConfigBackend(
             val fromAsDiscrete = dateTimeBindings
                 .filter { it.aes.name in layerConfig.combinedDiscreteMappings }
 
-            val scaleUpdated = (fromDiscreteScales + fromAsDiscrete).map {
-                val values = layerConfig.combinedData.distinctValues(it.variable)
-                val format = selectFormatter(values)
-                mapOf(
-                    Option.Scale.AES to it.aes.name,
-                    Option.Scale.DATE_TIME to true,
-                    Option.Scale.FORMAT to format
-                )
+            val scaleUpdated = (fromDiscreteScales + fromAsDiscrete).mapNotNull { binding ->
+                val values = layerConfig.combinedData.distinctValues(binding.variable).toList()
+                getDateTimeFormat(values)?.let { format ->
+                    mapOf(
+                        Option.Scale.AES to binding.aes.name,
+                        Option.Scale.DATE_TIME to true,
+                        Option.Scale.FORMAT to format
+                    )
+                }
             }
 
             val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
@@ -145,21 +148,14 @@ open class PlotConfigBackend(
         }
     }
 
-    private fun selectFormatter(values: Set<Any>): String {
-        val patterns = listOf(
-            "%Y",
-            "%Y-%m",
-            "%Y-%m-%d",
-            "%Y-%m-%d %H:%M",
-            "%Y-%m-%d %H:%M:%S",
-        )
-        patterns.forEach { pattern ->
-            val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
-            if (values.map(formatter::format).distinct().size == values.size) {
-                return pattern
+    private fun getDateTimeFormat(values: List<Any>): String? {
+        if (values.all { it is Number }) {
+            val range = SeriesUtil.toDoubleList(values)?.let { doubleList -> SeriesUtil.range(doubleList) }
+            if (range != null) {
+                return DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, values.size).pattern
             }
         }
-        return patterns.last()
+        return null
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
