@@ -158,6 +158,7 @@ class LayerConfig(
         )
 
         if (!clientSide
+            && !hasOwn(ORIENTATION)
             && isOrientationApplicable()
             && !DataConfigUtil.isAesDiscrete(
                 Aes.X,
