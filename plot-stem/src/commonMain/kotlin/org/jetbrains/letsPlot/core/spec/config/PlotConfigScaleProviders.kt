@@ -38,8 +38,9 @@ internal object PlotConfigScaleProviders {
         // Append date-time scale provider
         val dateTimeAesByVarBinding = dataByVarBinding
             .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
-            .keys
-            .map(VarBinding::aes)
+//            .keys
+//            .map(VarBinding::aes)
+            .map { (varBinding, _) -> varBinding.aes}
 
         // Axis that don't have an explicit mapping but have a corresponding positional mapping to a datetime variable
         val dateTimeAxisAesByPositionalVarBinding = listOfNotNull(

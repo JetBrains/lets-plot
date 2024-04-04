@@ -50,7 +50,8 @@ internal object PlotAssemblerUtil {
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-        for (layerInfo in geomTiles.coreLayerInfos()) {
+//        for (layerInfo in geomTiles.coreLayerInfos()) {
+        for (layerInfo in geomTiles.layerInfos()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
                 if (layerInfo.hasConstant(aes)) {
@@ -85,8 +86,18 @@ internal object PlotAssemblerUtil {
                         theme
                     )
 
-                    // ToDo: don't just replace an existing color-bar-assembler (see LP-760: ggmarginal(): broken coloring)
-                    colorBarAssemblerByTitle[scaleName] = colorBarAssembler
+                    val colorbarName = colorBarAssemblerByTitle[scaleName]?.let { existingAssembler ->
+                        if (colorBarAssembler.equalScalesAndOptions(existingAssembler)) {
+                            scaleName
+                        } else {
+                            // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
+                            // Add under another key
+                            "$scaleName (${aes.name})"
+                        }
+                    } ?: scaleName
+
+                    colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(colorbarName)
+
                 } else {
                     // Legend
                     aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)

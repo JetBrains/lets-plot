@@ -128,11 +128,12 @@ internal object PlotConfigUtil {
     private fun associateVarBindingsWithData(
         bindingsByLayer: List<List<VarBinding>>,
         dataByLayer: List<DataFrame>,
-    ): Map<VarBinding, DataFrame> {
+//    ): Map<VarBinding, DataFrame> {
+    ): List<Pair<VarBinding, DataFrame>> {
         val dataByVarBinding = bindingsByLayer.zip(dataByLayer)
             .flatMap { (varBindings, data) ->
                 varBindings.map { it to data }
-            }.toMap()
+            } //.toMap()  Don't do it. See VarBinding.equals()
 
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {

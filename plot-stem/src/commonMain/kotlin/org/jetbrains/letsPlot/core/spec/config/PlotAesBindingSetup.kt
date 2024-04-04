@@ -11,7 +11,8 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 
 internal class PlotAesBindingSetup(
     private val varBindings: List<VarBinding>,
-    val dataByVarBinding: Map<VarBinding, DataFrame>,
+//    val dataByVarBinding: Map<VarBinding, DataFrame>,
+    val dataByVarBinding: List<Pair<VarBinding, DataFrame>>,
     val variablesByMappedAes: Map<Aes<*>, List<DataFrame.Variable>>,
 
     ) {
@@ -20,7 +21,8 @@ internal class PlotAesBindingSetup(
             .map { it.aes }.toSet()
     }
 
-    fun dataByVarBindingWithoutStatPositional(): Map<VarBinding, DataFrame> {
+    //    fun dataByVarBindingWithoutStatPositional(): Map<VarBinding, DataFrame> {
+    fun dataByVarBindingWithoutStatPositional(): List<Pair<VarBinding, DataFrame>> {
         return dataByVarBinding.filterNot { (binding, _) ->
             binding.variable.isStat && Aes.isPositionalXY(binding.aes)
         }

@@ -1,4 +1,4 @@
-## [4.3.1] - 2024-mm-dd
+## [4.3.1] - 2024-04-dd
 
 ### Added
 
@@ -39,4 +39,5 @@
 - Add `linetype` parameter in `elementLine()` and `elementRect()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
 - Any way to line-wrap facet labels? [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 - Missing marginal gridlines.
+- ggmarginal(): broken coloring [[#760](https://github.com/JetBrains/lets-plot/issues/760)].
  

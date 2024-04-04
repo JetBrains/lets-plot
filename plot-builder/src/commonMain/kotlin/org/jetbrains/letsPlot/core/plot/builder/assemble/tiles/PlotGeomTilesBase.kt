@@ -56,8 +56,12 @@ abstract class PlotGeomTilesBase(
         }
     }
 
-    override fun coreLayerInfos(): List<GeomLayerInfo> {
-        return coreLayersByTile()[0].map(::GeomLayerInfo)
+//    override fun coreLayerInfos(): List<GeomLayerInfo> {
+//        return coreLayersByTile()[0].map(::GeomLayerInfo)
+//    }
+
+    override fun layerInfos(): List<GeomLayerInfo> {
+        return layersByTile()[0].map(::GeomLayerInfo)
     }
 
     companion object {

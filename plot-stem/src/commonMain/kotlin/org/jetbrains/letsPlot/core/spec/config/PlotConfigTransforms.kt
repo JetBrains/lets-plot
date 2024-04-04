@@ -48,12 +48,15 @@ internal object PlotConfigTransforms {
                 discreteAesSet.add(aes)
             } else if (variablesByMappedAes.containsKey(aes)) {
                 val variables = variablesByMappedAes.getValue(aes)
-                val anyNotNumericData = variables.any {
-                    val data = dataByVarBinding.getValue(VarBinding(it, aes))
-                    if (data.isEmpty(it)) {
+                val anyNotNumericData = variables.any { variable ->
+//                    val data = dataByVarBinding.getValue(VarBinding(variable, aes))
+                    val varBinding = VarBinding(variable, aes)
+                    val data = dataByVarBinding.find { it.first == varBinding }?.second
+                        ?: error("Missing binding $varBinding")
+                    if (data.isEmpty(variable)) {
                         isDiscreteScaleForEmptyData(scaleProvider, mapperProviderByAes.getValue(aes))
                     } else {
-                        data.isDiscrete(it)
+                        data.isDiscrete(variable)
                     }
                 }
                 if (anyNotNumericData) {
@@ -182,11 +185,15 @@ internal object PlotConfigTransforms {
 
     internal fun discreteDomainByAes(
         discreteAesSet: Set<Aes<*>>,
-        dataByVarBinding: Map<VarBinding, DataFrame>,
+//        dataByVarBinding: Map<VarBinding, DataFrame>,
+        dataByVarBinding: List<Pair<VarBinding, DataFrame>>,
     ): Map<Aes<*>, Collection<Any>> {
         // Discrete domains from 'data'.
-        val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
-            it.aes in discreteAesSet
+//        val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
+//            it.aes in discreteAesSet
+//        }
+        val discreteDataByVarBinding: List<Pair<VarBinding, DataFrame>> = dataByVarBinding.filter {
+            it.first.aes in discreteAesSet
         }
         val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
         for ((varBinding, data) in discreteDataByVarBinding) {

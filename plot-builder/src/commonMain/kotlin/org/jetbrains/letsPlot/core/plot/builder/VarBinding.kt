@@ -20,6 +20,11 @@ class VarBinding(
 
         other as VarBinding
 
+        // ToDo: Issue: "source" variables are different in different dataframes.
+        //  STAT variables are all the same.
+        //  Generally, we can't use VarBinding as a key in a hashmap.
+        //  As result, PlotConfigUtil.associateVarBindingsWithData() fails when building Map<VarBinding, DataFrame>
+        //  because several (..count.. -> color) bindings become 1 entry in the map.
         if (variable != other.variable) return false
         if (aes != other.aes) return false
 
