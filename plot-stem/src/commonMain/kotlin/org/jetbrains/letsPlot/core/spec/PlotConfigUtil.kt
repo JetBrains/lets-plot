@@ -178,10 +178,7 @@ internal object PlotConfigUtil {
         }
     }
 
-    internal fun createScaleConfigs(
-        scaleOptionsList: List<*>,
-        aopConversion: AesOptionConversion
-    ): List<ScaleConfig<Any>> {
+    internal fun mergeScaleOptions(scaleOptionsList: List<*>): HashMap<Aes<Any>, MutableMap<String, Any>> {
         // merge options by 'aes'
         val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
@@ -196,6 +193,14 @@ internal object PlotConfigUtil {
 
             mergedOpts[aes]!!.putAll(optsMap)
         }
+        return mergedOpts
+    }
+
+    internal fun createScaleConfigs(
+        scaleOptionsList: List<*>,
+        aopConversion: AesOptionConversion
+    ): List<ScaleConfig<Any>> {
+        val mergedOpts = mergeScaleOptions(scaleOptionsList)
 
         return mergedOpts.map { (aes, options) ->
             ScaleConfig(aes, options, aopConversion)

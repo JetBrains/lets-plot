@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
@@ -17,9 +18,11 @@ import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
@@ -52,6 +55,40 @@ open class PlotConfigBackend(
      * WARN! Side effects - performs modifications deep in specs tree
      */
     internal fun updatePlotSpec() {
+
+        // Correct scales
+        val plotDateTimeColumns = DataMetaUtil.getDateTimeColumns(getMap(DATA_META))
+        layerConfigs.map { layerConfig ->
+            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
+
+            // Detect variables:
+            // discrete (annotated as_discrete or with mapping to discrete scale)
+            // and datetime at the same time
+            val dateTimeBindings = layerConfig.varBindings
+                .filter { it.variable.name in dateTimeColumns }
+
+            val fromDiscreteScales = dateTimeBindings
+                .filter { scaleProviderByAes[it.aes]?.discreteDomain == true}
+
+            val fromAsDiscrete = dateTimeBindings
+                .filter { it.aes.name in layerConfig.combinedDiscreteMappings }
+
+            val scaleUpdated = (fromDiscreteScales + fromAsDiscrete).map {
+                val values = layerConfig.combinedData.distinctValues(it.variable)
+                val format = selectFormatter(values)
+                mapOf(
+                    Option.Scale.AES to it.aes.name,
+                    Option.Scale.DATE_TIME to true,
+                    Option.Scale.FORMAT to format
+                )
+            }
+
+            val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
+            if (mergedOpts.isNotEmpty()) {
+                update(SCALES, mergedOpts)
+            }
+        }
+
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
         val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
@@ -106,6 +143,23 @@ open class PlotConfigBackend(
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                 }
         }
+    }
+
+    private fun selectFormatter(values: Set<Any>): String {
+        val patterns = listOf(
+            "%Y",
+            "%Y-%m",
+            "%Y-%m-%d",
+            "%Y-%m-%d %H:%M",
+            "%Y-%m-%d %H:%M:%S",
+        )
+        patterns.forEach { pattern ->
+            val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
+            if (values.map(formatter::format).distinct().size == values.size) {
+                return pattern
+            }
+        }
+        return patterns.last()
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
