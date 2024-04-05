@@ -85,9 +85,8 @@ open class PlotConfigBackend(
                     )
                 }
             }
-
-            val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
-            if (mergedOpts.isNotEmpty()) {
+            if (scaleUpdated.isNotEmpty()) {
+                val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
                 update(SCALES, mergedOpts)
             }
         }
