@@ -31,6 +31,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                map=None, map_join=None, use_crs=None,
+               size_unit=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -76,6 +77,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+    size_unit : {'x', 'y'}
+        Relate the size of the point to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -197,6 +201,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -6036,6 +6041,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               label_format=None,
               na_text=None,
               nudge_x=None, nudge_y=None,
+              size_unit=None,
               color_by=None,
               **other_args):
     """
@@ -6095,6 +6101,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
+    size_unit : {'x', 'y'}
+        Relate the size of the text to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6242,6 +6251,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  label_format=label_format,
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
+                 size_unit=size_unit,
                  color_by=color_by,
                  **other_args)
 
@@ -6253,6 +6263,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                nudge_x=None, nudge_y=None,
                label_padding=None, label_r=None, label_size=None,
                alpha_stroke=None,
+               size_unit=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -6320,6 +6331,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Size of label border.
     alpha_stroke : bool, default=False
         Enable the applying of 'alpha' to 'color' (label text and border).
+    size_unit : {'x', 'y'}
+        Relate the size of the text label to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -6475,6 +6489,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_r=label_r,
                  label_size=label_size,
                  alpha_stroke=alpha_stroke,
+                 size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
