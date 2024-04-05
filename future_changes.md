@@ -13,7 +13,9 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/theme_linetype.ipynb).
 
+- Parameter `size_unit` in `geom_point()`, `geom_text()` and `geom_label()`.
 
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/param_size_unit.ipynb).
 
 ### Changed
       
