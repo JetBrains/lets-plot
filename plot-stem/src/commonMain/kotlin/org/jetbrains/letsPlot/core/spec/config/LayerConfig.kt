@@ -90,17 +90,6 @@ class LayerConfig(
         }
 
     val isYOrientation: Boolean
-        get() = when (hasOwn(ORIENTATION)) {
-            true -> getString(ORIENTATION)?.lowercase()?.let {
-                when (it) {
-                    "y" -> true
-                    "x" -> false
-                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
-                }
-            } ?: false
-
-            false -> false
-        }
 
     // Marginal layers
     val isMarginal: Boolean = getBoolean(MARGINAL, false)
@@ -157,27 +146,40 @@ class LayerConfig(
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
 
-        if (!clientSide
-            && !hasOwn(ORIENTATION)
-            && isOrientationApplicable()
-            && !DataConfigUtil.isAesDiscrete(
-                Aes.X,
-                plotData,
-                ownData,
-                plotMappings,
-                layerMappings,
-                combinedDiscreteMappings
-            )
-            && DataConfigUtil.isAesDiscrete(
-                Aes.Y,
-                plotData,
-                ownData,
-                plotMappings,
-                layerMappings,
-                combinedDiscreteMappings
-            )
-        ) {
-            setOrientationY()
+        isYOrientation = when (hasOwn(ORIENTATION)) {
+            true -> getString(ORIENTATION)?.lowercase()?.let {
+                when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            } ?: false
+
+            false ->
+                if (!clientSide
+                && isOrientationApplicable()
+                && !DataConfigUtil.isAesDiscrete(
+                    Aes.X,
+                    plotData,
+                    ownData,
+                    plotMappings,
+                    layerMappings,
+                    combinedDiscreteMappings
+                )
+                && DataConfigUtil.isAesDiscrete(
+                    Aes.Y,
+                    plotData,
+                    ownData,
+                    plotMappings,
+                    layerMappings,
+                    combinedDiscreteMappings
+                )
+            ) {
+                setOrientationY()
+                true
+            } else {
+                false
+            }
         }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
