@@ -22,6 +22,11 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/param_size_unit.ipynb).
 
+- Automatically choose `orientation="y"` when aes y is discrete [[#558](https://github.com/JetBrains/lets-plot/issues/558)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/auto_rotate.ipynb).
+
+
 ### Changed
       
 ### Fixed

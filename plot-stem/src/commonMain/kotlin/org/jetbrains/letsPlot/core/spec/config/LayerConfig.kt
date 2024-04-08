@@ -90,17 +90,6 @@ class LayerConfig(
         }
 
     val isYOrientation: Boolean
-        get() = when (hasOwn(ORIENTATION)) {
-            true -> getString(ORIENTATION)?.lowercase()?.let {
-                when (it) {
-                    "y" -> true
-                    "x" -> false
-                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
-                }
-            } ?: false
-
-            false -> false
-        }
 
     // Marginal layers
     val isMarginal: Boolean = getBoolean(MARGINAL, false)
@@ -156,6 +145,42 @@ class LayerConfig(
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
+
+        isYOrientation = when (hasOwn(ORIENTATION)) {
+            true -> getString(ORIENTATION)?.lowercase()?.let {
+                when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            } ?: false
+
+            false ->
+                if (!clientSide
+                && isOrientationApplicable()
+                && !DataConfigUtil.isAesDiscrete(
+                    Aes.X,
+                    plotData,
+                    ownData,
+                    plotMappings,
+                    layerMappings,
+                    combinedDiscreteMappings
+                )
+                && DataConfigUtil.isAesDiscrete(
+                    Aes.Y,
+                    plotData,
+                    ownData,
+                    plotMappings,
+                    layerMappings,
+                    combinedDiscreteMappings
+                )
+            ) {
+                setOrientationY()
+                true
+            } else {
+                false
+            }
+        }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -277,6 +302,31 @@ class LayerConfig(
 
         // Invalidate layer' "combined data"
         combinedDataValid = false
+    }
+
+    private fun isOrientationApplicable(): Boolean {
+        val isSuitableGeomKind = geomProto.geomKind in listOf(
+            GeomKind.BAR,
+            GeomKind.BOX_PLOT,
+            GeomKind.VIOLIN,
+            GeomKind.LOLLIPOP,
+            GeomKind.Y_DOT_PLOT
+        )
+        val isSuitableStatKind = statKind in listOf(
+            StatKind.COUNT,
+            StatKind.SUMMARY,
+            StatKind.BOXPLOT,
+            StatKind.BOXPLOT_OUTLIER,
+            StatKind.YDOTPLOT,
+            StatKind.YDENSITY
+        )
+
+        return isSuitableGeomKind || isSuitableStatKind
+    }
+
+    private fun setOrientationY() {
+        check(!clientSide)
+        update(ORIENTATION, "y")
     }
 
     fun hasExplicitGrouping(): Boolean {
