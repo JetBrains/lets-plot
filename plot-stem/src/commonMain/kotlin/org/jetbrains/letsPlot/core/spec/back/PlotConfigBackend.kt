@@ -63,19 +63,12 @@ open class PlotConfigBackend(
         layerConfigs.map { layerConfig ->
             val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
 
-            // Detect variables:
-            // discrete (annotated as_discrete or with mapping to discrete scale)
-            // and datetime at the same time
-            val dateTimeBindings = layerConfig.varBindings
+            // Detect datetime variables with mapping to discrete scale
+            val dateTimeDiscreteBindings = layerConfig.varBindings
                 .filter { it.variable.name in dateTimeColumns }
-
-            val fromDiscreteScales = dateTimeBindings
                 .filter { scaleProviderByAes[it.aes]?.discreteDomain == true}
 
-            val fromAsDiscrete = dateTimeBindings
-                .filter { it.aes.name in layerConfig.combinedDiscreteMappings }
-
-            val scaleUpdated = (fromDiscreteScales + fromAsDiscrete).mapNotNull { binding ->
+            val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val values = layerConfig.combinedData.distinctValues(binding.variable).toList()
                 selectDateTimeFormat(values)?.let { format ->
                     mapOf(

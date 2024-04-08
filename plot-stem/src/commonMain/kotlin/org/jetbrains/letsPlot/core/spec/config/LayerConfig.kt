@@ -112,9 +112,6 @@ class LayerConfig(
         else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
     }
 
-    var combinedDiscreteMappings: Map<String, String>
-        private set
-
     var orderOptions: List<OrderOption>
         private set
 
@@ -142,7 +139,7 @@ class LayerConfig(
 
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
-        combinedDiscreteMappings = combinedDiscreteMapping(
+        val combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
             ownMappings = layerMappings,
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
