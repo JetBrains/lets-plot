@@ -5,6 +5,7 @@
 - Parameter `dpi` in `ggsave()`, `to_png()` and `to_pdf()` functions [[#839](https://github.com/JetBrains/lets-plot/issues/839)].
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/parameter_dpi.ipynb).
+
 - Parameter `labwidth` in `facet_wrap()` and `x_labwidth/y_labwidth` in `facet_grid()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).
@@ -12,6 +13,10 @@
 - Parameter `linetype` in `element_text()` and `element_rect()`  in `theme()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/theme_linetype.ipynb).
+
+- Parameter `arrow` in `geom_spoke()` [[#986](https://github.com/JetBrains/lets-plot/issues/986)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/geom_spoke_arrow.ipynb).
 
 - Parameter `size_unit` in `geom_point()`, `geom_text()` and `geom_label()`.
 
@@ -23,7 +28,6 @@
 - Incorrect 'plot_background' area (with empty space capture) [[#918](https://github.com/JetBrains/lets-plot/issues/918)].
 - geom_density2df: uneven borders [[#941](https://github.com/JetBrains/lets-plot/issues/941)].
 - DateTime is not recognised in polars.DataFrame [[#961](https://github.com/JetBrains/lets-plot/issues/961)].
-- Support arrow() in geom_spoke() [[#986](https://github.com/JetBrains/lets-plot/issues/986)].
 - Support geom_spoke() in geom_livemap() [[#988](https://github.com/JetBrains/lets-plot/issues/988)].
 - NASA BlueMarble tiles have become blank [[#1000](https://github.com/JetBrains/lets-plot/issues/1000)].
 - Line segments in geom_density2df() do not get interpolated when used with coord_polar() [[#1037](https://github.com/JetBrains/lets-plot/issues/1037)].
