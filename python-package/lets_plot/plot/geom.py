@@ -5979,7 +5979,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 17
+        :emphasize-lines: 16-17
 
         import numpy as np
         from lets_plot import *
@@ -5996,8 +5996,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
         A = np.arctan2(dY, dX)
         data = dict(x=X.reshape(-1), y=Y.reshape(-1), z=Z.reshape(-1), r=nR.reshape(-1), a=A.reshape(-1))
         ggplot(data, aes('x', 'y', color='z')) + \\
-            geom_point(size=1.5) + \\
-            geom_spoke(aes(angle='a', radius='r')) + \\
+            geom_spoke(aes(angle='a', radius='r'), \\
+                       arrow=arrow(type='closed', angle=15)) + \\
             scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
             coord_fixed()
 
