@@ -10,7 +10,7 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).
 
-- Parameter `linetype` in `element_text()` and `element_rect()`  in `theme()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
+- Parameter `linetype` in `element_line()` and `element_rect()`  in `theme()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/theme_linetype.ipynb).
 
