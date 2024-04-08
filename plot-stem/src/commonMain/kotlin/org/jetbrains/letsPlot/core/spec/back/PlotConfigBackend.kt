@@ -63,7 +63,7 @@ open class PlotConfigBackend(
         layerConfigs.map { layerConfig ->
             val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
 
-            // Detect datetime variables with mapping to discrete scale
+            // Detect date/time variables with mapping to discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
                 .filter { it.variable.name in dateTimeColumns }
                 .filter { scaleProviderByAes[it.aes]?.discreteDomain == true}
@@ -144,7 +144,7 @@ open class PlotConfigBackend(
         if (values.any { it !is Number }) {
             return null
         }
-        // Try the same formatter that is used for continuous scaling
+        // Try the same formatter that is used for the continuous scale
         val range = SeriesUtil.toDoubleList(values)?.let { doubleList -> SeriesUtil.range(doubleList) }
         if (range != null) {
             val breaksHelper = DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, values.size)
