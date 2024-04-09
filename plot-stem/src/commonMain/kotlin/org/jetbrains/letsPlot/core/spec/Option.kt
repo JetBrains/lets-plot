@@ -803,6 +803,7 @@ object Option {
             const val FILL = ThemeOption.Elem.FILL
             const val COLOR = ThemeOption.Elem.COLOR
             const val SIZE = ThemeOption.Elem.SIZE
+            const val LINETYPE = ThemeOption.Elem.LINETYPE
             const val FONT_FAMILY = ThemeOption.Elem.FONT_FAMILY
             const val FONT_FACE = ThemeOption.Elem.FONT_FACE
             const val HJUST = ThemeOption.Elem.HJUST
