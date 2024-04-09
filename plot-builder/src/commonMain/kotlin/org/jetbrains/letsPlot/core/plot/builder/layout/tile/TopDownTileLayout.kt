@@ -26,9 +26,9 @@ internal open class TopDownTileLayout(
 
         val geomAreaInsets = computeAxisInfos(preferredSize, coordProvider)
 
-        val geomContentBounds = computeGeomContentBounds(geomAreaInsets, preferredSize, coordProvider)
-        val geomInnerBounds = panelInset.inflateRect(geomContentBounds)
-        val geomOuterBounds = marginsLayout.toOuterBounds(geomInnerBounds)
+        val geomOuterBounds = geomOuterBounds(geomAreaInsets, preferredSize, coordProvider)
+        val geomContentBounds = geomContentBounds(geomAreaInsets, preferredSize, coordProvider)
+        val geomInnerBounds = getGeomInnerBounds(geomAreaInsets, preferredSize, coordProvider)
 
         val axisInfos = geomAreaInsets.axisInfoQuad
 
@@ -53,7 +53,10 @@ internal open class TopDownTileLayout(
         )
     }
 
-    protected open fun computeGeomWithAxisBounds(geomOuterBounds: DoubleRectangle, axisInfos: AxisLayoutInfoQuad): DoubleRectangle {
+    protected open fun computeGeomWithAxisBounds(
+        geomOuterBounds: DoubleRectangle,
+        axisInfos: AxisLayoutInfoQuad
+    ): DoubleRectangle {
         val (l, r, t, b) = axisInfos
         return DoubleRectangle.LTRB(
             left = l?.axisBoundsAbsolute(geomOuterBounds)?.left ?: geomOuterBounds.left,
@@ -69,17 +72,14 @@ internal open class TopDownTileLayout(
     ): GeomAreaInsets {
         val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
         val axisHeightEstim =
-            computeGeomContentBounds(insetsInitial, plotSize, coordProvider)
+            geomContentBounds(insetsInitial, plotSize, coordProvider)
                 .dimension
-                .let(marginsLayout::toInnerSize)
                 .y
 
         val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
-        val plottingArea = computeGeomContentBounds(insetsVAxis, plotSize, coordProvider)
+        val plottingArea = geomContentBounds(insetsVAxis, plotSize, coordProvider)
 
-        val hAxisLength = marginsLayout
-            .toInnerBounds(plottingArea)
-            .width
+        val hAxisLength = plottingArea.width
 
         val insetsHVAxis = insetsVAxis.layoutHAxis(
             hDomain,
@@ -89,9 +89,8 @@ internal open class TopDownTileLayout(
         // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
         val insetsFinal =
             if ((insetsHVAxis.top + insetsHVAxis.bottom) > (insetsInitial.top + insetsInitial.bottom)) {
-                val geomHeight = computeGeomContentBounds(insetsHVAxis, plotSize, coordProvider)
+                val geomHeight = geomContentBounds(insetsHVAxis, plotSize, coordProvider)
                     .dimension
-                    .let(marginsLayout::toInnerSize)
                     .y
 
                 insetsHVAxis.layoutVAxis(vDomain, geomHeight)
@@ -102,20 +101,37 @@ internal open class TopDownTileLayout(
         return insetsFinal
     }
 
-    protected fun computeGeomContentBounds(
+    protected fun geomContentBounds(
+        geomInsets: GeomAreaInsets,
+        plotSize: DoubleVector,
+        coordProvider: CoordProvider
+    ): DoubleRectangle {
+        val geomInnerBounds = getGeomInnerBounds(geomInsets, plotSize, coordProvider)
+        return panelInset.shrinkRect(geomInnerBounds)
+    }
+
+    private fun getGeomInnerBounds(
+        geomAreaInsets: GeomAreaInsets,
+        plotSize: DoubleVector,
+        coordProvider: CoordProvider
+    ): DoubleRectangle {
+        val geomOuterBounds = geomOuterBounds(geomAreaInsets, plotSize, coordProvider)
+        return marginsLayout.toInnerBounds(geomOuterBounds)
+    }
+
+    private fun geomOuterBounds(
         geomInsets: GeomAreaInsets,
         plotSize: DoubleVector,
         coordProvider: CoordProvider
     ): DoubleRectangle {
         val plottingArea = geomInsets.subtractFrom(DoubleRectangle(DoubleVector.ZERO, plotSize))
-        val panelBounds = marginsLayout.toInnerBounds(plottingArea)
-        val contentBounds = panelInset.shrinkRect(panelBounds)
+        val geomInnerSize = marginsLayout.toInnerSize(plottingArea.dimension)
+        val geomContentSize = panelInset.shrinkSize(geomInnerSize)
 
-        val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, contentBounds.dimension)
+        val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomContentSize)
+            .let(marginsLayout::toOuterSize)
+            .let(panelInset::inflateSize)
 
-
-        return DoubleRectangle(contentBounds.origin, geomOuterSizeAdjusted)
+        return DoubleRectangle(plottingArea.origin, geomOuterSizeAdjusted)
     }
-
-
 }

@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.testing.doubleRectangleComparator
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
@@ -21,7 +22,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFa
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.FixedAxisBreaksProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
-import kotlin.math.roundToInt
 import kotlin.test.Test
 
 class PolarTileLayoutTest {
@@ -29,10 +29,13 @@ class PolarTileLayoutTest {
     fun simple() {
         val preferredSize = DoubleVector(600, 400)
         doLayout(preferredSize, Thickness.ZERO).let {
-            assertThat(it.geomOuterBounds.right).isLessThanOrEqualTo(preferredSize.x)
-            assertThat(round(it.geomInnerBounds))
-                .isEqualTo(round(it.geomOuterBounds))
-                .isEqualTo(round(it.geomContentBounds))
+            assertThat(it.geomOuterBounds.right)
+                .isLessThanOrEqualTo(preferredSize.x)
+
+            assertThat(it.geomInnerBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(it.geomOuterBounds)
+                .isEqualTo(it.geomContentBounds)
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 377, 377))
         }
     }
@@ -41,12 +44,17 @@ class PolarTileLayoutTest {
     fun `horizontal padding with lots of spare horizontal space should increase width of plotting area`() {
         val preferredSize = DoubleVector(800, 400)
         doLayout(preferredSize, Thickness(left = 50.0, right = 50.0)).let {
-            assertThat(it.geomOuterBounds.right).isLessThanOrEqualTo(preferredSize.x)
-            assertThat(round(it.geomOuterBounds))
-                .isEqualTo(round(it.geomInnerBounds))
+            assertThat(it.geomOuterBounds.right)
+                .isLessThanOrEqualTo(preferredSize.x)
+
+            assertThat(it.geomOuterBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(it.geomInnerBounds)
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 477, 377))
 
-            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(85, 0, 377, 377))
+            assertThat(it.geomContentBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(DoubleRectangle.XYWH(85, 0, 377, 377))
 
         }
     }
@@ -55,12 +63,17 @@ class PolarTileLayoutTest {
     fun `horizontal padding with not enough horizontal space should decrease plotting area`() {
         val preferredSize = DoubleVector(800, 400)
         doLayout(preferredSize, Thickness(left = 250.0, right = 250.0)).let {
-            assertThat(it.geomOuterBounds.right).isLessThanOrEqualTo(preferredSize.x)
-            assertThat(round(it.geomOuterBounds))
-                .isEqualTo(round(it.geomInnerBounds))
+            assertThat(it.geomOuterBounds.right)
+                .isLessThanOrEqualTo(preferredSize.x)
+
+            assertThat(it.geomOuterBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(it.geomInnerBounds)
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 765, 265))
 
-            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(285, 0, 265, 265))
+            assertThat(it.geomContentBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(DoubleRectangle.XYWH(285, 0, 265, 265))
         }
     }
 
@@ -69,11 +82,14 @@ class PolarTileLayoutTest {
         val preferredSize = DoubleVector(600, 800)
         doLayout(preferredSize, Thickness(top = 50.0, bottom = 50.0)).let {
             assertThat(it.geomOuterBounds.right).isLessThanOrEqualTo(preferredSize.x)
-            assertThat(round(it.geomOuterBounds))
-                .isEqualTo(round(it.geomInnerBounds))
+            assertThat(it.geomOuterBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(it.geomInnerBounds)
                 .isEqualTo(DoubleRectangle.XYWH(35, 0, 565, 665))
 
-            assertThat(round(it.geomContentBounds)).isEqualTo(DoubleRectangle.XYWH(35, 50, 565, 565))
+            assertThat(it.geomContentBounds)
+                .usingComparator(doubleRectangleComparator(1.0))
+                .isEqualTo(DoubleRectangle.XYWH(35, 50, 565, 565))
         }
     }
 
@@ -122,14 +138,5 @@ class PolarTileLayoutTest {
 
         val layoutInfo = layout.doLayout(preferredSize, coordProvider)
         return layoutInfo
-    }
-
-    private fun round(rect: DoubleRectangle): DoubleRectangle {
-        return DoubleRectangle(
-            rect.left.roundToInt().toDouble(),
-            rect.top.roundToInt().toDouble(),
-            rect.width.roundToInt().toDouble(),
-            rect.height.roundToInt().toDouble()
-        )
     }
 }
