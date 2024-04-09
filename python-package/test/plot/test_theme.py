@@ -60,6 +60,7 @@ def test_plot_theme_element_values_merged():
     assert 'b' == rect['fill']
     assert 1 == rect['size']
 
+
 def test_gggrid_theme_element_values_merged():
     spec = (gg.gggrid(plots=[gg.ggplot() + _geom('foo')])
             + theme(panel_background=element_rect(color='a', fill='b'))
@@ -91,6 +92,21 @@ def test_global_theme_overriding():
     spec = gg.ggplot() + _geom('foo') + theme(legend_position='top')
 
     assert 'top' == spec.as_dict()['theme']['legend_position']
+
+
+def test_global_theme_feature_add():
+    gg.LetsPlot.set_theme(
+        theme_classic() + flavor_darcula() + theme(legend_position='bottom')
+    )
+
+    spec = gg.ggplot() + _geom('foo')
+    expected_theme = {
+        'name': 'classic',
+        'flavor': 'darcula',
+        'legend_position': 'bottom'
+    }
+
+    assert expected_theme == spec.as_dict()['theme']
 
 
 def test_overriding_global_named_theme():

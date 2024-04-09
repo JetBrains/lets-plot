@@ -89,8 +89,16 @@ def ggplot(data=None, mapping=None):
 
     if has_global_value(PLOT_THEME):
         theme_options = json.loads(get_global_val(PLOT_THEME))
-        theme_name = theme_options.pop('name', None)
-        plot_spec += FeatureSpec('theme', theme_name, **theme_options)
+
+        if theme_options.get('feature-list') is not None:
+            feature_list = theme_options.get('feature-list')
+            for feature in feature_list:
+                theme = feature.get('theme')
+                theme_name = theme.pop('name', None)  # Remove name from kwargs to avoid duplication
+                plot_spec += FeatureSpec('theme', theme_name, **theme)
+        else:
+            theme_name = theme_options.pop('name', None)
+            plot_spec += FeatureSpec('theme', theme_name, **theme_options)
 
     return plot_spec
 
