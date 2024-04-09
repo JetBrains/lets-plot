@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.testing
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.abs
 
@@ -30,4 +31,25 @@ fun <T> assertContentEquals(
 
 fun doubleVectorEqComparer(precision: Double): (DoubleVector, DoubleVector) -> Boolean {
     return { v1, v2 ->  abs(v1.x - v2.x) <= precision && abs(v1.y - v2.y) <= precision }
+}
+
+fun doubleComparator(epsilon: Double): Comparator<Double> {
+    return object : Comparator<Double> {
+        override fun compare(a: Double, b: Double): Int {
+            if (abs(a - b) < epsilon) {
+                return 0
+            }
+
+            return a.compareTo(b)
+        }
+    }
+}
+
+fun doubleRectangleComparator(precision: Double): Comparator<DoubleRectangle> {
+    val comparer = doubleComparator(precision)
+
+    return compareBy(comparer, DoubleRectangle::left)
+        .thenBy(comparer, DoubleRectangle::top)
+        .thenBy(comparer, DoubleRectangle::width)
+        .thenBy(comparer, DoubleRectangle::height)
 }

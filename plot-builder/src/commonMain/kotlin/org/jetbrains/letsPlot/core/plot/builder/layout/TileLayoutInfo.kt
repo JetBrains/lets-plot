@@ -13,9 +13,9 @@ class TileLayoutInfo constructor(
 
     // Relative bounds.
     val geomWithAxisBounds: DoubleRectangle,    // Tile geom area, axis, axis ticks/labels.
-    val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
-    val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
-    val geomContentBounds: DoubleRectangle,  // panel area excluding padding.
+    val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins (geomWithAxisBounds excluding axis)
+    val geomInnerBounds: DoubleRectangle,  // Tile main geom area (geomOuterBounds excluding margins)
+    val geomContentBounds: DoubleRectangle,  // actual plotting area (geomInnerBounds excluding margins and padding)
 
     val axisInfos: AxisLayoutInfoQuad,
 

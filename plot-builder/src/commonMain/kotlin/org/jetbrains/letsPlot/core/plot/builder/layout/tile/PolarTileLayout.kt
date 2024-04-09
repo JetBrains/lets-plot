@@ -45,10 +45,10 @@ internal class PolarTileLayout(
         val insetsInitial = GeomAreaInsets.init(axisLayoutQuad)
 
         // For polar coord axis height is half of geom height - it starts from the center.
-        val axisHeightEstim = computeGeomContentBounds(insetsInitial, plotSize, coordProvider).dimension.y / 2
+        val axisHeightEstim = geomContentBounds(insetsInitial, plotSize, coordProvider).dimension.y / 2
 
         val insetsVAxis = insetsInitial.layoutVAxis(vDomain, axisHeightEstim)
-        val contentBounds = computeGeomContentBounds(insetsVAxis, plotSize, coordProvider)
+        val contentBounds = geomContentBounds(insetsVAxis, plotSize, coordProvider)
 
         // h axis in polar coord is rendered as a circle - increase its length to make more tick.
         val hAxisLength = contentBounds.width * 1.5
