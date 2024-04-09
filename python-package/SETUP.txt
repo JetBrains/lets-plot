@@ -23,6 +23,7 @@ Running tests.
 Run tests against `lets-plot` package installed in the module environment.
 
 - Update `lets-plot-python-module` conda environment:
+    conda activate lets-plot-python-module
     conda env update -f lets-plot/python-package/module_env.yml --prune
 
 - Change dir to `lets-plot/python-package`
