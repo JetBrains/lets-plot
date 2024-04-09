@@ -66,7 +66,7 @@ open class PlotConfigBackend(
             // Detect date/time variables with mapping to discrete scale
             val dateTimeDiscreteBindings = layerConfig.varBindings
                 .filter { it.variable.name in dateTimeColumns }
-                .filter { scaleProviderByAes[it.aes]?.discreteDomain == true}
+                .filter { scaleProviderByAes[it.aes]?.discreteDomain == true }
 
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
                 val values = layerConfig.combinedData.distinctValues(binding.variable).toList()
