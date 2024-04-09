@@ -765,6 +765,15 @@ class FeatureSpecArray(FeatureSpec):
         self.__elements = []
         self._flatten(list(features), self.__elements)
 
+    def __len__(self):
+        return len(self.__elements)
+
+    def __iter__(self):
+        return self.__elements.__iter__()
+
+    def __getitem__(self, item):
+        return self.__elements[item]
+
     def elements(self):
         return self.__elements
 
@@ -857,7 +866,8 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
+    str, None]:
     try:
         import cairosvg
     except ImportError:

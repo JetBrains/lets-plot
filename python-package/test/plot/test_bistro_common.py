@@ -4,6 +4,7 @@
 #
 import pytest
 
+from lets_plot.plot.core import DummySpec, FeatureSpecArray
 from lets_plot.bistro._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 
@@ -149,7 +150,8 @@ def _get_marginal_layers_props(marginal=None, binwidth2d=None, bins2d=None, colo
 
 def test_empty_marginal__get_marginal_layers():
     marginals = _get_marginal_layers(**_get_marginal_layers_props(marginal=""))
-    assert 0 == len(marginals)
+    # assert 0 == len(marginals)
+    assert isinstance(marginals, DummySpec)
 
 
 def test_marginal_split__get_marginal_layers():
@@ -169,7 +171,12 @@ def test_marginal_kind__get_marginal_layers():
                         'hist': 'histogram', 'histogram': 'histogram',
                         'box': 'boxplot', 'boxplot': 'boxplot'}
     for geom_kind, geom_name in kind_to_geom_map.items():
-        spec_dict = _get_marginal_layers(**_get_marginal_layers_props(marginal="{0}:r".format(geom_kind)))[0].as_dict()
+        marginal_layers = _get_marginal_layers(**_get_marginal_layers_props(marginal="{0}:r".format(geom_kind)))
+        if isinstance(marginal_layers, FeatureSpecArray):
+            spec_dict = marginal_layers[0].as_dict()
+        else:
+            spec_dict = marginal_layers.as_dict()
+
         assert geom_name == spec_dict['geom']
 
     with pytest.raises(Exception):
@@ -215,9 +222,16 @@ def test_marginal_color_params__get_marginal_layers():
     _COLOR_DEF = "pen"
 
     def get_spec_dict(geom_kind, color=None, color_by=None):
-        return _get_marginal_layers(**_get_marginal_layers_props(
-            marginal="{0}:r".format(geom_kind), color=color, color_by=color_by
-        ))[0].as_dict()
+        marginal_layers = _get_marginal_layers(**_get_marginal_layers_props(
+            marginal="{0}:r".format(geom_kind),
+            color=color, color_by=color_by))
+
+        if isinstance(marginal_layers, FeatureSpecArray):
+            spec_dict = marginal_layers[0].as_dict()
+        else:
+            spec_dict = marginal_layers.as_dict()
+        
+        return spec_dict
 
     for geom_kind in ['dens', 'hist', 'box']:
         spec_dict = get_spec_dict(geom_kind)
