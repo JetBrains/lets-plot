@@ -69,8 +69,8 @@ open class PlotConfigBackend(
                 .filter { scaleProviderByAes[it.aes]?.discreteDomain == true }
 
             val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
-                val values = layerConfig.combinedData.distinctValues(binding.variable).toList()
-                selectDateTimeFormat(values)?.let { format ->
+                val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
+                selectDateTimeFormat(distinctValues)?.let { format ->
                     mapOf(
                         Option.Scale.AES to binding.aes.name,
                         Option.Scale.DATE_TIME to true,
@@ -138,36 +138,6 @@ open class PlotConfigBackend(
                     layerConfig.update(DATA_META, layerDataMetaUpdated)
                 }
         }
-    }
-
-    private fun selectDateTimeFormat(values: List<Any>): String? {
-        if (values.any { it !is Number }) {
-            return null
-        }
-        // Try the same formatter that is used for the continuous scale
-        val range = SeriesUtil.toDoubleList(values)?.let { doubleList -> SeriesUtil.range(doubleList) }
-        if (range != null) {
-            val breaksHelper = DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, values.size)
-            val formatted = values.map { breaksHelper.formatter.invoke(it as Number) }.distinct()
-            if (formatted.size == values.size) {
-                return breaksHelper.pattern
-            }
-        }
-        // Select better pattern
-        val patterns = listOf(
-            "%Y",
-            "%Y-%m",
-            "%Y-%m-%d",
-            "%Y-%m-%d %H:%M",
-            "%Y-%m-%d %H:%M:%S",
-        )
-        patterns.forEach { pattern ->
-            val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
-            if (values.map(formatter::format).distinct().size == values.size) {
-                return pattern
-            }
-        }
-        return patterns.last()
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
@@ -421,6 +391,45 @@ open class PlotConfigBackend(
                 val factors = (levels + tail).let { if (order >= 0) it else it.reversed() }
                 variable.name to factors
             }.toMap()
+        }
+
+        private const val VALUES_LIMIT_TO_SELECT_FORMAT = 1_000_000
+        private fun selectDateTimeFormat(distinctValues: Set<Any>): String? {
+            if (distinctValues.any { it !is Number }) {
+                return null
+            }
+
+            // Try the same formatter that is used for the continuous scale
+            val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
+                ?.let { doubleList -> SeriesUtil.range(doubleList) }
+                ?.let { range ->
+                    val breaksHelper = DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, distinctValues.size)
+                    breaksHelper.pattern
+                }
+            // Other patterns to choose the most good one
+            val patterns = listOf(
+                "%Y",
+                "%Y-%m",
+                "%Y-%m-%d",
+                "%Y-%m-%d %H:%M",
+                "%Y-%m-%d %H:%M:%S",
+            )
+            if (distinctValues.size > VALUES_LIMIT_TO_SELECT_FORMAT) {
+                return breaksPattern ?: patterns.last()
+            }
+            (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
+                val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
+                val formattedValues = mutableSetOf<String>()
+                for (value in distinctValues) {
+                    if (!formattedValues.add(formatter.format(value))) {
+                        break
+                    }
+                }
+                if (formattedValues.size == distinctValues.size) {
+                    return pattern
+                }
+            }
+            return patterns.last()
         }
     }
 }
