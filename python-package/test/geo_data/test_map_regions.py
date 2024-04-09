@@ -5,14 +5,14 @@ from unittest import mock
 
 import pytest
 
+from geo_data_test_util import make_success_response, features_to_queries, features_to_answers, assert_row, \
+    assert_request_and_found_name_are_equal
 from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.geo_data.geocodes import _parse_resolution, Geocodes, Resolution
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
     RegionQuery
 from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint, GeoRect
-from geo_data_test_util import make_success_response, features_to_queries, features_to_answers, assert_row, \
-    assert_request_and_found_name_are_equal
 
 USA_REQUEST = 'united states'
 USA_NAME = 'USA'
@@ -33,7 +33,7 @@ RESOLUTION = 12
 
 class TestMapRegions:
 
-    def setup(self):
+    def setup_method(self, _):
         self.foo_id = 'foo_id'
         self.foo_query = 'foo'
         self.foo_name = 'Foo'
