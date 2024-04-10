@@ -5,10 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksHelper
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -17,9 +20,11 @@ import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
@@ -52,6 +57,33 @@ open class PlotConfigBackend(
      * WARN! Side effects - performs modifications deep in specs tree
      */
     internal fun updatePlotSpec() {
+
+        // Correct scales
+        val plotDateTimeColumns = DataMetaUtil.getDateTimeColumns(getMap(DATA_META))
+        layerConfigs.map { layerConfig ->
+            val dateTimeColumns = plotDateTimeColumns + DataMetaUtil.getDateTimeColumns(layerConfig.getMap(DATA_META))
+
+            // Detect date/time variables with mapping to discrete scale
+            val dateTimeDiscreteBindings = layerConfig.varBindings
+                .filter { it.variable.name in dateTimeColumns }
+                .filter { scaleProviderByAes[it.aes]?.discreteDomain == true }
+
+            val scaleUpdated = dateTimeDiscreteBindings.mapNotNull { binding ->
+                val distinctValues = layerConfig.combinedData.distinctValues(binding.variable)
+                selectDateTimeFormat(distinctValues)?.let { format ->
+                    mapOf(
+                        Option.Scale.AES to binding.aes.name,
+                        Option.Scale.DATE_TIME to true,
+                        Option.Scale.FORMAT to format
+                    )
+                }
+            }
+            if (scaleUpdated.isNotEmpty()) {
+                val mergedOpts = PlotConfigUtil.mergeScaleOptions(scaleUpdated + getList(SCALES)).values.toList()
+                update(SCALES, mergedOpts)
+            }
+        }
+
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
         val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
@@ -359,6 +391,43 @@ open class PlotConfigBackend(
                 val factors = (levels + tail).let { if (order >= 0) it else it.reversed() }
                 variable.name to factors
             }.toMap()
+        }
+
+        private const val VALUES_LIMIT_TO_SELECT_FORMAT = 1_000_000
+        private fun selectDateTimeFormat(distinctValues: Set<Any>): String? {
+            if (distinctValues.any { it !is Number }) {
+                return null
+            }
+
+            // Try the same formatter that is used for the continuous scale
+            val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
+                ?.let { doubleList -> SeriesUtil.range(doubleList) }
+                ?.let { range -> DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, distinctValues.size).pattern }
+
+            // Other patterns to choose the most good one
+            val patterns = listOf(
+                "%Y",
+                "%Y-%m",
+                "%Y-%m-%d",
+                "%Y-%m-%d %H:%M",
+                "%Y-%m-%d %H:%M:%S",
+            )
+            if (distinctValues.size > VALUES_LIMIT_TO_SELECT_FORMAT) {
+                return breaksPattern ?: patterns.last()
+            }
+            (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
+                val formatter = StringFormat.forOneArg(pattern, type = StringFormat.FormatType.DATETIME_FORMAT)
+                val formattedValues = mutableSetOf<String>()
+                for (value in distinctValues) {
+                    if (!formattedValues.add(formatter.format(value))) {
+                        break
+                    }
+                }
+                if (formattedValues.size == distinctValues.size) {
+                    return pattern
+                }
+            }
+            return patterns.last()
         }
     }
 }

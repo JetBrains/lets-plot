@@ -49,6 +49,7 @@
 - `geom_density2d`: the doc missing some 'computed' variables [[#1062](https://github.com/JetBrains/lets-plot/issues/1062)].
 - Weird and problematic behavior : lets-plot does not respect x and y. Sizing problem ?[[#1068](https://github.com/JetBrains/lets-plot/issues/1068)].
 - Plot layout breaks when marginal layers are used #1074 [[#1074](https://github.com/JetBrains/lets-plot/issues/1074)].
+- Discrete scale doesn't work for datetime data [[LPK-231](https://github.com/JetBrains/lets-plot-kotlin/issues/231)].
 - Add `linetype` parameter in `elementLine()` and `elementRect()` [[LPK-235](https://github.com/JetBrains/lets-plot-kotlin/issues/235)].
 - Any way to line-wrap facet labels? [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 - Missing marginal gridlines.
