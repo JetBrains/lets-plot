@@ -402,7 +402,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
             dash: FloatArray? = this.dashArray,
             dashPhase: Float = this.dashPhase
         ): BasicStroke {
-            return BasicStroke(width, cap, join, miterlimit, dash, dashPhase)
+            return BasicStroke(width, cap, join, maxOf(1f, miterlimit), dash, dashPhase)
         }
 
 
