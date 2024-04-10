@@ -57,18 +57,14 @@ internal object PlotGuidesAssemblerUtil {
         scaleMapper: ScaleMapper<Color>,
         options: ColorBarOptions?,
         theme: LegendTheme
-    ): ColorBarAssembler {
-
-        val result = ColorBarAssembler(
-            scaleName,
-            transformedDomain,
-            scale,
-            scaleMapper,
-            theme
-        )
-        result.setOptions(options)
-        return result
-    }
+    ) = ColorBarAssembler(
+        scaleName,
+        transformedDomain,
+        scale,
+        scaleMapper,
+        theme,
+        options
+    )
 
     fun fitsColorBar(aes: Aes<*>, scale: Scale): Boolean {
         return aes.isColor && scale.isContinuous

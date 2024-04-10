@@ -25,16 +25,14 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import kotlin.math.max
 
-class ColorBarAssembler(
+class ColorBarAssembler constructor(
     private val legendTitle: String,
     private val transformedDomain: DoubleSpan,
     private val scale: Scale,
     private val scaleMapper: ScaleMapper<Color>,
-    private val theme: LegendTheme
+    private val theme: LegendTheme,
+    private var colorBarOptions: ColorBarOptions?
 ) {
-
-    private var colorBarOptions: ColorBarOptions? = null
-
     fun createColorBar(): LegendBoxInfo {
         var scale = scale
         if (!scale.hasBreaks()) {
@@ -64,9 +62,6 @@ class ColorBarAssembler(
         }
     }
 
-    internal fun setOptions(options: ColorBarOptions?) {
-        colorBarOptions = options
-    }
 
     fun equalScalesAndOptions(other: ColorBarAssembler): Boolean {
         if (transformedDomain != other.transformedDomain) return false
@@ -82,7 +77,7 @@ class ColorBarAssembler(
     fun withTitle(title: String): ColorBarAssembler {
         return ColorBarAssembler(
             title,
-            transformedDomain, scale, scaleMapper, theme
+            transformedDomain, scale, scaleMapper, theme, colorBarOptions
         )
     }
 
