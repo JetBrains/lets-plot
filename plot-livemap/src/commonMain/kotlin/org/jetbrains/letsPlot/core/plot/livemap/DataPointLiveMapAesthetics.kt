@@ -10,14 +10,17 @@ import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.limitLat
 import org.jetbrains.letsPlot.commons.intern.spatial.normalizeLon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
@@ -27,9 +30,10 @@ import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.LabelOptions
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.PieOptions
 import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
+import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.api.GeoObject
 import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
-import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {
@@ -83,8 +87,8 @@ internal class DataPointLiveMapAesthetics {
     private var myArrowSpec: ArrowSpec? = null
     val arrowAngle: Double?
         get() = myArrowSpec?.angle
-    val arrowLength: Double?
-        get() = myArrowSpec?.length
+    val arrowLength: Scalar<Client>?
+        get() = myArrowSpec?.length?.px
     val arrowAtEnds: String?
         get() = myArrowSpec?.end?.name?.lowercase()
     val arrowType: String?
@@ -183,15 +187,15 @@ internal class DataPointLiveMapAesthetics {
     val fillArray: List<Color>
         get() = myFillArray.map(::colorWithAlpha)
 
-    val sizeStart: Double
-        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)) * 2.0
-    val sizeEnd: Double
-        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeEnd)) * 2.0
-    val strokeStart: Double
-        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeStart)
-    val strokeEnd: Double
-        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeEnd)
-    var spacer = 0.0
+    val sizeStart
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)).px * 2.0
+    val sizeEnd
+        get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeEnd)).px * 2.0
+    val strokeStart
+        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeStart).px
+    val strokeEnd
+        get() = AestheticsUtil.pointStrokeWidth(myP, DataPointAesthetics::strokeEnd).px
+    var spacer = 0.px
 
     private var myLabelOptions: LabelOptions? = null
     val labelPadding: Double

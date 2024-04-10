@@ -14,15 +14,3 @@ fun alphaScaledColor(color: Color, newAlpha: Int?): Color {
         else -> min(newAlpha, color.alpha)
     }.let(color::changeAlpha)
 }
-
-fun scaledPointSize(size: Double, scalingSizeFactor: Double): Double {
-    return size * scalingSizeFactor
-}
-
-fun scaledSize(size: Double, scalingSizeFactor: Double): Double {
-    return size * scalingSizeFactor
-}
-
-fun scaledLineDash(lineDash: DoubleArray, scalingSizeFactor: Double): DoubleArray {
-    return lineDash.map { it * scalingSizeFactor }.toDoubleArray()
-}

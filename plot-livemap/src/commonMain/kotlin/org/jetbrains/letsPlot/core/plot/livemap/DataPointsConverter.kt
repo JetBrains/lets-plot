@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.livemap
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
@@ -23,6 +23,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
+import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -78,7 +80,7 @@ internal class DataPointsConverter(
         private var myAnimation: Int? = null
         private var myFlat: Boolean = false
         private var myGeodesic: Boolean = false
-        private var mySpacer: Double = 0.0
+        private var mySpacer: Scalar<Client> = 0.px
         private var myIsCurve: Boolean = false
 
         private fun parsePathAnimation(animation: Any?): Int? {
@@ -108,22 +110,7 @@ internal class DataPointsConverter(
                 this.spacer = mySpacer
                 this.isCurve = myIsCurve
                 setAnimation(myAnimation)
-
-                val adjustedArrowSpec = myArrowSpec?.let {
-                    val angle = it.angle
-                    val ends = it.end
-                    val type = it.type
-
-                    val geometryLength = when (points.size) {
-                        0, 1 -> 0.0
-                        else -> points.windowed(2).sumOf { (a, b) -> distance(a.x, a.y, b.x, b.y) }
-                    }
-
-                    val length = ArrowSpec.adjustArrowHeadLength(geometryLength, it)
-                    val minTailLength = 0.0 // we already adjusted arrow length, no need to store original minTailLength
-                    ArrowSpec(angle, length, ends, type, minTailLength)
-                }
-                setArrowSpec(adjustedArrowSpec)
+                setArrowSpec(myArrowSpec)
             }
 
         fun setArrowSpec(arrowSpec: ArrowSpec?) {
@@ -143,7 +130,7 @@ internal class DataPointsConverter(
         }
 
         fun setSpacer(spacer: Double) {
-            mySpacer = spacer
+            mySpacer = spacer.px
         }
 
         fun setIsCurve(isCurve: Boolean) {

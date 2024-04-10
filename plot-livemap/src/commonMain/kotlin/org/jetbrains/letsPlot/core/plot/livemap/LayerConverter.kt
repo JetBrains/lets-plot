@@ -8,18 +8,14 @@ package org.jetbrains.letsPlot.core.plot.livemap
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.PieGeom
-import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
-import org.jetbrains.letsPlot.core.plot.base.geom.SegmentGeom
-import org.jetbrains.letsPlot.core.plot.base.geom.CurveGeom
-import org.jetbrains.letsPlot.core.plot.base.geom.SpokeGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
-import org.jetbrains.letsPlot.core.canvas.FontStyle
-import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.livemap.api.*
 
 

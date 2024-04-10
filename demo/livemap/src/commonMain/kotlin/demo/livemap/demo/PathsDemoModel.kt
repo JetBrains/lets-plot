@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.api.*
 
 class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
@@ -67,7 +68,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         strokeColor = Color.RED
                         strokeWidth = 3.0
                         lineDash = listOf(5.0)
-                        arrow(length = 20.0, ends = "both") // type = "open"
+                        arrow(length = 20.px, ends = "both") // type = "open"
                     }
                     path {
                         points = path4

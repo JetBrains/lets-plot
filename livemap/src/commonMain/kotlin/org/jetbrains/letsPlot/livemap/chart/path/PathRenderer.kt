@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
@@ -21,7 +22,10 @@ import org.jetbrains.letsPlot.livemap.mapengine.RenderHelper
 import org.jetbrains.letsPlot.livemap.mapengine.Renderer
 import org.jetbrains.letsPlot.livemap.mapengine.lineTo
 import org.jetbrains.letsPlot.livemap.mapengine.moveTo
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 open class PathRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
@@ -32,8 +36,8 @@ open class PathRenderer : Renderer {
         ctx.save()
         ctx.scale(renderHelper.zoomFactor)
 
-        val startPadding = renderHelper.dimToWorld(chartElement.scaledStartPadding()).value
-        val endPadding = renderHelper.dimToWorld(chartElement.scaledEndPadding()).value
+        val startPadding = renderHelper.dimToWorld(chartElement.scaledStartPadding())
+        val endPadding = renderHelper.dimToWorld(chartElement.scaledEndPadding())
 
         for (lineString in geometry) {
             val adjustedGeometry = padLineString(lineString, startPadding, endPadding)
@@ -64,7 +68,7 @@ open class PathRenderer : Renderer {
 
     class ArrowSpec private constructor(
         val angle: Double,
-        val length: Double,
+        val length: Scalar<Client>,
         val end: End,
         val type: Type
     ) {
@@ -109,7 +113,7 @@ open class PathRenderer : Renderer {
 
             fun create(
                 arrowAngle: Double?,
-                arrowLength: Double?,
+                arrowLength: Scalar<Client>?,
                 arrowAtEnds: String?,
                 arrowType: String?
             ): ArrowSpec? {
@@ -182,14 +186,17 @@ open class PathRenderer : Renderer {
         // TODO: fix duplication from padLineString(List<DoubleVector>)
         private fun padLineString(
             lineString: List<WorldPoint>,
-            startPadding: Double,
-            endPadding: Double
+            startPadding: Scalar<World>,
+            endPadding: Scalar<World>
         ): List<WorldPoint> {
             val startPadded = padStart(lineString, startPadding)
             return padEnd(startPadded, endPadding)
         }
 
-        private fun pad(lineString: List<WorldPoint>, padding: Double): Pair<Int, WorldPoint>? {
+        private fun pad(lineString: List<WorldPoint>, padding: Scalar<World>): Pair<Int, WorldPoint>? {
+            @Suppress("NAME_SHADOWING")
+            val padding = padding.value
+
             if (lineString.size < 2) {
                 return null
             }
@@ -216,12 +223,12 @@ open class PathRenderer : Renderer {
             return indexOutsidePadding to adjustedStartPoint.toVec()
         }
 
-        private fun padStart(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+        private fun padStart(lineString: List<WorldPoint>, padding: Scalar<World>): List<WorldPoint> {
             val (index, adjustedStartPoint) = pad(lineString, padding) ?: return lineString
             return listOf(adjustedStartPoint) + lineString.subList(index, lineString.size)
         }
 
-        private fun padEnd(lineString: List<WorldPoint>, padding: Double): List<WorldPoint> {
+        private fun padEnd(lineString: List<WorldPoint>, padding: Scalar<World>): List<WorldPoint> {
             val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
             return lineString.subList(0, lineString.size - index) + adjustedEndPoint
         }

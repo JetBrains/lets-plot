@@ -18,8 +18,8 @@ operator fun <T> Scalar<T>.minus(other: Scalar<T>): Scalar<T> = Scalar(value - o
 operator fun <T> Scalar<T>.times(other: Scalar<T>): Scalar<T> = Scalar(value * other.value)
 
 operator fun <T> Scalar<T>.div(other: Scalar<T>): Scalar<T> = Scalar(value / other.value)
-operator fun <T> Scalar<T>.div(other: Double): Scalar<T> = Scalar(value / other)
-operator fun <T> Scalar<T>.times(other: Double): Scalar<T> = Scalar(value * other)
+operator fun <T> Scalar<T>.div(other: Number): Scalar<T> = Scalar(value / other.toDouble())
+operator fun <T> Scalar<T>.times(other: Number): Scalar<T> = Scalar(value * other.toDouble())
 operator fun <T> Scalar<T>.unaryMinus(): Scalar<T> = Scalar(-value)
 
 operator fun <T> Scalar<T>.compareTo(other: Scalar<T>) = value.compareTo(other.value)

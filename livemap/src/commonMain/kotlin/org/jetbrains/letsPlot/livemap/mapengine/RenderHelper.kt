@@ -29,15 +29,19 @@ class RenderHelper(
         return viewport.getMapCoord(p)
     }
 
-    fun dimToWorld(v: Double): Scalar<World> {
-        return Scalar(dimWorldToClientTransform.invert(v))
+    fun dimToWorld(clientDimension: Double): Scalar<World> {
+        return Scalar(dimWorldToClientTransform.invert(clientDimension))
     }
 
-    fun dimToClient(v: Double): Scalar<Client> {
-        return Scalar(dimWorldToClientTransform.apply(v))
+    fun dimToWorld(clientDimension: Scalar<Client>): Scalar<World> {
+        return dimToWorld(clientDimension.value)
     }
 
-    fun dimToClient(v: Scalar<World>): Scalar<Client> {
-        return Scalar(dimWorldToClientTransform.apply(v.value))
+    fun dimToClient(worldDimension: Double): Scalar<Client> {
+        return Scalar(dimWorldToClientTransform.apply(worldDimension))
+    }
+
+    fun dimToClient(worldDimension: Scalar<World>): Scalar<Client> {
+        return dimToClient(worldDimension.value)
     }
 }

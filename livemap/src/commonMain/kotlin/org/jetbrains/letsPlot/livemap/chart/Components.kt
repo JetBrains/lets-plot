@@ -6,9 +6,12 @@
 package org.jetbrains.letsPlot.livemap.chart
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
 import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer.ArrowSpec
@@ -29,8 +32,8 @@ class ChartElementComponent : EcsComponent {
     var arrowSpec: ArrowSpec? = null
     var lineheight: Double? = null
 
-    var startPadding: Double = 0.0
-    var endPadding: Double = 0.0
+    var startPadding: Scalar<Client> = 0.px
+    var endPadding: Scalar<Client> = 0.px
 
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
@@ -39,11 +42,11 @@ class ChartElementComponent : EcsComponent {
 
     fun scaledStrokeColor() = alphaScaledColor(strokeColor!!, scalingAlphaValue)
     fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
-    fun scaledStrokeWidth() = scaledSize(strokeWidth, scalingSizeFactor)
-    fun scaledLineDash() = scaledLineDash(lineDash!!, scalingSizeFactor)
+    fun scaledStrokeWidth() = strokeWidth * scalingSizeFactor
+    fun scaledLineDash() = lineDash!!.map { it * scalingSizeFactor }.toDoubleArray()
 
-    fun scaledStartPadding() = scaledSize(startPadding, scalingSizeFactor)
-    fun scaledEndPadding() = scaledSize(endPadding, scalingSizeFactor)
+    fun scaledStartPadding() = startPadding * scalingSizeFactor
+    fun scaledEndPadding() = endPadding * scalingSizeFactor
 }
 
 class TextSpecComponent : EcsComponent {
@@ -53,7 +56,7 @@ class TextSpecComponent : EcsComponent {
 class PointComponent : EcsComponent {
     var size: Double = 0.0
 
-    fun scaledRadius(scalingSizeFactor: Double) = scaledPointSize(size, scalingSizeFactor) / 2.0
+    fun scaledRadius(scalingSizeFactor: Double) = size * scalingSizeFactor / 2.0
 }
 
 class PieSpecComponent : EcsComponent {

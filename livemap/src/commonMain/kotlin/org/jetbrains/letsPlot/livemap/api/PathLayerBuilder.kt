@@ -9,13 +9,12 @@ import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.intern.spatial.Geodesic
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.wrapPath
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transformPoints
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.ChartElementLocationComponent
@@ -96,15 +95,15 @@ class PathEntityBuilder(
 
     // Arrow specification
     var arrowAngle: Double? = null
-    var arrowLength: Double? = null
+    var arrowLength: Scalar<Client>? = null
     var arrowAtEnds: String? = null
     var arrowType: String? = null
 
-    var sizeStart: Double = 0.0
-    var sizeEnd: Double = 0.0
-    var strokeStart: Double = 0.0
-    var strokeEnd: Double = 0.0
-    var spacer: Double = 0.0
+    var sizeStart = 0.px
+    var sizeEnd = 0.px
+    var strokeStart = 0.px
+    var strokeEnd = 0.px
+    var spacer = 0.px
 
     fun build(nonInteractive: Boolean): EcsEntity? {
         // flat can't be geodesic
@@ -136,13 +135,13 @@ class PathEntityBuilder(
             this@PathEntityBuilder.arrowAtEnds,
             this@PathEntityBuilder.arrowType,
         )
-        val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(arrowSpec.angle * 2, strokeWidth) } ?: 0.0
+        val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(arrowSpec.angle * 2, strokeWidth).px } ?: 0.px
         val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
         val miterOffset = miterLength * miterSign / 2
 
         // Total offsets
-        val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.0)
-        val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.0)
+        val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.px)
+        val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.px)
 
         myFactory.incrementLayerPointsTotalCount(visGeometry.sumOf(LineString<World>::size))
         return visGeometry.bbox?.let { bbox ->
@@ -216,7 +215,7 @@ class PathEntityBuilder(
  * */
 fun PathEntityBuilder.arrow(
     angle: Double = 30.0,
-    length: Double = 10.0,
+    length: Scalar<Client> = 10.px,
     ends: String = "last",
     type: String = "open"
 ) {

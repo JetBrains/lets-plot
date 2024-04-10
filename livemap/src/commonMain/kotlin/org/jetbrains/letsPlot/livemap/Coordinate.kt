@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.livemap
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 
@@ -27,7 +28,9 @@ interface World {
 interface Client {
     companion object {
         val ZERO_VEC: Vec<Client> = Vec(0.0, 0.0)
+        val Number.px: Scalar<Client> get() = Scalar(this.toDouble())
     }
+
 }
 
 typealias ClientPoint = Vec<Client>
