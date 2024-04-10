@@ -28,8 +28,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     init {
         RenderingHints(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON
+            mapOf(
+                RenderingHints.KEY_ANTIALIASING to RenderingHints.VALUE_ANTIALIAS_ON,
+                RenderingHints.KEY_FRACTIONALMETRICS to RenderingHints.VALUE_FRACTIONALMETRICS_ON,
+                RenderingHints.KEY_STROKE_CONTROL to RenderingHints.VALUE_STROKE_PURE
+            )
         ).let(graphics::setRenderingHints)
 
         graphics.background = Color.TRANSPARENT.toAwtColor()
