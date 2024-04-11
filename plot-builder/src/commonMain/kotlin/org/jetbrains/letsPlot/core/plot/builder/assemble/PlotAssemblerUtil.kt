@@ -58,6 +58,7 @@ internal object PlotAssemblerUtil {
                 }
             }
 
+
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
@@ -121,9 +122,10 @@ internal object PlotAssemblerUtil {
                     aesListForScaleName,
                     layerConstantByAes,
                     aestheticsDefaults,
-                    ctx,
                     layerInfo.colorByAes,
-                    layerInfo.fillByAes
+                    layerInfo.fillByAes,
+                    layerInfo.isMarginal,
+                    ctx,
                 )
             }
         }

@@ -17,6 +17,7 @@ class GeomLayerInfo(
     val legendKeyElementFactory = geomLayer.legendKeyElementFactory
     val colorByAes: Aes<Color> = geomLayer.colorByAes
     val fillByAes: Aes<Color> = geomLayer.fillByAes
+    val isMarginal: Boolean = geomLayer.isMarginal
 
     fun renderedAes(): List<Aes<*>> = geomLayer.renderedAes()
     fun hasBinding(aes: Aes<*>): Boolean = geomLayer.hasBinding(aes)

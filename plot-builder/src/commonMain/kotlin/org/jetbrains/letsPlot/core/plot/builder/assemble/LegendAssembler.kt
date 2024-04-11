@@ -40,9 +40,10 @@ class LegendAssembler(
         aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-        ctx: PlotContext,
         colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>
+        fillByAes: Aes<Color>,
+        isMarginal: Boolean,
+        ctx: PlotContext,
     ) {
 
         legendLayers.add(
@@ -52,14 +53,18 @@ class LegendAssembler(
                 constantByAes,
                 aestheticsDefaults,
                 scaleMappers,
-                ctx,
                 colorByAes,
-                fillByAes
+                fillByAes,
+                isMarginal,
+                ctx
             )
         )
     }
 
     fun createLegend(): LegendBoxInfo {
+        val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
+        val legendLayers = legendLayers.filter { includeMarginalLayers || !it.isMarginal }
+
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in legendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
@@ -119,9 +124,10 @@ class LegendAssembler(
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-        ctx: PlotContext,
         colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>
+        fillByAes: Aes<Color>,
+        val isMarginal: Boolean,
+        ctx: PlotContext
     ) {
 
         val keyAesthetics: Aesthetics
