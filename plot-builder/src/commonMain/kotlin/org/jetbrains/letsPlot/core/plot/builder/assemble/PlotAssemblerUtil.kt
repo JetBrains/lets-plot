@@ -19,7 +19,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
-import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
 internal object PlotAssemblerUtil {
 
@@ -151,8 +150,6 @@ internal object PlotAssemblerUtil {
         insideOut: Boolean,
         facets: PlotFacets,
         facetsTheme: FacetsTheme,
-        hAxisPosition: AxisPosition,
-        vAxisPosition: AxisPosition,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
         plotTheme: PlotTheme,
@@ -162,8 +159,6 @@ internal object PlotAssemblerUtil {
                 facets,
                 layoutProviderByTile,
                 facetsTheme.showStrip(),
-                hAxisPosition,
-                vAxisPosition,
                 hAxisTheme,
                 vAxisTheme,
                 plotTheme,
@@ -178,10 +173,6 @@ internal object PlotAssemblerUtil {
 
             SingleTilePlotLayout(
                 tileLayout,
-                hAxisPosition,
-                vAxisPosition,
-                hAxisTheme,
-                vAxisTheme,
                 plotTheme
             )
         }

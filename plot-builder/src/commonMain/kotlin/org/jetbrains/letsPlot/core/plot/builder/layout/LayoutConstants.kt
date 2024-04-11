@@ -11,8 +11,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 internal object LayoutConstants {
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
 
-    const val GEOM_AREA_PADDING = 0.0
-
     // Horizontal axis labels
     const val H_AXIS_LABELS_EXPAND = 10.0  // Value by which labels can go beyond the axis bounds (px).
 

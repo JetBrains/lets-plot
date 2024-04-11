@@ -17,15 +17,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.axisTitles
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapAxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.LiveMapTileLayoutProvider
-import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
 internal class PlotFigureLayouter(
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val facets: PlotFacets,
     private val coordProvider: CoordProvider,
-    private val hAxisPosition: AxisPosition,
-    private val vAxisPosition: AxisPosition,
     private val containsLiveMap: Boolean,
     private val theme: Theme,
     legendBoxInfos: List<LegendBoxInfo>,
@@ -100,7 +97,6 @@ internal class PlotFigureLayouter(
                 insideOut,
                 facets,
                 theme.facets(),
-                hAxisPosition, vAxisPosition,
                 hAxisTheme = theme.horizontalAxis(flipAxis),
                 vAxisTheme = theme.verticalAxis(flipAxis),
                 plotTheme = theme.plot()
@@ -121,8 +117,6 @@ internal class PlotFigureLayouter(
             insideOut = false,
             facets,
             theme.facets(),
-            hAxisPosition = AxisPosition.BOTTOM,  // Not used with Live Map
-            vAxisPosition = AxisPosition.LEFT,    // Not used with Live Map
             hAxisTheme = LiveMapAxisTheme(),
             vAxisTheme = LiveMapAxisTheme(),
             plotTheme = theme.plot()

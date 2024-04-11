@@ -36,4 +36,5 @@ interface PlotTheme {
     fun subtitleMargins(): Thickness
     fun captionMargins(): Thickness
     fun plotMargins(): Thickness
+    fun plotInset(): Thickness
 }

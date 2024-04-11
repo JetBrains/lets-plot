@@ -31,6 +31,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
@@ -68,26 +69,23 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
-                Elem.Margin.TOP to 4.0,
+                Elem.Margin.TOP to 0.0,
                 Elem.Margin.RIGHT to 0.0,
-                Elem.Margin.BOTTOM to 4.0,
+                Elem.Margin.BOTTOM to 0.0,
                 Elem.Margin.LEFT to 0.0
             ),
             PLOT_TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_LARGE,
-                Elem.Margin.TOP to 0.0,
-                Elem.Margin.BOTTOM to 10.0
+                Elem.Margin.TOP to 4.0,
             ),
             PLOT_SUBTITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
-                Elem.Margin.TOP to 0.0,
-                Elem.Margin.BOTTOM to 10.0
+                Elem.Margin.TOP to 4.0,
             ),
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,
                 Elem.SIZE to Defaults.FONT_SMALL,
-                Elem.Margin.TOP to 10.0,
-                Elem.Margin.BOTTOM to 0.0
+                Elem.Margin.BOTTOM to 4.0,
             ),
 //            TEXT_WIDTH_FACTOR to 1.0,
             PANEL_BORDER_RECT to ELEMENT_BLANK,
@@ -165,10 +163,16 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             PLOT_MARGIN to mapOf(
-                Elem.Margin.TOP to 6.5,
-                Elem.Margin.RIGHT to 6.5,
-                Elem.Margin.BOTTOM to 6.5,
-                Elem.Margin.LEFT to 6.5
+                Elem.Margin.TOP to 0.0,
+                Elem.Margin.RIGHT to 0.0,
+                Elem.Margin.BOTTOM to 0.0,
+                Elem.Margin.LEFT to 0.0
+            ),
+            PLOT_INSET to mapOf(
+                Elem.Inset.TOP to 6.5,
+                Elem.Inset.RIGHT to 6.5,
+                Elem.Inset.BOTTOM to 6.5,
+                Elem.Inset.LEFT to 6.5
             ),
         )
     }

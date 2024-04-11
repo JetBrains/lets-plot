@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
-import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -21,6 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
 
 internal class DefaultPlotTheme(
     options: Map<String, Any>,
@@ -33,6 +33,7 @@ internal class DefaultPlotTheme(
     internal val captionKey = listOf(PLOT_CAPTION, TITLE, TEXT)
     internal val messagesKey = listOf(PLOT_MESSAGE)
     private val marginKey = listOf(PLOT_MARGIN)
+    private val insetKey = listOf(PLOT_INSET)
 
     override fun showBackground(): Boolean {
         return !isElemBlank(backgroundKey)
@@ -95,6 +96,8 @@ internal class DefaultPlotTheme(
     override fun captionMargins() = getMargins(getElemValue(captionKey))
 
     override fun plotMargins() = getMargins(getElemValue(marginKey))
+
+    override fun plotInset() = getPadding(getElemValue(insetKey))
 
     override fun showMessage(): Boolean {
         return !isElemBlank(messagesKey)

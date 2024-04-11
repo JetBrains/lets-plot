@@ -6,26 +6,17 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
-import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
 internal class SingleTilePlotLayout(
     private val tileLayout: TileLayout,
-    hAxisPosition: AxisPosition,
-    vAxisPosition: AxisPosition,
-    hAxisTheme: AxisTheme,
-    vAxisTheme: AxisTheme,
     private val plotTheme: PlotTheme
 ) : PlotLayout {
 
-    private val insets: Insets = plotInsets(
-        hAxisPosition, vAxisPosition,
-        hAxisTheme, vAxisTheme
-    )
+    private val insets: Insets = plotInsets(plotTheme.plotInset())
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         return if (tileLayout.insideOut) {

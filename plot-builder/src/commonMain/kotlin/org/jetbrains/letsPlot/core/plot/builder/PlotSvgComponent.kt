@@ -315,7 +315,7 @@ class PlotSvgComponent constructor(
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             subtitleTextRect?.let {
                 drawDebugRect(
-                    textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
+                    textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotSubtitle(plotTheme), align = -1),
                     Color.DARK_GREEN
                 )
             }
@@ -340,7 +340,7 @@ class PlotSvgComponent constructor(
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
             captionTextRect?.let {
                 drawDebugRect(
-                    textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1),
+                    textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotCaption(plotTheme), align = 1),
                     Color.DARK_GREEN
                 )
             }
@@ -386,6 +386,7 @@ class PlotSvgComponent constructor(
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     justification = theme.verticalAxis(flippedAxis).titleJustification(),
                     margins = theme.verticalAxis(flippedAxis).titleMargins(),
+                    plotInset = theme.plot().plotInset(),
                     className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
@@ -399,6 +400,7 @@ class PlotSvgComponent constructor(
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     justification = theme.horizontalAxis(flippedAxis).titleJustification(),
                     margins = theme.horizontalAxis(flippedAxis).titleMargins(),
+                    plotInset = theme.plot().plotInset(),
                     className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
@@ -456,6 +458,7 @@ class PlotSvgComponent constructor(
         labelSpec: LabelSpec,
         justification: TextJustification,
         margins: Thickness,
+        plotInset: Thickness,
         className: String
     ) {
         val referenceRect = when (orientation) {
@@ -486,7 +489,7 @@ class PlotSvgComponent constructor(
         val axisTitleElementRect = when (orientation) {
             Orientation.LEFT ->
                 DoubleRectangle(
-                    referenceRect.left - textHeight - margins.width,
+                    referenceRect.left - textHeight - margins.width - plotInset.left,
                     referenceRect.top,
                     textHeight + margins.width,
                     referenceRect.height
@@ -494,7 +497,7 @@ class PlotSvgComponent constructor(
 
             Orientation.RIGHT ->
                 DoubleRectangle(
-                    referenceRect.right,
+                    referenceRect.right + plotInset.right,
                     referenceRect.top,
                     textHeight + margins.width,
                     referenceRect.height
@@ -502,14 +505,14 @@ class PlotSvgComponent constructor(
 
             Orientation.TOP -> DoubleRectangle(
                 referenceRect.left,
-                referenceRect.top - textHeight - margins.height,
+                referenceRect.top - textHeight - margins.height - plotInset.top,
                 referenceRect.width,
                 textHeight + margins.height
             )
 
             Orientation.BOTTOM -> DoubleRectangle(
                 referenceRect.left,
-                referenceRect.bottom,
+                referenceRect.bottom + plotInset.bottom,
                 referenceRect.width,
                 textHeight + margins.height
             )

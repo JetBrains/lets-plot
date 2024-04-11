@@ -10,41 +10,16 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
-    fun plotInsets(
-        hAxisPosition: AxisPosition,
-        vAxisPosition: AxisPosition,
-        hAxisTheme: AxisTheme,
-        vAxisTheme: AxisTheme
-    ): Insets {
-        val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
-        val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
-        val (left, right) = when (vAxisPosition) {
-            AxisPosition.LEFT -> Pair(hPadding, GEOM_AREA_PADDING)
-            AxisPosition.RIGHT -> Pair(GEOM_AREA_PADDING, hPadding)
-            AxisPosition.LR -> Pair(hPadding, hPadding)
-            else -> throw IllegalStateException("Illegal vertical axis position: $vAxisPosition")
-        }
-        val (top, bottom) = when (hAxisPosition) {
-            AxisPosition.TOP -> Pair(vPadding, GEOM_AREA_PADDING)
-            AxisPosition.BOTTOM -> Pair(GEOM_AREA_PADDING, vPadding)
-            AxisPosition.TB -> Pair(vPadding, vPadding)
-            else -> throw IllegalStateException("Illegal horizontal axis position: $hAxisPosition")
-        }
-
-        return Insets(left, top, right, bottom)
-    }
+    fun plotInsets(plotInset: Thickness) = Insets(plotInset.leftTop, plotInset.rightBottom)
 
     private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
         if (text.isEmpty()) {

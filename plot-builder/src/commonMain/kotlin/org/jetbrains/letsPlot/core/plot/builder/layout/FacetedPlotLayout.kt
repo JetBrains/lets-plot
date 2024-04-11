@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
@@ -19,15 +19,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
-import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import kotlin.math.max
 
 internal class FacetedPlotLayout(
     private val facets: PlotFacets,
     private val layoutProviderByTile: List<TileLayoutProvider>,
     private val showFacetStrip: Boolean,
-    hAxisOrientation: AxisPosition,
-    vAxisOrientation: AxisPosition,
     private val hAxisTheme: AxisTheme,
     private val vAxisTheme: AxisTheme,
     private val plotTheme: PlotTheme,
@@ -36,10 +33,7 @@ internal class FacetedPlotLayout(
     private val totalAddedHSize: Double = PANEL_PADDING * (facets.colCount - 1)
     private val totalAddedVSize: Double = PANEL_PADDING * (facets.rowCount - 1)
 
-    private val insets: Insets = plotInsets(
-        hAxisOrientation, vAxisOrientation,
-        hAxisTheme, vAxisTheme
-    )
+    private val insets: Insets = plotInsets(plotTheme.plotInset())
 
     init {
         require(facets.isDefined) { "Undefined facets." }

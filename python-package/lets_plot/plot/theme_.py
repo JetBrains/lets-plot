@@ -67,6 +67,7 @@ def theme(*,
           plot_caption=None,
           plot_message=None,
           plot_margin=None,
+          plot_inset=None,
 
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
@@ -220,6 +221,16 @@ def theme(*,
         - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
+    plot_inset : number or list of numbers
+        Inset for a plotting area including the axes with their labels but without titles.
+        The inset may be specified using a number or a list of numbers:
+
+        - a number or list of one number - the same inset it applied to all four sides;
+        - a list of two numbers - the first inset applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers - the first inset applies to the top, the second - to the right and left, the third - to the bottom;
+        - a list of four numbers - the insets are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default value for the plot inset side will be used.
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.

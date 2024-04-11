@@ -111,8 +111,6 @@ class PlotAssembler constructor(
             frameProviderByTile = frameProviderByTile,
             facets = facets,
             coordProvider = geomTiles.coordProvider,
-            hAxisPosition = hAxisPosition,
-            vAxisPosition = vAxisPosition,
             containsLiveMap = geomTiles.containsLiveMap,
             theme = theme,
             legendBoxInfos = legendBoxInfos,
