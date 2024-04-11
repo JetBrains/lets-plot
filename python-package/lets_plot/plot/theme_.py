@@ -407,7 +407,7 @@ def element_rect(
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(panel_background=element_rect())
+            theme(panel_background=element_rect(fill='#f7fcf5'))
 
     """
     return locals()
@@ -453,7 +453,7 @@ def element_line(
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(panel_grid=element_line(size=3))
+            theme(panel_grid=element_line(size=3, linetype='dashed'))
 
     """
     return locals()
@@ -529,8 +529,8 @@ def element_text(
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \\
-            theme(axis_text=element_text(color='#bdbdbd'))
+        ggplot(data, aes(x='x')) + geom_histogram() + \
+            theme(axis_text=element_text(color='#cb181d', face='bold_italic', margin=[5, 10]))
 
     """
     return locals()
