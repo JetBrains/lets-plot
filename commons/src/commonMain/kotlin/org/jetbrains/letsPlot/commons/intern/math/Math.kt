@@ -197,3 +197,16 @@ fun lineSlope(p1: DoubleVector, p2: DoubleVector): Double {
 fun pointOnLine(p1: DoubleVector, p2: DoubleVector, offset: Double): DoubleVector {
     return pointOnLine(p1.x, p1.y, p2.x, p2.y, offset)
 }
+
+/*
+ * Rotate point (px, py) around center (cx, cy) by angle phi.
+ */
+fun rotateAround(px: Double, py: Double, cx: Double, cy: Double, phi: Double): DoubleVector {
+    val vx = px - cx
+    val vy = py - cy
+
+    val x = vx * cos(phi) - vy * sin(phi)
+    val y = vx * sin(phi) + vy * cos(phi)
+
+    return DoubleVector(x + cx, y + cy)
+}

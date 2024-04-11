@@ -8,11 +8,12 @@ package org.jetbrains.letsPlot.livemap.chart.path
 import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.math.distance2
 import org.jetbrains.letsPlot.commons.intern.math.pointOnLine
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
+import org.jetbrains.letsPlot.commons.intern.math.rotateAround
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
@@ -24,8 +25,8 @@ import org.jetbrains.letsPlot.livemap.mapengine.lineTo
 import org.jetbrains.letsPlot.livemap.mapengine.moveTo
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.sin
+
 
 open class PathRenderer : Renderer {
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
@@ -55,10 +56,37 @@ open class PathRenderer : Renderer {
                 // set attribute `stroke-miterlimit` to avoid a bevelled corner
                 val miterLimit = ArrowSpec.miterLength(it.angle * 2, chartElement.scaledStrokeWidth())
                 ctx.setStrokeMiterLimit(abs(miterLimit))
-
-                drawArrows(it, adjustedGeometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
+                val (startHead, endHead) = createArrowHeads(adjustedGeometry, it, chartElement.scalingSizeFactor, renderHelper)
+                val startHeadSvg = renderArrowHead(startHead, it, color, ctx, renderHelper)
+                val endHeadSvg = renderArrowHead(endHead, it, color, ctx, renderHelper)
+                listOfNotNull(startHeadSvg, endHeadSvg)
             }
         }
+    }
+
+    private fun renderArrowHead(
+        points: List<Vec<World>>,
+        arrowSpec: ArrowSpec,
+        color: Color,
+        ctx: Context2d,
+        renderHelper: RenderHelper
+    ) {
+        if (points.size < 2) return
+
+        ctx.save()
+        ctx.scale(renderHelper.zoomFactor)
+        ctx.beginPath()
+        ctx.moveTo(points[0])
+        points.asSequence().drop(1).forEach(ctx::lineTo)
+        ctx.restore()
+
+        ctx.setLineDash(doubleArrayOf())
+        if (arrowSpec.type == ArrowSpec.Type.CLOSED) {
+            ctx.closePath()
+            ctx.setFillStyle(color)
+            ctx.fill()
+        }
+        ctx.stroke()
     }
 
     open fun drawPath(points: List<WorldPoint>, ctx: Context2d) {
@@ -66,7 +94,7 @@ open class PathRenderer : Renderer {
         points.drop(1).forEach(ctx::lineTo)
     }
 
-    class ArrowSpec private constructor(
+    class ArrowSpec constructor(
         val angle: Double,
         val length: Scalar<Client>,
         val end: End,
@@ -78,26 +106,6 @@ open class PathRenderer : Renderer {
         val isOnLastEnd: Boolean
             get() = end == End.LAST || end == End.BOTH
 
-        fun createGeometry(
-            polarAngle: Double,
-            x: Double,
-            y: Double,
-            l: Scalar<World>,
-            scalingFactor: Double
-        ): Pair<DoubleArray, DoubleArray> {
-            val xs = doubleArrayOf(
-                x - l.value * scalingFactor * cos(polarAngle - angle),
-                x,
-                x - l.value * scalingFactor * cos(polarAngle + angle)
-            )
-            val ys = doubleArrayOf(
-                y - l.value * scalingFactor * sin(polarAngle - angle),
-                y,
-                y - l.value * scalingFactor * sin(polarAngle + angle)
-            )
-            return xs to ys
-        }
-
         enum class End {
             LAST, FIRST, BOTH
         }
@@ -107,6 +115,7 @@ open class PathRenderer : Renderer {
         }
 
         companion object {
+
             fun miterLength(headAngle: Double, strokeWidth: Double): Double {
                 return strokeWidth / sin(headAngle / 2)
             }
@@ -136,53 +145,10 @@ open class PathRenderer : Renderer {
         }
     }
 
-    private fun drawArrows(
-        arrowSpec: ArrowSpec,
-        geometry: List<WorldPoint>,
-        color: Color,
-        scalingSizeFactor: Double,
-        ctx: Context2d,
-        renderHelper: RenderHelper
-    ) {
-
-        fun drawArrowAtEnd(start: WorldPoint, end: WorldPoint, arrowSpec: ArrowSpec) {
-            val abscissa = end.x - start.x
-            val ordinate = end.y - start.y
-            if (abscissa != 0.0 || ordinate != 0.0) {
-                val polarAngle = atan2(ordinate, abscissa)
-                val worldLength = renderHelper.dimToWorld(arrowSpec.length)
-                val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, worldLength, scalingSizeFactor)
-
-                ctx.save()
-                ctx.scale(renderHelper.zoomFactor)
-                ctx.beginPath()
-                ctx.moveTo(xs[0], ys[0])
-                for (i in 1..2) {
-                    ctx.lineTo(xs[i], ys[i])
-                }
-                ctx.restore()
-
-                ctx.setLineDash(doubleArrayOf())
-                if (arrowSpec.type == ArrowSpec.Type.CLOSED) {
-                    ctx.closePath()
-                    ctx.setFillStyle(color)
-                    ctx.fill()
-                }
-                ctx.stroke()
-            }
-        }
-
-        if (arrowSpec.isOnFirstEnd) {
-            val (start, end) = geometry.take(2).reversed()
-            drawArrowAtEnd(start, end, arrowSpec)
-        }
-        if (arrowSpec.isOnLastEnd) {
-            val (start, end) = geometry.takeLast(2)
-            drawArrowAtEnd(start, end, arrowSpec)
-        }
-    }
-
     companion object {
+        private val MIN_TAIL_LENGTH = 10.px
+        private val MIN_HEAD_LENGTH = 5.px
+
         // TODO: fix duplication from padLineString(List<DoubleVector>)
         private fun padLineString(
             lineString: List<WorldPoint>,
@@ -231,6 +197,88 @@ open class PathRenderer : Renderer {
         private fun padEnd(lineString: List<WorldPoint>, padding: Scalar<World>): List<WorldPoint> {
             val (index, adjustedEndPoint) = pad(lineString.asReversed(), padding) ?: return lineString
             return lineString.subList(0, lineString.size - index) + adjustedEndPoint
+        }
+
+        private fun adjustArrowHeadLength(lineLength: Scalar<Client>, arrowSpec: ArrowSpec, scalingFactor: Double): Scalar<Client> {
+            val headsCount = listOf(arrowSpec.isOnFirstEnd, arrowSpec.isOnLastEnd).count { it }
+            val headsLength = arrowSpec.length * headsCount * scalingFactor
+            val tailLength = lineLength - headsLength
+
+            return when (tailLength < MIN_TAIL_LENGTH) {
+                true -> (lineLength - MIN_TAIL_LENGTH) / headsCount
+                false -> arrowSpec.length * scalingFactor
+            }
+        }
+
+        fun createArrowHeads(
+            geometry: List<WorldPoint>,
+            arrowSpec: ArrowSpec,
+            scalingFactor: Double,
+            renderHelper: RenderHelper
+        ): Pair<List<Vec<World>>, List<Vec<World>>> {
+            val startHead = when (arrowSpec.isOnFirstEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry.asReversed(), scalingFactor, renderHelper)
+                false -> emptyList()
+            }
+
+            val endHead = when (arrowSpec.isOnLastEnd) {
+                true -> createArrowHeadGeometry(arrowSpec, geometry, scalingFactor, renderHelper)
+                false -> emptyList()
+            }
+
+            return startHead to endHead
+        }
+
+        private fun createArrowHeadGeometry(
+            arrowSpec: ArrowSpec,
+            geometry: List<WorldPoint>,
+            scalingFactor: Double,
+            renderHelper: RenderHelper
+        ): List<Vec<World>> {
+            if (geometry.size < 2) return emptyList()
+
+            val lineLength = Scalar<World>(geometry.windowed(2).sumOf { (a, b) -> distance(a.x, a.y, b.x, b.y) })
+            val arrowHeadLength = adjustArrowHeadLength(renderHelper.dimToClient(lineLength), arrowSpec, scalingFactor)
+            val headLength = renderHelper.dimToWorld(maxOf(arrowHeadLength, MIN_HEAD_LENGTH))
+
+            // basePoint affects direction of the arrow head. Important for curves.
+            val basePoint = when (geometry.size) {
+                0, 1 -> error("Invalid geometry")
+                2 -> geometry.first()
+                else -> geometry[pointIndexAtDistance(geometry, distanceFromEnd = headLength)]
+            }
+
+            val tipPoint = geometry.last()
+
+            val abscissa = tipPoint.x - basePoint.x
+            val ordinate = tipPoint.y - basePoint.y
+            if (abscissa == 0.0 && ordinate == 0.0) return emptyList()
+
+            // Compute the angle that the vector defined by this segment makes with the
+            // X-axis (radians)
+            val polarAngle = atan2(ordinate, abscissa)
+
+            val length = tipPoint - newVec(headLength, Scalar(0))
+
+            val leftSide = rotateAround(length.x, length.y, tipPoint.x, tipPoint.y, polarAngle - arrowSpec.angle).toVec<World>()
+            val rightSide = rotateAround(length.x, length.y, tipPoint.x, tipPoint.y, polarAngle + arrowSpec.angle).toVec<World>()
+
+            return when (arrowSpec.type) {
+                ArrowSpec.Type.CLOSED -> listOf(leftSide, tipPoint, rightSide, leftSide)
+                ArrowSpec.Type.OPEN -> listOf(leftSide, tipPoint, rightSide)
+            }
+        }
+
+        private fun pointIndexAtDistance(curve: List<Vec<World>>, distanceFromEnd: Scalar<World>): Int {
+            var length = 0.0
+            var i = curve.lastIndex
+
+            while (i > 0 && length < distanceFromEnd.value) {
+                val cur = curve[i]
+                val prev = curve[--i]
+                length += distance(cur.x, cur.y, prev.x, prev.y)
+            }
+            return i
         }
     }
 }

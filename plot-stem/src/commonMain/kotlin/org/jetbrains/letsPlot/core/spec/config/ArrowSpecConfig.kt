@@ -42,7 +42,7 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
         private const val DEF_LENGTH = 10.0
         private val DEF_END = ArrowSpec.End.LAST
         private val DEF_TYPE = ArrowSpec.Type.OPEN
-        private const val DEF_MIN_TAIL_LENGTH = 5.0
+        private const val DEF_MIN_TAIL_LENGTH = 10.0
 
         fun create(options: Any): ArrowSpecConfig {
             if (options is Map<*, *>) {

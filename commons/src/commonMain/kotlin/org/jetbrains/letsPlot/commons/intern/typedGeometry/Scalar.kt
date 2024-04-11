@@ -8,9 +8,14 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class Scalar<T>(
+value class Scalar<T> (
     val value: Double
-)
+) : Comparable<Scalar<T>> {
+    constructor(value: Number) : this(value.toDouble())
+    override fun compareTo(other: Scalar<T>): Int {
+        return value.compareTo(other.value)
+    }
+}
 
 
 operator fun <T> Scalar<T>.plus(other: Scalar<T>): Scalar<T> = Scalar(value + other.value)
@@ -22,5 +27,4 @@ operator fun <T> Scalar<T>.div(other: Number): Scalar<T> = Scalar(value / other.
 operator fun <T> Scalar<T>.times(other: Number): Scalar<T> = Scalar(value * other.toDouble())
 operator fun <T> Scalar<T>.unaryMinus(): Scalar<T> = Scalar(-value)
 
-operator fun <T> Scalar<T>.compareTo(other: Scalar<T>) = value.compareTo(other.value)
 operator fun <T> Scalar<T>.compareTo(i: Int) = value.compareTo(i)
