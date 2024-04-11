@@ -26,6 +26,10 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/auto_rotate.ipynb).
 
+- Parameter `plot_inset` in `theme()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/theme_plot_inset.ipynb).
+
 
 ### Changed
       

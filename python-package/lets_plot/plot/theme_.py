@@ -222,7 +222,7 @@ def theme(*,
 
         It is acceptable to use None for any side; in this case, the default value for the plot margin side will be used.
     plot_inset : number or list of numbers
-        Inset for a plotting area including the axes with their labels but without titles.
+        Inset for a plotting area, including the axes with their labels, but without titles.
         The inset may be specified using a number or a list of numbers:
 
         - a number or list of one number - the same inset it applied to all four sides;
