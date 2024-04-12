@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg version="1" xmlns="http://www.w3.org/2000/svg" width="40pt" height="40pt" viewBox="0 0 40 40">
+	<defs>
+		<linearGradient id="LPGradient" x1="0%" y1="0%" x2="100%" y2="70%">
+			<stop offset="0%" style="stop-color:#9955dd;"/>
+			<stop offset="100%" style="stop-color:#5566dd;"/>
+		</linearGradient>
+		<clipPath id="circleClip">
+			<circle cx="20.00" cy="6.73" r="1.4"/>
+			<circle cx="13.33" cy="11.16" r="1.4"/>
+			<circle cx="20.00" cy="11.16" r="1.4"/>
+			<circle cx="26.67" cy="11.16" r="1.4"/>
+			<circle cx="6.66" cy="15.58" r="1.4"/>
+			<circle cx="13.33" cy="15.58" r="1.4"/>
+			<circle cx="20.00" cy="15.58" r="1.4"/>
+			<circle cx="26.67" cy="15.58" r="1.4"/>
+			<circle cx="33.34" cy="15.58" r="1.4"/>
+			<circle cx="6.66" cy="20.00" r="1.4"/>
+			<circle cx="13.33" cy="20.00" r="1.4"/>
+			<circle cx="20.00" cy="20.00" r="1.4"/>
+			<circle cx="26.67" cy="20.00" r="1.4"/>
+			<circle cx="33.34" cy="20.00" r="1.4"/>
+			<circle cx="6.66" cy="24.42" r="1.4"/>
+			<circle cx="13.33" cy="24.42" r="1.4"/>
+			<circle cx="20.00" cy="24.42" r="1.4"/>
+			<circle cx="26.67" cy="24.42" r="1.4"/>
+			<circle cx="33.34" cy="24.42" r="1.4"/>
+			<circle cx="13.33" cy="28.84" r="1.4"/>
+			<circle cx="20.00" cy="28.84" r="1.4"/>
+			<circle cx="26.67" cy="28.84" r="1.4"/>
+			<circle cx="20.00" cy="33.27" r="1.4"/>
+		</clipPath>
+	</defs>
+	<rect x="3.09" y="3.09" width="33.83" height="33.83" rx="6.83" stroke="none" fill="url(#LPGradient)" clip-path="url(#circleClip)"/>
+</svg>
