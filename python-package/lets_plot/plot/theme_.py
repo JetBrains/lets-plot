@@ -530,7 +530,7 @@ def element_text(
         LetsPlot.setup_html()
         np.random.seed(42)
         data = {'x': np.random.normal(size=1000)}
-        ggplot(data, aes(x='x')) + geom_histogram() + \
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
             theme(axis_text=element_text(color='#cb181d', face='bold_italic', margin=[5, 10]))
 
     """
