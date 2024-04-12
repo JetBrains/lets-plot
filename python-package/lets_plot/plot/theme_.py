@@ -171,7 +171,7 @@ def theme(*,
     panel_border : str or dict
         Border around plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
-        Set `element_line()` to specify border parameters, inherited from `line`.
+        Set `element_rect()` to specify border parameters, inherited from `rect`.
     panel_border_ontop : bool, default=True
         Option to place border around plotting area over the data layers.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
