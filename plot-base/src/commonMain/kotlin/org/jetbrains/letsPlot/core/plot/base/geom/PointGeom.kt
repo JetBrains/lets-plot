@@ -59,7 +59,7 @@ open class PointGeom : GeomBase() {
                 }
 
                 targetCollector.addPoint(
-                    i, location, (sizeUnitRatio * shape.size(p) + shape.strokeWidth(p)) / 2,
+                    i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)),
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     )
