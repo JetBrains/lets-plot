@@ -109,6 +109,24 @@ def test_global_theme_feature_add():
     assert expected_theme == spec.as_dict()['theme']
 
 
+def test_global_theme_feature_add_for_gggrid():
+    gg.LetsPlot.set_theme(
+        theme_classic() + flavor_darcula() + theme(legend_position='bottom')
+    )
+
+    spec_foo = gg.ggplot() + _geom('foo')
+    spec_bar = gg.ggplot() + _geom('bar')
+    spec = gg.gggrid([spec_foo, spec_bar])
+
+    expected_theme = {
+        'name': 'classic',
+        'flavor': 'darcula',
+        'legend_position': 'bottom'
+    }
+
+    assert expected_theme == spec.as_dict()['theme']
+
+
 def test_overriding_global_named_theme():
     gg.LetsPlot.set_theme(
         theme_classic()

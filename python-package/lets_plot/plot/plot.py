@@ -2,7 +2,6 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import json
 import numbers
 
 from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT, PLOT_THEME
@@ -88,17 +87,8 @@ def ggplot(data=None, mapping=None):
     plot_spec = PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 
     if has_global_value(PLOT_THEME):
-        theme_options = json.loads(get_global_val(PLOT_THEME))
-
-        if theme_options.get('feature-list') is not None:
-            feature_list = theme_options.get('feature-list')
-            for feature in feature_list:
-                theme = feature.get('theme')
-                theme_name = theme.pop('name', None)  # Remove name from kwargs to avoid duplication
-                plot_spec += FeatureSpec('theme', theme_name, **theme)
-        else:
-            theme_name = theme_options.pop('name', None)
-            plot_spec += FeatureSpec('theme', theme_name, **theme_options)
+        theme_options = get_global_val(PLOT_THEME)
+        plot_spec += theme_options
 
     return plot_spec
 

@@ -2,7 +2,6 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import json
 from pkgutil import extend_path
 from typing import Dict, Union
 
@@ -175,7 +174,7 @@ class LetsPlot:
             raise ValueError("Only `theme(...)`, `theme_xxx()`, `flavor_xxx()`, or a sum of them are supported")
 
         LetsPlot.set({
-            PLOT_THEME: json.dumps(theme.as_dict())
+            PLOT_THEME: theme
         })
 
     @classmethod
