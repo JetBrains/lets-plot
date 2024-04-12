@@ -4,9 +4,9 @@
 
 - Parameter `dpi` in `ggsave()`, `to_png()` and `to_pdf()` functions [[#839](https://github.com/JetBrains/lets-plot/issues/839)].
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/parameter_dpi.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/param_dpi.ipynb).
 
-- Parameter `labwidth` in `facet_wrap()` and `x_labwidth/y_labwidth` in `facet_grid()`.
+- Parameter `labwidth` in `facet_wrap()` and `x_labwidth/y_labwidth` in `facet_grid()` [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/facet_multiline_titles.ipynb).
 
@@ -22,7 +22,7 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/param_size_unit.ipynb).
 
-- Automatically choose `orientation="y"` when aes y is discrete [[#558](https://github.com/JetBrains/lets-plot/issues/558)].
+- Auto-detection of `orientation="y"` in bar-chart etc. [[#558](https://github.com/JetBrains/lets-plot/issues/558)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24b/auto_rotate.ipynb).
 
