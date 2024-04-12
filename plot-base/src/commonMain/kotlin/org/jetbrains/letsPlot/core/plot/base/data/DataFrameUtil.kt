@@ -31,9 +31,9 @@ object DataFrameUtil {
     ): DataFrame {
         val transformed = try {
             ScaleUtil.applyTransform(data[variable], transform)
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
             throw IllegalArgumentException(
-                "Failed to apply transform: ${transform::class.simpleName} to variable: ${variable.name}"
+                "Can't transform '${variable.name}' with ${transform::class.simpleName} : ${e.message}"
             )
         }
         return data.builder()
