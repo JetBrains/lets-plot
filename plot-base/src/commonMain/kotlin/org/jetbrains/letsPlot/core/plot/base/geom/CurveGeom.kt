@@ -39,8 +39,10 @@ class CurveGeom : GeomBase() {
     ) {
         val tooltipHelper = TargetCollectorHelper(GeomKind.CURVE, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val svgElementHelper = geomHelper
-            .createSvgElementHelper()
+        val svgElementHelper = geomHelper.createSvgElementHelper()
+
+        svgElementHelper
+            .setStrokeAlphaEnabled(true)
             .setInterpolation(SvgPathDataBuilder.Interpolation.BSPLINE)
             .setArrowSpec(arrowSpec)
             .setSpacer(spacer)

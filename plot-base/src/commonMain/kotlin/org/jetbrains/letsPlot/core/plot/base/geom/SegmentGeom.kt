@@ -36,6 +36,7 @@ class SegmentGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgHelper = geomHelper
             .createSvgElementHelper()
+            .setStrokeAlphaEnabled(true)
             .setSpacer(spacer)
             .setResamplingEnabled(!coord.isLinear && !flat)
             .setArrowSpec(arrowSpec)
