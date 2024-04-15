@@ -711,9 +711,10 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     labels : `layer_labels`
         Result of the call to the `layer_labels()` function.
         Specify style and content of the annotations.
-    orientation : str, default='x'
+    orientation : str
         Specify the axis that the layer's stat and geom should run along.
-        Possible values: 'x', 'y'.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3019,9 +3020,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    orientation : str, default='x'
+    orientation : str
         Specify the axis that the layer's stat and geom should run along.
-        Possible values: 'x', 'y'.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     fatten : float, default=2.0
         A multiplicative factor applied to size of the middle bar.
     outlier_alpha : float
@@ -3231,9 +3233,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    orientation : str, default='x'
+    orientation : str
         Specify the axis that the layer's stat and geom should run along.
-        Possible values: 'x', 'y'.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     show_half : float, default=0
         If -1, only half of each violin is drawn.
         If 1, another half is drawn.
@@ -3413,6 +3416,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
 
 def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
+                  orientation=None,
                   binwidth=None,
                   bins=None,
                   method=None,
@@ -3446,6 +3450,10 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    orientation : str
+        Specify the axis that the layer's stat and geom should run along.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
@@ -3571,6 +3579,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  binwidth=binwidth,
                  bins=bins,
                  method=method,
@@ -6771,9 +6780,10 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    orientation : {'x', 'y'}, default='x'
-        Specify the axis that the baseline should run along.
-        Possible values: 'x', 'y'.
+    orientation : str
+        Specify the axis that the layer's stat and geom should run along.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     dir : {'v', 'h', 's'}, default='v'
         Direction of the lollipop stick.
         'v' for vertical, 'h' for horizontal, 's' for orthogonal to the baseline.

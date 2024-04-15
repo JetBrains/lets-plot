@@ -41,9 +41,10 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    orientation : str, default='x'
+    orientation : str
         Specify the axis that the layer's stat and geom should run along.
-        Possible values: 'x', 'y'.
+        The default value (None) automatically determines the orientation based on the aesthetic mapping.
+        If the automatic detection doesn't work, it can be set explicitly by specifying the 'x' or 'y' orientation.
     fun : {'count', 'sum', 'mean', 'median', 'min', 'max', 'lq', 'mq', 'uq'}, default='mean'
         Name of function computing stat variable '..y..'.
         Names 'lq', 'mq', 'uq' corresponds to lower, middle and upper quantiles, default=[0.25, 0.5, 0.75].
