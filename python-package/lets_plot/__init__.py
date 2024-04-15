@@ -9,13 +9,14 @@ from typing import Dict, Union
 __path__ = extend_path(__path__, __name__)
 
 from ._version import __version__
-from ._global_settings import _settings, is_production, get_global_bool, PLOT_THEME
+from ._global_settings import _settings, is_production, get_global_bool
 from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
 from .export import *
 from .frontend_context import *
 from .settings_utils import *
+from .plot._global_theme import _set_global_theme
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
@@ -173,9 +174,7 @@ class LetsPlot:
         if theme.kind != 'theme' and not (theme.kind == 'feature-list' and all(f.kind == 'theme' for f in theme)):
             raise ValueError("Only `theme(...)`, `theme_xxx()`, `flavor_xxx()`, or a sum of them are supported")
 
-        LetsPlot.set({
-            PLOT_THEME: theme
-        })
+        _set_global_theme(theme)
 
     @classmethod
     def setup_show_ext(cls, *,

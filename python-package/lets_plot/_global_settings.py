@@ -45,7 +45,6 @@ JS_NAME = 'js_name'
 JS_URL_MANUAL = 'js_url_manual'
 MAX_WIDTH = 'max_width'
 MAX_HEIGHT = 'max_height'
-PLOT_THEME = 'plot_theme'
 
 MAPTILES_KIND = 'maptiles_kind'
 MAPTILES_URL = 'maptiles_url'
