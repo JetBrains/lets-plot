@@ -2,12 +2,11 @@
 # Copyright (c) 2023. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import json
 
-from lets_plot._global_settings import has_global_value, get_global_val, PLOT_THEME
 from lets_plot.plot.core import FeatureSpec, PlotSpec
 from .subplots import SupPlotsLayoutSpec
 from .subplots import SupPlotsSpec
+from ._global_theme import _get_global_theme
 
 __all__ = ['gggrid']
 
@@ -116,7 +115,7 @@ def gggrid(plots: list, ncol: int = None, *,
     )
 
     # Global Theme
-    global_theme_options = json.loads(get_global_val(PLOT_THEME)) if has_global_value(PLOT_THEME) else None
+    global_theme_options = _get_global_theme()
 
     def _strip_theme_if_global(fig):
         # Strip global theme options from plots in grid (see issue: #966).
@@ -136,7 +135,6 @@ def gggrid(plots: list, ncol: int = None, *,
     figure_spec = SupPlotsSpec(figures=figures, layout=layout)
 
     if global_theme_options is not None:
-        theme_name = global_theme_options.pop('name', None)
-        figure_spec += FeatureSpec('theme', theme_name, **global_theme_options)
+        figure_spec += global_theme_options
 
     return figure_spec

@@ -2,21 +2,21 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import json
 from pkgutil import extend_path
-from typing import Dict
+from typing import Dict, Union
 
 # To handle the situation when the 'lets_plot' package is shared by modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
 from ._version import __version__
-from ._global_settings import _settings, is_production, get_global_bool, PLOT_THEME
+from ._global_settings import _settings, is_production, get_global_bool
 from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
 from .export import *
 from .frontend_context import *
 from .settings_utils import *
+from .plot._global_theme import _set_global_theme
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
@@ -161,22 +161,20 @@ class LetsPlot:
             _settings.update({'dev_' + key: value for key, value in settings.items()})
 
     @classmethod
-    def set_theme(cls, theme: 'plot.FeatureSpec'):
+    def set_theme(cls, theme: Union['core.FeatureSpec', 'core.FeatureSpecArray']):
         """
         Set up global theme.
 
         Parameters
         ----------
         theme : spec
-            Theme spec provided by `theme(...)` or `theme_xxx()` functions.
+            Theme spec provided by `theme(...)`, `theme_xxx()`, `flavor_xxx()` functions, or their sum.
 
         """
-        if theme.kind != 'theme':
-            raise ValueError("Wrong option type. Expected `theme` but was `{}`.".format(theme.kind))
+        if theme.kind != 'theme' and not (theme.kind == 'feature-list' and all(f.kind == 'theme' for f in theme)):
+            raise ValueError("Only `theme(...)`, `theme_xxx()`, `flavor_xxx()`, or a sum of them are supported")
 
-        LetsPlot.set({
-            PLOT_THEME: json.dumps(theme.as_dict())
-        })
+        _set_global_theme(theme)
 
     @classmethod
     def setup_show_ext(cls, *,

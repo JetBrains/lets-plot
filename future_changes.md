@@ -58,3 +58,4 @@
 - Any way to line-wrap facet labels? [[LPK-237](https://github.com/JetBrains/lets-plot-kotlin/issues/237)].
 - Missing marginal gridlines.
 - Cryptic error message on geom_boxplot with orientation="y" [[#600](https://github.com/JetBrains/lets-plot/issues/600)].
+- `set_theme()` should accept "feature list" [[#657](https://github.com/JetBrains/lets-plot/issues/657)].
