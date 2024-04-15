@@ -29,7 +29,13 @@ object DataFrameUtil {
         transformVar: DataFrame.Variable,
         transform: Transform
     ): DataFrame {
-        val transformed = ScaleUtil.applyTransform(data[variable], transform)
+        val transformed = try {
+            ScaleUtil.applyTransform(data[variable], transform)
+        } catch (e: IllegalStateException) {
+            throw IllegalArgumentException(
+                "Can't transform '${variable.name}' with ${transform::class.simpleName} : ${e.message}"
+            )
+        }
         return data.builder()
             .putNumeric(transformVar, transformed)
             .build()
