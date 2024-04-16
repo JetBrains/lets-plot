@@ -27,7 +27,7 @@ Upgrade `Lets-Plot` version to just released RC version:
 
 ##### 3. Open and evaluate the example notebooks.
                                                    
-Note: all demo notebooks has been moved to the "lets-plot-docs" Github repository: 
+Note: all demo notebooks has been moved to the "lets-plot-docs" GitHub repository: 
 
 https://github.com/JetBrains/lets-plot-docs/tree/master/source/examples
 
