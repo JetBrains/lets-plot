@@ -15,29 +15,22 @@ import java.io.StringWriter
 
 object BrowserDemoUtil {
 
-    private const val ROOT_PROJECT = "lets-plot"
     private const val DEMO_PROJECT_PATH = "demo/livemap"
 
-    private fun getPlotLibPath(dev: Boolean): String {
-        val name = "lets-plot.min.js"
-        val dist = when {
-            dev -> "js-package/build/dist/js/developmentExecutable"
-            else -> "js-package/build/dist/js/productionExecutable"
-        }
-        return "${BrowserDemoUtil.getRootPath()}/$dist/$name"
-    }
+    fun openInBrowser(dev: Boolean? = null, html: () -> String) {
+        val outputDir = "$DEMO_PROJECT_PATH/${BrowserDemoUtil.getJsOutputDir(dev)}"
 
-    private fun getDemoDir(dev: Boolean = false) = when {
-        dev -> "build/dist/js/developmentExecutable"
-        else -> "build/dist/js/productionExecutable"
-    }
-
-    fun openInBrowser(dev: Boolean = false, html: () -> String) {
-        val outputDir = "$DEMO_PROJECT_PATH/${getDemoDir(dev)}"
-
-        val projectRoot = getProjectRoot()
+        val projectRoot = BrowserDemoUtil.getRootPath()
         println("Project root: $projectRoot")
         val tmpDir = File(projectRoot, outputDir)
+
+        require(tmpDir.exists()) {
+            if (BrowserDemoUtil.isDev(dev)) {
+                "Did you forget to run 'jsBrowserDevelopmentWebpack'? File not found: '${tmpDir.canonicalFile}'"
+            } else {
+                "File not found: '${tmpDir.canonicalFile}'"
+            }
+        }
         val file = File.createTempFile("index", ".html", tmpDir)
         println(file.canonicalFile)
 
@@ -49,17 +42,7 @@ object BrowserDemoUtil {
         desktop.browse(file.toURI())
     }
 
-    private fun getProjectRoot(): String {
-        // works when launching from IDEA
-        val projectRoot = System.getenv()["PWD"] ?: error("'PWD' env variable is not defined")
-
-        if (!projectRoot.contains(ROOT_PROJECT)) {
-            throw IllegalStateException("'PWD' is not pointing to $ROOT_PROJECT : $projectRoot")
-        }
-        return projectRoot
-    }
-
-    fun mapperDemoHtml(demoProject: String, callFun: String, title: String, dev: Boolean = false): String {
+    fun mapperDemoHtml(demoProject: String, callFun: String, title: String, dev: Boolean? = null): String {
         val mainScript = "$demoProject.js"
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -71,7 +54,7 @@ object BrowserDemoUtil {
 
                 script {
                     type = "text/javascript"
-                    src = getPlotLibPath(dev)
+                    src = BrowserDemoUtil.getPlotLibPath(dev)
                 }
 
                 script {
@@ -91,8 +74,6 @@ object BrowserDemoUtil {
                 }
             }
         }
-
         return writer.toString()
     }
-
 }

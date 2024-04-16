@@ -5,19 +5,17 @@
 
 package demo.plot.browser.plotConfig
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
-import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import demo.common.util.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
+import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import java.io.StringWriter
 
 object PlotConfigBrowserDemoUtil {
     private const val DEMO_PROJECT = "demo/plot"
     private const val ROOT_ELEMENT_ID = "root"
-    private const val JS_DIST_PATH = "js-package/build/dist/js/productionExecutable"
-
 
     fun show(
         title: String,
@@ -38,8 +36,7 @@ object PlotConfigBrowserDemoUtil {
     }
 
     private fun getPlotLibPath(): String {
-        val name = "lets-plot.min.js"
-        return "${BrowserDemoUtil.getRootPath()}/$JS_DIST_PATH/$name"
+        return BrowserDemoUtil.getPlotLibPath()
     }
 
     private fun getHtml(

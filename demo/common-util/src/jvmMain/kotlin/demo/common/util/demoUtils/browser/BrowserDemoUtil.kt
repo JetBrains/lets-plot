@@ -15,7 +15,12 @@ import java.io.StringWriter
 object BrowserDemoUtil {
     private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
-    private const val JS_DIST_PATH = "js-package/build/dist/js/productionExecutable"
+
+    private const val PROD_JS_OUTPUT_DIR = "build/dist/js/productionExecutable"
+    private const val DEV_JS_OUTPUT_DIR = "build/dist/js/developmentExecutable"
+
+    private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_JS_OUTPUT_DIR/lets-plot.min.js"
+    private const val DEV_LETS_PLOT_PATH = "js-package/$DEV_JS_OUTPUT_DIR/lets-plot.js"
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
         val file = createDemoFile(
@@ -46,21 +51,7 @@ object BrowserDemoUtil {
         return file
     }
 
-//    private fun openInBrowser(demoProjectRelativePath: String, filePref: String, fileSuff: String, html: () -> String) {
-//
-//        val rootPath = getRootPath()
-//        println("Project root: $rootPath")
-//        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
-//        val file = File.createTempFile(filePref, fileSuff, tmpDir)
-//        println(file.canonicalFile)
-//
-//        FileWriter(file).use {
-//            it.write(html())
-//        }
-//
-//        val desktop = Desktop.getDesktop()
-//        desktop.browse(file.toURI())
-//    }
+    fun isDev(dev: Boolean? = null): Boolean = dev ?: (System.getenv()["DEV"] != null)
 
     fun getRootPath(): String {
         // works when launching from IDEA
@@ -72,16 +63,37 @@ object BrowserDemoUtil {
         return projectRoot
     }
 
-    private fun getPlotLibPath(): String {
-        val name = "lets-plot.min.js"
-        return "${getRootPath()}/$JS_DIST_PATH/$name"
+    fun getPlotLibPath(dev: Boolean? = null): String {
+        val letsPlotPath = when (isDev(dev)) {
+            true -> DEV_LETS_PLOT_PATH
+            false -> PROD_LETS_PLOT_PATH
+        }
+
+        val absPath = getRootPath() + "/" + letsPlotPath
+
+        require(File(absPath).exists()) {
+            if (isDev(dev))
+                "Did you forget to run 'jsBrowserDevelopmentWebpack'? File not found: '$absPath'"
+            else
+                "File not found: '$absPath'"
+        }
+
+        return absPath
     }
 
-    private fun projectJs(projectPath: String, projectName: String) =
-        "${getRootPath()}/$projectPath/build/dist/js/productionExecutable/$projectName.js"
+    fun getJsOutputDir(dev: Boolean? = null): String {
+        return when (isDev(dev)) {
+            true -> DEV_JS_OUTPUT_DIR
+            false -> PROD_JS_OUTPUT_DIR
+        }
+    }
 
-    fun mapperDemoHtml(demoProjectPath: String, demoProject: String, callFun: String, title: String): String {
-        return mapperDemoHtml(demoProjectPath, demoProject, callFun, null, title)
+    private fun projectJs(projectPath: String, projectName: String, dev: Boolean? = null): String {
+        return "${getRootPath()}/$projectPath/${getJsOutputDir(dev)}/$projectName.js"
+    }
+
+    fun mapperDemoHtml(demoProjectPath: String, demoProject: String, callFun: String, title: String, dev: Boolean? = null): String {
+        return mapperDemoHtml(demoProjectPath, demoProject, callFun, null, title, dev)
     }
 
     fun mapperDemoHtml(
@@ -89,9 +101,10 @@ object BrowserDemoUtil {
         demoProject: String,
         callFun: String,
         projectDeps: List<String>?,
-        title: String
+        title: String,
+        dev: Boolean? = null
     ): String {
-        val mainScript = projectJs(demoProjectPath, demoProject)
+        val mainScript = projectJs(demoProjectPath, demoProject, dev)
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
@@ -101,7 +114,7 @@ object BrowserDemoUtil {
 
                 script {
                     type = "text/javascript"
-                    src = getPlotLibPath()
+                    src = getPlotLibPath(dev)
                 }
 
                 if (projectDeps != null) {
