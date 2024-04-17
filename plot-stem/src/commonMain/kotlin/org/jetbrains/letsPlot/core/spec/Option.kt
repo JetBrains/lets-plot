@@ -692,7 +692,6 @@ object Option {
         const val LENGTH = "length"
         const val ENDS = "ends"
         const val TYPE = "type"
-        const val MIN_TAIL_LENGTH = "min_tail_length"
     }
 
     internal object Sampling {

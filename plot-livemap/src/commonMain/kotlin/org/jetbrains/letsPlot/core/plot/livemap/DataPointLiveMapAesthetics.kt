@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.limitLat
 import org.jetbrains.letsPlot.commons.intern.spatial.normalizeLon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
@@ -30,12 +29,12 @@ import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.LabelOptions
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import org.jetbrains.letsPlot.core.plot.livemap.DataPointsConverter.PieOptions
 import org.jetbrains.letsPlot.core.plot.livemap.MapLayerKind.*
-import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.api.GeoObject
 import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
 import kotlin.math.ceil
 
+typealias LiveMapArrowSpec = org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec
 internal class DataPointLiveMapAesthetics {
     constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
@@ -84,15 +83,24 @@ internal class DataPointLiveMapAesthetics {
     var animation = 0
     var isCurve: Boolean = false
 
-    private var myArrowSpec: ArrowSpec? = null
-    val arrowAngle: Double?
-        get() = myArrowSpec?.angle
-    val arrowLength: Scalar<Client>?
-        get() = myArrowSpec?.length?.px
-    val arrowAtEnds: String?
-        get() = myArrowSpec?.end?.name?.lowercase()
-    val arrowType: String?
-        get() = myArrowSpec?.type?.name?.lowercase()
+    private var myPlotArrowSpec: ArrowSpec? = null
+    val arrowSpec: LiveMapArrowSpec? get() {
+        return myPlotArrowSpec?.let {
+            LiveMapArrowSpec(
+                angle = it.angle,
+                length = it.length.px,
+                end = when (it.end) {
+                    ArrowSpec.End.LAST -> org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.End.LAST
+                    ArrowSpec.End.FIRST -> org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.End.FIRST
+                    ArrowSpec.End.BOTH -> org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.End.BOTH
+                },
+                type = when (it.type) {
+                    ArrowSpec.Type.OPEN -> org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.Type.OPEN
+                    ArrowSpec.Type.CLOSED -> org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.Type.CLOSED
+                }
+            )
+        }
+    }
 
     val index get() = myP.index()
     val flow get() = myP.flow()!!
@@ -228,7 +236,7 @@ internal class DataPointLiveMapAesthetics {
     }
 
     fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
-        myArrowSpec = arrowSpec
+        myPlotArrowSpec = arrowSpec
         return this
     }
 

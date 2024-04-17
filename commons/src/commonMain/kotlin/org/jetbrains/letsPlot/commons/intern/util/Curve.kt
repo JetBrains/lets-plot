@@ -3,8 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.commons.geometry
+package org.jetbrains.letsPlot.commons.intern.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.lineSlope
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import kotlin.math.*

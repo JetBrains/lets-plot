@@ -133,10 +133,7 @@ object LayerConverter {
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
-                            arrowAngle = it.arrowAngle
-                            arrowLength = it.arrowLength
-                            arrowAtEnds = it.arrowAtEnds
-                            arrowType = it.arrowType
+                            arrowSpec = it.arrowSpec
                             isCurve = it.isCurve
                             sizeStart = it.sizeStart
                             sizeEnd = it.sizeEnd

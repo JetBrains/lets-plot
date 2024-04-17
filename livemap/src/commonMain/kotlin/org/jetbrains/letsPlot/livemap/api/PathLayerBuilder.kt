@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.wrapPath
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transformPoints
+import org.jetbrains.letsPlot.commons.intern.util.ArrowSupport
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
@@ -22,10 +23,10 @@ import org.jetbrains.letsPlot.livemap.chart.GrowingPathEffect.GrowingPathEffectC
 import org.jetbrains.letsPlot.livemap.chart.GrowingPathEffect.GrowingPathRenderer
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.LocatorComponent
+import org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec
 import org.jetbrains.letsPlot.livemap.chart.path.CurveRenderer
 import org.jetbrains.letsPlot.livemap.chart.path.PathLocator
 import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer
-import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer.ArrowSpec
 import org.jetbrains.letsPlot.livemap.core.animation.Animation
 import org.jetbrains.letsPlot.livemap.core.ecs.AnimationComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -94,10 +95,7 @@ class PathEntityBuilder(
     var isCurve: Boolean = false
 
     // Arrow specification
-    var arrowAngle: Double? = null
-    var arrowLength: Scalar<Client>? = null
-    var arrowAtEnds: String? = null
-    var arrowType: String? = null
+    var arrowSpec: ArrowSpec? = null
 
     var sizeStart = 0.px
     var sizeEnd = 0.px
@@ -129,13 +127,7 @@ class PathEntityBuilder(
         val targetSizeStart = sizeStart / 2.0 + strokeStart
         val targetSizeEnd = sizeEnd / 2.0 + strokeEnd
 
-        val arrowSpec = ArrowSpec.create(
-            this@PathEntityBuilder.arrowAngle,
-            this@PathEntityBuilder.arrowLength,
-            this@PathEntityBuilder.arrowAtEnds,
-            this@PathEntityBuilder.arrowType,
-        )
-        val miterLength = arrowSpec?.angle?.let { ArrowSpec.miterLength(arrowSpec.angle * 2, strokeWidth).px } ?: 0.px
+        val miterLength = arrowSpec?.angle?.let { ArrowSupport.miterLength(it * 2, strokeWidth).px } ?: 0.px
         val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
         val miterOffset = miterLength * miterSign / 2
 
@@ -160,7 +152,7 @@ class PathEntityBuilder(
                         strokeColor = this@PathEntityBuilder.strokeColor
                         strokeWidth = this@PathEntityBuilder.strokeWidth
                         lineDash = this@PathEntityBuilder.lineDash.toDoubleArray()
-                        this.arrowSpec = arrowSpec
+                        arrowSpec = this@PathEntityBuilder.arrowSpec
                         this.startPadding = startPadding
                         this.endPadding = endPadding
                     }
@@ -216,20 +208,8 @@ class PathEntityBuilder(
 fun PathEntityBuilder.arrow(
     angle: Double = 30.0,
     length: Scalar<Client> = 10.px,
-    ends: String = "last",
-    type: String = "open"
+    ends: ArrowSpec.End = ArrowSpec.End.LAST,
+    type: ArrowSpec.Type = ArrowSpec.Type.OPEN
 ) {
-    arrowAngle = toRadians(angle)
-    arrowLength = length
-    require(
-        ends in listOf(
-            "last",
-            "first",
-            "both"
-        )
-    ) { "Expected ends to draw arrows values: 'first'|'last'|'both', but was '$ends'" }
-    arrowAtEnds = ends
-    require(type in listOf("open", "closed")) { "Expected arrowhead type values: 'open'|'closed', but was '$type'" }
-    arrowType = type
+    arrowSpec = ArrowSpec(toRadians(angle), length, ends, type)
 }
-

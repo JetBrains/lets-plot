@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.GeometryType.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.VecResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.util.VecUtil
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTask
 import org.jetbrains.letsPlot.livemap.core.multitasking.map
 
@@ -85,7 +85,7 @@ object MicroTasks {
 
             when (prev) {
                 null -> myTransform(p)?.let(myRing!!::add)
-                else -> myRing!!.addAll(resample(prev, p, RESAMPLING_PRECISION, myTransform).asSequence().drop(1))
+                else -> myRing!!.addAll(VecUtil.resample(prev, p, RESAMPLING_PRECISION, myTransform).asSequence().drop(1))
             }
         }
     }

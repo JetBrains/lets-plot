@@ -26,7 +26,7 @@ fun <T> Context2d.drawMultiPolygon(geometry: MultiPolygon<T>, afterPolygon: (Con
     for (polygon in geometry) {
         for (ring in polygon) {
             ring[0].let(::moveTo)
-            ring.drop(1).forEach(::lineTo)
+            ring.asSequence().drop(1).forEach(::lineTo)
         }
     }
     afterPolygon(this)

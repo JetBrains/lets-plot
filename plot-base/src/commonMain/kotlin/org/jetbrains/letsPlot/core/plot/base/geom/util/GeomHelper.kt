@@ -7,10 +7,11 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.geometry.curve
-import org.jetbrains.letsPlot.commons.geometry.padLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.util.ArrowSupport
+import org.jetbrains.letsPlot.commons.intern.util.curve
+import org.jetbrains.letsPlot.commons.intern.util.padLineString
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -27,7 +28,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder.Interpolation
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 import kotlin.math.cos
-import kotlin.math.sign
 import kotlin.math.sin
 
 open class GeomHelper(
@@ -237,7 +237,16 @@ open class GeomHelper(
             decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
 
             val arrowElements = myArrowSpec?.let { arrowSpec ->
-                val (startHead, endHead) = ArrowSpec.createArrowHeads(lineStringAfterPadding, arrowSpec)
+                val (startHead, endHead) = ArrowSupport.createArrowHeads(
+                    lineString = lineStringAfterPadding,
+                    angle = arrowSpec.angle,
+                    arrowLength = arrowSpec.length,
+                    onStart = arrowSpec.isOnFirstEnd,
+                    onEnd = arrowSpec.isOnLastEnd,
+                    closed = arrowSpec.type == CLOSED,
+                    minTailLength = ArrowSupport.MIN_TAIL_LENGTH,
+                    minHeadLength = ArrowSupport.MIN_HEAD_LENGTH
+                )
                 val startHeadSvg = renderArrowHead(startHead, p, strokeScaler)
                 val endHeadSvg = renderArrowHead(endHead, p, strokeScaler)
                 listOfNotNull(startHeadSvg, endHeadSvg)
@@ -274,7 +283,7 @@ open class GeomHelper(
             val arrowSpec = myArrowSpec ?: return null
 
             val arrowSvg = SvgPathElement().apply {
-                strokeMiterLimit().set(ArrowSpec.miterLength(arrowSpec, p))
+                strokeMiterLimit().set(ArrowSupport.miterLength(arrowSpec.angle, AesScaling.strokeWidth(p)))
                 d().set(SvgPathDataBuilder()
                     .lineString(points)
                     .also { if (arrowSpec.type == CLOSED) it.closePath() }
@@ -305,13 +314,18 @@ open class GeomHelper(
             atStart: Boolean
         ): Double {
             val arrowSpec = myArrowSpec ?: return 0.0
+            val newVer = ArrowSupport.arrowPadding(
+                angle = arrowSpec.angle,
+                onStart = arrowSpec.isOnFirstEnd,
+                onEnd = arrowSpec.isOnLastEnd,
+                atStart = atStart,
+                strokeSize = AesScaling.strokeWidth(aes)
+            )
 
             val hasArrow = if (atStart) arrowSpec.isOnFirstEnd else arrowSpec.isOnLastEnd
             if (!hasArrow) return 0.0
 
-            val miterLength = ArrowSpec.miterLength(arrowSpec, aes)
-            val miterSign = sign(sin(arrowSpec.angle * 2))
-            return miterLength * miterSign / 2
+            return newVer
         }
     }
 

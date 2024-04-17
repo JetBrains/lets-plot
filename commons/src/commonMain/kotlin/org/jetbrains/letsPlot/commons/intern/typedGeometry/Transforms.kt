@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.typedGeometry
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.VecResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.util.VecUtil.resample
 
 object Transforms {
     private const val RESAMPLING_PRECISION = 0.004

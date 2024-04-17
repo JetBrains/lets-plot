@@ -8,24 +8,20 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.distance2
 import org.jetbrains.letsPlot.commons.intern.math.distance2ToLine
+import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter
+import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter.Companion.DOUBLE_VECTOR_ADAPTER
 
 // Note that resampled points may contain duplicates, i.e. rings detection may fail.
 class AdaptiveResampler<T> private constructor(
     private val transform: (T) -> T?,
     precision: Double,
-    private val dataAdapter: DataAdapter<T>
+    private val vec: VectorAdapter<T>
 ) {
     private val precisionSqr: Double = precision * precision
 
     companion object {
         const val PIXEL_PRECISION = 0.95
         private const val MAX_DEPTH_LIMIT = 9 // 1_025 points maximum (2^(LIMIT + 1) + 1)
-
-        private val DOUBLE_VECTOR_ADAPTER = object : DataAdapter<DoubleVector> {
-            override fun x(p: DoubleVector) = p.x
-            override fun y(p: DoubleVector) = p.y
-            override fun create(x: Double, y: Double) = DoubleVector(x, y)
-        }
 
         private fun forDoubleVector(
             transform: (DoubleVector) -> DoubleVector?,
@@ -34,7 +30,7 @@ class AdaptiveResampler<T> private constructor(
             return AdaptiveResampler(transform, precision, DOUBLE_VECTOR_ADAPTER)
         }
 
-        fun <T> generic(transform: (T) -> T?, precision: Double, adapter: DataAdapter<T>): AdaptiveResampler<T> {
+        fun <T> generic(precision: Double, adapter: VectorAdapter<T>, transform: (T) -> T?): AdaptiveResampler<T> {
             return AdaptiveResampler(transform, precision, adapter)
         }
 
@@ -111,19 +107,10 @@ class AdaptiveResampler<T> private constructor(
         }
     }
 
-    val T.x get() = dataAdapter.x(this)
-    val T.y get() = dataAdapter.y(this)
-    private operator fun T.minus(other: T): T = dataAdapter.create(x - other.x, y - other.y)
-    private operator fun T.plus(other: T): T = dataAdapter.create(x + other.x, y + other.y)
-    private operator fun T.div(other: T): T = dataAdapter.create(x / other.x, y / other.y)
-    private operator fun T.div(v: Double): T = dataAdapter.create(x / v, y / v)
-
-    interface DataAdapter<T> {
-        fun x(p: T): Double
-        fun y(p: T): Double
-        fun create(x: Double, y: Double): T
-
-        val T.x get() = x(this)
-        val T.y get() = y(this)
-    }
+    val T.x get() = vec.x(this)
+    val T.y get() = vec.y(this)
+    private operator fun T.minus(other: T): T = vec.create(x - other.x, y - other.y)
+    private operator fun T.plus(other: T): T = vec.create(x + other.x, y + other.y)
+    private operator fun T.div(other: T): T = vec.create(x / other.x, y / other.y)
+    private operator fun T.div(v: Double): T = vec.create(x / v, y / v)
 }

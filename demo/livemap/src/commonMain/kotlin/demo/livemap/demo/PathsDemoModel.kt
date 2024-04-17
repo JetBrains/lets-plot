@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.api.*
+import org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.End.BOTH
+import org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec.Type.CLOSED
 
 class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
@@ -68,7 +70,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         strokeColor = Color.RED
                         strokeWidth = 3.0
                         lineDash = listOf(5.0)
-                        arrow(length = 20.px, ends = "both") // type = "open"
+                        arrow(length = 20.px, ends = BOTH) // type = "open"
                     }
                     path {
                         points = path4
@@ -76,7 +78,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                         strokeColor = Color.RED
                         strokeWidth = 3.0
-                        arrow(ends = "both", type = "closed")
+                        arrow(ends = BOTH, type = CLOSED)
                     }
                 }
             }

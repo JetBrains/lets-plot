@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
 import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.donut.StrokeSide
-import org.jetbrains.letsPlot.livemap.chart.path.PathRenderer.ArrowSpec
+import org.jetbrains.letsPlot.livemap.chart.path.ArrowSpec
 import org.jetbrains.letsPlot.livemap.chart.text.TextSpec
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 

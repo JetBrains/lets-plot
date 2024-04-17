@@ -15,7 +15,6 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
         // See R function arrow(): https://www.rdocumentation.org/packages/grid/versions/3.4.1/topics/arrow
         val angle = getDouble(Option.Arrow.ANGLE) ?: DEF_ANGLE
         val length = getDouble(Option.Arrow.LENGTH) ?: DEF_LENGTH
-        val minTailLength = getDouble(Option.Arrow.MIN_TAIL_LENGTH) ?: DEF_MIN_TAIL_LENGTH
 
         val end = getString(Option.Arrow.ENDS)?.let {
             when (it) {
@@ -34,7 +33,7 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
             }
         } ?: DEF_TYPE
 
-        return ArrowSpec(toRadians(angle), length, end, type, minTailLength)
+        return ArrowSpec(toRadians(angle), length, end, type)
     }
 
     companion object {
@@ -42,7 +41,6 @@ internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : 
         private const val DEF_LENGTH = 10.0
         private val DEF_END = ArrowSpec.End.LAST
         private val DEF_TYPE = ArrowSpec.Type.OPEN
-        private const val DEF_MIN_TAIL_LENGTH = 10.0
 
         fun create(options: Any): ArrowSpecConfig {
             if (options is Map<*, *>) {
