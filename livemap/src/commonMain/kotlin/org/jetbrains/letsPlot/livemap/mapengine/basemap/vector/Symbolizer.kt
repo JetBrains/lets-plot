@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.gis.tileprotocol.mapConfig.Style
 import org.jetbrains.letsPlot.livemap.Client
+import org.jetbrains.letsPlot.livemap.core.util.Geometries.floor
 import kotlin.math.round
 
 internal interface Symbolizer {
@@ -90,20 +91,22 @@ internal interface Symbolizer {
 
         override fun createDrawTasks(ctx: Context2d, feature: TileFeature): List<() -> Unit> {
             val tasks = ArrayList<() -> Unit>()
-            feature.tileGeometry.multiPoint.let { multiPoint ->
-                getLabel(feature)?.let { label ->
-                    tasks.add {
+            feature.tileGeometry.multiPoint
+                .map { floor(it) } // To make text look sharper
+                .let { multiPoint ->
+                    getLabel(feature)?.let { label ->
+                        tasks.add {
 
-                        val wrapWidth = myStyle.wrapWidth
+                            val wrapWidth = myStyle.wrapWidth
 
-                        if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureText(label)) {
-                            ctx.drawWrapText(multiPoint, label, wrapWidth)
-                        } else {
-                            ctx.drawTextFast(multiPoint, label)
+                            if (wrapWidth != null && wrapWidth > 0.0 && wrapWidth < ctx.measureText(label)) {
+                                ctx.drawWrapText(multiPoint, label, wrapWidth)
+                            } else {
+                                ctx.drawTextFast(multiPoint, label)
+                            }
                         }
                     }
                 }
-            }
             return tasks
         }
 

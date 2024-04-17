@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.livemap.mapengine.basemap
 
 import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
-import org.jetbrains.letsPlot.livemap.WorldRectangle
 import org.jetbrains.letsPlot.livemap.api.mapEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
@@ -87,7 +86,10 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) :
                 )
                     .addComponents {
                         +WorldOriginComponent(tileRect.origin)
-                        +RenderableComponent().apply { NULL_RENDERER }
+                        +RenderableComponent().apply {
+                            renderer = NULL_RENDERER
+                            needIntegerCoordinates = true
+                        }
                         +ScreenDimensionComponent().apply {
                             dimension = Viewport.toClientDimension(tileRect.dimension, zoom)
                         }

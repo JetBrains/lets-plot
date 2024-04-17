@@ -6,19 +6,21 @@
 package org.jetbrains.letsPlot.livemap.mapengine
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.unaryMinus
-import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.onEachEntity2
-import org.jetbrains.letsPlot.livemap.core.graphics.RenderObject
 import org.jetbrains.letsPlot.livemap.core.layers.CanvasLayerComponent
+import org.jetbrains.letsPlot.livemap.core.util.Geometries.floor
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraComponent
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
 
-// Common rendering data - used for lines, polygons, pies, bars, points.
+// Common rendering data - used for lines, polygons, pies, bars, points, map tiles.
 class RenderableComponent : EcsComponent {
     lateinit var renderer: Renderer
+
+    // Renderer works well only with integer coordinates (to issues like gaps between tiles or blured text).
+    var needIntegerCoordinates: Boolean = false
 }
 
 internal class MapEntitiesRenderingSystem(
@@ -49,28 +51,21 @@ internal class MapEntitiesRenderingSystem(
             }
 
             val renderHelper = RenderHelper(context.mapRenderContext.viewport)
+            val calculatedOrigins = context.mapRenderContext.viewport.getMapOrigins()
 
             for (mapEntity in getEntitiesById(children.entities)) {
-                val renderer = mapEntity.get<RenderableComponent>().renderer
 
-                run {
-                    val calculatedOrigins = context.mapRenderContext.viewport.getMapOrigins()
-                    calculatedOrigins.forEach {
+                val renderable = mapEntity.get<RenderableComponent>()
+                val renderer = renderable.renderer
 
-                        context.mapRenderContext.draw(
-                            layerCtx,
-                            it,
-                            object : RenderObject {
-                                override fun render(ctx: Context2d) {
-                                    ctx.save()
-                                    renderer.render(mapEntity, ctx, renderHelper)
-                                    ctx.restore()
-                                }
-                            }
-                        )
-
+                calculatedOrigins
+                    .map { if (renderable.needIntegerCoordinates) floor(it) else it }
+                    .forEach { offset ->
+                        layerCtx.save()
+                        layerCtx.translate(offset)
+                        renderer.render(mapEntity, layerCtx, renderHelper)
+                        layerCtx.restore()
                     }
-                }
             }
 
             layerCtx.restore()

@@ -44,7 +44,7 @@ internal class DomCanvas private constructor(
     }
 
     companion object {
-        val DEVICE_PIXEL_RATIO = window.devicePixelRatio
+        val DEVICE_PIXEL_RATIO = ceil(window.devicePixelRatio) // Fix for gaps between tiles - ratio should be integer
 
         fun create(size: Vector, pixelRatio: Double): DomCanvas {
             val nativeCanvas = createNativeCanvas(size, pixelRatio)
@@ -65,12 +65,16 @@ internal class DomCanvas private constructor(
             canvasElement.style.setProperty("-ms-user-select", "none")
             canvasElement.style.setProperty("user-select", "none")
 
-            // TODO: fix it. With floor() there are gaps between tiles.
-            // element size type is int so use floor to make sure that the context2d will cover whole canvas
-            // e.g. width=101, ratio=2.5 => context width=202.5, canvas Width=202.
-            // Without floor canvas will have width of 203 and 0.5 pixel weill not be covered by paint ops.
-            canvasElement.width = ceil(size.x * pixelRatio).toInt()
-            canvasElement.height = ceil(size.y * pixelRatio).toInt()
+            val width = size.x * pixelRatio
+            val height = size.y * pixelRatio
+
+            // Size should be integer. Otherwise, there are gaps between tiles.
+            // This is accomplished by `ceil(window.devicePixelRatio)`.
+            require(width - width.toInt() == 0.0) { "Canvas width should be integer" }
+            require(height - height.toInt() == 0.0) { "Canvas height should be integer" }
+
+            canvasElement.width = width.toInt()
+            canvasElement.height = height.toInt()
             return canvasElement
         }
     }

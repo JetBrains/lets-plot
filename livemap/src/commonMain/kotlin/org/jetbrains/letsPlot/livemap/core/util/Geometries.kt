@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.livemap.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import kotlin.math.floor
 
 object Geometries {
     operator fun DoubleVector.minus(doubleVector: DoubleVector): DoubleVector = subtract(doubleVector)
@@ -19,4 +21,6 @@ object Geometries {
 
         return true
     }
+
+    fun <T> floor(p: Vec<T>): Vec<T> = Vec(floor(p.x), floor(p.y))
 }

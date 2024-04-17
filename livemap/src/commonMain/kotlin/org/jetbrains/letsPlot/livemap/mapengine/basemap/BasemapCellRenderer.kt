@@ -71,8 +71,8 @@ class BasemapCellRenderer : Renderer {
             srcRect.height,
             dstRect.left,
             dstRect.top,
-            dstRect.width + 1.0, // fix lines between tiles
-            dstRect.height + 1.0 // fix lines between tiles
+            dstRect.width,// + 1.0, // fix lines between tiles, BUT TEXT WILL GET BLURED
+            dstRect.height// + 1.0 // fix lines between tiles, BUT TEXT WILL GET BLURED
         )
     }
 

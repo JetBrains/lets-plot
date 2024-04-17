@@ -125,8 +125,8 @@ class DonorTileCalculatorTest {
             srcRect.height,
             dstRect.left,
             dstRect.top,
-            dstRect.width + 1.0,
-            dstRect.height + 1.0
+            dstRect.width,
+            dstRect.height
         )
         ++myDrawImageCount
     }
