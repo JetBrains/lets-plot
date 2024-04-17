@@ -11,7 +11,6 @@ object AreaBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {
-            @Suppress("UNCHECKED_CAST")
             (PlotConfigBrowserDemoUtil.show(
                 "Area plot",
                 plotSpecList(),

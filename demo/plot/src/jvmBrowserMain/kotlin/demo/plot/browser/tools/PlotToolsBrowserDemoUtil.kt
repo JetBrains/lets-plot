@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.plot.browser.plotConfig
+package demo.plot.browser.tools
 
 import demo.common.util.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
@@ -13,21 +13,21 @@ import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJ
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import java.io.StringWriter
 
-object PlotConfigBrowserDemoUtil {
+internal object PlotToolsBrowserDemoUtil {
     private const val DEMO_PROJECT = "demo/plot"
     private const val ROOT_ELEMENT_ID = "root"
 
     fun show(
         title: String,
-        plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector = DoubleVector(400.0, 300.0),
+        plotSpec: MutableMap<String, Any>,
+        plotSize: DoubleVector = DoubleVector(1000.0, 600.0),
         applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT) {
             getHtml(
                 title,
-                plotSpecList,
+                listOf(plotSpec),
                 plotSize,
                 applyBackendTransform,
                 backgroundColor
