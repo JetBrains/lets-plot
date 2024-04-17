@@ -115,7 +115,7 @@ class SupPlotsSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path) -> str:
+    def to_svg(self, path=None) -> str:
         """
         Export all plots currently in this 'bunch' to a file or file-like object in SVG format.
 
@@ -123,15 +123,15 @@ class SupPlotsSpec(FeatureSpec):
         ----------
         self : `SupPlotsSpec`
            Subplots specification to export.
-        path : str, file-like object
+        path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
-
+            If None is provided, the result will be returned as a string.
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Examples
         --------
@@ -156,7 +156,7 @@ class SupPlotsSpec(FeatureSpec):
         """
         return _to_svg(self, path)
 
-    def to_html(self, path, iframe: bool = None) -> str:
+    def to_html(self, path=None, iframe: bool = None) -> str:
         """
         Export all plots currently in this 'bunch' to a file or file-like object in HTML format.
 
@@ -164,17 +164,18 @@ class SupPlotsSpec(FeatureSpec):
         ----------
         self : `SupPlotsSpec`
             Subplots specification to export.
-        path : str, file-like object
+        path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
+            If None is provided, the result will be returned as a string.
         iframe : bool, default=False
             Whether to wrap HTML page into a iFrame.
 
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Examples
         --------
@@ -226,7 +227,7 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Notes
         -----
@@ -287,7 +288,7 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Notes
         -----

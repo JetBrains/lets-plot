@@ -477,7 +477,7 @@ class PlotSpec(FeatureSpec):
         from ..frontend_context._configuration import _display_plot
         _display_plot(self)
 
-    def to_svg(self, path) -> str:
+    def to_svg(self, path=None) -> str:
         """
         Export a plot to a file or to a file-like object in SVG format.
 
@@ -485,19 +485,21 @@ class PlotSpec(FeatureSpec):
         ----------
         self : `PlotSpec`
             Plot specification to export.
-        path : str, file-like object
+        path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
+            If None is provided, the result will be returned as a string.
 
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Examples
         --------
-        .. jupyter-execute::
+        ..
+        jupyter-execute::
             :linenos:
             :emphasize-lines: 9
 
@@ -514,7 +516,7 @@ class PlotSpec(FeatureSpec):
         """
         return _to_svg(self, path)
 
-    def to_html(self, path, iframe: bool = None) -> str:
+    def to_html(self, path=None, iframe: bool = None) -> str:
         """
         Export a plot to a file or to a file-like object in HTML format.
 
@@ -522,17 +524,18 @@ class PlotSpec(FeatureSpec):
         ----------
         self : `PlotSpec`
             Plot specification to export.
-        path : str, file-like object
+        path : str, file-like object, default=None
             Сan be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
+            If None is provided, the result will be returned as a string.
         iframe : bool, default=False
             Whether to wrap HTML page into a iFrame.
 
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Examples
         --------
@@ -581,7 +584,7 @@ class PlotSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Notes
         -----
@@ -638,7 +641,7 @@ class PlotSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if file-like object is provided.
+            Absolute pathname of created file or None if a file-like object is provided.
 
         Notes
         -----
@@ -839,7 +842,9 @@ def _to_svg(spec, path) -> Union[str, None]:
     from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(spec.as_dict())
-    if isinstance(path, str):
+    if path is None:
+        return svg
+    elif isinstance(path, str):
         abspath = _makedirs(path)
         with io.open(abspath, mode="w", encoding="utf-8") as f:
             f.write(svg)
@@ -856,7 +861,9 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
     from .. import _kbridge as kbr
     html_page = kbr._generate_static_html_page(spec.as_dict(), iframe)
 
-    if isinstance(path, str):
+    if path is None:
+        return html_page
+    elif isinstance(path, str):
         abspath = _makedirs(path)
         with io.open(abspath, mode="w", encoding="utf-8") as f:
             f.write(html_page)
