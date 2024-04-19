@@ -117,21 +117,23 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_svg(self, path=None) -> str:
         """
-        Export all plots currently in this 'bunch' to a file or file-like object in SVG format.
+        Export the plot in SVG format.
 
         Parameters
         ----------
         self : `SupPlotsSpec`
            Subplots specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            It can be a file path, file-like object, or None.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
         Returns
         -------
         str
-            Absolute pathname of created file or None if a file-like object is provided.
+            The result depends on the `path` parameter.
+            It can be the absolute path of the file,
+            SVG content as a string, or None if a file-like object is provided.
 
         Examples
         --------
@@ -158,14 +160,14 @@ class SupPlotsSpec(FeatureSpec):
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
-        Export all plots currently in this 'bunch' to a file or file-like object in HTML format.
+        Export the plot in HTML format.
 
         Parameters
         ----------
         self : `SupPlotsSpec`
             Subplots specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            It can be a file path, file-like object, or None.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
@@ -175,7 +177,9 @@ class SupPlotsSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if a file-like object is provided.
+            The result depends on the `path` parameter.
+            It can be the absolute path of the file,
+            HTML content as a string, or None if a file-like object is provided.
 
         Examples
         --------

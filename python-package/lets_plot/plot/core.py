@@ -479,7 +479,7 @@ class PlotSpec(FeatureSpec):
 
     def to_svg(self, path=None) -> str:
         """
-        Export a plot to a file or to a file-like object in SVG format.
+        Export the plot in SVG format.
 
         Parameters
         ----------
@@ -494,7 +494,8 @@ class PlotSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if a file-like object is provided.
+            Absolute pathname of created file,
+            SVG content as a string or None if a file-like object is provided.
 
         Examples
         --------
@@ -518,7 +519,7 @@ class PlotSpec(FeatureSpec):
 
     def to_html(self, path=None, iframe: bool = None) -> str:
         """
-        Export a plot to a file or to a file-like object in HTML format.
+        Export the plot in HTML format.
 
         Parameters
         ----------
@@ -535,11 +536,13 @@ class PlotSpec(FeatureSpec):
         Returns
         -------
         str
-            Absolute pathname of created file or None if a file-like object is provided.
+            Absolute pathname of created file,
+            HTML content as a string or None if a file-like object is provided.
 
         Examples
         --------
-        .. jupyter-execute::
+        ..
+        jupyter-execute::
             :linenos:
             :emphasize-lines: 8
 
