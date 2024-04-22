@@ -171,6 +171,10 @@ class LetsPlot:
             Theme spec provided by `theme(...)`, `theme_xxx()`, `flavor_xxx()` functions, or their sum.
 
         """
+        if theme is None:
+            _set_global_theme(None)
+            return
+
         if theme.kind != 'theme' and not (theme.kind == 'feature-list' and all(f.kind == 'theme' for f in theme)):
             raise ValueError("Only `theme(...)`, `theme_xxx()`, `flavor_xxx()`, or a sum of them are supported")
 

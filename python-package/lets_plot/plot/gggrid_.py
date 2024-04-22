@@ -119,7 +119,7 @@ def gggrid(plots: list, ncol: int = None, *,
 
     def _strip_theme_if_global(fig):
         # Strip global theme options from plots in grid (see issue: #966).
-        if global_theme_options is not None and fig is not None and 'theme' in fig.props() and fig.props()['theme'] == global_theme_options:
+        if global_theme_options is not None and fig is not None and 'theme' in fig.props() and fig.props()['theme'] == global_theme_options.props():
             if isinstance(fig, PlotSpec):
                 fig = PlotSpec.duplicate(fig)
                 fig.props().pop('theme')

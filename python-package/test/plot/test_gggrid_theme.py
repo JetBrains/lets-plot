@@ -6,8 +6,6 @@
 
 import lets_plot as gg
 
-from lets_plot._global_settings import PLOT_THEME
-
 
 def test_gggrid_theme():
     spec = gg.gggrid([gg.ggplot()]) + gg.theme_grey()
@@ -43,9 +41,7 @@ def test_gggrid_global_theme_override():
         spec = gg.gggrid([gg.ggplot()]) + gg.theme_light()
     finally:
         # Clear global setting
-        gg.LetsPlot.set({
-            PLOT_THEME: None
-        })
+        gg.LetsPlot.set_theme(None)
 
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'name': 'light'}
@@ -67,9 +63,7 @@ def test_gggrid_global_theme_override_cancelled():
         spec = gg.gggrid([fig]) + gg.theme_light()
     finally:
         # Clear global setting
-        gg.LetsPlot.set({
-            PLOT_THEME: None
-        })
+        gg.LetsPlot.set_theme(None)
 
     assert 'theme' in spec.as_dict()
     assert spec.as_dict()['theme'] == {'name': 'light'}
