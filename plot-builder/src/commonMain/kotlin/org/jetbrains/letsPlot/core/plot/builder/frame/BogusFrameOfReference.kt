@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class BogusFrameOfReference : FrameOfReference {
+    override var panOffset: DoubleVector = DoubleVector.ZERO
 
     override fun drawBeforeGeomLayer(parent: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
@@ -21,6 +23,10 @@ internal class BogusFrameOfReference : FrameOfReference {
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
+        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
+    }
+
+    override fun setClip(element: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 }

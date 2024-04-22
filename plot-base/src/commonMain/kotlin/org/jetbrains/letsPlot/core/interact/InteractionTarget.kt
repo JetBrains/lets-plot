@@ -10,5 +10,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 interface InteractionTarget {
     fun zoom(geomBounds: DoubleRectangle)
 
+    val tile: Any
     val geomBounds: DoubleRectangle
 }

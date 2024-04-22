@@ -217,6 +217,7 @@ class PlotSvgComponent constructor(
                 y = if (layoutInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
             )
             interactor?.onTileAdded(
+                tile,
                 geomContentBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,

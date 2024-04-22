@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
-internal class PlotInteractor constructor(
+internal class PlotInteractor(
     val decorationLayer: SvgNode,
     mouseEventPeer: MouseEventPeer,
     val plotSize: DoubleVector,
@@ -33,7 +33,7 @@ internal class PlotInteractor constructor(
     private val reg = CompositeRegistration()
     private val tooltipRenderer: TooltipRenderer
 
-    private val geomBoundsList = ArrayList<DoubleRectangle>()
+    private val tiles = ArrayList<Pair<DoubleRectangle, PlotTile>>()
 
     init {
         reg.add(Registration.from(eventsManager))
@@ -54,6 +54,7 @@ internal class PlotInteractor constructor(
     }
 
     fun onTileAdded(
+        plotTile: PlotTile,
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
@@ -69,7 +70,7 @@ internal class PlotInteractor constructor(
             hAxisTooltipPosition,
             vAxisTooltipPosition
         )
-        geomBoundsList.add(geomBounds)
+        tiles.add(geomBounds to plotTile)
     }
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
@@ -78,7 +79,7 @@ internal class PlotInteractor constructor(
                 DragInteractionContext(
                     decorationLayer,
                     eventsManager,
-                    geomBoundsList
+                    tiles
                 )
             )
 
@@ -95,21 +96,20 @@ internal class PlotInteractor constructor(
     private class DragInteractionContext(
         override val decorationsLayer: SvgNode,
         override val eventsManager: EventsManager,
-        val geomBoundsList: List<DoubleRectangle>
+        val tiles: List<Pair<DoubleRectangle, PlotTile>>
     ) : InteractionContext {
 
         override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
-            val geomBounds = geomBoundsList.find { it.contains(plotCoord) }
-            return geomBounds?.let {
-                object : InteractionTarget {
-                    override val geomBounds: DoubleRectangle
-                        get() = geomBounds
-
-                    override fun zoom(geomBounds: DoubleRectangle) {
-                        println("Target zoom: $geomBounds")
-                    }
+            val target = tiles.find { (bbox, _) -> plotCoord in bbox } ?: return null
+            val (bbox, tile) = target
+            return object : InteractionTarget {
+                override val geomBounds: DoubleRectangle = bbox
+                override val tile: Any = tile
+                override fun zoom(geomBounds: DoubleRectangle) {
+                    println("Target zoom: $geomBounds")
                 }
             }
+
         }
     }
 }

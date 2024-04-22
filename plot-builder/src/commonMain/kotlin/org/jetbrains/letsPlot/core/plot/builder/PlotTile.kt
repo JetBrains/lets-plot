@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -30,6 +31,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
 
 internal class PlotTile(
     private val coreLayers: List<GeomLayer>,
@@ -40,6 +42,12 @@ internal class PlotTile(
     private val frameOfReference: FrameOfReference,
     private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
+
+    private var panOffset = DoubleVector.ZERO
+    private val frameBottomGroup = GroupComponent()
+    private val clipGroup = GroupComponent()
+    private val geomGroup = GroupComponent()
+    private val frameTopGroup = GroupComponent()
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()
 
@@ -55,6 +63,21 @@ internal class PlotTile(
         moveTo(tileLayoutInfo.getAbsoluteBounds(tilesOrigin).origin)
     }
 
+    fun pan(offset: DoubleVector) {
+        panOffset = offset
+        frameOfReference.panOffset = offset
+        transformTranslate(geomGroup.rootGroup, offset)
+        drawFrame()
+    }
+
+    private fun drawFrame() {
+        frameBottomGroup.clear()
+        frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
+
+        frameTopGroup.clear()
+        frameOfReference.drawAfterGeomLayer(frameTopGroup)
+    }
+
     override fun buildComponent() {
         /*
     // Don't set this flag: it was harmless when we were using SvgNodeSubtreeGeneratingSynchronizer but with new
@@ -63,6 +86,11 @@ internal class PlotTile(
     // We want event handlers to be called on SvgElement-s
     getRootGroup().setPrebuiltSubtree(true);
     */
+
+        add(frameBottomGroup)
+        add(clipGroup)
+        add(frameTopGroup)
+        clipGroup.add(geomGroup)
 
         val geomOuterBounds = tileLayoutInfo.geomOuterBounds
 
@@ -80,8 +108,6 @@ internal class PlotTile(
         } else {
             // Normal plot tiles
 
-            frameOfReference.drawBeforeGeomLayer(this)
-
             for (layer in coreLayers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -91,7 +117,8 @@ internal class PlotTile(
                 _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
-                add(layerComponent)
+                geomGroup.add(layerComponent.rootGroup)
+                frameOfReference.setClip(clipGroup)
             }
 
             // Marginal layers
@@ -102,10 +129,11 @@ internal class PlotTile(
                 for (layer in layers) {
                     val marginComponent = marginFrame.buildGeomComponent(layer, NullGeomTargetCollector())
                     add(marginComponent)
+                    marginFrame.setClip(clipGroup)
                 }
             }
 
-            frameOfReference.drawAfterGeomLayer(this)
+            drawFrame()
         }
     }
 

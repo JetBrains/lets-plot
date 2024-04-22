@@ -5,15 +5,15 @@
 
 package org.jetbrains.letsPlot.batik.plot.util
 
+import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
+import org.apache.batik.gvt.event.GraphicsNodeChangeListener
 import org.jetbrains.letsPlot.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.DisposableRegistration
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
-import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
-import org.apache.batik.gvt.event.GraphicsNodeChangeListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics
@@ -108,8 +108,8 @@ class BatikMapperComponent(
 
     companion object {
 
-        internal const val USE_NEW_REPAINT_MANAGER = true
-        internal const val USE_WEIRD_PERFORMANCE_TUNEUP = true
+        internal const val USE_NEW_REPAINT_MANAGER = false
+        internal const val USE_WEIRD_PERFORMANCE_TUNEUP = false
         internal const val DEBUG_REPAINT_MAPPER_COMPONENT = false
 
         val DEF_MESSAGE_CALLBACK = object : BatikMessageCallback {

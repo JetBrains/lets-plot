@@ -8,23 +8,22 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.pickAtIndices
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
+import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory.axisTick
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import kotlin.math.abs
 
 object AxisUtil {
-    internal fun minorDomainBreaks(visibleMajorDomainBreak: List<Double>) =
-        if (visibleMajorDomainBreak.size > 2) {
-            val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
-            val start = visibleMajorDomainBreak[0] - step / 2.0
-            (0..(visibleMajorDomainBreak.size)).map { start + it * step }
+    internal fun minorDomainBreaks(majorDomainBreaks: List<Double>) =
+        if (majorDomainBreaks.size > 2) {
+            val step = (majorDomainBreaks[1] - majorDomainBreaks[0])
+            val start = majorDomainBreaks[0] - step / 2.0
+            (0..(majorDomainBreaks.size)).map { start + it * step }
         } else {
             emptyList()
         }
@@ -39,55 +38,60 @@ object AxisUtil {
         panelTheme: PanelTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
-        val majorClientBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
-
-        // cleanup overlapping labels
-        // WARNING: highly coupled with AxisComponent
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
-        val labelsMap = TickLabelsMap(
-            orientation.isHorizontal,
-            PlotLabelSpecFactory.axisTick(axisTheme),
-            labelAdjustments.rotationDegree
-        )
-        val visibleBreaks = scaleBreaks.labels.zip(majorClientBreaks).mapIndexedNotNull { i, pair ->
-            val br = pair.second ?: return@mapIndexedNotNull null
-            val label = pair.first
-            val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+        val labelsMap = TickLabelsMap(orientation.isHorizontal, axisTick(axisTheme), labelAdjustments.rotationDegree)
 
-            val loc = if (orientation.isHorizontal) br.x else br.y
-            if (labelsMap.haveSpace(loc, label, labelOffset)) {
-                return@mapIndexedNotNull i
-            } else {
-                return@mapIndexedNotNull null
+        val clientGridArea = toClient(domain, coord, flipAxis)?.let { rect ->
+            when (panelTheme.showRect() || panelTheme.showBorder()) {
+                true -> rect.inflate(-6.0)
+                false -> rect
             }
+        } ?: DoubleRectangle.XYWH(Double.MIN_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE) // better than fail
+
+        val majorBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+            .mapIndexedNotNull { i, clientTick ->
+                when (clientTick) {
+                    null, !in clientGridArea -> null
+                    else -> IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
+                }
+            }
+            .filter { (i, br) ->
+                val (label, _, clientBreak) = br
+                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                val loc = if (orientation.isHorizontal) clientBreak.x else clientBreak.y
+                labelsMap.haveSpace(loc, label, labelOffset)
+            }
+
+        val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
+            .let { minorDomainBreaks ->
+                toClient(minorDomainBreaks, domain, coord, flipAxis, orientation.isHorizontal)
+                    .mapIndexedNotNull { i, clientBreak ->
+                        when (clientBreak) {
+                            null, !in clientGridArea -> null
+                            else -> Pair(minorDomainBreaks[i], clientBreak)
+                        }
+                    }
+            }
+
+        val majorBreaksData = majorBreaks.mapNotNull { (_, br) ->
+            val (label, domainTick, clientTick) = br
+            val clientLine = buildGridLine(domainTick, domain, coord, flipAxis, orientation.isHorizontal)
+                ?: return@mapNotNull null
+            Triple(label, clientTick, clientLine)
         }
 
-        val visibleMajorLabels = pickAtIndices(scaleBreaks.labels, visibleBreaks)
-        val visibleMajorDomainBreak = pickAtIndices(scaleBreaks.transformedValues, visibleBreaks)
-        val visibleMinorDomainBreak = if (visibleMajorDomainBreak.size > 1) {
-            val step = (visibleMajorDomainBreak[1] - visibleMajorDomainBreak[0])
-            val start = visibleMajorDomainBreak[0] - step / 2.0
-            (0..visibleMajorDomainBreak.size).map { start + it * step }
-        } else {
-            emptyList()
+        val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
+            val clientLine = buildGridLine(domainTick, domain, coord, flipAxis, orientation.isHorizontal)
+                ?: return@mapNotNull null
+            Pair(clientTick, clientLine)
         }
-
-        val visibleMajorClientBreaks = pickAtIndices(majorClientBreaks, visibleBreaks)
-            .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
-
-        val visibleMinorClientBreaks =
-            toClient(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal)
-                .map { checkNotNull(it) { "Nulls are not allowed. Properly clean and sync breaks, grids and labels." } }
-
-        val majorGrid = buildGrid(visibleMajorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal, panelTheme)
-        val minorGrid = buildGrid(visibleMinorDomainBreak, domain, coord, flipAxis, orientation.isHorizontal, panelTheme)
 
         return AxisComponent.BreaksData(
-            majorBreaks = visibleMajorClientBreaks,
-            minorBreaks = visibleMinorClientBreaks,
-            majorLabels = visibleMajorLabels,
-            majorGrid = majorGrid,
-            minorGrid = minorGrid
+            majorBreaks = majorBreaksData.map { (_, tick, _) -> tick },
+            majorGrid = majorBreaksData.map { (_, _, gridLine) -> gridLine },
+            majorLabels = majorBreaksData.map { (label, _, _) -> label },
+            minorBreaks = minorBreaksData.map { (tick, _) -> tick },
+            minorGrid = minorBreaksData.map { (_, gridLine) -> gridLine }
         )
     }
 
@@ -114,46 +118,31 @@ object AxisUtil {
         }.map { toClient(it, coordinateSystem, flipAxis) ?: return@map null }
     }
 
-    private fun buildGrid(
-        breaks: List<Double>,
+    private fun buildGridLine(
+        tick: Double,
         domain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
-        horizontal: Boolean,
-        panelTheme: PanelTheme
-    ): List<List<DoubleVector>> {
-        val domainGrid = breaks.map { breakCoord ->
-            when (horizontal) {
-                true -> listOf(
-                    DoubleVector(breakCoord, domain.yRange().lowerEnd),
-                    DoubleVector(breakCoord, domain.yRange().upperEnd)
-                )
+        horizontal: Boolean
+    ): List<DoubleVector>? {
+        val domainLine = when (horizontal) {
+            true -> listOf(
+                DoubleVector(tick, domain.yRange().lowerEnd),
+                DoubleVector(tick, domain.yRange().upperEnd)
+            )
 
-                false -> listOf(
-                    DoubleVector(domain.xRange().lowerEnd, breakCoord),
-                    DoubleVector(domain.xRange().upperEnd, breakCoord)
-                )
-            }
+            false -> listOf(
+                DoubleVector(domain.xRange().lowerEnd, tick),
+                DoubleVector(domain.xRange().upperEnd, tick)
+            )
         }
 
-        val clientGrid = domainGrid.map { line -> line.mapNotNull { toClient(it, coordinateSystem, flipAxis) } }
-        val gridArea = toClient(domain, coordinateSystem, flipAxis)?.let { rect ->
-            when (panelTheme.showRect() || panelTheme.showBorder()) {
-                true -> rect.inflate(-6.0)
-                false -> rect
-            }
-        } ?: error("Cannot transform domain")
+        val clientLine = domainLine.map { toClient(it, coordinateSystem, flipAxis) }
 
-        return clientGrid.filter { line ->
-            line.any {
-                if (horizontal) {
-                    it.x in gridArea.xRange()
-                } else {
-                    it.y in gridArea.yRange()
-                }
-            }
+        return when {
+            null in clientLine -> null
+            else -> clientLine.requireNoNulls()
         }
-
     }
 
     fun tickLabelBaseOffset(axisTheme: AxisTheme, orientation: Orientation): DoubleVector {

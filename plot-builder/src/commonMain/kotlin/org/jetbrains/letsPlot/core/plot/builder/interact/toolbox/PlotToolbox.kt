@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
+import org.jetbrains.letsPlot.core.plot.builder.PlotTile
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
@@ -110,8 +111,14 @@ internal class PlotToolbox(
         init {
             regs.add(
                 interactor.startToolFeedback(PanGeomFeedback(
-                    onCompleted = {
-                        println("Pan tool: apply: $it")
+                    onStarted = { coord, target ->
+                        (target.tile as PlotTile).pan(coord)
+                    },
+                    onCompleted = { _, target ->
+                        (target.tile as PlotTile).pan(DoubleVector.ZERO)
+                    },
+                    onDragged = { coord, target ->
+                        (target.tile as PlotTile).pan(coord)
                     }
                 ))
             )

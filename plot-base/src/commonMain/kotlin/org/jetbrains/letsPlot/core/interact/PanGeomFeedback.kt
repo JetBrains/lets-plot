@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 
 class PanGeomFeedback(
-    private val onCompleted: ((Pair<DoubleVector, InteractionTarget>) -> Unit)
+    private val onStarted: ((DoubleVector, InteractionTarget) -> Unit) = { _, _ -> println("PanGeomFeedback start.") },
+    private val onCompleted:((DoubleVector, InteractionTarget) -> Unit),
+    private val onDragged: ((DoubleVector, InteractionTarget) -> Unit) = { _, _ -> println("PanGeomFeedback drag.")}
 ) : DragFeedback {
 
     override fun start(ctx: InteractionContext): Disposable {
@@ -18,16 +20,19 @@ class PanGeomFeedback(
         interaction.loop(
             onStarted = {
                 println("PanGeomFeedback start.")
+                val v = it.dragTo.subtract(it.dragFrom)
+                onStarted(v, it.target)
             },
             onDragged = {
-                println("PanGeomFeedback drag.")
+                val v = it.dragTo.subtract(it.dragFrom)
+                onDragged(v, it.target)
             },
             onCompleted = {
                 println("PanGeomFeedback complete.")
                 val v = it.dragTo.subtract(it.dragFrom)
                 val target = it.target
                 it.reset()
-                onCompleted(v to target)
+                onCompleted(v, target)
             },
             onAborted = {
                 println("PanGeomFeedback abort.")
