@@ -368,6 +368,7 @@ open class GeomHelper(
             shape.setFill(fill, fillAlpha)
             shape.setStroke(stroke, strokeAlpha)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
+            StrokeDashArraySupport.apply(shape, AesScaling.strokeWidth(p), p.lineType())
         }
     }
 }
