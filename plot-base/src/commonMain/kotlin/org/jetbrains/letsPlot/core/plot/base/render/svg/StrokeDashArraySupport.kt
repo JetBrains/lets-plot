@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
 /**
  * The counterpart of SVG 'stroke-dasharray' attribute but
@@ -18,6 +19,13 @@ object StrokeDashArraySupport {
         val dashArray = toStrokeDashArray(strokeWidth, lineType)
         if (dashArray != null) {
             element.strokeDashArray().set(dashArray)
+        }
+    }
+
+    fun apply(element: SvgSlimShape, strokeWidth: Double, lineType: LineType) {
+        val dashArray = toStrokeDashArray(strokeWidth, lineType)
+        if (dashArray != null) {
+            element.setStrokeDashArray(dashArray)
         }
     }
 
