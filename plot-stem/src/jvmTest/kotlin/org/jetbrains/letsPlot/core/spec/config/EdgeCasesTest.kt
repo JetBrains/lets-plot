@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.assertDoesNotFail
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.core.TestingPlotBuilder
+import org.jetbrains.letsPlot.core.TestingPlotBuilder.createPlot
 import org.jetbrains.letsPlot.core.spec.Option.GeomName
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.IMAGE
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.LIVE_MAP
@@ -41,7 +41,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
+        assertDoesNotFail { createPlot(opts) }
     }
 
     @Test
@@ -70,7 +70,7 @@ class EdgeCasesTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
+        assertDoesNotFail { createPlot(opts) }
     }
 
     @Test
@@ -104,7 +104,7 @@ class EdgeCasesTest {
 
 
         val opts = parsePlotSpec(spec)
-        assertDoesNotFail { TestingPlotBuilder.createPlot(opts) }
+        assertDoesNotFail { createPlot(opts) }
     }
 
     @Test
@@ -129,7 +129,7 @@ class EdgeCasesTest {
             |    'layers': [ { 'geom':  { 'name': '$geom' } } ]
             |}""".trimMargin()
 
-            assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
+            assertDoesNotFail("geom $geom: ") { createPlot(parsePlotSpec(spec)) }
         }
 
         (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
@@ -150,7 +150,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -167,7 +167,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -187,9 +187,54 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { createPlot(parsePlotSpec(spec)) }
     }
 
+    @Test
+    fun `issue1084 - polygon with 2 points should be skipped silently`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ 1.0, 1.0 ], 
+            |    "y": [ 1.0, 1.0 ]
+            |  },  
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "polygon", 
+            |      "mapping": { "x": "x", "y": "y" }
+            |      }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { createPlot(parsePlotSpec(spec)) }
+    }
+
+    @Test
+    fun `bad polygons`() {
+        fun spec(x: List<Any>, y: List<Any>) = """
+            |{
+            |  "data": {
+            |    "x": $x, 
+            |    "y": $y
+            |  },  
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "polygon", 
+            |      "mapping": { "x": "x", "y": "y" }
+            |      }
+            |  ]
+            |}"""
+            .trimMargin()
+            .let(::parsePlotSpec)
+
+        assertDoesNotFail { createPlot(spec(x = listOf(1), y = listOf(1))) }
+        assertDoesNotFail { createPlot(spec(x = listOf(1, 1), y = listOf(1, 1))) }
+        assertDoesNotFail { createPlot(spec(x = listOf(1, 1, 1), y = listOf(1, 1, 1))) }
+        assertDoesNotFail { createPlot(spec(x = listOf(1, 1, 1, 1), y = listOf(1, 1, 1, 1))) }
+        assertDoesNotFail { createPlot(spec(x = listOf(), y = listOf())) }
+    }
 
     private fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
@@ -218,7 +263,7 @@ class EdgeCasesTest {
         )
 
         plotSpec["data"] = data
-        assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { createPlot(plotSpec) }
     }
 
     private fun checkWithNullInXYSeries(geom: String) {
@@ -243,7 +288,7 @@ class EdgeCasesTest {
 
         val plotSpec = parsePlotSpec(spec)
 
-        assertDoesNotFail("geom $geom: ") { TestingPlotBuilder.createPlot(plotSpec) }
+        assertDoesNotFail("geom $geom: ") { createPlot(plotSpec) }
     }
 
     @Test
@@ -268,7 +313,7 @@ class EdgeCasesTest {
             |  ]
             |}""".trimMargin()
 
-        assertDoesNotFail { TestingPlotBuilder.createPlot(parsePlotSpec(spec)) }
+        assertDoesNotFail { createPlot(parsePlotSpec(spec)) }
     }
 
     @Test
@@ -295,7 +340,7 @@ class EdgeCasesTest {
             "c" to listOf(-1, 0, 0.01, 1, 81),
         )
 
-        assertDoesNotFail("log10 with negative data: ") { TestingPlotBuilder.createPlot(plotSpec) }
+        assertDoesNotFail("log10 with negative data: ") { createPlot(plotSpec) }
     }
 
     @Test
@@ -312,6 +357,6 @@ class EdgeCasesTest {
         assertFailsWith(
             IllegalArgumentException::class,
             "No layers in plot"
-        ) { TestingPlotBuilder.createPlot(plotSpec) }
+        ) { createPlot(plotSpec) }
     }
 }

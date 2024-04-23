@@ -58,6 +58,40 @@ private fun <T> findRingIntervals(path: List<T>, eq: (T, T) -> Boolean): List<In
     return intervals
 }
 
+fun <T> isRingTrimmed(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
+    if (ring.size < 3) {
+        return true
+    }
+
+    if (!eq(ring[0], ring[1]) && !eq(ring[ring.lastIndex], ring[ring.lastIndex - 1])) {
+        return true
+    }
+
+    return false
+}
+
+// Remove the same points from the beginning and the end of the ring. If trim is not needed, return the original ring.
+fun <T> trimRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
+    if (isRingTrimmed(ring, eq)) {
+        return ring
+    }
+
+    val firstElement = ring.first()
+    val lastElement = ring.last()
+
+    val inner = ring.subList(1, ring.lastIndex)
+
+    val startSkipCount = inner.indexOfFirst { !eq(it, firstElement) }
+    val endSkipCount = inner.asReversed().indexOfFirst { !eq(it, lastElement) }
+
+    // All items are the same - trim to two items
+    if (startSkipCount == -1 || endSkipCount == -1) {
+        return listOf(firstElement, lastElement)
+    }
+
+    return ring.subList(startSkipCount, ring.lastIndex - endSkipCount + 1)
+}
+
 private fun <T> List<T>.sublist(range: IntSpan): List<T> {
     return this.subList(range.lowerEnd, range.upperEnd)
 }

@@ -9,7 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingTrimmed
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.trimRing
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
@@ -91,13 +94,13 @@ open class LinesHelper(
 
         // split in domain space! after resampling coordinates may repeat and splitRings will return wrong results
         val domainPolygonData = domainPathData
-            .map { splitRings(it.points) { p1, p2 -> p1.coord == p2.coord } }
-            .map { PolygonData(it) }
+            .map { splitRings(it.points, PathPoint.LOC_EQ) }
+            .mapNotNull { PolygonData.create(it) }
 
-        val clientPolygonData = domainPolygonData.map { polygon ->
+        val clientPolygonData = domainPolygonData.mapNotNull { polygon ->
             polygon.rings
                 .map { resample(it) }
-                .let { PolygonData(it) }
+                .let { PolygonData.create(it) }
         }
 
         val svg = clientPolygonData.map { polygon ->
@@ -369,38 +372,44 @@ data class PathData(
     val coordinates by lazy { points.map(PathPoint::coord) } // may contain duplicates, don't work well for polygon
 }
 
-data class PolygonData(
+class PolygonData private constructor(
     val rings: List<List<PathPoint>>
 ) {
+    companion object {
+        fun create(rings: List<List<PathPoint>>): PolygonData? {
+            // Force the invariants
+            val processedRings = rings
+                .filter { it.isNotEmpty() }
+                .map { if (it.isClosed(PathPoint.LOC_EQ)) it else it + it.first() }
+                .map { trimRing(it, PathPoint.LOC_EQ) }
+                .filter { it.size >= 3 } // 3 points is fine - will draw a line
+
+            if (processedRings.isEmpty()) {
+                return null
+            }
+
+            return PolygonData(processedRings)
+        }
+    }
+
     init {
         require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
         require(rings.all { it.size >= 3 }) { "PolygonData ring should contain at least 3 points" }
         require(rings.all { it.first().coord == it.last().coord }) { "PolygonData ring should be closed" }
+        require(rings.all { isRingTrimmed(it, PathPoint.LOC_EQ) }) { "PolygonData ring should be trimmed" }
     }
 
     val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)
-    val aesthetics by lazy { rings.map { ring -> ring.map { it.aes } } }
-    val coordinates by lazy { rings.map { ring -> ring.map { it.coord } } }
-    val flattenCoordinates by lazy { // guaranteed to have no duplicates on ends caused by resampling
-        val output = mutableListOf<DoubleVector>()
-        rings.forEach { ring ->
-            val firstPoint = ring.first().coord
-            val lastPoint = ring.last().coord
-
-            // trim duplications at start and end to make the ring detection work
-
-            output.add(firstPoint)
-            output.addAll(ring.asSequence().dropWhile { it.coord == firstPoint }.map { it.coord })
-            while (output.last() == lastPoint) {
-                output.removeLast()
-            }
-            output.add(lastPoint)
-        }
-        output
-    }
+    val aesthetics by lazy { rings.map { it.map(PathPoint::aes) } }
+    val coordinates by lazy { rings.map { it.map(PathPoint::coord) } }
+    val flattenCoordinates by lazy { rings.flatten().map(PathPoint::coord) }
 }
 
 data class PathPoint(
     val aes: DataPointAesthetics,
     val coord: DoubleVector
-)
+) {
+    companion object {
+        val LOC_EQ = { p1: PathPoint, p2: PathPoint -> p1.coord == p2.coord }
+    }
+}
