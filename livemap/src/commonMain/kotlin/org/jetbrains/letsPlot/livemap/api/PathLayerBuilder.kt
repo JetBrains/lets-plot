@@ -42,8 +42,6 @@ import org.jetbrains.letsPlot.livemap.mapengine.MapProjection
 import org.jetbrains.letsPlot.livemap.mapengine.RenderableComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldDimensionComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
-import kotlin.math.sign
-import kotlin.math.sin
 
 @LiveMapDsl
 class PathLayerBuilder(
@@ -127,13 +125,29 @@ class PathEntityBuilder(
         val targetSizeStart = sizeStart / 2.0 + strokeStart
         val targetSizeEnd = sizeEnd / 2.0 + strokeEnd
 
-        val miterLength = arrowSpec?.angle?.let { ArrowSupport.miterLength(it * 2, strokeWidth).px } ?: 0.px
-        val miterSign = arrowSpec?.angle?.let { sign(sin(it * 2)) } ?: 0.0
-        val miterOffset = miterLength * miterSign / 2
+        val startArrowPadding = arrowSpec?.let {
+            ArrowSupport.arrowPadding(
+                angle = it.angle,
+                onStart = it.isOnFirstEnd,
+                onEnd = it.isOnLastEnd,
+                atStart = true,
+                strokeSize = strokeWidth
+            ).px
+        } ?: 0.px
+
+        val endArrowPadding = arrowSpec?.let {
+            ArrowSupport.arrowPadding(
+                angle = it.angle,
+                onStart = it.isOnFirstEnd,
+                onEnd = it.isOnLastEnd,
+                atStart = false,
+                strokeSize = strokeWidth
+            ).px
+        } ?: 0.px
 
         // Total offsets
-        val startPadding = targetSizeStart + spacer + (miterOffset.takeIf { arrowSpec?.isOnFirstEnd == true } ?: 0.px)
-        val endPadding = targetSizeEnd + spacer + (miterOffset.takeIf { arrowSpec?.isOnLastEnd == true } ?: 0.px)
+        val startPadding = targetSizeStart + spacer + startArrowPadding
+        val endPadding = targetSizeEnd + spacer + endArrowPadding
 
         myFactory.incrementLayerPointsTotalCount(visGeometry.sumOf(LineString<World>::size))
         return visGeometry.bbox?.let { bbox ->

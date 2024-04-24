@@ -283,7 +283,7 @@ open class GeomHelper(
             val arrowSpec = myArrowSpec ?: return null
 
             val arrowSvg = SvgPathElement().apply {
-                strokeMiterLimit().set(ArrowSupport.miterLength(arrowSpec.angle, AesScaling.strokeWidth(p)))
+                strokeMiterLimit().set(ArrowSupport.miterLength(arrowSpec.angle, AesScaling.strokeWidth(p)) * 2)
                 d().set(SvgPathDataBuilder()
                     .lineString(points)
                     .also { if (arrowSpec.type == CLOSED) it.closePath() }

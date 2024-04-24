@@ -64,7 +64,7 @@ open class PathRenderer : Renderer {
                 )
 
                 // set attribute `stroke-miterlimit` to avoid a bevelled corner
-                val miterLimit = ArrowSupport.miterLength(it.angle, chartElement.scaledStrokeWidth())
+                val miterLimit = ArrowSupport.miterLength(it.angle, chartElement.scaledStrokeWidth()) * 2
                 ctx.setStrokeMiterLimit(abs(miterLimit))
 
                 renderArrowHead(startHead, it, color, ctx, renderHelper)

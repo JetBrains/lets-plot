@@ -55,7 +55,9 @@ object ArrowSupport {
     }
 
     // Compute the length of the miter at the tip of the arrow head
-    // Angle is the angle between the two sides of the arrow head in radians
+    // Angle in radians.
+    // NOTE: Unlike the SVG spec, we expect half the angle, and we don't divide it by 2.
+    // That's because our arrow spec works with the angle between the side of the arrow and the arrow axis, which is half the angle.
     fun miterLength(angle: Double, strokeSize: Double): Double {
         return strokeSize / sin(angle)
     }
