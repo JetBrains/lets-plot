@@ -149,7 +149,9 @@ internal object PlotGeomTilesUtil {
             layerBuilder.addBinding(binding)
         }
 
-        layerBuilder.disableLegend(layerConfig.isLegendDisabled)
+        layerBuilder
+            .disableLegend(layerConfig.isLegendDisabled)
+            .legendItem(layerConfig.legendItem)
 
         geomInteraction?.let {
             layerBuilder

@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
@@ -21,8 +22,10 @@ import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
+import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.LEGEND_ITEM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal
@@ -37,6 +40,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem.Companion.DEFAULT_CUSTOM_LEGEND_KEY
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class LayerConfig(
@@ -76,6 +80,16 @@ class LayerConfig(
         get() = when (hasOwn(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
+        }
+    val legendItem: LegendItem?
+        get() {
+            val legendOpts = getMap(LEGEND_ITEM)
+            val label = legendOpts.getString(Layer.LegendItem.LABEL) ?: return null
+            return LegendItem(
+                key = legendOpts.getString(Layer.LegendItem.LEGEND) ?: DEFAULT_CUSTOM_LEGEND_KEY,
+                label = label,
+                index = legendOpts.getInt(Layer.LegendItem.INDEX)
+            )
         }
 
     private val _samplings: List<Sampling> = when (clientSide) {
@@ -370,8 +384,8 @@ class LayerConfig(
             in explicitConstantAes -> aes
             else -> {
                 val optionName = when (aes) {
-                    Aes.COLOR -> Option.Layer.COLOR_BY
-                    Aes.FILL -> Option.Layer.FILL_BY
+                    Aes.COLOR -> Layer.COLOR_BY
+                    Aes.FILL -> Layer.FILL_BY
                     else -> aes.name
                 }
 
@@ -414,8 +428,8 @@ class LayerConfig(
         }
 
         private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-            return if (opts.has(Option.Layer.SAMPLING)) {
-                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+            return if (opts.has(Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Layer.SAMPLING))
             } else {
                 listOf(defaultSampling)
             }

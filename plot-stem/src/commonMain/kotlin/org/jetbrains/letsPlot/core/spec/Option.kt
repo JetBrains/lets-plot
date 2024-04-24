@@ -161,6 +161,7 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val LEGEND_ITEM = "legend_item"
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
@@ -190,6 +191,12 @@ object Option {
 
         object CRS {
             const val PROVIDED = "provided"
+        }
+
+        object LegendItem {
+            const val LEGEND = "legend"
+            const val LABEL = "label"
+            const val INDEX = "index"
         }
     }
 
