@@ -499,8 +499,7 @@ class PlotSpec(FeatureSpec):
 
         Examples
         --------
-        ..
-        jupyter-execute::
+        .. jupyter-execute::
             :linenos:
             :emphasize-lines: 9
 
@@ -541,8 +540,7 @@ class PlotSpec(FeatureSpec):
 
         Examples
         --------
-        ..
-        jupyter-execute::
+        .. jupyter-execute::
             :linenos:
             :emphasize-lines: 8
 
