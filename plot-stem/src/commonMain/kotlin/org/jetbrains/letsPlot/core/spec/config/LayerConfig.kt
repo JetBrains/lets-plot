@@ -85,10 +85,14 @@ class LayerConfig(
         get() {
             val legendOpts = getMap(LEGEND_ITEM)
             val label = legendOpts.getString(Layer.LegendItem.LABEL) ?: return null
+            val aesValues = legendOpts
+                .filterKeys { it !in listOf(Layer.LegendItem.LEGEND, Layer.LegendItem.LABEL, Layer.LegendItem.INDEX) }
+                .mapKeys { Option.Mapping.toAes(it.key) }
             return LegendItem(
-                key = legendOpts.getString(Layer.LegendItem.LEGEND) ?: DEFAULT_CUSTOM_LEGEND_KEY,
                 label = label,
-                index = legendOpts.getInt(Layer.LegendItem.INDEX)
+                key = legendOpts.getString(Layer.LegendItem.LEGEND) ?: DEFAULT_CUSTOM_LEGEND_KEY,
+                index = legendOpts.getInt(Layer.LegendItem.INDEX),
+                aesValues = aesValues
             )
         }
 

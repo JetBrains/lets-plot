@@ -16,8 +16,13 @@ class CustomLegend {
     }
 
     private fun customLegend(): MutableMap<String, Any> {
-        //geom_point(legend_item=dict(legend="custom_key", label="Red zone"), shape=21, color="red" ) +
-        //geom_line(legend_item=dict(legend="custom_key", label="Blue zone"), linetype="dotted", color="blue" ) +
+        // geom_point(..., color='red', shape=21,
+        //            show_key=layer_key("Red zone", index=0, size=3)) + \
+        //    geom_line(..., color='blue', linetype=2,
+        //              show_key=layer_key("Blue zone", index=2)) + \
+        //    geom_rect(..., fill='green', alpha=0.2,
+        //              show_key=layer_key("Green zone", index=1, alpha=1))
+
         val spec = """
             {
               'kind': 'plot',
@@ -48,7 +53,9 @@ class CustomLegend {
                     'size': 5,
                     'legend_item': {
                         'label': 'Red zone',
-                        'index': 0
+                        'index': 0,
+                        'size': 7,
+                        'shape': 21
                     }
                 },                
                 {
@@ -58,7 +65,8 @@ class CustomLegend {
                     'fill': 'green',
                     'legend_item': {
                         'label': 'Green zone',
-                        'index': 1
+                        'index': 1,
+                        'alpha': 0.8
                     }
                 }               
               ]

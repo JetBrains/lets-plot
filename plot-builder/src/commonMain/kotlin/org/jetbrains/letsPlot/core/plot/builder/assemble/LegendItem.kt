@@ -5,10 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
+
 data class LegendItem(
-    val key: String,
     val label: String,
-    val index: Int? = null
+    val key: String,
+    val index: Int? = null,
+    val aesValues: Map<Aes<*>, Any>
 ) {
     companion object {
         const val DEFAULT_CUSTOM_LEGEND_KEY = "custom_key"
