@@ -128,6 +128,33 @@ internal object PlotAssemblerUtil {
                     ctx,
                 )
             }
+
+            // custom legend
+            layerInfo.legendItem?.let { legendItem ->
+                val aes = Aes.values().firstOrNull { it.name == legendItem.key }
+                val legendKey = if (aes != null && ctx.hasScale(aes)) {
+                    ctx.getScale(aes).name
+                } else {
+                    legendItem.key
+                }
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendKey) {
+                    LegendAssembler(
+                        legendKey,
+                        guideOptionsMap,
+                        scaleMappersNP,
+                        theme
+                    )
+                }
+                customLegendAssembler.addLayer(
+                    legendItem,
+                    layerInfo.legendKeyElementFactory,
+                    layerConstantByAes,
+                    layerInfo.aestheticsDefaults,
+                    layerInfo.colorByAes,
+                    layerInfo.fillByAes,
+                    layerInfo.isMarginal
+                )
+            }
         }
 
         val legendBoxInfos = ArrayList<LegendBoxInfo>()

@@ -28,7 +28,7 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+    private val guideOptionsMap: Map<Aes<*>, GuideOptions>, // Map<Any, GuideOptions> ?
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
@@ -43,11 +43,10 @@ class LegendAssembler(
         colorByAes: Aes<Color>,
         fillByAes: Aes<Color>,
         isMarginal: Boolean,
-        ctx: PlotContext,
+        ctx: PlotContext
     ) {
-
         legendLayers.add(
-            LegendLayer(
+            LegendLayer.create(
                 keyFactory,
                 aesList,
                 constantByAes,
@@ -61,9 +60,35 @@ class LegendAssembler(
         )
     }
 
+    // ToDo
+    fun addLayer(
+        legendItem: LegendItem,
+        keyFactory: LegendKeyElementFactory,
+        constantByAes: Map<Aes<*>, Any>,
+        aestheticsDefaults: AestheticsDefaults,
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>,
+        isMarginal: Boolean
+    ) {
+        legendLayers.add(
+            LegendLayer.withLegendItem(
+                legendItem,
+                keyFactory,
+                constantByAes,
+                aestheticsDefaults,
+                colorByAes,
+                fillByAes,
+                isMarginal
+            )
+        )
+    }
+
     fun createLegend(): LegendBoxInfo {
         val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
-        val legendLayers = legendLayers.filter { includeMarginalLayers || !it.isMarginal }
+        val legendLayers = legendLayers
+            .filter { includeMarginalLayers || !it.isMarginal }
+            // ToDo Add ordering by index
+            //.sortedBy { it.index }
 
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in legendLayers) {
@@ -121,47 +146,102 @@ class LegendAssembler(
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
         val aesList: List<Aes<*>>,
-        constantByAes: Map<Aes<*>, Any>,
-        aestheticsDefaults: AestheticsDefaults,
-        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-        colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>,
         val isMarginal: Boolean,
-        ctx: PlotContext
+        val keyAesthetics: Aesthetics,
+        val keyLabels: List<String>,
+        val index: Int? = null
     ) {
+        companion object {
+            fun create(
+                keyElementFactory: LegendKeyElementFactory,
+                aesList: List<Aes<*>>,
+                constantByAes: Map<Aes<*>, Any>,
+                aestheticsDefaults: AestheticsDefaults,
+                scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+                colorByAes: Aes<Color>,
+                fillByAes: Aes<Color>,
+                isMarginal: Boolean,
+                ctx: PlotContext
+            ): LegendLayer {
 
-        val keyAesthetics: Aesthetics
-        val keyLabels: List<String>
+                val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
 
-        init {
-            val aesValuesByLabel =
-                LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
-            for (aes in aesList) {
-                var scale = ctx.getScale(aes)
-                if (!scale.hasBreaks()) {
-                    scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
-                }
-                check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
+                for (aes in aesList) {
+                    var scale = ctx.getScale(aes)
+                    if (!scale.hasBreaks()) {
+                        scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
+                    }
+                    check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
-                val scaleBreaks = scale.getShortenedScaleBreaks()
-                val aesValues = scaleBreaks.transformedValues.map {
-                    scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                    val scaleBreaks = scale.getShortenedScaleBreaks()
+                    val aesValues = scaleBreaks.transformedValues.map {
+                        scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                    }
+                    val labels = scaleBreaks.labels
+                    for ((label, aesValue) in labels.zip(aesValues)) {
+                        aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
+                    }
                 }
-                val labels = scaleBreaks.labels
-                for ((label, aesValue) in labels.zip(aesValues)) {
-                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
-                }
+                // build 'key' aesthetics
+                val keyAesthetics = mapToAesthetics(
+                    aesValuesByLabel.values,
+                    constantByAes,
+                    aestheticsDefaults,
+                    colorByAes,
+                    fillByAes
+                )
+
+                val keyLabels = ArrayList(aesValuesByLabel.keys)
+                return LegendLayer(
+                    keyElementFactory,
+                    aesList,
+                    isMarginal,
+                    keyAesthetics,
+                    keyLabels
+                )
             }
 
-            // build 'key' aesthetics
-            keyAesthetics = mapToAesthetics(
-                aesValuesByLabel.values,
-                constantByAes,
-                aestheticsDefaults,
-                colorByAes,
-                fillByAes
-            )
-            keyLabels = ArrayList(aesValuesByLabel.keys)
+            fun withLegendItem(
+                legendItem: LegendItem,
+                keyElementFactory: LegendKeyElementFactory,
+                constantByAes: Map<Aes<*>, Any>,
+                aestheticsDefaults: AestheticsDefaults,
+                colorByAes: Aes<Color>,
+                fillByAes: Aes<Color>,
+                isMarginal: Boolean
+            ): LegendLayer {
+                // ToDo
+                // build 'key' aesthetics
+                val keyAesthetics = mapToAesthetics(
+                    listOf(legendItem.aesValues),
+                    constantByAes,
+                    aestheticsDefaults,
+                    colorByAes,
+                    fillByAes
+
+                )
+                /*val builder = AestheticsBuilder(1)
+                for (aes in Aes.values()) {
+                    @Suppress("UNCHECKED_CAST")
+                    builder.constantAes(
+                        aes as Aes<Any>,
+                        aestheticsDefaults.defaultValue(aes)
+                    )
+                }
+                for (aes in constantByAes.keys) {
+                    @Suppress("UNCHECKED_CAST")
+                    builder.constantAes(aes as Aes<Any>, constantByAes[aes])
+                }
+                val keyAesthetics = builder.build() */
+                return LegendLayer(
+                    keyElementFactory,
+                    emptyList(),
+                    isMarginal,
+                    keyAesthetics,
+                    keyLabels = listOf(legendItem.label),
+                    index = legendItem.index
+                )
+            }
         }
     }
 
