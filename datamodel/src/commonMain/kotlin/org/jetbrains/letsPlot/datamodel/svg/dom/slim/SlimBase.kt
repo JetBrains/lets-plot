@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 internal abstract class SlimBase protected constructor(val elementName: String) :
     SvgSlimShape {
@@ -59,6 +60,15 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
 
     override fun setStrokeDashArray(v: String) {
         setAttribute(strokeDashArray, v)
+    }
+
+    override fun setRotation(angle: Double, centerX: Double, centerY: Double) {
+        if (angle != 0.0) {
+            //setAttribute(transform, "rotate($angle, $centerX, $centerY)")
+            SvgTransformBuilder().rotate(angle, centerX, centerY).build().let {
+                setAttribute(transform, it.toString())
+            }
+        }
     }
 
     internal fun setAttribute(index: Int, v: Double) {

@@ -8,5 +8,14 @@ package org.jetbrains.letsPlot.core.plot.base.render.point
 import org.jetbrains.letsPlot.commons.values.Color
 
 interface UpdatableShape {
-    fun update(fill: Color, fillAlpha: Double, stroke: Color, strokeAlpha: Double, strokeWidth: Double)
+    fun update(
+        fill: Color,
+        fillAlpha: Double,
+        stroke: Color,
+        strokeAlpha: Double,
+        strokeWidth: Double,
+        angle: Double,
+        centerX: Double,
+        centerY: Double
+    )
 }

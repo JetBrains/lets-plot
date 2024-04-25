@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape.*
@@ -39,8 +40,10 @@ object PointShapeSvg {
         val r = SvgSlimElements.rect(location.x - 0.5, location.y - 0.5, 1.0, 1.0)
         val color = p.color()!!
         val alpha = AestheticsUtil.alpha(color, p)
+        val angle = p.finiteOrNull(Aes.ANGLE) ?: 0.0
         r.setFill(color, alpha)
         r.setStrokeWidth(0.0)
+        r.setRotation(angle, location.x, location.y)
         return r
     }
 
@@ -52,7 +55,7 @@ object PointShapeSvg {
     ): SvgSlimObject {
         val stroke = shape.strokeWidth(p)
         val glyph = createSlimGlyph(shape, location, size, stroke)
-        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke)
+        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke, location)
         return glyph
     }
 

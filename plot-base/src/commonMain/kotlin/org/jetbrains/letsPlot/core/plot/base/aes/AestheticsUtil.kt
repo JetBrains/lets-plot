@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.aes
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
@@ -24,7 +26,14 @@ object AestheticsUtil {
         return Color.TRANSPARENT
     }
 
-    fun decorate(shape: UpdatableShape, filled: Boolean, solid: Boolean, p: DataPointAesthetics, strokeWidth: Double) {
+    fun decorate(
+        shape: UpdatableShape,
+        filled: Boolean,
+        solid: Boolean,
+        p: DataPointAesthetics,
+        strokeWidth: Double,
+        location: DoubleVector
+    ) {
         val fill = fill(filled, solid, p)
         val stroke = p.color()!!
 
@@ -38,7 +47,8 @@ object AestheticsUtil {
             strokeAlpha = alpha(stroke, p)
         }
 
-        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth)
+        val angle = p.finiteOrNull(Aes.ANGLE) ?: 0.0
+        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, angle, location.x, location.y)
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {

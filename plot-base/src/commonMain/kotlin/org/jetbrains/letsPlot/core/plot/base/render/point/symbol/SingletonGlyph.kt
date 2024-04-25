@@ -23,10 +23,20 @@ abstract class SingletonGlyph : Glyph {
 
     protected abstract fun createShape(location: DoubleVector, width: Double): SvgSlimShape
 
-    override fun update(fill: Color, fillAlpha: Double, stroke: Color, strokeAlpha: Double, strokeWidth: Double) {
+    override fun update(
+        fill: Color,
+        fillAlpha: Double,
+        stroke: Color,
+        strokeAlpha: Double,
+        strokeWidth: Double,
+        angle: Double,
+        centerX: Double,
+        centerY: Double
+    ) {
         myShape.setFill(fill, fillAlpha)
         myShape.setStroke(stroke, strokeAlpha)
         myShape.setStrokeWidth(strokeWidth)
+        myShape.setRotation(angle, centerX, centerY)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

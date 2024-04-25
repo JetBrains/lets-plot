@@ -12,4 +12,5 @@ interface SvgSlimShape : SvgSlimObject {
     fun setStroke(c: Color, alpha: Double)
     fun setStrokeWidth(v: Double)
     fun setStrokeDashArray(v: String)
+    fun setRotation(angle: Double, centerX: Double, centerY: Double)
 }
