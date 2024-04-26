@@ -38,8 +38,14 @@ abstract class LegendBoxLayout(
 
             else -> DoubleVector(
                 0.0,
-                // make some space between title and the rest of the content.
-                titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
+                titleSize.y.let { titleHeight ->
+                    if (titleHeight > 0) {
+                        // make some space between title and the rest of the content
+                        titleHeight + PlotLabelSpecFactory.legendTitle(theme).height() / 2
+                    } else {
+                        0.0
+                    }
+                }
             )
         }
 

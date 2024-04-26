@@ -101,10 +101,16 @@ abstract class LegendBox : SvgComponent() {
             val rect = titleBoundingRect.add(spec.contentOrigin)
             add(createTransparentRect(rect, Color.MAGENTA, 1.0))
             // title bounding box
-            val textDimensions = PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
-            val titleBoundingBox =
-                DoubleRectangle(spec.contentBounds.left, spec.contentBounds.top, textDimensions.x, textDimensions.y)
-            add(createTransparentRect(titleBoundingBox, Color.DARK_GREEN, 1.0))
+            if (theme.showTitle()) {
+                val textDimensions = PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
+                val titleBoundingBox = DoubleRectangle(
+                    spec.contentBounds.left,
+                    rect.center.y - textDimensions.y / 2,
+                    textDimensions.x,
+                    textDimensions.y
+                )
+                add(createTransparentRect(titleBoundingBox, Color.DARK_GREEN, 1.0))
+            }
         }
 
         add(innerGroup)
