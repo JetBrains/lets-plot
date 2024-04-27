@@ -104,8 +104,8 @@ abstract class LegendBox : SvgComponent() {
             if (theme.showTitle()) {
                 val textDimensions = PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
                 val titleBoundingBox = DoubleRectangle(
-                    spec.contentBounds.left,
-                    rect.center.y - textDimensions.y / 2,
+                    rect.left + (rect.width - textDimensions.x) * theme.titleJustification().x,
+                    rect.top + (rect.height - textDimensions.y) * (1 - theme.titleJustification().y),
                     textDimensions.x,
                     textDimensions.y
                 )
