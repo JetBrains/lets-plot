@@ -92,10 +92,26 @@ fun <T> trimRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
     return ring.subList(startSkipCount, ring.lastIndex - endSkipCount + 1)
 }
 
+fun <T> normalize(ring: List<T>): List<T> {
+    //Remove consecutive duplicates
+    val cleanedRing = ring.fold(emptyList<T>()) { acc, i ->
+        if (acc.isEmpty() || acc.last() != i) acc + i else acc
+    }
+    //Add closing point if needed
+    val outputRing = mutableListOf<T>()
+    cleanedRing.forEachIndexed { index, vec ->
+        if (index != 0 && index != cleanedRing.size - 1 && vec == cleanedRing.first()) {
+            outputRing.add(vec)
+        }
+        outputRing.add(vec)
+    }
+
+    return outputRing
+}
+
 private fun <T> List<T>.sublist(range: IntSpan): List<T> {
     return this.subList(range.lowerEnd, range.upperEnd)
 }
-
 
 fun calculateArea(ring: List<DoubleVector>): Double {
     return calculateArea(ring, DoubleVector::x, DoubleVector::y)

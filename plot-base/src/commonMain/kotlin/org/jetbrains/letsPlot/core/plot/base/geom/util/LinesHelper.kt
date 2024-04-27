@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingTrimmed
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.trimRing
@@ -392,7 +391,6 @@ class PolygonData private constructor(
             // Force the invariants
             val processedRings = rings
                 .filter { it.isNotEmpty() }
-                .map { if (it.isClosed(PathPoint.LOC_EQ)) it else it + it.first() }
                 .map { trimRing(it, PathPoint.LOC_EQ) }
                 .filter { it.size >= 3 } // 3 points is fine - will draw a line
 

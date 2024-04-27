@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.spatial.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.normalize
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
@@ -332,7 +333,13 @@ internal abstract class CoordinatesCollector(
         override val supportedFeatures = listOf("Polygon, MultiPolygon")
         override val geoJsonConsumer: SimpleFeature.Consumer<LonLat> = defaultConsumer {
             onPolygon = { it.asSequence().flatten().forEach { p -> coordinates.append(p) } }
-            onMultiPolygon = { it.asSequence().flatten().flatten().forEach { p -> coordinates.append(p) } }
+            onMultiPolygon = {
+                it.asSequence()
+                    .flatten()
+                    .map { ring -> normalize(ring) }
+                    .flatten()
+                    .forEach { p -> coordinates.append(p) }
+            }
         }
     }
 
