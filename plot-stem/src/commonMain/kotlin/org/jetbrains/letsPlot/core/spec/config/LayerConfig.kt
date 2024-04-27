@@ -83,7 +83,17 @@ class LayerConfig(
         }
     val legendItem: LegendItem?
         get() {
-            val legendOptions = OptionsAccessor(getMap(LAYER_KEY))
+            val legendOptions = get(LAYER_KEY).let { option ->
+                val optsMap = when (option) {
+                    is Map<*, *> -> {
+                        @Suppress("UNCHECKED_CAST")
+                        option as Map<String, Any>
+                    }
+                    is String -> mapOf(Layer.LayerKey.LABEL to option)
+                    else -> throw IllegalArgumentException("$LAYER_KEY expected a string or option map, but was '$option'")
+                }
+                OptionsAccessor(optsMap)
+            }
             val label = legendOptions.getString(Layer.LayerKey.LABEL) ?: return null
             val aesValues = LayerConfigUtil.initConstants(
                 legendOptions,

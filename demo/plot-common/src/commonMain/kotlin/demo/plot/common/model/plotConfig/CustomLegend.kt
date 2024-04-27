@@ -10,12 +10,71 @@ import demoAndTestShared.parsePlotSpec
 class CustomLegend {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            customLegend(),
+            shortForm(),
+            parameterizedForm(),
             appendToLegend()
         )
     }
 
-    private fun customLegend(): MutableMap<String, Any> {
+    private fun shortForm(): MutableMap<String, Any> {
+        //    geom_point(..., show_key="Red zone") + \
+        //    geom_line(..., show_key="Blue zone") + \
+        //    geom_rect(..., show_key="Green zone")
+        val spec = """
+            {
+              'kind': 'plot',
+              'layers': [
+                {
+                    'geom': 'line', 
+                    'data': {
+                       'x': [0, 10], 
+                       'y': [1, 1]
+                    },
+                    'mapping': {
+                       'x': 'x', 
+                       'y': 'y'
+                    },
+                    'color': 'blue',
+                    'size': 1.2,
+                    'linetype': 'dotted',
+                    'layer_key': 'Blue zone'
+                },
+                {
+                    'geom': 'point',
+                    'x': 5,
+                    'y': 0,
+                    'color': 'red',
+                    'size': 5,
+                    'layer_key': 'Red zone'
+                },
+                {
+                    'geom': 'rect',
+                    'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
+                    'alpha': 0.2,
+                    'fill': 'green',
+                    'layer_key': 'Green zone'
+                },
+                {
+                    'geom': 'label',
+                    'label': 'Text',
+                    'x': 8,
+                    'y': 0,
+                    'fill': 'orange',
+                    'color': 'white',
+                    'size': 8,
+                    'layer_key': 'Orange zone'
+                }
+              ]
+            }
+        """.trimIndent()
+        //  + settings:
+        //              'scales': [ {'name': 'Zones', 'key': 'custom_key' } ],
+        //              'guides': {'custom_key': {'name': 'legend', 'ncol': 2}}
+        return parsePlotSpec(spec)
+    }
+
+    /// show_key=layer_key(label="Red zone", key=""?, index=0, size=3)
+    private fun parameterizedForm(): MutableMap<String, Any> {
         // geom_point(..., color='red', shape=21,
         //            show_key=layer_key("Red zone", index=0, size=3)) + \
         //    geom_line(..., color='blue', linetype=2,
