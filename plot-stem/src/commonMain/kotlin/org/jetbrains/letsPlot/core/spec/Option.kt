@@ -161,7 +161,7 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
-        const val LEGEND_ITEM = "legend_item"
+        const val LAYER_KEY = "layer_key"
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
@@ -193,9 +193,9 @@ object Option {
             const val PROVIDED = "provided"
         }
 
-        object LegendItem {
-            const val LEGEND = "legend"
+        object LayerKey {
             const val LABEL = "label"
+            const val KEY = "key"
             const val INDEX = "index"
         }
     }

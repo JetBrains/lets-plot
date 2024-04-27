@@ -25,7 +25,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
-import org.jetbrains.letsPlot.core.spec.Option.Layer.LEGEND_ITEM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.LAYER_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal
@@ -83,8 +83,8 @@ class LayerConfig(
         }
     val legendItem: LegendItem?
         get() {
-            val legendOptions = OptionsAccessor(getMap(LEGEND_ITEM))
-            val label = legendOptions.getString(Layer.LegendItem.LABEL) ?: return null
+            val legendOptions = OptionsAccessor(getMap(LAYER_KEY))
+            val label = legendOptions.getString(Layer.LayerKey.LABEL) ?: return null
             val aesValues = LayerConfigUtil.initConstants(
                 legendOptions,
                 consumedAesSet = Aes.values().toSet(),
@@ -92,8 +92,8 @@ class LayerConfig(
             )
             return LegendItem(
                 label = label,
-                key = legendOptions.getString(Layer.LegendItem.LEGEND) ?: DEFAULT_CUSTOM_LEGEND_KEY,
-                index = legendOptions.getInteger(Layer.LegendItem.INDEX),
+                key = legendOptions.getString(Layer.LayerKey.KEY) ?: DEFAULT_CUSTOM_LEGEND_KEY,
+                index = legendOptions.getInteger(Layer.LayerKey.INDEX),
                 aesValues = aesValues
             )
         }

@@ -40,35 +40,48 @@ class CustomLegend {
                     'color': 'blue',
                     'size': 1.2,
                     'linetype': 'dotted',
-                    'legend_item': {
+                    'layer_key': {
                         'label': 'Blue zone',
                         'index': 2
                     }
-                },                
+                },
                 {
                     'geom': 'point',
                     'x': 5,
                     'y': 0,
                     'color': 'red',
                     'size': 5,
-                    'legend_item': {
+                    'layer_key': {
                         'label': 'Red zone',
                         'index': 0,
                         'size': 7,
                         'shape': 21
                     }
-                },                
+                },
                 {
                     'geom': 'rect',
                     'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
                     'alpha': 0.2,
                     'fill': 'green',
-                    'legend_item': {
+                    'layer_key': {
                         'label': 'Green zone',
                         'index': 1,
                         'alpha': 0.8
                     }
-                }               
+                },
+                {
+                    'geom': 'label',
+                    'label': 'Text',
+                    'x': 8,
+                    'y': 0,
+                    'fill': 'orange',
+                    'color': 'white',
+                    'size': 8,
+                    'layer_key': {
+                        'label': 'Orange zone',
+                        'colour': 'black'
+                    }
+                }
               ]
             }
         """.trimIndent()
@@ -95,8 +108,8 @@ class CustomLegend {
                         'y': 'y', 
                         'color': 'g'
                     },
-                    'legend_item': {
-                        'legend': 'color',
+                    'layer_key': {
+                        'key': 'color',
                         'label': 'NA'
                     }
                 },                
@@ -106,8 +119,8 @@ class CustomLegend {
                     'y': 44,
                     'color': 'yellow',
                     'size': 5,
-                    'legend_item': {
-                        'legend': 'color',
+                    'layer_key': {
+                        'key': 'color',
                         'label': 'point'
                     }
                 }
