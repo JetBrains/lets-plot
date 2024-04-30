@@ -40,7 +40,7 @@ fun buildPlotFromRawSpecs(
     height: Double,
     parentElement: HTMLElement,
     optionsJs: dynamic = null
-): LetsPlotFigureModel? {
+): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
@@ -71,7 +71,7 @@ fun buildPlotFromProcessedSpecs(
     height: Double,
     parentElement: HTMLElement,
     optionsJs: dynamic = null
-): LetsPlotFigureModel? {
+): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
@@ -96,7 +96,7 @@ private fun buildPlotFromProcessedSpecsIntern(
     height: Double,
     parentElement: HTMLElement,
     options: Map<String, Any>
-): LetsPlotFigureModel? {
+): FigureModelJs? {
 
     // Fixed plot size (not compatible with reactive sizing).
     val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
@@ -140,12 +140,13 @@ private fun buildPlotFromProcessedSpecsIntern(
     val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        val figureRegistration = FigureToHtml(buildInfo, parentElement).eval()
-        LetsPlotFigureModel(
+        val result = FigureToHtml(buildInfo, parentElement).eval()
+        FigureModelJs(
             parentElement,
             sizingPolicy,
             buildInfo,
-            figureRegistration
+            result.toolEventDispatcher,
+            result.figureRegistration
         )
     } else {
         // a bunch

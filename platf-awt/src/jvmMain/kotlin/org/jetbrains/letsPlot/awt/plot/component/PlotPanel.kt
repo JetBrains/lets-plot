@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
@@ -24,6 +26,14 @@ open class PlotPanel(
     repaintDelay: Int,  // ms
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
+
+    val figureModel: FigureModel = PlotPanelFigureModel(
+        plotPanel = this,
+        plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
+        plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
+        applicationContext = applicationContext,
+    )
+
     init {
         // Layout a single child component.
         // 1. FlowLayout
@@ -54,7 +64,6 @@ open class PlotPanel(
             // Build the plot component now with its default size.
             // So that the container could take plot's preferred size in account.
             rebuildProvidedComponent(null)
-            // ToDo : updateThumbnailIcon()  here.
         } else {
             null
         }
@@ -119,6 +128,13 @@ open class PlotPanel(
 
         // add
         add(providedComponent)
+
+        (figureModel as PlotPanelFigureModel).let {
+            it.lastProvidedComponent = providedComponent
+            it.toolEventDispatcher =
+                actualPlotComponent.getClientProperty(ToolEventDispatcher::class) as? ToolEventDispatcher
+        }
+
         return providedComponent
     }
 

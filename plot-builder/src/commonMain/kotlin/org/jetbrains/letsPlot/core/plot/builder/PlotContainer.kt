@@ -11,11 +11,14 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
+import org.jetbrains.letsPlot.core.plot.builder.interact.PlotToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.toolbox.PlotToolbox
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 class PlotContainer constructor(
-    private val svgRoot: PlotSvgRoot,
+    val svgRoot: PlotSvgRoot,
 ) : Disposable {
 
     val svg: SvgSvgElement
@@ -33,9 +36,11 @@ class PlotContainer constructor(
     private val plot: PlotSvgComponent = svgRoot.plot
     private var registrations = CompositeRegistration()
 
+    val toolEventDispatcher: ToolEventDispatcher
+
     init {
         if (plot.interactionsEnabled) {
-            plot.interactor = PlotInteractor(
+            val plotInteractor = PlotInteractor(
                 decorationLayer = svgRoot.decorationLayer,
                 mouseEventPeer = mouseEventPeer,
                 plotSize = plot.figureSize,    // ToDo: svgRoot.bounds.dimension
@@ -43,12 +48,17 @@ class PlotContainer constructor(
                 theme = plot.theme,
                 plotContext = plot.plotContext
             )
+            plot.interactor = plotInteractor
 
             if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {
                 registrations.add(
-                    addViewToolbox(plot.interactor as PlotInteractor)
+                    addViewToolbox(plotInteractor)
                 )
             }
+
+            toolEventDispatcher = PlotToolEventDispatcher(plotInteractor)
+        } else {
+            toolEventDispatcher = UnsupportedToolEventDispatcher()
         }
 
         svgRoot.ensureContentBuilt()
@@ -58,7 +68,6 @@ class PlotContainer constructor(
         registrations.remove()
         svgRoot.clearContent()
     }
-
 
     companion object {
         private fun addViewToolbox(interactor: PlotInteractor): Registration {
