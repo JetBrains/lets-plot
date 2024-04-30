@@ -122,9 +122,11 @@ open class LinesHelper(
             .flatMap { (aes, coords) -> coords.map { PathPoint(aes, it) } }
 
         // smoothed path doesn't contain PathPoint for the last point - append it
-        val lastPoint = linestring.last().let { (aes, coord) -> PathPoint(aes, toClient(coord, aes)!!) }
-
-        return smoothed + lastPoint
+        val endPoint = linestring.last()
+        return when (val clientCoord = toClient(endPoint.coord, endPoint.aes)) {
+            null -> smoothed
+            else -> smoothed + PathPoint(endPoint.aes, clientCoord)
+        }
     }
 
     // TODO: return list of PathData for consistency
