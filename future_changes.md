@@ -6,4 +6,4 @@
 
 ### Fixed
 
-- Undesired vertical scroller when displaying `gggrid` in Jupiter notebook.
+- Undesired vertical scroller when displaying `gggrid` in Jupyter notebook.
