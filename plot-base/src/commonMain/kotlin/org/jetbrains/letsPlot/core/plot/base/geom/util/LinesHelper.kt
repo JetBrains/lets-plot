@@ -198,7 +198,7 @@ open class LinesHelper(
 
             upperPathData
                 .zip(lowerPathData)
-                .map { (upperPath, lowerPath) -> PathData(upperPath.points + lowerPath.points.reversed()) }
+                .mapNotNull { (upperPath, lowerPath) -> PathData.create(upperPath.points + lowerPath.points.reversed()) }
         }
 
         val clientBandsPathData = toClient(domainBandsPathData)
@@ -266,18 +266,18 @@ open class LinesHelper(
                 domainPathData
                     .mapValues { (_, groupPath) -> groupPath.flatMap(::splitByStyle) }
                     .let { interpolatePathData(it) }
-                    .mapValues { (_, paths) -> paths.map { PathData(resample(it.points)) } }
+                    .mapValues { (_, paths) -> paths.mapNotNull { PathData.create(resample(it.points)) } }
             }
 
             false -> {
                 val clientPathData = domainPathData.mapValues { (_, groupPath) ->
-                    groupPath.map { segment ->
+                    groupPath.mapNotNull { segment ->
                         // Note that PathPoint have to be recreated with the point aes, not with a segment aes
                         val points = segment.points.mapNotNull { p ->
                             toClient(p.coord, p.aes)
                                 ?.let { PathPoint(p.aes, coord = it) }
                         }
-                        PathData(points)
+                        PathData.create(points)
                     }
                 }
 
@@ -313,7 +313,7 @@ open class LinesHelper(
                         { it.aes.color()?.alpha }
                     )
                 )
-                .map(::PathData)
+                .mapNotNull { PathData.create(it)}
         }
 
         private fun midPointsPathInterpolator(path: List<PathData>): List<PathData> {
@@ -331,22 +331,22 @@ open class LinesHelper(
                     midPoint
                 }
 
-            return path.mapIndexed { i, subPath ->
+            return path.mapIndexedNotNull() { i, subPath ->
                 when (i) {
                     0 -> {
                         val rightJointPoint = subPath.points.last().copy(coord = jointPoints[i])
-                        PathData(subPath.points + rightJointPoint)
+                        PathData.create(subPath.points + rightJointPoint)
                     }
 
                     path.lastIndex -> {
                         val leftJointPoint = subPath.points.first().copy(coord = jointPoints[i - 1])
-                        PathData(listOf(leftJointPoint) + subPath.points)
+                        PathData.create(listOf(leftJointPoint) + subPath.points)
                     }
 
                     else -> {
                         val leftJointPoint = subPath.points.first().copy(coord = jointPoints[i - 1])
                         val rightJointPoint = subPath.points.last().copy(coord = jointPoints[i])
-                        PathData(listOf(leftJointPoint) + subPath.points + rightJointPoint)
+                        PathData.create(listOf(leftJointPoint) + subPath.points + rightJointPoint)
                     }
                 }
             }
@@ -362,9 +362,19 @@ open class LinesHelper(
     }
 }
 
-data class PathData(
+class PathData private constructor(
     val points: List<PathPoint>
 ) {
+    companion object {
+        fun create(points: List<PathPoint>): PathData? {
+            if (points.isEmpty()) {
+                return null
+            }
+
+            return PathData(points)
+        }
+    }
+
     init {
         require(points.isNotEmpty()) { "PathData should contain at least one point" }
     }

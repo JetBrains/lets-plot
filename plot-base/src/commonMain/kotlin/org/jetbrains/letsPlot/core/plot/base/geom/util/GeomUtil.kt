@@ -173,7 +173,7 @@ object GeomUtil {
             val points = aesthetics.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
             when (points.isEmpty()) {
                 true -> null
-                false -> PathData(points = points)
+                false -> PathData.create(points)
             }
         }.filterNotNullValues()
     }
