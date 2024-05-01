@@ -53,20 +53,7 @@ internal object PlotToolsBrowserDemoUtil {
             "buildPlotFromRawSpecs"
         }
 
-        val plotSpecListJs = StringBuilder("[\n")
-
-        var first = true
-        for (spec in plotSpecList) {
-            @Suppress("NAME_SHADOWING")
-            val spec = if (applyBackendTransform) {
-                SpecTransformBackendUtil.processTransform(spec)
-            } else {
-                spec  // raw: JS is going to apply transform on the client side
-            }
-            if (!first) plotSpecListJs.append(',') else first = false
-            plotSpecListJs.append(mapToJsObjectInitializer(spec))
-        }
-        plotSpecListJs.append("\n]")
+        val plotSpecJs = mapToJsObjectInitializer(plotSpecList.first())
 
         val writer = StringWriter().appendHTML().html {
             lang = "en"
@@ -93,19 +80,32 @@ internal object PlotToolsBrowserDemoUtil {
                     src = getPlotLibPath()
                 }
 
-                div("demo") { id = ROOT_ELEMENT_ID }
+                div("demo") {
+                    id = ROOT_ELEMENT_ID
+//                    button() {
+//                        id = "zoom-tool-btn"
+//                        text("Zoom Off")
+//                    }
+                }
 
                 script {
                     type = "text/javascript"
                     unsafe {
                         +"""
-                        |var plotSpecList=$plotSpecListJs;
-                        |plotSpecList.forEach(function (spec, index) {
                         |
-                        |   var parentElement = document.createElement('div');
-                        |   document.getElementById("root").appendChild(parentElement);
-                        |   LetsPlot.$plotFun(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
-                        |});
+                        |var plotSpec = $plotSpecJs;
+                        |var rootElement = document.getElementById("root");
+                        |
+                        |// Toolbar
+                        |var toolbar = new LetsPlot.tools.SandboxToolbar();
+                        |rootElement.appendChild(toolbar.getElement());
+                        |
+                        |var parentElement = document.createElement('div');
+                        |rootElement.appendChild(parentElement);
+                        |var fig = LetsPlot.$plotFun(plotSpec, ${plotSize.x}, ${plotSize.y}, parentElement);
+                        |
+                        |toolbar.bind(fig);
+                        |
                     """.trimMargin()
 
                     }
@@ -116,3 +116,41 @@ internal object PlotToolsBrowserDemoUtil {
         return writer.toString()
     }
 }
+
+//|
+//|
+//|var plotSpecList=$plotSpecListJs;
+//|plotSpecList.forEach(function (spec, index) {
+//    |
+//    |   var parentElement = document.createElement('div');
+//    |   document.getElementById("root").appendChild(parentElement);
+//    |   LetsPlot.$plotFun(spec, ${plotSize.x}, ${plotSize.y}, parentElement);
+//    |});
+
+
+//|// Toolbar
+//|
+//|const zoom_tool = {
+//    |   'active' : false,
+//    |   'name' : 'my-box-zoom',
+//    |   'interaction' : {'name':'box-zoom', 'dimension': 'both'},
+//    |   'on-event' : 'to-do'
+//    |};
+//|const zoom_btn = document.getElementById('zoom-tool-btn');
+//|zoom_btn.addEventListener('click', function() {
+//    |  zoom_tool.active = !zoom_tool.active;
+//    |  if (zoom_tool.active) {
+//        |    fig.startInteraction(zoom_tool.interaction);
+//        |    zoom_btn.innerText = 'Zoom On';
+//        |  } else {
+//        |    fig.abortInteraction(zoom_tool.interaction.name);
+//        |    zoom_btn.innerText = 'Zoom Off';
+//        |  }
+//    |});
+//|
+//|// Event dispatcher
+//|var toolEventHandler = function(e) {
+//    |  console.log('Event triggered:', e);
+//    |};
+//|
+//|fig.onToolEvent(toolEventHandler)

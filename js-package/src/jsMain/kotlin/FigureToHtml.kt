@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -47,7 +49,7 @@ internal class FigureToHtml(
         containerElement
     }
 
-    fun eval(): Registration {
+    fun eval(): Result {
 
         val buildInfo = buildInfo.layoutedByOuterSize()
 
@@ -58,7 +60,7 @@ internal class FigureToHtml(
         }
 
         val svgRoot = buildInfo.createSvgRoot()
-        if (svgRoot is CompositeFigureSvgRoot) {
+        val toolEventDispatcher = if (svgRoot is CompositeFigureSvgRoot) {
             processCompositeFigure(
                 svgRoot,
                 origin = null,      // The topmost SVG
@@ -71,21 +73,30 @@ internal class FigureToHtml(
             )
         }
 
-        return object : Registration() {
+        val registration = object : Registration() {
             override fun doRemove() {
                 while (containerElement.firstChild != null) {
                     containerElement.removeChild(containerElement.firstChild!!)
                 }
             }
         }
+
+        return Result(
+            toolEventDispatcher,
+            registration
+        )
     }
 
+    class Result(
+        val toolEventDispatcher: ToolEventDispatcher,
+        val figureRegistration: Registration
+    )
 
     companion object {
         private fun processPlotFigure(
             svgRoot: PlotSvgRoot,
             parentElement: HTMLElement,
-        ) {
+        ): ToolEventDispatcher {
 
             val plotContainer = PlotContainer(svgRoot)
             val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement)
@@ -99,13 +110,14 @@ internal class FigureToHtml(
             }
 
             parentElement.appendChild(rootSVG)
+            return plotContainer.toolEventDispatcher
         }
 
         private fun processCompositeFigure(
             svgRoot: CompositeFigureSvgRoot,
             origin: DoubleVector?,
             parentElement: HTMLElement,
-        ) {
+        ): ToolEventDispatcher {
             svgRoot.ensureContentBuilt()
 
             val rootSvgSvg: SvgSvgElement = svgRoot.svg
@@ -146,6 +158,8 @@ internal class FigureToHtml(
                     processCompositeFigure(figureSvgRoot, elementOrigin, parentElement)
                 }
             }
+
+            return UnsupportedToolEventDispatcher()
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
@@ -230,5 +244,4 @@ internal class FigureToHtml(
             return window.requestAnimationFrame { checkConnection() }
         }
     }
-
 }

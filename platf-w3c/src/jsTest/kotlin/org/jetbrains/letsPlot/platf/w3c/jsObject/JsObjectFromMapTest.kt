@@ -8,63 +8,64 @@ package org.jetbrains.letsPlot.platf.w3c.jsObject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class JsObjectSupportJsTest {
+class JsObjectFromMapTest {
 
     @Test
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
-            val actual = dynamicObjectToMap(datum.input)
-            assertEquals(datum.expectedOutput, actual, "test case [$index]")
+            val jsObject = dynamicObjectFromMap(datum.input)
+            // transform back for comparison to work
+            val actual = dynamicObjectToMap(jsObject) // this is supposed to be well tested
+            assertEquals(expected = datum.input, actual, "test case [$index]")
         }
     }
 
-    class TestData(val input: dynamic, val expectedOutput: Map<String, Any?>)
+//    class TestData(val input: Map<String, Any>, val expectedOutput: dynamic)
+    class TestData(val input: Map<String, Any>)
 
     companion object {
         @Suppress("UnsafeCastFromDynamic")
         val testData: List<TestData> = listOf(
             TestData(
-                js("{}"),
-                emptyMap()
+                emptyMap(),
+//                js("{}"),
             ),
+//            TestData(
+//                emptyMap(),
+//                js("{a:null,b:null}"),  // null values are dropped
+//            ),
             TestData(
-                js("{a:null,b:null}"),  // null values are dropped
-                emptyMap()
-            ),
-            TestData(
-                js("{'array':[]}"),
                 mapOf(
                     "array" to emptyList<Any?>()
-                )
+                ),
+//                js("{'array':[]}"),
             ),
             TestData(
-                js(
-                    """{
-                                'int':1,    
-                                'double':2.2,    
-                                'str':"hello",    
-                                'null':null,    
-                                'obj':{}    
-                            }
-                            """
-                ),
                 mapOf(
                     "int" to 1,
                     "double" to 2.2,
                     "str" to "hello",
-//                    "none" to null,                  // null values are dropped
                     "obj" to emptyMap<String, Any?>()
-                )
+                ),
+//                js(
+//                    """{
+//                                'int':1,
+//                                'double':2.2,
+//                                'str':"hello",
+//                                'obj':{}
+//                            }
+//                            """
+//                ),
             ),
             TestData(
-                js("{level_1:{level_2:{list:[1,1,null,100.0]}}}"),
                 mapOf(
                     "level_1" to mapOf<String, Any?>(
                         "level_2" to mapOf<String, Any?>(
                             "list" to listOf<Any?>(1, 1, null, 100.00)
                         )
                     )
-                )
+                ),
+//                js("{level_1:{level_2:{list:[1,1,null,100.0]}}}"),
             )
         )
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot.component
 
+import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import java.awt.Color
 import java.awt.Component
@@ -28,13 +29,17 @@ abstract class DefaultPlotContentPane(
 
     init {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
-        createContent(processedSpec)
+        val figureModel: FigureModel = createContent(processedSpec)
+        putClientProperty(FigureModel::class, figureModel)
     }
 
     /**
      * In IDEA plugin: override and check for 'com.intellij.openapi.Disposable'.
      */
     override fun dispose() {
+        // ToDo: deactivate all ongoing interactions?
+        putClientProperty(FigureModel::class, null)
+
         for (component in components) {
             when (component) {
                 is Disposable -> component.dispose()
@@ -43,7 +48,7 @@ abstract class DefaultPlotContentPane(
         removeAll()
     }
 
-    private fun createContent(processedSpec: MutableMap<String, Any>) {
+    private fun createContent(processedSpec: MutableMap<String, Any>): FigureModel {
         var shownMessages = HashSet<String>()
         val messagesArea: JLabel = JLabel().apply {
             foreground = Color.BLUE
@@ -78,6 +83,7 @@ abstract class DefaultPlotContentPane(
 
         this.add(plotPanel)
         this.add(messagesArea)
+        return plotPanel.figureModel
     }
 
     protected abstract fun createPlotPanel(

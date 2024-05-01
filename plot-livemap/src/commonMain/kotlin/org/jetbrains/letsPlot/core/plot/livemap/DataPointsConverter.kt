@@ -166,7 +166,8 @@ internal class DataPointsConverter(
             val rectangles = groupedData.map { (_, groupData) ->
                 groupData.flatMap { aes -> TO_RECTANGLE(aes).map { PathPoint(aes, it) } }
             }
-            return process(rectangles.map(::PathData), isClosed = true)
+
+            return process(rectangles.mapNotNull { PathData.create(it) }, isClosed = true)
         }
 
         private fun process(paths: Collection<PathData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {

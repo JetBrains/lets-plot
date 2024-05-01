@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
@@ -147,6 +148,7 @@ internal class FigureToAwt(
         }
     }
 
+
     companion object {
         private fun buildSinglePlotComponent(
             plotContainer: PlotContainer,
@@ -157,6 +159,12 @@ internal class FigureToAwt(
 
             val plotComponent: JComponent = svgComponentFactory(svg)
             (plotComponent as DisposingHub).registerDisposable(plotContainer)
+            plotComponent.putClientProperty(ToolEventDispatcher::class, plotContainer.toolEventDispatcher)
+            (plotComponent as DisposingHub).registerDisposable(object : Disposable {
+                override fun dispose() {
+                    plotComponent.putClientProperty(ToolEventDispatcher::class, null)
+                }
+            })
 
             plotComponent.addMouseMotionListener(object : MouseAdapter() {
                 private var lastEvent: MouseEvent? = null

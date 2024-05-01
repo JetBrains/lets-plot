@@ -3,25 +3,22 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package demo.plot.browser.tools
+package demo.plot.batik.tools
 
 import demoAndTestShared.parsePlotSpec
 import kotlin.math.PI
 import kotlin.math.sin
 
-//
-// Do before run:
-// > ./gradlew jsBrowserProductionWebpack
-//
-
-object ScatterToolsBrowser {
+object ScatterToolsBatik {
     @JvmStatic
     fun main(args: Array<String>) {
         with(ScatterModel()) {
-            (PlotToolsBrowserDemoUtil.show(
+            SandboxViewerWithToolsBatik(
                 "Scatter plot tools",
+                null,
                 plotSpec(),
-            ))
+//                    Dimension(900, 700),
+            ).open()
         }
     }
 
