@@ -39,10 +39,10 @@ internal class PlotPanelFigureModel(
     }
 
     override fun activateInteraction(origin: String, interactionSpec: Map<String, Any>) {
-        val responce: List<Map<String, Any>> = toolEventDispatcher?.activateInteraction(origin, interactionSpec)
+        val response: List<Map<String, Any>> = toolEventDispatcher?.activateInteraction(origin, interactionSpec)
             ?: return
 
-        responce.forEach {
+        response.forEach {
             processToolEvent(it)
         }
     }
@@ -55,9 +55,9 @@ internal class PlotPanelFigureModel(
         }
 
         originAndInteractionList.forEach { (origin, interaction) ->
-            val responce: Map<String, Any>? = toolEventDispatcher?.deactivateInteraction(origin, interaction)
-            if (responce != null) {
-                processToolEvent(responce)
+            val response: Map<String, Any>? = toolEventDispatcher?.deactivateInteraction(origin, interaction)
+            if (response != null) {
+                processToolEvent(response)
             }
         }
     }

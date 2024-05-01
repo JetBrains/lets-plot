@@ -49,8 +49,8 @@ class FigureModelJs internal constructor(
 
     fun activateInteraction(origin: String, interactionSpecJs: dynamic) {
         val interactionSpec = dynamicObjectToMap(interactionSpecJs)
-        val responce: List<Map<String, Any>> = toolEventDispatcher.activateInteraction(origin, interactionSpec)
-        responce.forEach {
+        val response: List<Map<String, Any>> = toolEventDispatcher.activateInteraction(origin, interactionSpec)
+        response.forEach {
             processToolEvent(it)
         }
     }
@@ -63,8 +63,8 @@ class FigureModelJs internal constructor(
         }
 
         originAndInteractionList.forEach { (origin, interaction) ->
-            val responce: Map<String, Any> = toolEventDispatcher.deactivateInteraction(origin, interaction)
-            processToolEvent(responce)
+            val response: Map<String, Any> = toolEventDispatcher.deactivateInteraction(origin, interaction)
+            processToolEvent(response)
         }
     }
 
