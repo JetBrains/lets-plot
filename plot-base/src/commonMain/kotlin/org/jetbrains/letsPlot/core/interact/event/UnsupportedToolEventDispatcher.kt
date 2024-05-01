@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.interact.event
 
 class UnsupportedToolEventDispatcher : ToolEventDispatcher {
-    override fun activateInteraction(origin: String, interactionSpec: Map<String, Any>): Map<String, Any> {
+    override fun activateInteraction(origin: String, interactionSpec: Map<String, Any>): List<Map<String, Any>> {
         // ToDo: fire an error-event
         throw IllegalStateException("Unsupported: $interactionSpec")
     }
