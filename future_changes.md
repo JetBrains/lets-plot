@@ -5,3 +5,5 @@
 ### Changed
 
 ### Fixed
+
+- Undesired vertical scroller when displaying `gggrid` in Jupiter notebook.
