@@ -49,32 +49,27 @@ internal object LegendAssemblerUtil {
     ): Aesthetics {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
-            val dataPoint = HashMap<Aes<*>, Any>()
-            for (aes in Aes.values()) {
-                dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(aes)!!
+            // Defaults for legend
+            val dataPoint = Aes.values().associateWith { aes ->
+                aestheticsDefaults.defaultValueInLegend(aes)!!
+            }.toMutableMap()
 
-                // fix defaults for 'color_by/fill_by' (https://github.com/JetBrains/lets-plot/issues/867)
-                if (aes in listOf(Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C)) {
-                    val baseAes = when (aes) {
-                        colorByAes -> Aes.COLOR
-                        fillByAes -> Aes.FILL
-                        else -> aes
-                    }
-                    dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(baseAes)!!
+            // fix defaults for 'color_by/fill_by' (https://github.com/JetBrains/lets-plot/issues/867)
+            listOf(Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C).forEach { aes ->
+                val baseAes = when (aes) {
+                    colorByAes -> Aes.COLOR
+                    fillByAes -> Aes.FILL
+                    else -> aes
                 }
+                dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(baseAes)
             }
 
-            // Derive some aesthetics from constants
+            // Derive from constants
             for (constantAes in constantByAes.keys) {
-                when (constantAes) {
-                    Aes.SHAPE,
-                    Aes.COLOR,
-                    Aes.FILL,
-                    Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C -> dataPoint[constantAes] =
-                        constantByAes[constantAes]!!
-                }
+                dataPoint[constantAes] = constantByAes[constantAes]!!
             }
 
+            // Fill with values
             for (aes in valueByAes.keys) {
                 dataPoint[aes] = valueByAes[aes]!!
             }

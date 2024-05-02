@@ -185,7 +185,15 @@ class LegendAssembler(
                 // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
                     aesValuesByLabel.values,
-                    constantByAes,
+                    constantByAes.filterKeys {
+                        // Derive some aesthetics from constants
+                        it in listOf(
+                            Aes.SHAPE,
+                            Aes.COLOR,
+                            Aes.FILL,
+                            Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C
+                        )
+                    },
                     aestheticsDefaults,
                     colorByAes,
                     fillByAes
@@ -210,32 +218,17 @@ class LegendAssembler(
                 fillByAes: Aes<Color>,
                 isMarginal: Boolean
             ): LegendLayer {
-                // ToDo
-                // build 'key' aesthetics
+                 // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
                     listOf(legendItem.aesValues),
                     constantByAes,
                     aestheticsDefaults,
                     colorByAes,
                     fillByAes
-
                 )
-                /*val builder = AestheticsBuilder(1)
-                for (aes in Aes.values()) {
-                    @Suppress("UNCHECKED_CAST")
-                    builder.constantAes(
-                        aes as Aes<Any>,
-                        aestheticsDefaults.defaultValue(aes)
-                    )
-                }
-                for (aes in constantByAes.keys) {
-                    @Suppress("UNCHECKED_CAST")
-                    builder.constantAes(aes as Aes<Any>, constantByAes[aes])
-                }
-                val keyAesthetics = builder.build() */
                 return LegendLayer(
                     keyElementFactory,
-                    emptyList(),
+                    aesList = emptyList(),
                     isMarginal,
                     keyAesthetics,
                     keyLabels = listOf(legendItem.label),
