@@ -105,7 +105,15 @@ internal class PolarFrameOfReference(
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
-            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+            val gridComponent = GridComponent(
+                majorBreaks = breaksData.majorBreaks,
+                minorBreaks = breaksData.minorBreaks,
+                majorGrid = breaksData.majorGrid,
+                minorGrid = breaksData.minorGrid,
+                axisInfo = axisInfo,
+                gridTheme = vGridTheme,
+                panOffset = panOffset,
+            )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
             parent.add(gridComponent)
@@ -116,7 +124,15 @@ internal class PolarFrameOfReference(
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
-            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
+            val gridComponent = GridComponent(
+                majorBreaks = breaksData.majorBreaks,
+                minorBreaks = breaksData.minorBreaks,
+                majorGrid = breaksData.majorGrid,
+                minorGrid = breaksData.minorGrid,
+                axisInfo = axisInfo,
+                gridTheme = hGridTheme,
+                panOffset = panOffset,
+            )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
             parent.add(gridComponent)
@@ -195,10 +211,12 @@ internal class PolarFrameOfReference(
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = buildGeom(layer, targetCollector)
         layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
+        return layerComponent
+    }
 
+    override fun setClip(element: SvgComponent) {
         // Compute clip circle
         val r = layoutInfo.geomContentBounds.width / 2 / (1 + R_EXPAND)
-        layerComponent.clipCircle(layoutInfo.geomContentBounds.dimension.mul(0.5), r)
-        return layerComponent
+        element.clipCircle(layoutInfo.geomContentBounds.dimension.mul(0.5), r)
     }
 }

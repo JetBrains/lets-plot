@@ -45,6 +45,7 @@ internal open class SquareFrameOfReference(
     // Flip theme
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
+    override var panOffset: DoubleVector = DoubleVector.ZERO
 
     // Rendering
 
@@ -124,9 +125,10 @@ internal open class SquareFrameOfReference(
                 axisInfo,
                 hideAxis = false,
                 hideAxisBreaks = !layoutInfo.vAxisShown,
-                vAxisTheme,
-                labelAdjustments,
-                isDebugDrawing,
+                axisTheme = vAxisTheme,
+                labelAdjustments = labelAdjustments,
+                offset = panOffset,
+                isDebugDrawing = isDebugDrawing,
             )
 
             val axisOrigin = marginsLayout.toAxisOrigin(
@@ -151,7 +153,8 @@ internal open class SquareFrameOfReference(
                 hideAxisBreaks = !layoutInfo.hAxisShown,
                 axisTheme = hAxisTheme,
                 labelAdjustments = labelAdjustments,
-                isDebugDrawing,
+                offset = panOffset,
+                isDebugDrawing = isDebugDrawing,
             )
 
             val axisOrigin = marginsLayout.toAxisOrigin(
@@ -169,7 +172,15 @@ internal open class SquareFrameOfReference(
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
 
-            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, vGridTheme)
+            val gridComponent = GridComponent(
+                majorBreaks = breaksData.majorBreaks,
+                minorBreaks = breaksData.minorBreaks,
+                majorGrid = breaksData.majorGrid,
+                minorGrid = breaksData.minorGrid,
+                axisInfo = axisInfo,
+                gridTheme = vGridTheme,
+                panOffset = panOffset,
+            )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
             parent.add(gridComponent)
@@ -180,7 +191,15 @@ internal open class SquareFrameOfReference(
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
 
-            val gridComponent = GridComponent(breaksData.majorGrid, breaksData.minorGrid, hGridTheme)
+            val gridComponent = GridComponent(
+                majorBreaks = breaksData.majorBreaks,
+                minorBreaks = breaksData.minorBreaks,
+                majorGrid = breaksData.majorGrid,
+                minorGrid = breaksData.minorGrid,
+                axisInfo = axisInfo,
+                gridTheme = hGridTheme,
+                panOffset = panOffset,
+            )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
             parent.add(gridComponent)
@@ -263,9 +282,11 @@ internal open class SquareFrameOfReference(
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = buildGeom(layer, targetCollector)
         layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
-        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, layoutInfo.geomContentBounds.dimension))
-
         return layerComponent
+    }
+
+    override fun setClip(element: SvgComponent) {
+        element.clipBounds(layoutInfo.geomContentBounds)
     }
 
     protected fun buildGeom(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
@@ -289,6 +310,7 @@ internal open class SquareFrameOfReference(
             hideAxisBreaks: Boolean,
             axisTheme: AxisTheme,
             labelAdjustments: TickLabelAdjustments,
+            offset: DoubleVector,
             isDebugDrawing: Boolean,
         ): SvgComponent {
             val axis = AxisComponent(
@@ -298,7 +320,8 @@ internal open class SquareFrameOfReference(
                 labelAdjustments = labelAdjustments,
                 axisTheme = axisTheme,
                 hideAxis = hideAxis,
-                hideAxisBreaks = hideAxisBreaks
+                hideAxisBreaks = hideAxisBreaks,
+                panOffset = offset
             )
 
             if (isDebugDrawing) {

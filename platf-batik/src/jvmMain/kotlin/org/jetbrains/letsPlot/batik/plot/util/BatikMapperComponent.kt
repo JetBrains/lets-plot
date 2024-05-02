@@ -5,15 +5,15 @@
 
 package org.jetbrains.letsPlot.batik.plot.util
 
+import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
+import org.apache.batik.gvt.event.GraphicsNodeChangeListener
 import org.jetbrains.letsPlot.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.DisposableRegistration
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
-import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
-import org.apache.batik.gvt.event.GraphicsNodeChangeListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics

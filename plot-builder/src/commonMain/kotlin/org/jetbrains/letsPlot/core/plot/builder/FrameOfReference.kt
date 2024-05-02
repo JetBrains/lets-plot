@@ -5,13 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface FrameOfReference {
+    var panOffset: DoubleVector
+
     fun drawBeforeGeomLayer(parent: SvgComponent)
 
     fun drawAfterGeomLayer(parent: SvgComponent)
 
     fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
+
+    fun setClip(element: SvgComponent)
 }

@@ -25,6 +25,8 @@ internal class MarginalFrameOfReference(
     private val penColor: Color,
     private val isDebugDrawing: Boolean
 ) : FrameOfReference {
+    override var panOffset: DoubleVector = DoubleVector.ZERO
+
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
 
     override fun drawAfterGeomLayer(parent: SvgComponent) {
@@ -50,7 +52,11 @@ internal class MarginalFrameOfReference(
         )
 
         layerComponent.moveTo(geomBounds.origin)
-        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+
         return layerComponent
+    }
+
+    override fun setClip(element: SvgComponent) {
+        element.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
     }
 }

@@ -32,8 +32,8 @@ internal class PlotToolEventDispatcher(
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = {
-                    println("Pan tool: apply: $it")
+                onCompleted = { _, target ->
+                    println("Pan tool: apply: $target")
                 }
             )
 

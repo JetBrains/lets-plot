@@ -12,44 +12,70 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
+import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
 
 class GridComponent(
+    private val majorBreaks: List<DoubleVector>,
+    private val minorBreaks: List<DoubleVector>,
     private val majorGrid: List<List<DoubleVector>>,
     private val minorGrid: List<List<DoubleVector>>,
-    private val gridTheme: PanelGridTheme
+    axisInfo: AxisLayoutInfo,
+    private val gridTheme: PanelGridTheme,
+    private val panOffset: DoubleVector,
 ) : SvgComponent() {
-    override fun buildComponent() {
+    private val container = SvgGElement()
 
-        if (gridTheme.showMinor()) {
-            for (lineString in minorGrid) {
-                val elem = buildGridLine(
-                    lineString,
-                    gridTheme.minorLineWidth(),
-                    gridTheme.minorLineColor(),
-                    gridTheme.minorLineType()
-                )
-                rootGroup.children().add(elem)
+    private val length = axisInfo.axisLength
+    private val orientation = axisInfo.orientation
+
+    private val start = 0.0
+    private val end: Double = length
+
+    override fun buildComponent() {
+        rootGroup.children().add(container)
+
+        if (panOffset != DoubleVector.ZERO) {
+            val delta = when (orientation.isHorizontal) {
+                true -> DoubleVector(panOffset.x, 0)
+                false -> DoubleVector(0, panOffset.y)
             }
+
+            transformTranslate(container, delta)
         }
 
-        // Major grid.
+        if (gridTheme.showMinor()) {
+            buildGrid(minorBreaks, minorGrid, gridTheme.minorLineWidth(), gridTheme.minorLineColor(), gridTheme.minorLineType())
+        }
+
         if (gridTheme.showMajor()) {
-            for (lineString in majorGrid) {
-                val elem = buildGridLine(
-                    lineString,
-                    gridTheme.majorLineWidth(),
-                    gridTheme.majorLineColor(),
-                    gridTheme.majorLineType()
-                )
-                rootGroup.children().add(elem)
+            buildGrid(majorBreaks, majorGrid, gridTheme.majorLineWidth(), gridTheme.majorLineColor(), gridTheme.majorLineType())
+        }
+    }
+
+    private fun buildGrid(breaks: List<DoubleVector>, grid: List<List<DoubleVector>>, lineWidth: Double, lineColor: Color, lineType: LineType) {
+        breaks.forEachIndexed { index, br ->
+            val loc = when (orientation.isHorizontal) {
+                true -> br.x + panOffset.x
+                false -> br.y + panOffset.y
+            }
+
+            if (loc in start..end) {
+                val elem = buildGridLine(grid[index], lineWidth, lineColor, lineType)
+                container.children().add(elem)
             }
         }
     }
 
-    private fun buildGridLine(lineString: List<DoubleVector>, width: Double, color: Color, lineType: LineType): SvgNode {
+    private fun buildGridLine(
+        lineString: List<DoubleVector>,
+        width: Double,
+        color: Color,
+        lineType: LineType
+    ): SvgNode {
         val shapeElem: SvgShape = when {
-            lineString.size == 2 -> SvgLineElement(lineString[0].x, lineString[0].y, lineString[1].x, lineString[1].y )
+            lineString.size == 2 -> SvgLineElement(lineString[0].x, lineString[0].y, lineString[1].x, lineString[1].y)
             lineString.size < 2 -> SvgPathElement()
             else -> SvgPathElement(SvgPathDataBuilder().lineString(lineString).build())
         }

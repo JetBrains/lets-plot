@@ -110,9 +110,9 @@ internal class PlotToolbox(
         init {
             regs.add(
                 interactor.startToolFeedback(PanGeomFeedback(
-                    onCompleted = {
-                        println("Pan tool: apply: $it")
-                    }
+                    onStarted = { coord, target -> target.pan(coord) },
+                    onDragged = { coord, target -> target.pan(coord) },
+                    onCompleted = { _, target -> target.pan(DoubleVector.ZERO) },
                 ))
             )
         }
