@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem.Companion.DEFAULT_CUSTOM_LEGEND_KEY
 import org.jetbrains.letsPlot.core.plot.builder.guide.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Legend
@@ -125,13 +126,12 @@ class LegendAssembler(
             }
         }
 
-        val spec =
-            createLegendSpec(
-                legendTitle, legendBreaks, theme,
-                LegendOptions.combine(
-                    legendOptionsList
-                )
-            )
+        val spec = createLegendSpec(
+            legendTitle.takeIf { it != DEFAULT_CUSTOM_LEGEND_KEY } ?: "",
+            legendBreaks,
+            theme,
+            options = LegendOptions.combine(legendOptionsList)
+        )
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
