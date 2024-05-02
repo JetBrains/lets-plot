@@ -129,7 +129,7 @@ internal class PlotTile(
                 for (layer in layers) {
                     val marginComponent = marginFrame.buildGeomComponent(layer, NullGeomTargetCollector())
                     add(marginComponent)
-                    marginFrame.setClip(clipGroup)
+                    marginFrame.setClip(marginComponent)
                 }
             }
 
