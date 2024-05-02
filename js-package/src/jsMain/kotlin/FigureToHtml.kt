@@ -163,6 +163,7 @@ internal class FigureToHtml(
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
+//            val style = "position: relative;"  < -- ggbunch doesn't work without setting the container's width/height.
             val style = "position: relative; width: ${size.x}px; height: ${size.y}px;"
             element.setAttribute("style", style)
         }

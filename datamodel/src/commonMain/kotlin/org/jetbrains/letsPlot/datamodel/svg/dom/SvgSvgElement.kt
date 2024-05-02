@@ -12,7 +12,9 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.WritablePropert
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgContainer.Companion.CLIP_PATH
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgContainer.Companion.OPACITY
 
-class SvgSvgElement() : SvgStylableElement(), SvgContainer,
+class SvgSvgElement constructor() :
+    SvgStylableElement(),
+    SvgContainer,
     SvgLocatable {
 
     companion object {
@@ -26,12 +28,22 @@ class SvgSvgElement() : SvgStylableElement(), SvgContainer,
             SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
         val VIEW_BOX: SvgAttributeSpec<ViewBoxRectangle> =
             SvgAttributeSpec.createSpec("viewBox")
+        val DISPLAY: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpec(SvgConstants.DISPLAY)
     }
 
     override val elementName = "svg"
 
     override val bBox: DoubleRectangle
         get() = container().getPeer()!!.getBBox(this)
+
+    init {
+        // Make SVG a block-element.
+        // By default, in HTML SVG is an inline element.
+        // As result the parent DIV height may sometimes be a few pixels larger than the height of the SVG itself,
+        // because of the vertical alignment of inline elements, which is "baseline".
+        setAttribute(DISPLAY, "block")
+    }
 
     constructor(width: Double, height: Double) : this() {
 

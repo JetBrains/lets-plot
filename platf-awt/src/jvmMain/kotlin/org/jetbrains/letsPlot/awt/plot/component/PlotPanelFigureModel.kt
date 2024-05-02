@@ -7,9 +7,11 @@ package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -22,7 +24,7 @@ internal class PlotPanelFigureModel(
 ) : FigureModel {
 
     private var toolEventHandler: ((Map<String, Any>) -> Unit)? = null
-    private val activeInteractionsByOrigin: MutableMap<String, MutableList<Map<String, Any>>> = HashMap()
+    private val activeInteractionsByOrigin: MutableMap<String, MutableList<String>> = HashMap()
 
     var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
@@ -37,21 +39,45 @@ internal class PlotPanelFigureModel(
     }
 
     override fun activateInteraction(origin: String, interactionSpec: Map<String, Any>) {
-        val responce: Map<String, Any> = toolEventDispatcher?.activateInteraction(origin, interactionSpec)
+        val response: List<Map<String, Any>> = toolEventDispatcher?.activateInteraction(origin, interactionSpec)
             ?: return
-        if (responce.getValue(EVENT_NAME) == INTERACTION_ACTIVATED) {
-            activeInteractionsByOrigin.getOrPut(origin) { ArrayList<Map<String, Any>>() }.add(interactionSpec)
+
+        response.forEach {
+            processToolEvent(it)
         }
-        toolEventHandler?.invoke(responce)
     }
 
     override fun deactivateInteractions(origin: String) {
-        activeInteractionsByOrigin.remove(origin)?.forEach { interactionSpec ->
-            val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-            val responce: Map<String, Any>? = toolEventDispatcher?.deactivateInteraction(origin, interactionName)
-            if (responce != null) {
-                toolEventHandler?.invoke(responce)
+        val originAndInteractionList = activeInteractionsByOrigin.flatMap { (origin, interactionList) ->
+            interactionList.map {
+                Pair(origin, it)
             }
         }
+
+        originAndInteractionList.forEach { (origin, interaction) ->
+            val response: Map<String, Any>? = toolEventDispatcher?.deactivateInteraction(origin, interaction)
+            if (response != null) {
+                processToolEvent(response)
+            }
+        }
+    }
+
+    private fun processToolEvent(event: Map<String, Any>) {
+        val origin = event.getValue(EVENT_INTERACTION_ORIGIN) as String
+        val interactionName = event.getValue(EVENT_INTERACTION_NAME) as String
+        when (event.getValue(EVENT_NAME) as String) {
+            INTERACTION_ACTIVATED -> {
+                activeInteractionsByOrigin.getOrPut(origin) { ArrayList<String>() }.add(interactionName)
+            }
+
+            INTERACTION_DEACTIVATED -> {
+                activeInteractionsByOrigin[origin]?.remove(interactionName)
+            }
+
+            else -> {
+                throw IllegalStateException("Unexpected tool event: $event")
+            }
+        }
+        toolEventHandler?.invoke(event)
     }
 }

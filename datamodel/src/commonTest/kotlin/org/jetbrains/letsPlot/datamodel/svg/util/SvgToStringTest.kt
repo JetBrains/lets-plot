@@ -30,7 +30,7 @@ class SvgToStringTest {
         // There should be no spaces between <tspan> elements
         assertEquals(
             """
-                |<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                |<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" display="block">
                 |  <text>
                 |    <tspan>1</tspan><tspan>2</tspan><tspan>3</tspan>
                 |  </text>

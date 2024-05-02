@@ -25,17 +25,6 @@ class SvgAttributeSpec<ValueT> private constructor(val name: String, val namespa
         return name
     }
 
-//    override fun equals(other: Any?): Boolean {
-//        if (this === other) return true
-//        if (other !is SvgAttributeSpec<*>) return false
-//
-//        val that = other as SvgAttributeSpec<*>?
-//
-//        return if (name != that!!.name) false else true
-//
-//    }
-
-
     override fun hashCode(): Int {
         return name.hashCode()
     }

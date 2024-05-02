@@ -13,6 +13,8 @@ object SvgConstants {
     const val SVG_STYLE_ATTRIBUTE = "style"
     const val SVG_TEXT_DY_ATTRIBUTE = "dy"
 
+    const val DISPLAY = "display"
+
     // values
     const val SVG_TEXT_ANCHOR_START = "start"  // also - default
     const val SVG_TEXT_ANCHOR_MIDDLE = "middle"

@@ -6,6 +6,6 @@
 package org.jetbrains.letsPlot.core.interact.event
 
 interface ToolEventDispatcher {
-    fun activateInteraction(origin: String, interactionSpec: Map<String, Any>): Map<String, Any>
+    fun activateInteraction(origin: String, interactionSpec: Map<String, Any>): List<Map<String, Any>>
     fun deactivateInteraction(origin: String, interactionName: String): Map<String, Any>
 }
