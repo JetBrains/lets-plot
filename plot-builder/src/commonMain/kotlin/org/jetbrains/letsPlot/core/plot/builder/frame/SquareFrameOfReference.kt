@@ -138,7 +138,6 @@ internal open class SquareFrameOfReference(
                 theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
-            axisComponent.addClassName(".v-draggable")
             parent.add(axisComponent)
         }
     }
@@ -165,7 +164,6 @@ internal open class SquareFrameOfReference(
                 theme.panel().inset()
             )
             axisComponent.moveTo(axisOrigin)
-            axisComponent.addClassName(".h-draggable")
             parent.add(axisComponent)
         }
     }

@@ -104,9 +104,13 @@ internal class PlotInteractor(
             val (bbox, tile) = target
             return object : InteractionTarget {
                 override val geomBounds: DoubleRectangle = bbox
-                override val tile: Any = tile
                 override fun zoom(geomBounds: DoubleRectangle) {
                     println("Target zoom: $geomBounds")
+                }
+
+                override fun pan(offset: DoubleVector) {
+                    println("Target pan: $offset")
+                    tile.pan(offset)
                 }
             }
 
