@@ -108,8 +108,8 @@ class BatikMapperComponent(
 
     companion object {
 
-        internal const val USE_NEW_REPAINT_MANAGER = false
-        internal const val USE_WEIRD_PERFORMANCE_TUNEUP = false
+        internal const val USE_NEW_REPAINT_MANAGER = true
+        internal const val USE_WEIRD_PERFORMANCE_TUNEUP = true
         internal const val DEBUG_REPAINT_MAPPER_COMPONENT = false
 
         val DEF_MESSAGE_CALLBACK = object : BatikMessageCallback {
