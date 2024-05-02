@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['guide_legend', 'guide_colorbar', 'guides']
+__all__ = ['guide_legend', 'guide_colorbar', 'guides', 'layer_key']
 
 
 def guide_legend(nrow=None, ncol=None, byrow=None):
@@ -141,3 +141,15 @@ def guides(**kwargs):
 
     """
     return FeatureSpec('guides', name=None, **kwargs)
+
+
+def layer_key(label, key=None, index=None, **kwargs):
+    """
+    ToDo Add description
+    :param label:
+    :param key:
+    :param index:
+    :param kwargs:
+    :return:
+    """
+    return FeatureSpec('layer_key', name=None, label=label, key=key, index=index, **kwargs)

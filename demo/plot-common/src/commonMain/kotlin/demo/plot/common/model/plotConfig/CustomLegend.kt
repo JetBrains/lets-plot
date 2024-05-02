@@ -37,7 +37,7 @@ class CustomLegend {
                     'color': 'blue',
                     'size': 1.2,
                     'linetype': 'dotted',
-                    'layer_key': 'Blue zone'
+                    'show_key': 'Blue zone'
                 },
                 {
                     'geom': 'point',
@@ -45,14 +45,14 @@ class CustomLegend {
                     'y': 0,
                     'color': 'red',
                     'size': 5,
-                    'layer_key': 'Red zone'
+                    'show_key': 'Red zone'
                 },
                 {
                     'geom': 'rect',
                     'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
                     'alpha': 0.2,
                     'fill': 'green',
-                    'layer_key': 'Green zone'
+                    'show_key': 'Green zone'
                 },
                 {
                     'geom': 'label',
@@ -62,7 +62,7 @@ class CustomLegend {
                     'fill': 'orange',
                     'color': 'white',
                     'size': 8,
-                    'layer_key': 'Orange zone'
+                    'show_key': 'Orange zone'
                 }
               ]
             }
@@ -99,7 +99,7 @@ class CustomLegend {
                     'color': 'blue',
                     'size': 1.2,
                     'linetype': 'dotted',
-                    'layer_key': {
+                    'show_key': {
                         'label': 'Blue zone',
                         'index': 2
                     }
@@ -110,7 +110,7 @@ class CustomLegend {
                     'y': 0,
                     'color': 'red',
                     'size': 5,
-                    'layer_key': {
+                    'show_key': {
                         'label': 'Red zone',
                         'index': 0,
                         'size': 7,
@@ -122,7 +122,7 @@ class CustomLegend {
                     'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
                     'alpha': 0.2,
                     'fill': 'green',
-                    'layer_key': {
+                    'show_key': {
                         'label': 'Green zone',
                         'index': 1,
                         'alpha': 0.8
@@ -136,7 +136,7 @@ class CustomLegend {
                     'fill': 'orange',
                     'color': 'white',
                     'size': 8,
-                    'layer_key': {
+                    'show_key': {
                         'label': 'Orange zone',
                         'colour': 'black'
                     }
@@ -157,6 +157,7 @@ class CustomLegend {
               'layers': [
                 {
                     'geom': 'line', 
+                    'linetype': 'dotted',                    
                     'data': {
                         'x': [10, 15, 10, 15], 
                         'y': [42, 48, 50, 50], 
@@ -167,7 +168,7 @@ class CustomLegend {
                         'y': 'y', 
                         'color': 'g'
                     },
-                    'layer_key': {
+                    'show_key': {
                         'key': 'color',
                         'label': 'NA'
                     }
@@ -178,7 +179,7 @@ class CustomLegend {
                     'y': 44,
                     'color': 'yellow',
                     'size': 5,
-                    'layer_key': {
+                    'show_key': {
                         'key': 'color',
                         'label': 'point'
                     }

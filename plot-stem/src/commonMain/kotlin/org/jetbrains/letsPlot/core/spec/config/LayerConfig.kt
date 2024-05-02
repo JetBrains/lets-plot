@@ -25,7 +25,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
-import org.jetbrains.letsPlot.core.spec.Option.Layer.LAYER_KEY
+import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal
@@ -83,17 +83,17 @@ class LayerConfig(
         }
     val legendItem: LegendItem?
         get() {
-            val legendOptions = get(LAYER_KEY).let { option ->
-                val optsMap = when (option) {
-                    is Map<*, *> -> {
-                        @Suppress("UNCHECKED_CAST")
-                        option as Map<String, Any>
-                    }
-                    is String -> mapOf(Layer.LayerKey.LABEL to option)
-                    else -> throw IllegalArgumentException("$LAYER_KEY expected a string or option map, but was '$option'")
+            val option = get(SHOW_KEY) ?: return null
+
+            val legendOptions = when (option) {
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    option as Map<String, Any>
                 }
-                OptionsAccessor(optsMap)
-            }
+                is String -> mapOf(Layer.LayerKey.LABEL to option)
+                else -> throw IllegalArgumentException("$SHOW_KEY expected a string or option map, but was '$option'")
+            }.let(::OptionsAccessor)
+
             val label = legendOptions.getString(Layer.LayerKey.LABEL) ?: return null
             val aesValues = LayerConfigUtil.initConstants(
                 legendOptions,
