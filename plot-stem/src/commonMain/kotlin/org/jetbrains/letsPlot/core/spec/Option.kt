@@ -682,6 +682,7 @@ object Option {
         const val COLOR_BAR_GB = "colourbar"
 
         const val REVERSE = "reverse"
+        const val TITLE = "title"
 
         object Legend {
             const val ROW_COUNT = "nrow"

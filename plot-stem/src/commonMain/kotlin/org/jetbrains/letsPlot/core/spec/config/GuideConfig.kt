@@ -19,13 +19,16 @@ import org.jetbrains.letsPlot.core.spec.Option.Guide.Legend.COL_COUNT
 import org.jetbrains.letsPlot.core.spec.Option.Guide.Legend.ROW_COUNT
 import org.jetbrains.letsPlot.core.spec.Option.Guide.NONE
 import org.jetbrains.letsPlot.core.spec.Option.Guide.REVERSE
+import org.jetbrains.letsPlot.core.spec.Option.Guide.TITLE
 import kotlin.math.max
 
 abstract class GuideConfig private constructor(opts: Map<String, Any>) : OptionsAccessor(opts) {
 
     fun createGuideOptions(): GuideOptions {
         val options = createGuideOptionsIntern()
-        return options.withReverse(getBoolean(REVERSE))
+        return options
+            .withReverse(getBoolean(REVERSE))
+            .withTitle(getString(TITLE))
     }
 
     protected abstract fun createGuideOptionsIntern(): GuideOptions

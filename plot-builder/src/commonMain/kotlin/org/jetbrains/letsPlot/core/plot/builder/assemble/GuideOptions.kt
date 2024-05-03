@@ -6,9 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 abstract class GuideOptions(
-    val isReverse: Boolean
+    val isReverse: Boolean,
+    val title: String?
 ) {
     abstract fun withReverse(reverse: Boolean): GuideOptions
+    abstract fun withTitle(title: String?): GuideOptions
 
     //    // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
 //    // @link https://github.com/JetBrains/kotlin-native/blob/master/IMMUTABILITY.md
@@ -16,8 +18,9 @@ abstract class GuideOptions(
 //    //      -   `isReverse` in the 'outer' class
 //    @ThreadLocal
     companion object {
-        val NONE: GuideOptions = object : GuideOptions(false) {
+        val NONE: GuideOptions = object : GuideOptions(false, null) {
             override fun withReverse(reverse: Boolean): GuideOptions = this // Do nothing
+            override fun withTitle(title: String?): GuideOptions = this
         }
     }
 }

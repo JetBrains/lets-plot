@@ -28,7 +28,7 @@ import kotlin.math.floor
 import kotlin.math.min
 
 class LegendAssembler(
-    private val legendTitle: String,
+    private val legendKey: String,
     private val guideOptionsMap: Map<String, GuideOptions>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
@@ -123,11 +123,12 @@ class LegendAssembler(
             }
         }
 
+        val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
         val spec = createLegendSpec(
-            legendTitle.takeIf { it != DEFAULT_CUSTOM_LEGEND_KEY } ?: "",
+            combinedLegendOptions.title ?: legendKey.takeIf { it != DEFAULT_CUSTOM_LEGEND_KEY } ?: "",
             legendBreaks,
             theme,
-            options = LegendOptions.combine(legendOptionsList)
+            combinedLegendOptions
         )
 
         return object : LegendBoxInfo(spec.size) {
