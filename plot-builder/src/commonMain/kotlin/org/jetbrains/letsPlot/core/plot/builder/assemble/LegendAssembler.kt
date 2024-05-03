@@ -61,7 +61,6 @@ class LegendAssembler(
         )
     }
 
-    // ToDo
     fun addLayer(
         legendItem: LegendItem,
         keyFactory: LegendKeyElementFactory,
@@ -88,8 +87,7 @@ class LegendAssembler(
         val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
         val legendLayers = legendLayers
             .filter { includeMarginalLayers || !it.isMarginal }
-            // ToDo Add ordering by index
-            //.sortedBy { it.index }
+            .sortedWith(compareBy(nullsLast()) { it.index })
 
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in legendLayers) {
