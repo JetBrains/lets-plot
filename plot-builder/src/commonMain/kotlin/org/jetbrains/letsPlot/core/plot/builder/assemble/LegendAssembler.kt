@@ -29,7 +29,7 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions>, // Map<Any, GuideOptions> ?
+    private val guideOptionsMap: Map<String, GuideOptions>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
@@ -116,10 +116,9 @@ class LegendAssembler(
         // legend options
         val legendOptionsList = ArrayList<LegendOptions>()
         for (legendLayer in legendLayers) {
-            val aesList = legendLayer.aesList
-            for (aes in aesList) {
-                if (guideOptionsMap[aes] is LegendOptions) {
-                    legendOptionsList.add(guideOptionsMap[aes] as LegendOptions)
+            for (key in legendLayer.keyList) {
+                if (guideOptionsMap[key] is LegendOptions) {
+                    legendOptionsList.add(guideOptionsMap[key] as LegendOptions)
                 }
             }
         }
@@ -143,7 +142,7 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val aesList: List<Aes<*>>,
+        val keyList: List<String>,
         val isMarginal: Boolean,
         val keyAesthetics: Aesthetics,
         val keyLabels: List<String>,
@@ -200,7 +199,7 @@ class LegendAssembler(
                 val keyLabels = ArrayList(aesValuesByLabel.keys)
                 return LegendLayer(
                     keyElementFactory,
-                    aesList,
+                    aesList.map(Aes<*>::name),
                     isMarginal,
                     keyAesthetics,
                     keyLabels
@@ -226,7 +225,7 @@ class LegendAssembler(
                 )
                 return LegendLayer(
                     keyElementFactory,
-                    aesList = emptyList(),
+                    keyList = listOf(legendItem.key),
                     isMarginal,
                     keyAesthetics,
                     keyLabels = listOf(legendItem.label),

@@ -42,7 +42,7 @@ internal object PlotAssemblerUtil {
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        guideOptionsMap: Map<String, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
 
@@ -65,7 +65,7 @@ internal object PlotAssemblerUtil {
                 val scale = ctx.getScale(aes)
                 val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes.name]?.let {
                     if (it is ColorBarOptions) {
                         checkFitsColorBar(aes, scale)
                         it

@@ -26,7 +26,7 @@ class PlotConfigFrontend private constructor(
     isClientSide = true
 ) {
 
-    internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
+    internal val guideOptionsMap: Map<String, GuideOptions>
 
     internal val xAxisPosition: AxisPosition
     internal val yAxisPosition: AxisPosition
