@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -35,7 +34,7 @@ internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
     private val adjustedDomain: DoubleRectangle,
-    coord: CoordinateSystem,
+    private val coord: PolarCoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
     private val theme: Theme,
@@ -51,8 +50,6 @@ internal class PolarFrameOfReference(
     flipAxis,
     plotContext
 ) {
-    private val coord: PolarCoordinateSystem = coord as PolarCoordinateSystem
-
     override fun doDrawVAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)

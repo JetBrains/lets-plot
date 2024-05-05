@@ -115,7 +115,7 @@ class PolarCoordProvider(
         )
     }
 
-    override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): CoordinateSystem {
+    override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): PolarCoordinateSystem {
         val sign = if (clockwise) -1.0 else 1.0
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return PolarCoordinateSystem(Coords.create(coordMapper), start, sign, transformBkgr)
