@@ -7,11 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingTrimmed
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.trimRing
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
@@ -391,7 +389,7 @@ class PolygonData private constructor(
             // Force the invariants
             val processedRings = rings
                 .filter { it.isNotEmpty() }
-                .map { trimRing(it, PathPoint.LOC_EQ) }
+                .map { trimAndNormalizeRing(it, PathPoint.LOC_EQ) }
                 .filter { it.size >= 3 } // 3 points is fine - will draw a line
 
             if (processedRings.isEmpty()) {

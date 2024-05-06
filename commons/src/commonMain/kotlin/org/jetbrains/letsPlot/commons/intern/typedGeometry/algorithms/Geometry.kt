@@ -63,18 +63,20 @@ fun <T> isRingTrimmed(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
         return true
     }
 
-    if (!eq(ring[0], ring[1]) && !eq(ring[ring.lastIndex], ring[ring.lastIndex - 1])) {
-        return true
+    if (eq(ring.first(), ring[1])) {
+        return false
     }
 
-    return false
+    if (eq(ring.first(), ring.last()) && eq(ring.first(), ring[ring.lastIndex - 1])) {
+        return false
+    }
+
+    return true
 }
 
 // Remove the same points from the beginning and the end of the ring. If trim is not needed, return the original ring.
 fun <T> trimRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
-    if (isRingTrimmed(ring, eq)) {
-        return ring
-    }
+    if (isRingTrimmed(ring, eq)) return ring
 
     val firstElement = ring.first()
     val lastElement = ring.last()
@@ -82,31 +84,59 @@ fun <T> trimRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
     val inner = ring.subList(1, ring.lastIndex)
 
     val startSkipCount = inner.indexOfFirst { !eq(it, firstElement) }
-    val endSkipCount = inner.asReversed().indexOfFirst { !eq(it, lastElement) }
+    val endSkipCount = inner.asReversed().indexOfFirst { !eq(it, firstElement) }
 
     // All items are the same - trim to two items
     if (startSkipCount == -1 || endSkipCount == -1) {
         return listOf(firstElement, lastElement)
     }
 
-    return ring.subList(startSkipCount, ring.lastIndex - endSkipCount + 1)
+    return ring.subList(startSkipCount, ring.size - endSkipCount)
 }
 
-fun <T> normalize(ring: List<T>): List<T> {
-    //Remove consecutive duplicates
-    val cleanedRing = ring.fold(emptyList<T>()) { acc, i ->
-        if (acc.isEmpty() || acc.last() != i) acc + i else acc
-    }
-    //Add closing point if needed
-    val outputRing = mutableListOf<T>()
-    cleanedRing.forEachIndexed { index, vec ->
-        if (index != 0 && index != cleanedRing.size - 1 && vec == cleanedRing.first()) {
-            outputRing.add(vec)
-        }
-        outputRing.add(vec)
+fun <T> isRingNormalized(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
+    if (ring.size < 3) {
+        return true
     }
 
-    return outputRing
+    //If ring has self-intersection in start point, then it's not normalized
+    ring.subList(1, ring.lastIndex).find { eq(it, ring.first()) }?.let {
+        return false
+    }
+
+    return true
+}
+
+// Normalize the ring by adding a duplicate of the first element if a self-intersection is found in the ring.
+fun <T> normalizeRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
+    if (isRingNormalized(ring, eq)) return ring
+
+    val firstElement = ring.first()
+    // Search for the first element in the array (not at the first and last position)
+    val normalizedRing = mutableListOf<T>()
+    var hasPair = true
+    ring.forEachIndexed() { index, t ->
+        normalizedRing.add(t)
+        if (eq(t, firstElement)
+            && index != 0
+            && index != ring.lastIndex
+        ) {
+            // Add a close element only if it has no pair
+            hasPair = !hasPair
+            if (!hasPair && !eq(ring[index + 1], firstElement)) {
+                normalizedRing.add(t)
+                hasPair = true
+            }
+        }
+    }
+
+    return normalizedRing
+}
+
+fun <T> trimAndNormalizeRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
+    val normalizedRing = normalizeRing(trimRing(ring, eq), eq)
+    if (ring.isNotEmpty() && !normalizedRing.isClosed(eq)) return makeClosed(normalizedRing)
+    return normalizedRing
 }
 
 private fun <T> List<T>.sublist(range: IntSpan): List<T> {
