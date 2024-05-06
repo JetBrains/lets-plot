@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape.*
+import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.CircleGlyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyphs
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements

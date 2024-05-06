@@ -32,6 +32,7 @@ object AestheticsUtil {
         solid: Boolean,
         p: DataPointAesthetics,
         strokeWidth: Double,
+        angle: Double,
         location: DoubleVector
     ) {
         val fill = fill(filled, solid, p)
@@ -47,7 +48,6 @@ object AestheticsUtil {
             strokeAlpha = alpha(stroke, p)
         }
 
-        val angle = p.finiteOrNull(Aes.ANGLE) ?: 0.0
         shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, angle, location.x, location.y)
     }
 
