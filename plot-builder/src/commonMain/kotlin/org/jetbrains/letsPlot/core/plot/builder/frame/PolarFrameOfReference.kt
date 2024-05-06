@@ -213,7 +213,7 @@ internal class PolarFrameOfReference(
 
     override fun setClip(element: SvgComponent) {
         // Compute clip circle
-        val r = layoutInfo.geomContentBounds.width / 2 / (1 + R_EXPAND)
-        element.clipCircle(layoutInfo.geomContentBounds.dimension.mul(0.5), r)
+        val r = layoutInfo.geomContentBounds.dimension.x / 2
+        element.clipCircle(layoutInfo.geomContentBounds.center, r / (1 + R_EXPAND))
     }
 }
