@@ -46,6 +46,7 @@ class LegendOptions constructor(
         if (colCount != other.colCount) return false
         if (rowCount != other.rowCount) return false
         if (byRow != other.byRow) return false
+        if (title != other.title) return false
 
         return true
     }
@@ -54,6 +55,7 @@ class LegendOptions constructor(
         var result = colCount ?: 0
         result = 31 * result + (rowCount ?: 0)
         result = 31 * result + byRow.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
         return result
     }
 

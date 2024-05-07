@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 abstract class GuideOptions(
-    val isReverse: Boolean,
+    val isReverse: Boolean,     // ToDo Not implemented (https://github.com/JetBrains/lets-plot/issues/410)
     val title: String?
 ) {
     abstract fun withReverse(reverse: Boolean): GuideOptions

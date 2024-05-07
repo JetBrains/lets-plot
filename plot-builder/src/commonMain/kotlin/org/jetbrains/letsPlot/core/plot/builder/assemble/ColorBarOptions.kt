@@ -34,6 +34,7 @@ class ColorBarOptions constructor(
         if (width != other.width) return false
         if (height != other.height) return false
         if (binCount != other.binCount) return false
+        if (title != other.title) return false
 
         return true
     }
@@ -42,6 +43,7 @@ class ColorBarOptions constructor(
         var result = width?.hashCode() ?: 0
         result = 31 * result + (height?.hashCode() ?: 0)
         result = 31 * result + (binCount ?: 0)
+        result = 31 * result + (title?.hashCode() ?: 0)
         return result
     }
 }
