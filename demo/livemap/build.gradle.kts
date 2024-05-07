@@ -38,7 +38,7 @@ kotlin {
     val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
     val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
     val ktorVersion = extra["ktor_version"] as String
-    val jfxPlatform = extra["jfx_platform_resolved"] as String
+    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning

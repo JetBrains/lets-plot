@@ -3,7 +3,7 @@
 import os
 import platform
 
-from setuptools import Command, Extension
+from setuptools import Extension
 from setuptools import setup, find_packages
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,7 +13,7 @@ kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_br
 this_system = platform.system()
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin', 'native', 'releaseStatic')
 
-python_package = "lets_plot"
+python_package = 'lets_plot'
 
 
 def update_js():
@@ -31,21 +31,7 @@ def update_js():
         if not os.path.isdir(dst_dir):
             os.mkdir(dst_dir)
 
-        copy(js_path, os.path.join(this_dir, python_package, 'package_data'))
-
-
-class UpdateJsCommand(Command):
-    description = "Copy datalore plot js files from last build"
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        update_js()
+        copy(js_path, dst_dir)
 
 
 version_locals = {}
@@ -54,7 +40,6 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 
 with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-
 
 if this_system == 'Darwin':
     stdcpp_lib = 'c++'
@@ -67,15 +52,18 @@ elif this_system == 'Windows':
     extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
-    distutils.cygwinccompiler.get_msvcr = lambda: []   
+
+    distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
     stdcpp_lib = 'stdc++'
     extra_link = ['-lz']
-    
+
 else:
     raise ValueError("Unsupported platform.")
 
+# Adding JS package to Python wheel:
+update_js()
 
 setup(name='lets-plot',
       license="MIT",
@@ -96,7 +84,6 @@ setup(name='lets-plot',
       classifiers=[
           "License :: OSI Approved :: MIT License",
           "Development Status :: 5 - Production/Stable",
-          "Programming Language :: Python :: 3.7",
           "Programming Language :: Python :: 3.8",
           "Programming Language :: Python :: 3.9",
           "Programming Language :: Python :: 3.10",
@@ -132,12 +119,8 @@ setup(name='lets-plot',
                     )
       ],
 
-      cmdclass=dict(
-          update_js=UpdateJsCommand,
-      ),
-
       install_requires=[
-          'pypng',          # for geom_imshow
-          'palettable',     # for geom_imshow
+          'pypng',  # for geom_imshow
+          'palettable',  # for geom_imshow
       ],
       )

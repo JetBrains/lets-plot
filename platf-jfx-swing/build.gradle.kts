@@ -8,7 +8,7 @@ plugins {
 }
 
 val jfxVersion = extra["jfx_version"] as String
-val jfxPlatform = extra["jfx_platform_resolved"] as String
+val jfxPlatform = extra["jfxPlatformResolved"] as String
 
 kotlin {
     jvm()
