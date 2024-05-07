@@ -54,8 +54,6 @@ def geom_livemap(*,
 
         To use vector tiles, pass the result of the `maptiles_lets_plot()` function.
 
-        To use a solid color as tiles, pass the result of the `maptiles_solid()` function.
-
         To use raster tiles, pass the result of the `maptiles_zxy()` function.
         As an alternative to this function, you can explicitly pass a string -
         URL to a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
