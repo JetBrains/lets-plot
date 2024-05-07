@@ -45,11 +45,13 @@ internal object PlotAssemblerUtil {
         guideOptionsMap: Map<String, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
+        fun chooseTitle(guideOptionsKey: String, defaultName: String): String {
+            return guideOptionsMap[guideOptionsKey]?.title ?: defaultName
+        }
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-//        for (layerInfo in geomTiles.coreLayerInfos()) {
         for (layerInfo in geomTiles.layerInfos()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
@@ -63,7 +65,7 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = scale.name
+                val scaleName = chooseTitle(aes.name, scale.name)
 
                 val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes.name]?.let {
                     if (it is ColorBarOptions) {
@@ -92,11 +94,13 @@ internal object PlotAssemblerUtil {
                         } else {
                             // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
                             // Add under another key
-                            "$scaleName (${aes.name})"
+                            "${scale.name} (${aes.name})"
                         }
                     } ?: scaleName
 
-                    colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(colorbarName)
+                    colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(
+                        chooseTitle(aes.name, colorbarName)
+                    )
 
                 } else {
                     // Legend
@@ -133,13 +137,16 @@ internal object PlotAssemblerUtil {
             layerInfo.legendItem?.let { legendItem ->
                 val aes = Aes.values().firstOrNull { it.name == legendItem.key }
                 val legendKey = if (aes != null && ctx.hasScale(aes)) {
-                    ctx.getScale(aes).name
+                    chooseTitle(aes.name, ctx.getScale(aes).name)
                 } else {
                     legendItem.key
                 }
                 val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendKey) {
                     LegendAssembler(
-                        legendKey,
+                        chooseTitle(
+                            legendKey,
+                            legendKey.takeIf { it != LegendItem.DEFAULT_CUSTOM_LEGEND_KEY } ?: ""
+                        ),
                         guideOptionsMap,
                         scaleMappersNP,
                         theme

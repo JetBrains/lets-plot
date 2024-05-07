@@ -28,7 +28,7 @@ import kotlin.math.floor
 import kotlin.math.min
 
 class LegendAssembler(
-    private val legendKey: String,
+    private val legendTitle: String,
     private val guideOptionsMap: Map<String, GuideOptions>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
@@ -116,19 +116,18 @@ class LegendAssembler(
         // legend options
         val legendOptionsList = ArrayList<LegendOptions>()
         for (legendLayer in legendLayers) {
-            for (key in legendLayer.keyList) {
+            for (key in legendLayer.legendKeyList) {
                 if (guideOptionsMap[key] is LegendOptions) {
                     legendOptionsList.add(guideOptionsMap[key] as LegendOptions)
                 }
             }
         }
 
-        val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
         val spec = createLegendSpec(
-            combinedLegendOptions.title ?: legendKey.takeIf { it != DEFAULT_CUSTOM_LEGEND_KEY } ?: "",
+            legendTitle,
             legendBreaks,
             theme,
-            combinedLegendOptions
+            LegendOptions.combine(legendOptionsList)
         )
 
         return object : LegendBoxInfo(spec.size) {
@@ -143,7 +142,7 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val keyList: List<String>,
+        val legendKeyList: List<String>,
         val isMarginal: Boolean,
         val keyAesthetics: Aesthetics,
         val keyLabels: List<String>,
@@ -200,7 +199,7 @@ class LegendAssembler(
                 val keyLabels = ArrayList(aesValuesByLabel.keys)
                 return LegendLayer(
                     keyElementFactory,
-                    aesList.map(Aes<*>::name),
+                    legendKeyList = aesList.map(Aes<*>::name),
                     isMarginal,
                     keyAesthetics,
                     keyLabels
@@ -226,7 +225,7 @@ class LegendAssembler(
                 )
                 return LegendLayer(
                     keyElementFactory,
-                    keyList = listOf(legendItem.key),
+                    legendKeyList = listOf(legendItem.key),
                     isMarginal,
                     keyAesthetics,
                     keyLabels = listOf(legendItem.label),
