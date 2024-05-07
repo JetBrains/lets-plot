@@ -20,7 +20,7 @@ def guide_legend(nrow=None, ncol=None, byrow=None, title=None):
     byrow : bool, default=True
         Type of output: by row, or by column.
     title : str
-        A title of guide.
+        Title of guide.
         By default, the name of the scale object or the name specified in `labs()` is used for the title.
 
     Returns
@@ -67,7 +67,7 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None, title=None):
     nbin : int
         Number of bins in color bar.
     title : str
-        A title of guide.
+        Title of guide.
         By default, the name of the scale object or the name specified in `labs()` is used for the title.
 
     Returns
@@ -151,11 +151,40 @@ def guides(**kwargs):
 
 def layer_key(label, key=None, index=None, **kwargs):
     """
-    ToDo Add description
-    :param label:
-    :param key:
-    :param index:
-    :param kwargs:
-    :return:
+    Configure custom legend.
+
+    Parameters
+    ----------
+    label : str
+        Text for the legend element in the custom legend.
+    key : str
+        Specifies the legend key to which the element should be added.
+    index : int
+        Position of the element in the custom legend.
+    kwargs :
+        A list of aesthetic parameters to use in the custom legend.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Custom legend specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = list(range(n))
+        y = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(color='red', show_key=layer_key("point", shape=21)) + \\
+            geom_line(color='blue', linetype=2, show_key=layer_key("line", linetype=1))
+
     """
     return FeatureSpec('layer_key', name=None, label=label, key=key, index=index, **kwargs)
