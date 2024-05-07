@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
@@ -42,11 +43,14 @@ object AxisUtil {
         val labelsMap = TickLabelsMap(orientation.isHorizontal, axisTick(axisTheme), labelAdjustments.rotationDegree)
 
         val clientGridArea = toClient(domain, coord, flipAxis)?.let { rect ->
-            when (panelTheme.showRect() || panelTheme.showBorder()) {
-                true -> rect.inflate(-6.0)
-                false -> rect
+            val padding = when {
+                !panelTheme.showRect() && !panelTheme.showBorder() -> Thickness.ZERO // For BBC-like themes
+                orientation.isHorizontal -> Thickness(right = 6.0, left = 6.0)
+                else -> Thickness(top = 6.0, bottom = 6.0)
             }
-        } ?: DoubleRectangle.XYWH(Double.MIN_VALUE, Double.MIN_VALUE, Double.MAX_VALUE, Double.MAX_VALUE) // better than fail
+            padding.shrinkRect(rect)
+
+        } ?: DoubleRectangle.LTRB(-1_000_000, -1_000_000, 1_000_000, 1_000_000) // better than fail
 
         val majorBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
             .mapIndexedNotNull { i, clientTick ->
