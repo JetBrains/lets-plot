@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.spatial.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.trimAndNormalizeRing
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.normalizeRing
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
@@ -336,7 +336,7 @@ internal abstract class CoordinatesCollector(
             onMultiPolygon = {
                 it.asSequence()
                     .flatten()
-                    .map { ring -> trimAndNormalizeRing(ring, LOC_EQ) }
+                    .map { ring -> normalizeRing(ring, Vec<LonLat>::equals) }
                     .flatten()
                     .forEach { p -> coordinates.append(p) }
             }
@@ -365,8 +365,6 @@ internal abstract class CoordinatesCollector(
     }
 
     companion object {
-
-        val LOC_EQ = { p1: Vec<LonLat>, p2: Vec<LonLat> -> p1 == p2 }
 
         val POINT_COLUMNS = mapOf(
             Aes.X.name to GeoConfig.POINT_X,

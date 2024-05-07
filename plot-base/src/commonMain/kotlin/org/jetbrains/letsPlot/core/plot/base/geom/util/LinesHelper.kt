@@ -389,7 +389,7 @@ class PolygonData private constructor(
             // Force the invariants
             val processedRings = rings
                 .filter { it.isNotEmpty() }
-                .map { trimAndNormalizeRing(it, PathPoint.LOC_EQ) }
+                .map { normalizeRing(it, PathPoint.LOC_EQ) }
                 .filter { it.size >= 3 } // 3 points is fine - will draw a line
 
             if (processedRings.isEmpty()) {
@@ -402,9 +402,7 @@ class PolygonData private constructor(
 
     init {
         require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
-        require(rings.all { it.size >= 3 }) { "PolygonData ring should contain at least 3 points" }
-        require(rings.all { it.first().coord == it.last().coord }) { "PolygonData ring should be closed" }
-        require(rings.all { isRingTrimmed(it, PathPoint.LOC_EQ) }) { "PolygonData ring should be trimmed" }
+        rings.forEach { checkRingInvariants(it, PathPoint.LOC_EQ) }
     }
 
     val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)
