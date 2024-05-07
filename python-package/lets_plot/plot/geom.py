@@ -6597,7 +6597,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - slice : values associated to pie sectors.
-    - explode : values to explode slices away from their center point, detaching it from the main pie.
+    - explode : values to explode slices away from their center point, detaching it from the main pie. The optimal range for the values is between 0 and 1-`hole`.
     - size : pie diameter.
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - alpha : transparency level of the pie. Accept values between 0 and 1.
