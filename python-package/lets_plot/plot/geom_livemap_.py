@@ -50,17 +50,11 @@ def geom_livemap(*,
         'epsg4326' for Equirectangular projection. `projection` only works
         with vector map tiles (i.e. Lets-Plot map tiles).
     tiles : str
-        Tile provider.
+        Tile provider:
 
-        To use vector tiles, pass the result of the `maptiles_lets_plot()` function.
-
-        To use raster tiles, pass the result of the `maptiles_zxy()` function.
-        As an alternative to this function, you can explicitly pass a string -
-        URL to a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
-        (e.g. 'http://my.tile.com/{z}/{x}/{y}.png').
-
-        The easiest way is to select tiles from a predefined list of constants
-        provided by the `tilesets` module.
+        - pass a predefined constant from the `tilesets` module (Lets-Plot's vector tiles, e.g. LETS_PLOT_COLOR, or outer raster tiles, e.g. OPEN_TOPO_MAP);
+        - pass a URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') if the required tileset isn't in the module;
+        - pass the result of a call to a `maptiles_zxy()` function if further customisation is required (e.g. attribution or zoom).
 
         More information about tiles can be found here:
         https://lets-plot.org/python/pages/basemap_tiles.html
@@ -106,9 +100,10 @@ def geom_livemap(*,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 10
 
         from lets_plot import *
+        from lets_plot import tilesets
         LetsPlot.setup_html()
         data = {
             'city': ['New York City', 'Prague'],
@@ -116,7 +111,7 @@ def geom_livemap(*,
             'lat': [40.6408, 50.073658],
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
-            geom_livemap(projection='epsg4326', tiles=maptiles_lets_plot(theme='dark')) + \\
+            geom_livemap(projection='epsg4326', tiles=tilesets.LETS_PLOT_DARK) + \\
             geom_path(color='white', geodesic=True) + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle("The shortest path between New York and Prague")
