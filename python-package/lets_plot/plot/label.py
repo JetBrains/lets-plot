@@ -4,6 +4,7 @@
 #
 from .core import FeatureSpec, FeatureSpecArray
 from .scale import _scale
+from .guide import guides, guide_legend
 
 #
 # Plot title
@@ -110,7 +111,7 @@ def ylab(label):
     return labs(y=label)
 
 
-def labs(title=None, subtitle=None, caption=None, **labels):
+def labs(title=None, subtitle=None, caption=None, custom_key=None, **labels):
     """
     Change plot title and axis label.
 
@@ -122,6 +123,8 @@ def labs(title=None, subtitle=None, caption=None, **labels):
         The text for the plot subtitle.
     caption : str
         The text for the plot caption.
+    custom_key : str or dict
+        The text for the custom legend title.
     labels
         Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color="New Color label"`.
 
@@ -153,6 +156,15 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     # plot caption
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
+
+    # custom legend titles
+    if custom_key is not None:
+        guides_args = {}
+        if isinstance(custom_key, dict):
+            guides_args = {key: guide_legend(title=value) for key, value in custom_key.items()}
+        else:
+            guides_args['custom_key'] = guide_legend(title=custom_key)
+        specs.append(guides(**guides_args))
 
     # scales
     for aes, label in labels.items():
