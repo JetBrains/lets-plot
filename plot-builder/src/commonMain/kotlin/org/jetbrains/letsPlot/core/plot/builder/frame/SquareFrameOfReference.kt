@@ -173,13 +173,12 @@ internal open class SquareFrameOfReference(
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
 
             val gridComponent = GridComponent(
-                majorBreaks = breaksData.majorBreaks,
-                minorBreaks = breaksData.minorBreaks,
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = vGridTheme,
                 panOffset = panOffset,
+                isOrthogonal = true
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -192,13 +191,12 @@ internal open class SquareFrameOfReference(
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
 
             val gridComponent = GridComponent(
-                majorBreaks = breaksData.majorBreaks,
-                minorBreaks = breaksData.minorBreaks,
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = hGridTheme,
                 panOffset = panOffset,
+                isOrthogonal = true
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)

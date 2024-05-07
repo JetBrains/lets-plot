@@ -42,20 +42,19 @@ object AxisUtil {
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
         val labelsMap = TickLabelsMap(orientation.isHorizontal, axisTick(axisTheme), labelAdjustments.rotationDegree)
 
-        val clientGridArea = toClient(domain, coord, flipAxis)?.let { rect ->
+        val gridRect = toClient(domain, coord, flipAxis)?.let { gridRect ->
             val padding = when {
                 !panelTheme.showRect() && !panelTheme.showBorder() -> Thickness.ZERO // For BBC-like themes
                 orientation.isHorizontal -> Thickness(right = 6.0, left = 6.0)
                 else -> Thickness(top = 6.0, bottom = 6.0)
             }
-            padding.shrinkRect(rect)
-
+            padding.shrinkRect(gridRect)
         } ?: DoubleRectangle.LTRB(-1_000_000, -1_000_000, 1_000_000, 1_000_000) // better than fail
 
         val majorBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
             .mapIndexedNotNull { i, clientTick ->
                 when (clientTick) {
-                    null, !in clientGridArea -> null
+                    null, !in gridRect -> null
                     else -> IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
                 }
             }
@@ -71,7 +70,7 @@ object AxisUtil {
                 toClient(minorDomainBreaks, domain, coord, flipAxis, orientation.isHorizontal)
                     .mapIndexedNotNull { i, clientBreak ->
                         when (clientBreak) {
-                            null, !in clientGridArea -> null
+                            null, !in gridRect -> null
                             else -> Pair(minorDomainBreaks[i], clientBreak)
                         }
                     }
@@ -107,7 +106,7 @@ object AxisUtil {
         return coordinateSystem.toClient(v.flipIf(flipAxis))
     }
 
-    private fun toClient(
+    internal fun toClient(
         breaks: List<Double>,
         domain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,

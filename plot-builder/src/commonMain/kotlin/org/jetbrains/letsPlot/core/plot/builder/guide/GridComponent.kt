@@ -17,13 +17,12 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
 
 class GridComponent(
-    private val majorBreaks: List<DoubleVector>,
-    private val minorBreaks: List<DoubleVector>,
     private val majorGrid: List<List<DoubleVector>>,
     private val minorGrid: List<List<DoubleVector>>,
     axisInfo: AxisLayoutInfo,
     private val gridTheme: PanelGridTheme,
     private val panOffset: DoubleVector,
+    private val isOrthogonal: Boolean,
 ) : SvgComponent() {
     private val container = SvgGElement()
 
@@ -46,26 +45,45 @@ class GridComponent(
         }
 
         if (gridTheme.showMinor()) {
-            buildGrid(minorBreaks, minorGrid, gridTheme.minorLineWidth(), gridTheme.minorLineColor(), gridTheme.minorLineType())
+            buildGrid(
+                minorGrid,
+                gridTheme.minorLineWidth(),
+                gridTheme.minorLineColor(),
+                gridTheme.minorLineType()
+            )
         }
 
         if (gridTheme.showMajor()) {
-            buildGrid(majorBreaks, majorGrid, gridTheme.majorLineWidth(), gridTheme.majorLineColor(), gridTheme.majorLineType())
+            buildGrid(
+                majorGrid,
+                gridTheme.majorLineWidth(),
+                gridTheme.majorLineColor(),
+                gridTheme.majorLineType()
+            )
         }
     }
 
-    private fun buildGrid(breaks: List<DoubleVector>, grid: List<List<DoubleVector>>, lineWidth: Double, lineColor: Color, lineType: LineType) {
-        breaks.forEachIndexed { index, br ->
-            val loc = when (orientation.isHorizontal) {
-                true -> br.x + panOffset.x
-                false -> br.y + panOffset.y
+    private fun buildGrid(
+        grid: List<List<DoubleVector>>,
+        lineWidth: Double,
+        lineColor: Color,
+        lineType: LineType
+    ) {
+        val visibleGridLines =
+            if (isOrthogonal) {
+                fun loc(p: DoubleVector): Double = when (orientation.isHorizontal) {
+                    true -> p.x + panOffset.x
+                    false -> p.y + panOffset.y
+                }
+                grid.filter { line -> line.any { p -> loc(p) in start..end } }
+            } else {
+                // Non-orthogonal grid is always visible and don't support panning
+                grid
             }
 
-            if (loc in start..end) {
-                val elem = buildGridLine(grid[index], lineWidth, lineColor, lineType)
-                container.children().add(elem)
-            }
-        }
+        val elems = visibleGridLines.map { buildGridLine(it, lineWidth, lineColor, lineType) }
+        container.children().addAll(elems)
+
     }
 
     private fun buildGridLine(
@@ -76,8 +94,8 @@ class GridComponent(
     ): SvgNode {
         val shapeElem: SvgShape = when {
             lineString.size == 2 -> SvgLineElement(lineString[0].x, lineString[0].y, lineString[1].x, lineString[1].y)
-            lineString.size < 2 -> SvgPathElement()
-            else -> SvgPathElement(SvgPathDataBuilder().lineString(lineString).build())
+            lineString.size > 2 -> SvgPathElement(SvgPathDataBuilder().lineString(lineString).build())
+            else -> SvgPathElement()
         }
 
         shapeElem.strokeColor().set(color)

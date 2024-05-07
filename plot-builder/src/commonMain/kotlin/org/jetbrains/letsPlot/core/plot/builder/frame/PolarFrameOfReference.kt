@@ -103,13 +103,12 @@ internal class PolarFrameOfReference(
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
             val gridComponent = GridComponent(
-                majorBreaks = breaksData.majorBreaks,
-                minorBreaks = breaksData.minorBreaks,
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = vGridTheme,
                 panOffset = panOffset,
+                isOrthogonal = false,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -122,13 +121,12 @@ internal class PolarFrameOfReference(
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
             val gridComponent = GridComponent(
-                majorBreaks = breaksData.majorBreaks,
-                minorBreaks = breaksData.minorBreaks,
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = hGridTheme,
                 panOffset = panOffset,
+                isOrthogonal = false,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
