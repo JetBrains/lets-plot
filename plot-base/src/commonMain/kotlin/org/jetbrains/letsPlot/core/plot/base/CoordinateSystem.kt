@@ -13,6 +13,7 @@ interface CoordinateSystem {
     val isPolar: Boolean
 
     fun toClient(p: DoubleVector): DoubleVector?
+    fun fromClient(p: DoubleVector): DoubleVector?
 
     fun toClient(r: DoubleRectangle): DoubleRectangle? {
         val leftTop = toClient(r.origin)

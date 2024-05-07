@@ -26,6 +26,11 @@ internal class DefaultCoordinateSystem(
         }
     }
 
+    override fun fromClient(p: DoubleVector): DoubleVector? {
+        val mapped = fromScreen(p)
+        return coordMapper.fromClient(mapped)
+    }
+
     override fun unitSize(p: DoubleVector): DoubleVector {
         return coordMapper.unitSize(p)
     }
@@ -38,6 +43,12 @@ internal class DefaultCoordinateSystem(
 
     private fun toScreen(p: DoubleVector): DoubleVector {
         val x = p.x - clientLeft
+        val y = clientBottom - p.y
+        return DoubleVector(x, y)
+    }
+
+    private fun fromScreen(p: DoubleVector): DoubleVector {
+        val x = p.x + clientLeft
         val y = clientBottom - p.y
         return DoubleVector(x, y)
     }

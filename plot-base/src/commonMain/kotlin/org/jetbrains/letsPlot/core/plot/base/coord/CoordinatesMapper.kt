@@ -11,12 +11,15 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 
 class CoordinatesMapper(
     val hScaleMapper: ScaleMapper<Double>,
+    val hScaleInverseMapper: ScaleMapper<Double>,
     val vScaleMapper: ScaleMapper<Double>,
+    val vScaleInverseMapper: ScaleMapper<Double>,
     val clientBounds: DoubleRectangle,
     internal val projection: Projection,
     private val flipAxis: Boolean,
@@ -41,6 +44,15 @@ class CoordinatesMapper(
         return null
     }
 
+    fun fromClient(p: DoubleVector): DoubleVector? {
+        val (mappedX, mappedY) = p.flipIf(flipAxis)
+
+        val projectedX = hScaleInverseMapper(mappedX) ?: return null
+        val projectedY = vScaleInverseMapper(mappedY) ?: return null
+
+        val projected = projection.invert(DoubleVector(projectedX, projectedY)) ?: return null
+        return projected.flipIf(flipAxis)
+    }
 
     fun unitSize(p: DoubleVector): DoubleVector {
         return if (projection.nonlinear) {
@@ -69,7 +81,15 @@ class CoordinatesMapper(
     }
 
     fun flip(): CoordinatesMapper {
-        return CoordinatesMapper(hScaleMapper, vScaleMapper, clientBounds, projection, !flipAxis)
+        return CoordinatesMapper(
+            hScaleMapper,
+            hScaleInverseMapper,
+            vScaleMapper,
+            vScaleInverseMapper,
+            clientBounds,
+            projection,
+            !flipAxis
+        )
     }
 
     companion object {
@@ -98,14 +118,16 @@ class CoordinatesMapper(
             }
 
             val hScaleMapper = Mappers.mul(domainProjected.xRange(), clientSize.x)
+            val hScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.x), domainProjected.xRange().length)
             val vScaleMapper = Mappers.mul(domainProjected.yRange(), clientSize.y)
+            val vScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.y), domainProjected.yRange().length)
 
             val clientOrigin = DoubleVector(
                 hScaleMapper(domainProjected.origin.x)!!,
                 vScaleMapper(domainProjected.origin.y)!!,
             )
             val clientBounds = DoubleRectangle(clientOrigin, clientSize)
-            return CoordinatesMapper(hScaleMapper, vScaleMapper, clientBounds, projection, flipAxis)
+            return CoordinatesMapper(hScaleMapper, hScaleInverseMapper, vScaleMapper, vScaleInverseMapper, clientBounds, projection, flipAxis)
         }
 
         fun toValidUnitSquareCenter(p: DoubleVector, projection: Projection): DoubleVector {

@@ -108,7 +108,9 @@ class PolarCoordProvider(
 
         return CoordinatesMapper(
             hScaleMapper = IDENTITY,
+            hScaleInverseMapper = IDENTITY,
             vScaleMapper = IDENTITY,
+            vScaleInverseMapper = IDENTITY,
             clientBounds = clientBounds,
             projection = polarProjection,
             flipAxis = false
@@ -141,6 +143,7 @@ class PolarCoordinateSystem internal constructor(
     override val isPolar: Boolean get() = true
 
     override fun toClient(p: DoubleVector): DoubleVector? = coordinateSystem.toClient(p)
+    override fun fromClient(p: DoubleVector): DoubleVector? = coordinateSystem.fromClient(p)
 
     override fun unitSize(p: DoubleVector): DoubleVector = coordinateSystem.unitSize(p)
 
