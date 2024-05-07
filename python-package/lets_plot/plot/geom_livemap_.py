@@ -50,9 +50,22 @@ def geom_livemap(*,
         'epsg4326' for Equirectangular projection. `projection` only works
         with vector map tiles (i.e. Lets-Plot map tiles).
     tiles : str
-        Tiles provider, either as a string - URL for a standard raster ZXY tile provider
-        with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
-        or the result of a call to a `maptiles_xxx()` functions.
+        Tile provider.
+
+        To use vector tiles, pass the result of the `maptiles_lets_plot()` function.
+
+        To use a solid color as tiles, pass the result of the `maptiles_solid()` function.
+
+        To use raster tiles, pass the result of the `maptiles_zxy()` function.
+        As an alternative to this function, you can explicitly pass a string -
+        URL to a standard raster ZXY tile provider with {z}, {x} and {y} wildcards
+        (e.g. 'http://my.tile.com/{z}/{x}/{y}.png').
+
+        The easiest way is to select tiles from a predefined list of constants
+        provided by the `tilesets` module.
+
+        More information about tiles can be found here:
+        https://lets-plot.org/python/pages/basemap_tiles.html
     show_coord_pick_tools : bool, default=False
         Show buttons "copy location" and "draw geometry".
     data_size_zoomin : int, default=0
