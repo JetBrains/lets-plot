@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.interact
 
-import org.jetbrains.letsPlot.core.interact.ui.UiControl
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
@@ -15,6 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.ui.UiControl
 
 typealias UiEventHandler = (UiControl?, MouseEvent) -> Unit
 
@@ -132,6 +132,13 @@ class EventsManager : Disposable {
             mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_ENTERED, handler { e ->
                 hoveredControl?.dispatch(MouseEventSpec.MOUSE_ENTERED, e)
                 dispatchGlobalEvent(MouseEventSpec.MOUSE_ENTERED, e)
+            })
+        )
+
+        regs.add(
+            mouseEventPeer.addEventHandler(MouseEventSpec.MOUSE_WHEEL_ROTATED, handler { e ->
+                hoveredControl?.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e)
+                dispatchGlobalEvent(MouseEventSpec.MOUSE_WHEEL_ROTATED, e)
             })
         )
     }

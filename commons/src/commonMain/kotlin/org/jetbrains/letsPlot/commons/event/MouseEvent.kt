@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.event.KeyModifiers.Companion.emptyModifier
 import org.jetbrains.letsPlot.commons.geometry.Vector
 
 
-class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModifiers) : PointEvent(x, y) {
+open class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModifiers) : PointEvent(x, y) {
 
     constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)
 
