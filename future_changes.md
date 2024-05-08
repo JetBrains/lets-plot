@@ -6,4 +6,5 @@
 
 ### Fixed
 
+- Livemap: improve "tiles" documentation [[#1093](https://github.com/JetBrains/lets-plot/issues/1093)].
 - Undesired vertical scroller when displaying `gggrid` in Jupyter notebook.
