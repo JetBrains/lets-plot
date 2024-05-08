@@ -37,7 +37,7 @@ if (enablePythonPackage) {
 
     val pythonBinPath = rootProject.extra["python.bin_path"]
 
-    val commandLine = listOf("${pythonBinPath}/python",
+    val pythonBuildParams = listOf("${pythonBinPath}/python",
         "-m",
         "build",
         "-w",
@@ -46,6 +46,8 @@ if (enablePythonPackage) {
     )
 
     val pythonTwineCommand = if (os.isWindows) "${pythonBinPath}/Scripts/twine" else "${pythonBinPath}/twine"
+    val pythonExtraBuildParams = if (os.isWindows) listOf("-C--build-option=\"build", "--compiler", "mingw32\"") else emptyList()
+    val commandLine = pythonBuildParams + pythonExtraBuildParams
 
     tasks.register<Exec>("buildPythonPackage") {
         group = rootProject.extra["letsPlotTaskGroup"] as String
