@@ -21,7 +21,7 @@ kotlin {
         } else if (os.isLinux && rootProject.extra["architecture"] == "arm64") {
             linuxArm64("native")
         } else if (os.isLinux && rootProject.extra["architecture"] == "x86_64") {
-            linuxArm64("native")
+            linuxX64("native")
         } else if (os.isWindows) {
             mingwX64("native")
         } else {
