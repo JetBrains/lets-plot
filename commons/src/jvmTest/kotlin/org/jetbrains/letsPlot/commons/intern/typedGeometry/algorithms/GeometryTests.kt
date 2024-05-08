@@ -11,6 +11,18 @@ import kotlin.test.Test
 class GeometryTests {
 
     @Test
+    fun `normalize empty ring`() {
+        assertThat(normalizeRing(emptyList(), Int::equals))
+            .isEqualTo(emptyList<Int>())
+    }
+
+    @Test
+    fun `normalize ring with one element`() {
+        assertThat(normalizeRing(listOf(1), Int::equals))
+            .isEqualTo(listOf(1, 1))
+    }
+
+    @Test
     fun `normalize not repeating not closed ring with 2 elements`() {
         assertThat(normalizeRing(listOf(1, 2, 1), Int::equals))
             .isEqualTo(listOf(1, 2, 1))
@@ -31,7 +43,7 @@ class GeometryTests {
     @Test
     fun `normalize not closed simple ring`() {
         assertThat(normalizeRing(listOf(1, 1, 2, 3, 4, 4), Int::equals))
-            .isEqualTo(listOf(1, 2, 3, 4, 4, 1))
+            .isEqualTo(listOf(1, 1, 1, 2, 3, 4, 4, 1))
     }
 
     @Test
@@ -41,33 +53,40 @@ class GeometryTests {
     }
 
     @Test
+    fun `normalize ring with 2 different elements`() {
+        assertThat(normalizeRing(listOf(1, 2), Int::equals))
+            .isEqualTo(listOf(1, 2, 1))
+    }
+
+    @Test
     fun `normalize ring with 3 equal elements`() {
         assertThat(normalizeRing(listOf(1, 1, 1), Int::equals))
-            .isEqualTo(listOf(1, 1))
+            .isEqualTo(listOf(1, 1, 1, 1))
     }
 
     @Test
     fun `normalize ring with 4 equal elements`() {
         assertThat(normalizeRing(listOf(1, 1, 1, 1), Int::equals))
-            .isEqualTo(listOf(1, 1))
+            .isEqualTo(listOf(1, 1, 1, 1))
     }
 
     @Test
     fun `normalize ring with last different element`() {
         assertThat(normalizeRing(listOf(1, 1, 1, 1, 2), Int::equals))
-            .isEqualTo(listOf(1, 2, 1))
+            .isEqualTo(listOf(1, 1, 1, 1, 1, 2, 1))
     }
 
-    @Test
-    fun `normalize empty ring`() {
-        assertThat(normalizeRing(emptyList(), Int::equals))
-            .isEqualTo(emptyList<Int>())
-    }
 
     @Test
     fun `normalize ring with last same elements`() {
         assertThat(normalizeRing(listOf(1, 2, 3, 4, 1, 1, 1), Int::equals))
-            .isEqualTo(listOf(1, 2, 3, 4, 1))
+            .isEqualTo(listOf(1, 2, 3, 4, 1, 1, 1))
+    }
+
+    @Test
+    fun `normalize ring with two last same elements`() {
+        assertThat(normalizeRing(listOf(1, 2, 3, 4, 1, 1), Int::equals))
+            .isEqualTo(listOf(1, 2, 3, 4, 1, 1, 1))
     }
 
     @Test

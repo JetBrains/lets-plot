@@ -390,7 +390,6 @@ class PolygonData private constructor(
             val processedRings = rings
                 .filter { it.isNotEmpty() }
                 .map { normalizeRing(it, PathPoint.LOC_EQ) }
-                .filter { it.size >= 3 } // 3 points is fine - will draw a line
 
             if (processedRings.isEmpty()) {
                 return null
@@ -402,7 +401,13 @@ class PolygonData private constructor(
 
     init {
         require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
-        rings.forEach { checkRingInvariants(it, PathPoint.LOC_EQ) }
+        require(rings.all { it.isClosed(PathPoint.LOC_EQ) }) { "PolygonData rings should be closed" }
+        require(rings.all {
+            isRingNormalized(
+                it,
+                PathPoint.LOC_EQ
+            )
+        }) { "PolygonData rings should be normalized" }
     }
 
     val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)

@@ -58,72 +58,34 @@ private fun <T> findRingIntervals(path: List<T>, eq: (T, T) -> Boolean): List<In
     return intervals
 }
 
-fun <T> checkRingInvariants(ring: List<T>, eq: (T, T) -> Boolean) {
-    require(ring.size >= 3) { "Ring should contain at least 3 points" }
-    require(ring.isClosed(eq)) { "Ring should be closed" }
-    require(isRingNormalized(ring, eq) ) { "PolygonData ring should be normalized" }
-}
-
-private fun <T> isRingNormalized(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
-    if (ring.size < 3) {
-        return true
+fun <T> isRingNormalized(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
+    if (ring.isEmpty()) return true
+    var isRingOpened = true
+    ring.asSequence().drop(1).forEach {
+        if (!eq(it, ring.first())) {
+            if (!isRingOpened) return false
+        } else {
+            isRingOpened = !isRingOpened
+        }
     }
-
-    if (!ring.isClosed(eq)) {
-        return false
-    }
-
-    val first = ring.first()
-    if (eq(first, ring[1])) {
-        return false
-    }
-
-    if (ring.takeLast(2).all { eq(it, first) }) {
-        return false
-    }
-
-    //If ring has a not closed self-intersection in start point, then it's not normalized
-    if (ring.count { eq(it, first) }.mod(2) != 0) {
-        return false
-    }
-    if (ring.windowed(3).any { (a, b, c) -> eq(b, first) && !eq(a, first) && !eq(c, first) }) {
-        return false
-    }
+    if (isRingOpened) return false
 
     return true
 }
 
-// Normalize the ring by adding a duplicate of the first element if a self-intersection is found in the ring.
+// Normalized ring means that it is possible to draw it without artifacts.
+// Artifacts can be caused by the ring not being closed or containing some unclosed subrings.
+// This function normalizes the ring by adding the missing elements to close the subrings.
 fun <T> normalizeRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
     if (isRingNormalized(ring, eq)) return ring
 
-    // Close the ring if it's not closed
-    val closedRing = if (!ring.isClosed(eq)) makeClosed(ring) else ring
-
-    // Trim the ring to remove the same points from the beginning and the end of the ring.
-    val firstElement = closedRing.first()
-    val lastElement = closedRing.last()
-
-    val inner = closedRing.subList(1, closedRing.lastIndex)
-
-    val startSkipCount = inner.indexOfFirst { !eq(it, firstElement) }
-    val endSkipCount = inner.asReversed().indexOfFirst { !eq(it, firstElement) }
-
-    // All items are the same - trim to two items
-    if (startSkipCount == -1 || endSkipCount == -1) {
-        return listOf(firstElement, lastElement)
-    }
-
-    val trimmedRing = closedRing.subList(startSkipCount, closedRing.size - endSkipCount)
-
-    // Normalize the ring by adding a duplicate of the first element if a self-intersection is found in the ring.
     val normalizedRing = mutableListOf<T>()
-    normalizedRing.add(trimmedRing.first())
+    normalizedRing.add(ring.first())
     var isRingOpened = true
-    trimmedRing.subList(1, trimmedRing.lastIndex).forEach {
-        if (!eq(it, firstElement)) {
+    ring.asSequence().drop(1).forEach {
+        if (!eq(it, ring.first())) {
             if (!isRingOpened) {
-                normalizedRing.add(firstElement)
+                normalizedRing.add(ring.first())
                 isRingOpened = true
             }
         } else {
@@ -131,7 +93,9 @@ fun <T> normalizeRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
         }
         normalizedRing.add(it)
     }
-    normalizedRing.add(trimmedRing.last())
+    if (isRingOpened) {
+        normalizedRing.add(ring.first())
+    }
 
     return normalizedRing
 }
