@@ -52,8 +52,8 @@ def geom_livemap(*,
     tiles : str
         Tile provider:
 
-        - pass a predefined constant from the `tilesets` module (Lets-Plot's vector tiles, e.g. LETS_PLOT_COLOR, or outer raster tiles, e.g. OPEN_TOPO_MAP);
-        - pass a URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') if the required tileset isn't in the module;
+        - pass a predefined constant from the `tilesets` module (Lets-Plot's vector tiles, e.g. LETS_PLOT_COLOR, or external raster tiles, e.g. OPEN_TOPO_MAP);
+        - pass a URL for a standard raster ZXY tile provider with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png') if the required tileset not present in the module;
         - pass the result of a call to a `maptiles_zxy()` function if further customisation is required (e.g. attribution or zoom).
 
         More information about tiles can be found here:
