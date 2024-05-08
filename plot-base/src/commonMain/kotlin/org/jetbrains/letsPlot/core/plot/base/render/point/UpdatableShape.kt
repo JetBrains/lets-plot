@@ -14,8 +14,6 @@ interface UpdatableShape {
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        angle: Double,
-        centerX: Double,
-        centerY: Double
+        rotationSpec: RotationSpec?
     )
 }

@@ -5,10 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.aes
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.render.point.RotationSpec
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
@@ -32,8 +31,7 @@ object AestheticsUtil {
         solid: Boolean,
         p: DataPointAesthetics,
         strokeWidth: Double,
-        angle: Double,
-        location: DoubleVector
+        rotationSpec: RotationSpec?
     ) {
         val fill = fill(filled, solid, p)
         val stroke = p.color()!!
@@ -48,7 +46,7 @@ object AestheticsUtil {
             strokeAlpha = alpha(stroke, p)
         }
 
-        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, angle, location.x, location.y)
+        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, rotationSpec)
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {

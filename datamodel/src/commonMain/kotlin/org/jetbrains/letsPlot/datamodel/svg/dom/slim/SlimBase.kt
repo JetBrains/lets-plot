@@ -64,7 +64,6 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
 
     override fun setRotation(angle: Double, centerX: Double, centerY: Double) {
         if (angle != 0.0) {
-            //setAttribute(transform, "rotate($angle, $centerX, $centerY)")
             SvgTransformBuilder().rotate(angle, centerX, centerY).build().let {
                 setAttribute(transform, it.toString())
             }

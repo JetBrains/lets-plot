@@ -16,6 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyphs
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimObject
 
+typealias RotationSpec = Pair<Double, DoubleVector>
+
 object PointShapeSvg {
     fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0): SvgSlimObject {
         if (shape == TinyPointShape) {
@@ -41,10 +43,12 @@ object PointShapeSvg {
         val r = SvgSlimElements.rect(location.x - 0.5, location.y - 0.5, 1.0, 1.0)
         val color = p.color()!!
         val alpha = AestheticsUtil.alpha(color, p)
-        val angle = p.finiteOrNull(Aes.ANGLE) ?: 0.0
         r.setFill(color, alpha)
         r.setStrokeWidth(0.0)
-        r.setRotation(angle, location.x, location.y)
+
+        val angle = p.finiteOrNull(Aes.ANGLE)
+        angle?.let { r.setRotation(it, location.x, location.y) }
+
         return r
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.point.symbol
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.point.RotationSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
@@ -29,14 +30,14 @@ abstract class SingletonGlyph : Glyph {
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        angle: Double,
-        centerX: Double,
-        centerY: Double
+        rotationSpec: RotationSpec?
     ) {
         myShape.setFill(fill, fillAlpha)
         myShape.setStroke(stroke, strokeAlpha)
         myShape.setStrokeWidth(strokeWidth)
-        myShape.setRotation(angle, centerX, centerY)
+        rotationSpec?.let { (angle, center) ->
+            myShape.setRotation(angle, center.x, center.y)
+        }
     }
 
     override fun appendTo(g: SvgSlimGroup) {

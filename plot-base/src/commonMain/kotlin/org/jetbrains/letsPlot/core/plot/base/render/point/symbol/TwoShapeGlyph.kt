@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point.symbol
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.point.RotationSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
@@ -24,12 +25,10 @@ internal abstract class TwoShapeGlyph : MultiShapeGlyph() {
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        angle: Double,
-        centerX: Double,
-        centerY: Double
+        rotationSpec: RotationSpec?
     ) {
-        update(myS1, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, angle, centerX, centerY)
-        update(myS2, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, angle, centerX, centerY)
+        update(myS1, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, rotationSpec)
+        update(myS2, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, rotationSpec)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

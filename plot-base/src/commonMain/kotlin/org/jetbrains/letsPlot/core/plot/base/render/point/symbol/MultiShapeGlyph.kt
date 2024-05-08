@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point.symbol
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.point.RotationSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
 internal abstract class MultiShapeGlyph : Glyph {
@@ -16,13 +17,13 @@ internal abstract class MultiShapeGlyph : Glyph {
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        angle: Double,
-        centerX: Double,
-        centerY: Double
+        rotationSpec: RotationSpec?
     ) {
         shape?.setFill(fill, fillAlpha)
         shape?.setStroke(stroke, strokeAlpha)
         shape?.setStrokeWidth(strokeWidth)
-        shape?.setRotation(angle, centerX, centerY)
+        rotationSpec?.let { (angle, center) ->
+            shape?.setRotation(angle, center.x, center.y)
+        }
     }
 }
