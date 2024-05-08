@@ -7,12 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingTrimmed
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.trimRing
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
@@ -392,9 +389,7 @@ class PolygonData private constructor(
             // Force the invariants
             val processedRings = rings
                 .filter { it.isNotEmpty() }
-                .map { if (it.isClosed(PathPoint.LOC_EQ)) it else it + it.first() }
-                .map { trimRing(it, PathPoint.LOC_EQ) }
-                .filter { it.size >= 3 } // 3 points is fine - will draw a line
+                .map { normalizeRing(it, PathPoint.LOC_EQ) }
 
             if (processedRings.isEmpty()) {
                 return null
@@ -406,9 +401,13 @@ class PolygonData private constructor(
 
     init {
         require(rings.isNotEmpty()) { "PolygonData should contain at least one ring" }
-        require(rings.all { it.size >= 3 }) { "PolygonData ring should contain at least 3 points" }
-        require(rings.all { it.first().coord == it.last().coord }) { "PolygonData ring should be closed" }
-        require(rings.all { isRingTrimmed(it, PathPoint.LOC_EQ) }) { "PolygonData ring should be trimmed" }
+        require(rings.all { it.isClosed(PathPoint.LOC_EQ) }) { "PolygonData rings should be closed" }
+        require(rings.all {
+            isRingNormalized(
+                it,
+                PathPoint.LOC_EQ
+            )
+        }) { "PolygonData rings should be normalized" }
     }
 
     val aes: DataPointAesthetics by lazy( rings.first().first()::aes ) // decoration aes (only for color, fill, size, stroke)

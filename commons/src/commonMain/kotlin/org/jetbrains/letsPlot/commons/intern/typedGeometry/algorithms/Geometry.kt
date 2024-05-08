@@ -58,44 +58,51 @@ private fun <T> findRingIntervals(path: List<T>, eq: (T, T) -> Boolean): List<In
     return intervals
 }
 
-fun <T> isRingTrimmed(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
-    if (ring.size < 3) {
-        return true
+fun <T> isRingNormalized(ring: List<T>, eq: (T, T) -> Boolean): Boolean {
+    if (ring.isEmpty()) return true
+    var isRingOpened = true
+    ring.asSequence().drop(1).forEach {
+        if (!eq(it, ring.first())) {
+            if (!isRingOpened) return false
+        } else {
+            isRingOpened = !isRingOpened
+        }
     }
+    if (isRingOpened) return false
 
-    if (!eq(ring[0], ring[1]) && !eq(ring[ring.lastIndex], ring[ring.lastIndex - 1])) {
-        return true
-    }
-
-    return false
+    return true
 }
 
-// Remove the same points from the beginning and the end of the ring. If trim is not needed, return the original ring.
-fun <T> trimRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
-    if (isRingTrimmed(ring, eq)) {
-        return ring
+// Normalized ring means that it is possible to draw it without artifacts.
+// Artifacts can be caused by the ring not being closed or containing some unclosed subrings.
+// This function normalizes the ring by adding the missing elements to close the subrings.
+fun <T> normalizeRing(ring: List<T>, eq: (T, T) -> Boolean): List<T> {
+    if (isRingNormalized(ring, eq)) return ring
+
+    val normalizedRing = mutableListOf<T>()
+    normalizedRing.add(ring.first())
+    var isRingOpened = true
+    ring.asSequence().drop(1).forEach {
+        if (!eq(it, ring.first())) {
+            if (!isRingOpened) {
+                normalizedRing.add(ring.first())
+                isRingOpened = true
+            }
+        } else {
+            isRingOpened = !isRingOpened
+        }
+        normalizedRing.add(it)
+    }
+    if (isRingOpened) {
+        normalizedRing.add(ring.first())
     }
 
-    val firstElement = ring.first()
-    val lastElement = ring.last()
-
-    val inner = ring.subList(1, ring.lastIndex)
-
-    val startSkipCount = inner.indexOfFirst { !eq(it, firstElement) }
-    val endSkipCount = inner.asReversed().indexOfFirst { !eq(it, lastElement) }
-
-    // All items are the same - trim to two items
-    if (startSkipCount == -1 || endSkipCount == -1) {
-        return listOf(firstElement, lastElement)
-    }
-
-    return ring.subList(startSkipCount, ring.lastIndex - endSkipCount + 1)
+    return normalizedRing
 }
 
 private fun <T> List<T>.sublist(range: IntSpan): List<T> {
     return this.subList(range.lowerEnd, range.upperEnd)
 }
-
 
 fun calculateArea(ring: List<DoubleVector>): Double {
     return calculateArea(ring, DoubleVector::x, DoubleVector::y)
