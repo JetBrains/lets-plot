@@ -195,7 +195,7 @@ object Option {
 
         object LayerKey {
             const val LABEL = "label"
-            const val KEY = "key"
+            const val GROUP = "group"
             const val INDEX = "index"
         }
     }

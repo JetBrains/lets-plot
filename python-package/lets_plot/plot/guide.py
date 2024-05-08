@@ -114,7 +114,7 @@ def guides(**kwargs):
     Parameters
     ----------
     kwargs
-        Name-guide pairs where name should be an aesthetic or a legend key.
+        Name-guide pairs where name should be an aesthetic or a legend group name.
         The guide can either be a string ('colorbar', 'legend'),
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments, or 'none' to hide the guide.
@@ -149,7 +149,7 @@ def guides(**kwargs):
     return FeatureSpec('guides', name=None, **kwargs)
 
 
-def layer_key(label, key=None, index=None, **kwargs):
+def layer_key(label, group=None, index=None, **kwargs):
     """
     Configure custom legend.
 
@@ -157,8 +157,8 @@ def layer_key(label, key=None, index=None, **kwargs):
     ----------
     label : str
         Text for the legend element in the custom legend.
-    key : str
-        Specifies the legend key to which the element should be added.
+    group : str
+        Specifies the key by which items are combined into a legend group.
     index : int
         Position of the element in the custom legend.
     kwargs :
@@ -187,4 +187,4 @@ def layer_key(label, key=None, index=None, **kwargs):
             geom_line(color='blue', linetype=2, show_key=layer_key("line", linetype=1))
 
     """
-    return FeatureSpec('layer_key', name=None, label=label, key=key, index=index, **kwargs)
+    return FeatureSpec('layer_key', name=None, label=label, group=group, index=index, **kwargs)

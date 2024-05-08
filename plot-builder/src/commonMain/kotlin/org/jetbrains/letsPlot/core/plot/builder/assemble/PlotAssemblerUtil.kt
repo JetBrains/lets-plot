@@ -135,17 +135,17 @@ internal object PlotAssemblerUtil {
 
             // custom legend
             layerInfo.legendItem?.let { legendItem ->
-                val aes = Aes.values().firstOrNull { it.name == legendItem.key }
-                val legendKey = if (aes != null && ctx.hasScale(aes)) {
+                val aes = Aes.values().firstOrNull { it.name == legendItem.group }
+                val legendGroupName = if (aes != null && ctx.hasScale(aes)) {
                     chooseTitle(aes.name, ctx.getScale(aes).name)
                 } else {
-                    legendItem.key
+                    legendItem.group
                 }
-                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendKey) {
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendGroupName) {
                     LegendAssembler(
                         chooseTitle(
-                            legendKey,
-                            legendKey.takeIf { it != LegendItem.DEFAULT_CUSTOM_LEGEND_KEY } ?: ""
+                            legendGroupName,
+                            legendGroupName.takeIf { it != LegendItem.DEFAULT_CUSTOM_LEGEND_KEY } ?: ""
                         ),
                         guideOptionsMap,
                         scaleMappersNP,

@@ -71,7 +71,7 @@ class LegendAssembler(
         isMarginal: Boolean
     ) {
         legendLayers.add(
-            LegendLayer.withLegendItem(
+            LegendLayer.createForLegendItem(
                 legendItem,
                 keyFactory,
                 constantByAes,
@@ -206,7 +206,7 @@ class LegendAssembler(
                 )
             }
 
-            fun withLegendItem(
+            fun createForLegendItem(
                 legendItem: LegendItem,
                 keyElementFactory: LegendKeyElementFactory,
                 constantByAes: Map<Aes<*>, Any>,
@@ -225,7 +225,7 @@ class LegendAssembler(
                 )
                 return LegendLayer(
                     keyElementFactory,
-                    legendKeyList = listOf(legendItem.key),
+                    legendKeyList = listOf(legendItem.group),
                     isMarginal,
                     keyAesthetics,
                     keyLabels = listOf(legendItem.label),

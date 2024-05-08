@@ -67,13 +67,10 @@ class CustomLegend {
               ]
             }
         """.trimIndent()
-        //  + settings:
-        //              'scales': [ {'name': 'Zones', 'key': 'custom_key' } ],
-        //              'guides': {'custom_key': {'name': 'legend', 'ncol': 2}}
         return parsePlotSpec(spec)
     }
 
-    /// show_key=layer_key(label="Red zone", key=""?, index=0, size=3)
+    /// show_key=layer_key(label="Red zone", group="Group 1", index=0, size=3)
     private fun parameterizedForm(): MutableMap<String, Any> {
         // geom_point(..., color='red', shape=21,
         //            show_key=layer_key("Red zone", index=0, size=3)) + \
@@ -85,6 +82,9 @@ class CustomLegend {
         val spec = """
             {
               'kind': 'plot',
+              'guides': {
+                'custom_legend': {'name': 'legend', 'ncol': 2, 'title': 'Zones' }
+               },           
               'layers': [
                 {
                     'geom': 'line', 
@@ -144,9 +144,6 @@ class CustomLegend {
               ]
             }
         """.trimIndent()
-        //  + settings:
-        //              'scales': [ {'name': 'Zones', 'key': 'custom_key' } ],
-        //              'guides': {'custom_key': {'name': 'legend', 'ncol': 2}}
         return parsePlotSpec(spec)
     }
 
@@ -169,7 +166,7 @@ class CustomLegend {
                         'color': 'g'
                     },
                     'show_key': {
-                        'key': 'color',
+                        'group': 'color',
                         'label': 'NA'
                     }
                 },                
@@ -180,13 +177,13 @@ class CustomLegend {
                     'color': 'yellow',
                     'size': 5,
                     'show_key': {
-                        'key': 'color',
+                        'group': 'color',
                         'label': 'point'
                     }
                 }
               ],
-              'scales': [ {'name': 'Zones', 'aesthetic': 'color' } ],
-              'guides': {'color': {'name': 'legend', 'ncol': 2}}
+              'scales': [ { 'aesthetic': 'color', 
+                            'guide': {'name': 'legend', 'ncol': 2, 'title': 'Zones'} } ]
             }
         """.trimIndent()
         return parsePlotSpec(spec)

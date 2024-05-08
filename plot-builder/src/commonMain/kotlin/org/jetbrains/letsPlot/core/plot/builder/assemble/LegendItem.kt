@@ -9,11 +9,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 
 data class LegendItem(
     val label: String,
-    val key: String,
+    val group: String, // by which the items are combined into a legend
     val index: Int? = null,
     val aesValues: Map<Aes<*>, Any>
 ) {
     companion object {
-        const val DEFAULT_CUSTOM_LEGEND_KEY = "custom_key"
+        const val DEFAULT_CUSTOM_LEGEND_KEY = "custom_legend"
     }
 }

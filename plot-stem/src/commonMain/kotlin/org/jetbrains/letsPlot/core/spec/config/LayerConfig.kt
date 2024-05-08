@@ -102,7 +102,7 @@ class LayerConfig(
             )
             return LegendItem(
                 label = label,
-                key = legendOptions.getString(Layer.LayerKey.KEY) ?: DEFAULT_CUSTOM_LEGEND_KEY,
+                group = legendOptions.getString(Layer.LayerKey.GROUP) ?: DEFAULT_CUSTOM_LEGEND_KEY,
                 index = legendOptions.getInteger(Layer.LayerKey.INDEX),
                 aesValues = aesValues
             )
