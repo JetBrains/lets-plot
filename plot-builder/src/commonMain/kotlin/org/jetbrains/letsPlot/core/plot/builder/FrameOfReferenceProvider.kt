@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
-import org.jetbrains.letsPlot.commons.values.Color
 
 interface FrameOfReferenceProvider {
     val hAxisLabel: String?
@@ -28,7 +28,6 @@ interface FrameOfReferenceProvider {
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         plotBackground: Color,
-        penColor: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference>
 }

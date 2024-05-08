@@ -22,7 +22,6 @@ internal class MarginalFrameOfReference(
     private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val plotBackground: Color,
-    private val penColor: Color,
     private val isDebugDrawing: Boolean
 ) : FrameOfReference {
     override var panOffset: DoubleVector = DoubleVector.ZERO

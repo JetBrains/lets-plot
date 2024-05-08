@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
-import org.jetbrains.letsPlot.commons.values.Color
 
 internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
     override val hAxisLabel: String? = null
@@ -35,7 +35,6 @@ internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         plotBackground: Color,
-        penColor: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
         return emptyMap()
