@@ -43,7 +43,6 @@ internal class PlotTile(
     private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
 
-    private var panOffset = DoubleVector.ZERO
     private val frameBottomGroup = GroupComponent()
     private val clipGroup = GroupComponent()
     private val geomGroup = GroupComponent()
@@ -63,11 +62,13 @@ internal class PlotTile(
         moveTo(tileLayoutInfo.getAbsoluteBounds(tilesOrigin).origin)
     }
 
-    fun pan(offset: DoubleVector) {
-        panOffset = offset
-        frameOfReference.panOffset = offset
+    fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        val offset = to.subtract(from)
+        val domainOffset = frameOfReference.pan(from ,to)
         transformTranslate(geomGroup.rootGroup, offset)
         drawFrame()
+
+        return domainOffset
     }
 
     private fun drawFrame() {

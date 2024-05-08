@@ -45,7 +45,15 @@ internal open class SquareFrameOfReference(
     // Flip theme
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
-    override var panOffset: DoubleVector = DoubleVector.ZERO
+    protected var panOffset: DoubleVector = DoubleVector.ZERO
+    override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        panOffset = to.subtract(from)
+
+        val domainFrom = coord.fromClient(from) ?: return null
+        val domainTo = coord.fromClient(to) ?: return null
+
+        return domainTo.subtract(domainFrom)
+    }
 
     // Rendering
 

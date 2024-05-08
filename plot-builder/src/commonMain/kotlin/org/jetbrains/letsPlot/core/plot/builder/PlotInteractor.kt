@@ -108,12 +108,13 @@ internal class PlotInteractor(
                     println("Target zoom: $geomBounds")
                 }
 
-                override fun pan(offset: DoubleVector) {
-                    println("Target pan: $offset")
-                    tile.pan(offset)
+                override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+                    val offset = to.subtract(from)
+                    val domainOffset = tile.pan(from, to)
+                    println("Target pan: $offset (domain: $domainOffset)")
+                    return domainOffset
                 }
             }
-
         }
     }
 }

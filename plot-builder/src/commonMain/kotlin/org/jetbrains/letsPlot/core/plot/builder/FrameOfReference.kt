@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface FrameOfReference {
-    var panOffset: DoubleVector
+    fun pan(from: DoubleVector, to: DoubleVector): DoubleVector?
 
     fun drawBeforeGeomLayer(parent: SvgComponent)
 

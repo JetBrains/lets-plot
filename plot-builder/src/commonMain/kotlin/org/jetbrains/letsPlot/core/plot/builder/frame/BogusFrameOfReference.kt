@@ -12,7 +12,9 @@ import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class BogusFrameOfReference : FrameOfReference {
-    override var panOffset: DoubleVector = DoubleVector.ZERO
+    override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
+    }
 
     override fun drawBeforeGeomLayer(parent: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")

@@ -17,28 +17,25 @@ class PanGeomFeedback(
 
         interaction.loop(
             onStarted = {
-                val v = it.dragTo.subtract(it.dragFrom)
-                val target = it.target
-                target.pan(v)
+                it.target.pan(it.dragFrom, it.dragTo)
             },
             onDragged = {
-                val v = it.dragTo.subtract(it.dragFrom)
-                val target = it.target
-                target.pan(v)
+                it.target.pan(it.dragFrom, it.dragTo)
             },
             onCompleted = {
                 println("PanGeomFeedback complete.")
-                val v = it.dragTo.subtract(it.dragFrom)
                 val target = it.target
-                target.pan(DoubleVector.ZERO)
+                val domainOffset = target.pan(it.dragFrom, it.dragTo) ?: DoubleVector.ZERO
+
+                target.pan(it.dragFrom, it.dragFrom) // TODO: remove when plot update is implemented.
+
                 it.reset()
-                onCompleted(v, target)
+                onCompleted(domainOffset, target)
             },
             onAborted = {
                 println("PanGeomFeedback abort.")
                 it.reset()
-                val target = it.target
-                target.pan(DoubleVector.ZERO)
+                it.target.pan(it.dragFrom, it.dragFrom)
                 // ToDo: ...
             }
         )

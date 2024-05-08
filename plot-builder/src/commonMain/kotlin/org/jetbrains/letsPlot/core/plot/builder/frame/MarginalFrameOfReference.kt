@@ -24,7 +24,9 @@ internal class MarginalFrameOfReference(
     private val plotBackground: Color,
     private val isDebugDrawing: Boolean
 ) : FrameOfReference {
-    override var panOffset: DoubleVector = DoubleVector.ZERO
+    override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        error("Not supported by MarginalFrameOfReference")
+    }
 
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
 
