@@ -16,7 +16,6 @@ val assertjVersion = extra["assertj_version"]
 val batikGroupId = "org.apache.xmlgraphics"
 val batikArtifacts = listOf("batik-transcoder", "batik-codec")
 val batikVersion = extra["batik_version"]
-
 val hamcrestVersion = extra["hamcrest_version"]
 val kotlinLoggingVersion = extra["kotlinLogging_version"]
 val mavenLocalPath = rootProject.extra["localMavenRepository"]

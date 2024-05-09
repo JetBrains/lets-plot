@@ -6,6 +6,7 @@
 import java.util.*
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 
@@ -198,7 +199,7 @@ subprojects {
     if (name in pythonExtensionModules) {
         apply(plugin = "org.jetbrains.kotlin.multiplatform")
 
-        configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
+        configure<KotlinMultiplatformExtension> {
             if (os.isMacOsX && projectArchitecture == "x86_64") {
                 macosX64()
             } else if (os.isMacOsX && projectArchitecture == "arm64") {
@@ -245,7 +246,7 @@ subprojects {
         apply(plugin = "signing")
 
         // For `jvmSourcesJar` task:
-        configure<org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension> {
+        configure<KotlinMultiplatformExtension> {
             jvm()
         }
 

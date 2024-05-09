@@ -52,7 +52,6 @@ elif this_system == 'Windows':
     extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
-
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
@@ -62,7 +61,7 @@ elif this_system == 'Linux':
 else:
     raise ValueError("Unsupported platform.")
 
-# Adding JS package to Python wheel:
+# Adds JS package to Python wheel:
 update_js()
 
 setup(name='lets-plot',
