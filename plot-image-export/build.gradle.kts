@@ -146,9 +146,9 @@ publishing {
                     dep.appendNode("version", tiffioVersion)
 
                     dep = deps.appendNode("dependency")
-                    dep.appendNode("groupId", tiffioGroupId)
-                    dep.appendNode("artifactId", tiffioArtifact)
-                    dep.appendNode("version", tiffioVersion)
+                    dep.appendNode("groupId", project.group)
+                    dep.appendNode("artifactId", "platf-awt")
+                    dep.appendNode("version", project.version)
 
                 }
             }
