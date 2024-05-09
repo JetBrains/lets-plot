@@ -193,7 +193,7 @@ subprojects {
         "platf-native",
         "demo-and-test-shared"
     )
-    val projectArchitecture = rootProject.extra["architecture"]
+    val projectArchitecture = rootProject.extra.getOrNull("architecture")
 
     if (name in pythonExtensionModules) {
         apply(plugin = "org.jetbrains.kotlin.multiplatform")
