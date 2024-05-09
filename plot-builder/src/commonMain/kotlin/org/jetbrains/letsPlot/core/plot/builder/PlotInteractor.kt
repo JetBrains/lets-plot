@@ -83,6 +83,13 @@ internal class PlotInteractor(
                 )
             )
 
+            is WheelZoomFeedback -> toolFeedback.start(
+                DragInteractionContext(
+                    decorationLayer,
+                    eventsManager,
+                    tiles
+                )
+            )
             else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
         }
         return Registration.from(disposable)

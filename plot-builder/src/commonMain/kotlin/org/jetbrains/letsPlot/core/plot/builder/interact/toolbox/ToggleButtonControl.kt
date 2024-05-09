@@ -32,10 +32,14 @@ class ToggleButtonControl(
     }
 
     override fun onMouseClicked(e: MouseEvent) {
-        isChecked = !isChecked
+        // Click only triggers event, not toggling
         clickHandler?.invoke()
-        toggleHandler?.invoke(isChecked)
-        updateContent()
+
+        toggleHandler?.let {
+            isChecked = !isChecked
+            it.invoke(isChecked)
+            updateContent()
+        }
     }
 
     private fun updateContent() {

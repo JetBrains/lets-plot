@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.interact
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
@@ -43,6 +44,13 @@ internal class PlotToolEventDispatcher(
                     val translated = r.subtract(target.geomBounds.origin)
                     println("Zoom tool: apply: $translated")
                     target.zoom(translated)
+                }
+            )
+
+            ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
+                onZoomed = { location, delta, target ->
+                    println("Wheel zoom: apply: $delta")
+                    //target.zoom(delta)
                 }
             )
 

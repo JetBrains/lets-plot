@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.interact.event
 
 object ToolInteractionSpec {
+    const val WHEEL_ZOOM = "wheel-zoom"
     const val BOX_ZOOM = "box-zoom"
     const val DRAG_PAN = "drag-pan"
 

@@ -9,21 +9,20 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
-import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class PlotToolbox(
-    private val interactor: PlotInteractor
+    private val interactor: PlotInteractor,
+    private val toolEventDispatcher: ToolEventDispatcher,
 ) : Disposable {
     private val toolboxLayer: SvgGElement
-    private var tool: Tool? = null
-        set(value) {
-            field?.dispose()
-            field = value
-        }
+    private val panTool = Tool("my-pan", "Pan", ToolInteractionSpec.DRAG_PAN, toolEventDispatcher)
+    private val zoomTool = Tool("my-zoom", "Zoom", ToolInteractionSpec.BOX_ZOOM, toolEventDispatcher)
+    private val wheelZoomTool = Tool("wheel-zoom", "Wheel Zoom", ToolInteractionSpec.WHEEL_ZOOM, toolEventDispatcher)
 
     init {
         val toolbox = ToolboxControl(
@@ -32,32 +31,25 @@ internal class PlotToolbox(
                     rectContent(Color.LIGHT_GREEN),
                     rectContent(Color.GREEN),
                 ).apply {
-                    onToggleClick { isChecked ->
-                        tool = when (isChecked) {
-                            true -> PanTool(interactor)
-                            false -> null
-                        }
-                        println("PanTool enabled: $isChecked")
-                    }
+                    onToggleClick(panTool::switch)
                 },
                 ToggleButtonControl(
                     rectContent(Color.LIGHT_BLUE),
                     rectContent(Color.BLUE),
                 ).apply {
-                    onToggleClick { isChecked ->
-                        tool = when (isChecked) {
-                            true -> ZoomTool(interactor)
-                            false -> null
-                        }
-                        println("ZoomTool enabled: $isChecked")
-                    }
+                    onToggleClick(zoomTool::switch)
+                },
+                ToggleButtonControl(
+                    rectContent(Color.LIGHT_PINK),
+                    rectContent(Color.PINK),
+                ).apply {
+                    onToggleClick(wheelZoomTool::switch)
                 },
                 ToggleButtonControl(
                     rectContent(Color.LIGHT_GRAY),
                     rectContent(Color.GRAY),
                 ).apply {
                     onClick {
-                        tool = null
                         println("Reset View.")
                     }
                 }
@@ -74,61 +66,34 @@ internal class PlotToolbox(
         fillColor().set(color)
     }
 
-    var visible: Boolean = false
-        set(value) {
-            when {
-                value == field -> return
-                value == true -> showPanel().also { field = value }
-                value == false -> hidePanel().also { field = value }
+    override fun dispose() {
+    }
+
+    private open class Tool(
+        val name: String,
+        val label: String,
+        val interaction: String,
+        private val toolEventDispatcher: ToolEventDispatcher,
+    ) : Disposable {
+        val interactionSpec = mapOf(
+            ToolInteractionSpec.NAME to interaction
+        )
+        var active: Boolean = false
+
+        fun switch(newState: Boolean) {
+            if (active == newState) return
+            active = newState
+            if (active) {
+                toolEventDispatcher.activateInteraction(origin = name, interactionSpec = interactionSpec)
+            } else {
+                toolEventDispatcher.deactivateInteraction(origin = name, interactionName = interaction)
             }
         }
 
-    private fun hidePanel() {
-
-    }
-
-    private fun showPanel() {
-
-    }
-
-    override fun dispose() {
-        tool = null
-    }
-
-
-    private open class Tool : Disposable {
         protected val regs = CompositeRegistration()
         override fun dispose() {
             println("Tool dispose.")
             regs.dispose()
-        }
-    }
-
-    private inner class PanTool(
-        interactor: PlotInteractor
-    ) : Tool() {
-        init {
-            regs.add(
-                interactor.startToolFeedback(PanGeomFeedback(
-                ))
-            )
-        }
-    }
-
-    private inner class ZoomTool(
-        interactor: PlotInteractor
-    ) : Tool() {
-        init {
-            regs.add(
-                interactor.startToolFeedback(DrawRectFeedback(
-                    onCompleted = { (r, target) ->
-                        // translate to "geom" space.
-                        val translated = r.subtract(target.geomBounds.origin)
-                        println("Zoom tool: apply: $translated")
-                        target.zoom(translated)
-                    }
-                ))
-            )
         }
     }
 }
