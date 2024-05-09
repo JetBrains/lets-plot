@@ -67,7 +67,6 @@ if (enablePythonPackage) {
         tasks.register<Exec>("publishTestPythonPackage") {
             group = rootProject.extra["letsPlotTaskGroup"] as String
             description = "Publishes lets-plot python package to test.pypi.org"
-            dependsOn("buildPythonPackage")
             workingDir(pythonPackageDistDir)
             commandLine(pythonTwineCommand,
                 "upload",
@@ -86,7 +85,6 @@ if (enablePythonPackage) {
         tasks.register<Exec>("publishProdPythonPackage") {
             group = rootProject.extra["letsPlotTaskGroup"] as String
             description = "Publishes lets-plot python package to pypi.org"
-            dependsOn("buildPythonPackage")
             workingDir(pythonPackageDistDir)
             commandLine(pythonTwineCommand,
                 "upload",
