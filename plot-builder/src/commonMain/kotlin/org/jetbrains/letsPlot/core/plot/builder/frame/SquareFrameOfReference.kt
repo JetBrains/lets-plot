@@ -46,6 +46,12 @@ internal open class SquareFrameOfReference(
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
     protected var panOffset: DoubleVector = DoubleVector.ZERO
+    protected var scale: Double = 1.0
+
+    override fun zoom(scale: Double) {
+        this.scale = scale
+    }
+
     override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
         panOffset = to.subtract(from)
 
@@ -286,9 +292,7 @@ internal open class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = buildGeom(layer, targetCollector)
-        layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
-        return layerComponent
+        return buildGeom(layer, targetCollector)
     }
 
     override fun setClip(element: SvgComponent) {

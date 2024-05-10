@@ -9,8 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 interface InteractionTarget {
-    fun zoom(geomBounds: DoubleRectangle)
+    fun zoom(offset: DoubleVector, scale: DoubleVector)
     fun pan(from: DoubleVector, to: DoubleVector): DoubleVector?
+    fun panEnd(from: DoubleVector, to: DoubleVector): DoubleVector?
 
     val geomBounds: DoubleRectangle
 }

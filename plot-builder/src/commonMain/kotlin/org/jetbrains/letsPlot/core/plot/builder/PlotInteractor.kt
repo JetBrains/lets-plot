@@ -111,14 +111,22 @@ internal class PlotInteractor(
             val (bbox, tile) = target
             return object : InteractionTarget {
                 override val geomBounds: DoubleRectangle = bbox
-                override fun zoom(geomBounds: DoubleRectangle) {
-                    println("Target zoom: $geomBounds")
+                override fun zoom(offset: DoubleVector, scale: DoubleVector) {
+                    //println("Target zoom: $geomBounds")
+                    tile.interactionSupport.zoom(offset, scale)
                 }
 
                 override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
                     val offset = to.subtract(from)
-                    val domainOffset = tile.pan(from, to)
-                    println("Target pan: $offset (domain: $domainOffset)")
+                    val domainOffset = tile.interactionSupport.pan(from, to)
+                    //println("Target pan: $offset (domain: $domainOffset)")
+                    return domainOffset
+                }
+
+                override fun panEnd(from: DoubleVector, to: DoubleVector): DoubleVector? {
+                    val offset = to.subtract(from)
+                    val domainOffset = tile.interactionSupport.panEnd(from, to)
+                    println("Target pan end: $offset (domain: $domainOffset)")
                     return domainOffset
                 }
             }

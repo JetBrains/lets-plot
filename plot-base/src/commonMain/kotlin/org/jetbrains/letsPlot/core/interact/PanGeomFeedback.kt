@@ -25,9 +25,9 @@ class PanGeomFeedback(
             onCompleted = {
                 println("PanGeomFeedback complete.")
                 val target = it.target
-                val domainOffset = target.pan(it.dragFrom, it.dragTo) ?: DoubleVector.ZERO
+                val domainOffset = target.panEnd(it.dragFrom, it.dragTo) ?: DoubleVector.ZERO
 
-                target.pan(it.dragFrom, it.dragFrom) // TODO: remove when plot update is implemented.
+                //target.panEnd(it.dragFrom, it.dragFrom) // TODO: remove when plot update is implemented.
 
                 it.reset()
                 onCompleted(domainOffset, target)

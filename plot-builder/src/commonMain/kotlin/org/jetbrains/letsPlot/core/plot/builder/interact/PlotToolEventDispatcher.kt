@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
@@ -29,7 +30,7 @@ internal class PlotToolEventDispatcher(
         val responseEvents = ArrayList<Map<String, Any>>()
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
 
-        responseEvents.addAll(deactivateOverlappingInteractions(interactionName))
+        //responseEvents.addAll(deactivateOverlappingInteractions(interactionName))
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
@@ -42,14 +43,16 @@ internal class PlotToolEventDispatcher(
                 onCompleted = { (r, target) ->
                     // translate to "geom" space.
                     val translated = r.subtract(target.geomBounds.origin)
+                    val offset = r.origin.subtract(target.geomBounds.origin)
+                    val scale = DoubleVector(target.geomBounds.dimension.x / r.dimension.x, target.geomBounds.dimension.y / r.dimension.y)
                     println("Zoom tool: apply: $translated")
-                    target.zoom(translated)
+                    target.zoom(offset, scale)
                 }
             )
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
-                onZoomed = { location, delta, target ->
-                    println("Wheel zoom: apply: $delta")
+                onZoomed = { rect, target ->
+                    //println("Wheel zoom: apply: $rect")
                     //target.zoom(delta)
                 }
             )
