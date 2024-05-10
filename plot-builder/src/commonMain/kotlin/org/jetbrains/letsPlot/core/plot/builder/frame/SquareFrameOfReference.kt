@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.coord.TransformedCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -45,8 +46,9 @@ internal open class SquareFrameOfReference(
     // Flip theme
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
-    protected var panOffset: DoubleVector = DoubleVector.ZERO
-    protected var scale: Double = 1.0
+
+    private var panOffset: DoubleVector = DoubleVector.ZERO
+    private var scale: Double = 1.0
 
     override fun zoom(scale: Double) {
         this.scale = scale
@@ -141,7 +143,6 @@ internal open class SquareFrameOfReference(
                 hideAxisBreaks = !layoutInfo.vAxisShown,
                 axisTheme = vAxisTheme,
                 labelAdjustments = labelAdjustments,
-                offset = panOffset,
                 isDebugDrawing = isDebugDrawing,
             )
 
@@ -167,7 +168,6 @@ internal open class SquareFrameOfReference(
                 hideAxisBreaks = !layoutInfo.hAxisShown,
                 axisTheme = hAxisTheme,
                 labelAdjustments = labelAdjustments,
-                offset = panOffset,
                 isDebugDrawing = isDebugDrawing,
             )
 
@@ -191,8 +191,8 @@ internal open class SquareFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = vGridTheme,
-                panOffset = panOffset,
-                isOrthogonal = true
+                isOrthogonal = true,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -209,8 +209,8 @@ internal open class SquareFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = hGridTheme,
-                panOffset = panOffset,
-                isOrthogonal = true
+                isOrthogonal = true,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -252,7 +252,7 @@ internal open class SquareFrameOfReference(
 
         val breaksData = AxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
-            coord = coord,
+            coord = TransformedCoordinateSystem(coord, panOffset, DoubleVector(scale, scale)),
             domain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
@@ -320,7 +320,6 @@ internal open class SquareFrameOfReference(
             hideAxisBreaks: Boolean,
             axisTheme: AxisTheme,
             labelAdjustments: TickLabelAdjustments,
-            offset: DoubleVector,
             isDebugDrawing: Boolean,
         ): SvgComponent {
             val axis = AxisComponent(
@@ -330,8 +329,7 @@ internal open class SquareFrameOfReference(
                 labelAdjustments = labelAdjustments,
                 axisTheme = axisTheme,
                 hideAxis = hideAxis,
-                hideAxisBreaks = hideAxisBreaks,
-                panOffset = offset
+                hideAxisBreaks = hideAxisBreaks
             )
 
             if (isDebugDrawing) {

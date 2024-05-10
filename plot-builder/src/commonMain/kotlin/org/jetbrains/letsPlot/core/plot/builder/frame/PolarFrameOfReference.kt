@@ -107,8 +107,8 @@ internal class PolarFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = vGridTheme,
-                panOffset = panOffset,
                 isOrthogonal = false,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -125,8 +125,8 @@ internal class PolarFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = hGridTheme,
-                panOffset = panOffset,
                 isOrthogonal = false,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)

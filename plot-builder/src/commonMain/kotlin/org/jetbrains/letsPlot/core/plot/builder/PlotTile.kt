@@ -242,8 +242,8 @@ internal class PlotTile(
 
             val domainOffset = frameOfReference.pan(DoubleVector.ZERO, offset)
             geomInteractionGroup.rootGroup.transform().set(SvgTransformBuilder()
-                .translate(offset.mul(this.scale))
                 .scale(scale)
+                .translate(offset)
                 .build()
             )
             frameBottomGroup.clear()
@@ -260,8 +260,8 @@ internal class PlotTile(
 
             val domainOffset = frameOfReference.pan(DoubleVector.ZERO, pan)
             geomInteractionGroup.rootGroup.transform().set(SvgTransformBuilder()
-                .translate(pan.mul( this.scale))
                 .scale(scale)
+                .translate(pan)
                 .build()
             )
             frameBottomGroup.clear()
@@ -278,17 +278,16 @@ internal class PlotTile(
             pan = pan.add(offset.mul(1 / this.scale))
             val scaleUpdate = maxOf(scale.x, scale.y)
             this.scale *= scaleUpdate
-            frameOfReference.zoom(scaleUpdate)
+            frameOfReference.zoom(this.scale)
+
+            frameOfReference.pan(DoubleVector.ZERO, pan)
 
             val transform = SvgTransformBuilder()
-                .translate(pan.mul( this.scale))
                 .scale(this.scale)
+                .translate(pan)
                 .build()
-            println("transform: $transform")
 
-            geomInteractionGroup.rootGroup.transform().set(
-                transform
-            )
+            geomInteractionGroup.rootGroup.transform().set(transform)
             frameBottomGroup.clear()
             frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
             frameTopGroup.clear()

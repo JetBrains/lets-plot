@@ -25,7 +25,6 @@ class AxisComponent(
     private val breaksData: BreaksData,
     private val labelAdjustments: TickLabelAdjustments = TickLabelAdjustments(orientation),
     private val axisTheme: AxisTheme,
-    private val panOffset: DoubleVector = DoubleVector.ZERO,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
 ) : SvgComponent() {
@@ -52,8 +51,8 @@ class AxisComponent(
 
                 for ((i, br) in breaksData.majorBreaks.withIndex()) {
                     val loc = when (orientation.isHorizontal) {
-                        true -> br.x + panOffset.x
-                        false -> br.y + panOffset.y
+                        true -> br.x
+                        false -> br.y
                     }
                     if (loc in start..end) {
                         val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
