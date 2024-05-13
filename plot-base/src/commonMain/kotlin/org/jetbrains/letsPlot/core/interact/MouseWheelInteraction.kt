@@ -23,7 +23,7 @@ class MouseWheelInteraction(
             return _target ?: throw IllegalStateException("Mouse wheel zoom target wasn't acquired.")
         }
 
-    var zoomLocation: DoubleVector = DoubleVector.ZERO
+    var zoomOrigin: DoubleVector = DoubleVector.ZERO
         private set
 
     var zoomDelta: Double = 0.0
@@ -40,7 +40,7 @@ class MouseWheelInteraction(
                     @Suppress("NAME_SHADOWING")
                     val e = e as MouseWheelEvent
 
-                    zoomLocation = e.location.toDoubleVector()
+                    zoomOrigin = e.location.toDoubleVector()
                     zoomDelta = e.scrollAmount
                     _target = ctx.findTarget(e.location.toDoubleVector())
                     onZoomed(this)

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.interact
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import kotlin.math.sign
 
 class WheelZoomFeedback(
     private val onZoomed: (DoubleRectangle, InteractionTarget) -> Unit
@@ -17,18 +18,15 @@ class WheelZoomFeedback(
 
         interaction.loop(
             onZoomed = {
-                val target = it.target
-
                 val zoomStep = 1.05
+                val factor = when (it.zoomDelta.sign) {
+                    -1.0 -> 1 / zoomStep // zoom in, reduce viewport
+                    else -> zoomStep // zoom out, enlarge viewport
+                }
 
-                val zoomFactor = if (it.zoomDelta < 0) zoomStep else 1 / zoomStep
-                val localBounds = target.geomBounds.subtract(target.geomBounds.origin)
-                val localPointer = it.zoomLocation.subtract(target.geomBounds.origin)
-
-                val newBounds = zoom(zoomFactor, localPointer, localBounds)
-
-                target.zoom(newBounds.origin.mul(1 / zoomFactor), DoubleVector(zoomFactor, zoomFactor))
-                onZoomed(newBounds, target)
+                val viewport = scaleRect(it.target.geomBounds, factor, it.zoomOrigin)
+                it.target.zoom(viewport)
+                onZoomed(viewport, it.target)
             }
         )
 
@@ -40,10 +38,10 @@ class WheelZoomFeedback(
         }
     }
 
-    fun zoom(zoomFactor: Double, mouse: DoubleVector, viewport: DoubleRectangle): DoubleRectangle {
-        // Calculate the new width and height
-        val newDim = viewport.dimension.mul(zoomFactor)
-        val newOrigin = viewport.origin.add(mouse.subtract(viewport.origin).mul(1 - zoomFactor))
+    private fun scaleRect(rect: DoubleRectangle, factor: Double, origin: DoubleVector): DoubleRectangle {
+        val newDim = rect.dimension.mul(factor)
+        val originOffset = origin.subtract(rect.origin)
+        val newOrigin = rect.origin.add(originOffset.mul(1 - factor))
 
         return DoubleRectangle(newOrigin, newDim)
     }

@@ -9,4 +9,5 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 
 interface ToolInteractor {
     fun startToolFeedback(toolFeedback: ToolFeedback): Registration
+    fun reset()
 }

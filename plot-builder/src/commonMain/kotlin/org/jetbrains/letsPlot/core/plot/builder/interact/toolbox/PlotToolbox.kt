@@ -12,12 +12,14 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 internal class PlotToolbox(
     private val interactor: PlotInteractor,
-    private val toolEventDispatcher: ToolEventDispatcher,
+    toolEventDispatcher: ToolEventDispatcher,
 ) : Disposable {
     private val toolboxLayer: SvgGElement
     private val panTool = Tool("my-pan", "Pan", ToolInteractionSpec.DRAG_PAN, toolEventDispatcher)
@@ -28,29 +30,29 @@ internal class PlotToolbox(
         val toolbox = ToolboxControl(
             listOf(
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_GREEN),
-                    rectContent(Color.GREEN),
+                    rectContent(Color.LIGHT_GREEN, "Pan", Color.GRAY),
+                    rectContent(Color.GREEN, "Pan", Color.BLACK),
                 ).apply {
                     onToggleClick(panTool::switch)
                 },
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_BLUE),
-                    rectContent(Color.BLUE),
+                    rectContent(Color.LIGHT_BLUE, "Box", Color.GRAY),
+                    rectContent(Color.BLUE, "Box", Color.BLACK),
                 ).apply {
                     onToggleClick(zoomTool::switch)
                 },
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_PINK),
-                    rectContent(Color.PINK),
+                    rectContent(Color.LIGHT_PINK, "Whl", Color.GRAY),
+                    rectContent(Color.PINK, "Whl", Color.BLACK),
                 ).apply {
                     onToggleClick(wheelZoomTool::switch)
                 },
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_GRAY),
-                    rectContent(Color.GRAY),
+                    rectContent(Color.LIGHT_GRAY, "Rst", Color.GRAY),
+                    rectContent(Color.GRAY, "Rst", Color.GRAY),
                 ).apply {
                     onClick {
-                        println("Reset View.")
+                        interactor.reset()
                     }
                 }
             ))
@@ -62,8 +64,17 @@ internal class PlotToolbox(
         toolboxLayer.children().add(toolbox.svgRoot)
     }
 
-    private fun rectContent(color: Color) = SvgRectElement().apply {
-        fillColor().set(color)
+    private fun rectContent(color: Color, text: String, textColor: Color): SvgElement {
+        return SvgGElement().apply {
+            children().add(SvgRectElement().apply {
+                fillColor().set(color)
+            })
+            children().add(
+                SvgTextElement(0.0, 12.0, text).apply {
+                    fillColor().set(textColor)
+                }
+            )
+        }
     }
 
     override fun dispose() {

@@ -26,6 +26,24 @@ class DrawRectFeedback(
         height().set(0.0)
     }
 
+    private val viewportSvg = SvgRectElement().apply {
+        strokeColor().set(Color.BLACK)
+        fillColor().set(Color.LIGHT_BLUE)
+        strokeWidth().set(0.0)
+        opacity().set(0.5)
+        x().set(0.0)
+        y().set(0.0)
+        width().set(0.0)
+        height().set(0.0)
+    }
+
+    private fun drawRects(r: SvgRectElement, rect: DoubleRectangle) {
+        r.x().set(rect.left)
+        r.y().set(rect.top)
+        r.width().set(rect.width)
+        r.height().set(rect.height)
+    }
+
     override fun start(ctx: InteractionContext): Disposable {
 
         val decorationsLayer = ctx.decorationsLayer
@@ -34,17 +52,20 @@ class DrawRectFeedback(
         interaction.loop(
             onStarted = {
                 println("DrawRectFeedback start.")
-                updateRect(it.dragFrom, it.dragTo, it.target.geomBounds)
+                drawRects(it.dragFrom, it.dragTo, it.target.geomBounds)
                 decorationsLayer.children().add(rect)
+                decorationsLayer.children().add(viewportSvg)
             },
             onDragged = {
                 println("DrawRectFeedback drag.")
-                updateRect(it.dragFrom, it.dragTo, it.target.geomBounds)
+                drawRects(it.dragFrom, it.dragTo, it.target.geomBounds)
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
                 decorationsLayer.children().remove(rect)
-                val r = calcRect(it.dragFrom, it.dragTo, it.target.geomBounds)
+                decorationsLayer.children().remove(viewportSvg)
+
+                val r = calcUserRect(it.dragFrom, it.dragTo, it.target.geomBounds)
                 val target = it.target
                 it.reset()
                 onCompleted(r to target)
@@ -52,6 +73,7 @@ class DrawRectFeedback(
             onAborted = {
                 println("DrawRectFeedback abort.")
                 decorationsLayer.children().remove(rect)
+                decorationsLayer.children().remove(viewportSvg)
                 it.reset()
             }
         )
@@ -65,21 +87,17 @@ class DrawRectFeedback(
         }
     }
 
-    private fun updateRect(
+    private fun drawRects(
         dragFrom: DoubleVector,
         dragTo: DoubleVector,
         geomBounds: DoubleRectangle
     ) {
-        calcRect(dragFrom, dragTo, geomBounds).let { r ->
-            rect.x().set(r.left)
-            rect.y().set(r.top)
-            rect.width().set(r.width)
-            rect.height().set(r.height)
-        }
+        drawRects(rect, calcUserRect(dragFrom, dragTo, geomBounds))
+        drawRects(viewportSvg, calcViewportRect(dragFrom, dragTo, geomBounds))
     }
 
     companion object {
-        private fun calcRect(
+        private fun calcUserRect(
             dragFrom: DoubleVector,
             dragTo: DoubleVector,
             geomBounds: DoubleRectangle
@@ -95,6 +113,15 @@ class DrawRectFeedback(
             )
 
             return geomBounds.intersect(r)!!
+        }
+
+        private fun calcViewportRect(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            geomBounds: DoubleRectangle
+        ): DoubleRectangle {
+            val userRect = calcUserRect(dragFrom, dragTo, geomBounds)
+            return userRect.srinkToAspectRatio(geomBounds.dimension)
         }
     }
 }

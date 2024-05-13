@@ -235,56 +235,39 @@ internal class PlotTile(
 
     inner class InteractionSupport {
         private var scale = 1.0
-        private var pan = DoubleVector.ZERO
+        private var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
 
-        fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
-            val offset = to.subtract(from).mul(1 / this.scale).add(pan)
-
-            val domainOffset = frameOfReference.pan(DoubleVector.ZERO, offset)
-            geomInteractionGroup.rootGroup.transform().set(SvgTransformBuilder()
-                .scale(scale)
-                .translate(offset)
-                .build()
-            )
-            frameBottomGroup.clear()
-            frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
-            frameTopGroup.clear()
-            frameOfReference.drawAfterGeomLayer(frameTopGroup)
-
-            return domainOffset
-        }
-
-        fun panEnd(from: DoubleVector, to: DoubleVector): DoubleVector? {
-            val offset = to.subtract(from).mul(1 / this.scale)
-            pan = pan.add(offset)
-
-            val domainOffset = frameOfReference.pan(DoubleVector.ZERO, pan)
-            geomInteractionGroup.rootGroup.transform().set(SvgTransformBuilder()
-                .scale(scale)
-                .translate(pan)
-                .build()
-            )
-            frameBottomGroup.clear()
-            frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
-            frameTopGroup.clear()
-            frameOfReference.drawAfterGeomLayer(frameTopGroup)
-
-            return domainOffset
-        }
-
-        fun zoom(offset: DoubleVector, scale: DoubleVector) {
-
-            //frameOfReference.pan(tileLayoutInfo.geomContentBounds.origin, tileLayoutInfo.geomContentBounds.origin.add(offset))
+        fun pan(offset: DoubleVector) {
             pan = pan.add(offset.mul(1 / this.scale))
-            val scaleUpdate = maxOf(scale.x, scale.y)
-            this.scale *= scaleUpdate
-            frameOfReference.zoom(this.scale)
 
-            frameOfReference.pan(DoubleVector.ZERO, pan)
+            repaint(pan, scale)
+        }
+
+        fun zoom(scale: Double) {
+            this.scale *= scale
+            repaint(pan, this.scale)
+        }
+
+        fun zoom(contentRect: DoubleRectangle, viewport: DoubleRectangle) {
+            val adjustedViewport = viewport.srinkToAspectRatio(contentRect.dimension)
+            val (scale, translate) = calculateTransform(contentRect, adjustedViewport)
+            pan(translate)
+            zoom(scale)
+        }
+
+        fun reset() {
+            scale = 1.0
+            pan = DoubleVector.ZERO
+            repaint(pan, scale)
+        }
+
+        private fun repaint(offset: DoubleVector, scale: Double) {
+            frameOfReference.zoom(scale)
+            frameOfReference.pan(DoubleVector.ZERO, offset)
 
             val transform = SvgTransformBuilder()
-                .scale(this.scale)
-                .translate(pan)
+                .scale(scale)
+                .translate(offset)
                 .build()
 
             geomInteractionGroup.rootGroup.transform().set(transform)
@@ -292,8 +275,15 @@ internal class PlotTile(
             frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
             frameTopGroup.clear()
             frameOfReference.drawAfterGeomLayer(frameTopGroup)
-
         }
 
+        private fun calculateTransform(rect: DoubleRectangle, viewport: DoubleRectangle): Pair<Double, DoubleVector> {
+            val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
+            val scaledSize = viewport.dimension.mul(scale)
+            val newPosition = rect.origin.add(rect.dimension.subtract(scaledSize).mul(0.5))
+            val translate = newPosition.subtract(viewport.origin)
+
+            return scale to translate
+        }
     }
 }

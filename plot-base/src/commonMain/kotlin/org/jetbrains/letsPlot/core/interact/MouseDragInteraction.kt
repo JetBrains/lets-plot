@@ -40,6 +40,13 @@ internal class MouseDragInteraction(
             return field
         }
 
+    var dragDelta: DoubleVector = DoubleVector.ZERO
+        private set
+        get():DoubleVector {
+            require(started) { "Mouse drag target wasn't acquired." }
+            return field
+        }
+
     private var disposed = false
     private val reg: CompositeRegistration = CompositeRegistration()
 
@@ -75,6 +82,7 @@ internal class MouseDragInteraction(
                             onStarted(this)
                         }
                     } else {
+                        dragDelta = plotCoord.subtract(dragTo)
                         dragTo = plotCoord
                         onDragged(this)
                     }
