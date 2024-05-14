@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
@@ -18,18 +19,24 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_HEIGHT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_WIDTH
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry
 ) : ThemeValuesAccess(options, fontFamilyRegistry), LegendTheme {
 
-    internal val backgroundKey = listOf(ThemeOption.LEGEND_BKGR_RECT, ThemeOption.RECT)
+    internal val backgroundKey = listOf(LEGEND_BKGR_RECT, ThemeOption.RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
     internal val textKey = listOf(LEGEND_TEXT, TEXT)
 
-    override fun keySize(): Double {
-        return 23.0
+    override fun keySize(): DoubleVector {
+        val width = getNumber(listOf(LEGEND_KEY_WIDTH, LEGEND_KEY_SIZE))
+        val height = getNumber(listOf(LEGEND_KEY_HEIGHT, LEGEND_KEY_SIZE))
+        return DoubleVector(width, height)
     }
 
     override fun margin(): Double {
