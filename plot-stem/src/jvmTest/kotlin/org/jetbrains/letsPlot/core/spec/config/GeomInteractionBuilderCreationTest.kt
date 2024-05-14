@@ -199,7 +199,7 @@ class GeomInteractionBuilderCreationTest {
                 scaleMap = scaleMap,
                 multilayerWithTooltips = false,
                 isLiveMap = false,
-                isLinearCoordSystem = true,
+                isPolarCoordSystem = false,
                 theme = DefaultTheme.minimal2()
             )
             val tooltipLines = builder.tooltipLines
@@ -432,7 +432,7 @@ class GeomInteractionBuilderCreationTest {
             scaleMap = scaleMap,
             multilayerWithTooltips = false,
             isLiveMap = false,
-            isLinearCoordSystem = true,
+            isPolarCoordSystem = false,
             theme
         )
     }
