@@ -28,6 +28,7 @@ class GridComponent(
     private val orientation = axisInfo.orientation
     private val start = 0.0
     private val end: Double = if (orientation.isHorizontal) geomContentBounds.height else geomContentBounds.width
+    private val geomContentLocalBounds = geomContentBounds.subtract(geomContentBounds.origin)
 
     override fun buildComponent() {
         rootGroup.children().add(container)
@@ -61,13 +62,13 @@ class GridComponent(
             if (isOrthogonal) {
 
                 grid
-                    .filter { line -> line.any { p -> p in geomContentBounds } }
                     .map { (p) ->
                         when (orientation.isHorizontal) {
                             true -> listOf(DoubleVector(p.x, start), DoubleVector(p.x, end))
                             false -> listOf(DoubleVector(start, p.y), DoubleVector(end, p.y))
                         }
                     }
+                    .filter { line -> line.any { p -> p in geomContentLocalBounds } }
             } else {
                 // Non-orthogonal grid is always visible and don't support panning
                 grid

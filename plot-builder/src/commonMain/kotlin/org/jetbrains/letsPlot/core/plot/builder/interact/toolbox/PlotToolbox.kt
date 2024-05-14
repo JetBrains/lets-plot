@@ -30,20 +30,20 @@ internal class PlotToolbox(
         val toolbox = ToolboxControl(
             listOf(
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_GREEN, "Pan", Color.GRAY),
-                    rectContent(Color.GREEN, "Pan", Color.BLACK),
+                    rectContent(Color.LIGHT_GREEN, "pan", Color.GRAY),
+                    rectContent(Color.GREEN, "PAN", Color.BLACK),
                 ).apply {
                     onToggleClick(panTool::switch)
                 },
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_BLUE, "Box", Color.GRAY),
-                    rectContent(Color.BLUE, "Box", Color.BLACK),
+                    rectContent(Color.LIGHT_BLUE, "box", Color.GRAY),
+                    rectContent(Color.BLUE, "BOX", Color.BLACK),
                 ).apply {
                     onToggleClick(zoomTool::switch)
                 },
                 ToggleButtonControl(
-                    rectContent(Color.LIGHT_PINK, "Whl", Color.GRAY),
-                    rectContent(Color.PINK, "Whl", Color.BLACK),
+                    rectContent(Color.LIGHT_PINK, "whl", Color.GRAY),
+                    rectContent(Color.PINK, "WHL", Color.BLACK),
                 ).apply {
                     onToggleClick(wheelZoomTool::switch)
                 },
@@ -70,7 +70,7 @@ internal class PlotToolbox(
                 fillColor().set(color)
             })
             children().add(
-                SvgTextElement(0.0, 12.0, text).apply {
+                SvgTextElement(0.0, 16.0, text).apply {
                     fillColor().set(textColor)
                 }
             )
