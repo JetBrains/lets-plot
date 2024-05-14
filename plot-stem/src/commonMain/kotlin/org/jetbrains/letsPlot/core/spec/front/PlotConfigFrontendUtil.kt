@@ -22,25 +22,26 @@ import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
 import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
+import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.front.tiles.PlotTilesConfig
 
 object PlotConfigFrontendUtil {
-    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
+    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>, aopConversion: AesOptionConversion): Map<Aes<*>, GuideOptions> {
         val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
-                val guideOptions = scaleConfig.getGuideOptions().createGuideOptions()
+                val guideOptions = scaleConfig.getGuideOptions().createGuideOptions(aopConversion)
                 guideOptionsByAes[scaleConfig.aes] = guideOptions
             }
         }
         return guideOptionsByAes
     }
 
-    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<Aes<*>, GuideOptions> {
+    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>, aopConversion: AesOptionConversion): Map<Aes<*>, GuideOptions> {
         val guideOptionsByAes = HashMap<Aes<*>, GuideOptions>()
         for ((key, value) in guideOptionsList) {
             val aes = Option.Mapping.toAes(key)
-            guideOptionsByAes[aes] = GuideConfig.create(value).createGuideOptions()
+            guideOptionsByAes[aes] = GuideConfig.create(value).createGuideOptions(aopConversion)
         }
         return guideOptionsByAes
     }

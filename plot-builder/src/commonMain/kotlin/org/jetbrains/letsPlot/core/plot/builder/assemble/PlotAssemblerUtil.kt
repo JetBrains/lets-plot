@@ -117,9 +117,20 @@ internal object PlotAssemblerUtil {
                 val aesListForScaleName = aesListByScaleName.getValue(scaleName)
                 val legendKeyFactory = layerInfo.legendKeyElementFactory
                 val aestheticsDefaults = layerInfo.aestheticsDefaults
+
+                val overrideAesValues = mutableMapOf<Aes<*>, Any>()
+                aesListForScaleName.forEach { aes ->
+                    val overrideOptionsForAes = (guideOptionsMap[aes] as? LegendOptions)?.overrideAesValues
+                    if (!overrideOptionsForAes.isNullOrEmpty()) {
+                        // ToDo Need to check for conflicting settings?
+                        overrideAesValues += overrideOptionsForAes
+                    }
+                }
+
                 legendAssembler.addLayer(
                     legendKeyFactory,
                     aesListForScaleName,
+                    overrideAesValues,
                     layerConstantByAes,
                     aestheticsDefaults,
                     layerInfo.colorByAes,

@@ -38,6 +38,7 @@ class LegendAssembler(
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
         aesList: List<Aes<*>>,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         colorByAes: Aes<Color>,
@@ -50,6 +51,7 @@ class LegendAssembler(
             LegendLayer(
                 keyFactory,
                 aesList,
+                overrideAesValues,
                 constantByAes,
                 aestheticsDefaults,
                 scaleMappers,
@@ -121,6 +123,7 @@ class LegendAssembler(
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
         val aesList: List<Aes<*>>,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
@@ -150,6 +153,9 @@ class LegendAssembler(
                 val labels = scaleBreaks.labels
                 for ((label, aesValue) in labels.zip(aesValues)) {
                     aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
+                    overrideAesValues.forEach { (aesToOverride, v) ->
+                       aesValuesByLabel.getOrPut(label) { HashMap() }[aesToOverride] = v
+                    }
                 }
             }
 

@@ -5,10 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
+
 class LegendOptions constructor(
     val colCount: Int? = null,
     val rowCount: Int? = null,
     val byRow: Boolean = false,
+    val overrideAesValues: Map<Aes<*>, Any>? = null,
     isReverse: Boolean = false
 ) : GuideOptions(isReverse) {
     init {
@@ -26,7 +29,7 @@ class LegendOptions constructor(
 
     override fun withReverse(reverse: Boolean): LegendOptions {
         return LegendOptions(
-            colCount, rowCount, byRow, isReverse = reverse
+            colCount, rowCount, byRow, overrideAesValues, isReverse = reverse
         )
     }
 
@@ -39,6 +42,7 @@ class LegendOptions constructor(
         if (colCount != other.colCount) return false
         if (rowCount != other.rowCount) return false
         if (byRow != other.byRow) return false
+        if (overrideAesValues != other.overrideAesValues) return false
 
         return true
     }
@@ -47,6 +51,7 @@ class LegendOptions constructor(
         var result = colCount ?: 0
         result = 31 * result + (rowCount ?: 0)
         result = 31 * result + byRow.hashCode()
+        result = 31 * result + (overrideAesValues?.hashCode() ?: 0)
         return result
     }
 

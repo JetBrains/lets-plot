@@ -7,7 +7,7 @@ from .core import FeatureSpec
 __all__ = ['guide_legend', 'guide_colorbar', 'guides']
 
 
-def guide_legend(nrow=None, ncol=None, byrow=None):
+def guide_legend(nrow=None, ncol=None, byrow=None, override_aes=None):
     """
     Legend guide.
 
@@ -19,6 +19,8 @@ def guide_legend(nrow=None, ncol=None, byrow=None):
         Number of columns in legend's guide.
     byrow : bool, default=True
         Type of output: by row, or by column.
+    override_aes : list
+        A list of aesthetic parameters that will override the default legend appearance.
 
     Returns
     -------
