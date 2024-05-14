@@ -11,25 +11,29 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_HEIGHT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_WIDTH
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry
 ) : ThemeValuesAccess(options, fontFamilyRegistry), LegendTheme {
 
-    internal val backgroundKey = listOf(LEGEND_BKGR_RECT, ThemeOption.RECT)
+    internal val backgroundKey = listOf(LEGEND_BKGR_RECT, RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
     internal val textKey = listOf(LEGEND_TEXT, TEXT)
 
@@ -48,15 +52,15 @@ internal class DefaultLegendTheme(
     }
 
     override fun position(): LegendPosition {
-        return getValue(ThemeOption.LEGEND_POSITION) as LegendPosition
+        return getValue(LEGEND_POSITION) as LegendPosition
     }
 
     override fun justification(): LegendJustification {
-        return getValue(ThemeOption.LEGEND_JUSTIFICATION) as LegendJustification
+        return getValue(LEGEND_JUSTIFICATION) as LegendJustification
     }
 
     override fun direction(): LegendDirection {
-        return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
+        return getValue(LEGEND_DIRECTION) as LegendDirection
     }
 
     override fun showTitle(): Boolean {
@@ -80,15 +84,15 @@ internal class DefaultLegendTheme(
     }
 
     override fun backgroundColor(): Color {
-        return getColor(getElemValue(backgroundKey), ThemeOption.Elem.COLOR)
+        return getColor(getElemValue(backgroundKey), Elem.COLOR)
     }
 
     override fun backgroundFill(): Color {
-        return getColor(getElemValue(backgroundKey), ThemeOption.Elem.FILL)
+        return getColor(getElemValue(backgroundKey), Elem.FILL)
     }
 
     override fun backgroundStrokeWidth(): Double {
-        return getNumber(getElemValue(backgroundKey), ThemeOption.Elem.SIZE)
+        return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
     override fun backgroundLineType() = getLineType(getElemValue(backgroundKey))
