@@ -281,17 +281,22 @@ class PlotSvgComponent constructor(
                 PlotLayoutUtil.titleThickness(
                     title,
                     PlotLabelSpecFactory.plotTitle(plotTheme),
-                    theme.plot().titleMargins()
+                    plotTheme.titleMargins()
                 )
             )
         }
-        val plotTitleTextRect = plotTitleElementRect?.let { textRectangle(it, theme.plot().titleMargins()) }
+        val plotTitleTextRect = plotTitleElementRect?.let { textRectangle(it, plotTheme.titleMargins()) }
         if (DEBUG_DRAWING) {
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             plotTitleTextRect?.let {
                 drawDebugRect(
-                    textBoundingBox(title!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
+                    textBoundingBox(
+                        title!!,
+                        it,
+                        PlotLabelSpecFactory.plotTitle(plotTheme),
+                        plotTheme.titleJustification()
+                    ),
                     Color.DARK_GREEN
                 )
             }
@@ -305,17 +310,22 @@ class PlotSvgComponent constructor(
                 PlotLayoutUtil.titleThickness(
                     subtitle,
                     PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                    theme.plot().subtitleMargins()
+                    plotTheme.subtitleMargins()
                 )
             )
         }
-        val subtitleTextRect = subtitleElementRect?.let { textRectangle(it, theme.plot().subtitleMargins()) }
+        val subtitleTextRect = subtitleElementRect?.let { textRectangle(it, plotTheme.subtitleMargins()) }
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             subtitleTextRect?.let {
                 drawDebugRect(
-                    textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotSubtitle(plotTheme), align = -1),
+                    textBoundingBox(
+                        subtitle!!,
+                        it,
+                        PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                        plotTheme.subtitleJustification()
+                    ),
                     Color.DARK_GREEN
                 )
             }
@@ -325,7 +335,7 @@ class PlotSvgComponent constructor(
             val captionRectHeight = PlotLayoutUtil.titleThickness(
                 caption,
                 PlotLabelSpecFactory.plotCaption(plotTheme),
-                theme.plot().captionMargins()
+                plotTheme.captionMargins()
             )
             DoubleRectangle(
                 geomAreaBounds.left,
@@ -334,13 +344,18 @@ class PlotSvgComponent constructor(
                 captionRectHeight
             )
         }
-        val captionTextRect = captionElementRect?.let { textRectangle(it, theme.plot().captionMargins()) }
+        val captionTextRect = captionElementRect?.let { textRectangle(it, plotTheme.captionMargins()) }
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
             captionTextRect?.let {
                 drawDebugRect(
-                    textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotCaption(plotTheme), align = 1),
+                    textBoundingBox(
+                        caption!!,
+                        it,
+                        PlotLabelSpecFactory.plotCaption(plotTheme),
+                        plotTheme.captionJustification()
+                    ),
                     Color.DARK_GREEN
                 )
             }
@@ -386,7 +401,7 @@ class PlotSvgComponent constructor(
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     justification = theme.verticalAxis(flippedAxis).titleJustification(),
                     margins = theme.verticalAxis(flippedAxis).titleMargins(),
-                    plotInset = theme.plot().plotInset(),
+                    plotInset = plotTheme.plotInset(),
                     className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
@@ -400,7 +415,7 @@ class PlotSvgComponent constructor(
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     justification = theme.horizontalAxis(flippedAxis).titleJustification(),
                     margins = theme.horizontalAxis(flippedAxis).titleMargins(),
-                    plotInset = theme.plot().plotInset(),
+                    plotInset = plotTheme.plotInset(),
                     className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
@@ -549,32 +564,10 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             drawDebugRect(axisTitleTextRect, Color.LIGHT_BLUE)
             drawDebugRect(axisTitleElementRect, Color.GRAY)
-            drawDebugRect(textBoundingBox(text, axisTitleTextRect, labelSpec, orientation), Color.DARK_GREEN)
-        }
-    }
-
-    private fun textBoundingBox(
-        text: String,
-        boundRect: DoubleRectangle,
-        labelSpec: LabelSpec,
-        orientation: Orientation = Orientation.TOP,
-        align: Int = 0 // < 0 - to left; > 0 - to right; 0 - centered
-    ): DoubleRectangle {
-        val d = PlotLayoutUtil.textDimensions(text, labelSpec)
-        return if (orientation in listOf(Orientation.TOP, Orientation.BOTTOM)) {
-            val x = when {
-                align > 0 -> boundRect.right - d.x
-                align < 0 -> boundRect.left
-                else -> boundRect.center.x - d.x / 2
-            }
-            DoubleRectangle(x, boundRect.center.y - d.y / 2, d.x, d.y)
-        } else {
-            val y = when {
-                align > 0 -> boundRect.bottom - d.x
-                align < 0 -> boundRect.top
-                else -> boundRect.center.y - d.x / 2
-            }
-            DoubleRectangle(boundRect.center.x - d.y / 2, y, d.y, d.x)
+            drawDebugRect(
+                textBoundingBox(text, axisTitleTextRect, labelSpec, justification, orientation),
+                Color.DARK_GREEN
+            )
         }
     }
 
@@ -603,6 +596,32 @@ class PlotSvgComponent constructor(
         titleLabel.moveTo(position)
         rotation?.angle?.let(titleLabel::rotate)
         add(titleLabel)
+    }
+
+    // for debug drawing
+    private fun textBoundingBox(
+        text: String,
+        boundRect: DoubleRectangle,
+        labelSpec: LabelSpec,
+        justification: TextJustification,
+        orientation: Orientation = Orientation.TOP,
+    ): DoubleRectangle {
+        val textDimensions = PlotLayoutUtil.textDimensions(text, labelSpec)
+        return if (orientation.isHorizontal) {
+            val x = (boundRect.left + boundRect.width * justification.x) - when {
+                justification.x < 0.5 -> 0.0                        // left horizontal anchor is used
+                justification.x == 0.5 -> textDimensions.x / 2      // middle
+                else -> textDimensions.x                            // right
+            }
+            DoubleRectangle(x, boundRect.center.y - textDimensions.y / 2, textDimensions.x, textDimensions.y)
+        } else {
+            val y = (boundRect.bottom - boundRect.height * justification.x) - when {
+                justification.x < 0.5 -> textDimensions.x
+                justification.x == 0.5 -> textDimensions.x / 2
+                else -> 0.0
+            }
+            DoubleRectangle(boundRect.center.x - textDimensions.y / 2, y, textDimensions.y, textDimensions.x)
+        }
     }
 
     private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
