@@ -270,7 +270,9 @@ class PlotSvgComponent constructor(
         fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
             elementRect,
             topMargin = margins.top,
-            bottomMargin = margins.bottom
+            rightMargin = margins.right,
+            bottomMargin = margins.bottom,
+            leftMargin = margins.left
         )
 
         val plotTitleElementRect = title?.let {
