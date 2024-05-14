@@ -81,14 +81,15 @@ class DomMouseEventMapper(
         val modifiers = getModifiers(domMouseEvent)
 
         val mouseEvent = when (domMouseEvent) {
-            is WheelEvent -> {
-                domMouseEvent.preventDefault()
-                MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
-            }
+            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
             else -> MouseEvent(x, y, button, modifiers)
         }
 
         mouseEventPeer.dispatch(eventSpec, mouseEvent)
+
+        if (mouseEvent.preventDefault) {
+            domMouseEvent.preventDefault()
+        }
     }
 
     private abstract inner class MouseState {

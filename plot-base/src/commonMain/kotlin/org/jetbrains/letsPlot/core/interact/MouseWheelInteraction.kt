@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 
 class MouseWheelInteraction(
     private val ctx: InteractionContext
-) : Disposable  {
+) : Disposable {
     private var disposed = false
     private val reg: CompositeRegistration = CompositeRegistration()
 
@@ -37,13 +37,14 @@ class MouseWheelInteraction(
 
         reg.add(
             ctx.eventsManager.onMouseEvent(MouseEventSpec.MOUSE_WHEEL_ROTATED) { _, e ->
-                    @Suppress("NAME_SHADOWING")
-                    val e = e as MouseWheelEvent
+                @Suppress("NAME_SHADOWING")
+                val e = e as MouseWheelEvent
+                e.preventDefault = true
 
-                    zoomOrigin = e.location.toDoubleVector()
-                    zoomDelta = e.scrollAmount
-                    _target = ctx.findTarget(e.location.toDoubleVector())
-                    onZoomed(this)
+                zoomOrigin = e.location.toDoubleVector()
+                zoomDelta = e.scrollAmount
+                _target = ctx.findTarget(e.location.toDoubleVector())
+                onZoomed(this)
             }
         )
     }
