@@ -52,8 +52,8 @@ abstract class CompositeFigureGridLayoutBase(
         )
 
         return elements.mapIndexed { index, buildInfo ->
-            val row = FigureGridLayoutUtil.indexToRow(index, ncols)
-            val col = FigureGridLayoutUtil.indexToCol(index, ncols)
+            val row = indexToRow(index, ncols)
+            val col = indexToCol(index, ncols)
             val cellBounds = DoubleRectangle(
                 x = toCellOrigin(col, cellWidthByCol, hSpace),
                 y = toCellOrigin(row, cellHeightByRow, vSpace),
@@ -66,7 +66,7 @@ abstract class CompositeFigureGridLayoutBase(
                     cellBounds
                 } else {
                     val figureDefaultSize = elementsDefaultSizes[index]!!
-                    cellBounds.srinkToAspectRatio(figureDefaultSize)
+                    cellBounds.shrinkToAspectRatio(figureDefaultSize)
                 }
 
                 it.withBounds(figureBounds.add(bounds.origin))

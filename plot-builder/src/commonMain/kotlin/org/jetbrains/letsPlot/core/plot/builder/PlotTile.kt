@@ -249,7 +249,7 @@ internal class PlotTile(
         }
 
         fun zoom(contentRect: DoubleRectangle, viewport: DoubleRectangle) {
-            val adjustedViewport = viewport.srinkToAspectRatio(contentRect.dimension)
+            val adjustedViewport = viewport.shrinkToAspectRatio(contentRect.dimension)
             val (scale, translate) = calculateTransform(contentRect, adjustedViewport)
             pan(translate)
             zoom(scale)

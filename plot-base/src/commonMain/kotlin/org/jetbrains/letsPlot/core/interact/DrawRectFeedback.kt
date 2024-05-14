@@ -121,7 +121,7 @@ class DrawRectFeedback(
             geomBounds: DoubleRectangle
         ): DoubleRectangle {
             val userRect = calcUserRect(dragFrom, dragTo, geomBounds)
-            return userRect.srinkToAspectRatio(geomBounds.dimension)
+            return userRect.shrinkToAspectRatio(geomBounds.dimension)
         }
     }
 }
