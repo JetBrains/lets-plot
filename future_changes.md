@@ -3,6 +3,7 @@
 ### Added
 
 ### Changed
+- [BREAKING] Dropped support for Python 3.7 as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle.
 
 ### Fixed
 - Livemap: improve "tiles" documentation [[#1093](https://github.com/JetBrains/lets-plot/issues/1093)].
