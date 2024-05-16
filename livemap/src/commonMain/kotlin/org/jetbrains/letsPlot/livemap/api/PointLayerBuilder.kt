@@ -67,6 +67,7 @@ class PointEntityBuilder(
     var animation: Int = 0
     var label: String = ""
     var shape: Int = 1
+    var angle: Double = 0.0
 
     fun build(nonInteractive: Boolean = false): EcsEntity {
         val d = radius * 2.0
@@ -80,7 +81,7 @@ class PointEntityBuilder(
                     +IndexComponent(layerIndex!!, index!!)
                 }
                 + RenderableComponent().apply {
-                    renderer = PointRenderer(shape)
+                    renderer = PointRenderer(shape, angle)
                 }
                 +ChartElementComponent().apply {
                     sizeScalingRange = this@PointEntityBuilder.sizeScalingRange
