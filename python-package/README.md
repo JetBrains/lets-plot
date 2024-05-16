@@ -25,7 +25,7 @@ Gradle `build` in the sibling project **python-package-build**
 
 or just run shell command (if the changes are only in the Python code):
 
-`python setup.py update_js bdist_wheel`
+`python -m build -w`
 
 ## Installing locally
 
