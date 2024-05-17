@@ -29,7 +29,7 @@ internal class PlotToolEventDispatcher(
         val responseEvents = ArrayList<Map<String, Any>>()
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
 
-        //responseEvents.addAll(deactivateOverlappingInteractions(interactionName))
+        responseEvents.addAll(deactivateOverlappingInteractions(interactionName))
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
