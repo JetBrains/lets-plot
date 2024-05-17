@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point.symbol
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.render.point.RotationSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 
 internal class GlyphPair(private val myG1: Glyph, private val myG2: Glyph) :
@@ -18,10 +18,10 @@ internal class GlyphPair(private val myG1: Glyph, private val myG2: Glyph) :
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        rotationSpec: RotationSpec?
+        transform: SvgTransform?
     ) {
-        myG1.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, rotationSpec)
-        myG2.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, rotationSpec)
+        myG1.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        myG2.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

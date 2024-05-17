@@ -13,10 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape.*
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.CircleGlyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyphs
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimObject
-
-typealias RotationSpec = Pair<Double, DoubleVector>
 
 object PointShapeSvg {
     fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0): SvgSlimObject {
@@ -47,7 +46,7 @@ object PointShapeSvg {
         r.setStrokeWidth(0.0)
 
         val angle = p.finiteOrNull(Aes.ANGLE)
-        angle?.let { r.setRotation(it, location.x, location.y) }
+        angle?.let { r.setTransform(SvgTransformBuilder().rotate(it, location).build()) }
 
         return r
     }
@@ -60,7 +59,13 @@ object PointShapeSvg {
     ): SvgSlimObject {
         val stroke = shape.strokeWidth(p)
         val glyph = createSlimGlyph(shape, location, size, stroke)
-        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke, location)
+        val angle = p.finiteOrNull(Aes.ANGLE)
+        val transform = if (glyph is CircleGlyph) null
+        else angle?.let {
+            SvgTransformBuilder().rotate(it, location).build()
+        }
+
+        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke, transform)
         return glyph
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 interface UpdatableShape {
     fun update(
@@ -14,6 +15,6 @@ interface UpdatableShape {
         stroke: Color,
         strokeAlpha: Double,
         strokeWidth: Double,
-        rotationSpec: RotationSpec?
+        transform: SvgTransform?
     )
 }
