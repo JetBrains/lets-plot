@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.guide
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
@@ -14,35 +15,23 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
 
 class GridComponent(
     private val majorGrid: List<List<DoubleVector>>,
     private val minorGrid: List<List<DoubleVector>>,
     axisInfo: AxisLayoutInfo,
     private val gridTheme: PanelGridTheme,
-    private val panOffset: DoubleVector,
     private val isOrthogonal: Boolean,
+    private val geomContentBounds: DoubleRectangle
 ) : SvgComponent() {
     private val container = SvgGElement()
-
-    private val length = axisInfo.axisLength
     private val orientation = axisInfo.orientation
-
     private val start = 0.0
-    private val end: Double = length
+    private val end: Double = if (orientation.isHorizontal) geomContentBounds.height else geomContentBounds.width
+    private val geomContentLocalBounds = geomContentBounds.subtract(geomContentBounds.origin)
 
     override fun buildComponent() {
         rootGroup.children().add(container)
-
-        if (panOffset != DoubleVector.ZERO) {
-            val delta = when (orientation.isHorizontal) {
-                true -> DoubleVector(panOffset.x, 0)
-                false -> DoubleVector(0, panOffset.y)
-            }
-
-            transformTranslate(container, delta)
-        }
 
         if (gridTheme.showMinor()) {
             buildGrid(
@@ -71,11 +60,15 @@ class GridComponent(
     ) {
         val visibleGridLines =
             if (isOrthogonal) {
-                fun loc(p: DoubleVector): Double = when (orientation.isHorizontal) {
-                    true -> p.x + panOffset.x
-                    false -> p.y + panOffset.y
-                }
-                grid.filter { line -> line.any { p -> loc(p) in start..end } }
+
+                grid
+                    .map { (p) ->
+                        when (orientation.isHorizontal) {
+                            true -> listOf(DoubleVector(p.x, start), DoubleVector(p.x, end))
+                            false -> listOf(DoubleVector(start, p.y), DoubleVector(end, p.y))
+                        }
+                    }
+                    .filter { line -> line.any { p -> p in geomContentLocalBounds } }
             } else {
                 // Non-orthogonal grid is always visible and don't support panning
                 grid
@@ -83,7 +76,6 @@ class GridComponent(
 
         val elems = visibleGridLines.map { buildGridLine(it, lineWidth, lineColor, lineType) }
         container.children().addAll(elems)
-
     }
 
     private fun buildGridLine(

@@ -23,7 +23,8 @@ internal class SandboxToolbar(
     init {
         toolButtons = listOf(
             toolButton(PAN_TOOL_SPEC),
-            toolButton(ZOOM_TOOL_SPEC)
+            toolButton(BOX_ZOOM_TOOL_SPEC),
+            toolButton(WHEEL_ZOOM_TOOL_SPEC)
         )
 
         toolButtons.forEach {
@@ -91,11 +92,18 @@ internal class SandboxToolbar(
                 ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
             )
         )
-        val ZOOM_TOOL_SPEC = mapOf(
-            "name" to "my-zoom",
-            "label" to "Zoom",
+        val BOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-box",
+            "label" to "Zoom Box",
             "interaction" to mapOf(
                 ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+            )
+        )
+        val WHEEL_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-wheel",
+            "label" to "Zoom Wheel",
+            "interaction" to mapOf(
+                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
             )
         )
     }

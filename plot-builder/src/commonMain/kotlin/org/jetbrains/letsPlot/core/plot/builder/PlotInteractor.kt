@@ -83,11 +83,21 @@ internal class PlotInteractor(
                 )
             )
 
+            is WheelZoomFeedback -> toolFeedback.start(
+                DragInteractionContext(
+                    decorationLayer,
+                    eventsManager,
+                    tiles
+                )
+            )
             else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
         }
         return Registration.from(disposable)
     }
 
+    override fun reset() {
+        tiles.forEach { (_, tile) -> tile.interactionSupport.reset() }
+    }
 
     override fun dispose() {
         reg.dispose()
@@ -104,15 +114,16 @@ internal class PlotInteractor(
             val (bbox, tile) = target
             return object : InteractionTarget {
                 override val geomBounds: DoubleRectangle = bbox
-                override fun zoom(geomBounds: DoubleRectangle) {
-                    println("Target zoom: $geomBounds")
+                override fun zoom(viewport: DoubleRectangle) {
+                    tile.interactionSupport.zoom(geomBounds, viewport)
                 }
 
-                override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
-                    val offset = to.subtract(from)
-                    val domainOffset = tile.pan(from, to)
-                    println("Target pan: $offset (domain: $domainOffset)")
-                    return domainOffset
+                override fun zoom(scale: Double) {
+                    tile.interactionSupport.zoom(scale)
+                }
+
+                override fun pan(offset: DoubleVector) {
+                    tile.interactionSupport.pan(offset)
                 }
             }
         }

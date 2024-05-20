@@ -10,7 +10,7 @@ plugins {
 kotlin {
     jvm()
 
-    val jfxPlatform = extra["jfx_platform_resolved"] as String
+    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     sourceSets {

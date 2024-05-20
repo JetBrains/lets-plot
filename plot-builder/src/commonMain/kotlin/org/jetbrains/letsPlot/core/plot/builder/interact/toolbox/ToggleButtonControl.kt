@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class ToggleButtonControl(
     private val uncheckedContent: SvgElement,
@@ -32,17 +33,24 @@ class ToggleButtonControl(
     }
 
     override fun onMouseClicked(e: MouseEvent) {
-        isChecked = !isChecked
+        // Click only triggers event, not toggling
         clickHandler?.invoke()
-        toggleHandler?.invoke(isChecked)
-        updateContent()
+
+        toggleHandler?.let {
+            isChecked = !isChecked
+            it.invoke(isChecked)
+            updateContent()
+        }
     }
 
     private fun updateContent() {
-        checkedContent.setAttribute(SvgConstants.WIDTH, size.x.toString())
-        checkedContent.setAttribute(SvgConstants.HEIGHT, size.y.toString())
-        uncheckedContent.setAttribute(SvgConstants.WIDTH, size.x.toString())
-        uncheckedContent.setAttribute(SvgConstants.HEIGHT, size.y.toString())
+        (checkedContent.children() + uncheckedContent.children())
+            .mapNotNull { it as? SvgRectElement }
+            .forEach {
+                it.setAttribute(SvgConstants.WIDTH, size.x.toString())
+                it.setAttribute(SvgConstants.HEIGHT, size.y.toString())
+            }
+
         svgRoot.children().clear()
         if (isChecked) {
             svgRoot.children().add(checkedContent)

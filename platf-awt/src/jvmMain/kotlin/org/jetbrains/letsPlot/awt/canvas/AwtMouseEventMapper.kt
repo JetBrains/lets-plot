@@ -47,6 +47,10 @@ class AwtMouseEventMapper(
             override fun mouseDragged(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_DRAGGED, e)
             override fun mouseMoved(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_MOVED, e)
         })
+        eventSource.addMouseWheelListener { e ->
+            val mouseEvent = AwtEventUtil.translate(e, bounds?.origin ?: Vector.ZERO)
+            mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, mouseEvent)
+        }
     }
 
     private abstract inner class MouseState(
@@ -80,6 +84,7 @@ class AwtMouseEventMapper(
                 AwtMouseEventType.MOUSE_MOVED -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
                 AwtMouseEventType.MOUSE_EXITED -> dispatch(MouseEventSpec.MOUSE_LEFT, e)
                 AwtMouseEventType.MOUSE_ENTERED -> dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                AwtMouseEventType.MOUSE_WHEEL_ROTATED -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e)
                 AwtMouseEventType.MOUSE_DRAGGED -> {} // ignore drag events from another facet
                 AwtMouseEventType.MOUSE_RELEASED -> {} // ignore button release (drag end from another facet)
                 AwtMouseEventType.MOUSE_CLICKED -> {} // ignore button  (drag end from another facet)
@@ -150,6 +155,7 @@ class AwtMouseEventMapper(
         MOUSE_EXITED,
         MOUSE_DRAGGED,
         MOUSE_MOVED,
+        MOUSE_WHEEL_ROTATED,
         ;
     }
 

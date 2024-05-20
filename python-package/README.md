@@ -2,8 +2,9 @@
 
 ## Requirements
 
-* `python >= 3.5` (with dev headers)
+* `python >= 3.8` (with dev headers)
 * `setuptools` (`pip install setuptools`)
+* `build` (`pip install build`)
 
 
 ## Configuration
@@ -24,7 +25,7 @@ Gradle `build` in the sibling project **python-package-build**
 
 or just run shell command (if the changes are only in the Python code):
 
-`python setup.py update_js bdist_wheel`
+`python -m build -w`
 
 ## Installing locally
 

@@ -8,8 +8,10 @@ package org.jetbrains.letsPlot.awt.util
 import org.jetbrains.letsPlot.commons.event.Button
 import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseWheelEvent
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import java.awt.event.MouseEvent as AwtMouseEvent
+import java.awt.event.MouseWheelEvent as AwtMouseWheelEvent
 
 object AwtEventUtil {
 
@@ -19,6 +21,16 @@ object AwtEventUtil {
             e.y - offset.y,
             getButton(e),
             getModifiers(e)
+        )
+    }
+
+    fun translate(e: AwtMouseWheelEvent): MouseWheelEvent {
+        return MouseWheelEvent(
+            e.x,
+            e.y,
+            getButton(e),
+            getModifiers(e),
+            e.preciseWheelRotation,
         )
     }
 

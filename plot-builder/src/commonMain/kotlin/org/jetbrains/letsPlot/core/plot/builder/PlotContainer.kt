@@ -50,13 +50,14 @@ class PlotContainer constructor(
             )
             plot.interactor = plotInteractor
 
+            toolEventDispatcher = PlotToolEventDispatcher(plotInteractor)
+
             if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {
                 registrations.add(
-                    addViewToolbox(plotInteractor)
+                    addViewToolbox(plotInteractor, toolEventDispatcher)
                 )
             }
 
-            toolEventDispatcher = PlotToolEventDispatcher(plotInteractor)
         } else {
             toolEventDispatcher = UnsupportedToolEventDispatcher()
         }
@@ -70,8 +71,8 @@ class PlotContainer constructor(
     }
 
     companion object {
-        private fun addViewToolbox(interactor: PlotInteractor): Registration {
-            return Registration.from(PlotToolbox(interactor))
+        private fun addViewToolbox(plotInteractor: PlotInteractor, toolEventDispatcher: ToolEventDispatcher): Registration {
+            return Registration.from(PlotToolbox(plotInteractor, toolEventDispatcher))
         }
     }
 }

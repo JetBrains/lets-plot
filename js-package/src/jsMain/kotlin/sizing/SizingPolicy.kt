@@ -55,7 +55,7 @@ internal class SizingPolicy(
         } else if (widthFixed == null && heightFixed == null) {
             // both "scaled"
             DoubleRectangle(DoubleVector.ZERO, containerSize)
-                .srinkToAspectRatio(figureSize)
+                .shrinkToAspectRatio(figureSize)
                 .dimension
         } else if (widthFixed != null) {
             // scale height

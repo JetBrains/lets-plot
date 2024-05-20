@@ -8,7 +8,7 @@ set -e -x
 
 working_dir="/tmp/python-package/"
 dist_dir="dist/"
-python_bin_version="cp3[7-9,10-12]*"
+python_bin_version="cp3[8,9,10-12]*"
 
 if [[ ${ARCH} = "arm64" ]]
 then
@@ -42,7 +42,7 @@ exit_with_error () {
 compile_wheels () {
   printf "Compile wheels..."
   for pybin in /opt/python/${python_bin_version}/bin; do
-       ${pybin}/python ${working_dir}/setup.py update_js bdist_wheel --dist-dir=${dist_dir} || exit_with_error "Could not build wheels for ${pybin}."
+       ${pybin}/python -m build -w -o ${dist_dir} || exit_with_error "Could not build wheels for ${pybin}."
   done
 }
 

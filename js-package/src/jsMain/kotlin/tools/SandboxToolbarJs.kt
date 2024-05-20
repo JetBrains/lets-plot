@@ -8,10 +8,10 @@ package tools
 import FigureModelJs
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
+import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
@@ -34,12 +34,15 @@ class SandboxToolbarJs() {
 
         toolButtons = listOf(
             toolButton(PAN_TOOL_SPEC),
-            toolButton(ZOOM_TOOL_SPEC)
+            toolButton(BOX_ZOOM_TOOL_SPEC),
+            toolButton(WHEEL_ZOOM_TOOL_SPEC),
         )
 
         toolButtons.forEach {
             element.appendChild(it.second)
         }
+
+        element.appendChild(resetButton())
     }
 
     fun getElement(): HTMLElement {
@@ -74,6 +77,16 @@ class SandboxToolbarJs() {
             }
         })
         return Pair(tool, button)
+    }
+
+    private fun resetButton(): HTMLButtonElement {
+        val button = document.createElement("button") as HTMLButtonElement
+        button.textContent = "Reset"
+        button.style.margin = "0 5px"
+        button.addEventListener("click", {
+            figure?.updateView()
+        })
+        return button
     }
 
     private fun activateTool(tool: Tool) {
@@ -114,11 +127,18 @@ class SandboxToolbarJs() {
                 ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
             )
         )
-        val ZOOM_TOOL_SPEC = mapOf(
-            "name" to "my-zoom",
-            "label" to "Zoom",
+        val BOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-box",
+            "label" to "Zoom Box",
             "interaction" to mapOf(
                 ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+            )
+        )
+        val WHEEL_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-wheel",
+            "label" to "Zoom Wheel",
+            "interaction" to mapOf(
+                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
             )
         )
     }

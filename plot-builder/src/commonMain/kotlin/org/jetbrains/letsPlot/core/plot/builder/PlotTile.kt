@@ -31,7 +31,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 internal class PlotTile(
     private val coreLayers: List<GeomLayer>,
@@ -43,9 +43,12 @@ internal class PlotTile(
     private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
 
+    val interactionSupport = InteractionSupport()
+
     private val frameBottomGroup = GroupComponent()
     private val clipGroup = GroupComponent()
     private val geomGroup = GroupComponent()
+    private val geomInteractionGroup = GroupComponent() // to set interaction transformations
     private val frameTopGroup = GroupComponent()
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()
@@ -62,23 +65,6 @@ internal class PlotTile(
         moveTo(tileLayoutInfo.getAbsoluteBounds(tilesOrigin).origin)
     }
 
-    fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
-        val offset = to.subtract(from)
-        val domainOffset = frameOfReference.pan(from ,to)
-        transformTranslate(geomGroup.rootGroup, offset)
-        drawFrame()
-
-        return domainOffset
-    }
-
-    private fun drawFrame() {
-        frameBottomGroup.clear()
-        frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
-
-        frameTopGroup.clear()
-        frameOfReference.drawAfterGeomLayer(frameTopGroup)
-    }
-
     override fun buildComponent() {
         /*
     // Don't set this flag: it was harmless when we were using SvgNodeSubtreeGeneratingSynchronizer but with new
@@ -90,8 +76,11 @@ internal class PlotTile(
 
         add(frameBottomGroup)
         add(clipGroup)
-        add(frameTopGroup)
         clipGroup.add(geomGroup)
+        geomGroup.moveTo(tileLayoutInfo.geomContentBounds.origin)
+        geomGroup.add(geomInteractionGroup)
+        add(frameTopGroup)
+
 
         val geomOuterBounds = tileLayoutInfo.geomOuterBounds
 
@@ -118,7 +107,7 @@ internal class PlotTile(
                 _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
-                geomGroup.add(layerComponent.rootGroup)
+                geomInteractionGroup.add(layerComponent.rootGroup)
                 frameOfReference.setClip(clipGroup)
             }
 
@@ -134,7 +123,8 @@ internal class PlotTile(
                 }
             }
 
-            drawFrame()
+            frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
+            frameOfReference.drawAfterGeomLayer(frameTopGroup)
         }
     }
 
@@ -241,5 +231,59 @@ internal class PlotTile(
         }
 
         private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
+    }
+
+    inner class InteractionSupport {
+        private var scale = 1.0
+        private var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
+
+        fun pan(offset: DoubleVector) {
+            pan = pan.add(offset.mul(1 / this.scale))
+
+            repaint(pan, scale)
+        }
+
+        fun zoom(scale: Double) {
+            this.scale *= scale
+            repaint(pan, this.scale)
+        }
+
+        fun zoom(contentRect: DoubleRectangle, viewport: DoubleRectangle) {
+            val adjustedViewport = viewport.shrinkToAspectRatio(contentRect.dimension)
+            val (scale, translate) = calculateTransform(contentRect, adjustedViewport)
+            pan(translate)
+            zoom(scale)
+        }
+
+        fun reset() {
+            scale = 1.0
+            pan = DoubleVector.ZERO
+            repaint(pan, scale)
+        }
+
+        private fun repaint(offset: DoubleVector, scale: Double) {
+            frameOfReference.zoom(scale)
+            frameOfReference.pan(DoubleVector.ZERO, offset)
+
+            val transform = SvgTransformBuilder()
+                .scale(scale)
+                .translate(offset)
+                .build()
+
+            geomInteractionGroup.rootGroup.transform().set(transform)
+            frameBottomGroup.clear()
+            frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
+            frameTopGroup.clear()
+            frameOfReference.drawAfterGeomLayer(frameTopGroup)
+        }
+
+        private fun calculateTransform(rect: DoubleRectangle, viewport: DoubleRectangle): Pair<Double, DoubleVector> {
+            val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
+            val scaledSize = viewport.dimension.mul(scale)
+            val newPosition = rect.origin.add(rect.dimension.subtract(scaledSize).mul(0.5))
+            val translate = newPosition.subtract(viewport.origin)
+
+            return scale to translate
+        }
     }
 }

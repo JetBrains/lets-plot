@@ -237,6 +237,12 @@ internal class FigureToAwt(
                 }
             })
 
+            plotComponent.addMouseWheelListener { e ->
+                executor {
+                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, AwtEventUtil.translate(e))
+                }
+            }
+
             return plotComponent
         }
     }

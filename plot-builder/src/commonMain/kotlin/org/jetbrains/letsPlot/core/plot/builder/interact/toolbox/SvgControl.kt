@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.toolbox
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
+import org.jetbrains.letsPlot.commons.event.MouseWheelEvent
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.ui.UiControl
@@ -74,6 +75,7 @@ abstract class SvgControl : UiControl {
             MOUSE_DOUBLE_CLICKED -> onMouseDoubleClicked(e)
             MOUSE_PRESSED -> onMousePressed(e)
             MOUSE_RELEASED -> onMouseReleased(e)
+            MOUSE_WHEEL_ROTATED -> onMouseWheelRotated(e as MouseWheelEvent)
         }
     }
 
@@ -85,4 +87,5 @@ abstract class SvgControl : UiControl {
     open fun onMousePressed(e: MouseEvent) {}
     open fun onMouseReleased(e: MouseEvent) {}
     open fun onMouseDoubleClicked(e: MouseEvent) {}
+    open fun onMouseWheelRotated(e: MouseWheelEvent) {}
 }

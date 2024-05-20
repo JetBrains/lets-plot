@@ -6,10 +6,7 @@
 package org.jetbrains.letsPlot.core.platf.dom
 
 import kotlinx.browser.document
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.event.MouseEventPeer
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
-import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
@@ -19,8 +16,10 @@ import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getModifiers
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.platf.w3c.dom.on
 import org.w3c.dom.Element
+import org.w3c.dom.events.WheelEvent
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
+typealias DomWheelEvent = WheelEvent
 
 private const val ENABLE_DEBUG_LOG = false
 
@@ -46,9 +45,10 @@ class DomMouseEventMapper(
         handle(DomEventType.MOUSE_DOWN) { state.onMouseEvent(DomEventType.MOUSE_DOWN, it) }
         handle(DomEventType.MOUSE_UP) { state.onMouseEvent(DomEventType.MOUSE_UP, it) }
         handle(DomEventType.MOUSE_MOVE) { state.onMouseEvent(DomEventType.MOUSE_MOVE, it) }
+        handle(DomEventType.MOUSE_WHEEL) { state.onMouseEvent(DomEventType.MOUSE_WHEEL, it) }
     }
 
-    private fun handle(eventSpec: DomEventType<DomMouseEvent>, handler: (DomMouseEvent) -> Unit) {
+    private fun handle(eventSpec: DomEventType<out DomMouseEvent>, handler: (DomMouseEvent) -> Unit) {
         eventSource.on(eventSpec, consumer = {
             val needHandle = bounds?.contains(DoubleVector(it.offsetX, it.offsetY)) ?: true
             if (needHandle) {
@@ -75,23 +75,30 @@ class DomMouseEventMapper(
         val eventClientCoord = DoubleVector(domMouseEvent.clientX.toDouble(), domMouseEvent.clientY.toDouble())
         val eventTargetCoord = eventClientCoord.subtract(targetClientOrigin).subtract(targetAbsoluteOrigin)
 
-        val mouseEvent = MouseEvent(
-            eventTargetCoord.x.toInt(),
-            eventTargetCoord.y.toInt(),
-            getButton(domMouseEvent),
-            getModifiers(domMouseEvent)
-        )
+        val x = eventTargetCoord.x.toInt()
+        val y = eventTargetCoord.y.toInt()
+        val button = getButton(domMouseEvent)
+        val modifiers = getModifiers(domMouseEvent)
+
+        val mouseEvent = when (domMouseEvent) {
+            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
+            else -> MouseEvent(x, y, button, modifiers)
+        }
 
         mouseEventPeer.dispatch(eventSpec, mouseEvent)
+
+        if (mouseEvent.preventDefault) {
+            domMouseEvent.preventDefault()
+        }
     }
 
     private abstract inner class MouseState {
-        fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+        fun onMouseEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             log(type.name)
             handleEvent(type, e)
         }
 
-        abstract fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent)
+        abstract fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent)
 
         fun log(str: String) {
             if (ENABLE_DEBUG_LOG) {
@@ -101,7 +108,7 @@ class DomMouseEventMapper(
     }
 
     private inner class HoverState : MouseState() {
-        override fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             if (type == DomEventType.MOUSE_DOWN) {
                 dispatch(MouseEventSpec.MOUSE_PRESSED, e)
                 state = ButtonDownState(eventCoord = DoubleVector(e.x, e.y))
@@ -118,11 +125,8 @@ class DomMouseEventMapper(
                 DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
                 DomEventType.MOUSE_LEAVE -> dispatch(MouseEventSpec.MOUSE_LEFT, e)
                 DomEventType.MOUSE_ENTER -> dispatch(MouseEventSpec.MOUSE_ENTERED, e)
-
-                DomEventType.DOUBLE_CLICK -> dispatch(
-                    MouseEventSpec.MOUSE_DOUBLE_CLICKED,
-                    e
-                ) // wish can handle in ButtonDownState
+                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e) // wish can handle in ButtonDownState
+                DomEventType.MOUSE_WHEEL -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e as DomWheelEvent)
                 DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
             }
         }
@@ -133,7 +137,7 @@ class DomMouseEventMapper(
         private val draggingTriggerDistance: Double = 3.0
     ) : MouseState() {
 
-        override fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             when (type) {
                 DomEventType.MOUSE_UP -> {
                     dispatch(MouseEventSpec.MOUSE_RELEASED, e)
@@ -171,13 +175,13 @@ class DomMouseEventMapper(
             myDocumentMouseEventsRegistration.dispose()
         }
 
-        override fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             // All required events handled by onDocumentMouseMove()
         }
     }
 
     private inner class ForeignDragging : MouseState() {
-        override fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             if (e.buttons > 0) {
                 return
             }

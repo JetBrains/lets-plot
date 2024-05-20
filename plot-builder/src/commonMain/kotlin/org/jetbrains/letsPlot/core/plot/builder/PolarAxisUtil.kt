@@ -35,6 +35,7 @@ object PolarAxisUtil {
         val orientation: Orientation,
         val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ) {
+        val center = coord.toClient(gridDomain.origin) ?: error("Failed to get center of the polar coordinate system")
         val IndexedValue<Triple<String, Double, DoubleVector>>.label get() = value.first
         val IndexedValue<Triple<String, Double, DoubleVector>>.domValue get() = value.second
         val IndexedValue<Triple<String, Double, DoubleVector>>.coord get() = value.third
@@ -44,13 +45,11 @@ object PolarAxisUtil {
                 "Breaks and labels must have the same size"
             }
 
-            val majorBreaks = toClient(scaleBreaks.transformedValues, gridDomain, coord, flipAxis, orientation.isHorizontal)
-                .mapIndexedNotNull { i, clientTick ->
-                    when (clientTick) {
-                        null -> null
-                        else -> IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
-                    }
-                }.let {
+            val majorBreaks = breaksToClient(scaleBreaks.transformedValues)
+                .mapIndexed { i, clientTick ->
+                    IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
+                }
+                .let {
                     if (it.size < 2) return@let it
 
                     val firstBr = it.first()
@@ -89,13 +88,8 @@ object PolarAxisUtil {
 
             val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
                 .let { minorDomainBreaks ->
-                    toClient(minorDomainBreaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-                        .mapIndexedNotNull { i, clientBreak ->
-                            when (clientBreak) {
-                                null -> null
-                                else -> Pair(minorDomainBreaks[i], clientBreak)
-                            }
-                        }
+                    breaksToClient(minorDomainBreaks)
+                        .mapIndexed { i, clientBreak -> Pair(minorDomainBreaks[i], clientBreak) }
                 }
 
             val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
@@ -108,18 +102,27 @@ object PolarAxisUtil {
                 false -> listOf(gridDomain.yRange().upperEnd).mapNotNull(::buildRadiusGridLine).single()
             }
 
-            val center = toClient(gridDomain.origin)
             return PolarBreaksData(
-                majorBreaks = majorBreaksData.map { (_, tick, _) -> tick.subtract(center) },
+                majorBreaks = majorBreaksData.map { (_, tick, _) -> tick },
                 majorGrid = majorBreaksData.map { (_, _, gridLine) -> gridLine },
                 majorLabels = majorBreaksData.map { (label, _, _) -> label },
-                minorBreaks = minorBreaksData.map { (tick, _) -> tick.subtract(center) },
+                minorBreaks = minorBreaksData.map { (tick, _) -> tick },
                 minorGrid = minorBreaksData.map { (_, gridLine) -> gridLine },
                 axisLine = axisLine,
                 center = center,
                 startAngle = coord.startAngle,
             )
         }
+
+        private fun breaksToClient(breaks: List<Double>) =
+            toClient(breaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
+                .filterNotNull()
+                .map {
+                    when (orientation.isHorizontal) {
+                        true -> it.subtract(center)
+                        false -> it.rotateAround(center, coord.startAngle * coord.direction)
+                    }
+                }
 
         private fun toClient(v: DoubleVector): DoubleVector {
             return coord.toClient(v.flipIf(flipAxis)) ?: error("Unexpected null value")
@@ -145,7 +148,7 @@ object PolarAxisUtil {
                 DoubleVector(gridDomain.xRange().lowerEnd, br),
                 DoubleVector(gridDomain.xRange().upperEnd, br)
             )
-            return AdaptiveResampler.resample(line, AdaptiveResampler.PIXEL_PRECISION, ::toClient)
+            return AdaptiveResampler.resample(line, AdaptiveResampler.PIXEL_PRECISION, this::toClient)
         }
 
         private fun buildGridLine(br: Double): List<DoubleVector>? {

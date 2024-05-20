@@ -107,8 +107,8 @@ internal class PolarFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = vGridTheme,
-                panOffset = panOffset,
                 isOrthogonal = false,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -125,8 +125,8 @@ internal class PolarFrameOfReference(
                 minorGrid = breaksData.minorGrid,
                 axisInfo = axisInfo,
                 gridTheme = hGridTheme,
-                panOffset = panOffset,
                 isOrthogonal = false,
+                geomContentBounds = layoutInfo.geomContentBounds,
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -204,9 +204,7 @@ internal class PolarFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = buildGeom(layer, targetCollector)
-        layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
-        return layerComponent
+        return buildGeom(layer, targetCollector)
     }
 
     override fun setClip(element: SvgComponent) {
