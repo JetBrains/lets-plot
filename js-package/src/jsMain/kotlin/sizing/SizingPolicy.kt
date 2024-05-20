@@ -23,6 +23,8 @@ internal class SizingPolicy(
     val heightMode: SizingMode,
     val widthMargin: Double,
     val heightMargin: Double,
+    private val width: Double? = null, // for 'FIXED' mode
+    private val height: Double? = null,
 ) {
 
     fun resize(figureSize: DoubleVector, container: HTMLElement): DoubleVector {
@@ -41,11 +43,13 @@ internal class SizingPolicy(
             FIT -> containerSize.x
             MIN -> min(figureSize.x, containerSize.x)
             SCALED -> null
+            FIXED -> width ?: figureSize.x
         }
         val heightFixed = when (heightMode) {
             FIT -> containerSize.y
             MIN -> min(figureSize.y, containerSize.y)
             SCALED -> null
+            FIXED -> height ?: figureSize.y
         }
 
 //        LOG.info { "widthMode:$widthMode heightMode:$heightMode widthFixed: $widthFixed heightFixed: $heightFixed" }
@@ -79,6 +83,14 @@ internal class SizingPolicy(
             widthMargin = 0.0,
             heightMargin = 0.0,
         )
+
+        fun fixedBoth(size: DoubleVector): SizingPolicy {
+            return SizingPolicy(
+                FIXED, FIXED, 0.0, 0.0,
+                size.x,
+                size.y,
+            )
+        }
 
         fun create(options: Map<*, *>): SizingPolicy {
             val widthMode = sizingMode(options, WIDTH_MODE) ?: DEFAULT.widthMode

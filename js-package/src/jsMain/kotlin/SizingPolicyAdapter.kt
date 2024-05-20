@@ -15,7 +15,10 @@ import kotlin.math.max
 internal class SizingPolicyAdapter(
     private val sizingPolicy: SizingPolicy,
 ) {
-    fun monolithicSizingParameters(parentElement: HTMLElement): SizeAndMaxWidth {
+    fun monolithicSizingParameters(
+        plotSize: DoubleVector?,
+        parentElement: HTMLElement
+    ): SizeAndMaxWidth {
 
         val parentWidth = when (val w = parentElement.clientWidth) {
             0 -> null  // parent element wasn't yet layouted
@@ -49,6 +52,15 @@ internal class SizingPolicyAdapter(
                         x = max(1.0, parentWidth - sizingPolicy.widthMargin),
                         y = max(1.0, parentHeight - sizingPolicy.heightMargin),
                     ),
+                    plotMaxWidth = null
+                )
+            }
+
+            SizingMode.FIXED -> {
+                check(plotSize != null) { "FIXED sizing mode: plot size not provided." }
+                check(sizingPolicy.heightMode == SizingMode.FIXED) { "Not supported: FIXED width + ${sizingPolicy.heightMode} height sizing policy." }
+                SizeAndMaxWidth(
+                    plotSize = plotSize,
                     plotMaxWidth = null
                 )
             }
