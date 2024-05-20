@@ -34,27 +34,29 @@ object BoxHelper {
     fun buildMidlines(
         root: SvgRoot,
         aesthetics: Aesthetics,
-        middleAesthetic: Aes<Double>,
+        xAes: Aes<Double>,
+        middleAes: Aes<Double>,
+        sizeAes: Aes<Double>,
         ctx: GeomContext,
         geomHelper: GeomHelper,
+        linesRotation: (DoubleVector) -> DoubleVector,
         fatten: Double
     ) {
         val elementHelper = geomHelper.createSvgElementHelper()
         for (p in aesthetics.dataPoints()) {
-            val x = p.finiteOrNull(Aes.X) ?: continue
-            val middle = p.finiteOrNull(middleAesthetic) ?: continue
-            val w = p.finiteOrNull(Aes.WIDTH) ?: continue
+            val x = p.finiteOrNull(xAes) ?: continue
+            val middle = p.finiteOrNull(middleAes) ?: continue
+            val w = p.finiteOrNull(sizeAes) ?: continue
 
-            val width = w * ctx.getResolution(Aes.X)
+            val width = w * ctx.getResolution(xAes)
 
             val (line) = elementHelper.createLine(
-                DoubleVector(x - width / 2, middle),
-                DoubleVector(x + width / 2, middle),
+                linesRotation(DoubleVector(x - width / 2, middle)),
+                linesRotation(DoubleVector(x + width / 2, middle)),
                 p
             ) { AesScaling.strokeWidth(it) * fatten } ?: continue
 
             // TODO: use strokeScale in createLine() function
-            // adjust thickness
             require(line is SvgShape)
 
             root.add(line)
