@@ -50,13 +50,9 @@ object PointShapeSvg {
         size: Double,
         p: DataPointAesthetics
     ): SvgSlimObject {
-        val glyph = createSlimGlyph(
-            shape,
-            location,
-            size,
-            shape.strokeWidth(p)
-        )
-        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, shape.strokeWidth(p))
+        val stroke = shape.strokeWidth(p)
+        val glyph = createSlimGlyph(shape, location, size, stroke)
+        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke)
         return glyph
     }
 
