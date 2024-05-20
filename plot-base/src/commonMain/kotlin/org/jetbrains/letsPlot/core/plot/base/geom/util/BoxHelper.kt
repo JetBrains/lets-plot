@@ -51,13 +51,11 @@ object BoxHelper {
                 DoubleVector(x - width / 2, middle),
                 DoubleVector(x + width / 2, middle),
                 p
-            ) ?: continue
+            ) { AesScaling.strokeWidth(it) * fatten } ?: continue
 
             // TODO: use strokeScale in createLine() function
             // adjust thickness
             require(line is SvgShape)
-            val thickness = line.strokeWidth().get()!!
-            line.strokeWidth().set(thickness * fatten)
 
             root.add(line)
         }
