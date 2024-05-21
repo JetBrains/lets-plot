@@ -30,6 +30,7 @@ internal class SandboxToolbar(
         toolButtons.forEach {
             this.add(it.second)
         }
+        this.add(resetButton())
 
         figureModel.onToolEvent { event ->
             println("Tool event: $event")
@@ -52,6 +53,14 @@ internal class SandboxToolbar(
             }
         }
         return Pair(tool, button)
+    }
+
+    private fun resetButton(): JButton {
+        val button = JButton("Reset")
+        button.addActionListener {
+            figureModel.updateView()
+        }
+        return button
     }
 
     private fun activateTool(tool: Tool) {

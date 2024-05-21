@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.FigureModel
+import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
@@ -18,7 +19,7 @@ import javax.swing.JComponent
 // See: PlotPanel.ResizeHook
 internal class PlotPanelFigureModel(
     private val plotPanel: PlotPanel,
-    private val plotPreferredSize: (Dimension) -> Dimension,
+    providedComponent: JComponent?,
     private val plotComponentFactory: (Dimension) -> JComponent,
     private val applicationContext: ApplicationContext,
 ) : FigureModel {
@@ -26,13 +27,11 @@ internal class PlotPanelFigureModel(
     private var toolEventHandler: ((Map<String, Any>) -> Unit)? = null
     private val activeInteractionsByOrigin: MutableMap<String, MutableList<String>> = HashMap()
 
-    var toolEventDispatcher: ToolEventDispatcher? = null
+    private var toolEventDispatcher: ToolEventDispatcher? = toolEventDispatcherFromProvidedComponent(providedComponent)
         set(value) {
             // ToDo: deactivate, then re-activate current interactions?
             field = value
         }
-
-    var lastProvidedComponent: JComponent? = null
 
     override fun onToolEvent(callback: (Map<String, Any>) -> Unit) {
         toolEventHandler = callback
@@ -79,5 +78,36 @@ internal class PlotPanelFigureModel(
             }
         }
         toolEventHandler?.invoke(event)
+    }
+
+    override fun updateView() {
+        rebuildPlotComponent()
+    }
+
+    internal fun rebuildPlotComponent(
+        onComponentCreated: (JComponent) -> Unit = {},
+        expared: () -> Boolean = { false }
+    ) {
+        val action = Runnable {
+
+            val containerSize = plotPanel.size
+            if (containerSize == null) return@Runnable
+
+            val providedComponent = plotComponentFactory(containerSize)
+            onComponentCreated(providedComponent)
+            toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
+
+            plotPanel.revalidate()
+        }
+
+        applicationContext.invokeLater(action, expared)
+    }
+
+    companion object {
+        fun toolEventDispatcherFromProvidedComponent(providedComponent: JComponent?): ToolEventDispatcher? {
+            if (providedComponent == null) return null
+            val actualPlotComponent = actualPlotComponentFromProvidedComponent(providedComponent)
+            return actualPlotComponent.getClientProperty(ToolEventDispatcher::class) as? ToolEventDispatcher
+        }
     }
 }
