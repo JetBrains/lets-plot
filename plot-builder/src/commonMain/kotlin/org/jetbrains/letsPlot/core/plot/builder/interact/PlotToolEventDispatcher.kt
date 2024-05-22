@@ -22,14 +22,28 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 internal class PlotToolEventDispatcher(
     private val plotInteractor: PlotInteractor
 ) : ToolEventDispatcher {
-    private val activeInteractionsByOrigin: MutableMap<String, MutableMap<String, Registration>> = HashMap()
+    private val interactionsByOrigin: MutableMap<
+            String,                 // origin
+            MutableList<InteractionInfo>> = HashMap()
 
-    override fun activateInteraction(origin: String, interactionSpec: Map<String, Any>): List<Map<String, Any>> {
+    override fun activateInteractions(
+        origin: String,
+        interactionSpecList: List<Map<String, Any>>
+    ): List<Map<String, Any>> {
 
+        return interactionSpecList.flatMap { interactionSpec ->
+            activateInteraction(origin, interactionSpec)
+        }
+    }
+
+    private fun activateInteraction(
+        origin: String,
+        interactionSpec: Map<String, Any>
+    ): List<Map<String, Any>> {
         val responseEvents = ArrayList<Map<String, Any>>()
-        val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
+        responseEvents.addAll(deactivateOverlappingInteractions(origin, interactionSpec))
 
-        responseEvents.addAll(deactivateOverlappingInteractions(interactionName))
+        val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
@@ -59,7 +73,13 @@ internal class PlotToolEventDispatcher(
         }
 
         val feedbackRegistration = plotInteractor.startToolFeedback(feedback)
-        activeInteractionsByOrigin.getOrPut(origin) { HashMap() }[interactionName] = feedbackRegistration
+        interactionsByOrigin.getOrPut(origin) { ArrayList() }.add(
+            InteractionInfo(
+                interactionSpec = interactionSpec,
+                feedbackReg = feedbackRegistration
+            )
+        )
+
 
         responseEvents.add(
             mapOf(
@@ -67,27 +87,48 @@ internal class PlotToolEventDispatcher(
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName
             )
+
         )
         return responseEvents
     }
 
-    override fun deactivateInteraction(origin: String, interactionName: String): Map<String, Any> {
-        activeInteractionsByOrigin[origin]?.remove(interactionName)?.dispose()
-        return mapOf(
-            EVENT_NAME to INTERACTION_DEACTIVATED,
-            EVENT_INTERACTION_ORIGIN to origin,
-            EVENT_INTERACTION_NAME to interactionName
-        )
+    override fun deactivateInteractions(origin: String): List<Map<String, Any>> {
+        return interactionsByOrigin.remove(origin)?.map { interactionInfo ->
+            interactionInfo.feedbackReg.dispose()
+            // event
+            mapOf(
+                EVENT_NAME to INTERACTION_DEACTIVATED,
+                EVENT_INTERACTION_ORIGIN to origin,
+                EVENT_INTERACTION_NAME to interactionInfo.interactionName
+            )
+        } ?: emptyList()
     }
 
-    private fun deactivateOverlappingInteractions(activatedInteractionName: String): List<Map<String, Any>> {
-        // For now just deactivate all active interactions
-        val originAndIntInteractionList = activeInteractionsByOrigin.flatMap { (origin, list) ->
-            list.map { (interaction, _) -> Pair(origin, interaction) }
+    override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
+        val deactivatedInteractions = interactionsByOrigin.mapValues { (_, interactionInfoList) ->
+            interactionInfoList.map {
+                it.feedbackReg.dispose()
+                it.interactionSpec
+            }
         }
+        interactionsByOrigin.clear()
+        return deactivatedInteractions
+    }
 
-        return originAndIntInteractionList.map {
-            deactivateInteraction(it.first, it.second)
-        }
+    private fun deactivateOverlappingInteractions(
+        originBeingActivated: String,
+        interactionSpecBeingActivated: Map<String, Any>
+    ): List<Map<String, Any>> {
+        // For now just deactivate all active interactions
+        return ArrayList(interactionsByOrigin.keys)
+            .filterNot { origin -> origin == originBeingActivated }
+            .flatMap { origin -> deactivateInteractions(origin) }
+    }
+
+    private class InteractionInfo(
+        val interactionSpec: Map<String, Any>,
+        val feedbackReg: Registration
+    ) {
+        val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
     }
 }

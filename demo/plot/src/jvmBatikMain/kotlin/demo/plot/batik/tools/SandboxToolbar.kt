@@ -24,7 +24,8 @@ internal class SandboxToolbar(
         toolButtons = listOf(
             toolButton(PAN_TOOL_SPEC),
             toolButton(BOX_ZOOM_TOOL_SPEC),
-            toolButton(WHEEL_ZOOM_TOOL_SPEC)
+            toolButton(WHEEL_ZOOM_TOOL_SPEC),
+            toolButton(WHEEL_BOX_ZOOM_TOOL_SPEC)
         )
 
         toolButtons.forEach {
@@ -65,17 +66,16 @@ internal class SandboxToolbar(
 
     private fun activateTool(tool: Tool) {
         if (!tool.active) {
-            figureModel.activateInteraction(
+            figureModel.activateInteractions(
                 origin = tool.name,
-                interactionSpec = tool.interactionSpec
-            ) ?: LOG.info { "The toolbar is unbound." }
+                interactionSpecList = tool.interactionSpecList
+            )
         }
     }
 
     private fun deactivateTool(tool: Tool) {
         if (tool.active) {
             figureModel.deactivateInteractions(tool.name)
-                ?: LOG.info { "The toolbar is unbound." }
         }
     }
 
@@ -87,7 +87,7 @@ internal class SandboxToolbar(
         val label = spec.getValue("label") as String
 
         @Suppress("UNCHECKED_CAST")
-        val interactionSpec = spec.getValue("interaction") as Map<String, Any>
+        val interactionSpecList = spec.getValue("interactions") as List<Map<String, Any>>
         var active: Boolean = false
     }
 
@@ -97,22 +97,40 @@ internal class SandboxToolbar(
         val PAN_TOOL_SPEC = mapOf(
             "name" to "my-pan",
             "label" to "Pan",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
+                )
             )
         )
         val BOX_ZOOM_TOOL_SPEC = mapOf(
             "name" to "my-zoom-box",
             "label" to "Zoom Box",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+                )
             )
         )
         val WHEEL_ZOOM_TOOL_SPEC = mapOf(
             "name" to "my-zoom-wheel",
             "label" to "Zoom Wheel",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+                )
+            )
+        )
+        val WHEEL_BOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-wheel-box",
+            "label" to "Zoom Wheel/Box",
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+                ),
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+                )
             )
         )
     }
