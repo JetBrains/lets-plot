@@ -44,10 +44,6 @@ object PointShapeSvg {
         val alpha = AestheticsUtil.alpha(color, p)
         r.setFill(color, alpha)
         r.setStrokeWidth(0.0)
-
-        val angle = p.finiteOrNull(Aes.ANGLE)
-        angle?.let { r.setTransform(SvgTransformBuilder().rotate(it, location).build()) }
-
         return r
     }
 
