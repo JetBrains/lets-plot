@@ -91,7 +91,6 @@ object LayerConverter {
                         label = it.label
                         animation = it.animation
                         shape = it.shape
-                        angle = it.angle
                         radius = it.radius
                         fillColor = it.fillColor
                         strokeColor = it.strokeColor
