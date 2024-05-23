@@ -6,7 +6,15 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 interface UpdatableShape {
-    fun update(fill: Color, fillAlpha: Double, stroke: Color, strokeAlpha: Double, strokeWidth: Double)
+    fun update(
+        fill: Color,
+        fillAlpha: Double,
+        stroke: Color,
+        strokeAlpha: Double,
+        strokeWidth: Double,
+        transform: SvgTransform?
+    )
 }

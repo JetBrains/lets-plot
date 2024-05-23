@@ -6,11 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape.*
+import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.CircleGlyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyph
 import org.jetbrains.letsPlot.core.plot.base.render.point.symbol.Glyphs
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimObject
 
@@ -52,7 +55,13 @@ object PointShapeSvg {
     ): SvgSlimObject {
         val stroke = shape.strokeWidth(p)
         val glyph = createSlimGlyph(shape, location, size, stroke)
-        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke)
+        val angle = p.finiteOrNull(Aes.ANGLE)
+        val transform = if (glyph is CircleGlyph) null
+        else angle?.let {
+            SvgTransformBuilder().rotate(it, location).build()
+        }
+
+        AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, stroke, transform)
         return glyph
     }
 

@@ -110,6 +110,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - shape : shape of the point, an integer from 0 to 25.
+    - angle : rotation angle of the point shape, in degrees.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
