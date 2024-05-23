@@ -22,29 +22,30 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 internal class PlotToolEventDispatcher(
     private val plotInteractor: PlotInteractor
 ) : ToolEventDispatcher {
+
     private val interactionsByOrigin: MutableMap<
             String,                 // origin
             MutableList<InteractionInfo>> = HashMap()
 
-    override fun activateInteractions(
-        origin: String,
-        interactionSpecList: List<Map<String, Any>>
-    ): List<Map<String, Any>> {
+    private lateinit var toolEventCallback: (Map<String, Any>) -> Unit
 
-        return interactionSpecList.flatMap { interactionSpec ->
+    override fun initToolEventCallback(callback: (Map<String, Any>) -> Unit) {
+        check(!this::toolEventCallback.isInitialized) { "Repeated initialization of 'toolEventCallback'." }
+        toolEventCallback = callback
+    }
+
+    override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
+        interactionSpecList.forEach { interactionSpec ->
             activateInteraction(origin, interactionSpec)
         }
     }
 
-    private fun activateInteraction(
-        origin: String,
-        interactionSpec: Map<String, Any>
-    ): List<Map<String, Any>> {
-        val responseEvents = ArrayList<Map<String, Any>>()
-        responseEvents.addAll(deactivateOverlappingInteractions(origin, interactionSpec))
+    private fun activateInteraction(origin: String, interactionSpec: Map<String, Any>) {
+        deactivateOverlappingInteractions(origin, interactionSpec)
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
 
+        // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
                 onCompleted = { _, target ->
@@ -80,28 +81,26 @@ internal class PlotToolEventDispatcher(
             )
         )
 
-
-        responseEvents.add(
+        toolEventCallback.invoke(
             mapOf(
                 EVENT_NAME to INTERACTION_ACTIVATED,
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName
             )
-
         )
-        return responseEvents
     }
 
-    override fun deactivateInteractions(origin: String): List<Map<String, Any>> {
-        return interactionsByOrigin.remove(origin)?.map { interactionInfo ->
+    override fun deactivateInteractions(origin: String) {
+        interactionsByOrigin.remove(origin)?.forEach { interactionInfo ->
             interactionInfo.feedbackReg.dispose()
-            // event
-            mapOf(
-                EVENT_NAME to INTERACTION_DEACTIVATED,
-                EVENT_INTERACTION_ORIGIN to origin,
-                EVENT_INTERACTION_NAME to interactionInfo.interactionName
+            toolEventCallback.invoke(
+                mapOf(
+                    EVENT_NAME to INTERACTION_DEACTIVATED,
+                    EVENT_INTERACTION_ORIGIN to origin,
+                    EVENT_INTERACTION_NAME to interactionInfo.interactionName
+                )
             )
-        } ?: emptyList()
+        }
     }
 
     override fun deactivateAllSilently(): Map<String, List<Map<String, Any>>> {
@@ -118,11 +117,11 @@ internal class PlotToolEventDispatcher(
     private fun deactivateOverlappingInteractions(
         originBeingActivated: String,
         interactionSpecBeingActivated: Map<String, Any>
-    ): List<Map<String, Any>> {
+    ) {
         // For now just deactivate all active interactions
-        return ArrayList(interactionsByOrigin.keys)
-            .filterNot { origin -> origin == originBeingActivated }
-            .flatMap { origin -> deactivateInteractions(origin) }
+        ArrayList(interactionsByOrigin.keys)
+            .filter { origin -> origin != originBeingActivated }
+            .forEach { origin -> deactivateInteractions(origin) }
     }
 
     private class InteractionInfo(

@@ -18,7 +18,7 @@ internal class PlotPanelFigureModel(
     private val applicationContext: ApplicationContext,
 ) : FigureModel {
 
-    private var toolEventHandler: ((Map<String, Any>) -> Unit)? = null
+    private var toolEventCallback: ((Map<String, Any>) -> Unit)? = null
 
     private var toolEventDispatcher: ToolEventDispatcher? = toolEventDispatcherFromProvidedComponent(providedComponent)
         set(value) {
@@ -26,6 +26,8 @@ internal class PlotPanelFigureModel(
             val wereInteractions = field?.deactivateAllSilently() ?: emptyMap()
             field = value
             value?.let { newDispatcher ->
+                newDispatcher.initToolEventCallback { event -> toolEventCallback?.invoke(event) }
+
                 // reactivate interactions in new plot component
                 wereInteractions.forEach { (origin, interactionSpecList) ->
                     newDispatcher.activateInteractions(origin, interactionSpecList)
@@ -34,26 +36,15 @@ internal class PlotPanelFigureModel(
         }
 
     override fun onToolEvent(callback: (Map<String, Any>) -> Unit) {
-        toolEventHandler = callback
+        toolEventCallback = callback
     }
 
     override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {
-        val response: List<Map<String, Any>> = toolEventDispatcher?.activateInteractions(origin, interactionSpecList)
-            ?: return
-
-        response.forEach {
-            processToolEvent(it)
-        }
+        toolEventDispatcher?.activateInteractions(origin, interactionSpecList)
     }
 
     override fun deactivateInteractions(origin: String) {
-        toolEventDispatcher?.deactivateInteractions(origin)?.forEach { event ->
-            processToolEvent(event)
-        }
-    }
-
-    private fun processToolEvent(event: Map<String, Any>) {
-        toolEventHandler?.invoke(event)
+        toolEventDispatcher?.deactivateInteractions(origin)
     }
 
     override fun updateView() {

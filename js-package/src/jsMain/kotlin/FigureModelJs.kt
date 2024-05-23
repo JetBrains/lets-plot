@@ -22,7 +22,15 @@ class FigureModelJs internal constructor(
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
-    private var toolEventHandler: ((dynamic) -> Unit)? = null
+    private var toolEventCallback: ((dynamic) -> Unit)? = null
+
+    init {
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+    }
+
+    fun onToolEvent(callback: (dynamic) -> Unit) {
+        toolEventCallback = callback
+    }
 
     fun updateView() {
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
@@ -37,6 +45,7 @@ class FigureModelJs internal constructor(
         val result = FigureToHtml(newBuildInfo, parentElement).eval()
         figureRegistration = result.figureRegistration
         toolEventDispatcher = result.toolEventDispatcher
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
 
         // Re-activate interactions
         currentInteractions.forEach { (origin, interactionSpec) ->
@@ -44,30 +53,20 @@ class FigureModelJs internal constructor(
         }
     }
 
-    fun onToolEvent(callback: (dynamic) -> Unit) {
-        toolEventHandler = callback
-    }
-
     /**
      * ToDo: a tool can activate several interactions at once.
      */
     fun activateInteraction(origin: String, interactionSpecJs: dynamic) {
         val interactionSpec = dynamicObjectToMap(interactionSpecJs)
-        val response: List<Map<String, Any>> = toolEventDispatcher.activateInteractions(origin, listOf(interactionSpec))
-        response.forEach {
-            processToolEvent(it)
-        }
+        toolEventDispatcher.activateInteractions(origin, listOf(interactionSpec))
     }
 
     fun deactivateInteractions(origin: String) {
-        val response: List<Map<String, Any>> = toolEventDispatcher.deactivateInteractions(origin)
-        response.forEach {
-            processToolEvent(it)
-        }
+        toolEventDispatcher.deactivateInteractions(origin)
     }
 
-    private fun processToolEvent(event: Map<String, Any>) {
-        toolEventHandler?.invoke(dynamicObjectFromMap(event))
+    private fun handleToolEvent(event: Map<String, Any>) {
+        toolEventCallback?.invoke(dynamicObjectFromMap(event))
     }
 
 
