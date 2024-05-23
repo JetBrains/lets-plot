@@ -18,7 +18,7 @@ val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.extra["localMavenRepository"]
 
-val jvmJarJfx by tasks.registering (Jar::class) {
+val jvmJarJfx by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
     // Add LICENSE file to the META-INF folder inside published JAR files.
@@ -44,7 +44,7 @@ publishing {
             artifactId = artifactBaseName
             version = artifactVersion
 
-            artifact(jvmJarJfx.get())
+            artifact(jvmJarJfx)
 
             pom {
                 name = "Lets-Plot for JavaFX"

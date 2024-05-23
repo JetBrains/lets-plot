@@ -19,7 +19,7 @@ val artifactVersion = project.version as String
 val batikVersion = extra["batik_version"] as String
 val mavenLocalPath = rootProject.extra["localMavenRepository"]
 
-val jvmJarBatik by tasks.registering(Jar::class) {
+val jvmJarBatik by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
     // Add LICENSE file to the META-INF folder inside published JAR files.
@@ -47,7 +47,7 @@ publishing {
             artifactId = artifactBaseName
             version = artifactVersion
 
-            artifact(jvmJarBatik.get())
+            artifact(jvmJarBatik)
 
             pom {
                 name = "Lets-Plot for Swing/Batik"
