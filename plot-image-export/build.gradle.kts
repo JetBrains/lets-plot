@@ -93,6 +93,13 @@ val jvmPlotImageExportSourcesJar by tasks.named<Jar>("jvmSourcesJar") {
     archiveClassifier.set("sources")
 }
 
+// Generating JavaDoc task for each publication task.
+// Fixes "Task ':plot-image-export:publishJsPublicationToMavenRepository' uses this output of task
+// ':plot-image-export:signJvmPublication' without declaring an explicit or implicit dependency" error.
+// Issues:
+//  - https://github.com/gradle-nexus/publish-plugin/issues/208
+//  - https://github.com/gradle/gradle/issues/26091
+//
 val jvmPlotImageExportJarJavaDoc by tasks.registering (Jar::class) {
     archiveBaseName.set("$artifactBaseName-$artifactVersion-javadoc.jar")
     archiveClassifier.set("javadoc")
