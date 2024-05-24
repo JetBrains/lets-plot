@@ -40,7 +40,7 @@ object BoxHelper {
         ctx: GeomContext,
         geomHelper: GeomHelper,
         fatten: Double,
-        flip: Boolean = false
+        flip: Boolean
     ) {
         val elementHelper = geomHelper.createSvgElementHelper()
         for (p in aesthetics.dataPoints()) {

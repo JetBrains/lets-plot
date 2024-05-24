@@ -61,7 +61,8 @@ class BoxplotGeom : GeomBase() {
             sizeAes = Aes.WIDTH,
             ctx,
             geomHelper,
-            fatten = fattenMidline
+            fatten = fattenMidline,
+            flip = false
         )
 
         val elementHelper = geomHelper.createSvgElementHelper()
