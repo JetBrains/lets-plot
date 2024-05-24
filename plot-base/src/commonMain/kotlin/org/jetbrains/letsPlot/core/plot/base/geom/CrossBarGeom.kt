@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 class CrossBarGeom(
     private val isVertical: Boolean
@@ -48,10 +47,6 @@ class CrossBarGeom(
         return flipHelper.flip(rectangle)
     }
 
-    private fun afterRotation(vector: DoubleVector): DoubleVector {
-        return flipHelper.flip(vector)
-    }
-
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -64,7 +59,17 @@ class CrossBarGeom(
             root, aesthetics, pos, coord, ctx,
             rectFactory = clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
         )
-        buildMidlines(root, aesthetics, ctx, geomHelper, fatten = fattenMidline)
+        BoxHelper.buildMidlines(
+            root,
+            aesthetics,
+            xAes = afterRotation(Aes.X),
+            middleAes = afterRotation(Aes.Y),
+            sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
+            ctx,
+            geomHelper,
+            fatten = fattenMidline,
+            flip = !isVertical
+        )
         // tooltip
         flipHelper.buildHints(
             listOf(Aes.YMIN, Aes.YMAX).map(::afterRotation),
@@ -111,39 +116,6 @@ class CrossBarGeom(
             factory(p)?.let { rect ->
                 geomHelper.toClient(afterRotation(rect), p)
             }
-        }
-    }
-
-    private fun buildMidlines(
-        root: SvgRoot,
-        aesthetics: Aesthetics,
-        ctx: GeomContext,
-        geomHelper: GeomHelper,
-        fatten: Double
-    ) {
-        val elementHelper = geomHelper.createSvgElementHelper()
-        val xAes = afterRotation(Aes.X)
-        val yAes = afterRotation(Aes.Y)
-        val sizeAes = Aes.WIDTH // do not flip as height is not defined for CrossBarGeom
-        for (p in aesthetics.dataPoints()) {
-            val x = p.finiteOrNull(xAes) ?: continue
-            val middle = p.finiteOrNull(yAes) ?: continue
-            val w = p.finiteOrNull(sizeAes) ?: continue
-
-            val width = w * ctx.getResolution(xAes)
-            val (line) = elementHelper.createLine(
-                afterRotation(DoubleVector(x - width / 2, middle)),
-                afterRotation(DoubleVector(x + width / 2, middle)),
-                p
-            ) ?: continue
-
-            // TODO: use strokeScale in createLine() function
-            // adjust thickness
-            require(line is SvgShape)
-            val thickness = line.strokeWidth().get()!!
-            line.strokeWidth().set(thickness * fatten)
-
-            root.add(line)
         }
     }
 

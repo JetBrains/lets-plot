@@ -16,14 +16,14 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
         override val isSolid: Boolean
             get() = true
     },
-    DASHED(2, listOf(4.3, 4.3)),
-    DOTTED(3, listOf(1.0, 3.2)),
+    DASHED(2, listOf(4.0, 4.0)),
+    DOTTED(3, listOf(1.0, 3.0)),
     @Suppress("SpellCheckingInspection")
-    DOTDASH(4, listOf(1.0, 3.2, 4.3, 3.2)),
+    DOTDASH(4, listOf(1.0, 3.0, 4.0, 3.0)),
     @Suppress("SpellCheckingInspection")
-    LONGDASH(5, listOf(7.4, 3.2)),
+    LONGDASH(5, listOf(7.0, 3.0)),
     @Suppress("SpellCheckingInspection")
-    TWODASH(6, listOf(2.4, 2.4, 6.4, 2.4));
+    TWODASH(6, listOf(2.0, 2.0, 6.0, 2.0));
 
     override val isSolid: Boolean
         get() = false
