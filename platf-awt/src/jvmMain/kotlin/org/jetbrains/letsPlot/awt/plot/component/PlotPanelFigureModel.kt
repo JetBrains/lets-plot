@@ -20,7 +20,7 @@ internal class PlotPanelFigureModel(
 
     private var toolEventCallback: ((Map<String, Any>) -> Unit)? = null
 
-    private var toolEventDispatcher: ToolEventDispatcher? = toolEventDispatcherFromProvidedComponent(providedComponent)
+    private var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
             // De-activate and re-activate ongoing interactions when replacing the dispatcher.
             val wereInteractions = field?.deactivateAllSilently() ?: emptyMap()
@@ -34,6 +34,10 @@ internal class PlotPanelFigureModel(
                 }
             }
         }
+
+    init {
+        toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
+    }
 
     override fun onToolEvent(callback: (Map<String, Any>) -> Unit) {
         toolEventCallback = callback
