@@ -33,7 +33,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 internal open class SquareFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
-    private val adjustedDomain: DoubleRectangle,
+    private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -43,6 +43,7 @@ internal open class SquareFrameOfReference(
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
+
     // Flip theme
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
@@ -61,6 +62,15 @@ internal open class SquareFrameOfReference(
         val domainTo = coord.fromClient(to) ?: return null
 
         return domainTo.subtract(domainFrom)
+    }
+
+    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
+        val domainPoint0 = coord.fromClient(clientRect.origin)
+            ?: error("Can't translate client ${clientRect.origin} to data domain.")
+        val clientBottomRight = clientRect.origin.add(clientRect.dimension)
+        val domainPoint1 = coord.fromClient(clientBottomRight)
+            ?: error("Can't translate client $clientBottomRight to data domain.")
+        return DoubleRectangle.span(domainPoint0, domainPoint1)
     }
 
     // Rendering

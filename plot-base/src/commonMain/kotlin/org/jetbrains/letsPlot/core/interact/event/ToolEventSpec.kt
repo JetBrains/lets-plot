@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.interact.event
 object ToolEventSpec {
     const val INTERACTION_ACTIVATED = "interaction_activated"
     const val INTERACTION_DEACTIVATED = "interaction_deactivated"
+    const val INTERACTION_COMPLETED = "interaction_completed"
 
     // properties
     const val EVENT_NAME = "name"

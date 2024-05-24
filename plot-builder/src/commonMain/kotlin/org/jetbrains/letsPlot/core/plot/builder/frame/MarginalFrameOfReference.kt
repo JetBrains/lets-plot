@@ -32,6 +32,10 @@ internal class MarginalFrameOfReference(
         error("Not supported by MarginalFrameOfReference")
     }
 
+    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
+        error("Not supported by MarginalFrameOfReference")
+    }
+
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
 
     override fun drawAfterGeomLayer(parent: SvgComponent) {

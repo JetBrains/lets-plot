@@ -13,5 +13,7 @@ interface InteractionTarget {
     fun zoom(scale: Double)
     fun pan(offset: DoubleVector)
 
+    fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
+
     val geomBounds: DoubleRectangle
 }

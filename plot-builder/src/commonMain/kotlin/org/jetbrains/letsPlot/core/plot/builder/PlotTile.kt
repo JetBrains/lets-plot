@@ -225,6 +225,10 @@ internal class PlotTile(
         add(lab)
     }
 
+    internal fun toDataBounds(clientBounds: DoubleRectangle):DoubleRectangle {
+        return frameOfReference.toDataBounds(clientBounds)
+    }
+
     companion object {
         private fun createCanvasFigure(layer: GeomLayer, bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
             return (layer.geom as LiveMapGeom).createCanvasFigure(bounds)

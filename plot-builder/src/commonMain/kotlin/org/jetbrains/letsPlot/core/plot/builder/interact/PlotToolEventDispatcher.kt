@@ -57,6 +57,7 @@ internal class PlotToolEventDispatcher(
                 onCompleted = { (r, target) ->
                     // translate to "geom" space.
                     target.zoom(r)
+                    println("client: $r -> data ${target.toDataBounds(r)}")
                 }
             )
 

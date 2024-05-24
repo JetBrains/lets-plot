@@ -29,6 +29,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
+/**
+ * ToDo: do not extend SquareFrameOfReference. Both should extend a common base.
+ */
 internal class PolarFrameOfReference(
     plotContext: PlotContext,
     private val hScaleBreaks: ScaleBreaks,

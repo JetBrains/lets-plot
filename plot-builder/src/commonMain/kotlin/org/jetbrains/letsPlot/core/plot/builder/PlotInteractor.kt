@@ -125,6 +125,10 @@ internal class PlotInteractor(
                 override fun pan(offset: DoubleVector) {
                     tile.interactionSupport.pan(offset)
                 }
+
+                override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
+                    return tile.toDataBounds(clientRect)
+                }
             }
         }
     }
