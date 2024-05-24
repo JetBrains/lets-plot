@@ -61,7 +61,6 @@ class BoxplotGeom : GeomBase() {
             sizeAes = Aes.WIDTH,
             ctx,
             geomHelper,
-            linesRotation = { it },
             fatten = fattenMidline
         )
 

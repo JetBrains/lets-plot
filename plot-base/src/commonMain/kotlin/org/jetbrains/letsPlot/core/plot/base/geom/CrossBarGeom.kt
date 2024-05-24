@@ -67,8 +67,8 @@ class CrossBarGeom(
             sizeAes = Aes.WIDTH, // do not flip as height is not defined for CrossBarGeom
             ctx,
             geomHelper,
-            linesRotation = flipHelper::flip,
-            fatten = fattenMidline
+            fatten = fattenMidline,
+            flip = !isVertical
         )
         // tooltip
         flipHelper.buildHints(
