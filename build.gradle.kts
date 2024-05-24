@@ -294,7 +294,7 @@ subprojects {
 
         afterEvaluate {
             // Add LICENSE file to the META-INF folder inside published JAR files.
-            val jvmJarLicense by tasks.registering (org.gradle.api.tasks.bundling.Jar::class) {
+            tasks.named<Jar>("jvmJar") {
                 metaInf {
                     from("$rootDir") {
                         include("LICENSE")

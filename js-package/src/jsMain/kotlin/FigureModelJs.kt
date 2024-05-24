@@ -6,11 +6,6 @@
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
@@ -27,10 +22,19 @@ class FigureModelJs internal constructor(
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
-    private var toolEventHandler: ((dynamic) -> Unit)? = null
-    private val activeInteractionsByOrigin: MutableMap<String, MutableList<String>> = HashMap()
+    private var toolEventCallback: ((dynamic) -> Unit)? = null
+
+    init {
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+    }
+
+    fun onToolEvent(callback: (dynamic) -> Unit) {
+        toolEventCallback = callback
+    }
 
     fun updateView() {
+        val currentInteractions = toolEventDispatcher.deactivateAllSilently()
+
         figureRegistration?.dispose()
         figureRegistration = null
 
@@ -39,52 +43,30 @@ class FigureModelJs internal constructor(
         val newBuildInfo = buildInfo.withPreferredSize(figureNewSize)
 
         val result = FigureToHtml(newBuildInfo, parentElement).eval()
-        toolEventDispatcher = result.toolEventDispatcher
         figureRegistration = result.figureRegistration
+        toolEventDispatcher = result.toolEventDispatcher
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+
+        // Re-activate interactions
+        currentInteractions.forEach { (origin, interactionSpec) ->
+            toolEventDispatcher.activateInteractions(origin, interactionSpec)
+        }
     }
 
-    fun onToolEvent(callback: (dynamic) -> Unit) {
-        toolEventHandler = callback
-    }
-
+    /**
+     * ToDo: a tool can activate several interactions at once.
+     */
     fun activateInteraction(origin: String, interactionSpecJs: dynamic) {
         val interactionSpec = dynamicObjectToMap(interactionSpecJs)
-        val response: List<Map<String, Any>> = toolEventDispatcher.activateInteraction(origin, interactionSpec)
-        response.forEach {
-            processToolEvent(it)
-        }
+        toolEventDispatcher.activateInteractions(origin, listOf(interactionSpec))
     }
 
     fun deactivateInteractions(origin: String) {
-        val originAndInteractionList = activeInteractionsByOrigin.flatMap { (origin, interactionList) ->
-            interactionList.map {
-                Pair(origin, it)
-            }
-        }
-
-        originAndInteractionList.forEach { (origin, interaction) ->
-            val response: Map<String, Any> = toolEventDispatcher.deactivateInteraction(origin, interaction)
-            processToolEvent(response)
-        }
+        toolEventDispatcher.deactivateInteractions(origin)
     }
 
-    private fun processToolEvent(event: Map<String, Any>) {
-        val origin = event.getValue(EVENT_INTERACTION_ORIGIN) as String
-        val interactionName = event.getValue(EVENT_INTERACTION_NAME) as String
-        when (event.getValue(EVENT_NAME) as String) {
-            INTERACTION_ACTIVATED -> {
-                activeInteractionsByOrigin.getOrPut(origin) { ArrayList<String>() }.add(interactionName)
-            }
-
-            INTERACTION_DEACTIVATED -> {
-                activeInteractionsByOrigin[origin]?.remove(interactionName)
-            }
-
-            else -> {
-                throw IllegalStateException("Unexpected tool event: $event")
-            }
-        }
-        toolEventHandler?.invoke(dynamicObjectFromMap(event))
+    private fun handleToolEvent(event: Map<String, Any>) {
+        toolEventCallback?.invoke(dynamicObjectFromMap(event))
     }
 
 

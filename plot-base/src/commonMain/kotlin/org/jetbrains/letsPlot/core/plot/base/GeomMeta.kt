@@ -47,6 +47,7 @@ object GeomMeta {
         Aes.FILL,
         Aes.ALPHA,
         Aes.SHAPE,
+        Aes.ANGLE,
         Aes.MAP_ID
     )
 

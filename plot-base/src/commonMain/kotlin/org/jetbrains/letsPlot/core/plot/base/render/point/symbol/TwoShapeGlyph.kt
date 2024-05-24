@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.point.symbol
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
@@ -18,9 +19,16 @@ internal abstract class TwoShapeGlyph : MultiShapeGlyph() {
         myS2 = s2
     }
 
-    override fun update(fill: Color, fillAlpha: Double, stroke: Color, strokeAlpha: Double, strokeWidth: Double) {
-        update(myS1, fill, fillAlpha, stroke, strokeAlpha, strokeWidth)
-        update(myS2, fill, fillAlpha, stroke, strokeAlpha, strokeWidth)
+    override fun update(
+        fill: Color,
+        fillAlpha: Double,
+        stroke: Color,
+        strokeAlpha: Double,
+        strokeWidth: Double,
+        transform: SvgTransform?
+    ) {
+        update(myS1, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        update(myS2, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

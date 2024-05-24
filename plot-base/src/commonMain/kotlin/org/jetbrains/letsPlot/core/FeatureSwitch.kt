@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core
 object FeatureSwitch {
 
     const val PLOT_VIEW_TOOLBOX = false
+    const val PLOT_VIEW_TOOLBOX_HTML = false
 
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false

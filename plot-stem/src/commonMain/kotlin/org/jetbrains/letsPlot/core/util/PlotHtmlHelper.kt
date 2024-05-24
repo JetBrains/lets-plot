@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_VIEW_TOOLBOX_HTML
 import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
@@ -107,7 +108,31 @@ object PlotHtmlHelper {
     private fun getDynamicDisplayHtml(plotSpecAsJsObjectInitializer: String, size: DoubleVector?): String {
         val outputId = randomString(6)
         val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
-        return """
+        if(PLOT_VIEW_TOOLBOX_HTML) {
+            // Experimental
+            return """
+            |   <div id="$outputId"></div>
+            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
+            |       (function() {
+            |           var plotSpec=$plotSpecAsJsObjectInitializer;
+            |           var outputDiv = document.getElementById("$outputId");
+            |           
+            |           // Toolbar
+            |           var toolbar = new LetsPlot.tools.SandboxToolbar();
+            |           outputDiv.appendChild(toolbar.getElement());
+            |           
+            |           var plotContainer = document.createElement('div');
+            |           outputDiv.appendChild(plotContainer);
+            |           window.letsPlotCall(function() {{
+            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
+            |               toolbar.bind(fig);
+            |           }});
+            |       })();
+            |   </script>
+        """.trimMargin()
+        } else {
+            // Production
+            return """
             |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       (function() {
@@ -119,6 +144,7 @@ object PlotHtmlHelper {
             |       })();
             |   </script>
         """.trimMargin()
+        }
     }
 
 /*

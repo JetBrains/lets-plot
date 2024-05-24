@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.gradle.jvm.tasks.Jar
+
 plugins {
     kotlin("multiplatform")
     `maven-publish`
@@ -75,7 +77,7 @@ kotlin {
     }
 }
 
-val jvmJarPlotImageExport by tasks.registering (Jar::class) {
+val jvmJarPlotImageExport by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
     // Add LICENSE file to the META-INF folder inside published JAR files.
@@ -86,7 +88,7 @@ val jvmJarPlotImageExport by tasks.registering (Jar::class) {
     }
 }
 
-val jvmPlotImageExportSourcesJar by tasks.registering (Jar::class) {
+val jvmPlotImageExportSourcesJar by tasks.named<Jar>("jvmSourcesJar") {
     archiveFileName.set("$artifactBaseName-$artifactVersion-sources.jar")
     archiveClassifier.set("sources")
 }
@@ -104,8 +106,8 @@ publishing {
             artifactId = artifactBaseName
             version = artifactVersion
 
-            artifact(jvmJarPlotImageExport.get())
-            artifact(jvmPlotImageExportSourcesJar.get())
+            artifact(jvmJarPlotImageExport)
+            artifact(jvmPlotImageExportSourcesJar)
             artifact(jvmPlotImageExportJarJavaDoc.get())
 
             pom {

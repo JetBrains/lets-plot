@@ -95,9 +95,9 @@ internal class PlotToolbox(
             if (active == newState) return
             active = newState
             if (active) {
-                toolEventDispatcher.activateInteraction(origin = name, interactionSpec = interactionSpec)
+                toolEventDispatcher.activateInteractions(origin = name, interactionSpecList = listOf(interactionSpec))
             } else {
-                toolEventDispatcher.deactivateInteraction(origin = name, interactionName = interaction)
+                toolEventDispatcher.deactivateInteractions(origin = name)
             }
         }
 
