@@ -5,8 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact
 
+import org.jetbrains.letsPlot.commons.debounce
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.InteractionTarget
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
 import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -44,7 +47,10 @@ internal class PlotToolEventDispatcher(
         deactivateOverlappingInteractions(origin, interactionSpec)
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-
+        val debouncedWheelZoom = debounce<Pair<DoubleRectangle, InteractionTarget>>(500) { (rect, _) ->
+            println("Wheel zoom tool: apply: $rect")
+        }
+        
         // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
@@ -64,6 +70,7 @@ internal class PlotToolEventDispatcher(
                 onZoomed = { rect, target ->
                     //println("Wheel zoom: apply: $rect")
                     //target.zoom(delta)
+                    debouncedWheelZoom(rect to target)
                 }
             )
 

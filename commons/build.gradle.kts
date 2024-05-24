@@ -10,6 +10,7 @@ plugins {
 
 val mockkVersion = extra["mockk_version"] as String
 val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val kotlinxCoroutinesVersion = extra["kotlinx_coroutines_version"] as String
 val hamcrestVersion = extra["hamcrest_version"] as String
 val mockitoVersion = extra["mockito_version"] as String
 val assertjVersion = extra["assertj_version"] as String
@@ -24,6 +25,14 @@ kotlin {
     }
 
     sourceSets {
+        commonMain {
+            dependencies {
+                // Can't use compileOnly
+                // > Task :commons:compileTestDevelopmentExecutableKotlinJs FAILED
+                //e: Could not find "org.jetbrains.kotlinx:kotlinx-coroutines-core" in [/home/me/.local/share/kotlin/daemon]
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+            }
+        }
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
