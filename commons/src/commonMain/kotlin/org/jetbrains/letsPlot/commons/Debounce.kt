@@ -5,14 +5,16 @@
 
 package org.jetbrains.letsPlot.commons
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
-// TODO: investigate can GlobalScope be replaced with some other scope
-@OptIn(DelicateCoroutinesApi::class)
+// Not thread-safe
 fun <T> debounce(
     delayMs: Long,
-    scope: CoroutineScope = GlobalScope,
+    scope: CoroutineScope,
     action: (T) -> Unit
 ): (T) -> Unit {
     var activeJob: Job? = null

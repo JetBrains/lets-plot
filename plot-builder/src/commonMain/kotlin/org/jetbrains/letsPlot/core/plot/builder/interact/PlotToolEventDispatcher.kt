@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -47,9 +49,10 @@ internal class PlotToolEventDispatcher(
         deactivateOverlappingInteractions(origin, interactionSpec)
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-        val debouncedWheelZoom = debounce<Pair<DoubleRectangle, InteractionTarget>>(500) { (rect, _) ->
-            println("Wheel zoom tool: apply: $rect")
-        }
+        val debouncedWheelZoom =
+            debounce<Pair<DoubleRectangle, InteractionTarget>>(500, CoroutineScope(Dispatchers.Default)) { (rect, _) ->
+                println("Wheel zoom tool: apply: $rect")
+            }
         
         // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
