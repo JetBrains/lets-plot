@@ -125,4 +125,12 @@ object SvgUtils {
         }
         return findRoot(node)
     }
+
+    // enumerate all nodes in the tree
+    fun children(node: SvgNode): Sequence<SvgNode> {
+        return when (node) {
+            is SvgContainer -> node.children().asSequence() + node.children().flatMap { children(it) }
+            else -> emptySequence()
+        }
+    }
 }

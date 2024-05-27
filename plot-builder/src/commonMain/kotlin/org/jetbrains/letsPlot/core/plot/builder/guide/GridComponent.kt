@@ -8,27 +8,43 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
-import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 class GridComponent(
     private val majorGrid: List<List<DoubleVector>>,
     private val minorGrid: List<List<DoubleVector>>,
-    axisInfo: AxisLayoutInfo,
-    private val gridTheme: PanelGridTheme,
+    private val orientation: Orientation,
     private val isOrthogonal: Boolean,
-    private val geomContentBounds: DoubleRectangle
+    geomContentBounds: DoubleRectangle,
+    private val gridTheme: PanelGridTheme,
+    panelTheme: PanelTheme
 ) : SvgComponent() {
     private val container = SvgGElement()
-    private val orientation = axisInfo.orientation
     private val start = 0.0
     private val end: Double = if (orientation.isHorizontal) geomContentBounds.height else geomContentBounds.width
-    private val geomContentLocalBounds = geomContentBounds.subtract(geomContentBounds.origin)
+    private val gridArea = geomContentBounds
+        .subtract(geomContentBounds.origin)
+        .let { gridArea ->
+            if (!panelTheme.showRect() && !panelTheme.showBorder()) {
+                // BBC style - no border, no padding, show grid lines until the very edge
+                return@let gridArea
+            }
+
+            // reduce grid area by 3px to avoid grid lines to be drawn on the edge (for aesthetic reasons)
+            val noGridMargin = when (orientation.isHorizontal) {
+                true -> Thickness(right = 3.0, left = 3.0)
+                false -> Thickness(top = 3.0, bottom = 3.0)
+            }
+
+            return@let noGridMargin.shrinkRect(gridArea)
+        }
 
     override fun buildComponent() {
         rootGroup.children().add(container)
@@ -60,7 +76,6 @@ class GridComponent(
     ) {
         val visibleGridLines =
             if (isOrthogonal) {
-
                 grid
                     .map { (p) ->
                         when (orientation.isHorizontal) {
@@ -68,7 +83,7 @@ class GridComponent(
                             false -> listOf(DoubleVector(start, p.y), DoubleVector(end, p.y))
                         }
                     }
-                    .filter { line -> line.any { p -> p in geomContentLocalBounds } }
+                    .filter { line -> line.any { p -> p in gridArea } }
             } else {
                 // Non-orthogonal grid is always visible and don't support panning
                 grid
