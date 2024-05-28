@@ -15,12 +15,12 @@ def test_two_guides():
 
 
 def test_shape_and_color_guides():
-    spec = (gg.ggplot() + gg.guides(shape=guide_legend(ncol=2), title="Shape title")
+    spec = (gg.ggplot() + gg.guides(shape=guide_legend(ncol=2, title="Shape title"))
             + gg.guides(color=guide_colorbar(nbin=8, title="Color title")))
 
     as_dict = spec.as_dict()['guides']
     assert as_dict['shape']['ncol'] == 2
-    assert as_dict['title'] == "Shape title"
+    assert as_dict['shape']['title'] == "Shape title"
     assert as_dict['color']['nbin'] == 8
     assert as_dict['color']['title'] == "Color title"
 
