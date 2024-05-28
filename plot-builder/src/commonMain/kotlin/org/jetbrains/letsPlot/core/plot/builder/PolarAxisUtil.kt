@@ -60,7 +60,7 @@ object PolarAxisUtil {
                     val newFirstBr = IndexedValue(
                         index = firstBr.index,
                         value = Triple(
-                            "${firstBr.label}/${lastBr.label}", // Merge first and last label
+                            "${lastBr.label}/${firstBr.label}", // Merge first and last label
                             firstBr.domValue,
                             firstBr.coord
                         )

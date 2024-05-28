@@ -21,6 +21,15 @@ import kotlin.test.assertTrue
 class PolarBreaksTest {
 
     @Test
+    fun firstLastMajorLabel() {
+        val angleBreaks = computeBreaks(axisKind = ANGLE)
+        assertEquals(6, angleBreaks.majorLabels.size)
+
+        assertEquals("0/-5", angleBreaks.majorLabels[0])
+        assertEquals("", angleBreaks.majorLabels[5])
+    }
+
+    @Test
     fun simple() {
         val angleBreaks = computeBreaks(axisKind = ANGLE)
 
