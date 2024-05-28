@@ -58,12 +58,11 @@ internal object PlotAssemblerUtil {
                 }
             }
 
-
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = scale.name
+                val scaleName = guideOptionsMap[aes]?.title ?: scale.name
 
                 val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
                     if (it is ColorBarOptions) {
@@ -92,12 +91,13 @@ internal object PlotAssemblerUtil {
                         } else {
                             // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
                             // Add under another key
-                            "$scaleName (${aes.name})"
+                            "${scale.name} (${aes.name})"
                         }
                     } ?: scaleName
 
-                    colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(colorbarName)
-
+                    colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(
+                        guideOptionsMap[aes]?.title ?: colorbarName
+                    )
                 } else {
                     // Legend
                     aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
