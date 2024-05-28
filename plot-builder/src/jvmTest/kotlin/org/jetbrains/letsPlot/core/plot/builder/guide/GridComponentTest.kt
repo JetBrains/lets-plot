@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.children
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.breadthFirstTraversal
 import kotlin.test.Test
 
 class GridComponentTest {
@@ -23,7 +23,7 @@ class GridComponentTest {
 
         val gridComponent = createGridComponent(theme)
 
-        children(gridComponent.rootGroup)
+        breadthFirstTraversal(gridComponent.rootGroup)
             .filterIsInstance<SvgLineElement>()
             .toList()
             .let { gridLines ->
@@ -45,7 +45,7 @@ class GridComponentTest {
 
         val gridComponent = createGridComponent(theme)
 
-        children(gridComponent.rootGroup)
+        breadthFirstTraversal(gridComponent.rootGroup)
             .filterIsInstance<SvgLineElement>()
             .toList()
             .let { gridLines ->

@@ -126,11 +126,14 @@ object SvgUtils {
         return findRoot(node)
     }
 
-    // enumerate all nodes in the tree
-    fun children(node: SvgNode): Sequence<SvgNode> {
-        return when (node) {
-            is SvgContainer -> node.children().asSequence() + node.children().flatMap { children(it) }
-            else -> emptySequence()
+    fun breadthFirstTraversal(node: SvgNode): Sequence<SvgNode> {
+        fun collectChildren(node: SvgNode): Sequence<SvgNode> {
+            return node.children().asSequence() + node.children().asSequence().flatMap(::collectChildren)
         }
+        return sequenceOf(node) + collectChildren(node)
+    }
+
+    fun depthFirstTraversal(node: SvgNode): Sequence<SvgNode> {
+        return sequenceOf(node) + node.children().asSequence().flatMap(::depthFirstTraversal)
     }
 }
