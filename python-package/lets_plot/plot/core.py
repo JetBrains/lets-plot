@@ -416,6 +416,10 @@ class PlotSpec(FeatureSpec):
                     plot = plot.__add__(spec)
                 return plot
 
+            if other.kind == 'guides':
+                _merge_dicts(plot.props(), {'guides': other.as_dict()})
+                return plot
+
             # add feature to properties
             plot.props()[other.kind] = other
             return plot
@@ -827,6 +831,14 @@ def _generate_data(size):
     """ For testing reasons only """
     # return FeatureSpec('dummy', name=None, data='x' * size)
     return PlotSpec(data='x' * size, mapping=None, scales=[], layers=[])
+
+
+def _merge_dicts(dict1, dict2):
+    for key, value in dict2.items():
+        if key in dict1 and isinstance(dict1[key], dict) and isinstance(value, dict):
+            _merge_dicts(dict1[key], value)
+        else:
+            dict1[key] = value
 
 
 def _theme_dicts_merge(x, y):
