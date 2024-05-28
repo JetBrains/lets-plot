@@ -1,7 +1,7 @@
 ## [4.3.3] - 2024-mm-dd
 
 ### Added
-- Support for marker rotation [[#736](https://github.com/JetBrains/lets-plot/issues/736)].
+- Support for "angle" aesthetic in `geom_point()` [[#736](https://github.com/JetBrains/lets-plot/issues/736)].
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24d/rotate_makers.ipynb).
 
 ### Changed
