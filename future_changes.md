@@ -2,7 +2,7 @@
 
 ### Added
 - Support for "angle" aesthetic in `geom_point()` [[#736](https://github.com/JetBrains/lets-plot/issues/736)].
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24d/rotate_makers.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24d/geom_point_angle.ipynb).
 
 ### Changed
 - [BREAKING] Dropped support for Python 3.7 as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle.
