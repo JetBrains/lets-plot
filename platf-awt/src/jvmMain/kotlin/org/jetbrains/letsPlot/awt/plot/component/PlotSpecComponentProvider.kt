@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.awt.plot.MonolithicAwt
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.util.PlotSizeUtil.preferredFigureSize
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
@@ -38,14 +39,20 @@ abstract class PlotSpecComponentProvider(
         }
     }
 
-    override fun createComponent(containerSize: Dimension?): JComponent {
+    override fun createComponent(containerSize: Dimension?, specOverride: Map<String, Any>?): JComponent {
         val plotSize = containerSize?.let {
             val preferredSize = getPreferredSize(containerSize)
             DoubleVector(preferredSize.width.toDouble(), preferredSize.height.toDouble())
         }
 
+        val plotSpec = specOverride?.let {
+            HashMap<String, Any>(processedSpec).also { plotSpec ->
+                plotSpec[SPEC_OVERRIDE] = it
+            }
+        } ?: processedSpec
+
         val plotComponent = createPlotComponent(
-            processedSpec, plotSize,
+            plotSpec, plotSize,
             svgComponentFactory,
             executor,
             errorMessageComponentFactory,

@@ -46,4 +46,7 @@ interface CoordProvider {
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return Coords.create(coordMapper)
     }
+
+    fun withXlimOverride(xlimOverride: Pair<Double?, Double?>): CoordProvider
+    fun withYlimOverride(ylimOverride: Pair<Double?, Double?>): CoordProvider
 }

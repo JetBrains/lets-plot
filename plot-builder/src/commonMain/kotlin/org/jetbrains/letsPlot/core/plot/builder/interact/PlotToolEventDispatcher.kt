@@ -13,7 +13,9 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
@@ -57,7 +59,19 @@ internal class PlotToolEventDispatcher(
                 onCompleted = { (r, target) ->
                     // translate to "geom" space.
                     target.zoom(r)
-                    println("client: $r -> data ${target.toDataBounds(r)}")
+                    val dataBounds = target.toDataBounds(r)
+                    println("client: $r -> data $dataBounds")
+                    toolEventCallback.invoke(
+                        mapOf(
+                            EVENT_NAME to INTERACTION_COMPLETED,
+                            EVENT_INTERACTION_ORIGIN to origin,
+                            EVENT_INTERACTION_NAME to interactionName,
+                            EVENT_RESULT_DATA_BOUNDS to listOf(
+                                dataBounds.left, dataBounds.top,
+                                dataBounds.right, dataBounds.bottom
+                            )
+                        )
+                    )
                 }
             )
 

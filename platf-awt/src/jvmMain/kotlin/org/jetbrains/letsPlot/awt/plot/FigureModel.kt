@@ -10,5 +10,5 @@ interface FigureModel {
     fun onToolEvent(callback: (Map<String, Any>) -> Unit)
     fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
-    fun updateView()
+    fun updateView(specOverride: Map<String, Any>? = null)
 }

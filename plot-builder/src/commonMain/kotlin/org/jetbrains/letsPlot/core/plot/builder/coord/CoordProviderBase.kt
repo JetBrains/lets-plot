@@ -33,6 +33,25 @@ abstract class CoordProviderBase(
     override val isLinear: Boolean = !projection.nonlinear
     override val isPolar: Boolean = false
 
+
+    override fun withXlimOverride(xlimOverride: Pair<Double?, Double?>): CoordProvider {
+        if (xlimOverride.first == null && xlimOverride.second == null) return this
+        val newXLim = Pair(
+            xlimOverride.first ?: xLim.first,
+            xlimOverride.second ?: xLim.second,
+        )
+        return with(newXLim, yLim, flipped)
+    }
+
+    override fun withYlimOverride(ylimOverride: Pair<Double?, Double?>): CoordProvider {
+        if (ylimOverride.first == null && ylimOverride.second == null) return this
+        val newYLim = Pair(
+            ylimOverride.first ?: xLim.first,
+            ylimOverride.second ?: xLim.second,
+        )
+        return with(xLim, newYLim, flipped)
+    }
+
     /**
      * Reshape and flip the domain if necessary.
      */

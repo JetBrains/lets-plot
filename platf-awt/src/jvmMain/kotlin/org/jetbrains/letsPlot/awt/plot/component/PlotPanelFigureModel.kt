@@ -14,11 +14,13 @@ import javax.swing.JComponent
 internal class PlotPanelFigureModel(
     private val plotPanel: PlotPanel,
     providedComponent: JComponent?,
-    private val plotComponentFactory: (Dimension) -> JComponent,
+    private val plotComponentFactory: (containerSize: Dimension, specOverride: Map<String, Any>?) -> JComponent,
     private val applicationContext: ApplicationContext,
 ) : FigureModel {
 
     private var toolEventCallback: ((Map<String, Any>) -> Unit)? = null
+
+    private var currSpecOverride: Map<String, Any>? = null
 
     private var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
@@ -51,7 +53,8 @@ internal class PlotPanelFigureModel(
         toolEventDispatcher?.deactivateInteractions(origin)
     }
 
-    override fun updateView() {
+    override fun updateView(specOverride: Map<String, Any>?) {
+        currSpecOverride = specOverride
         rebuildPlotComponent()
     }
 
@@ -59,12 +62,13 @@ internal class PlotPanelFigureModel(
         onComponentCreated: (JComponent) -> Unit = {},
         expared: () -> Boolean = { false }
     ) {
+        val specOverride = currSpecOverride
         val action = Runnable {
 
             val containerSize = plotPanel.size
             if (containerSize == null) return@Runnable
 
-            val providedComponent = plotComponentFactory(containerSize)
+            val providedComponent = plotComponentFactory(containerSize, specOverride)
             onComponentCreated(providedComponent)
             toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
 
