@@ -17,12 +17,13 @@ import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Name.LP_MINIMAL
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfoQuad
@@ -36,54 +37,49 @@ import kotlin.test.Test
 
 class SquareFrameOfReferenceGridTest {
     @Test
-    fun `with theme with border should not add gridlines close to edges and add ALL labels`() {
-        val theme = ThemeUtil.buildTheme(
-            themeName = LP_MINIMAL,
-            userOptions = mapOf(
-                PANEL_BORDER_RECT to mapOf(
-                    Elem.SIZE to 2.0,
-                    Elem.FILL to SymbolicColor.GREY_3,
-                    Elem.BLANK to false
-                )
-            ),
+    fun `with theme with border should not draw major gridlines close to edges but should draw their labels`() {
+        val frameReferenceSvg = buildFrameOrReference(
+            themeOptions = showBorder(true) + showMajorGrid(true) + showMinorGrid(false)
         )
 
-        val container = buildFrameOrReference(theme)
-
         // Do not draw grid lines on the edge
-        depthFirstTraversal(container)
+        depthFirstTraversal(frameReferenceSvg)
             .filterIsInstance<SvgLineElement>()
-            .let { lines ->
-                assertThat(lines.count()).isEqualTo(10)
-                assertThat(lines.none { line -> line.y1().get()!! >= (600 - 3) || line.y1().get()!! <= 3 })
+            .toList()
+            .let { majorGridLines ->
+                assertThat(majorGridLines).hasSize(10)
+                assertThat(majorGridLines.all(SvgLineElement::isHorizontal)).isTrue()
+                assertThat(majorGridLines.all { line -> line.y1!! in DoubleSpan(3.0, 597.0) }).isTrue()
             }
 
-        depthFirstTraversal(container)
+        // Yet all labels should be present
+        depthFirstTraversal(frameReferenceSvg)
             .filterIsInstance<SvgTextNode>()
+            .toList()
             .let { textNodes ->
-                assertThat(textNodes.count()).isEqualTo(12)
+                assertThat(textNodes).hasSize(12)
                 assertThat(textNodes.map { it.textContent().get() }.toList())
                     .containsExactlyInAnyOrder("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11")
             }
     }
 
     @Test
-    fun `with theme without border should not drop gridlines close to edges`() {
-        // LP_MINIMAL theme has no border
-        val theme = ThemeUtil.buildTheme(themeName = LP_MINIMAL)
-        val container = buildFrameOrReference(theme)
+    fun `with theme without border should draw all major gridlines`() {
+        val frameReferenceSvg = buildFrameOrReference(
+            themeOptions = showBorder(false) + showMajorGrid(true) + showMinorGrid(false)
+        )
 
-        // Do not draw grid lines on the edge
-        depthFirstTraversal(container)
+        // Do draw grid lines on the edge
+        depthFirstTraversal(frameReferenceSvg)
             .filterIsInstance<SvgLineElement>()
             .toList()
-            .let { lines ->
-                assertThat(lines).hasSize(12)
-                assertThat(lines.any { line -> line.y1().get()!! >= (600 - 3) } ).isTrue()
-                assertThat(lines.any { line -> line.y1().get()!! <= 3 } ).isTrue()
+            .let { majorGridLines ->
+                assertThat(majorGridLines).hasSize(12)
+                assertThat(majorGridLines.first().y1).isEqualTo(600.0)
+                assertThat(majorGridLines.last().y1).isEqualTo(0.0)
             }
 
-        depthFirstTraversal(container)
+        depthFirstTraversal(frameReferenceSvg)
             .filterIsInstance<SvgTextNode>()
             .toList()
             .let { textNodes ->
@@ -93,16 +89,72 @@ class SquareFrameOfReferenceGridTest {
             }
     }
 
-    private fun buildFrameOrReference(theme: Theme): SvgNode {
-        val values = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-        val transformedValues = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1)
-        val transformedRange = DoubleSpan.encloseAll(transformedValues)
-        val transformedDomain = DoubleRectangle.hvRange(transformedRange, transformedRange)
+    @Test
+    fun `should draw minor gridlines if two or more major gridlines are present`() {
+        val frameReferenceSvg = buildFrameOrReference(
+            themeOptions = showBorder(false) + showMajorGrid(false) + showMinorGrid(true),
+            size = DoubleVector(600, 180),
+            domain = DoubleSpan(0.0, 360.0),
+            breaks = listOf(0, 200)
+        )
+        depthFirstTraversal(frameReferenceSvg)
+            .filterIsInstance<SvgLineElement>()
+            .toList()
+            .let { minorGridLines ->
+                assertThat(minorGridLines).hasSize(2)
+                assertThat(minorGridLines.all(SvgLineElement::isHorizontal)).isTrue()
+                assertThat(minorGridLines[0].y1).isEqualTo(130.0)
+                assertThat(minorGridLines[1].y1).isEqualTo(30.0)
+            }
+    }
+
+    @Test
+    fun `with one major gridline should not draw minor gridlines`() {
+        val frameReferenceSvg = buildFrameOrReference(
+            themeOptions = showBorder(false) + showMajorGrid(false) + showMinorGrid(true),
+            size = DoubleVector(600, 180),
+            domain = DoubleSpan(0.0, 360.0),
+            breaks = listOf(200)
+        )
+        depthFirstTraversal(frameReferenceSvg)
+            .filterIsInstance<SvgLineElement>()
+            .toList()
+            .let { minorGridLines ->
+                assertThat(minorGridLines).isEmpty()
+            }
+    }
+
+    @Test
+    fun `without major gridlines should not draw minor gridlines`() {
+        val container = buildFrameOrReference(
+            themeOptions = showMajorGrid(true) + showMinorGrid(true),
+            size = DoubleVector(600, 180),
+            domain = DoubleSpan(0.0, 360.0),
+            breaks = listOf()
+        )
+        depthFirstTraversal(container)
+            .filterIsInstance<SvgLineElement>()
+            .toList()
+            .let { minorGridLines ->
+                assertThat(minorGridLines).isEmpty()
+            }
+    }
+
+    private fun buildFrameOrReference(
+        themeOptions: Map<String, Any> = emptyMap(),
+        size: DoubleVector = DoubleVector(600.0, 600.0),
+        breaks: List<Number> = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
+        domain: DoubleSpan = DoubleSpan.encloseAll(breaks.map { it.toDouble() }),
+    ): SvgNode {
+        val theme = ThemeUtil.buildTheme(LP_MINIMAL, themeOptions)
+        val transformedDomain = DoubleRectangle.hvRange(domain, domain)
+
+        val unusedRect = DoubleRectangle.LTRB(0, 0, 0, 0)
 
         val scaleBreaks = ScaleBreaks(
-            domainValues = values,
-            transformedValues = transformedValues,
-            labels = values.map { it.toString() },
+            domainValues = breaks,
+            transformedValues = breaks.map { it.toDouble() },
+            labels = breaks.map { it.toString() },
         )
 
         val squareFrameOfReference = SquareFrameOfReference(
@@ -112,24 +164,24 @@ class SquareFrameOfReferenceGridTest {
             coord = Coords.create(
                 CoordinatesMapper.create(
                     adjustedDomain = transformedDomain,
-                    clientSize = DoubleVector(600, 600),
+                    clientSize = size,
                     projection = identity(),
                     flipAxis = false
                 )
             ),
             layoutInfo = TileLayoutInfo(
                 offset = DoubleVector.ZERO,
-                geomWithAxisBounds = DoubleRectangle.LTRB(0, 0, 600, 600),
-                geomOuterBounds = DoubleRectangle.LTRB(0, 0, 600, 600),
-                geomInnerBounds = DoubleRectangle.LTRB(0, 0, 600, 600),
+                geomWithAxisBounds = unusedRect,
+                geomOuterBounds = unusedRect,
+                geomInnerBounds = unusedRect,
                 axisInfos = AxisLayoutInfoQuad(
                     left = AxisLayoutInfo(
-                        axisLength = 600.0,
-                        axisDomain = transformedRange,
+                        axisLength = size.y,
+                        axisDomain = domain,
                         orientation = Orientation.LEFT,
                         axisBreaks = scaleBreaks,
                         tickLabelRotationAngle = 0.0,
-                        tickLabelsBounds = DoubleRectangle.LTRB(0, 0, 30, 600),
+                        tickLabelsBounds = unusedRect,
                     ),
                     right = null,
                     top = null,
@@ -137,7 +189,7 @@ class SquareFrameOfReferenceGridTest {
                 ),
                 hAxisShown = true,
                 vAxisShown = true,
-                geomContentBounds = DoubleRectangle.LTRB(0, 0, 600, 600),
+                geomContentBounds = DoubleRectangle(DoubleVector.ZERO, size),
                 trueIndex = 0,
             ),
             marginsLayout = GeomMarginsLayout(0.0, 0.0, 0.0, 0.0),
@@ -158,5 +210,63 @@ class SquareFrameOfReferenceGridTest {
         squareFrameOfReference.drawBeforeGeomLayer(container)
         squareFrameOfReference.drawAfterGeomLayer(container)
         return container.rootGroup
+    }
+
+}
+
+private val SvgLineElement.y1: Double? get() = this.y1().get()
+private fun SvgLineElement.isHorizontal(): Boolean = y1().get() == y2().get()
+
+private fun showMajorGrid(isTrue: Boolean): Map<String, Any> {
+    return if (isTrue) {
+        mapOf(
+            PANEL_GRID_MAJOR to mapOf(
+                Elem.SIZE to 1.0,
+                Elem.COLOR to SymbolicColor.GREY_3,
+                Elem.BLANK to false
+            )
+        )
+    } else {
+        mapOf(
+            PANEL_GRID_MAJOR to mapOf(
+                Elem.BLANK to true
+            )
+        )
+    }
+}
+
+private fun showMinorGrid(isTrue: Boolean): Map<String, Any> {
+    return if (isTrue) {
+        mapOf(
+            PANEL_GRID_MINOR to mapOf(
+                Elem.SIZE to 1.0,
+                Elem.COLOR to SymbolicColor.GREY_3,
+                Elem.BLANK to false
+            )
+        )
+    } else {
+        mapOf(
+            PANEL_GRID_MINOR to mapOf(
+                Elem.BLANK to true
+            )
+        )
+    }
+}
+
+private fun showBorder(isTrue: Boolean): Map<String, Any> {
+    return if (isTrue) {
+        mapOf(
+            PANEL_BORDER_RECT to mapOf(
+                Elem.SIZE to 1.0,
+                Elem.FILL to SymbolicColor.GREY_3,
+                Elem.BLANK to false
+            )
+        )
+    } else {
+        mapOf(
+            PANEL_BORDER_RECT to mapOf(
+                Elem.BLANK to true
+            )
+        )
     }
 }
