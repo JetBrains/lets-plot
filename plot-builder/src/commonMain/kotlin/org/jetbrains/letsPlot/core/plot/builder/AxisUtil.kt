@@ -19,7 +19,7 @@ import kotlin.math.abs
 
 object AxisUtil {
     internal fun minorDomainBreaks(majorDomainBreaks: List<Double>) =
-        if (majorDomainBreaks.size > 2) {
+        if (majorDomainBreaks.size > 1) {
             val step = (majorDomainBreaks[1] - majorDomainBreaks[0])
             val start = majorDomainBreaks[0] - step / 2.0
             (0..(majorDomainBreaks.size)).map { start + it * step }
