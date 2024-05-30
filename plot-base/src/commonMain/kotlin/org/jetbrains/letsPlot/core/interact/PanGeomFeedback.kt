@@ -21,8 +21,8 @@ class PanGeomFeedback(
             onDragged = {
                 val (target, _, _, dragDelta) = it
 
-                val viewportPlotRect = target.geomPlotRect.subtract(dragDelta)
-                target.setViewport(viewportPlotRect)
+                val viewport = target.geomPlotRect.subtract(dragDelta)
+                target.setViewport(viewport)
             },
             onCompleted = {
                 println("PanGeomFeedback complete.")
