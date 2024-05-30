@@ -113,22 +113,37 @@ internal class PlotInteractor(
             val target = tiles.find { (bbox, _) -> plotCoord in bbox } ?: return null
             val (bbox, tile) = target
             return object : InteractionTarget {
-                override val geomBounds: DoubleRectangle = bbox
-                override fun zoom(viewport: DoubleRectangle) {
-                    tile.interactionSupport.zoom(geomBounds, viewport)
+                override val geomSize: DoubleVector = bbox.dimension
+
+                override fun toGeomCoords(plotCoords: DoubleVector): DoubleVector {
+                    return plotCoords.subtract(bbox.origin)
                 }
 
-                override fun zoom(scale: Double) {
-                    tile.interactionSupport.zoom(scale)
+                override fun toPlotCoords(geomCoords: DoubleVector): DoubleVector {
+                    return geomCoords.add(bbox.origin)
                 }
 
-                override fun pan(offset: DoubleVector) {
-                    tile.interactionSupport.pan(offset)
+                override fun setViewport(viewportPlotRect: DoubleRectangle) {
+                    val viewportGeomRect = toGeomCoords(viewportPlotRect)
+                        .shrinkToAspectRatio(bbox.dimension) // temp fix for aspect ratio on backends w/o plot rebuild
+                    val (scale, translate) = calculateTransform(viewportGeomRect, geomSize)
+                    tile.interactionSupport.update(scale, translate)
                 }
 
                 override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
                     return tile.toDataBounds(clientRect)
                 }
+
+                // Viewport is zero-based
+                private fun calculateTransform(viewport: DoubleRectangle, rectSize: DoubleVector): Pair<Double, DoubleVector> {
+                    val scale = minOf(rectSize.x / viewport.width, rectSize.y / viewport.height)
+                    val scaledSize = viewport.dimension.mul(scale)
+                    val newPosition = rectSize.subtract(scaledSize).mul(0.5)
+                    val translate = newPosition.subtract(viewport.origin)
+
+                    return scale to translate
+                }
+
             }
         }
     }

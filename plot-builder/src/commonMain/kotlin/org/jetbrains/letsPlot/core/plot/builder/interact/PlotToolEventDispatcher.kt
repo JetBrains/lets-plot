@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTI
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.toGeomCoords
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 
@@ -56,11 +57,12 @@ internal class PlotToolEventDispatcher(
             )
 
             ToolInteractionSpec.BOX_ZOOM -> DrawRectFeedback(
-                onCompleted = { (r, target) ->
+                onCompleted = { (viewportPlotRect, target) ->
+                    target.setViewport(viewportPlotRect)
                     // translate to "geom" space.
-                    target.zoom(r)
-                    val dataBounds = target.toDataBounds(r)
-                    println("client: $r -> data $dataBounds")
+                    val viewportGeomRect = target.toGeomCoords(viewportPlotRect)
+                    val dataBounds = target.toDataBounds(viewportGeomRect)
+                    println("client: $viewportGeomRect -> data $dataBounds")
                     toolEventCallback.invoke(
                         mapOf(
                             EVENT_NAME to INTERACTION_COMPLETED,
@@ -76,7 +78,7 @@ internal class PlotToolEventDispatcher(
             )
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
-                onZoomed = { rect, target ->
+                onZoomed = { viewportPlotRect, target ->
                     //println("Wheel zoom: apply: $rect")
                     //target.zoom(delta)
                 }

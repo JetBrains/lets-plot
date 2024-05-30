@@ -17,23 +17,26 @@ class PanGeomFeedback(
 
         interaction.loop(
             onStarted = {
-                it.target.pan(it.dragDelta)
             },
             onDragged = {
-                it.target.pan(it.dragDelta)
+                val (target, _, _, dragDelta) = it
+
+                val viewportPlotRect = target.geomPlotRect.subtract(dragDelta)
+                target.setViewport(viewportPlotRect)
             },
             onCompleted = {
                 println("PanGeomFeedback complete.")
-                val target = it.target
-                target.pan(it.dragDelta)
+                val (target, dragFrom, dragTo, dragDelta) = it
 
+                val viewport = target.geomPlotRect.subtract(dragDelta)
+                target.setViewport(viewport)
+
+                onCompleted(dragTo.subtract(dragFrom), target)
                 it.reset()
-                onCompleted(DoubleVector.ZERO, target)
             },
             onAborted = {
                 println("PanGeomFeedback abort.")
                 it.reset()
-                it.target.pan(it.dragDelta)
                 // ToDo: ...
             }
         )

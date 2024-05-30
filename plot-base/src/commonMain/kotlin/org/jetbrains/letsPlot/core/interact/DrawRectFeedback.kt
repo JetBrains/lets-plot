@@ -6,17 +6,14 @@
 package org.jetbrains.letsPlot.core.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
-import kotlin.math.max
-import kotlin.math.min
 
 class DrawRectFeedback(
     private val onCompleted: ((Pair<DoubleRectangle, InteractionTarget>) -> Unit)
 ) : DragFeedback {
-    private val rect = SvgRectElement().apply {
+    private val selectionRectSvg = SvgRectElement().apply {
         strokeColor().set(Color.GRAY)
         fillColor().set(Color.TRANSPARENT)
         strokeWidth().set(2.0)
@@ -52,27 +49,34 @@ class DrawRectFeedback(
         interaction.loop(
             onStarted = {
                 println("DrawRectFeedback start.")
-                drawRects(it.dragFrom, it.dragTo, it.target.geomBounds)
-                decorationsLayer.children().add(rect)
+                decorationsLayer.children().add(selectionRectSvg)
                 decorationsLayer.children().add(viewportSvg)
             },
             onDragged = {
                 println("DrawRectFeedback drag.")
-                drawRects(it.dragFrom, it.dragTo, it.target.geomBounds)
+                val (target, dragFrom, dragTo, _) = it
+
+                val dragPlotRect = DoubleRectangle.span(dragFrom, dragTo)
+                val selectionPlotRect = target.geomPlotRect.intersect(dragPlotRect) ?: return@loop
+
+                drawRects(selectionRectSvg, selectionPlotRect)
+                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomSize))
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
-                decorationsLayer.children().remove(rect)
+                val (target, dragFrom, dragTo, _) = it
+                decorationsLayer.children().remove(selectionRectSvg)
                 decorationsLayer.children().remove(viewportSvg)
 
-                val r = calcUserRect(it.dragFrom, it.dragTo, it.target.geomBounds)
-                val target = it.target
+                val dragRect = DoubleRectangle.span(dragFrom, dragTo)
+                val viewport = target.geomPlotRect.intersect(dragRect) ?: return@loop
+
+                onCompleted(viewport to target)
                 it.reset()
-                onCompleted(r to target)
             },
             onAborted = {
                 println("DrawRectFeedback abort.")
-                decorationsLayer.children().remove(rect)
+                decorationsLayer.children().remove(selectionRectSvg)
                 decorationsLayer.children().remove(viewportSvg)
                 it.reset()
             }
@@ -81,47 +85,11 @@ class DrawRectFeedback(
         return object : Disposable {
             override fun dispose() {
                 println("DrawRectFeedback dispose.")
-                decorationsLayer.children().remove(rect)
+                decorationsLayer.children().remove(selectionRectSvg)
+                decorationsLayer.children().remove(viewportSvg)
                 interaction.dispose()
             }
         }
     }
 
-    private fun drawRects(
-        dragFrom: DoubleVector,
-        dragTo: DoubleVector,
-        geomBounds: DoubleRectangle
-    ) {
-        drawRects(rect, calcUserRect(dragFrom, dragTo, geomBounds))
-        drawRects(viewportSvg, calcViewportRect(dragFrom, dragTo, geomBounds))
-    }
-
-    companion object {
-        private fun calcUserRect(
-            dragFrom: DoubleVector,
-            dragTo: DoubleVector,
-            geomBounds: DoubleRectangle
-        ): DoubleRectangle {
-            val left = min(dragFrom.x, dragTo.x)
-            val top = min(dragFrom.y, dragTo.y)
-
-            val r = DoubleRectangle(
-                x = left,
-                y = top,
-                w = max(dragFrom.x, dragTo.x) - left,
-                h = max(dragFrom.y, dragTo.y) - top
-            )
-
-            return geomBounds.intersect(r)!!
-        }
-
-        private fun calcViewportRect(
-            dragFrom: DoubleVector,
-            dragTo: DoubleVector,
-            geomBounds: DoubleRectangle
-        ): DoubleRectangle {
-            val userRect = calcUserRect(dragFrom, dragTo, geomBounds)
-            return userRect.shrinkToAspectRatio(geomBounds.dimension)
-        }
-    }
 }

@@ -17,16 +17,16 @@ class WheelZoomFeedback(
         val interaction = MouseWheelInteraction(ctx)
 
         interaction.loop(
-            onZoomed = {
+            onZoomed = { (target, zoomOrigin, zoomDelta) ->
                 val zoomStep = 1.05
-                val factor = when (it.zoomDelta.sign) {
+                val factor = when (zoomDelta.sign) {
                     -1.0 -> 1 / zoomStep // zoom in, reduce viewport
                     else -> zoomStep // zoom out, enlarge viewport
                 }
 
-                val viewport = scaleRect(it.target.geomBounds, factor, it.zoomOrigin)
-                it.target.zoom(viewport)
-                onZoomed(viewport, it.target)
+                val plotViewport = calculateViewport(target.geomPlotRect, factor, zoomOrigin)
+                target.setViewport(plotViewport)
+                onZoomed(plotViewport, target)
             }
         )
 
@@ -38,11 +38,9 @@ class WheelZoomFeedback(
         }
     }
 
-    private fun scaleRect(rect: DoubleRectangle, factor: Double, origin: DoubleVector): DoubleRectangle {
-        val newDim = rect.dimension.mul(factor)
-        val originOffset = origin.subtract(rect.origin)
-        val newOrigin = rect.origin.add(originOffset.mul(1 - factor))
-
+    private fun calculateViewport(rect: DoubleRectangle, scaleFactor: Double, scaleOrigin: DoubleVector): DoubleRectangle {
+        val newDim = rect.dimension.mul(scaleFactor)
+        val newOrigin = rect.origin.add(scaleOrigin.subtract(rect.origin).mul(1 - scaleFactor))
         return DoubleRectangle(newOrigin, newDim)
     }
 }

@@ -241,22 +241,10 @@ internal class PlotTile(
         private var scale = 1.0
         private var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
 
-        fun pan(offset: DoubleVector) {
-            pan = pan.add(offset.mul(1 / this.scale))
-
+        fun update(scaleDelta: Double, panDelta: DoubleVector) {
+            pan = pan.add(panDelta.mul(1 / this.scale))
+            scale *= scaleDelta
             repaint(pan, scale)
-        }
-
-        fun zoom(scale: Double) {
-            this.scale *= scale
-            repaint(pan, this.scale)
-        }
-
-        fun zoom(contentRect: DoubleRectangle, viewport: DoubleRectangle) {
-            val adjustedViewport = viewport.shrinkToAspectRatio(contentRect.dimension)
-            val (scale, translate) = calculateTransform(contentRect, adjustedViewport)
-            pan(translate)
-            zoom(scale)
         }
 
         fun reset() {
@@ -279,15 +267,6 @@ internal class PlotTile(
             frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
             frameTopGroup.clear()
             frameOfReference.drawAfterGeomLayer(frameTopGroup)
-        }
-
-        private fun calculateTransform(rect: DoubleRectangle, viewport: DoubleRectangle): Pair<Double, DoubleVector> {
-            val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
-            val scaledSize = viewport.dimension.mul(scale)
-            val newPosition = rect.origin.add(rect.dimension.subtract(scaledSize).mul(0.5))
-            val translate = newPosition.subtract(viewport.origin)
-
-            return scale to translate
         }
     }
 }
