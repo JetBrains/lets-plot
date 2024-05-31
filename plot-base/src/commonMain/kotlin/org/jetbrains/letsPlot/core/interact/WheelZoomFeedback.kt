@@ -24,7 +24,7 @@ class WheelZoomFeedback(
                     else -> zoomStep // zoom out, enlarge viewport
                 }
 
-                val viewport = calculateViewport(target.geomPlotRect, factor, zoomOrigin)
+                val viewport = calculateViewport(target.geomBounds, factor, zoomOrigin)
                 target.setViewport(viewport)
                 onZoomed(viewport, target)
             }

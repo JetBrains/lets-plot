@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTI
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
-import org.jetbrains.letsPlot.core.interact.toGeomCoords
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 

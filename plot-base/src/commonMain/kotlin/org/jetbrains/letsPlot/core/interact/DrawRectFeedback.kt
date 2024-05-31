@@ -57,10 +57,10 @@ class DrawRectFeedback(
                 val (target, dragFrom, dragTo, _) = it
 
                 val dragPlotRect = DoubleRectangle.span(dragFrom, dragTo)
-                val selectionPlotRect = target.geomPlotRect.intersect(dragPlotRect) ?: return@loop
+                val selectionPlotRect = target.geomBounds.intersect(dragPlotRect) ?: return@loop
 
                 drawRects(selectionRectSvg, selectionPlotRect)
-                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomSize))
+                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomBounds.dimension))
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
@@ -69,7 +69,7 @@ class DrawRectFeedback(
                 decorationsLayer.children().remove(viewportSvg)
 
                 val dragRect = DoubleRectangle.span(dragFrom, dragTo)
-                val viewport = target.geomPlotRect.intersect(dragRect) ?: return@loop
+                val viewport = target.geomBounds.intersect(dragRect) ?: return@loop
 
                 onCompleted(viewport to target)
                 it.reset()

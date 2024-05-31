@@ -238,10 +238,12 @@ internal class PlotTile(
     }
 
     inner class InteractionSupport {
-        private var scale = 1.0
-        private var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
+        var scale = 1.0
+            private set
+        var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
+            private set
 
-        fun update(scaleDelta: Double, panDelta: DoubleVector) {
+        fun updateTransform(scaleDelta: Double, panDelta: DoubleVector) {
             pan = pan.add(panDelta.mul(1 / this.scale))
             scale *= scaleDelta
             repaint(pan, scale)

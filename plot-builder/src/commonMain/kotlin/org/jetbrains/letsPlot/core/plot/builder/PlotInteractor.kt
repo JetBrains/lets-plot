@@ -113,37 +113,41 @@ internal class PlotInteractor(
             val target = tiles.find { (bbox, _) -> plotCoord in bbox } ?: return null
             val (bbox, tile) = target
             return object : InteractionTarget {
-                override val geomSize: DoubleVector = bbox.dimension
+                override val geomBounds: DoubleRectangle = bbox
 
-                override fun toGeomCoords(plotCoords: DoubleVector): DoubleVector {
-                    return plotCoords.subtract(bbox.origin)
-                }
-
-                override fun toPlotCoords(geomCoords: DoubleVector): DoubleVector {
-                    return geomCoords.add(bbox.origin)
+                override fun toGeomCoords(plotRect: DoubleRectangle): DoubleRectangle {
+                    return plotRect.subtract(bbox.origin)
                 }
 
                 override fun setViewport(viewportPlotRect: DoubleRectangle) {
-                    val viewportGeomRect = toGeomCoords(viewportPlotRect)
-                        .shrinkToAspectRatio(bbox.dimension) // temp fix for aspect ratio on backends w/o plot rebuild
-                    val (scale, translate) = calculateTransform(viewportGeomRect, geomSize)
-                    tile.interactionSupport.update(scale, translate)
+                    val (scale, translate) = viewportToTransform(viewportPlotRect, bbox)
+                    tile.interactionSupport.updateTransform(scale, translate)
+                }
+
+                override fun getDataBounds(): DoubleRectangle {
+                    val translate = tile.interactionSupport.pan.negate() // pan is a translation in the opposite direction
+                    val geomBounds = toGeomCoords(bbox)
+                    val viewport = transformToViewport(geomBounds, tile.interactionSupport.scale, translate)
+                    return tile.toDataBounds(viewport)
                 }
 
                 override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
                     return tile.toDataBounds(clientRect)
                 }
 
-                // Viewport is zero-based
-                private fun calculateTransform(viewport: DoubleRectangle, rectSize: DoubleVector): Pair<Double, DoubleVector> {
-                    val scale = minOf(rectSize.x / viewport.width, rectSize.y / viewport.height)
-                    val scaledSize = viewport.dimension.mul(scale)
-                    val newPosition = rectSize.subtract(scaledSize).mul(0.5)
-                    val translate = newPosition.subtract(viewport.origin)
+                private fun viewportToTransform(viewport: DoubleRectangle, rect: DoubleRectangle): Pair<Double, DoubleVector> {
+                    val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
+                    val translate = rect.origin.subtract(viewport.origin)
 
                     return scale to translate
                 }
 
+                private fun transformToViewport(rect: DoubleRectangle, scaleFactor: Double, translate: DoubleVector): DoubleRectangle {
+                    val newOrigin = rect.origin.add(translate)
+                    val newDim = rect.dimension.mul(1 / scaleFactor)
+
+                    return DoubleRectangle(newOrigin, newDim)
+                }
             }
         }
     }
