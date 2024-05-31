@@ -90,8 +90,8 @@ fun buildPlotFromProcessedSpecs(
     }
 }
 
-private fun buildPlotFromProcessedSpecsIntern(
-    plotSpec: MutableMap<String, Any>,
+internal fun buildPlotFromProcessedSpecsIntern(
+    plotSpec: Map<String, Any>,
     width: Double,
     height: Double,
     parentElement: HTMLElement,
@@ -147,9 +147,8 @@ private fun buildPlotFromProcessedSpecsIntern(
         val buildInfo = success.buildInfos[0]
         val result = FigureToHtml(buildInfo, parentElement).eval()
         FigureModelJs(
-            parentElement,
-            sizingPolicy,
-            buildInfo,
+            plotSpec,
+            MonolithicParameters(width, height, parentElement, options),
             result.toolEventDispatcher,
             result.figureRegistration
         )

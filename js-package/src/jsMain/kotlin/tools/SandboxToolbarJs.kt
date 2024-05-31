@@ -10,8 +10,12 @@ import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
@@ -23,7 +27,7 @@ import org.w3c.dom.HTMLElement
 class SandboxToolbarJs() {
     private val element: HTMLElement = document.createElement("div") as HTMLElement
     private val toolButtons: List<Pair<Tool, HTMLButtonElement>>
-    private var figure: FigureModelJs? = null
+    private var figureModel: FigureModelJs? = null
 
     init {
         element.style.display = "flex"
@@ -50,16 +54,43 @@ class SandboxToolbarJs() {
     }
 
     fun bind(figure: FigureModelJs) {
-        check(this.figure == null) { "Tollbar is already bound to another figure." }
-        this.figure = figure
+        check(this.figureModel == null) { "Tollbar is already bound to another figure." }
+        this.figureModel = figure
         figure.onToolEvent { e: dynamic ->
             val event = dynamicObjectToMap(e)
             println("Tool event: $event")
-            val activated = event[EVENT_NAME] == INTERACTION_ACTIVATED
-            val toolButtonName = event[EVENT_INTERACTION_ORIGIN] as String
-            toolButtons.find { it.first.name == toolButtonName }?.let {
-                it.first.active = activated
-                it.second.textContent = "${it.first.label} ${if (activated) "on" else "off"}"
+            when (event[EVENT_NAME]) {
+                INTERACTION_ACTIVATED, INTERACTION_DEACTIVATED -> {
+                    val toolButtonName = event[EVENT_INTERACTION_ORIGIN] as String
+                    val activated = event[EVENT_NAME] == INTERACTION_ACTIVATED
+                    toolButtons.find { it.first.name == toolButtonName }?.let {
+                        it.first.active = activated
+                        it.second.textContent = "${it.first.label} ${if (activated) "on" else "off"}"
+                    }
+                }
+
+                INTERACTION_COMPLETED -> {
+                    event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
+                        @Suppress("UNCHECKED_CAST")
+                        bounds as List<Double?>
+                        LOG.info { "bounds: $bounds" }
+                        val specOverride = HashMap<String, Any>().also { map ->
+                            val xlim = listOf(bounds[0], bounds[2])
+                            if (xlim.filterNotNull().isNotEmpty()) {
+                                map[SpecOverride.COORD_XLIM_TRANSFORMED] = xlim
+                            }
+                            val ylim = listOf(bounds[1], bounds[3])
+                            if (ylim.filterNotNull().isNotEmpty()) {
+                                map[SpecOverride.COORD_YLIM_TRANSFORMED] = ylim
+                            }
+                        }
+                        LOG.info { "specOverride: $specOverride" }
+                        val specOverrideJs = dynamicObjectFromMap(specOverride)
+                        figureModel?.updateView(specOverrideJs)
+                    }
+                }
+
+                else -> {}
             }
 
         }
@@ -84,14 +115,14 @@ class SandboxToolbarJs() {
         button.textContent = "Reset"
         button.style.margin = "0 5px"
         button.addEventListener("click", {
-            figure?.updateView()
+            figureModel?.updateView()
         })
         return button
     }
 
     private fun activateTool(tool: Tool) {
         if (!tool.active) {
-            figure?.activateInteraction(
+            figureModel?.activateInteraction(
                 origin = tool.name,
                 interactionSpecJs = dynamicObjectFromMap(tool.interactionSpec)
             ) ?: LOG.info { "The toolbar is unbound." }
@@ -100,7 +131,7 @@ class SandboxToolbarJs() {
 
     private fun deactivateTool(tool: Tool) {
         if (tool.active) {
-            figure?.deactivateInteractions(tool.name)
+            figureModel?.deactivateInteractions(tool.name)
                 ?: LOG.info { "The toolbar is unbound." }
         }
     }

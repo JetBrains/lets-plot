@@ -46,10 +46,8 @@ abstract class PlotSpecComponentProvider(
         }
 
         val plotSpec = specOverride?.let {
-            HashMap<String, Any>(processedSpec).also { plotSpec ->
-                plotSpec[SPEC_OVERRIDE] = it
-            }
-        } ?: processedSpec
+            processedSpec + mapOf(SPEC_OVERRIDE to it)
+        }?.toMutableMap() ?: processedSpec    // ToDo: get rid of "mutable"
 
         val plotComponent = createPlotComponent(
             plotSpec, plotSize,

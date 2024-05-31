@@ -71,8 +71,8 @@ class DrawRectFeedback(
                 val dragRect = DoubleRectangle.span(dragFrom, dragTo)
                 val viewport = target.geomPlotRect.intersect(dragRect) ?: return@loop
 
-                onCompleted(viewport to target)
                 it.reset()
+                onCompleted(viewport to target)
             },
             onAborted = {
                 println("DrawRectFeedback abort.")
