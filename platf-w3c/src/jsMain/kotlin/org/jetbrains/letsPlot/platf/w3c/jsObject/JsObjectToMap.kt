@@ -9,14 +9,18 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 
 private val LOG = PortableLogging.logger("JsObjectSupportJs")
 
+fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
+    @Suppress("UNCHECKED_CAST")
+    return dynamicToAnyQ(o) as MutableMap<String, Any>
+}
 
 /**
- * Copies all object's properties to hash map recursively with the exception of
+ * Copies object recursively with the exception of
  * arrays containing only simple values (str,number,boolean,null).
- * 'simple' arrays are wrapped in immutable lists (not copied)
+ * 'simple' arrays are wrapped in immutable lists (not copied).
  */
 @Suppress("UNUSED_ANONYMOUS_PARAMETER", "NAME_SHADOWING")
-fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
+fun dynamicToAnyQ(o: dynamic): Any? {
 
     var handleAnyNotNull: (o: dynamic) -> Any = {}
     var handleAnyNullable: (o: dynamic) -> Any? = {}
@@ -38,6 +42,7 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
 
     val handleArray = { o: dynamic ->
         if (isArrayOfPrimitives(o)) {  // do not copy data vectors
+            // ToDo: create list view via: (o as Array<*>).asList()
             listOf(*(o as Array<*>))
         } else {
             val l = ArrayList<Any?>()
@@ -64,7 +69,8 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
     }
 
     // expecting an `object`
-    return handleObject(o)
+//    return handleObject(o)
+    return handleAnyNullable(o)
 }
 
 private fun isArrayOfPrimitives(o: dynamic) = (o as Array<*>).all { isPrimitiveOrNull(it) }
