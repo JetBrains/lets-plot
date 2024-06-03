@@ -21,14 +21,14 @@ class PanGeomFeedback(
             onDragged = {
                 val (target, _, _, dragDelta) = it
 
-                val viewport = target.geomBounds.subtract(dragDelta)
+                val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 target.applyViewport(viewport)
             },
             onCompleted = {
                 println("PanGeomFeedback complete.")
                 val (target, _, _, dragDelta) = it
 
-                val viewport = target.geomBounds.subtract(dragDelta)
+                val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val dataBounds = target.applyViewport(viewport)
 
                 onCompleted(dataBounds)

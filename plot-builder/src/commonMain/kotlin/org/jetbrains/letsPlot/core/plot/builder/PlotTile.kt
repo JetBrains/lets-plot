@@ -253,10 +253,10 @@ internal class PlotTile(
         }
 
         fun calculateDataBounds(): DoubleRectangle {
-            val viewport = InteractionUtil.transformToViewport(
+            val viewport = InteractionUtil.viewportFromTransform(
                 rect = geomContentBounds,
-                scaleFactor = scale,
-                translate = pan.negate() // pan is a translation in the opposite direction
+                scale = scale,
+                translate = pan
             )
             return frameOfReference.toDataBounds(viewport.subtract(geomContentBounds.origin))
         }

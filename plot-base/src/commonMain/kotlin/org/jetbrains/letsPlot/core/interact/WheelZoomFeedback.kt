@@ -23,7 +23,7 @@ class WheelZoomFeedback(
                     else -> zoomStep // zoom out, enlarge viewport
                 }
 
-                val viewport = InteractionUtil.scaleViewport(target.geomBounds, factor, zoomOrigin)
+                val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
                 val dataBounds = target.applyViewport(viewport)
                 onCompleted(dataBounds)
             }

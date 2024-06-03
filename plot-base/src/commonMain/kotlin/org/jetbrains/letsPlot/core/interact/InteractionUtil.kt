@@ -9,21 +9,27 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 object InteractionUtil {
-    fun transformToViewport(
+    fun viewportFromTransform(
         rect: DoubleRectangle,
-        scaleFactor: DoubleVector,
-        translate: DoubleVector
+        scale: DoubleVector = DoubleVector(1.0, 1.0),
+        translate: DoubleVector = DoubleVector.ZERO
     ): DoubleRectangle {
-        val origin = rect.origin.add(translate)
+        val origin = rect.origin.subtract(translate)
         val dimension = DoubleVector(
-            rect.dimension.x * (1 / scaleFactor.x),
-            rect.dimension.y * (1 / scaleFactor.y)
+            rect.dimension.x * (1 / scale.x),
+            rect.dimension.y * (1 / scale.y)
         )
 
         return DoubleRectangle(origin, dimension)
     }
 
-    fun viewportToTransform(viewport: DoubleRectangle, rect: DoubleRectangle): Pair<DoubleVector, DoubleVector> {
+    fun viewportFromScale(rect: DoubleRectangle, scale: Double, scaleOrigin: DoubleVector): DoubleRectangle {
+        val newDim = rect.dimension.mul(scale)
+        val newOrigin = rect.origin.add(scaleOrigin.subtract(rect.origin).mul(1 - scale))
+        return DoubleRectangle(newOrigin, newDim)
+    }
+
+    fun viewportToTransform(rect: DoubleRectangle, viewport: DoubleRectangle): Pair<DoubleVector, DoubleVector> {
         val translate = rect.origin.subtract(viewport.origin)
         val scale = DoubleVector(
             rect.width / viewport.width,
@@ -31,11 +37,5 @@ object InteractionUtil {
         )
 
         return scale to translate
-    }
-
-    fun scaleViewport(rect: DoubleRectangle, scaleFactor: Double, scaleOrigin: DoubleVector): DoubleRectangle {
-        val newDim = rect.dimension.mul(scaleFactor)
-        val newOrigin = rect.origin.add(scaleOrigin.subtract(rect.origin).mul(1 - scaleFactor))
-        return DoubleRectangle(newOrigin, newDim)
     }
 }

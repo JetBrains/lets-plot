@@ -116,7 +116,7 @@ internal class PlotInteractor(
                 override val geomBounds: DoubleRectangle = geomBounds
 
                 override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
-                    val (scale, translate) = InteractionUtil.viewportToTransform(screenViewport, geomBounds)
+                    val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
                     tile.interactionSupport.updateTransform(scale, translate)
                     return tile.interactionSupport.calculateDataBounds()
                 }
