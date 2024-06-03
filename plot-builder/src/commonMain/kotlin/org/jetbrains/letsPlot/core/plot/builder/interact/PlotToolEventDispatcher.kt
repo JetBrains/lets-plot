@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
-import org.jetbrains.letsPlot.core.interact.InteractionTarget
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
 import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -52,8 +51,8 @@ internal class PlotToolEventDispatcher(
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
         val completeInteractionDebounced =
-            debounce<DoubleRectangle>(500, CoroutineScope(Dispatchers.Default)) { dataBounds ->
-                println("Wheel zoom tool: apply: $dataBounds")
+            debounce<DoubleRectangle>(DEBOUNCE_DELAY_MS, CoroutineScope(Dispatchers.Default)) { dataBounds ->
+                println("Debounced interaction: $interactionName, dataBounds: $dataBounds")
                 completeInteraction(origin, interactionName, dataBounds)
             }
 
@@ -75,7 +74,7 @@ internal class PlotToolEventDispatcher(
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
                 onCompleted = { dataBounds ->
-                    debouncedWheelZoom(dataBounds)
+                    completeInteractionDebounced(dataBounds)
                 }
             )
 
@@ -159,5 +158,9 @@ internal class PlotToolEventDispatcher(
         val feedbackReg: Registration
     ) {
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
+    }
+
+    companion object {
+        private const val DEBOUNCE_DELAY_MS = 30L
     }
 }
