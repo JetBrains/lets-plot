@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class DrawRectFeedback(
-    private val onCompleted: ((Pair<DoubleRectangle, InteractionTarget>) -> Unit)
+    private val onCompleted: ((DoubleRectangle) -> Unit)
 ) : DragFeedback {
     private val selectionRectSvg = SvgRectElement().apply {
         strokeColor().set(Color.GRAY)
@@ -57,10 +57,10 @@ class DrawRectFeedback(
                 val (target, dragFrom, dragTo, _) = it
 
                 val dragPlotRect = DoubleRectangle.span(dragFrom, dragTo)
-                val selectionPlotRect = target.geomPlotRect.intersect(dragPlotRect) ?: return@loop
+                val selectionPlotRect = target.geomBounds.intersect(dragPlotRect) ?: return@loop
 
                 drawRects(selectionRectSvg, selectionPlotRect)
-                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomSize))
+                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomBounds.dimension))
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
@@ -69,10 +69,12 @@ class DrawRectFeedback(
                 decorationsLayer.children().remove(viewportSvg)
 
                 val dragRect = DoubleRectangle.span(dragFrom, dragTo)
-                val viewport = target.geomPlotRect.intersect(dragRect) ?: return@loop
+                val viewport = target.geomBounds.intersect(dragRect) ?: return@loop
 
+                val dataBounds = target.applyViewport(viewport)
+
+                onCompleted(dataBounds)
                 it.reset()
-                onCompleted(viewport to target)
             },
             onAborted = {
                 println("DrawRectFeedback abort.")

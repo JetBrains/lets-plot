@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface FrameOfReference {
-    fun zoom(scale: Double)
+    fun zoom(scale: DoubleVector)
     fun pan(from: DoubleVector, to: DoubleVector): DoubleVector?
     fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 

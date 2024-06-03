@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
@@ -18,7 +19,6 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTI
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
-import org.jetbrains.letsPlot.core.interact.toGeomCoords
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 
@@ -51,36 +51,22 @@ internal class PlotToolEventDispatcher(
         // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = { _, target ->
-                    println("Pan tool: apply: $target")
+                onCompleted = { dataBounds ->
+                    println("Pan tool: apply $dataBounds")
+                    completeInteraction(origin, interactionName, dataBounds)
                 }
             )
 
             ToolInteractionSpec.BOX_ZOOM -> DrawRectFeedback(
-                onCompleted = { (viewportPlotRect, target) ->
-                    target.setViewport(viewportPlotRect)
-                    // translate to "geom" space.
-                    val viewportGeomRect = target.toGeomCoords(viewportPlotRect)
-                    val dataBounds = target.toDataBounds(viewportGeomRect)
-                    println("client: $viewportGeomRect -> data $dataBounds")
-                    toolEventCallback.invoke(
-                        mapOf(
-                            EVENT_NAME to INTERACTION_COMPLETED,
-                            EVENT_INTERACTION_ORIGIN to origin,
-                            EVENT_INTERACTION_NAME to interactionName,
-                            EVENT_RESULT_DATA_BOUNDS to listOf(
-                                dataBounds.left, dataBounds.top,
-                                dataBounds.right, dataBounds.bottom
-                            )
-                        )
-                    )
+                onCompleted = { dataBounds ->
+                    println("client: data $dataBounds")
+                    completeInteraction(origin, interactionName, dataBounds)
                 }
             )
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
-                onZoomed = { viewportPlotRect, target ->
-                    //println("Wheel zoom: apply: $rect")
-                    //target.zoom(delta)
+                onCompleted = { dataBounds ->
+                    completeInteraction(origin, interactionName, dataBounds)
                 }
             )
 
@@ -103,6 +89,24 @@ internal class PlotToolEventDispatcher(
                 EVENT_NAME to INTERACTION_ACTIVATED,
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName
+            )
+        )
+    }
+
+    private fun completeInteraction(
+        origin: String,
+        interactionName: String,
+        dataBounds: DoubleRectangle
+    ) {
+        toolEventCallback.invoke(
+            mapOf(
+                EVENT_NAME to INTERACTION_COMPLETED,
+                EVENT_INTERACTION_ORIGIN to origin,
+                EVENT_INTERACTION_NAME to interactionName,
+                EVENT_RESULT_DATA_BOUNDS to listOf(
+                    dataBounds.left, dataBounds.top,
+                    dataBounds.right, dataBounds.bottom
+                )
             )
         )
     }
