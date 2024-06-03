@@ -6,45 +6,55 @@
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLElement
-import sizing.SizingPolicy
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
 @JsExport
 class FigureModelJs internal constructor(
-    private val parentElement: HTMLElement,
-    private val sizingPolicy: SizingPolicy,
-    private val buildInfo: FigureBuildInfo,
+    private val processedPlotSpec: Map<String, Any>,
+    private val monolithicParameters: MonolithicParameters,
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
     private var toolEventCallback: ((dynamic) -> Unit)? = null
 
-    init {
+    fun onToolEvent(callback: (dynamic) -> Unit) {
+        toolEventCallback = callback
         toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
     }
 
-    fun onToolEvent(callback: (dynamic) -> Unit) {
-        toolEventCallback = callback
-    }
+    fun updateView(specOverrideJs: dynamic = null) {
 
-    fun updateView() {
+        val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
+            dynamicObjectToMap(specOverrideJs)
+        } else {
+            null
+        }
+
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
         figureRegistration?.dispose()
         figureRegistration = null
 
-        val figureSize = buildInfo.bounds.dimension
-        val figureNewSize = sizingPolicy.resize(figureSize, parentElement)
-        val newBuildInfo = buildInfo.withPreferredSize(figureNewSize)
+        val newPlotSpec = specOverride?.let {
+            processedPlotSpec + mapOf(SPEC_OVERRIDE to specOverride)
+        } ?: processedPlotSpec
+        val newFigureModel = buildPlotFromProcessedSpecsIntern(
+            newPlotSpec,
+            monolithicParameters.width,
+            monolithicParameters.height,
+            monolithicParameters.parentElement,
+            monolithicParameters.options
+        )
 
-        val result = FigureToHtml(newBuildInfo, parentElement).eval()
-        figureRegistration = result.figureRegistration
-        toolEventDispatcher = result.toolEventDispatcher
+        if (newFigureModel == null) return  // something went wrong.
+
+        figureRegistration = newFigureModel.figureRegistration
+        toolEventDispatcher = newFigureModel.toolEventDispatcher
         toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
 
         // Re-activate interactions
@@ -69,8 +79,14 @@ class FigureModelJs internal constructor(
         toolEventCallback?.invoke(dynamicObjectFromMap(event))
     }
 
-
     companion object {
         private val LOG = PortableLogging.logger("FigureModelJs")
     }
 }
+
+internal class MonolithicParameters(
+    val width: Double,
+    val height: Double,
+    val parentElement: HTMLElement,
+    val options: Map<String, Any>
+)
