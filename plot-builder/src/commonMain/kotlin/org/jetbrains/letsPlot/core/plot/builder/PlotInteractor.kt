@@ -110,43 +110,15 @@ internal class PlotInteractor(
     ) : InteractionContext {
 
         override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
-            val target = tiles.find { (bbox, _) -> plotCoord in bbox } ?: return null
-            val (bbox, tile) = target
+            val target = tiles.find { (geomBounds, _) -> plotCoord in geomBounds } ?: return null
+            val (geomBounds, tile) = target
             return object : InteractionTarget {
-                override val geomBounds: DoubleRectangle = bbox
+                override val geomBounds: DoubleRectangle = geomBounds
 
-                override fun toGeomCoords(plotRect: DoubleRectangle): DoubleRectangle {
-                    return plotRect.subtract(bbox.origin)
-                }
-
-                override fun setViewport(viewportPlotRect: DoubleRectangle) {
-                    val (scale, translate) = viewportToTransform(viewportPlotRect, bbox)
+                override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
+                    val (scale, translate) = InteractionUtil.viewportToTransform(screenViewport, geomBounds)
                     tile.interactionSupport.updateTransform(scale, translate)
-                }
-
-                override fun getDataBounds(): DoubleRectangle {
-                    val translate = tile.interactionSupport.pan.negate() // pan is a translation in the opposite direction
-                    val geomBounds = toGeomCoords(bbox)
-                    val viewport = transformToViewport(geomBounds, tile.interactionSupport.scale, translate)
-                    return tile.toDataBounds(viewport)
-                }
-
-                override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-                    return tile.toDataBounds(clientRect)
-                }
-
-                private fun viewportToTransform(viewport: DoubleRectangle, rect: DoubleRectangle): Pair<Double, DoubleVector> {
-                    val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
-                    val translate = rect.origin.subtract(viewport.origin)
-
-                    return scale to translate
-                }
-
-                private fun transformToViewport(rect: DoubleRectangle, scaleFactor: Double, translate: DoubleVector): DoubleRectangle {
-                    val newOrigin = rect.origin.add(translate)
-                    val newDim = rect.dimension.mul(1 / scaleFactor)
-
-                    return DoubleRectangle(newOrigin, newDim)
+                    return tile.interactionSupport.calculateDataBounds()
                 }
             }
         }

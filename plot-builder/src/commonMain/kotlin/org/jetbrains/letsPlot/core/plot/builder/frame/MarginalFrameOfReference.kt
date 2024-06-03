@@ -24,7 +24,7 @@ internal class MarginalFrameOfReference(
     private val plotBackground: Color,
     private val isDebugDrawing: Boolean
 ) : FrameOfReference {
-    override fun zoom(scale: Double) {
+    override fun zoom(scale: DoubleVector) {
         error("Not supported by MarginalFrameOfReference")
     }
 

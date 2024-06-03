@@ -49,9 +49,9 @@ internal open class SquareFrameOfReference(
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
 
     private var panOffset: DoubleVector = DoubleVector.ZERO
-    private var scale: Double = 1.0
+    private var scale: DoubleVector = DoubleVector(1.0, 1.0)
 
-    override fun zoom(scale: Double) {
+    override fun zoom(scale: DoubleVector) {
         this.scale = scale
     }
 
@@ -264,7 +264,7 @@ internal open class SquareFrameOfReference(
 
         val breaksData = AxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
-            coord = TransformedCoordinateSystem(coord, panOffset, DoubleVector(scale, scale)),
+            coord = TransformedCoordinateSystem(coord, panOffset, scale),
             domain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,

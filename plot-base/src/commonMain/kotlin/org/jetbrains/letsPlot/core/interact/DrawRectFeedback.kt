@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class DrawRectFeedback(
-    private val onCompleted: ((Pair<DoubleRectangle, InteractionTarget>) -> Unit)
+    private val onCompleted: ((DoubleRectangle) -> Unit)
 ) : DragFeedback {
     private val selectionRectSvg = SvgRectElement().apply {
         strokeColor().set(Color.GRAY)
@@ -71,7 +71,9 @@ class DrawRectFeedback(
                 val dragRect = DoubleRectangle.span(dragFrom, dragTo)
                 val viewport = target.geomBounds.intersect(dragRect) ?: return@loop
 
-                onCompleted(viewport to target)
+                val dataBounds = target.applyViewport(viewport)
+
+                onCompleted(dataBounds)
                 it.reset()
             },
             onAborted = {

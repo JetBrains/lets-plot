@@ -8,15 +8,14 @@ package org.jetbrains.letsPlot.core.interact
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 
 interface InteractionTarget {
-    // viewport is in plot coordinates
-    fun setViewport(viewportPlotRect: DoubleRectangle)
-
-    fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
-    fun getDataBounds(): DoubleRectangle
+    // Apply new viewport over the current one.
+    // Passing the geomBounds will result in the same viewport.
+    // Viewport change is additive:
+    // applyViewport(geomBounds.add(10, 0))
+    // applyViewport(geomBounds.add(10, 0))
+    // will result a viewport that is shifted by 20 units to the right.
+    // Returns data bounds for the actual viewport.
+    fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle
 
     val geomBounds: DoubleRectangle
-
-    fun toGeomCoords(plotRect: DoubleRectangle): DoubleRectangle
 }
-
-

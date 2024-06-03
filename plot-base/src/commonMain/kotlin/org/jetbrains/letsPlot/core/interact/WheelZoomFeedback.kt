@@ -6,12 +6,11 @@
 package org.jetbrains.letsPlot.core.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import kotlin.math.sign
 
 class WheelZoomFeedback(
-    private val onZoomed: (DoubleRectangle, InteractionTarget) -> Unit
+    private val onCompleted: (DoubleRectangle) -> Unit
 ) : ToolFeedback {
     fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx)
@@ -24,9 +23,9 @@ class WheelZoomFeedback(
                     else -> zoomStep // zoom out, enlarge viewport
                 }
 
-                val viewport = calculateViewport(target.geomBounds, factor, zoomOrigin)
-                target.setViewport(viewport)
-                onZoomed(viewport, target)
+                val viewport = InteractionUtil.scaleViewport(target.geomBounds, factor, zoomOrigin)
+                val dataBounds = target.applyViewport(viewport)
+                onCompleted(dataBounds)
             }
         )
 
@@ -36,11 +35,5 @@ class WheelZoomFeedback(
                 interaction.dispose()
             }
         }
-    }
-
-    private fun calculateViewport(rect: DoubleRectangle, scaleFactor: Double, scaleOrigin: DoubleVector): DoubleRectangle {
-        val newDim = rect.dimension.mul(scaleFactor)
-        val newOrigin = rect.origin.add(scaleOrigin.subtract(rect.origin).mul(1 - scaleFactor))
-        return DoubleRectangle(newOrigin, newDim)
     }
 }
