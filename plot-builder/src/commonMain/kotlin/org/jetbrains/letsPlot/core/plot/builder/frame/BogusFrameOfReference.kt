@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -12,11 +13,15 @@ import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
 internal class BogusFrameOfReference : FrameOfReference {
-    override fun zoom(scale: Double) {
+    override fun zoom(scale: DoubleVector) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 
     override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
+    }
+
+    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }
 

@@ -49,7 +49,7 @@ class PlotResizableDemoWindowBatik(
             return containerSize
         }
 
-        override fun createComponent(containerSize: Dimension?): JComponent {
+        override fun createComponent(containerSize: Dimension?, specOverride: Map<String, Any>?): JComponent {
             val plotSize = if (containerSize != null) {
                 DoubleVector(
                     containerSize.getWidth(),

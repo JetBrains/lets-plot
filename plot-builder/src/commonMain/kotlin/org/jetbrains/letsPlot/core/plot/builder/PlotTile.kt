@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
+import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -234,42 +235,46 @@ internal class PlotTile(
     }
 
     inner class InteractionSupport {
-        var scale = 1.0
-            private set
-        var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
-            private set
+        private val geomContentBounds = tileLayoutInfo.geomContentBounds
+        private var scale = DoubleVector(1.0, 1.0) // scale factor
+        private var pan = DoubleVector.ZERO // total offset in pixels at scale = 1.0
 
-        fun pan(offset: DoubleVector) {
-            pan = pan.add(offset.mul(1 / this.scale))
+        fun updateTransform(scaleDelta: DoubleVector, panDelta: DoubleVector) {
+            pan = DoubleVector(
+                pan.x + panDelta.x / scale.x,
+                pan.y + panDelta.y / scale.y
+            )
+            scale = DoubleVector(
+                scale.x * scaleDelta.x,
+                scale.y * scaleDelta.y
+            )
 
-            repaint(pan, scale)
+            repaint()
         }
 
-        fun zoom(scale: Double) {
-            this.scale *= scale
-            repaint(pan, this.scale)
-        }
-
-        fun zoom(contentRect: DoubleRectangle, viewport: DoubleRectangle) {
-            val adjustedViewport = viewport.shrinkToAspectRatio(contentRect.dimension)
-            val (scale, translate) = calculateTransform(contentRect, adjustedViewport)
-            pan(translate)
-            zoom(scale)
+        fun calculateDataBounds(): DoubleRectangle {
+            val viewport = InteractionUtil.viewportFromTransform(
+                rect = geomContentBounds,
+                scale = scale,
+                translate = pan
+            )
+            return frameOfReference.toDataBounds(viewport.subtract(geomContentBounds.origin))
         }
 
         fun reset() {
-            scale = 1.0
+            scale = DoubleVector(1.0, 1.0)
             pan = DoubleVector.ZERO
-            repaint(pan, scale)
+
+            repaint()
         }
 
-        private fun repaint(offset: DoubleVector, scale: Double) {
+        private fun repaint() {
             frameOfReference.zoom(scale)
-            frameOfReference.pan(DoubleVector.ZERO, offset)
+            frameOfReference.pan(DoubleVector.ZERO, pan)
 
             val transform = SvgTransformBuilder()
-                .scale(scale)
-                .translate(offset)
+                .scale(scale.x, scale.y)
+                .translate(pan)
                 .build()
 
             geomInteractionGroup.rootGroup.transform().set(transform)
@@ -277,15 +282,6 @@ internal class PlotTile(
             frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
             frameTopGroup.clear()
             frameOfReference.drawAfterGeomLayer(frameTopGroup)
-        }
-
-        private fun calculateTransform(rect: DoubleRectangle, viewport: DoubleRectangle): Pair<Double, DoubleVector> {
-            val scale = minOf(rect.width / viewport.width, rect.height / viewport.height)
-            val scaledSize = viewport.dimension.mul(scale)
-            val newPosition = rect.origin.add(rect.dimension.subtract(scaledSize).mul(0.5))
-            val translate = newPosition.subtract(viewport.origin)
-
-            return scale to translate
         }
     }
 }

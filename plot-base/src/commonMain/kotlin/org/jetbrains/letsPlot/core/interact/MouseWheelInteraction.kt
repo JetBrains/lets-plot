@@ -14,6 +14,10 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 class MouseWheelInteraction(
     private val ctx: InteractionContext
 ) : Disposable {
+    operator fun component1() = target
+    operator fun component2() = zoomOrigin
+    operator fun component3() = zoomDelta
+
     private var disposed = false
     private val reg: CompositeRegistration = CompositeRegistration()
 
@@ -23,6 +27,7 @@ class MouseWheelInteraction(
             return _target ?: throw IllegalStateException("Mouse wheel zoom target wasn't acquired.")
         }
 
+    // Zoom origin in plot coordinates
     var zoomOrigin: DoubleVector = DoubleVector.ZERO
         private set
 

@@ -9,8 +9,12 @@ import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import javax.swing.JButton
 import javax.swing.JPanel
 
@@ -35,11 +39,35 @@ internal class SandboxToolbar(
 
         figureModel.onToolEvent { event ->
             println("Tool event: $event")
-            val activated = event[EVENT_NAME] == INTERACTION_ACTIVATED
-            val toolButtonName = event[EVENT_INTERACTION_ORIGIN] as String
-            toolButtons.find { it.first.name == toolButtonName }?.let {
-                it.first.active = activated
-                it.second.text = "${it.first.label} ${if (activated) "on" else "off"}"
+            when (event[EVENT_NAME]) {
+                INTERACTION_ACTIVATED, INTERACTION_DEACTIVATED -> {
+                    val toolButtonName = event[EVENT_INTERACTION_ORIGIN] as String
+                    val activated = event[EVENT_NAME] == INTERACTION_ACTIVATED
+                    toolButtons.find { it.first.name == toolButtonName }?.let {
+                        it.first.active = activated
+                        it.second.text = "${it.first.label} ${if (activated) "on" else "off"}"
+                    }
+                }
+
+                INTERACTION_COMPLETED -> {
+                    event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
+                        @Suppress("UNCHECKED_CAST")
+                        bounds as List<Double?>
+                        val specOverride = HashMap<String, Any>().also { map ->
+                            val xlim = listOf(bounds[0], bounds[2])
+                            if(xlim.filterNotNull().isNotEmpty()) {
+                                map[SpecOverride.COORD_XLIM_TRANSFORMED] = xlim
+                            }
+                            val ylim = listOf(bounds[1], bounds[3])
+                            if(ylim.filterNotNull().isNotEmpty()) {
+                                map[SpecOverride.COORD_YLIM_TRANSFORMED] = ylim
+                            }
+                        }
+                        figureModel.updateView(specOverride)
+                    }
+                }
+
+                else -> {}
             }
         }
     }

@@ -62,7 +62,12 @@ open class PlotPanel(
         figureModel = PlotPanelFigureModel(
             plotPanel = this,
             providedComponent = providedComponent,
-            plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
+            plotComponentFactory = { containerSize: Dimension, specOverride: Map<String, Any>? ->
+                rebuildProvidedComponent(
+                    containerSize,
+                    specOverride
+                )
+            },
             applicationContext = applicationContext,
         )
 
@@ -113,9 +118,12 @@ open class PlotPanel(
 //        println("plotComponentRebuilt: ${plotComponent::class.simpleName}")
     }
 
-    private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {
+    private fun rebuildProvidedComponent(
+        containerSize: Dimension?,
+        specOverride: Map<String, Any>? = null
+    ): JComponent {
         removeAll()
-        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize)
+        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize, specOverride)
 
         // notify
         plotComponentCreated(actualPlotComponentFromProvidedComponent(providedComponent))

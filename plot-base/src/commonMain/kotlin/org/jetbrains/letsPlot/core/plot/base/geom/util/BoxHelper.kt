@@ -56,7 +56,6 @@ object BoxHelper {
                 p
             ) { AesScaling.strokeWidth(it) * fatten } ?: continue
 
-            // TODO: use strokeScale in createLine() function
             require(line is SvgShape)
 
             root.add(line)
