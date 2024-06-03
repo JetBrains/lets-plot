@@ -42,8 +42,8 @@ fun dynamicToAnyQ(o: dynamic): Any? {
 
     val handleArray = { o: dynamic ->
         if (isArrayOfPrimitives(o)) {  // do not copy data vectors
-            // ToDo: create list view via: (o as Array<*>).asList()
-            listOf(*(o as Array<*>))
+//            listOf(*(o as Array<*>))
+            (o as Array<*>).asList()
         } else {
             val l = ArrayList<Any?>()
             for (e in o) {
