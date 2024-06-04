@@ -13,32 +13,46 @@ class JsObjectFromMapTest {
     @Test
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
-            val jsObject = dynamicObjectFromMap(datum.input)
+            val jsObject = dynamicFromAnyQ(datum.input)
             // transform back for comparison to work
-            val actual = dynamicObjectToMap(jsObject) // this is supposed to be well tested
+            val actual = dynamicToAnyQ(jsObject) // this is supposed to be well tested
             assertEquals(expected = datum.input, actual, "test case [$index]")
         }
     }
 
-//    class TestData(val input: Map<String, Any>, val expectedOutput: dynamic)
-    class TestData(val input: Map<String, Any>)
+    class TestData(val input: Any?)
 
     companion object {
         @Suppress("UnsafeCastFromDynamic")
         val testData: List<TestData> = listOf(
             TestData(
-                emptyMap(),
-//                js("{}"),
+                null,
             ),
-//            TestData(
-//                emptyMap(),
-//                js("{a:null,b:null}"),  // null values are dropped
-//            ),
+            TestData(
+                "Hello!",
+            ),
+            TestData(
+                10,
+            ),
+            TestData(
+                10.5,
+            ),
+            TestData(
+                listOf(1, 2, 3),
+            ),
+            TestData(
+                listOf(1.2, 2.5, 3.8),
+            ),
+            TestData(
+                listOf("Hello!", null, 3.0),
+            ),
+            TestData(
+                emptyMap<Any, Any>(),
+            ),
             TestData(
                 mapOf(
                     "array" to emptyList<Any?>()
                 ),
-//                js("{'array':[]}"),
             ),
             TestData(
                 mapOf(
@@ -47,15 +61,6 @@ class JsObjectFromMapTest {
                     "str" to "hello",
                     "obj" to emptyMap<String, Any?>()
                 ),
-//                js(
-//                    """{
-//                                'int':1,
-//                                'double':2.2,
-//                                'str':"hello",
-//                                'obj':{}
-//                            }
-//                            """
-//                ),
             ),
             TestData(
                 mapOf(
@@ -65,7 +70,6 @@ class JsObjectFromMapTest {
                         )
                     )
                 ),
-//                js("{level_1:{level_2:{list:[1,1,null,100.0]}}}"),
             )
         )
     }

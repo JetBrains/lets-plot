@@ -7,8 +7,9 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
 import org.w3c.dom.HTMLElement
 
 @OptIn(ExperimentalJsExport::class)
@@ -63,12 +64,12 @@ class FigureModelJs internal constructor(
         }
     }
 
-    /**
-     * ToDo: a tool can activate several interactions at once.
-     */
-    fun activateInteraction(origin: String, interactionSpecJs: dynamic) {
-        val interactionSpec = dynamicObjectToMap(interactionSpecJs)
-        toolEventDispatcher.activateInteractions(origin, listOf(interactionSpec))
+    fun activateInteraction(origin: String, interactionSpecListJs: dynamic) {
+        val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
+        require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
+        @Suppress("UNCHECKED_CAST")
+        interactionSpecList as List<Map<String, Any>>
+        toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 
     fun deactivateInteractions(origin: String) {
@@ -76,7 +77,7 @@ class FigureModelJs internal constructor(
     }
 
     private fun handleToolEvent(event: Map<String, Any>) {
-        toolEventCallback?.invoke(dynamicObjectFromMap(event))
+        toolEventCallback?.invoke(dynamicFromAnyQ(event))
     }
 
     companion object {
