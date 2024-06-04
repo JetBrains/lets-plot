@@ -23,17 +23,6 @@ class DrawRectFeedback(
         height().set(0.0)
     }
 
-    private val viewportSvg = SvgRectElement().apply {
-        strokeColor().set(Color.BLACK)
-        fillColor().set(Color.LIGHT_BLUE)
-        strokeWidth().set(0.0)
-        opacity().set(0.5)
-        x().set(0.0)
-        y().set(0.0)
-        width().set(0.0)
-        height().set(0.0)
-    }
-
     private fun drawRects(r: SvgRectElement, rect: DoubleRectangle) {
         r.x().set(rect.left)
         r.y().set(rect.top)
@@ -50,7 +39,6 @@ class DrawRectFeedback(
             onStarted = {
                 println("DrawRectFeedback start.")
                 decorationsLayer.children().add(selectionRectSvg)
-                decorationsLayer.children().add(viewportSvg)
             },
             onDragged = {
                 println("DrawRectFeedback drag.")
@@ -60,13 +48,11 @@ class DrawRectFeedback(
                 val selectionPlotRect = target.geomBounds.intersect(dragPlotRect) ?: return@loop
 
                 drawRects(selectionRectSvg, selectionPlotRect)
-                drawRects(viewportSvg, selectionPlotRect.shrinkToAspectRatio(target.geomBounds.dimension))
             },
             onCompleted = {
                 println("DrawRectFeedback complete.")
                 val (target, dragFrom, dragTo, _) = it
                 decorationsLayer.children().remove(selectionRectSvg)
-                decorationsLayer.children().remove(viewportSvg)
 
                 val dragRect = DoubleRectangle.span(dragFrom, dragTo)
                 val viewport = target.geomBounds.intersect(dragRect) ?: return@loop
@@ -79,7 +65,6 @@ class DrawRectFeedback(
             onAborted = {
                 println("DrawRectFeedback abort.")
                 decorationsLayer.children().remove(selectionRectSvg)
-                decorationsLayer.children().remove(viewportSvg)
                 it.reset()
             }
         )
@@ -88,7 +73,6 @@ class DrawRectFeedback(
             override fun dispose() {
                 println("DrawRectFeedback dispose.")
                 decorationsLayer.children().remove(selectionRectSvg)
-                decorationsLayer.children().remove(viewportSvg)
                 interaction.dispose()
             }
         }

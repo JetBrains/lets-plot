@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMP
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
@@ -40,6 +40,7 @@ class SandboxToolbarJs() {
             toolButton(PAN_TOOL_SPEC),
             toolButton(BOX_ZOOM_TOOL_SPEC),
             toolButton(WHEEL_ZOOM_TOOL_SPEC),
+            toolButton(WHEEL_BOX_ZOOM_TOOL_SPEC),
         )
 
         toolButtons.forEach {
@@ -85,7 +86,7 @@ class SandboxToolbarJs() {
                             }
                         }
                         LOG.info { "specOverride: $specOverride" }
-                        val specOverrideJs = dynamicObjectFromMap(specOverride)
+                        val specOverrideJs = dynamicFromAnyQ(specOverride)
                         figureModel?.updateView(specOverrideJs)
                     }
                 }
@@ -124,7 +125,7 @@ class SandboxToolbarJs() {
         if (!tool.active) {
             figureModel?.activateInteraction(
                 origin = tool.name,
-                interactionSpecJs = dynamicObjectFromMap(tool.interactionSpec)
+                interactionSpecListJs = dynamicFromAnyQ(tool.interactionSpecList)
             ) ?: LOG.info { "The toolbar is unbound." }
         }
     }
@@ -144,7 +145,7 @@ class SandboxToolbarJs() {
         val label = spec.getValue("label") as String
 
         @Suppress("UNCHECKED_CAST")
-        val interactionSpec = spec.getValue("interaction") as Map<String, Any>
+        val interactionSpecList = spec.getValue("interactions") as List<Map<String, Any>>
         var active: Boolean = false
     }
 
@@ -154,23 +155,42 @@ class SandboxToolbarJs() {
         val PAN_TOOL_SPEC = mapOf(
             "name" to "my-pan",
             "label" to "Pan",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
+                )
             )
         )
         val BOX_ZOOM_TOOL_SPEC = mapOf(
             "name" to "my-zoom-box",
             "label" to "Zoom Box",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+                )
             )
         )
         val WHEEL_ZOOM_TOOL_SPEC = mapOf(
             "name" to "my-zoom-wheel",
             "label" to "Zoom Wheel",
-            "interaction" to mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+                )
             )
         )
+        val WHEEL_BOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-wheel-box",
+            "label" to "Zoom Wheel/Box",
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+                ),
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+                )
+            )
+        )
+
     }
 }
