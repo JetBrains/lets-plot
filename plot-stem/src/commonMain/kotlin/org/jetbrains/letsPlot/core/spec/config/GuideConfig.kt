@@ -27,8 +27,8 @@ abstract class GuideConfig private constructor(opts: Map<String, Any>) : Options
     fun createGuideOptions(): GuideOptions {
         val options = createGuideOptionsIntern()
         return options
-            .withReverse(getBoolean(REVERSE))
             .withTitle(getString(TITLE))
+            .withReverse(getBoolean(REVERSE))
     }
 
     protected abstract fun createGuideOptionsIntern(): GuideOptions
