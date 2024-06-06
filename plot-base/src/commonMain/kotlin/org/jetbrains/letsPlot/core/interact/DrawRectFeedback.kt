@@ -6,76 +6,127 @@
 package org.jetbrains.letsPlot.core.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class DrawRectFeedback(
     private val onCompleted: ((DoubleRectangle) -> Unit)
 ) : DragFeedback {
-    private val selectionRectSvg = SvgRectElement().apply {
-        strokeColor().set(Color.GRAY)
+    private val dragRectSvg = SvgRectElement().apply {
+        strokeColor().set(Color.BLACK)
         fillColor().set(Color.TRANSPARENT)
-        strokeWidth().set(2.0)
+        strokeWidth().set(1.5)
+        strokeDashArray().set("5,5")
         x().set(0.0)
         y().set(0.0)
         width().set(0.0)
         height().set(0.0)
     }
 
-    private fun drawRects(r: SvgRectElement, rect: DoubleRectangle) {
-        r.x().set(rect.left)
-        r.y().set(rect.top)
-        r.width().set(rect.width)
-        r.height().set(rect.height)
+    private val selectionSvg = SvgPathElement().apply {
+        fillColor().set(Color.LIGHT_GRAY)
+        opacity().set(0.5)
+        fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
+    }
+
+    private fun drawSelection(geomBounds: DoubleRectangle, selection: DoubleRectangle) {
+        dragRectSvg.apply {
+            visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
+            x().set(selection.left)
+            y().set(selection.top)
+            width().set(selection.width)
+            height().set(selection.height)
+        }
+
+        if (isSelectionAcceptable(selection)) {
+            selectionSvg.apply {
+                visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
+                d().set(SvgPathDataBuilder().apply {
+                    moveTo(geomBounds.left, geomBounds.top)
+                    lineTo(geomBounds.right, geomBounds.top)
+                    lineTo(geomBounds.right, geomBounds.bottom)
+                    lineTo(geomBounds.left, geomBounds.bottom)
+                    closePath()
+                    moveTo(selection.left, selection.top)
+                    lineTo(selection.right, selection.top)
+                    lineTo(selection.right, selection.bottom)
+                    lineTo(selection.left, selection.bottom)
+                    closePath()
+                }.build())
+            }
+        } else {
+            selectionSvg.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
+        }
     }
 
     override fun start(ctx: InteractionContext): Disposable {
-
         val decorationsLayer = ctx.decorationsLayer
         val interaction = MouseDragInteraction(ctx)
 
         interaction.loop(
             onStarted = {
-                println("DrawRectFeedback start.")
-                decorationsLayer.children().add(selectionRectSvg)
+                val (target, dragFrom, dragTo, _) = it
+                decorationsLayer.children().add(dragRectSvg)
+                decorationsLayer.children().add(selectionSvg)
+
+                val selection = getSelection(dragFrom, dragTo, target)
+                drawSelection(
+                    geomBounds = target.geomBounds,
+                    selection = selection
+                )
             },
             onDragged = {
-                println("DrawRectFeedback drag.")
                 val (target, dragFrom, dragTo, _) = it
 
-                val dragPlotRect = DoubleRectangle.span(dragFrom, dragTo)
-                val selectionPlotRect = target.geomBounds.intersect(dragPlotRect) ?: return@loop
-
-                drawRects(selectionRectSvg, selectionPlotRect)
+                val selection = getSelection(dragFrom, dragTo, target)
+                drawSelection(
+                    geomBounds = target.geomBounds,
+                    selection = selection
+                )
             },
             onCompleted = {
-                println("DrawRectFeedback complete.")
                 val (target, dragFrom, dragTo, _) = it
-                decorationsLayer.children().remove(selectionRectSvg)
 
-                val dragRect = DoubleRectangle.span(dragFrom, dragTo)
-                val viewport = target.geomBounds.intersect(dragRect) ?: return@loop
+                val selection = getSelection(dragFrom, dragTo, target)
 
-                val dataBounds = target.applyViewport(viewport)
+                if (isSelectionAcceptable(selection)) {
+                    val dataBounds = target.applyViewport(selection)
+                    onCompleted(dataBounds)
+                }
 
-                onCompleted(dataBounds)
+                decorationsLayer.children().remove(dragRectSvg)
+                decorationsLayer.children().remove(selectionSvg)
+
                 it.reset()
             },
             onAborted = {
-                println("DrawRectFeedback abort.")
-                decorationsLayer.children().remove(selectionRectSvg)
                 it.reset()
             }
         )
 
         return object : Disposable {
             override fun dispose() {
-                println("DrawRectFeedback dispose.")
-                decorationsLayer.children().remove(selectionRectSvg)
+                decorationsLayer.children().remove(dragRectSvg)
+                decorationsLayer.children().remove(selectionSvg)
                 interaction.dispose()
             }
         }
     }
 
+    private fun getSelection(
+        dragFrom: DoubleVector,
+        dragTo: DoubleVector,
+        target: InteractionTarget
+    ) = DoubleRectangle.span(dragFrom, dragTo)
+        .intersect(target.geomBounds)
+        ?: DoubleRectangle(dragFrom, DoubleVector.ZERO) // at least move the selection rect to the drag start point
+
+    private fun isSelectionAcceptable(selection: DoubleRectangle): Boolean {
+        return selection.width > 25 || selection.height > 25
+    }
 }
