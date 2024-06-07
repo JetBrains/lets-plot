@@ -3,6 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -49,6 +50,7 @@ class FigureModelJs internal constructor(
             monolithicParameters.width,
             monolithicParameters.height,
             monolithicParameters.parentElement,
+            monolithicParameters.mouseEventSource,
             monolithicParameters.options
         )
 
@@ -89,5 +91,6 @@ internal class MonolithicParameters(
     val width: Double,
     val height: Double,
     val parentElement: HTMLElement,
+    val mouseEventSource: MouseEventSource,
     val options: Map<String, Any>
 )

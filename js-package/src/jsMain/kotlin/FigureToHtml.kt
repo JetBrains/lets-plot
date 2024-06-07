@@ -6,6 +6,7 @@
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.dom.createElement
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
@@ -35,7 +36,8 @@ import org.w3c.dom.svg.SVGSVGElement
 
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
-    private val containerElement: HTMLElement
+    private val containerElement: HTMLElement,
+    private val mouseEventSource: MouseEventSource
 ) {
 
     private val parentElement: HTMLElement = if (buildInfo.isComposite) {
@@ -52,6 +54,10 @@ internal class FigureToHtml(
     fun eval(): Result {
 
         val buildInfo = buildInfo.layoutedByOuterSize()
+        containerElement.style.apply {
+            width = "${buildInfo.layoutInfo.figureSize.x}px"
+            height = "${buildInfo.layoutInfo.figureSize.y}px"
+        }
 
         buildInfo.injectLiveMapProvider { tiles: List<List<GeomLayer>>, spec: Map<String, Any> ->
             val cursorServiceConfig = CursorServiceConfig()
@@ -64,12 +70,14 @@ internal class FigureToHtml(
             processCompositeFigure(
                 svgRoot,
                 origin = null,      // The topmost SVG
-                parentElement = parentElement
+                parentElement = parentElement,
+                mouseEventSource = mouseEventSource
             )
         } else {
             processPlotFigure(
                 svgRoot as PlotSvgRoot,
-                parentElement = parentElement
+                parentElement = parentElement,
+                eventMapper = mouseEventSource
             )
         }
 
@@ -96,10 +104,11 @@ internal class FigureToHtml(
         private fun processPlotFigure(
             svgRoot: PlotSvgRoot,
             parentElement: HTMLElement,
+            eventMapper: MouseEventSource
         ): ToolEventDispatcher {
 
             val plotContainer = PlotContainer(svgRoot)
-            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement)
+            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement, eventMapper)
             rootSVG.style.setCursor(CssCursor.CROSSHAIR)
 
             // Livemap cursor pointer
@@ -117,6 +126,7 @@ internal class FigureToHtml(
             svgRoot: CompositeFigureSvgRoot,
             origin: DoubleVector?,
             parentElement: HTMLElement,
+            mouseEventSource: MouseEventSource
         ): ToolEventDispatcher {
             svgRoot.ensureContentBuilt()
 
@@ -151,11 +161,12 @@ internal class FigureToHtml(
                     }
                     processPlotFigure(
                         svgRoot = figureSvgRoot,
-                        parentElement = figureContainer
+                        parentElement = figureContainer,
+                        eventMapper = mouseEventSource
                     )
                 } else {
                     figureSvgRoot as CompositeFigureSvgRoot
-                    processCompositeFigure(figureSvgRoot, elementOrigin, parentElement)
+                    processCompositeFigure(figureSvgRoot, elementOrigin, parentElement, mouseEventSource)
                 }
             }
 
@@ -187,7 +198,8 @@ internal class FigureToHtml(
 
         private fun buildPlotFigureSVG(
             plotContainer: PlotContainer,
-            parentElement: Element
+            parentElement: Element,
+            mouseEventSource: MouseEventSource
         ): SVGSVGElement {
 
             val svg: SVGSVGElement = mapSvgToSVG(plotContainer.svg)
@@ -198,7 +210,7 @@ internal class FigureToHtml(
                 }
             }
 
-            plotContainer.mouseEventPeer.addEventSource(DomMouseEventMapper(svg))
+            plotContainer.mouseEventPeer.addEventSource(mouseEventSource)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()

@@ -5,9 +5,12 @@
 
 /* root package */
 
+import kotlinx.browser.document
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.spec.FailureHandler
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
@@ -15,6 +18,7 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.get
@@ -50,7 +54,12 @@ fun buildPlotFromRawSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val figureContainer = document.createElement("div") as HTMLDivElement
+        val mouseEventSource = DomMouseEventMapper(figureContainer)
+
+        parentElement.appendChild(figureContainer)
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, figureContainer, mouseEventSource, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -83,7 +92,12 @@ fun buildPlotFromProcessedSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val figureContainer = document.createElement("div") as HTMLDivElement
+        parentElement.appendChild(figureContainer)
+        val mouseEventSource = DomMouseEventMapper(figureContainer)
+
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, figureContainer, mouseEventSource, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -95,6 +109,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
     width: Double,
     height: Double,
     parentElement: HTMLElement,
+    mouseEventSource: MouseEventSource,
     options: Map<String, Any>
 ): FigureModelJs? {
 
@@ -145,23 +160,27 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        val result = FigureToHtml(buildInfo, parentElement).eval()
+        val result = FigureToHtml(buildInfo, parentElement, mouseEventSource).eval()
         FigureModelJs(
             plotSpec,
-            MonolithicParameters(width, height, parentElement, options),
+            MonolithicParameters(width, height, parentElement, mouseEventSource, options),
             result.toolEventDispatcher,
             result.figureRegistration
         )
     } else {
         // a bunch
-        buildGGBunchComponent(success.buildInfos, parentElement)
+        buildGGBunchComponent(success.buildInfos, parentElement, mouseEventSource)
         null
     }
 
     return figureModel
 }
 
-fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {
+fun buildGGBunchComponent(
+    plotInfos: List<FigureBuildInfo>,
+    parentElement: HTMLElement,
+    mouseEventSource: MouseEventSource
+) {
     val bunchBounds = plotInfos.map { it.bounds }
         .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
             acc.union(bounds)
@@ -179,7 +198,8 @@ fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLE
 
         FigureToHtml(
             buildInfo = plotInfo,
-            containerElement = itemContainerElement
+            containerElement = itemContainerElement,
+            mouseEventSource = mouseEventSource
         ).eval()
 
     }
