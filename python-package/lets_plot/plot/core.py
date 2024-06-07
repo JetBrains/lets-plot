@@ -416,6 +416,11 @@ class PlotSpec(FeatureSpec):
                     plot = plot.__add__(spec)
                 return plot
 
+            if other.kind == 'guides':
+                existing_guides_options = plot.props().get('guides', {})
+                plot.props()['guides'] = _merge_dicts_recursively(existing_guides_options, other.as_dict())
+                return plot
+
             # add feature to properties
             plot.props()[other.kind] = other
             return plot
@@ -827,6 +832,16 @@ def _generate_data(size):
     """ For testing reasons only """
     # return FeatureSpec('dummy', name=None, data='x' * size)
     return PlotSpec(data='x' * size, mapping=None, scales=[], layers=[])
+
+
+def _merge_dicts_recursively(d1, d2):
+    merged = d1.copy()
+    for key, value in d2.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = _merge_dicts_recursively(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
 
 
 def _theme_dicts_merge(x, y):

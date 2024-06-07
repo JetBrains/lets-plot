@@ -9,19 +9,19 @@ class ColorBarOptions constructor(
     val width: Double? = null,
     val height: Double? = null,
     val binCount: Int? = null,
-    isReverse: Boolean = false,
-    title: String? = null
-) : GuideOptions(isReverse, title) {
+    title: String? = null,
+    isReverse: Boolean = false
+) : GuideOptions(title, isReverse) {
 
     override fun withReverse(reverse: Boolean): ColorBarOptions {
         return ColorBarOptions(
-            width, height, binCount, isReverse = reverse, title
+            width, height, binCount, title, isReverse = reverse
         )
     }
 
     override fun withTitle(title: String?): GuideOptions {
         return ColorBarOptions(
-            width, height, binCount, isReverse, title = title
+            width, height, binCount, title = title, isReverse
         )
     }
 

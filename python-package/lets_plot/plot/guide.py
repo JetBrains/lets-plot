@@ -7,21 +7,21 @@ from .core import FeatureSpec
 __all__ = ['guide_legend', 'guide_colorbar', 'guides', 'layer_key']
 
 
-def guide_legend(nrow=None, ncol=None, byrow=None, title=None):
+def guide_legend(title=None, nrow=None, ncol=None, byrow=None):
     """
     Legend guide.
 
     Parameters
     ----------
+    title : str
+        Title of guide.
+        By default, the name of the scale object or the name specified in `labs()` is used for the title.
     nrow : int
         Number of rows in legend's guide.
     ncol : int
         Number of columns in legend's guide.
     byrow : bool, default=True
         Type of output: by row, or by column.
-    title : str
-        Title of guide.
-        By default, the name of the scale object or the name specified in `labs()` is used for the title.
 
     Returns
     -------
@@ -54,21 +54,21 @@ def guide_legend(nrow=None, ncol=None, byrow=None, title=None):
     return _guide('legend', **locals())
 
 
-def guide_colorbar(barwidth=None, barheight=None, nbin=None, title=None):
+def guide_colorbar(title=None, barwidth=None, barheight=None, nbin=None):
     """
     Continuous color bar guide.
 
     Parameters
     ----------
+    title : str
+        Title of guide.
+        By default, the name of the scale object or the name specified in `labs()` is used for the title.
     barwidth : float
         Color bar width in px.
     barheight : float
         Color bar height in px.
     nbin : int
         Number of bins in color bar.
-    title : str
-        Title of guide.
-        By default, the name of the scale object or the name specified in `labs()` is used for the title.
 
     Returns
     -------
