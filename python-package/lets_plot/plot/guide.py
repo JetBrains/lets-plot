@@ -114,7 +114,8 @@ def guides(**kwargs):
     Parameters
     ----------
     kwargs
-        Name-guide pairs where name should be an aesthetic or a legend group name.
+        Name-guide pairs where name should be an aesthetic or a legend group name (the default group name for
+        custom legend is 'manual').
         The guide can either be a string ('colorbar', 'legend'),
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments, or 'none' to hide the guide.

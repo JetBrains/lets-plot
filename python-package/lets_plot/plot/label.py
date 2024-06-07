@@ -163,7 +163,7 @@ def labs(title=None, subtitle=None, caption=None, custom_legend=None, **labels):
         if isinstance(custom_legend, dict):
             guides_args = {key: guide_legend(title=value) for key, value in custom_legend.items()}
         else:
-            guides_args['custom_legend'] = guide_legend(title=custom_legend)
+            guides_args['manual'] = guide_legend(title=custom_legend)
         specs.append(guides(**guides_args))
 
     # scales

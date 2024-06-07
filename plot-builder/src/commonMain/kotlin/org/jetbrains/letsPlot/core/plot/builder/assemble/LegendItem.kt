@@ -14,6 +14,6 @@ data class LegendItem(
     val aesValues: Map<Aes<*>, Any>
 ) {
     companion object {
-        const val DEFAULT_CUSTOM_LEGEND_KEY = "custom_legend"
+        const val DEFAULT_LEGEND_GROUP_NAME = "manual"
     }
 }

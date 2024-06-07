@@ -83,7 +83,7 @@ class CustomLegend {
             {
               'kind': 'plot',
               'guides': {
-                'custom_legend': {'name': 'legend', 'ncol': 2, 'title': 'Zones' }
+                'manual': {'name': 'legend', 'ncol': 2, 'title': 'Zones' }
                },           
               'layers': [
                 {

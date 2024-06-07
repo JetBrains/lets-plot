@@ -40,7 +40,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
-import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem.Companion.DEFAULT_CUSTOM_LEGEND_KEY
+import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem.Companion.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class LayerConfig(
@@ -102,7 +102,7 @@ class LayerConfig(
             )
             return LegendItem(
                 label = label,
-                group = legendOptions.getString(Layer.LayerKey.GROUP) ?: DEFAULT_CUSTOM_LEGEND_KEY,
+                group = legendOptions.getString(Layer.LayerKey.GROUP) ?: DEFAULT_LEGEND_GROUP_NAME,
                 index = legendOptions.getInteger(Layer.LayerKey.INDEX),
                 aesValues = aesValues
             )

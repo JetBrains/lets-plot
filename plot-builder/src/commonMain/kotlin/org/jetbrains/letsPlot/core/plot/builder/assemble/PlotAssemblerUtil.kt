@@ -145,7 +145,7 @@ internal object PlotAssemblerUtil {
                     LegendAssembler(
                         chooseTitle(
                             legendGroupName,
-                            legendGroupName.takeIf { it != LegendItem.DEFAULT_CUSTOM_LEGEND_KEY } ?: ""
+                            legendGroupName.takeIf { it != LegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
                         ),
                         guideOptionsMap,
                         scaleMappersNP,
