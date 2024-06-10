@@ -150,7 +150,7 @@ def guides(**kwargs):
     return FeatureSpec('guides', name=None, **kwargs)
 
 
-def layer_key(label, group=None, index=None, **kwargs):
+def layer_key(label, group=None, *, index=None, **kwargs):
     """
     Configure custom legend.
 
