@@ -7,7 +7,7 @@ from .core import FeatureSpec
 __all__ = ['guide_legend', 'guide_colorbar', 'guides']
 
 
-def guide_legend(title=None, nrow=None, ncol=None, byrow=None):
+def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None):
     """
     Legend guide.
 
@@ -54,7 +54,7 @@ def guide_legend(title=None, nrow=None, ncol=None, byrow=None):
     return _guide('legend', **locals())
 
 
-def guide_colorbar(title=None, barwidth=None, barheight=None, nbin=None):
+def guide_colorbar(title=None, *, barwidth=None, barheight=None, nbin=None):
     """
     Continuous color bar guide.
 
@@ -104,6 +104,8 @@ def guide_colorbar(title=None, barwidth=None, barheight=None, nbin=None):
 
 
 def _guide(name, **kwargs):
+    if 'title' in kwargs and isinstance(kwargs['title'], int):
+        raise ValueError("The first argument is now reserved for 'title' and cannot be an integer. Please use keywords for others.")
     return FeatureSpec('guide', name=name, **kwargs)
 
 
