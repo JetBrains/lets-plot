@@ -133,18 +133,13 @@ internal object PlotAssemblerUtil {
 
             // custom legend
             layerInfo.legendItem?.let { legendItem ->
-                val aes = Aes.values().firstOrNull { it.name == legendItem.group }
-                val legendGroupName = if (aes != null && ctx.hasScale(aes)) {
-                    chooseTitle(aes.name, ctx.getScale(aes).name)
-                } else {
-                    legendItem.group
-                }
-                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendGroupName) {
+                val legendTitle = chooseTitle(
+                    legendItem.group,
+                    legendItem.group.takeIf { it != LegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
+                )
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
                     LegendAssembler(
-                        chooseTitle(
-                            legendGroupName,
-                            legendGroupName.takeIf { it != LegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
-                        ),
+                        legendTitle,
                         guideOptionsMap,
                         scaleMappersNP,
                         theme
