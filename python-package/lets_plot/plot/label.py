@@ -111,7 +111,18 @@ def ylab(label):
     return labs(y=label)
 
 
-def labs(title=None, subtitle=None, caption=None, custom_legend=None, **labels):
+# ToDo
+def _is_aes(name):
+    aes_list = ['x', 'y', 'z', 'color', 'fill', 'paint_a', 'paint_b', 'paint_c', 'alpha', 'shape', 'linetype', 'size',
+                'stroke', 'linewidth', 'stacksize', 'width', 'height', 'binwidth', 'violinwidth', 'weight', 'intercept',
+                'slope', 'xintercept', 'yintercept', 'lower', 'middle', 'upper', 'sample', 'quantile', 'xmin', 'xmax',
+                'ymin', 'ymax', 'xend', 'yend', 'map_id', 'frame', 'speed', 'flow', 'label', 'family', 'fontface',
+                'lineheight', 'hjust', 'vjust', 'angle', 'radius', 'slice', 'explode', 'size_start', 'size_end',
+                'stroke_start', 'stroke_end']
+    return name in aes_list
+
+
+def labs(title=None, subtitle=None, caption=None, **labels):
     """
     Change plot title and axis label.
 
@@ -123,10 +134,9 @@ def labs(title=None, subtitle=None, caption=None, custom_legend=None, **labels):
         The text for the plot subtitle.
     caption : str
         The text for the plot caption.
-    custom_legend : str or dict
-        The text for the custom legend title.
     labels
-        Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color="New Color label"`.
+        Name-value pairs where name should be an aesthetic or legend group name
+        and value should be a string, e.g. `color="New Color label"`.
 
     Returns
     -------
@@ -157,18 +167,12 @@ def labs(title=None, subtitle=None, caption=None, custom_legend=None, **labels):
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
 
-    # custom legend titles
-    if custom_legend is not None:
-        guides_args = {}
-        if isinstance(custom_legend, dict):
-            guides_args = {key: guide_legend(title=value) for key, value in custom_legend.items()}
+    # scales for aes or guides for others
+    for key, label in labels.items():
+        if _is_aes(key):
+            specs.append(_scale(aesthetic=key, name=label))
         else:
-            guides_args['manual'] = guide_legend(title=custom_legend)
-        specs.append(guides(**guides_args))
-
-    # scales
-    for aes, label in labels.items():
-        specs.append(_scale(aesthetic=aes, name=label))
+            specs.append(guides(**{key: guide_legend(title=label)}))
 
     if len(specs) == 1:
         return specs[0]
