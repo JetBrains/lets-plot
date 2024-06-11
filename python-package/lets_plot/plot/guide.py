@@ -15,7 +15,6 @@ def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None):
     ----------
     title : str
         Title of guide.
-        By default, the name of the scale object or the name specified in `labs()` is used for the title.
     nrow : int
         Number of rows in legend's guide.
     ncol : int
@@ -62,7 +61,6 @@ def guide_colorbar(title=None, *, barwidth=None, barheight=None, nbin=None):
     ----------
     title : str
         Title of guide.
-        By default, the name of the scale object or the name specified in `labs()` is used for the title.
     barwidth : float
         Color bar width in px.
     barheight : float
