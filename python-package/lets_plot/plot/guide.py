@@ -105,7 +105,7 @@ def guide_colorbar(title=None, *, barwidth=None, barheight=None, nbin=None):
 
 def _guide(name, **kwargs):
     if 'title' in kwargs and isinstance(kwargs['title'], int):
-        raise ValueError("The first argument is now reserved for 'title' and cannot be an integer. Please use keywords for others.")
+        raise ValueError("Use keyword arguments for all other than 'title' parameters.")
     return FeatureSpec('guide', name=name, **kwargs)
 
 
