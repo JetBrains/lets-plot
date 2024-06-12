@@ -6,10 +6,10 @@
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.dom.createElement
-import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -37,7 +37,7 @@ import org.w3c.dom.svg.SVGSVGElement
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
     private val containerElement: HTMLElement,
-    private val mouseEventSource: MouseEventSource
+    private val eventTarget: Element
 ) {
 
     private val parentElement: HTMLElement = if (buildInfo.isComposite) {
@@ -71,13 +71,14 @@ internal class FigureToHtml(
                 svgRoot,
                 origin = null,      // The topmost SVG
                 parentElement = parentElement,
-                mouseEventSource = mouseEventSource
+                eventTarget = eventTarget
             )
         } else {
             processPlotFigure(
-                svgRoot as PlotSvgRoot,
+                svgRoot = svgRoot as PlotSvgRoot,
                 parentElement = parentElement,
-                eventMapper = mouseEventSource
+                eventTarget = eventTarget,
+                eventArea = buildInfo.bounds
             )
         }
 
@@ -104,11 +105,12 @@ internal class FigureToHtml(
         private fun processPlotFigure(
             svgRoot: PlotSvgRoot,
             parentElement: HTMLElement,
-            eventMapper: MouseEventSource
+            eventTarget: Element,
+            eventArea: DoubleRectangle
         ): ToolEventDispatcher {
 
             val plotContainer = PlotContainer(svgRoot)
-            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement, eventMapper)
+            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement, eventTarget, eventArea)
             rootSVG.style.setCursor(CssCursor.CROSSHAIR)
 
             // Livemap cursor pointer
@@ -126,7 +128,7 @@ internal class FigureToHtml(
             svgRoot: CompositeFigureSvgRoot,
             origin: DoubleVector?,
             parentElement: HTMLElement,
-            mouseEventSource: MouseEventSource
+            eventTarget: Element,
         ): ToolEventDispatcher {
             svgRoot.ensureContentBuilt()
 
@@ -162,11 +164,12 @@ internal class FigureToHtml(
                     processPlotFigure(
                         svgRoot = figureSvgRoot,
                         parentElement = figureContainer,
-                        eventMapper = mouseEventSource
+                        eventTarget = eventTarget,
+                        eventArea = figureSvgRoot.bounds.add(origin)
                     )
                 } else {
                     figureSvgRoot as CompositeFigureSvgRoot
-                    processCompositeFigure(figureSvgRoot, elementOrigin, parentElement, mouseEventSource)
+                    processCompositeFigure(figureSvgRoot, elementOrigin, parentElement, eventTarget)
                 }
             }
 
@@ -199,9 +202,10 @@ internal class FigureToHtml(
         private fun buildPlotFigureSVG(
             plotContainer: PlotContainer,
             parentElement: Element,
-            mouseEventSource: MouseEventSource
+            eventTarget: Element,
+            eventArea: DoubleRectangle
         ): SVGSVGElement {
-
+            val disposer = CompositeRegistration()
             val svg: SVGSVGElement = mapSvgToSVG(plotContainer.svg)
 
             if (plotContainer.isLiveMap) {
@@ -210,7 +214,10 @@ internal class FigureToHtml(
                 }
             }
 
-            plotContainer.mouseEventPeer.addEventSource(mouseEventSource)
+            val plotMouseEventMapper = DomMouseEventMapper(eventTarget, eventArea)
+            disposer.add(Registration.from(plotMouseEventMapper))
+
+            plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -223,18 +230,19 @@ internal class FigureToHtml(
                     setPosition(CssPosition.RELATIVE)
                 }
 
+                val canvasMouseEventMapper = DomMouseEventMapper(
+                    eventTarget,
+                    DoubleRectangle(
+                        eventArea.origin.add(bounds.origin.toDoubleVector()),
+                        bounds.dimension.toDoubleVector()
+                    )
+                )
+                disposer.add(Registration.from(canvasMouseEventMapper))
+
                 val canvasControl = DomCanvasControl(
                     myRootElement = liveMapDiv,
                     size = Vector(bounds.dimension.x, bounds.dimension.y),
-                    mouseEventSource = DomMouseEventMapper(
-                        eventSource = svg,
-                        bounds = DoubleRectangle.XYWH(
-                            bounds.origin.x,
-                            bounds.origin.y,
-                            bounds.dimension.x,
-                            bounds.dimension.y
-                        )
-                    )
+                    mouseEventSource = canvasMouseEventMapper
                 )
 
                 val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
@@ -243,10 +251,15 @@ internal class FigureToHtml(
                 liveMapDiv.onDisconnect(liveMapReg::dispose)
             }
 
+            // TODO: temporary solution. Dispose in FigureToHtml.Result.figureRegistration instead.
+            svg.onDisconnect {
+                println("Plot disconnected")
+                disposer.dispose()
+            }
             return svg
         }
 
-        private fun HTMLElement.onDisconnect(onDisconnected: () -> Unit): Int {
+        private fun Node.onDisconnect(onDisconnected: () -> Unit): Int {
             fun checkConnection() {
                 if (!isConnected) {
                     onDisconnected()
