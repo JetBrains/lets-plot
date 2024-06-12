@@ -151,10 +151,19 @@ class LegendAssembler(
                     scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                 }
                 val labels = scaleBreaks.labels
-                for ((label, aesValue) in labels.zip(aesValues)) {
-                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
+                labels.zip(aesValues).forEachIndexed { index, (label, aesValue) ->
+                    val labelMap = aesValuesByLabel.getOrPut(label) { HashMap() }
+                    labelMap[aes] = aesValue
+
                     overrideAesValues.forEach { (aesToOverride, v) ->
-                       aesValuesByLabel.getOrPut(label) { HashMap() }[aesToOverride] = v
+                        val newAesValue = if (v is List<*>) {
+                            v.getOrElse(index) { v.last() }
+                        } else {
+                            v
+                        }
+                        newAesValue?.let {
+                            labelMap[aesToOverride] = it
+                        }
                     }
                 }
             }
