@@ -166,7 +166,7 @@ class CustomLegend {
                         'color': 'g'
                     },
                     'show_key': {
-                        'group': 'color',
+                        'group': 'g',
                         'label': 'NA'
                     }
                 },                
@@ -177,13 +177,11 @@ class CustomLegend {
                     'color': 'yellow',
                     'size': 5,
                     'show_key': {
-                        'group': 'color',
+                        'group': 'g',
                         'label': 'point'
                     }
                 }
-              ],
-              'scales': [ { 'aesthetic': 'color', 
-                            'guide': {'name': 'legend', 'ncol': 2, 'title': 'Zones'} } ]
+              ]
             }
         """.trimIndent()
         return parsePlotSpec(spec)

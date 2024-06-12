@@ -141,7 +141,7 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val legendKeyList: List<String>,
+        val legendKeyList: List<String>, // to access to guide options
         val isMarginal: Boolean,
         val keyAesthetics: Aesthetics,
         val keyLabels: List<String>,

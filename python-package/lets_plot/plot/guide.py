@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['guide_legend', 'guide_colorbar', 'guides']
+__all__ = ['guide_legend', 'guide_colorbar', 'guides', 'layer_key']
 
 
 def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None):

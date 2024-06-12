@@ -111,7 +111,6 @@ def ylab(label):
     return labs(y=label)
 
 
-# ToDo
 def _is_aes(name):
     aes_list = ['x', 'y', 'z', 'color', 'fill', 'paint_a', 'paint_b', 'paint_c', 'alpha', 'shape', 'linetype', 'size',
                 'stroke', 'linewidth', 'stacksize', 'width', 'height', 'binwidth', 'violinwidth', 'weight', 'intercept',
@@ -119,6 +118,18 @@ def _is_aes(name):
                 'ymin', 'ymax', 'xend', 'yend', 'map_id', 'frame', 'speed', 'flow', 'label', 'family', 'fontface',
                 'lineheight', 'hjust', 'vjust', 'angle', 'radius', 'slice', 'explode', 'size_start', 'size_end',
                 'stroke_start', 'stroke_end']
+    return name in aes_list
+
+
+def _is_guided_aes(name):
+    aes_list = ['x', 'y', 'z',
+                'xmin', 'xmax', 'ymin', 'ymax', 'xend', 'yend',
+                'lower', 'middle', 'upper',
+                'sample',
+                'weight',
+                'intercept', 'xintercept', 'yintercept',
+                'color', 'fill', 'paint_a', 'paint_b', 'paint_c',
+                'alpha', 'shape', 'linetype', 'size', 'stroke', 'linewidth']
     return name in aes_list
 
 
