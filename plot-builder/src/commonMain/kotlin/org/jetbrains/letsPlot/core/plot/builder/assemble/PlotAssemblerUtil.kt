@@ -60,7 +60,6 @@ internal object PlotAssemblerUtil {
                 }
             }
 
-
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {

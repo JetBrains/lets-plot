@@ -19,9 +19,9 @@ class ColorBarOptions constructor(
         )
     }
 
-    override fun withTitle(title: String?): GuideOptions {
+    override fun withTitle(title: String?): ColorBarOptions {
         return ColorBarOptions(
-            width, height, binCount, title = title, isReverse
+            width, height, binCount, title = title, isReverse 
         )
     }
 

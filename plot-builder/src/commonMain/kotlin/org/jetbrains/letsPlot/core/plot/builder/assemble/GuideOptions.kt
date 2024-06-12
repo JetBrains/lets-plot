@@ -20,7 +20,7 @@ abstract class GuideOptions(
     companion object {
         val NONE: GuideOptions = object : GuideOptions(null, false) {
             override fun withTitle(title: String?): GuideOptions = this
-            override fun withReverse(reverse: Boolean): GuideOptions = this // Do nothing
+	    override fun withReverse(reverse: Boolean): GuideOptions = this // Do nothing
         }
     }
 }
