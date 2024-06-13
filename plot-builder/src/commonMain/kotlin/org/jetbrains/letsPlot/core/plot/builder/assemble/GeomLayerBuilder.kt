@@ -61,7 +61,7 @@ class GeomLayerBuilder(
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
-    private var myLegendItem: LegendItem? = null
+    private var myCustomLegendItem: CustomLegendItem? = null
     private var isYOrientation: Boolean = false
 
     private var isMarginal: Boolean = false
@@ -120,8 +120,8 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun legendItem(legendItem: LegendItem?): GeomLayerBuilder {
-        myLegendItem = legendItem
+    fun customLegendItem(customLegendItem: CustomLegendItem?): GeomLayerBuilder {
+        myCustomLegendItem = customLegendItem
         return this
     }
 
@@ -247,7 +247,7 @@ class GeomLayerBuilder(
             myLocatorLookupSpec,
             myContextualMappingProvider,
             myIsLegendDisabled,
-            myLegendItem,
+            myCustomLegendItem,
             isYOrientation = isYOrientation,
             isMarginal = isMarginal,
             marginalSide = marginalSide,
@@ -277,7 +277,7 @@ class GeomLayerBuilder(
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,
         override val isLegendDisabled: Boolean,
-        override val legendItem: LegendItem?,
+        override val customLegendItem: CustomLegendItem?,
         override val isYOrientation: Boolean,
         override val isMarginal: Boolean,
         override val marginalSide: MarginSide,

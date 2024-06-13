@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
-import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem
+import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendItem
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
@@ -40,7 +40,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
-import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendItem.Companion.DEFAULT_LEGEND_GROUP_NAME
+import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendItem.Companion.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class LayerConfig(
@@ -81,7 +81,7 @@ class LayerConfig(
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
         }
-    val legendItem: LegendItem?
+    val customLegendItem: CustomLegendItem?
         get() {
             val option = get(SHOW_KEY) ?: return null
 
@@ -100,7 +100,7 @@ class LayerConfig(
                 consumedAesSet = Aes.values().toSet(),
                 aopConversion
             )
-            return LegendItem(
+            return CustomLegendItem(
                 label = label,
                 group = legendOptions.getString(Layer.LayerKey.GROUP) ?: DEFAULT_LEGEND_GROUP_NAME,
                 index = legendOptions.getInteger(Layer.LayerKey.INDEX),

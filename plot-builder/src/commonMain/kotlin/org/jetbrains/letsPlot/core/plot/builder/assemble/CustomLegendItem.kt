@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
-data class LegendItem(
+data class CustomLegendItem(
     val label: String,
     val group: String, // by which the items are combined into a legend
     val index: Int? = null,

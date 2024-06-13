@@ -61,7 +61,7 @@ class LegendAssembler(
     }
 
     fun addLayer(
-        legendItem: LegendItem,
+        customLegendItem: CustomLegendItem,
         keyFactory: LegendKeyElementFactory,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
@@ -70,8 +70,8 @@ class LegendAssembler(
         isMarginal: Boolean
     ) {
         legendLayers.add(
-            LegendLayer.createForLegendItem(
-                legendItem,
+            LegendLayer.createForCustomLegendItem(
+                customLegendItem,
                 keyFactory,
                 constantByAes,
                 aestheticsDefaults,
@@ -92,7 +92,7 @@ class LegendAssembler(
         for (legendLayer in legendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
             val dataPoints = legendLayer.keyAesthetics.dataPoints().iterator()
-            for (label in legendLayer.keyLabels) {
+            for (label in legendLayer.labels) {
                 legendBreaksByLabel.getOrPut(label) {
                     LegendBreak(wrap(label, Legend.LINES_MAX_LENGTH, Legend.LINES_MAX_COUNT))
                 }.addLayer(dataPoints.next(), keyElementFactory)
@@ -115,7 +115,7 @@ class LegendAssembler(
         // legend options
         val legendOptionsList = ArrayList<LegendOptions>()
         for (legendLayer in legendLayers) {
-            for (key in legendLayer.legendKeyList) {
+            for (key in legendLayer.guideKeys) {
                 if (guideOptionsMap[key] is LegendOptions) {
                     legendOptionsList.add(guideOptionsMap[key] as LegendOptions)
                 }
@@ -141,11 +141,11 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val legendKeyList: List<String>, // to access to guide options
-        val isMarginal: Boolean,
         val keyAesthetics: Aesthetics,
-        val keyLabels: List<String>,
-        val index: Int? = null
+        val labels: List<String>,
+        val guideKeys: List<String>, // to access to guide options
+        val index: Int? = null,
+        val isMarginal: Boolean
     ) {
         companion object {
             fun create(
@@ -198,15 +198,15 @@ class LegendAssembler(
                 val keyLabels = ArrayList(aesValuesByLabel.keys)
                 return LegendLayer(
                     keyElementFactory,
-                    legendKeyList = aesList.map(Aes<*>::name),
-                    isMarginal,
                     keyAesthetics,
-                    keyLabels
+                    keyLabels,
+                    guideKeys = aesList.map(Aes<*>::name),
+                    isMarginal = isMarginal
                 )
             }
 
-            fun createForLegendItem(
-                legendItem: LegendItem,
+            fun createForCustomLegendItem(
+                customLegendItem: CustomLegendItem,
                 keyElementFactory: LegendKeyElementFactory,
                 constantByAes: Map<Aes<*>, Any>,
                 aestheticsDefaults: AestheticsDefaults,
@@ -216,7 +216,7 @@ class LegendAssembler(
             ): LegendLayer {
                  // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
-                    listOf(legendItem.aesValues),
+                    listOf(customLegendItem.aesValues),
                     constantByAes,
                     aestheticsDefaults,
                     colorByAes,
@@ -224,11 +224,11 @@ class LegendAssembler(
                 )
                 return LegendLayer(
                     keyElementFactory,
-                    legendKeyList = listOf(legendItem.group),
-                    isMarginal,
                     keyAesthetics,
-                    keyLabels = listOf(legendItem.label),
-                    index = legendItem.index
+                    labels = listOf(customLegendItem.label),
+                    guideKeys = listOf(customLegendItem.group),
+                    customLegendItem.index,
+                    isMarginal
                 )
             }
         }

@@ -131,10 +131,10 @@ internal object PlotAssemblerUtil {
             }
 
             // custom legend
-            layerInfo.legendItem?.let { legendItem ->
+            layerInfo.customLegendItem?.let { legendItem ->
                 val legendTitle = chooseTitle(
                     legendItem.group,
-                    legendItem.group.takeIf { it != LegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
+                    legendItem.group.takeIf { it != CustomLegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
                 )
                 val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
                     LegendAssembler(
