@@ -28,22 +28,27 @@ import org.jetbrains.letsPlot.core.spec.front.tiles.PlotTilesConfig
 
 object PlotConfigFrontendUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<String, GuideOptions> {
-        val guideOptionsByAes = HashMap<String, GuideOptions>()
+        val guideOptionsByAesName = HashMap<String, GuideOptions>()
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
                 val guideOptions = scaleConfig.getGuideOptions().createGuideOptions()
-                guideOptionsByAes[scaleConfig.aes.name] = guideOptions
+                guideOptionsByAesName[scaleConfig.aes.name] = guideOptions
             }
         }
-        return guideOptionsByAes
+        return guideOptionsByAesName
     }
 
     internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<String, GuideOptions> {
-        val guideOptionsByAes = HashMap<String, GuideOptions>()
+        val guideOptions = HashMap<String, GuideOptions>()
         for ((key, value) in guideOptionsList) {
-            guideOptionsByAes[key] = GuideConfig.create(value).createGuideOptions()
+            val name = if (key in Option.Mapping.REAL_AES_OPTION_NAMES) {
+                Option.Mapping.toAes(key).name
+            } else {
+                key
+            }
+            guideOptions[name] = GuideConfig.create(value).createGuideOptions()
         }
-        return guideOptionsByAes
+        return guideOptions
     }
 
     internal fun createMappersAndScalesBeforeFacets(config: PlotConfigFrontend): Pair<Map<Aes<*>, ScaleMapper<*>>, Map<Aes<*>, Scale>> {

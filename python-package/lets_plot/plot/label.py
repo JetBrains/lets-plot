@@ -111,26 +111,11 @@ def ylab(label):
     return labs(y=label)
 
 
-def _is_aes(name):
-    aes_list = ['x', 'y', 'z', 'color', 'fill', 'paint_a', 'paint_b', 'paint_c', 'alpha', 'shape', 'linetype', 'size',
-                'stroke', 'linewidth', 'stacksize', 'width', 'height', 'binwidth', 'violinwidth', 'weight', 'intercept',
-                'slope', 'xintercept', 'yintercept', 'lower', 'middle', 'upper', 'sample', 'quantile', 'xmin', 'xmax',
-                'ymin', 'ymax', 'xend', 'yend', 'map_id', 'frame', 'speed', 'flow', 'label', 'family', 'fontface',
-                'lineheight', 'hjust', 'vjust', 'angle', 'radius', 'slice', 'explode', 'size_start', 'size_end',
-                'stroke_start', 'stroke_end']
-    return name in aes_list
-
-
-def _is_guided_aes(name):
-    aes_list = ['x', 'y', 'z',
-                'xmin', 'xmax', 'ymin', 'ymax', 'xend', 'yend',
-                'lower', 'middle', 'upper',
-                'sample',
-                'weight',
-                'intercept', 'xintercept', 'yintercept',
-                'color', 'fill', 'paint_a', 'paint_b', 'paint_c',
+def _is_title_by_scale_spec(aes):
+    aes_list = ['x', 'y',
+                'color', 'colour', 'col', 'fill', 'paint_a', 'paint_b', 'paint_c',
                 'alpha', 'shape', 'linetype', 'size', 'stroke', 'linewidth']
-    return name in aes_list
+    return aes.lower() in aes_list
 
 
 def labs(title=None, subtitle=None, caption=None, **labels):
@@ -180,7 +165,7 @@ def labs(title=None, subtitle=None, caption=None, **labels):
 
     # scales for aes or guides for others
     for key, label in labels.items():
-        if _is_aes(key):
+        if _is_title_by_scale_spec(key):
             specs.append(_scale(aesthetic=key, name=label))
         else:
             specs.append(guides(**{key: guide_legend(title=label)}))
