@@ -36,7 +36,7 @@ class LegendOptions constructor(
 
     override fun withTitle(title: String?): LegendOptions {
         return LegendOptions(
-            colCount, rowCount, byRow, title = title, isReverse
+            colCount, rowCount, byRow, title = title, overrideAesValues, isReverse
         )
     }
 
