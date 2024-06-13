@@ -110,20 +110,15 @@ internal class PlotInteractor(
     ) : InteractionContext {
 
         override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
-            val target = tiles.find { (bbox, _) -> plotCoord in bbox } ?: return null
-            val (bbox, tile) = target
+            val target = tiles.find { (geomBounds, _) -> plotCoord in geomBounds } ?: return null
+            val (geomBounds, tile) = target
             return object : InteractionTarget {
-                override val geomBounds: DoubleRectangle = bbox
-                override fun zoom(viewport: DoubleRectangle) {
-                    tile.interactionSupport.zoom(geomBounds, viewport)
-                }
+                override val geomBounds: DoubleRectangle = geomBounds
 
-                override fun zoom(scale: Double) {
-                    tile.interactionSupport.zoom(scale)
-                }
-
-                override fun pan(offset: DoubleVector) {
-                    tile.interactionSupport.pan(offset)
+                override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
+                    val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
+                    tile.interactionSupport.updateTransform(scale, translate)
+                    return tile.interactionSupport.calculateDataBounds()
                 }
             }
         }

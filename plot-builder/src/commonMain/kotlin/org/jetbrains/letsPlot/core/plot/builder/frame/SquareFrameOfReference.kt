@@ -33,7 +33,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 internal open class SquareFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
-    private val adjustedDomain: DoubleRectangle,
+    private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -43,14 +43,15 @@ internal open class SquareFrameOfReference(
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
+
     // Flip theme
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
 
     private var panOffset: DoubleVector = DoubleVector.ZERO
-    private var scale: Double = 1.0
+    private var scale: DoubleVector = DoubleVector(1.0, 1.0)
 
-    override fun zoom(scale: Double) {
+    override fun zoom(scale: DoubleVector) {
         this.scale = scale
     }
 
@@ -61,6 +62,15 @@ internal open class SquareFrameOfReference(
         val domainTo = coord.fromClient(to) ?: return null
 
         return domainTo.subtract(domainFrom)
+    }
+
+    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
+        val domainPoint0 = coord.fromClient(clientRect.origin)
+            ?: error("Can't translate client ${clientRect.origin} to data domain.")
+        val clientBottomRight = clientRect.origin.add(clientRect.dimension)
+        val domainPoint1 = coord.fromClient(clientBottomRight)
+            ?: error("Can't translate client $clientBottomRight to data domain.")
+        return DoubleRectangle.span(domainPoint0, domainPoint1)
     }
 
     // Rendering
@@ -189,10 +199,11 @@ internal open class SquareFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                axisInfo = axisInfo,
-                gridTheme = vGridTheme,
+                orientation = axisInfo.orientation,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
+                gridTheme = vGridTheme,
+                panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -207,10 +218,11 @@ internal open class SquareFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                axisInfo = axisInfo,
-                gridTheme = hGridTheme,
+                orientation = axisInfo.orientation,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
+                gridTheme = hGridTheme,
+                panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -252,12 +264,11 @@ internal open class SquareFrameOfReference(
 
         val breaksData = AxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
-            coord = TransformedCoordinateSystem(coord, panOffset, DoubleVector(scale, scale)),
+            coord = TransformedCoordinateSystem(coord, panOffset, scale),
             domain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
             axisTheme = axisTheme,
-            panelTheme = panelTheme,
             labelAdjustments = labelAdjustments
         )
         return Pair(labelAdjustments, breaksData)

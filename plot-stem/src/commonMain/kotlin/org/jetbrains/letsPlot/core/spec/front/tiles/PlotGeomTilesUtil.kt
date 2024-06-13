@@ -92,7 +92,7 @@ internal object PlotGeomTilesUtil {
                     scaleMapByLayer[layerIndex],
                     otherLayerWithTooltips,
                     isLiveMap,
-                    coordProvider.isLinear,
+                    coordProvider.isPolar,
                     theme
                 )
             }

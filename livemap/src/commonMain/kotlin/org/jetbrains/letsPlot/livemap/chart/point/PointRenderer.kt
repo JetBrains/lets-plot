@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.livemap.chart.point
 
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.chart.PointComponent
@@ -17,8 +18,10 @@ import kotlin.math.PI
 import kotlin.math.sqrt
 
 class PointRenderer(
-    private val shape: Int
+    private val shape: Int,
+    degreeAngle: Double
 ) : Renderer {
+    private val angle = toRadians(degreeAngle)
 
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val chartElement = entity.get<ChartElementComponent>()
@@ -31,7 +34,8 @@ class PointRenderer(
             ctx = ctx,
             radius = pointData.scaledRadius(chartElement.scalingSizeFactor),
             stroke = chartElement.scaledStrokeWidth(),
-            shape = shape
+            shape = shape,
+            angle = angle
         )
         if (chartElement.fillColor != null) {
             ctx.setFillStyle(chartElement.scaledFillColor())
@@ -43,7 +47,12 @@ class PointRenderer(
             ctx.stroke()
         }
     }
-    private fun drawMarker(ctx: Context2d, radius: Double, stroke: Double, shape: Int) {
+    private fun drawMarker(ctx: Context2d, radius: Double, stroke: Double, shape: Int, angle: Double) {
+        val needToRotate = shape !in listOf(1, 10, 16, 19, 20, 21) && angle != 0.0
+        if (needToRotate) {
+            ctx.rotate(angle)
+        }
+
         when (shape) {
             0 -> square(ctx, radius)
             1 -> circle(ctx, radius)
@@ -93,6 +102,10 @@ class PointRenderer(
             24 -> triangle(ctx, radius, stroke)
             25 -> triangle(ctx, radius, stroke, pointingUp = false)
             else -> throw IllegalStateException("Unknown point shape")
+        }
+
+        if (needToRotate) {
+            ctx.rotate(-angle)
         }
     }
 

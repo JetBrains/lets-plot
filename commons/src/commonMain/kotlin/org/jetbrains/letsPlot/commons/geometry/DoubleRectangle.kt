@@ -136,7 +136,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return result
     }
 
-    fun srinkToAspectRatio(targetRatio: DoubleVector): DoubleRectangle {
+    fun shrinkToAspectRatio(targetRatio: DoubleVector): DoubleRectangle {
         check(targetRatio.x > 0 && targetRatio.y > 0)
         val aspectRatio = targetRatio.x / targetRatio.y
         val newSize = if (aspectRatio >= 1.0) {

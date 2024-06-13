@@ -1,11 +1,10 @@
-## [4.3.3] - 2024-mm-dd
+## [4.3.4] - 2024-mm-dd
 
 ### Added
+- Legend title in guide_legend() and guide_colorbar().
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
 
 ### Changed
-
+- [**breaking change**] guide_legend()/guide_colorbar() require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
+ 
 ### Fixed
-- Livemap: improve "tiles" documentation [[#1093](https://github.com/JetBrains/lets-plot/issues/1093)].
-- Undesired vertical scroller when displaying `gggrid` in Jupyter notebook.
-- GeoJson structure breaks if the ring start label occurs several times [[#1086](https://github.com/JetBrains/lets-plot/issues/1086)].
-- `theme`: left margin doesn't work for the `plot_title` parameter [[#1101](https://github.com/JetBrains/lets-plot/issues/1101)].

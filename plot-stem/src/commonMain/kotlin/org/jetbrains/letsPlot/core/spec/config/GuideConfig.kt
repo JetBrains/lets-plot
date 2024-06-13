@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Guide.Legend.OVERRIDE_AES
 import org.jetbrains.letsPlot.core.spec.Option.Guide.Legend.ROW_COUNT
 import org.jetbrains.letsPlot.core.spec.Option.Guide.NONE
 import org.jetbrains.letsPlot.core.spec.Option.Guide.REVERSE
+import org.jetbrains.letsPlot.core.spec.Option.Guide.TITLE
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import kotlin.math.max
 
@@ -29,7 +30,9 @@ abstract class GuideConfig private constructor(opts: Map<String, Any>) : Options
 
     fun createGuideOptions(aopConversion: AesOptionConversion): GuideOptions {
         val options = createGuideOptionsIntern(aopConversion)
-        return options.withReverse(getBoolean(REVERSE))
+        return options
+            .withTitle(getString(TITLE))
+            .withReverse(getBoolean(REVERSE))
     }
 
     protected abstract fun createGuideOptionsIntern(aopConversion: AesOptionConversion): GuideOptions

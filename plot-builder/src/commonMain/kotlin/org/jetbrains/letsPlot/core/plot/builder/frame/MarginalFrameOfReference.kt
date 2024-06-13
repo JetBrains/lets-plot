@@ -24,11 +24,15 @@ internal class MarginalFrameOfReference(
     private val plotBackground: Color,
     private val isDebugDrawing: Boolean
 ) : FrameOfReference {
-    override fun zoom(scale: Double) {
+    override fun zoom(scale: DoubleVector) {
         error("Not supported by MarginalFrameOfReference")
     }
 
     override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
+        error("Not supported by MarginalFrameOfReference")
+    }
+
+    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
         error("Not supported by MarginalFrameOfReference")
     }
 

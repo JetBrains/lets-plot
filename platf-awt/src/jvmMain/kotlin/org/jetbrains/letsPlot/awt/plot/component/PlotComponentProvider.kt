@@ -10,5 +10,5 @@ import javax.swing.JComponent
 
 interface PlotComponentProvider {
     fun getPreferredSize(containerSize: Dimension): Dimension
-    fun createComponent(containerSize: Dimension?): JComponent
+    fun createComponent(containerSize: Dimension?, specOverride: Map<String, Any>? = null): JComponent
 }

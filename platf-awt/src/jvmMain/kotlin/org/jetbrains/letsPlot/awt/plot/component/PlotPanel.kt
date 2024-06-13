@@ -7,18 +7,14 @@ package org.jetbrains.letsPlot.awt.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.commons.registration.Disposable
-import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
 import java.awt.event.ContainerAdapter
 import java.awt.event.ContainerEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JScrollPane
-import javax.swing.Timer
 
 open class PlotPanel(
     private val plotComponentProvider: PlotComponentProvider,
@@ -27,12 +23,7 @@ open class PlotPanel(
     applicationContext: ApplicationContext,
 ) : JPanel(), Disposable {
 
-    val figureModel: FigureModel = PlotPanelFigureModel(
-        plotPanel = this,
-        plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
-        plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
-        applicationContext = applicationContext,
-    )
+    val figureModel: FigureModel
 
     init {
         // Layout a single child component.
@@ -68,12 +59,25 @@ open class PlotPanel(
             null
         }
 
+        figureModel = PlotPanelFigureModel(
+            plotPanel = this,
+            providedComponent = providedComponent,
+            plotComponentFactory = { containerSize: Dimension, specOverride: Map<String, Any>? ->
+                rebuildProvidedComponent(
+                    containerSize,
+                    specOverride
+                )
+            },
+            applicationContext = applicationContext,
+        )
+
         addComponentListener(
             ResizeHook(
                 plotPanel = this,
-                lastProvidedComponent = providedComponent,
+                skipFirstResizeEvent = providedComponent != null,
+                plotScrollPane = if (providedComponent is JScrollPane) providedComponent else null,
                 plotPreferredSize = { containerSize: Dimension -> plotComponentProvider.getPreferredSize(containerSize) },
-                plotComponentFactory = { containerSize: Dimension -> rebuildProvidedComponent(containerSize) },
+                figureModel = figureModel,
                 applicationContext = applicationContext,
                 repaintDelay = repaintDelay
             )
@@ -114,95 +118,28 @@ open class PlotPanel(
 //        println("plotComponentRebuilt: ${plotComponent::class.simpleName}")
     }
 
-    private fun rebuildProvidedComponent(containerSize: Dimension?): JComponent {
+    private fun rebuildProvidedComponent(
+        containerSize: Dimension?,
+        specOverride: Map<String, Any>? = null
+    ): JComponent {
         removeAll()
-        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize)
+        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize, specOverride)
 
         // notify
-        val actualPlotComponent = if (providedComponent is JScrollPane) {
-            providedComponent.viewport.view as JComponent
-        } else {
-            providedComponent
-        }
-        plotComponentCreated(actualPlotComponent)
+        plotComponentCreated(actualPlotComponentFromProvidedComponent(providedComponent))
 
         // add
         add(providedComponent)
-
-        (figureModel as PlotPanelFigureModel).let {
-            it.lastProvidedComponent = providedComponent
-            it.toolEventDispatcher =
-                actualPlotComponent.getClientProperty(ToolEventDispatcher::class) as? ToolEventDispatcher
-        }
-
         return providedComponent
     }
 
 
-    private class ResizeHook(
-        private val plotPanel: PlotPanel,
-        private var lastProvidedComponent: JComponent?,
-        private val plotPreferredSize: (Dimension) -> Dimension,
-        private val plotComponentFactory: (Dimension) -> JComponent,
-        private val applicationContext: ApplicationContext,
-        repaintDelay: Int // ms
-
-    ) : ComponentAdapter() {
-        private var skipThisRun = lastProvidedComponent != null
-
-        private var lastPreferredSize: Dimension? = null
-
-        private val refreshTimer: Timer = Timer(repaintDelay) {
-            rebuildPlotComponent()
-        }.apply { isRepeats = false }
-
-        override fun componentResized(e: ComponentEvent?) {
-            if (!refreshTimer.isRunning && skipThisRun) {
-                // When in IDEA pligin we can modify our state
-                // only in a command.
-                applicationContext.runWriteAction() {
-                    skipThisRun = false
-                }
-                return
-            }
-
-            refreshTimer.stop()
-
-            if (lastProvidedComponent is JScrollPane) {
-                lastProvidedComponent?.preferredSize = e?.component?.size
-                lastProvidedComponent?.size = e?.component?.size
-                plotPanel.revalidate()
-                return
-            }
-
-            refreshTimer.restart()
-        }
-
-        private fun rebuildPlotComponent() {
-            val action = Runnable {
-
-                val plotContainerSize = plotPanel.size
-                if (plotContainerSize == null) return@Runnable
-
-                check(!(lastProvidedComponent is JScrollPane)) { "Unexpected JScrollPane" }
-
-                // Either updating an existing "single" plot or
-                // creating a new plot (single or GGBunch) for a first time.
-                val preferredSize: Dimension = plotPreferredSize(plotContainerSize)
-                if (lastPreferredSize == preferredSize) {
-                    // No change in size => no need to rebuild plot component
-                    return@Runnable
-                }
-                lastPreferredSize = preferredSize
-                lastProvidedComponent = plotComponentFactory(plotContainerSize)
-
-                plotPanel.revalidate()
-            }
-
-            applicationContext.invokeLater(action) {
-                // "expired"
-                // Other timer is running? Weird but let's wait for the next action.
-                refreshTimer.isRunning
+    companion object {
+        fun actualPlotComponentFromProvidedComponent(providedComponent: JComponent): JComponent {
+            return if (providedComponent is JScrollPane) {
+                providedComponent.viewport.view as JComponent
+            } else {
+                providedComponent
             }
         }
     }

@@ -32,10 +32,10 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
-        isLinearCoordSystem: Boolean,
+        isPolarCoordSystem: Boolean,
         theme: Theme
     ): GeomInteraction {
-        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, isLinearCoordSystem, theme).build()
+        return createGeomInteractionBuilder(layerConfig, scaleMap, multilayerWithTooltips, isLiveMap, isPolarCoordSystem, theme).build()
     }
 
     internal fun createGeomInteractionBuilder(
@@ -43,14 +43,14 @@ object GeomInteractionUtil {
         scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
-        isLinearCoordSystem: Boolean,
+        isPolarCoordSystem: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind = layerConfig.geomProto.geomKind,
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
-            isLinearCoordSystem = isLinearCoordSystem,
+            isPolarCoordSystem = isPolarCoordSystem,
             multilayerWithTooltips = multilayerWithTooltips,
             definedAesList = layerConfig.varBindings.map(VarBinding::aes) + layerConfig.constantsMap.keys
         )
@@ -139,7 +139,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
-        isLinearCoordSystem: Boolean,
+        isPolarCoordSystem: Boolean,
         multilayerWithTooltips: Boolean,
         definedAesList: List<Aes<*>>,
     ): GeomTooltipSetup {
@@ -147,7 +147,7 @@ object GeomInteractionUtil {
             geomKind,
             statKind,
             isCrosshairEnabled,
-            isLinearCoordSystem,
+            isPolarCoordSystem,
             definedAesList
         ).let {
             var multilayerLookup = false
@@ -178,16 +178,12 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
-        isLinearCoordSystem: Boolean,
+        isPolarCoordSystem: Boolean,
         definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
-        if (!isLinearCoordSystem
-            && geomKind != GeomKind.MAP // FIXME: mercator is also non linear, but tooltips strategy should not be changed
-            ) {
-            return GeomTooltipSetup.bivariateFunction(
-                GeomTooltipSetup.AREA_GEOM,
-                axisTooltipVisibilityFromConfig = true
-            )
+        if (isPolarCoordSystem) {
+            // Always show axis tooltips for polar coordinate system as all geoms are area-like
+            return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, axisTooltipVisibilityFromConfig = true)
         }
 
         if (statKind === StatKind.SMOOTH) {

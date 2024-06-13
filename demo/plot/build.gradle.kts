@@ -28,8 +28,9 @@ kotlin {
     val batikVersion = extra["batik_version"] as String
     val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
     val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
+    val kotlinxCoroutinesVersion = extra["kotlinx_coroutines_version"] as String
     val ktorVersion = extra["ktor_version"] as String
-    val jfxPlatform = extra["jfx_platform_resolved"] as String
+    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
@@ -39,6 +40,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(kotlin("stdlib-common"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
 
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))

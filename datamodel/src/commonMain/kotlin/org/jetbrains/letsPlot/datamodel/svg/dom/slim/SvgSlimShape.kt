@@ -6,10 +6,12 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 interface SvgSlimShape : SvgSlimObject {
     fun setFill(c: Color, alpha: Double)
     fun setStroke(c: Color, alpha: Double)
     fun setStrokeWidth(v: Double)
     fun setStrokeDashArray(v: String)
+    fun setTransform(t: SvgTransform)
 }

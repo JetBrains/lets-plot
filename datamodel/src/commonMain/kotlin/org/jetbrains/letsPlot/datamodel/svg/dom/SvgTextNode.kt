@@ -5,10 +5,12 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 class SvgTextNode(text: String) : SvgNode() {
 
@@ -38,6 +40,10 @@ class SvgTextNode(text: String) : SvgNode() {
 
             override fun checkRemove(index: Int, item: SvgNode) {
                 throw UnsupportedOperationException("Cannot remove children from SvgTextNode")
+            }
+
+            override fun addListener(l: CollectionListener<in SvgNode>): Registration {
+                return Registration.EMPTY
             }
         }
     }

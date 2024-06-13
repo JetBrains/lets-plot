@@ -125,4 +125,15 @@ object SvgUtils {
         }
         return findRoot(node)
     }
+
+    fun breadthFirstTraversal(node: SvgNode): Sequence<SvgNode> {
+        fun collectChildren(node: SvgNode): Sequence<SvgNode> {
+            return node.children().asSequence() + node.children().asSequence().flatMap(::collectChildren)
+        }
+        return sequenceOf(node) + collectChildren(node)
+    }
+
+    fun depthFirstTraversal(node: SvgNode): Sequence<SvgNode> {
+        return sequenceOf(node) + node.children().asSequence().flatMap(::depthFirstTraversal)
+    }
 }

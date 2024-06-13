@@ -152,6 +152,7 @@ object Option {
         const val HEIGHT = "height"
         const val METAINFO_LIST = "metainfo_list"
         const val METAINFO = "metainfo"  // a special kind of FeatureSpec
+        const val SPEC_OVERRIDE = "spec_override"  // Tools support. Values that tool passes to a FigureModel.
     }
 
     object Layer {
@@ -627,6 +628,7 @@ object Option {
         const val Y_FORMAT = "y_format"
         const val X_LABWIDTH = "x_labwidth"
         const val Y_LABWIDTH = "y_labwidth"
+
         // wrap
         const val FACETS = "facets"
         const val NCOL = "ncol"
@@ -673,6 +675,7 @@ object Option {
         const val COLOR_BAR_GB = "colourbar"
 
         const val REVERSE = "reverse"
+        const val TITLE = "title"
 
         object Legend {
             const val ROW_COUNT = "nrow"
@@ -964,7 +967,7 @@ object Option {
 
     object Coord {
         // coord parameters
-        const val X_LIM = "xlim"
+        const val X_LIM = "xlim"    // array of two nullable numbers
         const val Y_LIM = "ylim"
         const val RATIO = "ratio"
         const val FLIPPED = "flip"
@@ -1018,5 +1021,11 @@ object Option {
         const val FAMILY = "family"
         const val WIDTH_CORRECTION = "width_correction"
         const val MONOSPACED = "monospaced"
+    }
+
+    object SpecOverride {
+        // Tools can temporary override default or provided limits.
+        const val COORD_XLIM_TRANSFORMED = "coord_xlim_transformed"  // array of two nullable numbers
+        const val COORD_YLIM_TRANSFORMED = "coord_ylim_transformed"
     }
 }

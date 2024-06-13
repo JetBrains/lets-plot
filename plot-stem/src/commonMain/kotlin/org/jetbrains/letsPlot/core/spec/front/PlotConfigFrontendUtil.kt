@@ -18,8 +18,10 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.core.spec.config.CoordConfig
 import org.jetbrains.letsPlot.core.spec.config.GuideConfig
+import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor.Companion.over
 import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
 import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
@@ -113,12 +115,26 @@ object PlotConfigFrontendUtil {
         }
 
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
+
         val coordProvider = CoordConfig.createCoordProvider(
             config[Option.Plot.COORD],
             scaleByAesBeforeFacets.getValue(Aes.X).transform,
             scaleByAesBeforeFacets.getValue(Aes.Y).transform,
             defaultCoordProvider
-        ).let {
+        ).let { coordProvider ->
+            @Suppress("UNCHECKED_CAST")
+            config[Option.Plot.SPEC_OVERRIDE]?.let { specOverride ->
+                val accessor = over(specOverride as Map<String, Any>)
+                val xlimOverride = accessor.getNumQPair(SpecOverride.COORD_XLIM_TRANSFORMED)
+                    .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
+                val ylimOverride = accessor.getNumQPair(SpecOverride.COORD_YLIM_TRANSFORMED)
+                    .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
+
+                coordProvider
+                    .withXlimOverride(xlimOverride)
+                    .withYlimOverride(ylimOverride)
+            } ?: coordProvider
+        }.let {
             if (it.isPolar) {
                 (it as PolarCoordProvider).withHScaleContinuous(scaleByAesBeforeFacets.getValue(Aes.X).isContinuousDomain)
             } else {

@@ -90,8 +90,8 @@ fun buildPlotFromProcessedSpecs(
     }
 }
 
-private fun buildPlotFromProcessedSpecsIntern(
-    plotSpec: MutableMap<String, Any>,
+internal fun buildPlotFromProcessedSpecsIntern(
+    plotSpec: Map<String, Any>,
     width: Double,
     height: Double,
     parentElement: HTMLElement,
@@ -100,22 +100,27 @@ private fun buildPlotFromProcessedSpecsIntern(
 
     // Fixed plot size (not compatible with reactive sizing).
     val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
+
     // Datalore specific option - not compatible with reactive sizing.
     val datalorePreferredWidth: Double? =
         parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
-    val sizingPolicy = when (val sizingOptions = options[SizingOption.KEY]) {
+    val sizingPolicy = if (plotSizeProvided != null) {
+        // Ignore sizing options even if provided
+        SizingPolicy.fixedBoth(plotSizeProvided)
+    } else when (val sizingOptions = options[SizingOption.KEY]) {
         is Map<*, *> -> SizingPolicy.create(sizingOptions)
         else -> SizingPolicy.DEFAULT
     }
 
-    val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
-    val (plotSize, plotMaxWidth) = if (plotSizeProvided != null) {
+    val (plotSize, plotMaxWidth) = /*if (plotSizeProvided != null) {
         SizingPolicyAdapter.SizeAndMaxWidth(plotSizeProvided, null)
-    } else if (datalorePreferredWidth != null) {
+    } else */if (datalorePreferredWidth != null) {
         SizingPolicyAdapter.SizeAndMaxWidth(null, null)
     } else {
-        sizingPolicyAdapter.monolithicSizingParameters(parentElement)
+
+        val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
+        sizingPolicyAdapter.monolithicSizingParameters(plotSizeProvided, parentElement)
     }
 
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
@@ -142,9 +147,8 @@ private fun buildPlotFromProcessedSpecsIntern(
         val buildInfo = success.buildInfos[0]
         val result = FigureToHtml(buildInfo, parentElement).eval()
         FigureModelJs(
-            parentElement,
-            sizingPolicy,
-            buildInfo,
+            plotSpec,
+            MonolithicParameters(width, height, parentElement, options),
             result.toolEventDispatcher,
             result.figureRegistration
         )

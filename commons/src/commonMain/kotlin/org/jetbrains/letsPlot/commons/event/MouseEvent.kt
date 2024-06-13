@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 
 
 open class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModifiers) : PointEvent(x, y) {
+    var preventDefault: Boolean = false
 
     constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)
 

@@ -54,7 +54,7 @@ object MonolithicCommon {
 
 
     fun buildPlotsFromProcessedSpecs(
-        plotSpec: MutableMap<String, Any>,
+        plotSpec: Map<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double? = null,
         plotPreferredWidth: Double? = null
@@ -110,7 +110,7 @@ object MonolithicCommon {
     }
 
     private fun buildGGBunchFromProcessedSpecs(
-        bunchSpec: MutableMap<String, Any>,
+        bunchSpec: Map<String, Any>,
         maxWidth: Double?,
         preferredWidth: Double?
     ): PlotsBuildResult {

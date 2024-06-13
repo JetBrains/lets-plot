@@ -6,89 +6,88 @@
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectFromMap
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
 import org.w3c.dom.HTMLElement
-import sizing.SizingPolicy
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
 @JsExport
 class FigureModelJs internal constructor(
-    private val parentElement: HTMLElement,
-    private val sizingPolicy: SizingPolicy,
-    private val buildInfo: FigureBuildInfo,
+    private val processedPlotSpec: Map<String, Any>,
+    private val monolithicParameters: MonolithicParameters,
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
-    private var toolEventHandler: ((dynamic) -> Unit)? = null
-    private val activeInteractionsByOrigin: MutableMap<String, MutableList<String>> = HashMap()
+    private var toolEventCallback: ((dynamic) -> Unit)? = null
 
-    fun updateView() {
+    fun onToolEvent(callback: (dynamic) -> Unit) {
+        toolEventCallback = callback
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+    }
+
+    fun updateView(specOverrideJs: dynamic = null) {
+
+        val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
+            dynamicObjectToMap(specOverrideJs)
+        } else {
+            null
+        }
+
+        val currentInteractions = toolEventDispatcher.deactivateAllSilently()
+
         figureRegistration?.dispose()
         figureRegistration = null
 
-        val figureSize = buildInfo.bounds.dimension
-        val figureNewSize = sizingPolicy.resize(figureSize, parentElement)
-        val newBuildInfo = buildInfo.withPreferredSize(figureNewSize)
+        val newPlotSpec = specOverride?.let {
+            processedPlotSpec + mapOf(SPEC_OVERRIDE to specOverride)
+        } ?: processedPlotSpec
+        val newFigureModel = buildPlotFromProcessedSpecsIntern(
+            newPlotSpec,
+            monolithicParameters.width,
+            monolithicParameters.height,
+            monolithicParameters.parentElement,
+            monolithicParameters.options
+        )
 
-        val result = FigureToHtml(newBuildInfo, parentElement).eval()
-        toolEventDispatcher = result.toolEventDispatcher
-        figureRegistration = result.figureRegistration
-    }
+        if (newFigureModel == null) return  // something went wrong.
 
-    fun onToolEvent(callback: (dynamic) -> Unit) {
-        toolEventHandler = callback
-    }
+        figureRegistration = newFigureModel.figureRegistration
+        toolEventDispatcher = newFigureModel.toolEventDispatcher
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
 
-    fun activateInteraction(origin: String, interactionSpecJs: dynamic) {
-        val interactionSpec = dynamicObjectToMap(interactionSpecJs)
-        val response: List<Map<String, Any>> = toolEventDispatcher.activateInteraction(origin, interactionSpec)
-        response.forEach {
-            processToolEvent(it)
+        // Re-activate interactions
+        currentInteractions.forEach { (origin, interactionSpec) ->
+            toolEventDispatcher.activateInteractions(origin, interactionSpec)
         }
+    }
+
+    fun activateInteraction(origin: String, interactionSpecListJs: dynamic) {
+        val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
+        require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
+        @Suppress("UNCHECKED_CAST")
+        interactionSpecList as List<Map<String, Any>>
+        toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 
     fun deactivateInteractions(origin: String) {
-        val originAndInteractionList = activeInteractionsByOrigin.flatMap { (origin, interactionList) ->
-            interactionList.map {
-                Pair(origin, it)
-            }
-        }
-
-        originAndInteractionList.forEach { (origin, interaction) ->
-            val response: Map<String, Any> = toolEventDispatcher.deactivateInteraction(origin, interaction)
-            processToolEvent(response)
-        }
+        toolEventDispatcher.deactivateInteractions(origin)
     }
 
-    private fun processToolEvent(event: Map<String, Any>) {
-        val origin = event.getValue(EVENT_INTERACTION_ORIGIN) as String
-        val interactionName = event.getValue(EVENT_INTERACTION_NAME) as String
-        when (event.getValue(EVENT_NAME) as String) {
-            INTERACTION_ACTIVATED -> {
-                activeInteractionsByOrigin.getOrPut(origin) { ArrayList<String>() }.add(interactionName)
-            }
-
-            INTERACTION_DEACTIVATED -> {
-                activeInteractionsByOrigin[origin]?.remove(interactionName)
-            }
-
-            else -> {
-                throw IllegalStateException("Unexpected tool event: $event")
-            }
-        }
-        toolEventHandler?.invoke(dynamicObjectFromMap(event))
+    private fun handleToolEvent(event: Map<String, Any>) {
+        toolEventCallback?.invoke(dynamicFromAnyQ(event))
     }
-
 
     companion object {
         private val LOG = PortableLogging.logger("FigureModelJs")
     }
 }
+
+internal class MonolithicParameters(
+    val width: Double,
+    val height: Double,
+    val parentElement: HTMLElement,
+    val options: Map<String, Any>
+)

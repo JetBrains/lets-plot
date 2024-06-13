@@ -48,7 +48,7 @@ class PathConverterTest {
 
         matcher!!
             .strokeWidth(eq(1.1))
-            .lineDash(vectorEq(listOf(4.73, 4.73)))
+            .lineDash(vectorEq(listOf(4.4, 4.4)))
 
         assertMapObject()
     }
@@ -61,7 +61,7 @@ class PathConverterTest {
 
         matcher!!
             .strokeWidth(eq(4.4))
-            .lineDash(vectorEq(listOf(18.92, 18.92)))
+            .lineDash(vectorEq(listOf(17.6, 17.6)))
 
         assertMapObject()
     }

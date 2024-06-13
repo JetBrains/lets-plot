@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 // See: PlotPanel.ResizeHook
 interface FigureModel {
     fun onToolEvent(callback: (Map<String, Any>) -> Unit)
-    fun activateInteraction(origin: String, interactionSpec: Map<String, Any>)
+    fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>)
     fun deactivateInteractions(origin: String)
+    fun updateView(specOverride: Map<String, Any>? = null)
 }

@@ -19,7 +19,7 @@ val artifactVersion = project.version as String
 val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
 val mavenLocalPath = rootProject.extra["localMavenRepository"]
 
-val jvmJarCommon by tasks.registering (Jar::class) {
+val jvmJarCommon by tasks.named<Jar>("jvmJar") {
     archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
 
     // Add LICENSE file to the META-INF folder inside published JAR files.
@@ -49,7 +49,7 @@ publishing {
             artifactId = artifactBaseName
             version = artifactVersion
 
-            artifact(jvmJarCommon.get())
+            artifact(jvmJarCommon)
 
             pom {
                 name = "Lets-Plot common modules"

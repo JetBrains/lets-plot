@@ -39,7 +39,6 @@ class PolarAxisComponent(
     private fun buildAxis() {
         val rootElement = rootGroup
 
-
         // Ticks and labels
         if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
             val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
@@ -87,10 +86,9 @@ class PolarAxisComponent(
         label: String,
         labelOffset: DoubleVector,
         axisTheme: AxisTheme,
-        breakVector: DoubleVector,
+        breakCoord: DoubleVector,
         center: DoubleVector
     ): Pair<TextLabel?, SvgLineElement?> {
-        val breakCoord = breakVector.add(breaksData.center)
 
         val tickMark: SvgLineElement? = if (axisTheme.showTickMarks()) {
             val tickMark = SvgLineElement()
@@ -108,12 +106,12 @@ class PolarAxisComponent(
                 }
 
                 Orientation.BOTTOM -> {
-                    val tickMarkVector = breakVector.mul(1 + markLength / breakVector.length())
+                    val tickMarkVector = breakCoord.mul(1 + markLength / breakCoord.length())
                     tickMark.x2().set(tickMarkVector.add(center).x)
                     tickMark.y2().set(tickMarkVector.add(center).y)
 
-                    tickMark.x1().set(breakVector.add(center).x)
-                    tickMark.y1().set(breakVector.add(center).y)
+                    tickMark.x1().set(breakCoord.add(center).x)
+                    tickMark.y1().set(breakCoord.add(center).y)
                 }
 
                 Orientation.RIGHT -> error("Unsupported orientation $orientation")
@@ -137,7 +135,7 @@ class PolarAxisComponent(
                 }
 
                 true -> {
-                    val pos = breakVector.mul(1 + labelOffset.length() / breakVector.length())
+                    val pos = breakCoord.mul(1 + labelOffset.length() / breakCoord.length())
                     tickLabel.moveTo(pos.add(center))
                     val degrees = toDegrees(atan2(pos.y, pos.x))
                     val (hAnchor, vAnchor) = when (degrees) {

@@ -29,6 +29,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
+/**
+ * ToDo: do not extend SquareFrameOfReference. Both should extend a common base.
+ */
 internal class PolarFrameOfReference(
     plotContext: PlotContext,
     private val hScaleBreaks: ScaleBreaks,
@@ -105,10 +108,11 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                axisInfo = axisInfo,
-                gridTheme = vGridTheme,
+                orientation = axisInfo.orientation,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
+                gridTheme = vGridTheme,
+                panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -123,10 +127,11 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                axisInfo = axisInfo,
-                gridTheme = hGridTheme,
+                orientation = axisInfo.orientation,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
+                gridTheme = hGridTheme,
+                panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
             gridComponent.moveTo(gridOrigin)
@@ -204,9 +209,7 @@ internal class PolarFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = buildGeom(layer, targetCollector)
-        layerComponent.moveTo(layoutInfo.geomContentBounds.origin)
-        return layerComponent
+        return buildGeom(layer, targetCollector)
     }
 
     override fun setClip(element: SvgComponent) {

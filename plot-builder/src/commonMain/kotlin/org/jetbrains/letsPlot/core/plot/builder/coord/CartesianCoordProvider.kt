@@ -13,6 +13,7 @@ internal class CartesianCoordProvider(
     yLim: Pair<Double?, Double?>,
     flipped: Boolean = false
 ) : CoordProviderBase(xLim, yLim, flipped) {
+
     override fun with(
         xLim: Pair<Double?, Double?>,
         yLim: Pair<Double?, Double?>,

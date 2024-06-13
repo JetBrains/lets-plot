@@ -13,6 +13,10 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 internal class MouseDragInteraction(
     private val ctx: InteractionContext
 ) : Disposable {
+    operator fun component1() = target
+    operator fun component2() = dragFrom
+    operator fun component3() = dragTo
+    operator fun component4() = dragDelta
 
     private val started: Boolean
         get() = _target != null
@@ -40,6 +44,7 @@ internal class MouseDragInteraction(
             return field
         }
 
+    // Relative to the previous event.
     var dragDelta: DoubleVector = DoubleVector.ZERO
         private set
         get():DoubleVector {
