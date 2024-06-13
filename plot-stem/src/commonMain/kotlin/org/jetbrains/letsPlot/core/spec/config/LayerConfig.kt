@@ -400,8 +400,8 @@ class LayerConfig(
             in explicitConstantAes -> aes
             else -> {
                 val optionName = when (aes) {
-                    Aes.COLOR -> Layer.COLOR_BY
-                    Aes.FILL -> Layer.FILL_BY
+                    Aes.COLOR -> Option.Layer.COLOR_BY
+                    Aes.FILL -> Option.Layer.FILL_BY
                     else -> aes.name
                 }
 
@@ -444,8 +444,8 @@ class LayerConfig(
         }
 
         private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-            return if (opts.has(Layer.SAMPLING)) {
-                SamplingConfig.create(opts.getSafe(Layer.SAMPLING))
+            return if (opts.has(Option.Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
             } else {
                 listOf(defaultSampling)
             }
