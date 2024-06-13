@@ -11,6 +11,11 @@ from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.util import as_annotated_data
 from lets_plot.plot._global_theme import _get_global_theme
 
+try:
+    import pandas
+except ImportError:
+    pandas = None
+
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
 
@@ -84,6 +89,10 @@ def ggplot(data=None, mapping=None):
         data = data.get_geocodes()
 
     data, mapping, data_meta = as_annotated_data(data, mapping)
+
+    if pandas and isinstance(data, pandas.DataFrame):
+        if data.columns.dtype.kind in ['i', 'u']:
+            data.columns = data.columns.astype(str)
 
     plot_spec = PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 

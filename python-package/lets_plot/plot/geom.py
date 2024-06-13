@@ -7,6 +7,11 @@ from lets_plot.geo_data_internals.utils import is_geocoder
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
+try:
+    import pandas
+except ImportError:
+    pandas = None
+
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
 #
@@ -7027,6 +7032,10 @@ def _geom(name, *,
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
+
+    if pandas and isinstance(data, pandas.DataFrame):
+        if data.columns.dtype.kind in ['i', 'u']:
+            data.columns = data.columns.astype(str)
 
     return LayerSpec(geom=name,
                      stat=stat,

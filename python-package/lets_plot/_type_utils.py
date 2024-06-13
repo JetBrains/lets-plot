@@ -35,7 +35,6 @@ def standardize_dict(value: Dict) -> Dict:
     result = {}
     for k, v in value.items():
         result[_standardize_value(k)] = _standardize_value(v)
-
     return result
 
 
