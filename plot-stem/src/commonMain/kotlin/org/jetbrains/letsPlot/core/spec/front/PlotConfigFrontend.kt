@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.front
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideTitleOption
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
@@ -32,7 +33,16 @@ class PlotConfigFrontend private constructor(
     internal val yAxisPosition: AxisPosition
 
     init {
-        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
+        val guides = createGuideOptionsMap(getMap(GUIDES))
+
+        val guidesWithTitlesOnly = guides.filterValues { it is GuideTitleOption }.toMutableMap()
+        val namedGuides = guides.filterValues { it !is GuideTitleOption }
+
+        guideOptionsMap = (createGuideOptionsMap(this.scaleConfigs) + namedGuides).mapValues { (aes, options) ->
+            val titleOption = guidesWithTitlesOnly[aes]
+            guidesWithTitlesOnly.remove(aes)
+            titleOption?.let { options.withTitle(titleOption.title) } ?: options
+        } + guidesWithTitlesOnly
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition
