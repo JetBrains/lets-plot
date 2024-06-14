@@ -37,6 +37,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
     mapping_meta = []
     # series annotations
     series_meta = []
+    types_meta = []
 
     class VariableMeta:
         def __init__(self):
@@ -53,6 +54,13 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
                 var_meta = VariableMeta()
                 var_meta.levels = dtype.categories.to_list()
                 variables_meta[column_name] = var_meta
+
+            types_meta.append({
+                'column': column_name,
+                'type_name': dtype.name,
+                'type_kind': dtype.kind
+            })
+
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -109,6 +117,9 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
                         'column': column_name,
                         'type': 'datetime'
                     })
+
+    if len(types_meta) > 0:
+        data_meta.update({'types_annotations': types_meta})
 
     if len(series_meta) > 0:
         data_meta.update({'series_annotations': series_meta})

@@ -136,6 +136,8 @@ class LayerConfig(
 
     init {
         ownData = ConfigUtil.createDataFrame(get(DATA))
+        val odm = getMap(DATA_META)
+        val pdm = plotDataMeta
 
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 

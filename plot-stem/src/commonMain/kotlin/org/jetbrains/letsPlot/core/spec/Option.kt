@@ -73,6 +73,14 @@ object Option {
                 const val TIME_ZONE = "time_zone"
             }
         }
+
+        object TypesAnnotation {
+            const val TAG = "types_annotations"
+
+            const val COLUMN = "column"
+            const val TYPE_NAME = "type_name"
+            const val TYPE_KIND = "type_kind"
+        }
     }
 
     object ErrorGen {

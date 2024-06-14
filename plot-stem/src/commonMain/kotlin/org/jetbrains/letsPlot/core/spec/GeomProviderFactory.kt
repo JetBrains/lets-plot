@@ -403,6 +403,12 @@ internal object GeomProviderFactory {
     private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom, superscriptExponent: Boolean) {
         opts.getString(Option.Geom.Text.LABEL_FORMAT)
             ?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
+            ?:let {
+                val v = opts.getString(Option.Meta.TypesAnnotation.TYPE_KIND)
+                if (v == "i") {
+                    geom.formatter = StringFormat.forOneArg("{l}", superscriptExponent = superscriptExponent)::format
+                }
+            }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }
