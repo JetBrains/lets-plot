@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, FeatureSpecArray
-from .scale import _scale
+from .guide import _guide, guides
 
 #
 # Plot title
@@ -154,9 +154,9 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
 
-    # scales
-    for aes, label in labels.items():
-        specs.append(_scale(aesthetic=aes, name=label))
+    # guides
+    for key, label in labels.items():
+        specs.append(guides(**{key: _guide(name=None, title=label)}))
 
     if len(specs) == 1:
         return specs[0]
