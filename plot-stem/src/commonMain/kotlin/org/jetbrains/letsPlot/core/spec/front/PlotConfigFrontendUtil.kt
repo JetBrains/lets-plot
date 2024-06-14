@@ -67,7 +67,8 @@ object PlotConfigFrontendUtil {
             layerConfigs,
             transformByAes,
             mappersByAes,
-            config.scaleProviderByAes
+            config.scaleProviderByAes,
+            config.guideOptionsMap
         )
         return Pair(mappersByAes, scaleByAes)
     }

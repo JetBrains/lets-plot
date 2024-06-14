@@ -40,6 +40,7 @@ internal class ScaleProviderBuilderTest {
             Transforms.IDENTITY,
             continuousRange = false,
             guideBreaks = null,
+            guideTitle = null
         )
 
         fun actual(scale: Scale): BreaksGenerator {

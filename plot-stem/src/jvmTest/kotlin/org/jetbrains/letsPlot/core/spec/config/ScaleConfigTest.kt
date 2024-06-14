@@ -198,11 +198,12 @@ class ScaleConfigTest {
 
     @Test
     fun `choosing a scale name`() {
-        fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null) = """
+        fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null, guideParam: String? = null) = """
             {
               "data": { "x": [0, 1], "v": [0, 1] },
               "kind": "plot",
               "scales": [ ${scaleParams.takeIf { it != null } ?: ""} ],
+              "guides": { ${guideParam.takeIf { it != null } ?: ""} },
               "layers": [
                 {
                   "geom": "point",
@@ -222,6 +223,7 @@ class ScaleConfigTest {
 
         val scaleNameParam = "{ 'aesthetic': 'color', 'name': 'name from scale' }"
         val asDiscreteLabelParam = "{ 'label': 'label from as_discrete' }"
+        val guideParam = "'color': { 'title': 'guide title' }"
 
         // use variable name by default
         transformToClientPlotConfig(makePlotSpec())
@@ -238,5 +240,13 @@ class ScaleConfigTest {
         // scale(name) is a higher priority than as_discrete(label)
         transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam, asDiscreteParams = asDiscreteLabelParam))
             .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
+
+        // guide(title) has the highest priority
+        transformToClientPlotConfig(makePlotSpec(
+            scaleParams = scaleNameParam,
+            asDiscreteParams = asDiscreteLabelParam,
+            guideParam = guideParam
+        ))
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "guide title")
     }
 }

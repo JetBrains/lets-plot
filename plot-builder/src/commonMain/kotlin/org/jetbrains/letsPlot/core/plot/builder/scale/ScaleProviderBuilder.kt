@@ -178,9 +178,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         /**
          * Discrete domain.
          */
-        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale {
-            var scale: Scale = Scales.discreteDomain(
-                myName ?: defaultName,
+        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform, guideTitle: String?): Scale {
+            val scale: Scale = Scales.discreteDomain(
+                guideTitle ?: myName ?: defaultName,
                 discreteTransform,
             )
 
@@ -191,9 +191,10 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             defaultName: String,
             continuousTransform: ContinuousTransform,
             continuousRange: Boolean,
-            guideBreaks: WithGuideBreaks<Any>?
+            guideBreaks: WithGuideBreaks<Any>?,
+            guideTitle: String?
         ): Scale {
-            val name = myName ?: defaultName
+            val name = guideTitle ?: myName ?: defaultName
             var scale: Scale
 
             // continuous (numeric) domain

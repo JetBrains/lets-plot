@@ -62,7 +62,7 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = guideOptionsMap[aes]?.title ?: scale.name
+                val scaleName = scale.name
 
                 val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
                     if (it is ColorBarOptions) {

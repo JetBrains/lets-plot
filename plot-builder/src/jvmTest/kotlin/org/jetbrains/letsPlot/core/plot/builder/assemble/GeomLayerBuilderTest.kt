@@ -51,7 +51,8 @@ class GeomLayerBuilderTest {
         val scaleProvider = ScaleProviderHelper.createDefault(Aes.FILL)
         val scaleFill = scaleProvider.createScale(
             "cat",
-            DiscreteTransform(data.distinctValues(cat), emptyList())
+            DiscreteTransform(data.distinctValues(cat), emptyList()),
+            guideTitle = null
         )
         val scaleByAes = mapOf<Aes<*>, Scale>(
             Aes.X to Scales.DemoAndTest.continuousDomain(
