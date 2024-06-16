@@ -3,6 +3,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 import lets_plot as gg
+from lets_plot import geom_point
 from lets_plot.plot.guide import guide_legend, guide_colorbar
 
 
@@ -23,4 +24,12 @@ def test_shape_and_color_guides():
     assert as_dict['shape']['title'] == "Shape title"
     assert as_dict['color']['nbin'] == 8
     assert as_dict['color']['title'] == "Color title"
+
+
+def test_override_aes():
+    spec = (gg.ggplot() + gg.guides(color=guide_legend(override_aes=dict(color=['grey'], size=10))))
+
+    as_dict = spec.as_dict()['guides']['color']['override_aes']
+    assert as_dict['color'][0] == 'grey'
+    assert as_dict['size'] == 10
 
