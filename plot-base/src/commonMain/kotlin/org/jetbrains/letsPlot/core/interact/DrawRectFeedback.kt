@@ -92,6 +92,8 @@ class DrawRectFeedback(
             onCompleted = {
                 val (target, dragFrom, dragTo, _) = it
 
+                it.reset()
+
                 val selection = getSelection(dragFrom, dragTo, target)
 
                 if (isSelectionAcceptable(selection)) {
@@ -101,8 +103,6 @@ class DrawRectFeedback(
 
                 decorationsLayer.children().remove(dragRectSvg)
                 decorationsLayer.children().remove(selectionSvg)
-
-                it.reset()
             },
             onAborted = {
                 it.reset()

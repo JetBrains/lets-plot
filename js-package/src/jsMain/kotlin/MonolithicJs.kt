@@ -5,6 +5,7 @@
 
 /* root package */
 
+import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
@@ -15,9 +16,7 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.get
+import org.w3c.dom.*
 import sizing.SizingOption
 import sizing.SizingPolicy
 
@@ -50,7 +49,11 @@ fun buildPlotFromRawSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val persistentDiv = document.createElement("div") as HTMLDivElement
+
+        parentElement.appendChild(persistentDiv)
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -83,7 +86,12 @@ fun buildPlotFromProcessedSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val persistentDiv = document.createElement("div") as HTMLDivElement
+
+        parentElement.appendChild(persistentDiv)
+
+        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -95,6 +103,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
     width: Double,
     height: Double,
     parentElement: HTMLElement,
+    eventTarget: Element,
     options: Map<String, Any>
 ): FigureModelJs? {
 
@@ -145,23 +154,27 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        val result = FigureToHtml(buildInfo, parentElement).eval()
+        val result = FigureToHtml(buildInfo, parentElement, eventTarget).eval()
         FigureModelJs(
             plotSpec,
-            MonolithicParameters(width, height, parentElement, options),
+            MonolithicParameters(width, height, parentElement, eventTarget, options),
             result.toolEventDispatcher,
             result.figureRegistration
         )
     } else {
         // a bunch
-        buildGGBunchComponent(success.buildInfos, parentElement)
+        buildGGBunchComponent(success.buildInfos, parentElement, eventTarget)
         null
     }
 
     return figureModel
 }
 
-fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {
+fun buildGGBunchComponent(
+    plotInfos: List<FigureBuildInfo>,
+    parentElement: HTMLElement,
+    eventTarget: Element
+) {
     val bunchBounds = plotInfos.map { it.bounds }
         .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
             acc.union(bounds)
@@ -179,7 +192,8 @@ fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLE
 
         FigureToHtml(
             buildInfo = plotInfo,
-            containerElement = itemContainerElement
+            containerElement = itemContainerElement,
+            eventTarget = eventTarget
         ).eval()
 
     }
