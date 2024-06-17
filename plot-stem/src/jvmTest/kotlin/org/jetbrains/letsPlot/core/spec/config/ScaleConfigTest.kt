@@ -224,6 +224,8 @@ class ScaleConfigTest {
         val scaleNameParam = "{ 'aesthetic': 'color', 'name': 'name from scale' }"
         val asDiscreteLabelParam = "{ 'label': 'label from as_discrete' }"
         val guideParam = "'color': { 'title': 'guide title' }"
+        val scaleNameParamWithGuide = "{ 'aesthetic': 'color', 'name': 'name from scale', " +
+                "'guide': {'name': 'legend', 'title': 'scale guide title'} }"
 
         // use variable name by default
         transformToClientPlotConfig(makePlotSpec())
@@ -240,6 +242,10 @@ class ScaleConfigTest {
         // scale(name) is a higher priority than as_discrete(label)
         transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam, asDiscreteParams = asDiscreteLabelParam))
             .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
+
+        // scale(name, guide with title)
+        transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParamWithGuide))
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "scale guide title")
 
         // guide(title) has the highest priority
         transformToClientPlotConfig(makePlotSpec(
