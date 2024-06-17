@@ -9,8 +9,9 @@ class LegendOptions constructor(
     val colCount: Int? = null,
     val rowCount: Int? = null,
     val byRow: Boolean = false,
+    title: String? = null,
     isReverse: Boolean = false
-) : GuideOptions(isReverse) {
+) : GuideOptions(title, isReverse) {
     init {
         require(colCount == null || colCount > 0) { "Invalid value: colCount=$colCount" }
         require(rowCount == null || rowCount > 0) { "Invalid value: colCount=$rowCount" }
@@ -26,7 +27,13 @@ class LegendOptions constructor(
 
     override fun withReverse(reverse: Boolean): LegendOptions {
         return LegendOptions(
-            colCount, rowCount, byRow, isReverse = reverse
+            colCount, rowCount, byRow, title, isReverse = reverse
+        )
+    }
+
+    override fun withTitle(title: String?): LegendOptions {
+        return LegendOptions(
+            colCount, rowCount, byRow, title = title, isReverse
         )
     }
 
@@ -39,6 +46,7 @@ class LegendOptions constructor(
         if (colCount != other.colCount) return false
         if (rowCount != other.rowCount) return false
         if (byRow != other.byRow) return false
+        if (title != other.title) return false
 
         return true
     }
@@ -47,6 +55,7 @@ class LegendOptions constructor(
         var result = colCount ?: 0
         result = 31 * result + (rowCount ?: 0)
         result = 31 * result + byRow.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
         return result
     }
 
@@ -56,6 +65,7 @@ class LegendOptions constructor(
             var colCount: Int? = null
             var rowCount: Int? = null
             var byRow = false
+            var title: String? = null
             for (options in optionsList) {
                 if (options.byRow) {
                     byRow = true
@@ -66,8 +76,11 @@ class LegendOptions constructor(
                 if (options.hasRowCount()) {
                     rowCount = options.rowCount
                 }
+                if (options.title != null) {
+                    title = options.title
+                }
             }
-            return LegendOptions(colCount, rowCount, byRow)
+            return LegendOptions(colCount, rowCount, byRow, title)
         }
     }
 }
