@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.areEqual
 import org.jetbrains.letsPlot.commons.values.FontFace
@@ -210,5 +211,28 @@ object TextUtil {
         val lineInterval = lineHeight - fontSize
         val textHeight = estimated.y + lineInterval * (lines.size - 1)
         return DoubleVector(estimated.x, textHeight)
+    }
+
+    fun rectangleForText(
+        location: DoubleVector,
+        textSize: DoubleVector,
+        padding: Double,
+        hAnchor: Text.HorizontalAnchor,
+        vAnchor: Text.VerticalAnchor
+    ): DoubleRectangle {
+        val width = textSize.x + padding * 2
+        val height = textSize.y + padding * 2
+
+        val originX = when (hAnchor) {
+            Text.HorizontalAnchor.LEFT -> location.x
+            Text.HorizontalAnchor.RIGHT -> location.x - width
+            Text.HorizontalAnchor.MIDDLE -> location.x - width / 2
+        }
+        val originY = when (vAnchor) {
+            Text.VerticalAnchor.TOP -> location.y
+            Text.VerticalAnchor.BOTTOM -> location.y - height
+            Text.VerticalAnchor.CENTER -> location.y - height / 2
+        }
+        return DoubleRectangle(originX, originY, width, height)
     }
 }

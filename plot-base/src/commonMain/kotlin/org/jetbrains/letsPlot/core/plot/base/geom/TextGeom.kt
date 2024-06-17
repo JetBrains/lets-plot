@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
@@ -25,6 +27,9 @@ open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
+    var checkOverlap: Boolean = false
+
+    private val myRestrictions = mutableListOf<List<DoubleVector>>()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory()
@@ -46,13 +51,16 @@ open class TextGeom : GeomBase() {
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
                 val point = DoubleVector(x!!, y!!)
-                val loc = helper.toClient(point, p)
-                if (loc == null) continue
+                val loc = helper.toClient(point, p) ?: continue
 
                 // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
                 val sizeUnitRatio = when (sizeUnit) {
                     null -> 1.0
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
+                }
+
+                if (checkOverlap && hasOverlaps(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
+                    continue
                 }
 
                 val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
@@ -71,6 +79,29 @@ open class TextGeom : GeomBase() {
                 )
             }
         }
+    }
+
+    private fun hasOverlaps(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        sizeUnitRatio: Double,
+        ctx: GeomContext,
+        boundsCenter: DoubleVector?
+    ): Boolean {
+        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
+        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
+
+        val rectangle = objectRectangle(location, textSize, TextUtil.fontSize(p, sizeUnitRatio), hAnchor, vAnchor)
+            .rotate(toRadians(TextUtil.angle(p)), location)
+
+        if (myRestrictions.any { areIntersect(rectangle, it) }) {
+            return true
+        }
+        myRestrictions.add(rectangle)
+
+        return false
     }
 
     open fun buildTextComponent(
@@ -105,6 +136,14 @@ open class TextGeom : GeomBase() {
         return g
     }
 
+    open fun objectRectangle(
+        location: DoubleVector,
+        textSize: DoubleVector,
+        fontSize: Double,
+        hAnchor: Text.HorizontalAnchor,
+        vAnchor: Text.VerticalAnchor,
+    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
+
     private fun toString(label: Any?): String {
         return when {
             label == null -> naValue
@@ -133,6 +172,40 @@ open class TextGeom : GeomBase() {
                 else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
             }
             return unitSize / BASELINE_TEXT_WIDTH
+        }
+
+        private fun DoubleRectangle.rotate(angle: Double, around: DoubleVector): List<DoubleVector> {
+            val lt = origin.rotateAround(around, angle)
+            val lb = DoubleVector(left, bottom).rotateAround(around, angle)
+            val rt = DoubleVector(right, top).rotateAround(around, angle)
+            val rb = DoubleVector(right, bottom).rotateAround(around, angle)
+            return listOf(lt, lb, rb, rt)
+        }
+
+        private fun areIntersect(pg1: List<DoubleVector>, pg2: List<DoubleVector>): Boolean {
+            fun projectPolygon(axis: DoubleVector, polygon: List<DoubleVector>): Pair<Double, Double> {
+                val dots = polygon.map { it.dotProduct(axis) }
+                return Pair(dots.min(), dots.max())
+            }
+
+            val edges = mutableListOf<DoubleVector>()
+            for (polygon in listOf(pg1, pg2)) {
+                for (i in polygon.indices) {
+                    val edge = polygon[i].subtract(
+                        polygon[(i + 1) % polygon.size]
+                    )
+                    edges.add(edge.orthogonal().normalize())
+                }
+            }
+
+            for (axis in edges) {
+                val (min1, max1) = projectPolygon(axis, pg1)
+                val (min2, max2) = projectPolygon(axis, pg2)
+                if (max1 < min2 || max2 < min1) {
+                    return false
+                }
+            }
+            return true
         }
     }
 }

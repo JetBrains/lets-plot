@@ -405,6 +405,7 @@ internal object GeomProviderFactory {
             ?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
+        geom.checkOverlap = opts.getBoolean(Option.Geom.Text.CHECK_OVERLAP)
     }
 
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {
