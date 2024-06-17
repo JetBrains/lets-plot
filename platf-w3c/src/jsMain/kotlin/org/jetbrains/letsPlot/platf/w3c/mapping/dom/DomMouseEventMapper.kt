@@ -10,6 +10,7 @@ import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.event.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
@@ -166,7 +167,7 @@ class DomMouseEventMapper(
 
             if (type == DomEventType.MOUSE_DOWN) {
                 dispatch(MouseEventSpec.MOUSE_PRESSED, e)
-                state = MousePressedState(eventCoord = DoubleVector(e.x, e.y))
+                state = MousePressedState(pressEvent = e)
                 return
             }
 
@@ -187,7 +188,7 @@ class DomMouseEventMapper(
     }
 
     private inner class MousePressedState(
-        private val eventCoord: DoubleVector,
+        private val pressEvent: DomMouseEvent,
         private val draggingTriggerDistance: Double = 3.0
     ) : MouseState() {
 
@@ -202,7 +203,8 @@ class DomMouseEventMapper(
                 }
 
                 DomEventType.MOUSE_MOVE -> {
-                    if (DoubleVector(e.x, e.y).subtract(eventCoord).length() > draggingTriggerDistance) {
+                    if (distance(e.x, e.y, pressEvent.x, pressEvent.y) > draggingTriggerDistance) {
+                        dispatch(MouseEventSpec.MOUSE_DRAGGED, pressEvent)
                         dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
                         state = MouseDragState()
                     }
