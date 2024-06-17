@@ -35,14 +35,16 @@ class PlotConfigFrontend private constructor(
     init {
         val guides = createGuideOptionsMap(getMap(GUIDES))
 
-        val guidesWithTitlesOnly = guides.filterValues { it is GuideTitleOption }.toMutableMap()
+        val guidesWithTitle = guides.filterValues { it is GuideTitleOption }.toMutableMap()
         val namedGuides = guides.filterValues { it !is GuideTitleOption }
 
         guideOptionsMap = (createGuideOptionsMap(this.scaleConfigs) + namedGuides).mapValues { (aes, options) ->
-            val titleOption = guidesWithTitlesOnly[aes]
-            guidesWithTitlesOnly.remove(aes)
-            titleOption?.let { options.withTitle(titleOption.title) } ?: options
-        } + guidesWithTitlesOnly
+            val titleOption = guidesWithTitle[aes]
+            titleOption?.let {
+                guidesWithTitle.remove(aes)
+                options.withTitle(titleOption.title)
+            } ?: options
+        } + guidesWithTitle
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition
