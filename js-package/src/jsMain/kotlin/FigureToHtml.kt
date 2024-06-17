@@ -66,7 +66,7 @@ internal class FigureToHtml(
         }
 
         val svgRoot = buildInfo.createSvgRoot()
-        val toolEventDispatcher = if (svgRoot is CompositeFigureSvgRoot) {
+        val (toolEventDispatcher, eventsRegistration) = if (svgRoot is CompositeFigureSvgRoot) {
             processCompositeFigure(
                 svgRoot,
                 origin = null,      // The topmost SVG
@@ -82,7 +82,7 @@ internal class FigureToHtml(
             )
         }
 
-        val registration = object : Registration() {
+        val domCleanupRegistration = object : Registration() {
             override fun doRemove() {
                 while (containerElement.firstChild != null) {
                     containerElement.removeChild(containerElement.firstChild!!)
@@ -92,11 +92,14 @@ internal class FigureToHtml(
 
         return Result(
             toolEventDispatcher,
-            registration
+            CompositeRegistration().add(
+                eventsRegistration,
+                domCleanupRegistration
+            )
         )
     }
 
-    class Result(
+    data class Result(
         val toolEventDispatcher: ToolEventDispatcher,
         val figureRegistration: Registration
     )
@@ -107,10 +110,10 @@ internal class FigureToHtml(
             parentElement: HTMLElement,
             eventTarget: Element,
             eventArea: DoubleRectangle
-        ): ToolEventDispatcher {
+        ): Pair<ToolEventDispatcher, Registration> {
 
             val plotContainer = PlotContainer(svgRoot)
-            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement, eventTarget, eventArea)
+            val (rootSVG, cleanupRegistration) = buildPlotFigureSVG(plotContainer, parentElement, eventTarget, eventArea)
             rootSVG.style.setCursor(CssCursor.CROSSHAIR)
 
             // Livemap cursor pointer
@@ -121,7 +124,7 @@ internal class FigureToHtml(
             }
 
             parentElement.appendChild(rootSVG)
-            return plotContainer.toolEventDispatcher
+            return plotContainer.toolEventDispatcher to cleanupRegistration
         }
 
         private fun processCompositeFigure(
@@ -129,7 +132,7 @@ internal class FigureToHtml(
             origin: DoubleVector?,
             parentElement: HTMLElement,
             eventTarget: Element,
-        ): ToolEventDispatcher {
+        ): Pair<ToolEventDispatcher, Registration> {
             svgRoot.ensureContentBuilt()
 
             val rootSvgSvg: SvgSvgElement = svgRoot.svg
@@ -173,7 +176,7 @@ internal class FigureToHtml(
                 }
             }
 
-            return UnsupportedToolEventDispatcher()
+            return UnsupportedToolEventDispatcher() to Registration.EMPTY
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
@@ -203,9 +206,8 @@ internal class FigureToHtml(
             plotContainer: PlotContainer,
             parentElement: Element,
             eventTarget: Element,
-            eventArea: DoubleRectangle
-        ): SVGSVGElement {
-            val disposer = CompositeRegistration()
+            eventArea: DoubleRectangle,
+        ): Pair<SVGSVGElement, Registration> {
             val svg: SVGSVGElement = mapSvgToSVG(plotContainer.svg)
 
             if (plotContainer.isLiveMap) {
@@ -215,7 +217,9 @@ internal class FigureToHtml(
             }
 
             val plotMouseEventMapper = DomMouseEventMapper(eventTarget, eventArea)
-            disposer.add(Registration.from(plotMouseEventMapper))
+
+            val eventsRegistration = CompositeRegistration()
+            eventsRegistration.add(Registration.from(plotMouseEventMapper))
 
             plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
@@ -237,7 +241,7 @@ internal class FigureToHtml(
                         bounds.dimension.toDoubleVector()
                     )
                 )
-                disposer.add(Registration.from(canvasMouseEventMapper))
+                eventsRegistration.add(Registration.from(canvasMouseEventMapper))
 
                 val canvasControl = DomCanvasControl(
                     myRootElement = liveMapDiv,
@@ -251,12 +255,7 @@ internal class FigureToHtml(
                 liveMapDiv.onDisconnect(liveMapReg::dispose)
             }
 
-            // TODO: temporary solution. Dispose in FigureToHtml.Result.figureRegistration instead.
-            svg.onDisconnect {
-                println("Plot disconnected")
-                disposer.dispose()
-            }
-            return svg
+            return svg to eventsRegistration
         }
 
         private fun Node.onDisconnect(onDisconnected: () -> Unit): Int {
