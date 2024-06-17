@@ -27,9 +27,9 @@ def test_shape_and_color_guides():
 
 
 def test_override_aes():
-    spec = (gg.ggplot() + gg.guides(color=guide_legend(override_aes=dict(color=['grey'], size=10))))
+    spec = (gg.ggplot() + gg.guides(color=guide_legend(override_aes=dict(color=['red'], size=10))))
 
     as_dict = spec.as_dict()['guides']['color']['override_aes']
-    assert as_dict['color'][0] == 'grey'
+    assert as_dict['color'][0] == 'red'
     assert as_dict['size'] == 10
 
