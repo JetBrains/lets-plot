@@ -78,27 +78,14 @@ class LegendAssembler(
             }
         }
 
-        val legendBreaks = ArrayList<LegendBreak>()
-        for (legendBreak in legendBreaksByLabel.values) {
-            if (legendBreak.isEmpty) {
-                continue
-            }
-            legendBreaks.add(legendBreak)
-        }
-
-
+        val legendBreaks = legendBreaksByLabel.values.filterNot { it.isEmpty }
         if (legendBreaks.isEmpty()) {
             return LegendBoxInfo.EMPTY
         }
 
-        // legend options
-        val legendOptionsList = ArrayList<LegendOptions>()
-        for (legendLayer in legendLayers) {
-            val aesList = legendLayer.aesList
-            for (aes in aesList) {
-                if (guideOptionsMap[aes] is LegendOptions) {
-                    legendOptionsList.add(guideOptionsMap[aes] as LegendOptions)
-                }
+        val legendOptionsList = legendLayers.flatMap { legendLayer ->
+            legendLayer.aesList.mapNotNull { aes ->
+                guideOptionsMap[aes] as? LegendOptions
             }
         }
 
@@ -157,7 +144,7 @@ class LegendAssembler(
 
                     overrideAesValues.forEach { (aesToOverride, v) ->
                         val newAesValue = if (v is List<*>) {
-                            v.getOrElse(index) { v.last() }
+                            v.getOrElse(index) { v.lastOrNull() }
                         } else {
                             v
                         }
