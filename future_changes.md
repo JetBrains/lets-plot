@@ -8,3 +8,4 @@
 - [**breaking change**] guide_legend()/guide_colorbar() require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
  
 ### Fixed
+- geom_density2d: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
