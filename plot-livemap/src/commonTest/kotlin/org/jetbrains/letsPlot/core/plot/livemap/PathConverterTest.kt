@@ -34,10 +34,12 @@ class PathConverterTest {
     }
 
     @Test
-    fun blankLineShouldNotHaveDashPattern() {
+    fun blankLineHasDashPattern() {
         aesData!!.builder().lineType(constant(NamedLineType.BLANK))
 
-        matcher!!.lineDash(vectorEq(emptyList()))
+        matcher!!
+            .strokeWidth(eq(1.1))
+            .lineDash(vectorEq(listOf(0.0, 1.1)))
 
         assertMapObject()
     }

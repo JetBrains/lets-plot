@@ -30,7 +30,7 @@ object StrokeDashArraySupport {
     }
 
     private fun toStrokeDashArray(strokeWidth: Double, lineType: LineType): String? {
-        if (lineType.isBlank || lineType.isSolid) {
+        if (lineType.isSolid) {
             return null
         }
         val sb = StringBuilder()

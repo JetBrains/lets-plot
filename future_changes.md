@@ -9,3 +9,4 @@
  
 ### Fixed
 - geom_density2d: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
+- `linetype` = 0 ('blank') should make lines invisible [[#712](https://github.com/JetBrains/lets-plot/issues/712)].
