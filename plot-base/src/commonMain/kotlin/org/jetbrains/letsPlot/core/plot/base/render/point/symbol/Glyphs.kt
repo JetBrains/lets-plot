@@ -66,8 +66,8 @@ object Glyphs {
 
     fun stickTriangleUpDown(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
-            TriangleGlyph(location, size, stroke, pointingUp = true, pinnedToCentroid = true),
-            TriangleGlyph(location, size, stroke, pointingUp = false, pinnedToCentroid = true)
+            TriangleGlyph(location, size, stroke, pointingUp = true),
+            TriangleGlyph(location, size, stroke, pointingUp = false)
         )
     }
 
