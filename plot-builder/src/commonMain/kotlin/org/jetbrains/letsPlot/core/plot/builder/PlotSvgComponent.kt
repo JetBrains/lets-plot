@@ -276,15 +276,15 @@ class PlotSvgComponent constructor(
             leftMargin = margins.left
         )
 
-        val titleAlignRect = when (plotTheme.titlePosition()) {
+        val titleAlignmentArea = when (plotTheme.titlePosition()) {
             TitlePosition.PANEL -> geomAreaBounds
             TitlePosition.PLOT -> plotOuterBounds
         }
         val plotTitleElementRect = title?.let {
             DoubleRectangle(
-                titleAlignRect.left,
+                titleAlignmentArea.left,
                 plotOuterBounds.top,
-                titleAlignRect.width,
+                titleAlignmentArea.width,
                 PlotLayoutUtil.titleThickness(
                     title,
                     PlotLabelSpecFactory.plotTitle(plotTheme),
@@ -311,9 +311,9 @@ class PlotSvgComponent constructor(
 
         val subtitleElementRect = subtitle?.let {
             DoubleRectangle(
-                titleAlignRect.left,
+                titleAlignmentArea.left,
                 plotTitleElementRect?.bottom ?: plotOuterBounds.top,
-                titleAlignRect.width,
+                titleAlignmentArea.width,
                 PlotLayoutUtil.titleThickness(
                     subtitle,
                     PlotLabelSpecFactory.plotSubtitle(plotTheme),
@@ -338,7 +338,7 @@ class PlotSvgComponent constructor(
             }
         }
 
-        val captionAlignRect = when (plotTheme.captionPosition()) {
+        val captionAlignmentArea = when (plotTheme.captionPosition()) {
             TitlePosition.PANEL -> geomAreaBounds
             TitlePosition.PLOT -> plotOuterBounds
         }
@@ -349,9 +349,9 @@ class PlotSvgComponent constructor(
                 plotTheme.captionMargins()
             )
             DoubleRectangle(
-                captionAlignRect.left,
+                captionAlignmentArea.left,
                 plotOuterBounds.bottom - captionRectHeight,
-                captionAlignRect.width,
+                captionAlignmentArea.width,
                 captionRectHeight
             )
         }
