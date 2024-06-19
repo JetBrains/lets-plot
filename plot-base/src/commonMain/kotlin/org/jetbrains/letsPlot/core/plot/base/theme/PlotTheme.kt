@@ -37,4 +37,7 @@ interface PlotTheme {
     fun captionMargins(): Thickness
     fun plotMargins(): Thickness
     fun plotInset(): Thickness
+
+    fun titlePosition(): TitlePosition
+    fun captionPosition(): TitlePosition
 }

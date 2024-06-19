@@ -721,6 +721,8 @@ object Option {
         const val PLOT_MESSAGE = ThemeOption.PLOT_MESSAGE
         const val PLOT_MARGIN = ThemeOption.PLOT_MARGIN
         const val PLOT_INSET = ThemeOption.PLOT_INSET
+        const val PLOT_TITLE_POSITION = ThemeOption.PLOT_TITLE_POSITION
+        const val PLOT_CAPTION_POSITION = ThemeOption.PLOT_CAPTION_POSITION
 
         // Axis
         const val AXIS = ThemeOption.AXIS

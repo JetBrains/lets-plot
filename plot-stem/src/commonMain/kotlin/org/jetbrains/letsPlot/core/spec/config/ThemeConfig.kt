@@ -7,13 +7,16 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE_POSITION
 import org.jetbrains.letsPlot.core.spec.Option
 
 class ThemeConfig constructor(
@@ -34,6 +37,7 @@ class ThemeConfig constructor(
             value = convertMargins(key, value)
             value = convertInset(key, value)
             value = convertExponentFormat(key, value)
+            value = convertTitlePosition(key, value)
             LegendThemeConfig.convertValue(key, value)
         }
 
@@ -166,6 +170,21 @@ class ThemeConfig constructor(
                     val inset = toInsetSpec(value[ThemeOption.Elem.INSET])
                     // to keep other options
                     value - ThemeOption.Elem.INSET + inset
+                }
+                else -> value
+            }
+        }
+
+        private fun convertTitlePosition(key: String, value: Any): Any {
+            return when (key) {
+                PLOT_TITLE_POSITION, PLOT_CAPTION_POSITION -> {
+                    when (value) {
+                        "panel" -> TitlePosition.PANEL
+                        "plot" -> TitlePosition.PLOT
+                        else -> throw IllegalArgumentException(
+                            "Illegal value: '$value', $key. Expected values are: 'panel' or 'plot'."
+                        )
+                    }
                 }
                 else -> value
             }

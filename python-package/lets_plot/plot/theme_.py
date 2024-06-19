@@ -69,6 +69,9 @@ def theme(*,
           plot_margin=None,
           plot_inset=None,
 
+          plot_title_position=None,
+          plot_caption_position=None,
+
           strip_background=None,  # ToDo: x/y
           strip_text=None,  # ToDo: x/y
           # ToDo: strip.placement
@@ -232,6 +235,14 @@ def theme(*,
         - a list of four numbers - the insets are applied to the top, right, bottom and left in that order.
 
         It is acceptable to use None for any side; in this case, the default value for the plot inset side will be used.
+    plot_title_position : {'panel', 'plot'}, default='panel'
+        Alignment of the plot title/subtitle.
+        A value of 'panel' means that title and subtitle are aligned to the plot panels.
+        A value of 'plot' means that title and subtitle are aligned to the entire plot (excluding margins).
+    plot_caption_position : {'panel', 'plot'}, default='panel'
+        Alignment of the plot caption.
+        A value of 'panel' means that title and subtitle are aligned to the plot panels.
+        A value of 'plot' means that title and subtitle are aligned to the entire plot (excluding margins).
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
