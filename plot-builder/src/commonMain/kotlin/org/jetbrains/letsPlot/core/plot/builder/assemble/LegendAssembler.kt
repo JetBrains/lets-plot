@@ -38,6 +38,7 @@ class LegendAssembler(
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
         aesList: List<Aes<*>>,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         colorByAes: Aes<Color>,
@@ -50,6 +51,7 @@ class LegendAssembler(
             LegendLayer(
                 keyFactory,
                 aesList,
+                overrideAesValues,
                 constantByAes,
                 aestheticsDefaults,
                 scaleMappers,
@@ -76,27 +78,14 @@ class LegendAssembler(
             }
         }
 
-        val legendBreaks = ArrayList<LegendBreak>()
-        for (legendBreak in legendBreaksByLabel.values) {
-            if (legendBreak.isEmpty) {
-                continue
-            }
-            legendBreaks.add(legendBreak)
-        }
-
-
+        val legendBreaks = legendBreaksByLabel.values.filterNot { it.isEmpty }
         if (legendBreaks.isEmpty()) {
             return LegendBoxInfo.EMPTY
         }
 
-        // legend options
-        val legendOptionsList = ArrayList<LegendOptions>()
-        for (legendLayer in legendLayers) {
-            val aesList = legendLayer.aesList
-            for (aes in aesList) {
-                if (guideOptionsMap[aes] is LegendOptions) {
-                    legendOptionsList.add(guideOptionsMap[aes] as LegendOptions)
-                }
+        val legendOptionsList = legendLayers.flatMap { legendLayer ->
+            legendLayer.aesList.mapNotNull { aes ->
+                guideOptionsMap[aes] as? LegendOptions
             }
         }
 
@@ -121,6 +110,7 @@ class LegendAssembler(
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
         val aesList: List<Aes<*>>,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
@@ -148,8 +138,20 @@ class LegendAssembler(
                     scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                 }
                 val labels = scaleBreaks.labels
-                for ((label, aesValue) in labels.zip(aesValues)) {
-                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
+                labels.zip(aesValues).forEachIndexed { index, (label, aesValue) ->
+                    val labelMap = aesValuesByLabel.getOrPut(label) { HashMap() }
+                    labelMap[aes] = aesValue
+
+                    overrideAesValues.forEach { (aesToOverride, v) ->
+                        val newAesValue = if (v is List<*>) {
+                            v.getOrElse(index) { v.lastOrNull() }
+                        } else {
+                            v
+                        }
+                        newAesValue?.let {
+                            labelMap[aesToOverride] = it
+                        }
+                    }
                 }
             }
 
