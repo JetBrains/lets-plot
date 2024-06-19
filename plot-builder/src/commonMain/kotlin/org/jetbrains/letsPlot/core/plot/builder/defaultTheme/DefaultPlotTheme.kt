@@ -20,7 +20,10 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE_POSITION
 
 internal class DefaultPlotTheme(
     options: Map<String, Any>,
@@ -98,6 +101,14 @@ internal class DefaultPlotTheme(
     override fun plotMargins() = getMargins(getElemValue(marginKey))
 
     override fun plotInset() = getPadding(getElemValue(insetKey))
+
+    override fun titlePosition(): TitlePosition {
+        return getValue(PLOT_TITLE_POSITION) as TitlePosition
+    }
+
+    override fun captionPosition(): TitlePosition {
+        return getValue(PLOT_CAPTION_POSITION) as TitlePosition
+    }
 
     override fun showMessage(): Boolean {
         return !isElemBlank(messagesKey)
