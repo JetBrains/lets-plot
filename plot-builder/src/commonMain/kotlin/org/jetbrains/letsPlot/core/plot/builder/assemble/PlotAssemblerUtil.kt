@@ -42,7 +42,7 @@ internal object PlotAssemblerUtil {
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
 
@@ -62,16 +62,11 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = guideOptionsMap[aes]?.title ?: scale.name
+                val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
-                    if (it is ColorBarOptions) {
-                        checkFitsColorBar(aes, scale)
-                        it
-                    } else {
-                        null
-                    }
-                }
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]
+                    ?.getColorBarOptions()
+                    ?.also { checkFitsColorBar(aes, scale) }
 
                 if (colorBarOptions != null || fitsColorBar(aes, scale)) {
                     // Colorbar

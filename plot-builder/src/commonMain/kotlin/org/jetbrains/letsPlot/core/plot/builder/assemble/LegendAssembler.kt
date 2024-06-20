@@ -28,7 +28,7 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
+    private val guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
@@ -90,23 +90,13 @@ class LegendAssembler(
         }
 
         // legend options
-        val legendOptionsList = ArrayList<LegendOptions>()
-        for (legendLayer in legendLayers) {
-            val aesList = legendLayer.aesList
-            for (aes in aesList) {
-                if (guideOptionsMap[aes] is LegendOptions) {
-                    legendOptionsList.add(guideOptionsMap[aes] as LegendOptions)
-                }
-            }
-        }
+        val legendOptionsList = legendLayers
+            .flatMap(LegendLayer::aesList)
+            .mapNotNull(guideOptionsMap::get)
+            .mapNotNull(GuideOptionsList::getLegendOptions)
+        val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
 
-        val spec =
-            createLegendSpec(
-                legendTitle, legendBreaks, theme,
-                LegendOptions.combine(
-                    legendOptionsList
-                )
-            )
+        val spec = createLegendSpec(legendTitle, legendBreaks, theme, combinedLegendOptions)
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {

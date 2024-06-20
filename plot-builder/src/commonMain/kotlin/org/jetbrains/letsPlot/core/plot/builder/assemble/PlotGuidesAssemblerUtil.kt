@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.GeomLayerInfo
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
         layer: GeomLayerInfo,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>
+        guideOptionsMap: Map<Aes<*>, GuideOptionsList>
     ): List<Aes<*>> {
         if (layer.isLegendDisabled) {
             // ToDo: add support for:
@@ -38,10 +38,8 @@ internal object PlotGuidesAssemblerUtil {
             if (!layer.hasBinding(aes)) {
                 continue
             }
-            if (guideOptionsMap.containsKey(aes)) {
-                if (guideOptionsMap[aes] === GuideOptions.NONE) {
-                    continue
-                }
+            if (guideOptionsMap[aes]?.hasNone() == true) {
+                continue
             }
 
             result.add(aes)
