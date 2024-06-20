@@ -46,10 +46,10 @@ class Band {
             {
               'kind': 'plot',
               'data': {
-                'xmin': [-1, null],
-                'xmax': [1, null],
-                'ymin': [null, -1],
-                'ymax': [null, 1]
+                'xmin': [-1],
+                'xmax': [1],
+                'ymin': [-1],
+                'ymax': [1]
               },
               'mapping': {
                 'xmin': 'xmin',
