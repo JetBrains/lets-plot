@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.WithGuideBreaks
@@ -23,7 +23,7 @@ internal object PlotConfigScales {
         transformByAes: Map<Aes<*>, Transform>,
         mappersByAes: Map<Aes<*>, ScaleMapper<*>>,
         scaleProviderByAes: Map<Aes<*>, ScaleProvider>,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
     ): Map<Aes<*>, Scale> {
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(
@@ -41,7 +41,7 @@ internal object PlotConfigScales {
         // Create scales for all aes.
         val scaleByAes = HashMap<Aes<*>, Scale>()
         for (aes in aesSet) {
-            val guideTitle = guideOptionsMap[aes]?.title
+            val guideTitle = guideOptionsMap[aes]?.getTitle()
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)
 
