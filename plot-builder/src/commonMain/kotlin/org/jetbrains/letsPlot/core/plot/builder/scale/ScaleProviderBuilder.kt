@@ -171,8 +171,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         }
 
 
-        private fun scaleName(variable: DataFrame.Variable): String {
-            return myName ?: variable.label
+        private fun scaleName(defaultName: String, guideTitle: String?): String {
+            return guideTitle ?: myName ?: defaultName
         }
 
         /**
@@ -180,7 +180,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
          */
         override fun createScale(defaultName: String, discreteTransform: DiscreteTransform, guideTitle: String?): Scale {
             val scale: Scale = Scales.discreteDomain(
-                guideTitle ?: myName ?: defaultName,
+                scaleName(defaultName, guideTitle),
                 discreteTransform,
             )
 
@@ -194,7 +194,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             guideBreaks: WithGuideBreaks<Any>?,
             guideTitle: String?
         ): Scale {
-            val name = guideTitle ?: myName ?: defaultName
+            val name = scaleName(defaultName, guideTitle)
             var scale: Scale
 
             // continuous (numeric) domain
