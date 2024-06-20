@@ -674,7 +674,7 @@ object Option {
         const val COLOR_BAR = "colorbar"
         const val COLOR_BAR_GB = "colourbar"
 
-        const val REVERSE = "reverse"
+        const val REVERSE = "reverse" // not implemented
         const val TITLE = "title"
 
         object Legend {

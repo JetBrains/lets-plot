@@ -9,9 +9,8 @@ class LegendOptions constructor(
     val colCount: Int? = null,
     val rowCount: Int? = null,
     val byRow: Boolean = false,
-    title: String? = null,
-    isReverse: Boolean = false
-) : GuideOptions(title, isReverse) {
+    title: String? = null
+) : GuideOptions(title) {
     init {
         require(colCount == null || colCount > 0) { "Invalid value: colCount=$colCount" }
         require(rowCount == null || rowCount > 0) { "Invalid value: colCount=$rowCount" }
@@ -25,15 +24,9 @@ class LegendOptions constructor(
         return rowCount != null
     }
 
-    override fun withReverse(reverse: Boolean): LegendOptions {
-        return LegendOptions(
-            colCount, rowCount, byRow, title, isReverse = reverse
-        )
-    }
-
     override fun withTitle(title: String?): LegendOptions {
         return LegendOptions(
-            colCount, rowCount, byRow, title = title, isReverse
+            colCount, rowCount, byRow, title = title
         )
     }
 
