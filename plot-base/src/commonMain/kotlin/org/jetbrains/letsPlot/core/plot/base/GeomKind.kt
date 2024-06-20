@@ -23,6 +23,7 @@ enum class GeomKind {
     AB_LINE,
     H_LINE,
     V_LINE,
+    BAND,
     BOX_PLOT,
     AREA_RIDGES,
     VIOLIN,

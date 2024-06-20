@@ -72,6 +72,7 @@ class GeomProto(val geomKind: GeomKind) {
             AB_LINE -> DefaultSampling.AB_LINE
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
+            BAND -> DefaultSampling.RECT
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
             AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN

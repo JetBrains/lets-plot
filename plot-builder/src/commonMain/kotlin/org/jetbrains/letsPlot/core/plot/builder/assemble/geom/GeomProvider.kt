@@ -173,6 +173,13 @@ class GeomProvider internal constructor(
             ) { VLineGeom() }
         }
 
+        fun band(): GeomProvider {
+            return GeomProvider(
+                GeomKind.BAND,
+                BandGeom.HANDLES_GROUPS
+            ) { BandGeom() }
+        }
+
         fun boxplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.BOX_PLOT,

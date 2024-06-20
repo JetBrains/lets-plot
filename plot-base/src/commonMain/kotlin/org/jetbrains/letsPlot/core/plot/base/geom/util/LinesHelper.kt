@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
@@ -160,6 +161,28 @@ open class LinesHelper(
         }
 
         return linePaths
+    }
+
+    fun createStrips(
+        dataPoints: Iterable<DataPointAesthetics>,
+        toStrip: (DataPointAesthetics) -> DoubleRectangle?
+    ): List<LinePath> {
+        return dataPoints.map { p ->
+            toStrip(p)?.let { rect ->
+                toClient(rect, p)?.let { clientRect ->
+                    Pair(clientRect, p)
+                }
+            }
+        }.filterNotNull().map { (rect, p) ->
+            LinePath.polygon(listOf(
+                DoubleVector(rect.left, rect.top),
+                DoubleVector(rect.right, rect.top),
+                DoubleVector(rect.right, rect.bottom),
+                DoubleVector(rect.left, rect.bottom),
+            )).also { path ->
+                decorateFillingPart(path, p)
+            }
+        }
     }
 
     // TODO: inline. N.B.: for linear geoms, be careful with the closePath parameter

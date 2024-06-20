@@ -37,6 +37,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
         PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
         PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
+        PROVIDER[GeomKind.BAND] = GeomProvider.band()
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
