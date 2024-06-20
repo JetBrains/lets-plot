@@ -38,10 +38,8 @@ internal object PlotGuidesAssemblerUtil {
             if (!layer.hasBinding(aes)) {
                 continue
             }
-            if (guideOptionsMap.containsKey(aes)) {
-                if (guideOptionsMap[aes]?.hasNone() == true) {
-                    continue
-                }
+            if (guideOptionsMap[aes]?.hasNone() == true) {
+                continue
             }
 
             result.add(aes)

@@ -90,19 +90,13 @@ class LegendAssembler(
         }
 
         // legend options
-        val legendOptionsList = legendLayers.flatMap { legendLayer ->
-            legendLayer.aesList.mapNotNull { aes ->
-                guideOptionsMap[aes]?.getLegendOptions()
-            }
-        }
+        val legendOptionsList = legendLayers
+            .flatMap(LegendLayer::aesList)
+            .mapNotNull(guideOptionsMap::get)
+            .mapNotNull(GuideOptionsList::getLegendOptions)
+        val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
 
-        val spec =
-            createLegendSpec(
-                legendTitle, legendBreaks, theme,
-                LegendOptions.combine(
-                    legendOptionsList
-                )
-            )
+        val spec = createLegendSpec(legendTitle, legendBreaks, theme, combinedLegendOptions)
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
