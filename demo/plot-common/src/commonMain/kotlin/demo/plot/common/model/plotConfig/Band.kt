@@ -11,6 +11,7 @@ class Band {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            verticalAndHorizontal(),
         )
     }
 
@@ -34,6 +35,41 @@ class Band {
                   'geom': 'band'
                 }
               ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun verticalAndHorizontal(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'xmin': [-1, null],
+                'xmax': [1, null],
+                'ymin': [null, -1],
+                'ymax': [null, 1]
+              },
+              'mapping': {
+                'xmin': 'xmin',
+                'xmax': 'xmax',
+                'ymin': 'ymin',
+                'ymax': 'ymax'
+              },
+              'ggtitle': {
+                'text': 'Vertical and horizontal bands together'
+              },
+              'layers': [
+                {
+                  'geom': 'band'
+                }
+              ],
+              'coord': {
+                'name': 'cartesian',
+                'xlim': [-3, 3],
+                'ylim': [-3, 3]
+              }
             }
         """.trimIndent()
 
