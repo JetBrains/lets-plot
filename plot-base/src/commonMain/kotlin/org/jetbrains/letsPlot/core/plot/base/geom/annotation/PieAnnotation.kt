@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.annotation
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -101,19 +102,41 @@ object PieAnnotation {
         val canBePlacedInside =
             textRect.parts.flatMap { listOf(it.start, it.end) }.distinct().all(::isPointInsideSector)
 
-        val pointerLocation = if (canBePlacedInside) {
+        fun canBePlacedInsideRotated(): Boolean {
+            if (textSize.x > sector.radius - sector.holeRadius) {
+                return false
+            }
+
+            fun checkChord(p1: DoubleVector, p2: DoubleVector, h: Double) = p1.subtract(p2).length() < h
+
+            // outer
+            if (checkChord(sector.outerArcStart, sector.outerArcEnd, textSize.y)) {
+                return false
+            }
+            // inner
+            val offset = sector.radius - textSize.x
+            val onStartArc = sector.arcPoint(offset, sector.startAngle)
+            val onEndArc = sector.arcPoint(offset, sector.endAngle)
+            return !checkChord(onStartArc, onEndArc, textSize.y)
+        }
+
+        val canBePlacedInsideWithRotation = if (!canBePlacedInside) canBePlacedInsideRotated() else false
+
+        val location = if (canBePlacedInside) {
             sector.sectorCenter
+        } else if (canBePlacedInsideWithRotation) {
+            val offset = sector.radius - textSize.x / 2
+            sector.arcPoint(offset, sector.direction)
         } else {
             val offset = sector.holeRadius + 0.8 * (sector.radius - sector.holeRadius)
-            sector.position.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
-            // sector.arcPoint(offset, sector.direction)
+            sector.arcPoint(offset, sector.direction)
         }
         val side = when {
-            canBePlacedInside -> Side.INSIDE
-            pointerLocation.x < sector.pieCenter.x -> Side.LEFT
+            canBePlacedInside || canBePlacedInsideWithRotation -> Side.INSIDE
+            location.x < sector.pieCenter.x -> Side.LEFT
             else -> Side.RIGHT
         }
-        val outerPointerCoord: DoubleVector? = if (canBePlacedInside) {
+        val outerPointerCoord: DoubleVector? = if (side == Side.INSIDE) {
             null
         } else {
             sector.position.add(
@@ -123,6 +146,14 @@ object PieAnnotation {
                 )
             )
         }
+        val rotationAngle = if (canBePlacedInsideWithRotation) {
+            toDegrees(-sector.direction) + when {
+                location.x < sector.pieCenter.x -> 180.0
+                else -> 0.0
+            }
+        } else {
+            0.0
+        }
         val textColor = when (side) {
             Side.INSIDE -> annotation.getTextColor(sector.p.fill())
             else -> annotation.getTextColor()
@@ -130,10 +161,11 @@ object PieAnnotation {
         return AnnotationLabel(
             text,
             textSize,
-            pointerLocation,
+            location,
             outerPointerCoord,
             textColor,
-            side
+            side,
+            rotationAngle
         )
     }
 
@@ -161,7 +193,8 @@ object PieAnnotation {
         val location: DoubleVector,             // to place text element or pointer
         val outerPointerCoord: DoubleVector?,   // position for middle point of pointer line
         val textColor: Color,
-        val side: Side
+        val side: Side,
+        val rotationAngle: Double
     )
 
     private fun createAnnotationElements(
@@ -212,7 +245,7 @@ object PieAnnotation {
             }
         }
 
-        return Side.values().flatMap(::createForSide)
+        return Side.entries.flatMap(::createForSide)
     }
 
     private fun createAnnotationElement(
@@ -228,6 +261,7 @@ object PieAnnotation {
                 style = textStyle,
                 color = label.textColor,
                 hjust = label.side.getHJust(),
+                angle = label.rotationAngle
             ),
             geomContext = ctx,
         )

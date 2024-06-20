@@ -301,7 +301,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             angle = angle
         )
 
-        private fun arcPoint(radius: Double, angle: Double): DoubleVector {
+        internal fun arcPoint(radius: Double, angle: Double): DoubleVector {
             return position.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
         }
 
