@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -275,11 +276,15 @@ class PlotSvgComponent constructor(
             leftMargin = margins.left
         )
 
+        val titleAlignmentArea = when (plotTheme.titlePosition()) {
+            TitlePosition.PANEL -> geomAreaBounds
+            TitlePosition.PLOT -> plotOuterBounds
+        }
         val plotTitleElementRect = title?.let {
             DoubleRectangle(
-                geomAreaBounds.left,
+                titleAlignmentArea.left,
                 plotOuterBounds.top,
-                geomAreaBounds.width,
+                titleAlignmentArea.width,
                 PlotLayoutUtil.titleThickness(
                     title,
                     PlotLabelSpecFactory.plotTitle(plotTheme),
@@ -306,9 +311,9 @@ class PlotSvgComponent constructor(
 
         val subtitleElementRect = subtitle?.let {
             DoubleRectangle(
-                geomAreaBounds.left,
+                titleAlignmentArea.left,
                 plotTitleElementRect?.bottom ?: plotOuterBounds.top,
-                geomAreaBounds.width,
+                titleAlignmentArea.width,
                 PlotLayoutUtil.titleThickness(
                     subtitle,
                     PlotLabelSpecFactory.plotSubtitle(plotTheme),
@@ -333,6 +338,10 @@ class PlotSvgComponent constructor(
             }
         }
 
+        val captionAlignmentArea = when (plotTheme.captionPosition()) {
+            TitlePosition.PANEL -> geomAreaBounds
+            TitlePosition.PLOT -> plotOuterBounds
+        }
         val captionElementRect = caption?.let {
             val captionRectHeight = PlotLayoutUtil.titleThickness(
                 caption,
@@ -340,9 +349,9 @@ class PlotSvgComponent constructor(
                 plotTheme.captionMargins()
             )
             DoubleRectangle(
-                geomAreaBounds.left,
+                captionAlignmentArea.left,
                 plotOuterBounds.bottom - captionRectHeight,
-                geomAreaBounds.width,
+                captionAlignmentArea.width,
                 captionRectHeight
             )
         }

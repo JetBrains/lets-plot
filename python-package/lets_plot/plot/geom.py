@@ -4294,6 +4294,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - weight : used by 'density2d' stat to compute weighted density.
 
     |
 
@@ -4507,6 +4508,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - weight : used by 'density2df' stat to compute weighted density.
 
     |
 

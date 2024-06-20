@@ -78,8 +78,8 @@ class PointRenderer(
                 plus(ctx, radius)
             }
             11 -> {
-                triangle(ctx, radius, stroke, pointingUp = true, pinnedToCentroid = true)
-                triangle(ctx, radius, stroke, pointingUp = false, pinnedToCentroid = true)
+                triangle(ctx, radius, stroke, pointingUp = true)
+                triangle(ctx, radius, stroke, pointingUp = false)
             }
             12 -> {
                 square(ctx, radius)
@@ -134,7 +134,7 @@ class PointRenderer(
         ctx.closePath()
     }
 
-    private fun triangle(ctx: Context2d, r: Double, stroke: Double, pointingUp: Boolean = true, pinnedToCentroid: Boolean = false) {
+    private fun triangle(ctx: Context2d, r: Double, stroke: Double, pointingUp: Boolean = true) {
         val outerHeight = 2 * r + stroke
         val height = outerHeight - 3.0 * stroke / 2.0
         val side = 2.0 * height / sqrt(3.0)
@@ -144,10 +144,7 @@ class PointRenderer(
             1.0
         else
             -1.0
-        val centroidOffset = if (pinnedToCentroid)
-            height / 6.0 + stroke / 4.0
-        else
-            0.0
+        val centroidOffset = height / 6.0 + stroke / 4.0
 
         ctx.moveTo(0.0, -pointingCoeff * (distanceToPeak + centroidOffset))
         ctx.lineTo(side / 2.0, pointingCoeff * (distanceToBase - centroidOffset))

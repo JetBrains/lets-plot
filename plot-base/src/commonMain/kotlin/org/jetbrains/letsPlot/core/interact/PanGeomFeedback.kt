@@ -31,8 +31,9 @@ class PanGeomFeedback(
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val dataBounds = target.applyViewport(viewport)
 
-                onCompleted(dataBounds)
                 it.reset()
+
+                onCompleted(dataBounds)
             },
             onAborted = {
                 println("PanGeomFeedback abort.")

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
-class ScaleBreaks(
+class ScaleBreaks constructor(
     val domainValues: List<Any>,
     val transformedValues: List<Double>,
     val labels: List<String>
@@ -45,6 +45,22 @@ class ScaleBreaks(
         }
     }
 
+    fun filterByTransformedLimits(limits: DoubleSpan): ScaleBreaks {
+        val includeIndices = transformedValues.mapIndexed { index, value ->
+            val include = value >= limits.lowerEnd && value <= limits.upperEnd
+            if (include) index else null
+        }.filterNotNull()
+
+        return if (includeIndices.size == transformedValues.size) {
+            this
+        } else {
+            ScaleBreaks(
+                domainValues = domainValues.slice(includeIndices),
+                transformedValues = transformedValues.slice(includeIndices),
+                labels = labels.slice(includeIndices)
+            )
+        }
+    }
 
     companion object {
         val EMPTY: ScaleBreaks = ScaleBreaks(emptyList(), emptyList(), emptyList())
