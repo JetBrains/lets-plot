@@ -11,11 +11,6 @@ from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.util import as_annotated_data, key_int2str
 
-try:
-    import pandas
-except ImportError:
-    pandas = None
-
 __all__ = ['ggplot', 'ggsize', 'GGBunch']
 
 

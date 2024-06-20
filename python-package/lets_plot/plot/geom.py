@@ -7,11 +7,6 @@ from lets_plot.geo_data_internals.utils import is_geocoder
 from .core import FeatureSpec, LayerSpec
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
-try:
-    import pandas
-except ImportError:
-    pandas = None
-
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
 #
