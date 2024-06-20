@@ -5,7 +5,7 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 try:
     import pandas
@@ -7033,9 +7033,7 @@ def _geom(name, *,
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
-    if pandas and isinstance(data, pandas.DataFrame):
-        if data.columns.dtype.kind in ['i', 'u']:
-            data.columns = data.columns.astype(str)
+    data = key_int2str(data)
 
     return LayerSpec(geom=name,
                      stat=stat,

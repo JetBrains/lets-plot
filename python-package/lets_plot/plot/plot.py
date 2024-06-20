@@ -6,10 +6,10 @@ import numbers
 
 from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
 from lets_plot.geo_data_internals.utils import is_geocoder
+from lets_plot.plot._global_theme import _get_global_theme
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
-from lets_plot.plot.util import as_annotated_data
-from lets_plot.plot._global_theme import _get_global_theme
+from lets_plot.plot.util import as_annotated_data, key_int2str
 
 try:
     import pandas
@@ -90,9 +90,7 @@ def ggplot(data=None, mapping=None):
 
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
-    if pandas and isinstance(data, pandas.DataFrame):
-        if data.columns.dtype.kind in ['i', 'u']:
-            data.columns = data.columns.astype(str)
+    data = key_int2str(data)
 
     plot_spec = PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 
