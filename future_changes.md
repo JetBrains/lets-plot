@@ -16,6 +16,7 @@
 - The triangular point shape is now anchored to the data point via the centroid.
  
 ### Fixed
-- `geom_density2d`: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
 - `linetype` = 0 ('blank') should make lines invisible [[#712](https://github.com/JetBrains/lets-plot/issues/712)].
-- Descrete axis labels unnecessary rotate 90 degrees when applying coord system limits.
+- `geom_density2d`: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
+- Int DataFrame column names are being converted to float string representation [[#901](https://github.com/JetBrains/lets-plot/issues/901)].
+- Discrete axis labels unnecessary rotate 90 degrees when applying coord system limits.

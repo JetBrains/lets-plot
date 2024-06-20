@@ -231,3 +231,15 @@ def is_data_frame(data: Any) -> bool:
         return isinstance(data, DataFrame)
     except ImportError:
         return False
+
+
+def key_int2str(data):
+    if is_data_frame(data):
+        if data.columns.inferred_type == 'integer':
+            data.columns = data.columns.astype(str)
+        return data
+
+    if isinstance(data, dict):
+        return {(str(k) if isinstance(k, int) else k): v for k, v in data.items()}
+
+    return data

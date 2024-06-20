@@ -5,7 +5,7 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -7029,6 +7029,8 @@ def _geom(name, *,
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
+
+    data = key_int2str(data)
 
     return LayerSpec(geom=name,
                      stat=stat,
