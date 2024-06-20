@@ -18,6 +18,8 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Succes
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.*
 import sizing.SizingOption
+import sizing.SizingOption.HEIGHT
+import sizing.SizingOption.WIDTH
 import sizing.SizingPolicy
 
 private val LOG = PortableLogging.logger("MonolithicJs")
@@ -53,7 +55,12 @@ fun buildPlotFromRawSpecs(
         val persistentDiv = document.createElement("div") as HTMLDivElement
 
         parentElement.appendChild(persistentDiv)
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
+        buildPlotFromProcessedSpecsIntern(
+            processedSpec,
+            width, height,
+            persistentDiv, persistentDiv,
+            options,
+        )
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -91,7 +98,12 @@ fun buildPlotFromProcessedSpecs(
 
         parentElement.appendChild(persistentDiv)
 
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
+        buildPlotFromProcessedSpecsIntern(
+            processedSpec,
+            width, height,
+            persistentDiv, persistentDiv,
+            options,
+        )
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -114,22 +126,43 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val datalorePreferredWidth: Double? =
         parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
-    val sizingPolicy = if (plotSizeProvided != null) {
-        // Ignore sizing options even if provided
-        SizingPolicy.fixedBoth(plotSizeProvided)
-    } else when (val sizingOptions = options[SizingOption.KEY]) {
-        is Map<*, *> -> SizingPolicy.create(sizingOptions)
-        else -> SizingPolicy.DEFAULT
-    }
-
-    val (plotSize, plotMaxWidth) = /*if (plotSizeProvided != null) {
-        SizingPolicyAdapter.SizeAndMaxWidth(plotSizeProvided, null)
-    } else */if (datalorePreferredWidth != null) {
+    val (plotSize, plotMaxWidth) = if (datalorePreferredWidth != null) {
         SizingPolicyAdapter.SizeAndMaxWidth(null, null)
+
     } else {
+        val sizingPolicy = if (plotSizeProvided != null) {
+            // Ignore sizing options even if provided
+            SizingPolicy.fixedBoth(plotSizeProvided)
+        } else {
+            val parentWidth = when (val w = parentElement.clientWidth) {
+                0 -> null  // parent element wasn't yet layouted
+                else -> w
+            }?.toDouble()
+            val parentHeight = when (val h = parentElement.clientHeight) {
+                0 -> null  // parent element wasn't yet layouted
+                else -> h
+            }?.toDouble()
+
+            when (val sizingOptions = options[SizingOption.KEY]) {
+                is Map<*, *> -> {
+                    // The width/height should be in 'sizingOptions'.
+                    // Take the 'parentElement' dimensions as a fallback option.
+                    val fallbackSizingOptions = mapOf(
+                        WIDTH to parentWidth,
+                        HEIGHT to parentHeight,
+                    )
+                    SizingPolicy.create(fallbackSizingOptions + sizingOptions)
+                }
+
+                else -> {
+                    // No sizing options given - default to 'notebook mode'.
+                    SizingPolicy.notebookCell(parentWidth, parentHeight)
+                }
+            }
+        }
 
         val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
-        sizingPolicyAdapter.monolithicSizingParameters(plotSizeProvided, parentElement)
+        sizingPolicyAdapter.toMonolithicSizingParameters(/*plotSizeProvided, parentWidth, parentHeight*/)
     }
 
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
@@ -157,7 +190,13 @@ internal fun buildPlotFromProcessedSpecsIntern(
         val result = FigureToHtml(buildInfo, parentElement, eventTarget).eval()
         FigureModelJs(
             plotSpec,
-            MonolithicParameters(width, height, parentElement, eventTarget, options),
+            MonolithicParameters(
+                width,
+                height,
+                parentElement,
+                eventTarget,
+                options
+            ),
             result.toolEventDispatcher,
             result.figureRegistration
         )
