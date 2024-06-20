@@ -18,6 +18,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
+           'geom_band',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
@@ -2754,6 +2755,21 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  slope=slope,
                  intercept=intercept,
                  color_by=color_by,
+                 **other_args)
+
+
+def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+              color_by=None, fill_by=None,
+              **other_args):
+    return _geom('band',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 color_by=color_by,
+                 fill_by=fill_by,
                  **other_args)
 
 
