@@ -9,7 +9,7 @@ from typing import Any, Tuple, Sequence, Optional, Dict
 from lets_plot._type_utils import is_dict_or_dataframe, is_polars_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
-from lets_plot.plot.core import aes
+from lets_plot.plot.core import aes, FeatureSpec
 
 
 def as_boolean(val, *, default):
@@ -19,7 +19,7 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
+def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
     data_meta = {}
 
     # data
@@ -43,16 +43,23 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
             self.levels = None
             self.aesthetics = []
             self.order = None
+            self.type = None
 
     variables_meta: Dict[str, VariableMeta] = {}
 
     if is_data_frame(data):
-        dtypes = data.dtypes.to_dict().items()
-        for column_name, dtype in dtypes:
+        for var_name, var_content in data.items():
+            var_meta = VariableMeta()
+            variables_meta[var_name] = var_meta
+
+            if var_content.dtype == 'category':
+                var_meta.type = var_content.cat.categories.inferred_type
+            else:
+                var_meta.type = var_content.dtype
+
+            dtype = var_content.dtype
             if dtype.name == 'category' and dtype.ordered:
-                var_meta = VariableMeta()
                 var_meta.levels = dtype.categories.to_list()
-                variables_meta[column_name] = var_meta
 
     if raw_mapping is not None:
         for aesthetic, variable in raw_mapping.as_dict().items():
@@ -65,27 +72,28 @@ def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
                     var_meta = variables_meta[variable.variable]
                 else:
                     var_meta = VariableMeta()
+                    variables_meta[variable.variable] = var_meta
+
                 var_meta.aesthetics.append(aesthetic)
                 if variable.levels is not None:
                     var_meta.levels = variable.levels
                 order = variable.parameters.get('order')
                 if order is not None:
                     var_meta.order = order
-                variables_meta[variable.variable] = var_meta
             else:
                 mapping[aesthetic] = variable
 
-    for variableName, settings in variables_meta.items():
-        if settings.levels is not None:
+    for var_name, var_meta in variables_meta.items():
+        if var_meta.levels is not None:
             # series annotations
             series_meta.append({
-                'column': variableName,
-                'factor_levels': settings.levels,
-                'order': settings.order
+                'column': var_name,
+                'factor_levels': var_meta.levels,
+                'order': var_meta.order
             })
         else:
             # mapping annotations
-            for aesthetic in settings.aesthetics:
+            for aesthetic in var_meta.aesthetics:
                 value = raw_mapping.as_dict().get(aesthetic)
                 if value is not None and isinstance(value, MappingMeta):
                     mapping_meta.append({
