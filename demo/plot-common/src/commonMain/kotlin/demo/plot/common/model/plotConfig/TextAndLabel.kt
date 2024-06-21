@@ -11,15 +11,18 @@ class TextAndLabel {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             textWithAngle("text"),
-            textWithAngle("text", angle = 45.0),
-            textWithAngle("text", angle = 90.0),
+            //textWithAngle("text", angle = 45.0),
+            //textWithAngle("text", angle = 90.0),
 
-            textWithAngle("label"),
+            //textWithAngle("label"),
             textWithAngle("label", angle = 45.0),
-            textWithAngle("label", angle = 90.0),
+            //textWithAngle("label", angle = 90.0),
 
             inwardOutward(hjust = "inward", vjust = "inward", angle = 0.0),
-            inwardOutward(hjust = "inward", vjust = null, angle = 90.0),
+            //inwardOutward(hjust = "inward", vjust = null, angle = 90.0),
+
+            checkOverlaps(false),
+            checkOverlaps(true),
         )
         //return listOf(0,45,90,135,180,225,270,315).map {
         //    inward_outward(vjust =null , hjust = "inward", angle = it.toDouble())
@@ -131,6 +134,33 @@ class TextAndLabel {
 
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = data
+        return plotSpec
+    }
+
+    private fun checkOverlaps(checkOverlap: Boolean): MutableMap<String, Any> {
+        val spec = """{
+            'kind': 'plot',
+            'mapping': {
+                'x': 'vehicle weight (lbs.)',
+                'y':  'engine horsepower',
+                'label': 'vehicle name'
+            },
+           'layers': [
+                {
+                    'geom': 'point',
+                    'size': 2
+                },
+                {
+                    'geom': 'label',
+                    'hjust': 0.0,
+                    'vjust': 0.0,
+                    'check_overlap': $checkOverlap
+                }
+           ]
+        }
+        """.trimIndent()
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = demo.plot.common.data.AutoMpg.df
         return plotSpec
     }
 }
