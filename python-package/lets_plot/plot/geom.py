@@ -1141,7 +1141,12 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                color_by=None, fill_by=None,
                **other_args):
     """
-    Divides the plane into a grid and color the bins by the count of cases in them.
+    Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
+    and map the count to the fill color of the cell (tile).
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -1190,8 +1195,6 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
-    `geom_bin2d()` applies rectangular grid to the plane then counts observation
-    in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
 
     Computed variables:
 
@@ -4225,6 +4228,10 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     """
     Display density function contour.
 
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
+
     Parameters
     ----------
     mapping : `FeatureSpec`
@@ -4279,7 +4286,6 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_density2d()` draws density function.
 
     Computed variables:
 
@@ -4440,6 +4446,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     """
     Fill density function contour.
 
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
+
     Parameters
     ----------
     mapping : `FeatureSpec`
@@ -4496,7 +4506,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Notes
     -----
-    `geom_density2df()` fills density contours.
 
     Computed variables:
 
