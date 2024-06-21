@@ -111,6 +111,6 @@ class GuideOptionsConfigTest {
             listOf(scaleConfig),
             mapOf(Aes.COLOR.name to guideOptionsMap)
         )
-        return guideOptions[Aes.COLOR]!!
+        return guideOptions[Aes.COLOR.name]!!
     }
 }

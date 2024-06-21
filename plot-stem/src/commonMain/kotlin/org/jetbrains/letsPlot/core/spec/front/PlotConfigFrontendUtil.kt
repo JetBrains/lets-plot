@@ -53,7 +53,7 @@ object PlotConfigFrontendUtil {
     }
 
     private fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<String, GuideOptionsList> {
-        val guideOptionsByAes = HashMap<String, GuideOptionsList>()
+        val guideOptionsByName = HashMap<String, GuideOptionsList>()
         for ((key, value) in guideOptionsList) {
             val name = if (key in Option.Mapping.REAL_AES_OPTION_NAMES) {
                 Option.Mapping.toAes(key).name
@@ -61,9 +61,9 @@ object PlotConfigFrontendUtil {
                 key
             }
             val guideOptions = GuideConfig.create(value).createGuideOptions()
-            guideOptionsByAes.getOrPut(name, ::GuideOptionsList).add(guideOptions)
+            guideOptionsByName.getOrPut(name, ::GuideOptionsList).add(guideOptions)
         }
-        return guideOptions
+        return guideOptionsByName
     }
 
     internal fun createMappersAndScalesBeforeFacets(config: PlotConfigFrontend): Pair<Map<Aes<*>, ScaleMapper<*>>, Map<Aes<*>, Scale>> {
