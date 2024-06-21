@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
@@ -86,6 +87,19 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
         }
 
         throw IllegalStateException("Not implemented for $orientation")
+    }
+
+
+    override fun filterBreaks(axisDomain: DoubleSpan): AxisLabelsLayout {
+        val filteredBreaks = breaks.filterByTransformedLimits(axisDomain)
+        return withScaleBreaks(filteredBreaks)
+    }
+
+    open fun withScaleBreaks(breaks: ScaleBreaks): AxisLabelsLayout {
+        // To be implemented only in "entry-point" subclasses:
+        // - HorizontalFixedBreaksLabelsLayout
+        // - VerticalFixedBreaksLabelsLayout
+        throw IllegalStateException("Not implemented in ${this::class.simpleName}")
     }
 
     companion object {

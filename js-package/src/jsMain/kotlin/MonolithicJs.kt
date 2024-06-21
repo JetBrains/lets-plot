@@ -5,6 +5,7 @@
 
 /* root package */
 
+import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
@@ -15,10 +16,10 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.get
+import org.w3c.dom.*
 import sizing.SizingOption
+import sizing.SizingOption.HEIGHT
+import sizing.SizingOption.WIDTH
 import sizing.SizingPolicy
 
 private val LOG = PortableLogging.logger("MonolithicJs")
@@ -50,7 +51,16 @@ fun buildPlotFromRawSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val persistentDiv = document.createElement("div") as HTMLDivElement
+
+        parentElement.appendChild(persistentDiv)
+        buildPlotFromProcessedSpecsIntern(
+            processedSpec,
+            width, height,
+            persistentDiv, persistentDiv,
+            options,
+        )
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -83,7 +93,17 @@ fun buildPlotFromProcessedSpecs(
         } else {
             emptyMap()
         }
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement, options)
+
+        val persistentDiv = document.createElement("div") as HTMLDivElement
+
+        parentElement.appendChild(persistentDiv)
+
+        buildPlotFromProcessedSpecsIntern(
+            processedSpec,
+            width, height,
+            persistentDiv, persistentDiv,
+            options,
+        )
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
         null
@@ -95,6 +115,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
     width: Double,
     height: Double,
     parentElement: HTMLElement,
+    eventTarget: Element,
     options: Map<String, Any>
 ): FigureModelJs? {
 
@@ -105,22 +126,43 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val datalorePreferredWidth: Double? =
         parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
-    val sizingPolicy = if (plotSizeProvided != null) {
-        // Ignore sizing options even if provided
-        SizingPolicy.fixedBoth(plotSizeProvided)
-    } else when (val sizingOptions = options[SizingOption.KEY]) {
-        is Map<*, *> -> SizingPolicy.create(sizingOptions)
-        else -> SizingPolicy.DEFAULT
-    }
-
-    val (plotSize, plotMaxWidth) = /*if (plotSizeProvided != null) {
-        SizingPolicyAdapter.SizeAndMaxWidth(plotSizeProvided, null)
-    } else */if (datalorePreferredWidth != null) {
+    val (plotSize, plotMaxWidth) = if (datalorePreferredWidth != null) {
         SizingPolicyAdapter.SizeAndMaxWidth(null, null)
+
     } else {
+        val sizingPolicy = if (plotSizeProvided != null) {
+            // Ignore sizing options even if provided
+            SizingPolicy.fixedBoth(plotSizeProvided)
+        } else {
+            val parentWidth = when (val w = parentElement.clientWidth) {
+                0 -> null  // parent element wasn't yet layouted
+                else -> w
+            }?.toDouble()
+            val parentHeight = when (val h = parentElement.clientHeight) {
+                0 -> null  // parent element wasn't yet layouted
+                else -> h
+            }?.toDouble()
+
+            when (val sizingOptions = options[SizingOption.KEY]) {
+                is Map<*, *> -> {
+                    // The width/height should be in 'sizingOptions'.
+                    // Take the 'parentElement' dimensions as a fallback option.
+                    val fallbackSizingOptions = mapOf(
+                        WIDTH to parentWidth,
+                        HEIGHT to parentHeight,
+                    )
+                    SizingPolicy.create(fallbackSizingOptions + sizingOptions)
+                }
+
+                else -> {
+                    // No sizing options given - default to 'notebook mode'.
+                    SizingPolicy.notebookCell(parentWidth, parentHeight)
+                }
+            }
+        }
 
         val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
-        sizingPolicyAdapter.monolithicSizingParameters(plotSizeProvided, parentElement)
+        sizingPolicyAdapter.toMonolithicSizingParameters(/*plotSizeProvided, parentWidth, parentHeight*/)
     }
 
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
@@ -145,23 +187,33 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        val result = FigureToHtml(buildInfo, parentElement).eval()
+        val result = FigureToHtml(buildInfo, parentElement, eventTarget).eval()
         FigureModelJs(
             plotSpec,
-            MonolithicParameters(width, height, parentElement, options),
+            MonolithicParameters(
+                width,
+                height,
+                parentElement,
+                eventTarget,
+                options
+            ),
             result.toolEventDispatcher,
             result.figureRegistration
         )
     } else {
         // a bunch
-        buildGGBunchComponent(success.buildInfos, parentElement)
+        buildGGBunchComponent(success.buildInfos, parentElement, eventTarget)
         null
     }
 
     return figureModel
 }
 
-fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {
+fun buildGGBunchComponent(
+    plotInfos: List<FigureBuildInfo>,
+    parentElement: HTMLElement,
+    eventTarget: Element
+) {
     val bunchBounds = plotInfos.map { it.bounds }
         .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
             acc.union(bounds)
@@ -179,7 +231,8 @@ fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLE
 
         FigureToHtml(
             buildInfo = plotInfo,
-            containerElement = itemContainerElement
+            containerElement = itemContainerElement,
+            eventTarget = eventTarget
         ).eval()
 
     }

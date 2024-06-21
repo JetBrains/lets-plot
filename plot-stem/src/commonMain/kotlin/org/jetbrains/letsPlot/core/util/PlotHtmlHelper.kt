@@ -111,20 +111,33 @@ object PlotHtmlHelper {
         if(PLOT_VIEW_TOOLBOX_HTML) {
             // Experimental
             return """
-            |   <div id="$outputId"></div>
+            |   <div id="$outputId" style="background-color: orange;"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       (function() {
             |           var plotSpec=$plotSpecAsJsObjectInitializer;
-            |           var outputDiv = document.getElementById("$outputId");
+            |           var containerDiv = document.getElementById("$outputId");
+            |           <!-- Wrapper for toolbar and chart -->
+            |           var outputDiv = document.createElement('div');
+            |           outputDiv.setAttribute('style', 'display: inline-block;');
+            |           containerDiv.appendChild(outputDiv);
             |           
             |           // Toolbar
             |           var toolbar = new LetsPlot.tools.SandboxToolbar();
             |           outputDiv.appendChild(toolbar.getElement());
             |           
+            |           // Plot
             |           var plotContainer = document.createElement('div');
             |           outputDiv.appendChild(plotContainer);
             |           window.letsPlotCall(function() {{
-            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
+            |               var options = {
+            |                   sizing: {
+            |                       width_mode: "min",
+            |                       height_mode: "scaled",
+            |                       width: containerDiv.clientWidth,
+            |                       height: containerDiv.clientHeight
+            |                   }
+            |               };
+            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
             |               toolbar.bind(fig);
             |           }});
             |       })();

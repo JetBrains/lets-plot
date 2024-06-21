@@ -13,9 +13,8 @@ object ScaleProviderHelper {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDateTimeScaleProviderBuilder(aes: Aes<T>, name: String): ScaleProviderBuilder<T> {
+    fun <T> createDateTimeScaleProviderBuilder(aes: Aes<T>): ScaleProviderBuilder<T> {
         return ScaleProviderBuilder(aes)
-            .name(name)
             .breaksGenerator(DateTimeBreaksGen())
     }
 }

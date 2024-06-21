@@ -136,7 +136,7 @@ internal class DataPointLiveMapAesthetics {
         get() {
             val lineType = myP.lineType()
 
-            if (lineType.isSolid || lineType.isBlank) {
+            if (lineType.isSolid) {
                 return emptyList()
             }
 

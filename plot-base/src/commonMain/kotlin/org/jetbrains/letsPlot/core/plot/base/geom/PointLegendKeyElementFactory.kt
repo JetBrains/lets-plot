@@ -17,7 +17,7 @@ internal class PointLegendKeyElementFactory(private val fatten: Double = 1.0) :
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val location = DoubleVector(size.x / 2, size.y / 2)
         val shape = p.shape()!!
-        val slimObject = PointShapeSvg.create(shape, location, p, fatten)
+        val slimObject = PointShapeSvg.create(shape, location, p, fatten, verticallyAligned = true)
         return GeomBase.Companion.wrap(slimObject)
     }
 

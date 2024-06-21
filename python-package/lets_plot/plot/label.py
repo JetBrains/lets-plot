@@ -3,8 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec, FeatureSpecArray
-from .scale import _scale
-from .guide import guides, guide_legend
+from .guide import _guide, guides
 
 #
 # Plot title
@@ -111,13 +110,6 @@ def ylab(label):
     return labs(y=label)
 
 
-def _is_title_by_scale_spec(aes):
-    aes_list = ['x', 'y',
-                'color', 'colour', 'col', 'fill', 'paint_a', 'paint_b', 'paint_c',
-                'alpha', 'shape', 'linetype', 'size', 'stroke', 'linewidth']
-    return aes.lower() in aes_list
-
-
 def labs(title=None, subtitle=None, caption=None, **labels):
     """
     Change plot title and axis label.
@@ -163,12 +155,9 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
 
-    # scales for aes or guides for others
+    # guides
     for key, label in labels.items():
-        if _is_title_by_scale_spec(key):
-            specs.append(_scale(aesthetic=key, name=label))
-        else:
-            specs.append(guides(**{key: guide_legend(title=label)}))
+        specs.append(guides(**{key: _guide(name=None, title=label)}))
 
     if len(specs) == 1:
         return specs[0]

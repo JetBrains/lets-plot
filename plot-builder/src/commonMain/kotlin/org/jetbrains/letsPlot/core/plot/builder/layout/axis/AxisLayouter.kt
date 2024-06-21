@@ -24,6 +24,7 @@ internal class AxisLayouter private constructor(
 
     fun doLayout(axisDomain: DoubleSpan, axisLength: Double): AxisLayoutInfo {
 
+        val labelsLayout = labelsLayout.filterBreaks(axisDomain)
         val labelsInfo = labelsLayout.doLayout(axisDomain, axisLength)
         val axisBreaks = labelsInfo.breaks!!
         val labelsBounds = labelsInfo.bounds!!

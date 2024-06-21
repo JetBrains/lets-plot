@@ -30,6 +30,14 @@ internal class VerticalFixedBreaksLabelsLayout(
         throw IllegalStateException("Not implemented here")
     }
 
+    override fun withScaleBreaks(breaks: ScaleBreaks): AxisLabelsLayout {
+        return VerticalFixedBreaksLabelsLayout(
+            orientation,
+            breaks,
+            theme
+        )
+    }
+
     override fun doLayout(
         axisDomain: DoubleSpan,
         axisLength: Double,

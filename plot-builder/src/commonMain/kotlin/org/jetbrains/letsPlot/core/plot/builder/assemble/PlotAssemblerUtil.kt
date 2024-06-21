@@ -42,12 +42,9 @@ internal object PlotAssemblerUtil {
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<String, GuideOptions>,
+        guideOptionsMap: Map<String, GuideOptionsList>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
-        fun chooseTitle(guideOptionsKey: String, defaultName: String): String {
-            return guideOptionsMap[guideOptionsKey]?.title ?: defaultName
-        }
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
@@ -64,16 +61,11 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = chooseTitle(aes.name, scale.name)
+                val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes.name]?.let {
-                    if (it is ColorBarOptions) {
-                        checkFitsColorBar(aes, scale)
-                        it
-                    } else {
-                        null
-                    }
-                }
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes.name]
+                    ?.getColorBarOptions()
+                    ?.also { checkFitsColorBar(aes, scale) }
 
                 if (colorBarOptions != null || fitsColorBar(aes, scale)) {
                     // Colorbar
@@ -132,10 +124,9 @@ internal object PlotAssemblerUtil {
 
             // custom legend
             layerInfo.customLegendItem?.let { legendItem ->
-                val legendTitle = chooseTitle(
-                    legendItem.group,
+                val legendTitle = guideOptionsMap[legendItem.group]?.getTitle() ?:
                     legendItem.group.takeIf { it != CustomLegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
-                )
+
                 val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
                     LegendAssembler(
                         legendTitle,

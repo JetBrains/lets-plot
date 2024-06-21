@@ -25,7 +25,7 @@ class LollipopLegendKeyElementFactory(
         val g = SvgGElement()
 
         val location = DoubleVector(size.x / 2, (size.y - stickLength) / 2)
-        val slimObject = PointShapeSvg.create(p.shape()!!, location, p, fatten)
+        val slimObject = PointShapeSvg.create(p.shape()!!, location, p, fatten, verticallyAligned = true)
         val circle = GeomBase.Companion.wrap(slimObject)
         g.children().add(circle)
 

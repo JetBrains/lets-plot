@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
+import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 
 @OptIn(ExperimentalJsExport::class)
@@ -49,6 +50,7 @@ class FigureModelJs internal constructor(
             monolithicParameters.width,
             monolithicParameters.height,
             monolithicParameters.parentElement,
+            monolithicParameters.eventTarget,
             monolithicParameters.options
         )
 
@@ -89,5 +91,6 @@ internal class MonolithicParameters(
     val width: Double,
     val height: Double,
     val parentElement: HTMLElement,
+    val eventTarget: Element,
     val options: Map<String, Any>
 )

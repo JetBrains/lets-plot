@@ -1,22 +1,25 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.core.platf.dom
 
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.event.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getButton
-import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getModifiers
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.platf.w3c.dom.on
 import org.w3c.dom.Element
 import org.w3c.dom.events.WheelEvent
+import kotlin.math.roundToInt
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
 typealias DomWheelEvent = WheelEvent
@@ -24,37 +27,56 @@ typealias DomWheelEvent = WheelEvent
 private const val ENABLE_DEBUG_LOG = false
 
 class DomMouseEventMapper(
-    private val eventSource: Element,
-    private val bounds: DoubleRectangle? = null,
-) : MouseEventSource {
+    private val eventTarget: Element,
+
+    // The area where the events are handled.
+    // The area is relative to the top-left corner of the event target.
+    private val eventArea: DoubleRectangle = DoubleRectangle.XYWH(
+        x = 0,
+        y = 0,
+        width = eventTarget.clientWidth.toDouble(),
+        height = eventTarget.clientHeight.toDouble()
+    )
+) : MouseEventSource, Disposable {
+
+    private val regs = CompositeRegistration()
     private val mouseEventPeer = MouseEventPeer()
 
-    private var state: MouseState = HoverState()
+    private var state: MouseState = MouseOverState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
-                println("state($${this@DomMouseEventMapper.hashCode()}): ${field::class.simpleName} -> ${value::class.simpleName}")
+                println(
+                    "state($${
+                        this@DomMouseEventMapper.hashCode().toString(36)
+                    }): ${field::class.simpleName} -> ${value::class.simpleName}"
+                )
             }
             field = value
         }
 
     init {
-        handle(DomEventType.CLICK) { state.onMouseEvent(DomEventType.CLICK, it) }
-        handle(DomEventType.DOUBLE_CLICK) { state.onMouseEvent(DomEventType.DOUBLE_CLICK, it) }
-        handle(DomEventType.MOUSE_ENTER) { state.onMouseEvent(DomEventType.MOUSE_ENTER, it) }
-        handle(DomEventType.MOUSE_LEAVE) { state.onMouseEvent(DomEventType.MOUSE_LEAVE, it) }
-        handle(DomEventType.MOUSE_DOWN) { state.onMouseEvent(DomEventType.MOUSE_DOWN, it) }
-        handle(DomEventType.MOUSE_UP) { state.onMouseEvent(DomEventType.MOUSE_UP, it) }
-        handle(DomEventType.MOUSE_MOVE) { state.onMouseEvent(DomEventType.MOUSE_MOVE, it) }
-        handle(DomEventType.MOUSE_WHEEL) { state.onMouseEvent(DomEventType.MOUSE_WHEEL, it) }
+        if (ENABLE_DEBUG_LOG) {
+            println("DomMouseEventMapper(${this.hashCode().toString(36)}): subarea=$eventArea")
+        }
+
+        fun addHandler(eventSpec: DomEventType<out DomMouseEvent>) {
+            eventTarget
+                .on(eventSpec, consumer = { mouseEvent -> state.onMouseEvent(eventSpec, mouseEvent) })
+                .also(regs::add)
+        }
+
+        addHandler(DomEventType.CLICK)
+        addHandler(DomEventType.DOUBLE_CLICK)
+        addHandler(DomEventType.MOUSE_ENTER)
+        addHandler(DomEventType.MOUSE_LEAVE)
+        addHandler(DomEventType.MOUSE_DOWN)
+        addHandler(DomEventType.MOUSE_UP)
+        addHandler(DomEventType.MOUSE_MOVE)
+        addHandler(DomEventType.MOUSE_WHEEL)
     }
 
-    private fun handle(eventSpec: DomEventType<out DomMouseEvent>, handler: (DomMouseEvent) -> Unit) {
-        eventSource.on(eventSpec, consumer = {
-            val needHandle = bounds?.contains(DoubleVector(it.offsetX, it.offsetY)) ?: true
-            if (needHandle) {
-                handler(it)
-            }
-        })
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+        return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
     }
 
     private fun dispatch(eventSpec: MouseEventSpec, domMouseEvent: DomMouseEvent) {
@@ -70,15 +92,11 @@ class DomMouseEventMapper(
         // Now dragging outside the iframe can be tested.
         //domMouseEvent.preventDefault() // Fix for Safari to prevent selection when user drags outside a canvas
 
-        val targetClientOrigin = eventSource.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
-        val targetAbsoluteOrigin = bounds?.origin ?: DoubleVector.ZERO
-        val eventClientCoord = DoubleVector(domMouseEvent.clientX.toDouble(), domMouseEvent.clientY.toDouble())
-        val eventTargetCoord = eventClientCoord.subtract(targetClientOrigin).subtract(targetAbsoluteOrigin)
-
-        val x = eventTargetCoord.x.toInt()
-        val y = eventTargetCoord.y.toInt()
-        val button = getButton(domMouseEvent)
-        val modifiers = getModifiers(domMouseEvent)
+        val coord = toEventTargetOffsetCoord(domMouseEvent).subtract(eventArea.origin)
+        val x = coord.x.roundToInt()//domMouseEvent.regionX.roundToInt()
+        val y = coord.y.roundToInt()//domMouseEvent.regionY.roundToInt()
+        val button = DomEventUtil.getButton(domMouseEvent)
+        val modifiers = DomEventUtil.getModifiers(domMouseEvent)
 
         val mouseEvent = when (domMouseEvent) {
             is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
@@ -92,9 +110,25 @@ class DomMouseEventMapper(
         }
     }
 
+    private fun inEventArea(e: DomMouseEvent): Boolean {
+        return toEventTargetOffsetCoord(e) in eventArea
+    }
+
+    // Convert event coordinates to the local coordinate system of the event target
+    // (i.e. the top-left corner of the event target is (0, 0))
+    // Can't use offsetX/Y because it's relative to the element under the mouse pointer, not the event target.
+    // This means that with gggrid even when the mouse is over the most right cell, offsetX is still
+    // in range (0, cell.width), not (cell.left, cell.right)
+    private fun toEventTargetOffsetCoord(e: DomMouseEvent): DoubleVector {
+        val offsetX = e.pageX - window.pageXOffset - eventTarget.getBoundingClientRect().left
+        val offsetY = e.pageY - window.pageYOffset - eventTarget.getBoundingClientRect().top
+
+        return DoubleVector(offsetX, offsetY)
+    }
+
     private abstract inner class MouseState {
         fun onMouseEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
-            log(type.name)
+            log("${type.name} at (${e.x}, ${e.y})")
             handleEvent(type, e)
         }
 
@@ -102,64 +136,84 @@ class DomMouseEventMapper(
 
         fun log(str: String) {
             if (ENABLE_DEBUG_LOG) {
-                println("${this::class.simpleName}(${this@DomMouseEventMapper.hashCode()}): $str")
+                println("${this::class.simpleName}(${this@DomMouseEventMapper.hashCode().toString(36)}): $str")
             }
         }
     }
 
-    private inner class HoverState : MouseState() {
+    private inner class MouseOutsideState : MouseState() {
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
-            if (type == DomEventType.MOUSE_DOWN) {
-                dispatch(MouseEventSpec.MOUSE_PRESSED, e)
-                state = ButtonDownState(eventCoord = DoubleVector(e.x, e.y))
-                return
+            if (!inEventArea(e)) return
+
+            // mouseover with already pressed button -> drag from another element -> not hover for this element
+            if (e.buttons > 0) return
+
+            when (type) {
+                DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
+                        dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                        state = MouseOverState()
+                }
+                // Ignore buttons/leave events
+            }
+        }
+    }
+
+    private inner class MouseOverState : MouseState() {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
+            if (!inEventArea(e)) {
+                dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                state = MouseOutsideState()
             }
 
-            // Any event with already pressed button -> drag from another element -> ignore events until buttons release
-            if (e.buttons > 0) {
-                state = ForeignDragging()
+            if (type == DomEventType.MOUSE_DOWN) {
+                dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                state = MousePressedState(pressEvent = e)
                 return
             }
 
             when (type) {
                 DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
-                DomEventType.MOUSE_LEAVE -> dispatch(MouseEventSpec.MOUSE_LEFT, e)
-                DomEventType.MOUSE_ENTER -> dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+
+                DomEventType.MOUSE_LEAVE -> {
+                    dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                    state = MouseOutsideState()
+                }
+
                 DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e) // wish can handle in ButtonDownState
                 DomEventType.MOUSE_WHEEL -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e as DomWheelEvent)
+                DomEventType.MOUSE_ENTER -> {} // should be handled by OutsideState
                 DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
             }
         }
     }
 
-    private inner class ButtonDownState(
-        private val eventCoord: DoubleVector,
+    private inner class MousePressedState(
+        private val pressEvent: DomMouseEvent,
         private val draggingTriggerDistance: Double = 3.0
     ) : MouseState() {
 
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             when (type) {
-                DomEventType.MOUSE_UP -> {
-                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-                }
+                DomEventType.MOUSE_UP -> dispatch(MouseEventSpec.MOUSE_RELEASED, e)
 
                 // It's safe to set HoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
                 DomEventType.CLICK -> {
                     dispatch(MouseEventSpec.MOUSE_CLICKED, e)
-                    state = HoverState()
+                    state = MouseOverState()
                 }
 
                 DomEventType.MOUSE_MOVE -> {
-                    if (DoubleVector(e.x, e.y).subtract(eventCoord).length() > draggingTriggerDistance) {
+                    if (distance(e.x, e.y, pressEvent.x, pressEvent.y) > draggingTriggerDistance) {
+                        dispatch(MouseEventSpec.MOUSE_DRAGGED, pressEvent)
                         dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
-                        state = Dragging()
+                        state = MouseDragState()
                     }
                 }
             }
         }
     }
 
-    private inner class Dragging : MouseState() {
+    private inner class MouseDragState : MouseState() {
         private var myDocumentMouseEventsRegistration = Registration.from(
             document.on(DomEventType.MOUSE_MOVE, ::onDocumentMouseMove),
             document.on(DomEventType.MOUSE_UP, ::onDocumentMouseUp)
@@ -171,7 +225,7 @@ class DomMouseEventMapper(
 
         private fun onDocumentMouseUp(e: DomMouseEvent) {
             dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-            state = HoverState()
+            state = MouseOverState()
             myDocumentMouseEventsRegistration.dispose()
         }
 
@@ -180,17 +234,7 @@ class DomMouseEventMapper(
         }
     }
 
-    private inner class ForeignDragging : MouseState() {
-        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
-            if (e.buttons > 0) {
-                return
-            }
-
-            state = HoverState()
-        }
-    }
-
-    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
+    override fun dispose() {
+        regs.dispose()
     }
 }

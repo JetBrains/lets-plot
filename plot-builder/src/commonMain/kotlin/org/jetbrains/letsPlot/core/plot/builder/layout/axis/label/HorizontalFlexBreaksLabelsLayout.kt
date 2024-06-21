@@ -28,6 +28,11 @@ internal class HorizontalFlexBreaksLabelsLayout(
         require(!myBreaksProvider.isFixedBreaks) { "fixed breaks" }
     }
 
+    override fun filterBreaks(axisDomain: DoubleSpan): AxisLabelsLayout {
+        // Only for scales eith "fixed" breaks.
+        return this
+    }
+
     override fun doLayout(
         axisDomain: DoubleSpan,
         axisLength: Double,

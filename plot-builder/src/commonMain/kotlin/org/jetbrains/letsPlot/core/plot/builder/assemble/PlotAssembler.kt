@@ -37,7 +37,7 @@ class PlotAssembler constructor(
     title: String? = null,
     subtitle: String? = null,
     caption: String? = null,
-    guideOptionsMap: Map<String, GuideOptions> = HashMap(),
+    guideOptionsMap: Map<String, GuideOptionsList> = HashMap(),
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap

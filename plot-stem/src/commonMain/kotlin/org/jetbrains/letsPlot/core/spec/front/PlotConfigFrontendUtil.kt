@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -27,26 +27,41 @@ import org.jetbrains.letsPlot.core.spec.config.ScaleConfig
 import org.jetbrains.letsPlot.core.spec.front.tiles.PlotTilesConfig
 
 object PlotConfigFrontendUtil {
-    internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<String, GuideOptions> {
-        val guideOptionsByAesName = HashMap<String, GuideOptions>()
+    internal fun createGuideOptions(
+        scaleConfigs: List<ScaleConfig<*>>,
+        guideOptionsList: Map<String, Any>,
+    ): Map<String, GuideOptionsList> {
+        val scaleGuides = createGuideOptionsMap(scaleConfigs)
+        val plotGuides = createGuideOptionsMap(guideOptionsList)
+
+        return (scaleGuides.asSequence() + plotGuides.asSequence())
+            .groupBy({ it.key }, { it.value })
+            .mapValues { (_, values) ->
+                values.fold(GuideOptionsList()) { acc, list -> acc + list }
+            }
+    }
+
+    private fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<String, GuideOptionsList> {
+        val guideOptionsByAesName = HashMap<String, GuideOptionsList>()
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
                 val guideOptions = scaleConfig.getGuideOptions().createGuideOptions()
-                guideOptionsByAesName[scaleConfig.aes.name] = guideOptions
+                guideOptionsByAesName.getOrPut(scaleConfig.aes.name, ::GuideOptionsList).add(guideOptions)
             }
         }
         return guideOptionsByAesName
     }
 
-    internal fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<String, GuideOptions> {
-        val guideOptions = HashMap<String, GuideOptions>()
+    private fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<String, GuideOptionsList> {
+        val guideOptionsByAes = HashMap<String, GuideOptionsList>()
         for ((key, value) in guideOptionsList) {
             val name = if (key in Option.Mapping.REAL_AES_OPTION_NAMES) {
                 Option.Mapping.toAes(key).name
             } else {
                 key
             }
-            guideOptions[name] = GuideConfig.create(value).createGuideOptions()
+            val guideOptions = GuideConfig.create(value).createGuideOptions()
+            guideOptionsByAes.getOrPut(name, ::GuideOptionsList).add(guideOptions)
         }
         return guideOptions
     }
@@ -71,7 +86,8 @@ object PlotConfigFrontendUtil {
             layerConfigs,
             transformByAes,
             mappersByAes,
-            config.scaleProviderByAes
+            config.scaleProviderByAes,
+            config.guideOptionsMap
         )
         return Pair(mappersByAes, scaleByAes)
     }
