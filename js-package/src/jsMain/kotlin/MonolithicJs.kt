@@ -63,7 +63,7 @@ fun buildPlotFromRawSpecs(
         )
 
     } catch (e: RuntimeException) {
-        handleException(e, parentElement)
+        handleException(e, MessageHandler(parentElement))
         null
     }
 }
@@ -102,7 +102,7 @@ fun buildPlotFromProcessedSpecs(
             options
         )
     } catch (e: RuntimeException) {
-        handleException(e, parentElement)
+        handleException(e, MessageHandler(parentElement))
         null
     }
 }
@@ -122,6 +122,10 @@ private fun buildPlotFromProcessedSpecsPrivate(
     val wrapperDiv = document.createElement("div") as HTMLDivElement
     parentElement.appendChild(wrapperDiv)
 
+    // Messages div
+    val messagesDiv = document.createElement("div") as HTMLDivElement
+    parentElement.appendChild(messagesDiv)
+
     val sizingPolicy = createSizingPolicy(
         width, height,
         parentElement,
@@ -133,6 +137,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
         width, height,
         wrapperDiv,
         sizingPolicy,
+        MessageHandler(messagesDiv),
     )
 }
 
@@ -184,6 +189,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
     height: Double,
     wrapperElement: HTMLElement,
     sizingPolicy: SizingPolicy,
+    messageHandler: MessageHandler
 ): FigureModelJs? {
 
     // Datalore specific option - not compatible with reactive sizing.
@@ -206,14 +212,14 @@ internal fun buildPlotFromProcessedSpecsIntern(
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
-        showError(errorMessage, wrapperElement)
+        messageHandler.showError(errorMessage)
         return null
     }
 
     val success = buildResult as Success
     val computationMessages = success.buildInfos.flatMap { it.computationMessages }
     computationMessages.forEach {
-        showInfo(it, wrapperElement)
+        messageHandler.showInfo(it)
     }
 
     val figureModel = if (success.buildInfos.size == 1) {
@@ -227,6 +233,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
                 height,
                 wrapperElement,
                 sizingPolicy,
+                messageHandler.toMute(),
             ),
             result.toolEventDispatcher,
             result.figureRegistration
@@ -267,29 +274,42 @@ private fun buildGGBunchComponent(
     }
 }
 
-private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
+private fun handleException(e: RuntimeException, messageHandler: MessageHandler) {
     val failureInfo = FailureHandler.failureInfo(e)
-    showError(failureInfo.message, parentElement)
+    messageHandler.showError(failureInfo.message)
     if (failureInfo.isInternalError) {
         LOG.error(e) { "Unexpected situation in 'MonolithicJs'" }
     }
 }
 
-private fun showError(message: String, parentElement: HTMLElement) {
-    showText(message, "lets-plot-message-error", "color:darkred;", parentElement)
-}
+internal class MessageHandler(
+    private val messagesDiv: HTMLElement,
+) {
 
-private fun showInfo(message: String, parentElement: HTMLElement) {
-    showText(message, "lets-plot-message-info", "color:darkblue;", parentElement)
-}
+    private var mute: Boolean = false
 
-private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
-    val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
-
-    if (style.isNotBlank()) {
-        paragraphElement.setAttribute("style", style)
+    fun showError(message: String) {
+        showText(message, "lets-plot-message-error", "color:darkred;")
     }
-    paragraphElement.textContent = message
-    paragraphElement.className = className
-    parentElement.appendChild(paragraphElement)
+
+    fun showInfo(message: String) {
+        showText(message, "lets-plot-message-info", "color:darkblue;")
+    }
+
+    private fun showText(message: String, className: String, style: String) {
+        if (mute) return
+
+        val paragraphElement = messagesDiv.ownerDocument!!.createElement("p") as HTMLParagraphElement
+
+        if (style.isNotBlank()) {
+            paragraphElement.setAttribute("style", style)
+        }
+        paragraphElement.textContent = message
+        paragraphElement.className = className
+        messagesDiv.appendChild(paragraphElement)
+    }
+
+    fun toMute(): MessageHandler {
+        return MessageHandler(messagesDiv).also { it.mute = true }
+    }
 }

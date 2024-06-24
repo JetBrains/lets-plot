@@ -51,6 +51,7 @@ class FigureModelJs internal constructor(
             monolithicParameters.height,
             monolithicParameters.parentElement,
             monolithicParameters.sizingPolicy,
+            monolithicParameters.messageHandler,
         )
 
         if (newFigureModel == null) return  // something went wrong.
@@ -91,4 +92,5 @@ internal class MonolithicParameters(
     val height: Double,
     val parentElement: HTMLElement,
     val sizingPolicy: SizingPolicy,
+    val messageHandler: MessageHandler,
 )
