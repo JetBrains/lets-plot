@@ -3,10 +3,10 @@
 
 import json
 
-from geo_data_test_util import get_data_meta, get_map_data_meta
 from geopandas import GeoDataFrame
 from shapely.geometry import MultiPolygon, Polygon, LinearRing, Point, mapping
 
+from geo_data_test_util import get_data_meta, get_map_data_meta
 from lets_plot._type_utils import _standardize_value
 from lets_plot.plot import ggplot, geom_polygon
 
@@ -28,11 +28,18 @@ MULTIPOLYGON = MultiPolygon([
 names = ['A', 'B', 'C']
 geoms = [POINT, POLYGON, MULTIPOLYGON]
 
-EXPECTED_GDF_META = {
+EXPECTED_SERIES_ANNOTATIONS_META = {
+    'series_annotations': [{'column': 'name', 'type': 'str'},
+                           {'column': 'coord',
+                            'type': 'unknown(pandas:unknown-array)'}]
+}
+
+EXPECTED_GEODATAFRAME_META = {
     'geodataframe': {
         'geometry': 'coord'
     }
 }
+
 
 def make_geodataframe() -> GeoDataFrame:
     return GeoDataFrame(
@@ -56,18 +63,19 @@ def test_geodataframe_should_be_mapped():
 def test_plot_should_has_meta_data_for_geodataframe():
     plot_spec = ggplot() + geom_polygon(data=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_data_meta(plot_spec, 0)
+    assert {**EXPECTED_SERIES_ANNOTATIONS_META, **EXPECTED_GEODATAFRAME_META} == get_data_meta(plot_spec, 0)
 
 
 def test_plot_should_has_meta_map_for_geodataframe():
     plot_spec = ggplot() + geom_polygon(map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
+    # map doesn't define type meta (maybe it should?)
+    assert EXPECTED_GEODATAFRAME_META == get_map_data_meta(plot_spec, 0)
 
 
 def test_when_both_data_and_map_are_gdf_should_has_geodataframe_meta_only_for_map():
     plot_spec = ggplot() + geom_polygon(data=make_geodataframe(), map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
-    assert {} == get_data_meta(plot_spec, 0)
-
+    # map doesn't define type meta (maybe it should?)
+    assert EXPECTED_GEODATAFRAME_META == get_map_data_meta(plot_spec, 0)
+    assert EXPECTED_SERIES_ANNOTATIONS_META == get_data_meta(plot_spec, 0)
