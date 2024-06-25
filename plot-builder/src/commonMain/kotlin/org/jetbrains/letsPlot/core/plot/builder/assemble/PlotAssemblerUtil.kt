@@ -42,14 +42,13 @@ internal object PlotAssemblerUtil {
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
+        guideOptionsMap: Map<GuideKey, GuideOptionsList>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-//        for (layerInfo in geomTiles.coreLayerInfos()) {
         for (layerInfo in geomTiles.layerInfos()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
@@ -64,7 +63,7 @@ internal object PlotAssemblerUtil {
                 val scale = ctx.getScale(aes)
                 val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[GuideKey.fromAes(aes)]
                     ?.getColorBarOptions()
                     ?.also { checkFitsColorBar(aes, scale) }
 
@@ -120,6 +119,30 @@ internal object PlotAssemblerUtil {
                     layerInfo.fillByAes,
                     layerInfo.isMarginal,
                     ctx,
+                )
+            }
+
+            // custom legend
+            layerInfo.customLegendOptions?.let { legendOptions ->
+                val guideKey = GuideKey.fromName(legendOptions.group)
+                val legendTitle = guideOptionsMap[guideKey]?.getTitle() ?: legendOptions.group
+
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
+                    LegendAssembler(
+                        legendTitle,
+                        guideOptionsMap,
+                        scaleMappersNP,
+                        theme
+                    )
+                }
+                customLegendAssembler.addCustomLayer(
+                    legendOptions,
+                    layerInfo.legendKeyElementFactory,
+                    layerConstantByAes,
+                    layerInfo.aestheticsDefaults,
+                    layerInfo.colorByAes,
+                    layerInfo.fillByAes,
+                    layerInfo.isMarginal
                 )
             }
         }
