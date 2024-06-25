@@ -83,11 +83,11 @@ class LegendAssembler(
             return LegendBoxInfo.EMPTY
         }
 
-        val legendOptionsList = legendLayers.flatMap { legendLayer ->
-            legendLayer.aesList.mapNotNull { aes ->
-                guideOptionsMap[aes] as? LegendOptions
-            }
-        }
+        val legendOptionsList =
+            legendLayers
+                .map(LegendLayer::aesList)
+                .flatten()
+                .mapNotNull { guideOptionsMap[it] as? LegendOptions }
 
         val spec =
             createLegendSpec(
@@ -119,13 +119,13 @@ class LegendAssembler(
         val isMarginal: Boolean,
         ctx: PlotContext
     ) {
-
         val keyAesthetics: Aesthetics
         val keyLabels: List<String>
 
         init {
-            val aesValuesByLabel =
-                LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
+            val labelsValuesByAes: MutableMap<Aes<*>, List<Pair<String, Any?>>> = mutableMapOf()
+            var maxLabelsSize = 0
+
             for (aes in aesList) {
                 var scale = ctx.getScale(aes)
                 if (!scale.hasBreaks()) {
@@ -137,33 +137,55 @@ class LegendAssembler(
                 val aesValues = scaleBreaks.transformedValues.map {
                     scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                 }
-                val labels = scaleBreaks.labels
-                labels.zip(aesValues).forEachIndexed { index, (label, aesValue) ->
-                    val labelMap = aesValuesByLabel.getOrPut(label) { HashMap() }
-                    labelMap[aes] = aesValue
 
-                    overrideAesValues.forEach { (aesToOverride, v) ->
-                        val newAesValue = if (v is List<*>) {
-                            v.getOrElse(index) { v.lastOrNull() }
-                        } else {
-                            v
-                        }
-                        newAesValue?.let {
-                            labelMap[aesToOverride] = it
-                        }
-                    }
+                val labels = scaleBreaks.labels
+                labelsValuesByAes[aes] = labels.zip(aesValues)
+                maxLabelsSize = maxOf(maxLabelsSize, labels.size)
+            }
+
+            val overideAesValueLists = overrideAesValues.mapValues { (_, value) ->
+                val valueList = when (value) {
+                    is List<*> -> if (value.isEmpty()) listOf(null) else value
+                    else -> listOf(value)
                 }
+                if (maxLabelsSize <= valueList.size) {
+                    valueList
+                } else {
+                    valueList + List(maxLabelsSize - valueList.size) { valueList.last() }
+                }
+            }
+
+            aesList.forEach { aes ->
+                val labels = labelsValuesByAes.getValue(aes).map{ it.first }
+
+                overideAesValueLists.forEach { (aesToOverride, valueList) ->
+                    val currentValues = labelsValuesByAes.getOrPut(aesToOverride) { labels.zip(valueList) }
+                    val updatedValues = currentValues
+                        .zip(valueList)
+                        .map{ (old_value, new_value) -> new_value ?: old_value }
+
+                    labelsValuesByAes[aesToOverride] = labels.zip(updatedValues)
+                }
+            }
+
+            keyLabels = labelsValuesByAes.values
+                .flatMap { it.map { pair -> pair.first } }
+                .distinct()
+
+            val mapsByLabel = keyLabels.map { label ->
+                labelsValuesByAes.mapNotNull { (aes, pairs) ->
+                    pairs.lastOrNull { it.first == label && it.second != null }?.let { aes to it.second!! }
+                }.toMap()
             }
 
             // build 'key' aesthetics
             keyAesthetics = mapToAesthetics(
-                aesValuesByLabel.values,
+                mapsByLabel,
                 constantByAes,
                 aestheticsDefaults,
                 colorByAes,
                 fillByAes
             )
-            keyLabels = ArrayList(aesValuesByLabel.keys)
         }
     }
 
@@ -256,3 +278,4 @@ class LegendAssembler(
         }
     }
 }
+
