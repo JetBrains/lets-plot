@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.coord.TransformedCoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -48,21 +48,7 @@ internal open class SquareFrameOfReference(
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
 
-    private var panOffset: DoubleVector = DoubleVector.ZERO
-    private var scale: DoubleVector = DoubleVector(1.0, 1.0)
-
-    override fun zoom(scale: DoubleVector) {
-        this.scale = scale
-    }
-
-    override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
-        panOffset = to.subtract(from)
-
-        val domainFrom = coord.fromClient(from) ?: return null
-        val domainTo = coord.fromClient(to) ?: return null
-
-        return domainTo.subtract(domainFrom)
-    }
+    override val transientState: ComponentTransientState = TransientState()
 
     override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
         val domainPoint0 = coord.fromClient(clientRect.origin)
@@ -264,7 +250,11 @@ internal open class SquareFrameOfReference(
 
         val breaksData = AxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
-            coord = TransformedCoordinateSystem(coord, panOffset, scale),
+            coord = TransformedCoordinateSystem(
+                coord,
+                translate = transientState.offset,
+                scale = transientState.scale
+            ),
             domain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
@@ -415,6 +405,25 @@ internal open class SquareFrameOfReference(
             val geom = layer.geom
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
+        }
+    }
+
+    inner class TransientState : ComponentTransientState(
+        bounds = layoutInfo.geomContentBounds
+    ) {
+        override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
+            return this@SquareFrameOfReference.toDataBounds(clientRect)
+        }
+
+        override fun repaint() {
+            // This is invoked from generic methods of the base class - ignore.
+        }
+
+        override fun repaintFrame(bottomGroup: GroupComponent, topGroup: GroupComponent) {
+            bottomGroup.clear()
+            drawBeforeGeomLayer(bottomGroup)
+            topGroup.clear()
+            drawAfterGeomLayer(topGroup)
         }
     }
 }

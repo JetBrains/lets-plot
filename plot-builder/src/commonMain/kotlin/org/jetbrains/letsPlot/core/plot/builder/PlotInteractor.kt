@@ -90,13 +90,14 @@ internal class PlotInteractor(
                     tiles
                 )
             )
+
             else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
         }
         return Registration.from(disposable)
     }
 
     override fun reset() {
-        tiles.forEach { (_, tile) -> tile.interactionSupport.reset() }
+        tiles.forEach { (_, tile) -> tile.transientState.reset() }
     }
 
     override fun dispose() {
@@ -117,8 +118,8 @@ internal class PlotInteractor(
 
                 override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
                     val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
-                    tile.interactionSupport.updateTransform(scale, translate)
-                    return tile.interactionSupport.calculateDataBounds()
+                    tile.transientState.applyDelta(scale, translate)
+                    return tile.transientState.dataBounds
                 }
             }
         }

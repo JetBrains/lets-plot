@@ -6,13 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface FrameOfReference {
-    fun zoom(scale: DoubleVector)
-    fun pan(from: DoubleVector, to: DoubleVector): DoubleVector?
+    val transientState: ComponentTransientState
+
     fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 
     fun drawBeforeGeomLayer(parent: SvgComponent)
