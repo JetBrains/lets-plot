@@ -43,7 +43,7 @@ class LegendAssembler(
         colorByAes: Aes<Color>,
         fillByAes: Aes<Color>,
         isMarginal: Boolean,
-        ctx: PlotContext
+        ctx: PlotContext,
     ) {
         legendLayers.add(
             LegendLayer.createDefaultLegendLayer(
@@ -119,11 +119,7 @@ class LegendAssembler(
             .mapNotNull(GuideOptionsList::getLegendOptions)
         val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
 
-        val spec = createLegendSpec(
-            legendTitle,
-            legendBreaks,
-            theme,
-            combinedLegendOptions)
+        val spec = createLegendSpec(legendTitle, legendBreaks, theme, combinedLegendOptions)
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
