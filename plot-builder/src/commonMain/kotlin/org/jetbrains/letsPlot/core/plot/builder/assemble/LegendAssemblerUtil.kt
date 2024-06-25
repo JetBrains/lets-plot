@@ -50,6 +50,8 @@ internal object LegendAssemblerUtil {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
             val dataPoint = HashMap<Aes<*>, Any>()
+
+            // Default values
             for (aes in Aes.values()) {
                 dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(aes)!!
 
@@ -65,13 +67,10 @@ internal object LegendAssemblerUtil {
             }
 
             // Derive from constants
-            constantByAes.entries.forEach { (constantAes, value) ->
-                dataPoint[constantAes] = value
-            }
+            dataPoint += constantByAes
 
-            for (aes in valueByAes.keys) {
-                dataPoint[aes] = valueByAes[aes]!!
-            }
+            // Apply defined values
+            dataPoint += valueByAes
 
             dataPoints.add(dataPoint)
         }
