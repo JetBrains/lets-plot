@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.front
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideTitleOption
 import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendOptions
 import org.jetbrains.letsPlot.core.spec.Option
@@ -111,6 +112,6 @@ class GuideOptionsConfigTest {
             listOf(scaleConfig),
             mapOf(Aes.COLOR.name to guideOptionsMap)
         )
-        return guideOptions[Aes.COLOR.name]!!
+        return guideOptions[GuideKey.fromAes(Aes.COLOR)]!!
     }
 }

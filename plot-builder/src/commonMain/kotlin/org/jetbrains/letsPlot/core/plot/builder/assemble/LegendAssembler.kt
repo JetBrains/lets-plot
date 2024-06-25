@@ -28,7 +28,7 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<String, GuideOptionsList>,
+    private val guideOptionsMap: Map<GuideKey, GuideOptionsList>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
@@ -139,7 +139,7 @@ class LegendAssembler(
         val keyElementFactory: LegendKeyElementFactory,
         val keyAesthetics: Aesthetics,
         val labels: List<String>,
-        val guideKeys: List<String>, // to access to guide options
+        val guideKeys: List<GuideKey>,
         val index: Int? = null,
         val isMarginal: Boolean
     ) {
@@ -195,7 +195,7 @@ class LegendAssembler(
                     keyElementFactory,
                     keyAesthetics,
                     labels = aesValuesByLabel.keys.toList(),
-                    guideKeys = aesList.map(Aes<*>::name),
+                    guideKeys = aesList.map(GuideKey::fromAes),
                     isMarginal = isMarginal
                 )
             }
