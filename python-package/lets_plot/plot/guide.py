@@ -114,8 +114,7 @@ def guides(**kwargs):
     Parameters
     ----------
     kwargs
-        Name-guide pairs where name should be an aesthetic or a legend group name (the default group name for
-        custom legend is 'manual').
+        Name-guide pairs where name should be an aesthetic or group name used in the `layer_key()` function.
         The guide can either be a string ('colorbar', 'legend'),
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments, or 'none' to hide the guide.
@@ -146,6 +145,24 @@ def guides(**kwargs):
             guides(shape=guide_legend(ncol=2), \\
                    color=guide_colorbar(nbin=8, barwidth=20))
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = list(range(n))
+        y = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(color='red', show_key="point") + \\
+            geom_line(color='blue', show_key="line") + \\
+            guides(manual=guide_legend('Zones', ncol=2))
+
     """
     return FeatureSpec('guides', name=None, **kwargs)
 
@@ -157,9 +174,9 @@ def layer_key(label, group=None, *, index=None, **kwargs):
     Parameters
     ----------
     label : str
-        Text for the legend element in the custom legend.
+        Text for the element in the custom legend.
     group : str
-        Specifies the key by which items are combined into a legend group.
+        Group name by which elements are combined into a legend group.
     index : int
         Position of the element in the custom legend.
     kwargs :
