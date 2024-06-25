@@ -55,13 +55,13 @@ object PlotConfigFrontendUtil {
     private fun createGuideOptionsMap(guideOptionsList: Map<String, Any>): Map<String, GuideOptionsList> {
         val guideOptionsByName = HashMap<String, GuideOptionsList>()
         for ((key, value) in guideOptionsList) {
-            val name = if (key in Option.Mapping.REAL_AES_OPTION_NAMES) {
-                Option.Mapping.toAes(key).name
-            } else {
-                key
+            val guideKey = when (key) {
+                in Option.Mapping.REAL_AES_OPTION_NAMES -> Option.Mapping.toAes(key).name
+                Option.Layer.DEFAULT_LEGEND_GROUP_NAME -> ""
+                else -> key
             }
             val guideOptions = GuideConfig.create(value).createGuideOptions()
-            guideOptionsByName.getOrPut(name, ::GuideOptionsList).add(guideOptions)
+            guideOptionsByName.getOrPut(guideKey, ::GuideOptionsList).add(guideOptions)
         }
         return guideOptionsByName
     }

@@ -46,7 +46,7 @@ class LegendAssembler(
         ctx: PlotContext
     ) {
         legendLayers.add(
-            LegendLayer.create(
+            LegendLayer.createDefaultLegendLayer(
                 keyFactory,
                 aesList,
                 constantByAes,
@@ -60,8 +60,8 @@ class LegendAssembler(
         )
     }
 
-    fun addLayer(
-        customLegendItem: CustomLegendItem,
+    fun addCustomLayer(
+        customLegendOptions: CustomLegendOptions,
         keyFactory: LegendKeyElementFactory,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
@@ -70,8 +70,8 @@ class LegendAssembler(
         isMarginal: Boolean
     ) {
         legendLayers.add(
-            LegendLayer.createForCustomLegendItem(
-                customLegendItem,
+            LegendLayer.createCustomLegendLayer(
+                customLegendOptions,
                 keyFactory,
                 constantByAes,
                 aestheticsDefaults,
@@ -86,7 +86,7 @@ class LegendAssembler(
         val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
         val legendLayers = legendLayers
             .filter { includeMarginalLayers || !it.isMarginal }
-            .sortedWith(compareBy(nullsLast()) { it.index })
+            .sortedWith(compareBy(nullsLast(), LegendLayer::index))
 
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in legendLayers) {
@@ -144,7 +144,7 @@ class LegendAssembler(
         val isMarginal: Boolean
     ) {
         companion object {
-            fun create(
+            fun createDefaultLegendLayer(
                 keyElementFactory: LegendKeyElementFactory,
                 aesList: List<Aes<*>>,
                 constantByAes: Map<Aes<*>, Any>,
@@ -191,18 +191,17 @@ class LegendAssembler(
                     fillByAes
                 )
 
-                val keyLabels = ArrayList(aesValuesByLabel.keys)
                 return LegendLayer(
                     keyElementFactory,
                     keyAesthetics,
-                    keyLabels,
+                    labels = aesValuesByLabel.keys.toList(),
                     guideKeys = aesList.map(Aes<*>::name),
                     isMarginal = isMarginal
                 )
             }
 
-            fun createForCustomLegendItem(
-                customLegendItem: CustomLegendItem,
+            fun createCustomLegendLayer(
+                customLegendOptions: CustomLegendOptions,
                 keyElementFactory: LegendKeyElementFactory,
                 constantByAes: Map<Aes<*>, Any>,
                 aestheticsDefaults: AestheticsDefaults,
@@ -212,7 +211,7 @@ class LegendAssembler(
             ): LegendLayer {
                  // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
-                    listOf(customLegendItem.aesValues),
+                    listOf(customLegendOptions.aesValues),
                     constantByAes,
                     aestheticsDefaults,
                     colorByAes,
@@ -221,9 +220,9 @@ class LegendAssembler(
                 return LegendLayer(
                     keyElementFactory,
                     keyAesthetics,
-                    labels = listOf(customLegendItem.label),
-                    guideKeys = listOf(customLegendItem.group),
-                    customLegendItem.index,
+                    labels = listOf(customLegendOptions.label),
+                    guideKeys = listOf(GuideKey.fromName(customLegendOptions.group)),
+                    customLegendOptions.index,
                     isMarginal
                 )
             }

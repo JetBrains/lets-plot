@@ -198,6 +198,8 @@ object Option {
             const val GROUP = "group"
             const val INDEX = "index"
         }
+
+        const val DEFAULT_LEGEND_GROUP_NAME = "manual"
     }
 
     object LinesSpec {

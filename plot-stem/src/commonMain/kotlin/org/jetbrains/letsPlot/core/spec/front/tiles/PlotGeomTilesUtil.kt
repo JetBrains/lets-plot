@@ -151,7 +151,7 @@ internal object PlotGeomTilesUtil {
 
         layerBuilder
             .disableLegend(layerConfig.isLegendDisabled)
-            .customLegendItem(layerConfig.customLegendItem)
+            .customLegendOptions(layerConfig.customLegendOptions)
 
         geomInteraction?.let {
             layerBuilder

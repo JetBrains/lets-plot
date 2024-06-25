@@ -65,8 +65,8 @@ internal object LegendAssemblerUtil {
             }
 
             // Derive from constants
-            for (constantAes in constantByAes.keys) {
-                dataPoint[constantAes] = constantByAes[constantAes]!!
+            constantByAes.entries.forEach { (constantAes, value) ->
+                dataPoint[constantAes] = value
             }
 
             for (aes in valueByAes.keys) {

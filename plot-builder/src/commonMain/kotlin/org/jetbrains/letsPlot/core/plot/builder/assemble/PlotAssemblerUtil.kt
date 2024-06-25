@@ -123,9 +123,8 @@ internal object PlotAssemblerUtil {
             }
 
             // custom legend
-            layerInfo.customLegendItem?.let { legendItem ->
-                val legendTitle = guideOptionsMap[legendItem.group]?.getTitle() ?:
-                    legendItem.group.takeIf { it != CustomLegendItem.DEFAULT_LEGEND_GROUP_NAME } ?: ""
+            layerInfo.customLegendOptions?.let { legendOptions ->
+                val legendTitle = guideOptionsMap[legendItem.group]?.getTitle() ?: legendOptions.group
 
                 val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
                     LegendAssembler(
@@ -135,8 +134,8 @@ internal object PlotAssemblerUtil {
                         theme
                     )
                 }
-                customLegendAssembler.addLayer(
-                    legendItem,
+                customLegendAssembler.addCustomLayer(
+                    legendOptions,
                     layerInfo.legendKeyElementFactory,
                     layerConstantByAes,
                     layerInfo.aestheticsDefaults,
