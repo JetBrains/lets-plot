@@ -84,4 +84,35 @@ internal class PlotSvgExportNativeTest {
         ).let { assertTrue(it.contains("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR4nGP49OH7vxD1/n8MIALEAQBnLwu/xaBIdAAAAABJRU5ErkJggg==")) }
     }
 
+    @Test
+    fun `LP-626 inconsistentNumberFormat`() {
+        val spec = """
+{
+  "data": {
+    "x": [0.0],
+    "y": [0.0],
+    "label": [777.0]
+  },
+  "data_meta": {
+    "series_annotations": [
+      { "column": "x", "type": "int" },
+      { "column": "y", "type": "int" },
+      { "column": "label", "type": "int" }
+    ]
+  },
+  "kind": "plot",
+  "layers": [
+    {
+      "geom": "label",
+      "mapping": { "x": "x", "y": "y", "label": "label" }
+    }
+  ]
+}
+        """.trimIndent()
+
+        PlotSvgExportNative.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            useCssPixelatedImageRendering = true
+        ).let { assertTrue(it.indexOf("777.0") < 0) }
+    }
 }
