@@ -2,14 +2,13 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from collections.abc import Iterable
-from datetime import datetime
-from typing import Any, Tuple, Sequence, Optional, Dict, Union
+from typing import Any, Tuple, Sequence, Optional, Dict
 
-from lets_plot._type_utils import is_polars_dataframe
+from lets_plot._type_utils import is_pandas_data_frame
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes, FeatureSpec
+from lets_plot.plot.series_meta import infer_type
 
 
 def as_boolean(val, *, default):
@@ -34,9 +33,9 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
 
     # mapping
     mapping = {}
-    mapping_meta = []
+    mapping_annotations = []
     # series annotations
-    series_meta = []
+    series_annotation = []
 
     class VariableMeta:
         def __init__(self):
@@ -46,10 +45,15 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
             self.type = None
 
     variables_meta: Dict[str, VariableMeta] = {}
+
+    # init variables_meta
+    # take all variables from layer data
     for var_name, var_type in infer_type(data).items():
         var_meta = VariableMeta()
         variables_meta[var_name] = var_meta
         var_meta.type = var_type
+
+    # and append with variables from mapping
 
     if is_pandas_data_frame(data):
         for var_name, var_content in data.items():
@@ -58,57 +62,58 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
                 variables_meta[var_name].levels = dtype.categories.to_list()
 
     if raw_mapping is not None:
-        for aesthetic, variable in raw_mapping.as_dict().items():
+        for aesthetic in raw_mapping.props().keys():
             if aesthetic == 'name':  # ignore FeatureSpec.name property
                 continue
 
-            if isinstance(variable, MappingMeta):
-                mapping[aesthetic] = variable.variable
+            if isinstance(raw_mapping.props()[aesthetic], MappingMeta):
+                mapping_meta: MappingMeta = raw_mapping.props()[aesthetic]
+                mapping[aesthetic] = mapping_meta.variable
 
-                if variable.variable in variables_meta:
-                    var_meta = variables_meta[variable.variable]
-                else:
+                if mapping_meta.variable in variables_meta:
+                    var_meta = variables_meta[mapping_meta.variable]
+                else:  # as_discrete for the variable stored in ggplot data
                     var_meta = VariableMeta()
-                    variables_meta[variable.variable] = var_meta
+                    variables_meta[mapping_meta.variable] = var_meta
 
                 var_meta.aesthetics.append(aesthetic)
-                if variable.levels is not None:
-                    var_meta.levels = variable.levels
-                order = variable.parameters.get('order')
-                if order is not None:
-                    var_meta.order = order
+                if mapping_meta.levels is not None:
+                    var_meta.levels = mapping_meta.levels
+
+                if mapping_meta.parameters['order'] is not None:
+                    var_meta.order = mapping_meta.parameters['order']
             else:
-                mapping[aesthetic] = variable
+                mapping[aesthetic] = raw_mapping.props()[aesthetic]  # variable name
 
     for var_name, var_meta in variables_meta.items():
-        meta_dict = {
+        series_meta = {
             'column': var_name,
             'type': var_meta.type
         }
 
         if var_meta.type != 'unknown':
-            series_meta.append(meta_dict)
+            series_annotation.append(series_meta)
 
         if var_meta.levels is not None:
             # series annotations
-            meta_dict['factor_levels'] = var_meta.levels
-            meta_dict['order'] = var_meta.order
+            series_meta['factor_levels'] = var_meta.levels
+            series_meta['order'] = var_meta.order
         else:
             # mapping annotations
             for aesthetic in var_meta.aesthetics:
                 value = raw_mapping.as_dict().get(aesthetic)
                 if value is not None and isinstance(value, MappingMeta):
-                    mapping_meta.append({
+                    mapping_annotations.append({
                         'aes': aesthetic,
                         'annotation': value.annotation,
                         'parameters': value.parameters
                     })
 
-    if len(series_meta) > 0:
-        data_meta.update({'series_annotations': series_meta})
+    if len(series_annotation) > 0:
+        data_meta.update({'series_annotations': series_annotation})
 
-    if len(mapping_meta) > 0:
-        data_meta.update({'mapping_annotations': mapping_meta})
+    if len(mapping_annotations) > 0:
+        data_meta.update({'mapping_annotations': mapping_annotations})
 
     return data, aes(**mapping), {'data_meta': data_meta}
 
@@ -210,121 +215,6 @@ def geo_data_frame_to_crs(gdf: 'GeoDataFrame', use_crs: Optional[str]):
         return gdf
 
     return gdf.to_crs('EPSG:4326' if use_crs is None else use_crs)
-
-
-def is_ndarray(data) -> bool:
-    try:
-        from numpy import ndarray
-        return isinstance(data, ndarray)
-    except ImportError:
-        return False
-
-
-def is_pandas_data_frame(data: Any) -> bool:
-    try:
-        from pandas import DataFrame
-        return isinstance(data, DataFrame)
-    except ImportError:
-        return False
-
-
-def infer_categorical_type(column: 'pandas.Series') -> str:
-    import numpy as np
-    dtype = column.cat.categories.dtype
-
-    if np.issubdtype(dtype, np.integer):
-        return 'integer'
-    elif np.issubdtype(dtype, np.floating):
-        return 'float'
-    elif np.issubdtype(dtype, np.object_):
-        # Check if all elements are strings
-        if all(isinstance(x, str) for x in column.cat.categories):
-            return 'string'
-        else:
-            return 'mixed'
-    else:
-        return 'unknown'
-
-
-def infer_type(data: Union[Dict, 'pandas.DataFrame']) -> Dict[str, str]:
-    type_info = {}
-
-    if is_pandas_data_frame(data):
-        import pandas as pd
-
-        for var_name, var_content in data.items():
-            if data.empty:
-                type_info[var_name] = 'unknown'
-                continue
-
-            inferred_type = pd.api.types.infer_dtype(var_content.values, skipna=True)
-            if inferred_type == "categorical":
-                inferred_type = infer_categorical_type(var_content)
-
-            # see https://pandas.pydata.org/docs/reference/api/pandas.api.types.infer_dtype.html
-            if inferred_type == 'string':
-                type_info[var_name] = 'str'
-            elif inferred_type == 'floating':
-                type_info[var_name] = 'float'
-            elif inferred_type == 'integer':
-                type_info[var_name] = 'int'
-            elif inferred_type == 'boolean':
-                type_info[var_name] = 'bool'
-            elif inferred_type == 'datetime64' or inferred_type == 'datetime':
-                type_info[var_name] = 'datetime'
-            elif inferred_type == "date":
-                type_info[var_name] = 'date'
-            elif inferred_type == 'empty':  # for columns with all None values
-                type_info[var_name] = 'unknown'
-            else:
-                type_info[var_name] = 'unknown(pandas:' + inferred_type + ')'
-    elif is_polars_dataframe(data):
-        import polars as pl
-        for var_name, var_type in data.schema.items():
-
-            # https://docs.pola.rs/api/python/stable/reference/datatypes.html
-            if var_type in pl.FLOAT_DTYPES:
-                type_info[var_name] = 'float'
-            elif var_type in pl.INTEGER_DTYPES:
-                type_info[var_name] = 'int'
-            elif var_type == pl.datatypes.Utf8:
-                type_info[var_name] = 'str'
-            elif var_type == pl.datatypes.Boolean:
-                type_info[var_name] = 'bool'
-            elif var_type in pl.datatypes.DATETIME_DTYPES:
-                type_info[var_name] = 'datetime'
-            else:
-                type_info[var_name] = 'unknown(polars:' + str(var_type) + ')'
-    elif isinstance(data, dict):
-        for var_name, var_content in data.items():
-            if isinstance(var_content, Iterable):
-                if not any(True for _ in var_content):  # empty
-                    type_info[var_name] = 'unknown'
-                    continue
-
-                type_set = set(type(val) for val in var_content)
-                if None in type_set:
-                    type_set.remove(None)
-
-                if len(type_set) > 1:
-                    type_info[var_name] = 'unknown(mixed types)'
-                    continue
-
-                type_obj = list(type_set)[0]
-                if type_obj == int:
-                    type_info[var_name] = 'int'
-                elif type_obj == float:
-                    type_info[var_name] = 'float'
-                elif type_obj == bool:
-                    type_info[var_name] = 'bool'
-                elif type_obj == str:
-                    type_info[var_name] = 'str'
-                elif type_obj == datetime:
-                    type_info[var_name] = 'datetime'
-                else:
-                    type_info[var_name] = 'unknown(python:' + str(type_obj) + ')'
-
-    return type_info
 
 
 def key_int2str(data):

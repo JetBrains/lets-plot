@@ -110,8 +110,6 @@ open class TextGeom : GeomBase() {
         return when {
             label == null -> naValue
             formatter != null -> formatter!!.invoke(label)
-            geomContext.plotContext?.getTooltipFormatter(Aes.LABEL) != null ->
-                geomContext.plotContext!!.getTooltipFormatter(Aes.LABEL).invoke(label)
             else -> label.toString()
         }
     }

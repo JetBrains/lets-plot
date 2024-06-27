@@ -6,9 +6,13 @@
 package org.jetbrains.letsPlot.core.commons.data
 
 enum class DataType {
+    UNKNOWN,
     NUMBER,
+    INTEGER,
+    FLOATING,
     STRING,
     INSTANT,
+    BOOLEAN,
 
     /**
      * INSTANT_OF_DAY and INSTANT_OF_MONTH are INSTANTS formatted as year-month-day or year-month
@@ -35,4 +39,6 @@ enum class DataType {
 
     val isNumber: Boolean
         get() = this == NUMBER
+                || this == INTEGER
+                || this == FLOATING
 }

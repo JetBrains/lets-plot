@@ -72,6 +72,14 @@ object Option {
                 const val DATE_TIME = "datetime"
                 const val TIME_ZONE = "time_zone"
             }
+            object Types {
+                const val DATE_TIME = "datetime"
+                const val INTEGER = "int"
+                const val FLOATING = "float"
+                const val STRING = "str"
+                const val BOOLEAN = "bool"
+                const val UNKNOWN = "unknown"
+            }
         }
     }
 
