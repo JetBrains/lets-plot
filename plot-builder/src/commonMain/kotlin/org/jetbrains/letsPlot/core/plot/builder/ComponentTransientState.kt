@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
-import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 abstract class ComponentTransientState(
@@ -68,6 +67,4 @@ abstract class ComponentTransientState(
     abstract fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 
     internal abstract fun repaint()
-
-    internal abstract fun repaintFrame(bottomGroup: GroupComponent, topGroup: GroupComponent)
 }

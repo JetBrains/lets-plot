@@ -24,7 +24,7 @@ internal class MarginalFrameOfReference(
     private val coord: CoordinateSystem,
     private val plotBackground: Color,
     private val isDebugDrawing: Boolean
-) : FrameOfReference {
+) : FrameOfReference() {
     override val transientState: ComponentTransientState = DummyTransientState()
 
     override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {

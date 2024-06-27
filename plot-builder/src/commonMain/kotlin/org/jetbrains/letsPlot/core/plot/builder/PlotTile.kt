@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
@@ -43,11 +42,9 @@ internal class PlotTile(
     private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
 
-    private val frameBottomGroup = GroupComponent()
     private val clipGroup = GroupComponent()
     private val geomGroup = GroupComponent()
     private val geomInteractionGroup = GroupComponent() // to set interaction transformations
-    private val frameTopGroup = GroupComponent()
 
     val transientState = TransientState()
 
@@ -74,13 +71,12 @@ internal class PlotTile(
     getRootGroup().setPrebuiltSubtree(true);
     */
 
-        add(frameBottomGroup)
+        add(frameOfReference.bottomGroup)
         add(clipGroup)
         clipGroup.add(geomGroup)
         geomGroup.moveTo(tileLayoutInfo.geomContentBounds.origin)
         geomGroup.add(geomInteractionGroup)
-        add(frameTopGroup)
-
+        add(frameOfReference.topGroup)
 
         val geomOuterBounds = tileLayoutInfo.geomOuterBounds
 
@@ -123,8 +119,7 @@ internal class PlotTile(
                 }
             }
 
-            frameOfReference.drawBeforeGeomLayer(frameBottomGroup)
-            frameOfReference.drawAfterGeomLayer(frameTopGroup)
+            frameOfReference.repaintFrame()
         }
     }
 
@@ -245,11 +240,6 @@ internal class PlotTile(
         override fun repaint() {
             geomInteractionGroup.rootGroup.transform().set(transform)
             coreTransientState.transform(scale, offset)
-            coreTransientState.repaintFrame(frameBottomGroup, frameTopGroup)
-        }
-
-        override fun repaintFrame(bottomGroup: GroupComponent, topGroup: GroupComponent) {
-            UNSUPPORTED("Use `repaint()`")
         }
     }
 }

@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.coord.TransformedCoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -40,7 +39,7 @@ internal open class SquareFrameOfReference(
     private val theme: Theme,
     private val flipAxis: Boolean,
     private val plotContext: PlotContext
-) : FrameOfReference {
+) : FrameOfReference() {
 
     var isDebugDrawing: Boolean = false
 
@@ -416,14 +415,8 @@ internal open class SquareFrameOfReference(
         }
 
         override fun repaint() {
-            // This is invoked from generic methods of the base class - ignore.
-        }
-
-        override fun repaintFrame(bottomGroup: GroupComponent, topGroup: GroupComponent) {
-            bottomGroup.clear()
-            drawBeforeGeomLayer(bottomGroup)
-            topGroup.clear()
-            drawAfterGeomLayer(topGroup)
+            // Repaint axis and grid.
+            repaintFrame()
         }
     }
 }

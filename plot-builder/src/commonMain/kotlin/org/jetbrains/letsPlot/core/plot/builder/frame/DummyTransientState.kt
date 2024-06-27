@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
-import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
 
 internal class DummyTransientState : ComponentTransientState(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) {
@@ -17,10 +16,6 @@ internal class DummyTransientState : ComponentTransientState(DoubleRectangle(Dou
     }
 
     override fun repaint() {
-        UNSUPPORTED("Not yet implemented")
-    }
-
-    override fun repaintFrame(bottomGroup: GroupComponent, topGroup: GroupComponent) {
         UNSUPPORTED("Not yet implemented")
     }
 }

@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 
-internal class BogusFrameOfReference : FrameOfReference {
+internal class BogusFrameOfReference : FrameOfReference() {
     override val transientState: ComponentTransientState = DummyTransientState()
 
     override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
