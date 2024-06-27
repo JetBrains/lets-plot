@@ -101,7 +101,7 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawVGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawHGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
@@ -120,7 +120,7 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawHGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawVGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 

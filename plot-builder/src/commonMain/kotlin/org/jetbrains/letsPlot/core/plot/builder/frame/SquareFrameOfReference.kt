@@ -73,15 +73,15 @@ internal open class SquareFrameOfReference(
         val geomInnerBounds: DoubleRectangle = layoutInfo.geomInnerBounds
         val panelTheme = theme.panel()
 
-        val hGridTheme = panelTheme.gridX(flipAxis)
-        val vGridTheme = panelTheme.gridY(flipAxis)
+        val vGridTheme = panelTheme.verticalGrid(flipAxis)
+        val hGridTheme = panelTheme.horizontalGrid(flipAxis)
 
         val fillBkgr = panelTheme.showRect() && beforeGeomLayer
         val strokeBkgr = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
         val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
 
-        val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
         val drawVGrid = beforeGeomLayer xor vGridTheme.isOntop()
+        val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
         val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
         val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
 
@@ -89,12 +89,12 @@ internal open class SquareFrameOfReference(
             doFillBkgr(parent)
         }
 
-        if (drawHGrid) {
-            doDrawHGrid(hGridTheme, parent)
-        }
-
         if (drawVGrid) {
             doDrawVGrid(vGridTheme, parent)
+        }
+
+        if (drawHGrid) {
+            doDrawHGrid(hGridTheme, parent)
         }
 
         if (drawHAxis) {
@@ -178,7 +178,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawVGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
+    protected open fun doDrawHGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
 
@@ -197,7 +197,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawHGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
+    protected open fun doDrawVGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
 
