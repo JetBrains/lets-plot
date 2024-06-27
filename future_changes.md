@@ -1,9 +1,14 @@
 ## [4.3.4] - 2024-mm-dd
 
 ### Added
-- Legend title in guide_legend() and guide_colorbar().
+- Legend title in `guide_legend()` and `guide_colorbar()`.
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
+
+- Manual customization of the legend [[#774](https://github.com/JetBrains/lets-plot/issues/774)]:<br/>
+  `manual_key` layer parameter that specifies a legend label or advanced settings using the `layer_key()` function.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
 
 - `plot_title_position` and `plot_caption_position` parameters in `theme()` [[#1027](https://github.com/JetBrains/lets-plot/issues/1027)].
 
@@ -12,7 +17,7 @@
 
 
 ### Changed
-- [**breaking change**] guide_legend()/guide_colorbar() require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
+- [**breaking change**] `guide_legend()/guide_colorbar()` require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
 - The triangular point shape is now anchored to the data point via the centroid.
  
 ### Fixed
