@@ -8,7 +8,7 @@ from lets_plot._type_utils import is_pandas_data_frame
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes, FeatureSpec
-from lets_plot.plot.series_meta import infer_type
+from lets_plot.plot.series_meta import infer_type, TYPE_UNKNOWN
 
 
 def as_boolean(val, *, default):
@@ -18,40 +18,32 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
+def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     data_meta = {}
 
-    # data
-    data = raw_data
-
-    if is_data_pub_stream(data):
-        data = {}
-        for col_name in raw_data.col_names:
-            data[col_name] = []
-
-        data_meta.update({'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}})
+    #if is_data_pub_stream(data):
+    #    data = {}
+    #    for col_name in raw_data.col_names:
+    #        data[col_name] = []
+    #
+    #    data_meta.update({'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}})
 
     # mapping
-    mapping = {}
-    mapping_annotations = []
-    # series annotations
-    series_annotation = []
+    mappings = {}
 
     class VariableMeta:
-        def __init__(self):
+        def __init__(self, type: str = TYPE_UNKNOWN):
             self.levels = None
             self.aesthetics = []
             self.order = None
-            self.type = None
+            self.type: str = type
 
     variables_meta: Dict[str, VariableMeta] = {}
 
     # init variables_meta
     # take all variables from layer data
     for var_name, var_type in infer_type(data).items():
-        var_meta = VariableMeta()
-        variables_meta[var_name] = var_meta
-        var_meta.type = var_type
+        variables_meta[var_name] = VariableMeta(var_type)
 
     # and append with variables from mapping
 
@@ -61,21 +53,19 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
             if dtype.name == 'category' and dtype.ordered:
                 variables_meta[var_name].levels = dtype.categories.to_list()
 
-    if raw_mapping is not None:
-        for aesthetic in raw_mapping.props().keys():
+    if mapping_spec is not None:
+        for aesthetic in mapping_spec.props().keys():
             if aesthetic == 'name':  # ignore FeatureSpec.name property
                 continue
 
-            if isinstance(raw_mapping.props()[aesthetic], MappingMeta):
-                mapping_meta: MappingMeta = raw_mapping.props()[aesthetic]
-                mapping[aesthetic] = mapping_meta.variable
+            if isinstance(mapping_spec.props()[aesthetic], MappingMeta):
+                mapping_meta: MappingMeta = mapping_spec.props()[aesthetic]
+                mappings[aesthetic] = mapping_meta.variable
 
-                if mapping_meta.variable in variables_meta:
-                    var_meta = variables_meta[mapping_meta.variable]
-                else:  # as_discrete for the variable stored in ggplot data
-                    var_meta = VariableMeta()
-                    variables_meta[mapping_meta.variable] = var_meta
+                if mapping_meta.variable not in variables_meta:  # as_discrete for the variable stored in ggplot data
+                    variables_meta[mapping_meta.variable] = VariableMeta()
 
+                var_meta = variables_meta[mapping_meta.variable]
                 var_meta.aesthetics.append(aesthetic)
                 if mapping_meta.levels is not None:
                     var_meta.levels = mapping_meta.levels
@@ -83,31 +73,37 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
                 if mapping_meta.parameters['order'] is not None:
                     var_meta.order = mapping_meta.parameters['order']
             else:
-                mapping[aesthetic] = raw_mapping.props()[aesthetic]  # variable name
+                mappings[aesthetic] = mapping_spec.props()[aesthetic]  # variable name
+
+    series_annotation = []
+    mapping_annotations = []
 
     for var_name, var_meta in variables_meta.items():
-        series_meta = {
-            'column': var_name,
-            'type': var_meta.type
-        }
+        series_meta = {}
 
-        if var_meta.type != 'unknown':
-            series_annotation.append(series_meta)
+        if var_meta.type != TYPE_UNKNOWN:
+            series_meta['type'] = var_meta.type
 
         if var_meta.levels is not None:
             # series annotations
             series_meta['factor_levels'] = var_meta.levels
-            series_meta['order'] = var_meta.order
+
+            if var_meta.order is not None:
+                series_meta['order'] = var_meta.order
         else:
             # mapping annotations
             for aesthetic in var_meta.aesthetics:
-                value = raw_mapping.as_dict().get(aesthetic)
-                if value is not None and isinstance(value, MappingMeta):
+                mapping = mapping_spec.props().get(aesthetic)
+                if isinstance(mapping, MappingMeta):
                     mapping_annotations.append({
                         'aes': aesthetic,
-                        'annotation': value.annotation,
-                        'parameters': value.parameters
+                        'annotation': mapping.annotation,
+                        'parameters': mapping.parameters
                     })
+
+        if len(series_meta) > 0:
+            series_meta['column'] = var_name
+            series_annotation.append(series_meta)
 
     if len(series_annotation) > 0:
         data_meta.update({'series_annotations': series_annotation})
@@ -115,7 +111,7 @@ def as_annotated_data(raw_data: Any, raw_mapping: FeatureSpec) -> Tuple:
     if len(mapping_annotations) > 0:
         data_meta.update({'mapping_annotations': mapping_annotations})
 
-    return data, aes(**mapping), {'data_meta': data_meta}
+    return data, aes(**mappings), {'data_meta': data_meta}
 
 
 def is_data_pub_stream(data: Any) -> bool:

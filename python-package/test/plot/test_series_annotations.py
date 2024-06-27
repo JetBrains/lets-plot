@@ -88,7 +88,7 @@ def test_factor_levels():
     mapping = aes(as_discrete('v1', levels=['foo', 'bar']))
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
-        {'column': 'v1', 'type': 'str', 'factor_levels': ['foo', 'bar'], 'order': None},
+        {'column': 'v1', 'type': 'str', 'factor_levels': ['foo', 'bar']},
         {'column': 'v2', 'type': 'int'}
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
@@ -104,7 +104,7 @@ def test_factor_levels_with_ordering():
     data_meta = get_data_meta(data_dict2, mapping)
     expected_factor_levels = [
         {'column': 'v1', 'type': 'str', 'factor_levels': ['foo', 'bar'], 'order': -1},
-        {'column': 'v2', 'type': 'int', 'factor_levels': [2, 1], 'order': None},
+        {'column': 'v2', 'type': 'int', 'factor_levels': [2, 1]},
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
     assert 'mapping_annotations' not in data_meta
@@ -124,7 +124,7 @@ def test_with_mapping_annotations():
     ]
     expected_factor_levels = [
         {'column': 'v1', 'type': 'str'},
-        {'column': 'v2', 'type': 'int', 'factor_levels': [2, 1], 'order': None},
+        {'column': 'v2', 'type': 'int', 'factor_levels': [2, 1]},
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
     assert data_meta['mapping_annotations'] == expected_mapping_annotations
@@ -137,7 +137,7 @@ def test_pd_categorical_variable():
     df['v'] = Categorical(df.v, categories=x_order, ordered=True)
     data_meta = get_data_meta(df)
     expected_factor_levels = [
-        {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1'], 'order': None},
+        {'column': 'v', 'type': 'str', 'factor_levels': ['ch5', 'ch4', 'ch2', 'ch1']},
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
 
@@ -149,7 +149,7 @@ def test_pd_int_categorical_variable():
     df['v'] = Categorical(df.v, categories=x_order, ordered=True)
     data_meta = get_data_meta(df)
     expected_factor_levels = [
-        {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1], 'order': None},
+        {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1]},
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
 
@@ -161,7 +161,7 @@ def test_pd_int_categorical_variable_from_ggplot_dataframe():
     df['v'] = Categorical(df.v, categories=x_order, ordered=True)
     data_meta = get_data_meta(df)
     expected_factor_levels = [
-        {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1], 'order': None},
+        {'column': 'v', 'type': 'int', 'factor_levels': [5, 4, 2, 1]},
     ]
     assert data_meta['series_annotations'] == expected_factor_levels
 
@@ -196,7 +196,8 @@ def test_as_discrete():
         {'column': 'c', 'type': 'int'}
     ]
 
-    assert p.as_dict()['layers'][0]['data_meta']['series_annotations'] == [{'column': 'c', 'type': None}]
+    # no meta for 'c' in the layer -> no series_annotations
+    assert 'series_annotations' not in p.as_dict()['layers'][0]['data_meta']
 
 
 def test_as_discrete_with_levels():
@@ -214,5 +215,5 @@ def test_as_discrete_with_levels():
     ]
 
     assert p.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
-        {'column': 'c', 'type': None, 'factor_levels': [3, 2, 1], 'order': None}
+        {'column': 'c', 'factor_levels': [3, 2, 1]}
     ]
