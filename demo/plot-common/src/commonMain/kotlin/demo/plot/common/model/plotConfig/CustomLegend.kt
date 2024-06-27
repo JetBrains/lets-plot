@@ -17,9 +17,9 @@ class CustomLegend {
     }
 
     private fun shortForm(): MutableMap<String, Any> {
-        //    geom_point(..., show_key="Red zone") + \
-        //    geom_line(..., show_key="Blue zone") + \
-        //    geom_rect(..., show_key="Green zone")
+        //    geom_point(..., manual_key="Red zone") + \
+        //    geom_line(..., manual_key="Blue zone") + \
+        //    geom_rect(..., manual_key="Green zone")
         val spec = """
             {
               'kind': 'plot',
@@ -37,7 +37,7 @@ class CustomLegend {
                     'color': 'blue',
                     'size': 1.2,
                     'linetype': 'dotted',
-                    'show_key': 'Blue zone'
+                    'manual_key': 'Blue zone'
                 },
                 {
                     'geom': 'point',
@@ -45,14 +45,14 @@ class CustomLegend {
                     'y': 0,
                     'color': 'red',
                     'size': 5,
-                    'show_key': 'Red zone'
+                    'manual_key': 'Red zone'
                 },
                 {
                     'geom': 'rect',
                     'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
                     'alpha': 0.2,
                     'fill': 'green',
-                    'show_key': 'Green zone'
+                    'manual_key': 'Green zone'
                 },
                 {
                     'geom': 'label',
@@ -62,7 +62,7 @@ class CustomLegend {
                     'fill': 'orange',
                     'color': 'white',
                     'size': 8,
-                    'show_key': 'Orange zone'
+                    'manual_key': 'Orange zone'
                 }
               ]
             }
@@ -70,14 +70,14 @@ class CustomLegend {
         return parsePlotSpec(spec)
     }
 
-    /// show_key=layer_key(label="Red zone", group="Group 1", index=0, size=3)
+    /// manual_key=layer_key(label="Red zone", group="Group 1", index=0, size=3)
     private fun parameterizedForm(): MutableMap<String, Any> {
         // geom_point(..., color='red', shape=21,
-        //            show_key=layer_key("Red zone", index=0, size=3)) + \
+        //            manual_key=layer_key("Red zone", index=0, size=3)) + \
         //    geom_line(..., color='blue', linetype=2,
-        //              show_key=layer_key("Blue zone", index=2)) + \
+        //              manual_key=layer_key("Blue zone", index=2)) + \
         //    geom_rect(..., fill='green', alpha=0.2,
-        //              show_key=layer_key("Green zone", index=1, alpha=1))
+        //              manual_key=layer_key("Green zone", index=1, alpha=1))
 
         val spec = """
             {
@@ -99,7 +99,7 @@ class CustomLegend {
                     'color': 'blue',
                     'size': 1.2,
                     'linetype': 'dotted',
-                    'show_key': {
+                    'manual_key': {
                         'label': 'Blue zone',
                         'index': 2
                     }
@@ -110,7 +110,7 @@ class CustomLegend {
                     'y': 0,
                     'color': 'red',
                     'size': 5,
-                    'show_key': {
+                    'manual_key': {
                         'label': 'Red zone',
                         'index': 0,
                         'size': 7,
@@ -122,7 +122,7 @@ class CustomLegend {
                     'xmin': 2, 'xmax': 8, 'ymin': 0.2, 'ymax': 0.8,
                     'alpha': 0.2,
                     'fill': 'green',
-                    'show_key': {
+                    'manual_key': {
                         'label': 'Green zone',
                         'index': 1,
                         'alpha': 0.8
@@ -136,7 +136,7 @@ class CustomLegend {
                     'fill': 'orange',
                     'color': 'white',
                     'size': 8,
-                    'show_key': {
+                    'manual_key': {
                         'label': 'Orange zone',
                         'colour': 'black'
                     }
@@ -165,7 +165,7 @@ class CustomLegend {
                         'y': 'y', 
                         'color': 'g'
                     },
-                    'show_key': {
+                    'manual_key': {
                         'group': 'g',
                         'label': 'NA'
                     }
@@ -176,7 +176,7 @@ class CustomLegend {
                     'y': 44,
                     'color': 'yellow',
                     'size': 5,
-                    'show_key': {
+                    'manual_key': {
                         'group': 'g',
                         'label': 'point'
                     }

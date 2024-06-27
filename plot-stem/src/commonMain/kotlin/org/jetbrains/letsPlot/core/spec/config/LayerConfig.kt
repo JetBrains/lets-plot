@@ -25,7 +25,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
-import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_KEY
+import org.jetbrains.letsPlot.core.spec.Option.Layer.MANUAL_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal
@@ -83,7 +83,7 @@ class LayerConfig(
         }
     val customLegendOptions: CustomLegendOptions?
         get() {
-            val option = get(SHOW_KEY) ?: return null
+            val option = get(MANUAL_KEY) ?: return null
 
             val legendOptions = when (option) {
                 is Map<*, *> -> {
@@ -91,7 +91,7 @@ class LayerConfig(
                     option as Map<String, Any>
                 }
                 is String -> mapOf(Layer.LayerKey.LABEL to option)
-                else -> throw IllegalArgumentException("$SHOW_KEY expected a string or option map, but was '$option'")
+                else -> throw IllegalArgumentException("$MANUAL_KEY expected a string or option map, but was '$option'")
             }.let(::OptionsAccessor)
 
             val label = legendOptions.getString(Layer.LayerKey.LABEL) ?: return null

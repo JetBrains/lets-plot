@@ -159,8 +159,8 @@ def guides(**kwargs):
         x = list(range(n))
         y = np.random.uniform(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-            geom_point(color='red', show_key="point") + \\
-            geom_line(color='blue', show_key="line") + \\
+            geom_point(color='red', manual_key="point") + \\
+            geom_line(color='blue', manual_key="line") + \\
             guides(manual=guide_legend('Zones', ncol=2))
 
     """
@@ -201,8 +201,8 @@ def layer_key(label, group=None, *, index=None, **kwargs):
         x = list(range(n))
         y = np.random.uniform(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-            geom_point(color='red', show_key=layer_key("point", shape=21)) + \\
-            geom_line(color='blue', linetype=2, show_key=layer_key("line", linetype=1))
+            geom_point(color='red', manual_key=layer_key("point", shape=21)) + \\
+            geom_line(color='blue', linetype=2, manual_key=layer_key("line", linetype=1))
 
     """
     return FeatureSpec('layer_key', name=None, label=label, group=group, index=index, **kwargs)

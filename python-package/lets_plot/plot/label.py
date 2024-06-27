@@ -158,8 +158,8 @@ def labs(title=None, subtitle=None, caption=None, **labels):
         x = list(range(n))
         y = np.random.uniform(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-            geom_point(color='red', show_key="point") + \\
-            geom_line(color='blue', show_key="line") + \\
+            geom_point(color='red', manual_key="point") + \\
+            geom_line(color='blue', manual_key="line") + \\
             labs(manual='Zones')
 
     """
