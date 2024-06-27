@@ -123,7 +123,7 @@ class LegendAssembler(
         val keyLabels: List<String>
 
         init {
-            val labelsValuesByAes: MutableMap<Aes<*>, List<Pair<String, Any?>>> = mutableMapOf()
+            val labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>> = mutableMapOf()
             var maxLabelsSize = 0
 
             for (aes in aesList) {
@@ -139,13 +139,63 @@ class LegendAssembler(
                 }
 
                 val labels = scaleBreaks.labels
-                labelsValuesByAes[aes] = labels.zip(aesValues)
+                labelsValuesByAes[aes] = labels to aesValues
                 maxLabelsSize = maxOf(maxLabelsSize, labels.size)
             }
 
-            val overideAesValueLists = overrideAesValues.mapValues { (_, value) ->
+            val overrideAesValueLists = createOverrideAesValueLists(overrideAesValues, maxLabelsSize)
+
+            val labelValues = applyOverrideAes(overrideAesValueLists, labelsValuesByAes)
+            keyLabels = labelValues.first
+
+            // build 'key' aesthetics
+            keyAesthetics = mapToAesthetics(
+                labelValues.second,
+                constantByAes,
+                aestheticsDefaults,
+                colorByAes,
+                fillByAes
+            )
+        }
+
+        private fun applyOverrideAes(
+            overrideAesValueLists: Map<Aes<*>, List<Any?>>,
+            labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>>
+        ): Pair<List<String>, List<Map<Aes<*>, Any>>> {
+            val labelsLists = labelsValuesByAes.values.map{ it.first }
+
+            labelsLists.forEach { labels ->
+                overrideAesValueLists.forEach { (aesToOverride, valueList) ->
+                    val currentValues = labelsValuesByAes.getOrPut(aesToOverride) { labels to valueList }.second
+                    val updatedValues = currentValues
+                        .zip(valueList)
+                        .map { (oldValue, newValue) -> newValue ?: oldValue }
+
+                    labelsValuesByAes[aesToOverride] = labels to updatedValues
+                }
+            }
+
+            val keyLabels = labelsLists.flatten().distinct()
+
+            val mapsByLabel = keyLabels.map { label ->
+                labelsValuesByAes.mapNotNull { (aes, pair) ->
+                    pair.first.zip(pair.second)
+                        .lastOrNull { it.first == label }
+                        ?.second
+                        ?.let { aes to it }
+                }.toMap()
+            }
+
+            return keyLabels to mapsByLabel
+        }
+
+        private fun createOverrideAesValueLists(
+            overrideAesValues: Map<Aes<*>, Any>,
+            maxLabelsSize: Int
+        ): Map<Aes<*>, List<Any?>> {
+            val overrideAesValueLists = overrideAesValues.mapValues { (_, value) ->
                 val valueList = when (value) {
-                    is List<*> -> if (value.isEmpty()) listOf(null) else value
+                    is List<*> -> value.ifEmpty { listOf(null) }
                     else -> listOf(value)
                 }
                 if (maxLabelsSize <= valueList.size) {
@@ -154,38 +204,7 @@ class LegendAssembler(
                     valueList + List(maxLabelsSize - valueList.size) { valueList.last() }
                 }
             }
-
-            aesList.forEach { aes ->
-                val labels = labelsValuesByAes.getValue(aes).map{ it.first }
-
-                overideAesValueLists.forEach { (aesToOverride, valueList) ->
-                    val currentValues = labelsValuesByAes.getOrPut(aesToOverride) { labels.zip(valueList) }
-                    val updatedValues = currentValues
-                        .zip(valueList)
-                        .map{ (old_value, new_value) -> new_value ?: old_value }
-
-                    labelsValuesByAes[aesToOverride] = labels.zip(updatedValues)
-                }
-            }
-
-            keyLabels = labelsValuesByAes.values
-                .flatMap { it.map { pair -> pair.first } }
-                .distinct()
-
-            val mapsByLabel = keyLabels.map { label ->
-                labelsValuesByAes.mapNotNull { (aes, pairs) ->
-                    pairs.lastOrNull { it.first == label && it.second != null }?.let { aes to it.second!! }
-                }.toMap()
-            }
-
-            // build 'key' aesthetics
-            keyAesthetics = mapToAesthetics(
-                mapsByLabel,
-                constantByAes,
-                aestheticsDefaults,
-                colorByAes,
-                fillByAes
-            )
+            return overrideAesValueLists
         }
     }
 
