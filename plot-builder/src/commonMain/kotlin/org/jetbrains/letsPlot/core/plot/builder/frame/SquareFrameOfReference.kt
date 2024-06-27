@@ -177,7 +177,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawHGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
+    protected open fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
 
@@ -187,7 +187,7 @@ internal open class SquareFrameOfReference(
                 orientation = axisInfo.orientation,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = vGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
@@ -196,7 +196,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawVGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
+    protected open fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
 
@@ -206,7 +206,7 @@ internal open class SquareFrameOfReference(
                 orientation = axisInfo.orientation,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = hGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
