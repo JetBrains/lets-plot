@@ -145,13 +145,13 @@ internal class PlotSvgExportTest {
     }
 
     @Test
-    fun `LP-626`() {
+    fun `LP-626 inconsistent number format`() {
         val spec = """
             |{
             |  "data": {
             |    "x": [0.0],
             |    "y": [0.0],
-            |    "label": [777.0]
+            |    "label": [717273.0]
             |  },
             |  "data_meta": {
             |    "series_annotations": [
@@ -172,7 +172,10 @@ internal class PlotSvgExportTest {
         PlotSvgExport.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
             useCssPixelatedImageRendering = true
-        ).let { assertEquals(-1, it.indexOf("777.0")) }
+        ).let {
+            assertEquals(-1, it.indexOf("717273.0"))
+            assertTrue { it.indexOf("717273") >= 0 }
+        }
 
     }
 

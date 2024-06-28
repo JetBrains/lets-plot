@@ -44,7 +44,7 @@ open class TextGeom : GeomBase() {
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
-            val text = toString(p.label(), ctx)
+            val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
                 val point = DoubleVector(x!!, y!!)
                 val loc = helper.toClient(point, p)
@@ -106,12 +106,11 @@ open class TextGeom : GeomBase() {
         return g
     }
 
-    private fun toString(label: Any?, geomContext: GeomContext): String {
-        return when {
-            label == null -> naValue
-            formatter != null -> formatter!!.invoke(label)
-            else -> label.toString()
-        }
+    private fun toString(label: Any?): String {
+        if (label == null) return naValue
+
+        val formatter = formatter ?: error("Formatter is not set.")
+        return formatter(label)
     }
 
     companion object {

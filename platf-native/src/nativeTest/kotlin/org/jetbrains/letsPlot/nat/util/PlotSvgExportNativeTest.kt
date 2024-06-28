@@ -6,6 +6,7 @@ package org.jetbrains.letsPlot.nat.util
 
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class PlotSvgExportNativeTest {
@@ -85,34 +86,36 @@ internal class PlotSvgExportNativeTest {
     }
 
     @Test
-    fun `LP-626 inconsistentNumberFormat`() {
+    fun `LP-626 inconsistent number format`() {
         val spec = """
-{
-  "data": {
-    "x": [0.0],
-    "y": [0.0],
-    "label": [777.0]
-  },
-  "data_meta": {
-    "series_annotations": [
-      { "column": "x", "type": "int" },
-      { "column": "y", "type": "int" },
-      { "column": "label", "type": "int" }
-    ]
-  },
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "label",
-      "mapping": { "x": "x", "y": "y", "label": "label" }
-    }
-  ]
-}
-        """.trimIndent()
+            |{
+            |  "data": {
+            |    "x": [0.0],
+            |    "y": [0.0],
+            |    "label": [717273.0]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "column": "x", "type": "int" },
+            |      { "column": "y", "type": "int" },
+            |      { "column": "label", "type": "int" }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "label",
+            |      "mapping": { "x": "x", "y": "y", "label": "label" }
+            |    }
+            |  ]
+            |}""".trimMargin()
 
         PlotSvgExportNative.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
             useCssPixelatedImageRendering = true
-        ).let { assertTrue(it.indexOf("777.0") < 0) }
+        ).let {
+            assertEquals(-1, it.indexOf("717273.0"))
+            assertTrue { it.indexOf("717273") >= 0 }
+        }
     }
 }
