@@ -93,7 +93,7 @@ object DataMetaUtil {
         return options
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
-            ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
+            ?.filterValues(SeriesAnnotation.Types.DATE_TIME::equals)
             ?.keys
             ?: emptySet()
     }

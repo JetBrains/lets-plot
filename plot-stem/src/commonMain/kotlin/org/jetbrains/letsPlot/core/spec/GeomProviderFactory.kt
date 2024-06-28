@@ -406,17 +406,18 @@ internal object GeomProviderFactory {
         if (userFormat != null) {
             geom.formatter = StringFormat.forOneArg(userFormat, superscriptExponent = superscriptExponent)::format
         } else {
-            geom.formatter = layerConfig.varBindings
+            val autoFormat = layerConfig.varBindings
                 .firstOrNull { it.aes == Aes.LABEL }
                 ?.let { labelBinding ->
-                    val format = when (layerConfig.dtypes[labelBinding.variable.name]) {
+                    when (layerConfig.dtypes[labelBinding.variable.name]) {
                         DataType.INTEGER -> "d"
                         DataType.FLOATING -> "g"
                         DataType.INSTANT -> "%d.%m.%y %H:%M:%S"
                         else -> "{}"
                     }
-                    StringFormat.forOneArg(format, superscriptExponent = superscriptExponent)::format
-                }
+                } ?: "{}" // no mappings/data
+
+            geom.formatter = StringFormat.forOneArg(autoFormat, superscriptExponent = superscriptExponent)::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it

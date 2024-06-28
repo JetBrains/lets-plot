@@ -69,8 +69,8 @@ object Option {
 
             // Values of the "TYPE" property
             object DateTime {
-                const val DATE_TIME = "datetime"
-                const val TIME_ZONE = "time_zone"
+                const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
+                const val TIME_ZONE = "time_zone" // TODO: remove or move to Types
             }
             object Types {
                 const val DATE_TIME = "datetime"
