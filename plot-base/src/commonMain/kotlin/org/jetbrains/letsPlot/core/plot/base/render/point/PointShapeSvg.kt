@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimObject
 
 object PointShapeSvg {
-    fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0): SvgSlimObject {
+    fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0, verticallyAligned: Boolean = false): SvgSlimObject {
         if (shape == TinyPointShape) {
             return createTinyDotShape(
                 location,
@@ -32,7 +32,8 @@ object PointShapeSvg {
                 shape,
                 location,
                 size,
-                p
+                p,
+                verticallyAligned
             )
         }
         throw IllegalArgumentException("Unsupported point shape code ${shape.code} ${shape::class.simpleName}")
@@ -51,10 +52,11 @@ object PointShapeSvg {
         shape: NamedShape,
         location: DoubleVector,
         size: Double,
-        p: DataPointAesthetics
+        p: DataPointAesthetics,
+        verticallyAligned: Boolean
     ): SvgSlimObject {
         val stroke = shape.strokeWidth(p)
-        val glyph = createSlimGlyph(shape, location, size, stroke)
+        val glyph = createSlimGlyph(shape, location, size, stroke, verticallyAligned)
         val angle = p.finiteOrNull(Aes.ANGLE)
         val transform = if (glyph is CircleGlyph) null
         else angle?.let {
@@ -65,7 +67,7 @@ object PointShapeSvg {
         return glyph
     }
 
-    private fun createSlimGlyph(shape: NamedShape, location: DoubleVector, size: Double, stroke: Double): Glyph {
+    private fun createSlimGlyph(shape: NamedShape, location: DoubleVector, size: Double, stroke: Double, verticallyAligned: Boolean): Glyph {
         when (shape) {
             STICK_SQUARE, SOLID_SQUARE, FILLED_SQUARE -> return Glyphs.square(location, size)
 
@@ -73,9 +75,9 @@ object PointShapeSvg {
                 , BULLET             // same as SOLID_CIRCLE but smaller
                 , FILLED_CIRCLE -> return Glyphs.circle(location, size)
 
-            STICK_TRIANGLE_UP, SOLID_TRIANGLE_UP, FILLED_TRIANGLE_UP -> return Glyphs.triangleUp(location, size, stroke)
+            STICK_TRIANGLE_UP, SOLID_TRIANGLE_UP, FILLED_TRIANGLE_UP -> return Glyphs.triangleUp(location, size, stroke, !verticallyAligned)
 
-            STICK_TRIANGLE_DOWN, FILLED_TRIANGLE_DOWN -> return Glyphs.triangleDown(location, size, stroke)
+            STICK_TRIANGLE_DOWN, FILLED_TRIANGLE_DOWN -> return Glyphs.triangleDown(location, size, stroke, !verticallyAligned)
 
             STICK_DIAMOND, SOLID_DIAMOND, FILLED_DIAMOND -> return Glyphs.diamond(location, size)
 

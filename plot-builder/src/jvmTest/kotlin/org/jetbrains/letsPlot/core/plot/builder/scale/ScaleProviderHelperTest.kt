@@ -21,7 +21,8 @@ class ScaleProviderHelperTest {
 
         ScaleProviderHelper.createDefault(Aes.HJUST).createScale(
             "region",
-            DiscreteTransform(df.distinctValues(region), emptyList())
+            DiscreteTransform(df.distinctValues(region), emptyList()),
+            guideTitle = null
         )
     }
 }

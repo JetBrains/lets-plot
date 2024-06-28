@@ -16,8 +16,13 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Error
 import org.jetbrains.letsPlot.core.util.MonolithicCommon.PlotsBuildResult.Success
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
-import org.w3c.dom.*
+import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLParagraphElement
+import org.w3c.dom.get
 import sizing.SizingOption
+import sizing.SizingOption.HEIGHT
+import sizing.SizingOption.WIDTH
 import sizing.SizingPolicy
 
 private val LOG = PortableLogging.logger("MonolithicJs")
@@ -50,12 +55,15 @@ fun buildPlotFromRawSpecs(
             emptyMap()
         }
 
-        val persistentDiv = document.createElement("div") as HTMLDivElement
+        buildPlotFromProcessedSpecsPrivate(
+            processedSpec,
+            width, height,
+            parentElement,
+            options
+        )
 
-        parentElement.appendChild(persistentDiv)
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
     } catch (e: RuntimeException) {
-        handleException(e, parentElement)
+        handleException(e, MessageHandler(parentElement))
         null
     }
 }
@@ -87,14 +95,91 @@ fun buildPlotFromProcessedSpecs(
             emptyMap()
         }
 
-        val persistentDiv = document.createElement("div") as HTMLDivElement
-
-        parentElement.appendChild(persistentDiv)
-
-        buildPlotFromProcessedSpecsIntern(processedSpec, width, height, persistentDiv, persistentDiv, options)
+        buildPlotFromProcessedSpecsPrivate(
+            processedSpec,
+            width, height,
+            parentElement,
+            options
+        )
     } catch (e: RuntimeException) {
-        handleException(e, parentElement)
+        handleException(e, MessageHandler(parentElement))
         null
+    }
+}
+
+private fun buildPlotFromProcessedSpecsPrivate(
+    processedSpec: Map<String, Any>,
+    width: Double,
+    height: Double,
+    parentElement: HTMLElement,
+    options: Map<String, Any>
+): FigureModelJs? {
+    // Plot wrapper:
+    // - will get `width` and `height` style attributes according to the plot dimensions
+    //      (computed later, see: FigureToHtml.eval())
+    // - will serve as an 'event target' for interactive tools
+    // - will persist through the figure rebuilds via `FigureModel.updateView()`
+    val wrapperDiv = document.createElement("div") as HTMLDivElement
+    parentElement.appendChild(wrapperDiv)
+
+    // Messages div
+    val messagesDiv = document.createElement("div") as HTMLDivElement
+    parentElement.appendChild(messagesDiv)
+
+    val sizingPolicy = createSizingPolicy(
+        width, height,
+        parentElement,
+        options[SizingOption.KEY] as? Map<*, *>
+    )
+
+    return buildPlotFromProcessedSpecsIntern(
+        processedSpec,
+        width, height,
+        wrapperDiv,
+        sizingPolicy,
+        MessageHandler(messagesDiv),
+    )
+}
+
+private fun createSizingPolicy(
+    width: Double,    // "not-specified" if set to value <= 0
+    height: Double,   // same
+    parentElement: HTMLElement,
+    sizingOptions: Map<*, *>?
+): SizingPolicy {
+
+    // Fixed plot size (not compatible with reactive sizing).
+    val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
+
+    return if (plotSizeProvided != null) {
+        // Ignore sizing options even if provided
+        SizingPolicy.fixedBoth(plotSizeProvided)
+    } else {
+        val parentWidth = when (val w = parentElement.clientWidth) {
+            0 -> null  // parent element wasn't yet layouted
+            else -> w
+        }?.toDouble()
+        val parentHeight = when (val h = parentElement.clientHeight) {
+            0 -> null  // parent element wasn't yet layouted
+            else -> h
+        }?.toDouble()
+
+        when (sizingOptions) {
+            is Map<*, *> -> {
+                // The width/height should be in 'sizingOptions'.
+                // Take the 'parentElement' dimensions as a fallback option.
+                val fallbackSizingOptions = mapOf(
+                    WIDTH to parentWidth,
+                    HEIGHT to parentHeight,
+                )
+                SizingPolicy.create(fallbackSizingOptions + sizingOptions)
+            }
+
+            else -> {
+                // No sizing options given - default to 'notebook mode'.
+                SizingPolicy.notebookCell(parentWidth, parentHeight)
+            }
+        }
     }
 }
 
@@ -102,34 +187,20 @@ internal fun buildPlotFromProcessedSpecsIntern(
     plotSpec: Map<String, Any>,
     width: Double,
     height: Double,
-    parentElement: HTMLElement,
-    eventTarget: Element,
-    options: Map<String, Any>
+    wrapperElement: HTMLElement,
+    sizingPolicy: SizingPolicy,
+    messageHandler: MessageHandler
 ): FigureModelJs? {
-
-    // Fixed plot size (not compatible with reactive sizing).
-    val plotSizeProvided = if (width > 0 && height > 0) DoubleVector(width, height) else null
 
     // Datalore specific option - not compatible with reactive sizing.
     val datalorePreferredWidth: Double? =
-        parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
+        wrapperElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
 
-    val sizingPolicy = if (plotSizeProvided != null) {
-        // Ignore sizing options even if provided
-        SizingPolicy.fixedBoth(plotSizeProvided)
-    } else when (val sizingOptions = options[SizingOption.KEY]) {
-        is Map<*, *> -> SizingPolicy.create(sizingOptions)
-        else -> SizingPolicy.DEFAULT
-    }
-
-    val (plotSize, plotMaxWidth) = /*if (plotSizeProvided != null) {
-        SizingPolicyAdapter.SizeAndMaxWidth(plotSizeProvided, null)
-    } else */if (datalorePreferredWidth != null) {
+    val (plotSize, plotMaxWidth) = if (datalorePreferredWidth != null) {
         SizingPolicyAdapter.SizeAndMaxWidth(null, null)
     } else {
-
         val sizingPolicyAdapter = SizingPolicyAdapter(sizingPolicy)
-        sizingPolicyAdapter.monolithicSizingParameters(plotSizeProvided, parentElement)
+        sizingPolicyAdapter.toMonolithicSizingParameters()
     }
 
 //    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
@@ -141,39 +212,44 @@ internal fun buildPlotFromProcessedSpecsIntern(
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
-        showError(errorMessage, parentElement)
+        messageHandler.showError(errorMessage)
         return null
     }
 
     val success = buildResult as Success
     val computationMessages = success.buildInfos.flatMap { it.computationMessages }
     computationMessages.forEach {
-        showInfo(it, parentElement)
+        messageHandler.showInfo(it)
     }
 
     val figureModel = if (success.buildInfos.size == 1) {
         // a single figure
         val buildInfo = success.buildInfos[0]
-        val result = FigureToHtml(buildInfo, parentElement, eventTarget).eval()
+        val result = FigureToHtml(buildInfo, wrapperElement).eval(isRoot = true)
         FigureModelJs(
             plotSpec,
-            MonolithicParameters(width, height, parentElement, eventTarget, options),
+            MonolithicParameters(
+                width,
+                height,
+                wrapperElement,
+                sizingPolicy,
+                messageHandler.toMute(),
+            ),
             result.toolEventDispatcher,
             result.figureRegistration
         )
     } else {
         // a bunch
-        buildGGBunchComponent(success.buildInfos, parentElement, eventTarget)
+        buildGGBunchComponent(success.buildInfos, wrapperElement)
         null
     }
 
     return figureModel
 }
 
-fun buildGGBunchComponent(
+private fun buildGGBunchComponent(
     plotInfos: List<FigureBuildInfo>,
     parentElement: HTMLElement,
-    eventTarget: Element
 ) {
     val bunchBounds = plotInfos.map { it.bounds }
         .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
@@ -192,36 +268,48 @@ fun buildGGBunchComponent(
 
         FigureToHtml(
             buildInfo = plotInfo,
-            containerElement = itemContainerElement,
-            eventTarget = eventTarget
-        ).eval()
+            parentElement = itemContainerElement,
+        ).eval(isRoot = false)
 
     }
 }
 
-private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
+private fun handleException(e: RuntimeException, messageHandler: MessageHandler) {
     val failureInfo = FailureHandler.failureInfo(e)
-    showError(failureInfo.message, parentElement)
+    messageHandler.showError(failureInfo.message)
     if (failureInfo.isInternalError) {
         LOG.error(e) { "Unexpected situation in 'MonolithicJs'" }
     }
 }
 
-private fun showError(message: String, parentElement: HTMLElement) {
-    showText(message, "lets-plot-message-error", "color:darkred;", parentElement)
-}
+internal class MessageHandler(
+    private val messagesDiv: HTMLElement,
+) {
 
-private fun showInfo(message: String, parentElement: HTMLElement) {
-    showText(message, "lets-plot-message-info", "color:darkblue;", parentElement)
-}
+    private var mute: Boolean = false
 
-private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
-    val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
-
-    if (style.isNotBlank()) {
-        paragraphElement.setAttribute("style", style)
+    fun showError(message: String) {
+        showText(message, "lets-plot-message-error", "color:darkred;")
     }
-    paragraphElement.textContent = message
-    paragraphElement.className = className
-    parentElement.appendChild(paragraphElement)
+
+    fun showInfo(message: String) {
+        showText(message, "lets-plot-message-info", "color:darkblue;")
+    }
+
+    private fun showText(message: String, className: String, style: String) {
+        if (mute) return
+
+        val paragraphElement = messagesDiv.ownerDocument!!.createElement("p") as HTMLParagraphElement
+
+        if (style.isNotBlank()) {
+            paragraphElement.setAttribute("style", style)
+        }
+        paragraphElement.textContent = message
+        paragraphElement.className = className
+        messagesDiv.appendChild(paragraphElement)
+    }
+
+    fun toMute(): MessageHandler {
+        return MessageHandler(messagesDiv).also { it.mute = true }
+    }
 }

@@ -31,8 +31,8 @@ class SandboxToolbarJs() {
 
     init {
         element.style.display = "flex"
-        element.style.justifyContent = "center"
-        element.style.alignItems = "center"
+        element.style.justifyContent = "right"
+//        element.style.alignItems = "center"
         element.style.padding = "10px"
         element.style.backgroundColor = "#f0f0f0"
 

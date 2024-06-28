@@ -6,20 +6,33 @@
 package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
-interface FrameOfReference {
-    fun zoom(scale: DoubleVector)
-    fun pan(from: DoubleVector, to: DoubleVector): DoubleVector?
-    fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
+abstract class FrameOfReference {
+    abstract val transientState: ComponentTransientState
 
-    fun drawBeforeGeomLayer(parent: SvgComponent)
+    val bottomGroup = GroupComponent()
+    val topGroup = GroupComponent()
 
-    fun drawAfterGeomLayer(parent: SvgComponent)
+    abstract fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 
-    fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
+    /**
+     * Repaints axis and grid but not geoms.
+     */
+    fun repaintFrame() {
+        bottomGroup.clear()
+        drawBeforeGeomLayer(bottomGroup)
+        topGroup.clear()
+        drawAfterGeomLayer(topGroup)
+    }
 
-    fun setClip(element: SvgComponent)
+    protected abstract fun drawBeforeGeomLayer(parent: SvgComponent)
+
+    protected abstract fun drawAfterGeomLayer(parent: SvgComponent)
+
+    abstract fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
+
+    abstract fun setClip(element: SvgComponent)
 }

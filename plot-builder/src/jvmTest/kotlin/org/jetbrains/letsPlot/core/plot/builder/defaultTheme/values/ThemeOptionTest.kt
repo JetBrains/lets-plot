@@ -121,10 +121,10 @@ internal class ThemeOptionTest {
 
             ThemeOption.PANEL_BKGR_RECT -> (theme.panel() as DefaultPanelTheme).rectKey
             ThemeOption.PANEL_BORDER_RECT -> (theme.panel() as DefaultPanelTheme).borderKey
-            ThemeOption.PANEL_GRID_MAJOR_X -> (theme.panel().gridX() as DefaultPanelGridTheme).majorLineKey
-            ThemeOption.PANEL_GRID_MINOR_X -> (theme.panel().gridX() as DefaultPanelGridTheme).minorLineKey
-            ThemeOption.PANEL_GRID_MAJOR_Y -> (theme.panel().gridY() as DefaultPanelGridTheme).majorLineKey
-            ThemeOption.PANEL_GRID_MINOR_Y -> (theme.panel().gridY() as DefaultPanelGridTheme).minorLineKey
+            ThemeOption.PANEL_GRID_MAJOR_X -> (theme.panel().verticalGrid() as DefaultPanelGridTheme).majorLineKey
+            ThemeOption.PANEL_GRID_MINOR_X -> (theme.panel().verticalGrid() as DefaultPanelGridTheme).minorLineKey
+            ThemeOption.PANEL_GRID_MAJOR_Y -> (theme.panel().horizontalGrid() as DefaultPanelGridTheme).majorLineKey
+            ThemeOption.PANEL_GRID_MINOR_Y -> (theme.panel().horizontalGrid() as DefaultPanelGridTheme).minorLineKey
 
             ThemeOption.FACET_STRIP_BGR_RECT -> (theme.facets() as DefaultFacetsTheme).rectKey
             ThemeOption.FACET_STRIP_TEXT -> (theme.facets() as DefaultFacetsTheme).textKey

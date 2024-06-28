@@ -207,8 +207,14 @@ class SquareFrameOfReferenceGridTest {
         )
 
         val container = GroupComponent()
-        squareFrameOfReference.drawBeforeGeomLayer(container)
-        squareFrameOfReference.drawAfterGeomLayer(container)
+        squareFrameOfReference.repaintFrame()
+
+        val axisAndGrid = (squareFrameOfReference.bottomGroup.rootGroup.children()
+            .map { it } + squareFrameOfReference.topGroup.rootGroup.children().map { it })
+            .map { it.removeFromParent(); it }
+
+
+        container.rootGroup.children().addAll(axisAndGrid)
         return container.rootGroup
     }
 

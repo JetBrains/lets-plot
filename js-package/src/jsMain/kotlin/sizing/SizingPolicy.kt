@@ -10,7 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.w3c.dom.HTMLElement
 import sizing.SizingMode.*
+import sizing.SizingOption.HEIGHT
 import sizing.SizingOption.HEIGHT_MODE
+import sizing.SizingOption.WIDTH
 import sizing.SizingOption.WIDTH_MARGIN
 import sizing.SizingOption.WIDTH_MODE
 import kotlin.math.max
@@ -23,8 +25,8 @@ internal class SizingPolicy(
     val heightMode: SizingMode,
     val widthMargin: Double,
     val heightMargin: Double,
-    private val width: Double? = null, // for 'FIXED' mode
-    private val height: Double? = null,
+    val width: Double?,     // for fit | min | fixed modes
+    val height: Double?,    // for fit | min | fixed modes
 ) {
 
     fun resize(figureSize: DoubleVector, container: HTMLElement): DoubleVector {
@@ -77,32 +79,45 @@ internal class SizingPolicy(
 
     companion object {
         // Notebook policy
-        val DEFAULT: SizingPolicy = SizingPolicy(
-            widthMode = MIN,
-            heightMode = SCALED,
-            widthMargin = 0.0,
-            heightMargin = 0.0,
-        )
+        private val NOTEBOOK_WIDTH_MODE = MIN
+        private val NOTEBOOK_HEIGHT_MODE = SCALED
 
-        fun fixedBoth(size: DoubleVector): SizingPolicy {
+        fun notebookCell(cellWidth: Double?, cellHeight: Double?): SizingPolicy {
             return SizingPolicy(
-                FIXED, FIXED, 0.0, 0.0,
-                size.x,
-                size.y,
+                NOTEBOOK_WIDTH_MODE, NOTEBOOK_HEIGHT_MODE,
+                widthMargin = 0.0, heightMargin = 0.0,
+                width = cellWidth,
+                height = cellHeight,
             )
         }
 
-        fun create(options: Map<*, *>): SizingPolicy {
-            val widthMode = sizingMode(options, WIDTH_MODE) ?: DEFAULT.widthMode
-            val heightMode = sizingMode(options, HEIGHT_MODE) ?: DEFAULT.heightMode
+        fun fixedBoth(size: DoubleVector): SizingPolicy {
+            return SizingPolicy(
+                FIXED, FIXED,
+                widthMargin = 0.0, heightMargin = 0.0,
+                width = size.x,
+                height = size.y,
+            )
+        }
+
+        fun create(
+            options: Map<*, *>,
+        ): SizingPolicy {
+            val widthMode = sizingMode(options, WIDTH_MODE) ?: NOTEBOOK_WIDTH_MODE
+            val heightMode = sizingMode(options, HEIGHT_MODE) ?: NOTEBOOK_HEIGHT_MODE
             val widthMargin = (options[WIDTH_MARGIN] as? Number)?.toDouble() ?: 0.0
             val heightMargin = (options[HEIGHT_MODE] as? Number)?.toDouble() ?: 0.0
+
+            val width = (options[WIDTH] as? Number)?.toDouble()
+            val height = (options[HEIGHT] as? Number)?.toDouble()
 
             return SizingPolicy(
                 widthMode = widthMode,
                 heightMode = heightMode,
                 widthMargin = widthMargin,
                 heightMargin = heightMargin,
+                width = width,
+                height = height,
             )
         }
 

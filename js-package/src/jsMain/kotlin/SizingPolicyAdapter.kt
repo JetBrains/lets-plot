@@ -4,7 +4,6 @@
  */
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.w3c.dom.HTMLElement
 import sizing.SizingMode
 import sizing.SizingPolicy
 import kotlin.math.max
@@ -15,52 +14,50 @@ import kotlin.math.max
 internal class SizingPolicyAdapter(
     private val sizingPolicy: SizingPolicy,
 ) {
-    fun monolithicSizingParameters(
-        plotSize: DoubleVector?,
-        parentElement: HTMLElement
-    ): SizeAndMaxWidth {
+    fun toMonolithicSizingParameters(): SizeAndMaxWidth {
 
-        val parentWidth = when (val w = parentElement.clientWidth) {
-            0 -> null  // parent element wasn't yet layouted
-            else -> w
-        }?.toDouble()
-
-        if (parentWidth == null) {
+        // 'Monolithic Sizing' requires the 'width'.
+        if (sizingPolicy.width == null) {
             return SizeAndMaxWidth(
                 plotSize = null,
                 plotMaxWidth = null
             )
         }
 
-        // currently: only some of all possible policies
+        val cellWidth: Double = sizingPolicy.width
+        val cellHeight: Double? = sizingPolicy.height
+
+        // Currently only some of all possible sizing policies are supported.
         return when (sizingPolicy.widthMode) {
             SizingMode.SCALED, // Note: 'width: SCALED' mode is not implemented
             SizingMode.MIN -> {
                 // Note: only 'hight: SCALED' mode is currently implemented
                 SizeAndMaxWidth(
                     plotSize = null,
-                    plotMaxWidth = max(1.0, parentWidth - sizingPolicy.widthMargin)
+                    plotMaxWidth = max(1.0, cellWidth - sizingPolicy.widthMargin)
                 )
             }
 
             SizingMode.FIT -> {
                 // Note: only 'hight: FIT' mode is currently implemented
-                val parentHeight = parentElement.clientHeight.toDouble()
+                check(cellHeight != null) { "Height-FIT sizing mode: the cell 'height' not provided." }
 
                 SizeAndMaxWidth(
                     plotSize = DoubleVector(
-                        x = max(1.0, parentWidth - sizingPolicy.widthMargin),
-                        y = max(1.0, parentHeight - sizingPolicy.heightMargin),
+                        x = max(1.0, cellWidth - sizingPolicy.widthMargin),
+                        y = max(1.0, cellHeight - sizingPolicy.heightMargin),
                     ),
                     plotMaxWidth = null
                 )
             }
 
             SizingMode.FIXED -> {
-                check(plotSize != null) { "FIXED sizing mode: plot size not provided." }
-                check(sizingPolicy.heightMode == SizingMode.FIXED) { "Not supported: FIXED width + ${sizingPolicy.heightMode} height sizing policy." }
+
+                // Currently, if the wigth is FIXED than the height must be fixed as well.
+                check(sizingPolicy.heightMode == SizingMode.FIXED) { "Not supported: width-FIXED + height-${sizingPolicy.heightMode} sizing policy. Try both FIXED." }
+                check(cellHeight != null) { "Height-FIXED sizing mode: the cell 'height' not provided." }
                 SizeAndMaxWidth(
-                    plotSize = plotSize,
+                    plotSize = DoubleVector(cellWidth, cellHeight),
                     plotMaxWidth = null
                 )
             }

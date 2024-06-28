@@ -81,7 +81,7 @@ class GridComponentTest {
             orientation = Orientation.LEFT,
             isOrthogonal = true,
             geomContentBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(100, 100)),
-            gridTheme = theme.panel().gridY(),
+            gridTheme = theme.panel().horizontalGrid(),
             panelTheme = theme.panel()
         )
 

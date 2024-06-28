@@ -8,9 +8,14 @@ package sizing
 internal object SizingOption {
     const val KEY = "sizing"
 
-    const val WIDTH_MODE = "width_mode"     // fit | min | scaled
-    const val HEIGHT_MODE = "height_mode"   // fit | min | scaled
+    // See: `SizingMode`
+    const val WIDTH_MODE = "width_mode"     // fit | min | scaled | fixed
+    const val HEIGHT_MODE = "height_mode"   // fit | min | scaled | fixed
 
     const val WIDTH_MARGIN = "width_margin"
     const val HEIGHT_MARGIN = "height_margin"
+
+    // Dimensions for fit | min | fixed
+    const val WIDTH = "width"
+    const val HEIGHT = "height"
 }

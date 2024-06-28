@@ -5,7 +5,7 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -30,7 +30,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_count']
 
 
-def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                map=None, map_join=None, use_crs=None,
                size_unit=None,
                color_by=None, fill_by=None,
@@ -61,6 +62,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -200,6 +204,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -208,7 +213,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               flat=None, geodesic=None,
               color_by=None,
@@ -238,6 +244,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -378,6 +387,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -386,7 +396,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               color_by=None,
               **other_args):
     """
@@ -416,6 +427,9 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -489,13 +503,15 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                tooltips=None,
                 orientation=None,
                 method=None,
                 n=None,
@@ -532,6 +548,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -658,6 +677,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -673,7 +693,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
              tooltips=None, labels=None,
              orientation=None,
              color_by=None, fill_by=None,
@@ -704,6 +724,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -815,6 +838,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  labels=labels,
@@ -823,7 +847,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                   sampling=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -858,6 +883,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -966,6 +994,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  labels=labels,
@@ -978,7 +1007,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, sampling=None, tooltips=None,
                  binwidth=None,
                  bins=None,
                  method=None,
@@ -1005,6 +1034,9 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1120,6 +1152,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  binwidth=binwidth,
@@ -1135,14 +1168,20 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  **other_args)
 
 
-def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                bins=None,
                binwidth=None,
                drop=None,
                color_by=None, fill_by=None,
                **other_args):
     """
-    Divides the plane into a grid and color the bins by the count of cases in them.
+    Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
+    and map the count to the fill color of the cell (tile).
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -1161,6 +1200,9 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1191,8 +1233,6 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
-    `geom_bin2d()` applies rectangular grid to the plane then counts observation
-    in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
 
     Computed variables:
 
@@ -1288,6 +1328,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins,
@@ -1297,7 +1338,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               color_by=None, fill_by=None,
               **other_args):
     """
@@ -1320,6 +1362,9 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1428,13 +1473,15 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, fill_by=None,
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                fill_by=None,
                 **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1458,6 +1505,9 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1515,12 +1565,14 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  fill_by=fill_by,
                  **other_args)
 
 
-def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   color_by=None,
                   **other_args):
     """
@@ -1548,6 +1600,9 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1646,13 +1701,15 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   fatten=None,
                   color_by=None, fill_by=None,
                   **other_args):
@@ -1681,6 +1738,9 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1775,6 +1835,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
@@ -1782,7 +1843,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                    sampling=None,
                     tooltips=None,
                     fatten=None,
                     color_by=None, fill_by=None,
@@ -1812,6 +1874,9 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1903,6 +1968,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
@@ -1910,7 +1976,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                   sampling=None, tooltips=None,
                    color_by=None,
                    **other_args):
     """
@@ -1938,6 +2005,9 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2019,13 +2089,15 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                 tooltips=None,
                  bins=None,
                  binwidth=None,
                  color_by=None,
@@ -2050,6 +2122,9 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2157,6 +2232,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins, binwidth=binwidth,
@@ -2164,7 +2240,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   bins=None,
                   binwidth=None,
                   color_by=None, fill_by=None,
@@ -2189,6 +2266,9 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2297,6 +2377,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins,
@@ -2305,7 +2386,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                 tooltips=None,
                  map=None, map_join=None, use_crs=None,
                  color_by=None, fill_by=None,
                  **other_args):
@@ -2329,6 +2411,9 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2475,6 +2560,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -2482,7 +2568,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+             tooltips=None,
              map=None, map_join=None, use_crs=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -2511,6 +2598,9 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2642,6 +2732,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -2649,7 +2740,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
                 slope=None,
                 intercept=None,
                 color_by=None,
@@ -2674,6 +2765,9 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2751,6 +2845,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  slope=slope,
                  intercept=intercept,
@@ -2773,7 +2868,8 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                yintercept=None,
                color_by=None,
                **other_args):
@@ -2797,6 +2893,9 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2881,6 +2980,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  yintercept=yintercept,
@@ -2888,7 +2988,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                xintercept=None,
                color_by=None,
                **other_args):
@@ -2912,6 +3013,9 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2996,6 +3100,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  xintercept=xintercept,
@@ -3003,7 +3108,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, tooltips=None,
                  orientation=None,
                  fatten=None,
                  outlier_alpha=None, outlier_color=None, outlier_fill=None,
@@ -3034,6 +3139,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -3185,6 +3293,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           stat=stat,
                           position=position,
                           show_legend=show_legend,
+                 manual_key=manual_key,
                           sampling=None,
                           tooltips=tooltips,
                           orientation=orientation,
@@ -3217,7 +3326,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     return boxplot_layer
 
 
-def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                tooltips=None,
                 orientation=None,
                 show_half=None,
                 quantiles=None, quantile_lines=None,
@@ -3244,6 +3354,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3421,6 +3534,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -3432,7 +3546,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   binwidth=None,
                   bins=None,
@@ -3461,6 +3575,9 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3594,6 +3711,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -3610,7 +3728,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                  **other_args)
 
 
-def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                     sampling=None, tooltips=None,
                      trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      color_by=None, fill_by=None,
@@ -3637,6 +3756,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3770,6 +3892,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  trim=trim,
@@ -3787,7 +3910,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  **other_args)
 
 
-def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                tooltips=None,
                 color_by=None, fill_by=None,
                 **other_args):
     """
@@ -3810,6 +3934,9 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3892,13 +4019,15 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               flat=None, color_by=None, fill_by=None,
               **other_args):
     """
@@ -3927,6 +4056,9 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4013,6 +4145,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  flat=flat,
@@ -4020,7 +4153,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                 tooltips=None,
                  orientation=None,
                  trim=None,
                  kernel=None,
@@ -4057,6 +4191,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4220,6 +4357,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -4229,7 +4367,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                   sampling=None, tooltips=None,
                    kernel=None,
                    adjust=None,
                    bw=None,
@@ -4240,6 +4379,10 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    **other_args):
     """
     Display density function contour.
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4258,6 +4401,9 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4295,7 +4441,6 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_density2d()` draws density function.
 
     Computed variables:
 
@@ -4436,6 +4581,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
@@ -4443,7 +4589,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                    sampling=None,
                     tooltips=None,
                     kernel=None,
                     adjust=None,
@@ -4455,6 +4602,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     **other_args):
     """
     Fill density function contour.
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4473,6 +4624,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4512,7 +4666,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Notes
     -----
-    `geom_density2df()` fills density contours.
 
     Computed variables:
 
@@ -4653,6 +4806,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  kernel=kernel,
@@ -4664,7 +4818,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                tooltips=None,
                 width=None, height=None,
                 color_by=None, fill_by=None,
                 seed=None,
@@ -4694,6 +4849,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4784,6 +4942,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  width=width, height=height,
@@ -4792,7 +4951,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+            tooltips=None,
             distribution=None,
             dparams=None,
             color_by=None, fill_by=None,
@@ -4823,6 +4983,9 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4913,6 +5076,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  distribution=distribution,
@@ -4921,7 +5085,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  **other_args)
 
 
-def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+             tooltips=None,
              color_by=None, fill_by=None,
              **other_args):
     """
@@ -4950,6 +5115,9 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5015,13 +5183,15 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                 tooltips=None,
                  distribution=None,
                  dparams=None,
                  quantiles=None,
@@ -5053,6 +5223,9 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5139,6 +5312,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  distribution=distribution,
@@ -5148,7 +5322,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   quantiles=None,
                   color_by=None,
                   **other_args):
@@ -5178,6 +5353,9 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5235,6 +5413,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  quantiles=quantiles,
@@ -5242,7 +5421,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   orientation=None,
                   color_by=None,
                   **other_args):
@@ -5272,6 +5452,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5350,6 +5533,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -5357,7 +5541,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               direction=None,
               color_by=None,
               **other_args):
@@ -5386,6 +5571,9 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5462,6 +5650,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  direction=direction,
@@ -5469,7 +5658,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               color_by=None, fill_by=None,
               **other_args):
@@ -5493,6 +5683,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5628,6 +5821,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -5635,7 +5829,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+                 tooltips=None,
                  arrow=None, flat=None, geodesic=None, spacer=None, color_by=None, **other_args):
     """
     Draw a straight line segment between two points.
@@ -5662,6 +5857,9 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5774,6 +5972,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -5784,7 +5983,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                arrow=None,
                curvature=None, angle=None, ncp=None,
                spacer=None,
@@ -5814,6 +6014,9 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5927,6 +6130,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -5936,7 +6140,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                arrow=None, pivot=None,
                color_by=None, **other_args):
     """
@@ -5957,6 +6162,9 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6056,6 +6264,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
                  stat=None,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -6064,7 +6273,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
                  **other_args)
 
 
-def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               label_format=None,
               na_text=None,
@@ -6097,6 +6307,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6273,6 +6486,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -6284,7 +6498,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                map=None, map_join=None, use_crs=None,
                label_format=None,
                na_text=None,
@@ -6319,6 +6534,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6507,6 +6725,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -6522,7 +6741,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+             tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
              hole=None,
              stroke_side=None,
@@ -6552,6 +6772,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6750,6 +6973,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  labels=labels,
@@ -6763,7 +6987,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+                  sampling=None, tooltips=None,
                   orientation=None,
                   dir=None, fatten=None, slope=None, intercept=None,
                   color_by=None, fill_by=None,
@@ -6793,6 +7018,9 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6903,6 +7131,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -6911,7 +7140,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -6934,6 +7164,9 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -7017,6 +7250,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
@@ -7029,6 +7263,7 @@ def _geom(name, *,
           stat=None,
           position=None,
           show_legend=None,
+          manual_key=None,
           sampling=None,
           tooltips=None,
           **kwargs):
@@ -7046,12 +7281,15 @@ def _geom(name, *,
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
+    data = key_int2str(data)
+
     return LayerSpec(geom=name,
                      stat=stat,
                      data=data,
                      mapping=mapping,
                      position=position,
                      show_legend=show_legend,
+                     manual_key=manual_key,
                      sampling=sampling,
                      tooltips=tooltips,
                      **data_meta,
