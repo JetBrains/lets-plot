@@ -241,8 +241,8 @@ def theme(*,
         A value of 'plot' means that title and subtitle are aligned to the entire plot (excluding margins).
     plot_caption_position : {'panel', 'plot'}, default='panel'
         Alignment of the plot caption.
-        A value of 'panel' means that title and subtitle are aligned to the plot panels.
-        A value of 'plot' means that title and subtitle are aligned to the entire plot (excluding margins).
+        A value of 'panel' means that caption is aligned to the plot panels.
+        A value of 'plot' means that caption is aligned to the entire plot (excluding margins).
     strip_background : str or dict
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.

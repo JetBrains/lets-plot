@@ -112,7 +112,7 @@ def ylab(label):
 
 def labs(title=None, subtitle=None, caption=None, **labels):
     """
-    Change plot title and axis label.
+    Change plot title, axis labels and legend titles.
 
     Parameters
     ----------
@@ -123,7 +123,8 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     caption : str
         The text for the plot caption.
     labels
-        Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color="New Color label"`.
+        Name-value pairs where name should be an aesthetic or group name used in the `layer_key()` function
+        and value should be a string, e.g. `color="New Color label"`.
 
     Returns
     -------
@@ -142,6 +143,24 @@ def labs(title=None, subtitle=None, caption=None, **labels):
         ggplot(data, aes('x', 'y')) + geom_point(aes(size='y')) + \\
             labs(title='New plot title', subtitle='The plot subtitle', caption='The plot caption', \\
                  x='New x axis label', y='New y axis label', size='New legend title')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = list(range(n))
+        y = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(color='red', manual_key="point") + \\
+            geom_line(color='blue', manual_key="line") + \\
+            labs(manual='Zones')
 
     """
     specs = []

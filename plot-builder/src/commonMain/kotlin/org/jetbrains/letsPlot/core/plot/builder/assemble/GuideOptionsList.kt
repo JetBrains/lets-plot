@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
+
 
 class GuideOptionsList {
     private val options = mutableListOf<GuideOptions>()
@@ -31,5 +33,12 @@ class GuideOptionsList {
     operator fun plus(other: GuideOptionsList): GuideOptionsList {
         this.options.addAll(other.options)
         return this
+    }
+}
+
+data class GuideKey internal constructor(private val key: String) {
+    companion object {
+        fun fromAes(aes: Aes<*>) = GuideKey(aes.name)
+        fun fromName(name: String) = GuideKey(name)
     }
 }

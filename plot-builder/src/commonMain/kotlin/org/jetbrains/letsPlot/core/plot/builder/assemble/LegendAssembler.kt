@@ -28,7 +28,7 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
+    private val guideOptionsMap: Map<GuideKey, GuideOptionsList>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
@@ -45,9 +45,8 @@ class LegendAssembler(
         isMarginal: Boolean,
         ctx: PlotContext,
     ) {
-
         legendLayers.add(
-            LegendLayer(
+            LegendLayer.createDefaultLegendLayer(
                 keyFactory,
                 aesList,
                 constantByAes,
@@ -61,15 +60,39 @@ class LegendAssembler(
         )
     }
 
+    fun addCustomLayer(
+        customLegendOptions: CustomLegendOptions,
+        keyFactory: LegendKeyElementFactory,
+        constantByAes: Map<Aes<*>, Any>,
+        aestheticsDefaults: AestheticsDefaults,
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>,
+        isMarginal: Boolean
+    ) {
+        legendLayers.add(
+            LegendLayer.createCustomLegendLayer(
+                customLegendOptions,
+                keyFactory,
+                constantByAes,
+                aestheticsDefaults,
+                colorByAes,
+                fillByAes,
+                isMarginal
+            )
+        )
+    }
+
     fun createLegend(): LegendBoxInfo {
         val includeMarginalLayers = legendLayers.all { it.isMarginal } // Yes, if there are no 'core' layers.
-        val legendLayers = legendLayers.filter { includeMarginalLayers || !it.isMarginal }
+        val legendLayers = legendLayers
+            .filter { includeMarginalLayers || !it.isMarginal }
+            .sortedWith(compareBy(nullsLast(), LegendLayer::index))
 
         val legendBreaksByLabel = LinkedHashMap<String, LegendBreak>()
         for (legendLayer in legendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
             val dataPoints = legendLayer.keyAesthetics.dataPoints().iterator()
-            for (label in legendLayer.keyLabels) {
+            for (label in legendLayer.labels) {
                 legendBreaksByLabel.getOrPut(label) {
                     LegendBreak(wrap(label, Legend.LINES_MAX_LENGTH, Legend.LINES_MAX_COUNT))
                 }.addLayer(dataPoints.next(), keyElementFactory)
@@ -91,7 +114,7 @@ class LegendAssembler(
 
         // legend options
         val legendOptionsList = legendLayers
-            .flatMap(LegendLayer::aesList)
+            .flatMap(LegendLayer::guideKeys)
             .mapNotNull(guideOptionsMap::get)
             .mapNotNull(GuideOptionsList::getLegendOptions)
         val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
@@ -110,48 +133,95 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val aesList: List<Aes<*>>,
-        constantByAes: Map<Aes<*>, Any>,
-        aestheticsDefaults: AestheticsDefaults,
-        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-        colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>,
-        val isMarginal: Boolean,
-        ctx: PlotContext
+        val keyAesthetics: Aesthetics,
+        val labels: List<String>,
+        val guideKeys: List<GuideKey>,
+        val index: Int? = null,
+        val isMarginal: Boolean
     ) {
+        companion object {
+            fun createDefaultLegendLayer(
+                keyElementFactory: LegendKeyElementFactory,
+                aesList: List<Aes<*>>,
+                constantByAes: Map<Aes<*>, Any>,
+                aestheticsDefaults: AestheticsDefaults,
+                scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+                colorByAes: Aes<Color>,
+                fillByAes: Aes<Color>,
+                isMarginal: Boolean,
+                ctx: PlotContext
+            ): LegendLayer {
 
-        val keyAesthetics: Aesthetics
-        val keyLabels: List<String>
+                val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
 
-        init {
-            val aesValuesByLabel =
-                LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
-            for (aes in aesList) {
-                var scale = ctx.getScale(aes)
-                if (!scale.hasBreaks()) {
-                    scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
-                }
-                check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
+                for (aes in aesList) {
+                    var scale = ctx.getScale(aes)
+                    if (!scale.hasBreaks()) {
+                        scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
+                    }
+                    check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 
-                val scaleBreaks = scale.getShortenedScaleBreaks()
-                val aesValues = scaleBreaks.transformedValues.map {
-                    scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                    val scaleBreaks = scale.getShortenedScaleBreaks()
+                    val aesValues = scaleBreaks.transformedValues.map {
+                        scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                    }
+                    val labels = scaleBreaks.labels
+                    for ((label, aesValue) in labels.zip(aesValues)) {
+                        aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
+                    }
                 }
-                val labels = scaleBreaks.labels
-                for ((label, aesValue) in labels.zip(aesValues)) {
-                    aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
-                }
+                // build 'key' aesthetics
+                val keyAesthetics = mapToAesthetics(
+                    aesValuesByLabel.values,
+                    constantByAes.filterKeys {
+                        // Derive some aesthetics from constants
+                        it in listOf(
+                            Aes.SHAPE,
+                            Aes.COLOR,
+                            Aes.FILL,
+                            Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C
+                        )
+                    },
+                    aestheticsDefaults,
+                    colorByAes,
+                    fillByAes
+                )
+
+                return LegendLayer(
+                    keyElementFactory,
+                    keyAesthetics,
+                    labels = aesValuesByLabel.keys.toList(),
+                    guideKeys = aesList.map(GuideKey::fromAes),
+                    isMarginal = isMarginal
+                )
             }
 
-            // build 'key' aesthetics
-            keyAesthetics = mapToAesthetics(
-                aesValuesByLabel.values,
-                constantByAes,
-                aestheticsDefaults,
-                colorByAes,
-                fillByAes
-            )
-            keyLabels = ArrayList(aesValuesByLabel.keys)
+            fun createCustomLegendLayer(
+                customLegendOptions: CustomLegendOptions,
+                keyElementFactory: LegendKeyElementFactory,
+                constantByAes: Map<Aes<*>, Any>,
+                aestheticsDefaults: AestheticsDefaults,
+                colorByAes: Aes<Color>,
+                fillByAes: Aes<Color>,
+                isMarginal: Boolean
+            ): LegendLayer {
+                 // build 'key' aesthetics
+                val keyAesthetics = mapToAesthetics(
+                    listOf(customLegendOptions.aesValues),
+                    constantByAes,
+                    aestheticsDefaults,
+                    colorByAes,
+                    fillByAes
+                )
+                return LegendLayer(
+                    keyElementFactory,
+                    keyAesthetics,
+                    labels = listOf(customLegendOptions.label),
+                    guideKeys = listOf(GuideKey.fromName(customLegendOptions.group)),
+                    customLegendOptions.index,
+                    isMarginal
+                )
+            }
         }
     }
 
