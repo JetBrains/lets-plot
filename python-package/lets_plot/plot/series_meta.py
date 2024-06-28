@@ -14,7 +14,7 @@ TYPE_DATE_TIME = 'datetime'
 TYPE_UNKNOWN = 'unknown'
 
 
-def infer_type(data: Union[Dict, 'pandas.DataFrame']) -> Dict[str, str]:
+def infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Dict[str, str]:
     type_info = {}
 
     if is_pandas_data_frame(data):

@@ -59,28 +59,28 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     data_type_by_var.update(infer_type(data))
 
     # fill series annotations
-    series_annotation = {}  # var to series_meta
+    series_annotations = {}  # var to series_annotation
     for var_name, data_type in data_type_by_var.items():
-        series_meta = {}
+        series_annotation = {}
 
         if data_type != TYPE_UNKNOWN:
-            series_meta['type'] = data_type
+            series_annotation['type'] = data_type
 
         if is_pandas_data_frame(data) and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
-            series_meta['factor_levels'] = data[var_name].cat.categories.to_list()
+            series_annotation['factor_levels'] = data[var_name].cat.categories.to_list()
         elif var_name in mapping_meta_by_var:
             levels = last_not_none(list(map(lambda mm: mm.levels, mapping_meta_by_var[var_name].values())))
             if levels is not None:
-                series_meta['factor_levels'] = levels
+                series_annotation['factor_levels'] = levels
 
-        if 'factor_levels' in series_meta and var_name in mapping_meta_by_var:
+        if 'factor_levels' in series_annotation and var_name in mapping_meta_by_var:
             order = last_not_none(list(map(lambda mm: mm.parameters['order'], mapping_meta_by_var[var_name].values())))
             if order is not None:
-                series_meta['order'] = order
+                series_annotation['order'] = order
 
-        if len(series_meta) > 0:
-            series_meta['column'] = var_name
-            series_annotation[var_name] = series_meta
+        if len(series_annotation) > 0:
+            series_annotation['column'] = var_name
+            series_annotations[var_name] = series_annotation
 
     # fill mapping annotations
     mapping_annotations = []
@@ -94,7 +94,7 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
                     mapping_annotation.setdefault('parameters', {})['label'] = label
 
                 # order options are either in series or in mapping, but not in both
-                if var_name not in series_annotation or 'factor_levels' not in series_annotation[var_name]:
+                if var_name not in series_annotations or 'factor_levels' not in series_annotations[var_name]:
                     if mapping_meta.levels is not None:
                         mapping_annotation['levels'] = mapping_meta.levels
 
@@ -115,8 +115,8 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
 
     data_meta = {}
 
-    if len(series_annotation) > 0:
-        data_meta.update({'series_annotations': list(series_annotation.values())})
+    if len(series_annotations) > 0:
+        data_meta.update({'series_annotations': list(series_annotations.values())})
 
     if len(mapping_annotations) > 0:
         data_meta.update({'mapping_annotations': mapping_annotations})
