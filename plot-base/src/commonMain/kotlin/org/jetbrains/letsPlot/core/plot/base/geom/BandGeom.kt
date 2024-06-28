@@ -24,6 +24,7 @@ class BandGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
+            .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
         val viewPort = overallAesBounds(ctx)
 
@@ -38,7 +39,7 @@ class BandGeom : GeomBase() {
             return svgTop
         }
 
-        val horizontalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toHorizontalStrip(viewPort))
+        val horizontalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toHorizontalStrip(viewPort), coord.isLinear)
         root.appendNodes(horizontalStrips)
         for (p in aesthetics.dataPoints()) {
             val strip = toHorizontalStrip(viewPort)(p) ?: continue
@@ -46,7 +47,7 @@ class BandGeom : GeomBase() {
             toSvg(strip.bottom, viewPort.left, viewPort.right, p, false)?.also { svgNode -> root.add(svgNode) }
         }
 
-        val verticalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toVerticalStrip(viewPort))
+        val verticalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toVerticalStrip(viewPort), coord.isLinear)
         root.appendNodes(verticalStrips)
         for (p in aesthetics.dataPoints()) {
             val strip = toVerticalStrip(viewPort)(p) ?: continue
