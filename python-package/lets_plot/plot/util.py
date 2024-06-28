@@ -18,25 +18,6 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def find_mapping_specs(mapping_spec, annotation) -> Dict[str, MappingMeta]:
-    if mapping_spec is None:
-        return {}
-
-    specs = {}
-    for aesthetic in mapping_spec.props().keys():
-        if aesthetic == 'name':  # ignore FeatureSpec.name property
-            continue
-
-        if isinstance(mapping_spec.props()[aesthetic], MappingMeta):
-            mapping_meta: MappingMeta = mapping_spec.props()[aesthetic]
-            if mapping_meta.annotation != annotation:
-                continue
-
-            specs[aesthetic] = mapping_meta
-
-    return specs
-
-
 def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     data_type_by_var: Dict[str, str] = {}  # VarName to Type
     mapping_meta_by_var: Dict[str, Dict[str, MappingMeta]] = {}  # VarName to Dict[Aes, MappingMeta]
