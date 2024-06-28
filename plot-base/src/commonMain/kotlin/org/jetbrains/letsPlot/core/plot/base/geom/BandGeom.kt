@@ -7,10 +7,11 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class BandGeom : GeomBase() {
@@ -26,34 +27,68 @@ class BandGeom : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
+        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
         val viewPort = overallAesBounds(ctx)
 
-        fun toSvg(intercept: Double, startCoord: Double, endCoord: Double, p: DataPointAesthetics, flip: Boolean): SvgNode? {
-            val start = DoubleVector(startCoord, intercept).let { vector ->
-                if (flip) vector.flip() else vector
-            }
-            val end = DoubleVector(endCoord, intercept).let { vector ->
-                if (flip) vector.flip() else vector
-            }
-            val (svgTop, _) = helper.createLine(start, end, p) ?: return null
-            return svgTop
+        linesHelper.createStrips(aesthetics.dataPoints(), toHorizontalStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
+            root.appendNodes(listOf(linePath))
+            buildHints(p, polygon, geomHelper, colorMapper(p), ctx)
         }
-
-        val horizontalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toHorizontalStrip(viewPort), coord.isLinear)
-        root.appendNodes(horizontalStrips)
         for (p in aesthetics.dataPoints()) {
             val strip = toHorizontalStrip(viewPort)(p) ?: continue
-            toSvg(strip.top, viewPort.left, viewPort.right, p, false)?.also { svgNode -> root.add(svgNode) }
-            toSvg(strip.bottom, viewPort.left, viewPort.right, p, false)?.also { svgNode -> root.add(svgNode) }
+            buildStripBorder(strip.top, viewPort.left, viewPort.right, p, helper, false)?.let { svgNode ->
+                root.add(svgNode)
+            }
+            buildStripBorder(strip.bottom, viewPort.left, viewPort.right, p, helper, false)?.let { svgNode ->
+                root.add(svgNode)
+            }
         }
 
-        val verticalStrips = linesHelper.createStrips(aesthetics.dataPoints(), toVerticalStrip(viewPort), coord.isLinear)
-        root.appendNodes(verticalStrips)
+        linesHelper.createStrips(aesthetics.dataPoints(), toVerticalStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
+            root.appendNodes(listOf(linePath))
+            buildHints(p, polygon, geomHelper, colorMapper(p), ctx)
+        }
         for (p in aesthetics.dataPoints()) {
             val strip = toVerticalStrip(viewPort)(p) ?: continue
-            toSvg(strip.right, viewPort.bottom, viewPort.top, p, true)?.also { svgNode -> root.add(svgNode) }
-            toSvg(strip.left, viewPort.bottom, viewPort.top, p, true)?.also { svgNode -> root.add(svgNode) }
+            buildStripBorder(strip.right, viewPort.bottom, viewPort.top, p, helper, true)?.let { svgNode ->
+                root.add(svgNode)
+            }
+            buildStripBorder(strip.left, viewPort.bottom, viewPort.top, p, helper,true)?.let { svgNode ->
+                root.add(svgNode)
+            }
         }
+    }
+
+    private fun buildStripBorder(
+        intercept: Double,
+        startCoord: Double,
+        endCoord: Double,
+        p: DataPointAesthetics,
+        helper: GeomHelper.SvgElementHelper,
+        flip: Boolean
+    ): SvgNode? {
+        val start = DoubleVector(startCoord, intercept).let { vector ->
+            if (flip) vector.flip() else vector
+        }
+        val end = DoubleVector(endCoord, intercept).let { vector ->
+            if (flip) vector.flip() else vector
+        }
+        return helper.createLine(start, end, p)?.first ?: return null
+    }
+
+    private fun buildHints(
+        p: DataPointAesthetics,
+        polygon: List<DoubleVector>,
+        helper: GeomHelper,
+        markerColors: List<Color>,
+        ctx: GeomContext
+    ) {
+        val hintsCollection = HintsCollection(p, helper)
+        val tooltipParams = GeomTargetCollector.TooltipParams(
+            tipLayoutHints = hintsCollection.hints,
+            markerColors = markerColors
+        )
+        ctx.targetCollector.addPolygon(polygon, p.index(), tooltipParams)
     }
 
     companion object {

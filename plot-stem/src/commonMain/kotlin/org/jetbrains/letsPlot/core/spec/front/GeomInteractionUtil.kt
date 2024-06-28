@@ -279,7 +279,8 @@ object GeomInteractionUtil {
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
             GeomKind.MAP,
-            GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+            GeomKind.RECT,
+            GeomKind.BAND -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
 
             GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
