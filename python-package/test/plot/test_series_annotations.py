@@ -8,19 +8,28 @@ from pandas import DataFrame, Categorical
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
 
-dt_value = datetime(2020, 1, 1)
 data_dict = {
-    'v1': [dt_value],
+    'v1': [(datetime(2020, 1, 1))],
     'v2': [0.0],
-    'v3': [dt_value],
+    'v3': [0],
     'v4': ['foo']
 }
 expected_series_annotations = [
     {'column': 'v1', 'type': 'datetime'},
     {'column': 'v2', 'type': 'float'},
-    {'column': 'v3', 'type': 'datetime'},
+    {'column': 'v3', 'type': 'int'},
     {'column': 'v4', 'type': 'str'}
 ]
+
+
+def test_values_list_in_aes_doest_not_produce_series_annotations():
+    # values list in layer
+    p = ggplot() + geom_point(aes(x=[0, 0, 0], y=[1, 2, 3]))
+    assert p.as_dict()['data_meta'] == {}
+
+    # values list in ggplot
+    p = ggplot(mapping=aes(x=[0, 0, 0], y=[1, 2, 3])) + geom_point()
+    assert p.as_dict()['data_meta'] == {}
 
 
 def test_as_annotated_data_dict():
@@ -42,7 +51,7 @@ def test_as_annotated_data_polars_dataframe():
 
 
 def test_as_annotated_data_list():
-    data = [dt_value]
+    data = [datetime(2020, 1, 1)]
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta'] == {}
 
@@ -140,8 +149,9 @@ def test_with_mapping_annotations():
 
 
 def test_pd_categorical_variable():
-    df = DataFrame({'v': ['ch4', 'ch5', 'ch1', 'ch2']})
-    df['v'] = Categorical(df.v, categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    df = DataFrame({
+        'v': Categorical(['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    })
 
     p = ggplot(df) + geom_point()
 
@@ -151,8 +161,9 @@ def test_pd_categorical_variable():
 
 
 def test_pd_int_categorical_variable():
-    df = DataFrame({'v': [4, 5, 2, 1]})
-    df['v'] = Categorical(df.v, categories=[5, 4, 2, 1], ordered=True)
+    df = DataFrame({
+        'v': Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
+    })
 
     p = ggplot(df) + geom_point()
 
@@ -162,8 +173,10 @@ def test_pd_int_categorical_variable():
 
 
 def test_pd_int_categorical_variable_from_ggplot_dataframe():
-    df = DataFrame({'v': [4, 5, 2, 1]})
-    df['v'] = Categorical(df.v, categories=[5, 4, 2, 1], ordered=True)
+    df = DataFrame({
+        'v': Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
+    })
+
     p = ggplot(df) + geom_point()
 
     assert p.as_dict()['data_meta']['series_annotations'] == [
@@ -172,8 +185,9 @@ def test_pd_int_categorical_variable_from_ggplot_dataframe():
 
 
 def test_pd_categorical_variable_with_order_from_mapping():
-    df = DataFrame({'v': ['ch4', 'ch5', 'ch1', 'ch2']})
-    df['v'] = Categorical(df.v, categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    df = DataFrame({
+        'v': Categorical(values=['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    })
 
     p = ggplot(df, aes(x=as_discrete('v', order=-1))) + geom_point()
 
