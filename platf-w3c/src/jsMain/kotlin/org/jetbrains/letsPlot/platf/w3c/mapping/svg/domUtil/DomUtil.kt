@@ -232,6 +232,7 @@ object DomUtil {
                 is SvgCircleElement -> createSVGElement("circle")
                 is SvgRectElement -> createSVGElement("rect")
                 is SvgTextElement -> createSVGElement("text")
+                is SvgTextPathElement -> createSVGElement("textPath")
                 is SvgPathElement -> createSVGElement("path")
                 is SvgLineElement -> createSVGElement("line")
                 is SvgSvgElement -> createSVGElement("svg")

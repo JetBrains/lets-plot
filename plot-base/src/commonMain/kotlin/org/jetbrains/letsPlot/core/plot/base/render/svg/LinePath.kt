@@ -65,6 +65,10 @@ class LinePath(builder: SvgPathDataBuilder) : SvgComponent() {
 
     }
 
+    fun id(): WritableProperty<String?> {
+        return myPath.id()
+    }
+
     fun color(): WritableProperty<Color?> {
         return myPath.strokeColor()
     }

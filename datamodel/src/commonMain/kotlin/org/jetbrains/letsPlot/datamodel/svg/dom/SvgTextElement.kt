@@ -89,6 +89,11 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         children().add(SvgTSpanElement(text))
     }
 
+    fun setTextPath(textPath: SvgTextPathElement) {
+        children().clear()
+        children().add(textPath)
+    }
+
     override fun fill(): Property<SvgColor?> {
         return getAttribute(FILL)
     }

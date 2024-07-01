@@ -73,6 +73,7 @@ internal object Utils {
             is SvgCircleElement -> SVGOMCircleElement(null, myDoc)
             is SvgRectElement -> SVGOMRectElement(null, myDoc)
             is SvgTextElement -> SVGOMTextElement(null, myDoc)
+            is SvgTextPathElement -> SVGOMTextPathElement(null, myDoc)
             is SvgPathElement -> SVGOMPathElement(null, myDoc)
             is SvgLineElement -> SVGOMLineElement(null, myDoc)
             is SvgSvgElement -> SVGOMSVGElement(null, myDoc)

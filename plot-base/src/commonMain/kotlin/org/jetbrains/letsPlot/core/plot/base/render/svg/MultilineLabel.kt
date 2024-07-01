@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextPathElement
 
 
 class MultilineLabel(val text: String) : SvgComponent() {
@@ -118,7 +119,29 @@ class MultilineLabel(val text: String) : SvgComponent() {
 
     fun linesCount() = myLines.size
 
+    private fun setTextPath(pathId: SvgTextPathElement) {
+        myLines.forEach { it.setTextPath(pathId) }
+    }
+
     companion object {
         fun splitLines(text: String) = text.split('\n').map(String::trim)
+
+        fun createCurvedLabel(
+            text: String,
+            textHeight: Double,
+            pathId: String,
+            startOffset: Double = 0.0
+        ): MultilineLabel {
+            val hAnchor = when {
+                startOffset == 50.0 -> HorizontalAnchor.MIDDLE
+                startOffset < 50 -> HorizontalAnchor.LEFT
+                else -> HorizontalAnchor.RIGHT
+            }
+            val label = MultilineLabel("")
+            val textPath = SvgTextPathElement(splitLines(text), textHeight, pathId, startOffset)
+            label.setTextPath(textPath)
+            label.setHorizontalAnchor(hAnchor)
+            return label
+        }
     }
 }
