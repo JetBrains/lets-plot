@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 /*
   For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
 */
-class BandGeom(private val isVertical: Boolean) : GeomBase() {
+class BandGeom(isVertical: Boolean) : GeomBase() {
     private val flipHelper = FlippableGeomHelper(isVertical)
 
     private fun afterRotation(aes: Aes<Double>): Aes<Double> {

@@ -59,21 +59,21 @@ class Band {
                 {
                   'geom': 'band',
                   'mapping': {
-                    'xmin': 'xmin',
-                    'xmax': 'xmax'
+                    'ymin': 'ymin',
+                    'ymax': 'ymax'
                   },
                   'size': 0,
-                  'fill': 'red',
+                  'fill': 'yellow',
                   'alpha': 0.5
                 },
                 {
                   'geom': 'band',
                   'mapping': {
-                    'ymin': 'ymin',
-                    'ymax': 'ymax'
+                    'xmin': 'xmin',
+                    'xmax': 'xmax'
                   },
                   'size': 0,
-                  'fill': 'blue',
+                  'fill': 'black',
                   'alpha': 0.5
                 }
               ],
