@@ -73,7 +73,7 @@ object AnnotationUtil {
         val alpha: Double? = null,
     )
 
-    private fun toTextDataPointAesthetics(
+    internal fun toTextDataPointAesthetics(
         textParams: TextParams,
         p: DataPointAesthetics = AestheticsBuilder().build().dataPointAt(0),
     ): DataPointAesthetics {
@@ -117,7 +117,8 @@ object AnnotationUtil {
         text: String,
         location: DoubleVector,
         textParams: TextParams,
-        geomContext: GeomContext
+        geomContext: GeomContext,
+        boundsCenter: DoubleVector? = null
     ): SvgGElement {
         return LabelGeom()
             .apply { borderWidth = 0.0; paddingFactor = 0.0 }
@@ -127,7 +128,7 @@ object AnnotationUtil {
                 text,
                 sizeUnitRatio = 1.0,
                 geomContext,
-                boundsCenter = null
+                boundsCenter = boundsCenter
             )
     }
 }

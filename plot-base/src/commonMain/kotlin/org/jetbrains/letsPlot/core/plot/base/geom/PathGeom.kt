@@ -6,11 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.LineAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
 
 open class PathGeom : GeomBase() {
 
@@ -45,10 +47,21 @@ open class PathGeom : GeomBase() {
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
-    }
 
+        ctx.annotation?.let {
+            // make curved text
+            val ids = svgPath.map {
+                val id = SvgUID.get(PATH_ID_PREFIX)
+                it.id().set(id)
+                id
+            }
+            LineAnnotation.build(root, pathData.values.flatten(), ids, coord, ctx)
+        }
+    }
 
     companion object {
         const val HANDLES_GROUPS = true
+
+        const val PATH_ID_PREFIX = "path"
     }
 }
