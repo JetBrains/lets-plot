@@ -37,7 +37,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
         PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
         PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
-        PROVIDER[GeomKind.BAND] = GeomProvider.band()
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
@@ -136,6 +135,10 @@ internal object GeomProviderFactory {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
                 }
                 geom
+            }
+
+            GeomKind.BAND -> GeomProvider.band { ctx ->
+                BandGeom(isVertical(ctx, geomKind.name))
             }
 
             GeomKind.BOX_PLOT -> GeomProvider.boxplot { ctx ->

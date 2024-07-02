@@ -10,67 +10,32 @@ import demoAndTestShared.parsePlotSpec
 class Band {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            basic(),
-            verticalAndHorizontal(),
+            basic("x"),
+            basic("y"),
             polar(),
         )
     }
 
-    private fun basic(): MutableMap<String, Any> {
+    private fun basic(orientation: String): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
               'data': {
-                'xmin': [-3, 1],
-                'xmax': [-1, 3]
+                '${orientation}min': [-3, 1],
+                '${orientation}max': [-1, 3]
               },
               'mapping': {
-                'xmin': 'xmin',
-                'xmax': 'xmax'
+                '${orientation}min': '${orientation}min',
+                '${orientation}max': '${orientation}max'
               },
               'ggtitle': {
-                'text': 'Band demo'
+                'text': 'Band demo ($orientation-oriented)'
               },
               'layers': [
                 {
                   'geom': 'band'
                 }
               ]
-            }
-        """.trimIndent()
-
-        return HashMap(parsePlotSpec(spec))
-    }
-
-    private fun verticalAndHorizontal(): MutableMap<String, Any> {
-        val spec = """
-            {
-              'kind': 'plot',
-              'data': {
-                'xmin': [-1],
-                'xmax': [1],
-                'ymin': [-1],
-                'ymax': [1]
-              },
-              'mapping': {
-                'xmin': 'xmin',
-                'xmax': 'xmax',
-                'ymin': 'ymin',
-                'ymax': 'ymax'
-              },
-              'ggtitle': {
-                'text': 'Vertical and horizontal bands together'
-              },
-              'layers': [
-                {
-                  'geom': 'band'
-                }
-              ],
-              'coord': {
-                'name': 'cartesian',
-                'xlim': [-3, 3],
-                'ylim': [-3, 3]
-              }
             }
         """.trimIndent()
 
@@ -87,18 +52,29 @@ class Band {
                 'ymin': [-4, -1, 2],
                 'ymax': [-2, 1, 4]
               },
-              'mapping': {
-                'xmin': 'xmin',
-                'xmax': 'xmax',
-                'ymin': 'ymin',
-                'ymax': 'ymax'
-              },
               'ggtitle': {
                 'text': 'Polar coordinates'
               },
               'layers': [
                 {
-                  'geom': 'band'
+                  'geom': 'band',
+                  'mapping': {
+                    'xmin': 'xmin',
+                    'xmax': 'xmax'
+                  },
+                  'size': 0,
+                  'fill': 'red',
+                  'alpha': 0.5
+                },
+                {
+                  'geom': 'band',
+                  'mapping': {
+                    'ymin': 'ymin',
+                    'ymax': 'ymax'
+                  },
+                  'size': 0,
+                  'fill': 'blue',
+                  'alpha': 0.5
                 }
               ],
               'coord': {'name': 'polar', 'xlim': [-4.5, 4.5], 'ylim': [-4.5, 4.5]}

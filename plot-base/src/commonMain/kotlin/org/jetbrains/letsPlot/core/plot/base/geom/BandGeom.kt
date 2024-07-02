@@ -14,7 +14,29 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
-class BandGeom : GeomBase() {
+/*
+  For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
+*/
+class BandGeom(private val isVertical: Boolean) : GeomBase() {
+    private val flipHelper = FlippableGeomHelper(isVertical)
+
+    private fun afterRotation(aes: Aes<Double>): Aes<Double> {
+        return flipHelper.getEffectiveAes(aes)
+    }
+
+    private fun afterRotation(vector: DoubleVector): DoubleVector {
+        return flipHelper.flip(vector)
+    }
+
+    private fun afterRotation(rectangle: DoubleRectangle): DoubleRectangle {
+        return flipHelper.flip(rectangle)
+    }
+
+    override val wontRender: List<Aes<*>>
+        get() {
+            return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
+        }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -30,49 +52,58 @@ class BandGeom : GeomBase() {
         val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
         val viewPort = overallAesBounds(ctx)
 
-        linesHelper.createStrips(aesthetics.dataPoints(), toHorizontalStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
+        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
             root.appendNodes(listOf(linePath))
             buildHints(p, polygon, geomHelper, colorMapper(p), ctx)
         }
-        for (p in aesthetics.dataPoints()) {
-            val strip = toHorizontalStrip(viewPort)(p) ?: continue
-            buildStripBorder(strip.top, viewPort.left, viewPort.right, p, helper, false)?.let { svgNode ->
-                root.add(svgNode)
-            }
-            buildStripBorder(strip.bottom, viewPort.left, viewPort.right, p, helper, false)?.let { svgNode ->
-                root.add(svgNode)
-            }
-        }
+        buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { root.add(it) }
+    }
 
-        linesHelper.createStrips(aesthetics.dataPoints(), toVerticalStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
-            root.appendNodes(listOf(linePath))
-            buildHints(p, polygon, geomHelper, colorMapper(p), ctx)
+    private fun toStrip(
+        viewPort: DoubleRectangle
+    ): (DataPointAesthetics) -> DoubleRectangle? {
+        val minAes = afterRotation(Aes.YMIN)
+        val maxAes = afterRotation(Aes.YMAX)
+        val mainRange = afterRotation(viewPort).yRange()
+        val secondaryRange = afterRotation(viewPort).xRange()
+        fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
+            val minValue = p.finiteOrNull(minAes) ?: return null
+            val maxValue = p.finiteOrNull(maxAes) ?: return null
+            if (minValue > maxValue) return null
+            if (minValue !in mainRange && maxValue !in mainRange) return null
+            return afterRotation(DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue))
         }
-        for (p in aesthetics.dataPoints()) {
-            val strip = toVerticalStrip(viewPort)(p) ?: continue
-            buildStripBorder(strip.right, viewPort.bottom, viewPort.top, p, helper, true)?.let { svgNode ->
-                root.add(svgNode)
-            }
-            buildStripBorder(strip.left, viewPort.bottom, viewPort.top, p, helper,true)?.let { svgNode ->
-                root.add(svgNode)
+        return ::stripRectByDataPoint
+    }
+
+    private fun buildStripBorders(
+        dataPoints: Iterable<DataPointAesthetics>,
+        viewPort: DoubleRectangle,
+        helper: GeomHelper.SvgElementHelper,
+        handler: (SvgNode) -> Unit
+    ) {
+        for (p in dataPoints) {
+            toStrip(viewPort)(p)?.let { strip ->
+                listOf(
+                    afterRotation(strip).top,
+                    afterRotation(strip).bottom
+                ).forEach { intercept ->
+                    buildStripBorder(intercept, viewPort, p, helper)?.let { svgNode ->
+                        handler(svgNode)
+                    }
+                }
             }
         }
     }
 
     private fun buildStripBorder(
         intercept: Double,
-        startCoord: Double,
-        endCoord: Double,
+        viewPort: DoubleRectangle,
         p: DataPointAesthetics,
-        helper: GeomHelper.SvgElementHelper,
-        flip: Boolean
+        helper: GeomHelper.SvgElementHelper
     ): SvgNode? {
-        val start = DoubleVector(startCoord, intercept).let { vector ->
-            if (flip) vector.flip() else vector
-        }
-        val end = DoubleVector(endCoord, intercept).let { vector ->
-            if (flip) vector.flip() else vector
-        }
+        val start = afterRotation(DoubleVector(afterRotation(viewPort).left, intercept))
+        val end = afterRotation(DoubleVector(afterRotation(viewPort).right, intercept))
         return helper.createLine(start, end, p)?.first ?: return null
     }
 
@@ -93,43 +124,5 @@ class BandGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        private fun toVerticalStrip(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleRectangle? {
-            return toStrip(viewPort, Aes.XMIN, Aes.XMAX)
-        }
-
-        private fun toHorizontalStrip(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleRectangle? {
-            return toStrip(viewPort, Aes.YMIN, Aes.YMAX)
-        }
-
-        private fun toStrip(
-            viewPort: DoubleRectangle,
-            minAes: Aes<Double>,
-            maxAes: Aes<Double>
-        ): (DataPointAesthetics) -> DoubleRectangle? {
-            val isVertical = minAes == Aes.XMIN
-            val mainRange = if (isVertical) {
-                viewPort.xRange()
-            } else {
-                viewPort.yRange()
-            }
-            val secondaryRange = if (isVertical) {
-                viewPort.yRange()
-            } else {
-                viewPort.xRange()
-            }
-            fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-                val minValue = p.finiteOrNull(minAes) ?: return null
-                val maxValue = p.finiteOrNull(maxAes) ?: return null
-                if (minValue > maxValue) return null
-                if (minValue !in mainRange && maxValue !in mainRange) return null
-                return if (isVertical) {
-                    DoubleRectangle.LTRB(minValue, secondaryRange.upperEnd, maxValue, secondaryRange.lowerEnd)
-                } else {
-                    DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue)
-                }
-            }
-            return ::stripRectByDataPoint
-        }
     }
 }
