@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
@@ -129,7 +128,7 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawVAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
+            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
 
             val axisComponent = buildAxis(
                 breaksData = breaksData,
@@ -154,7 +153,7 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawHAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
+            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
             val axisComponent = buildAxis(
                 breaksData = breaksData,
@@ -179,7 +178,7 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         (layoutInfo.axisInfos.left ?: layoutInfo.axisInfos.right)?.let { axisInfo ->
-            val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
+            val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
@@ -198,7 +197,7 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         (layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom)?.let { axisInfo ->
-            val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
+            val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
@@ -233,11 +232,10 @@ internal open class SquareFrameOfReference(
     }
 
 
-    protected open fun prepareAxisData(
+    private fun prepareAxisData(
         axisInfo: AxisLayoutInfo,
         scaleBreaks: ScaleBreaks,
         axisTheme: AxisTheme,
-        panelTheme: PanelTheme
     ): Pair<TickLabelAdjustments, BreaksData> {
         val labelAdjustments = TickLabelAdjustments(
             orientation = axisInfo.orientation,
@@ -263,7 +261,7 @@ internal open class SquareFrameOfReference(
         return Pair(labelAdjustments, breaksData)
     }
 
-    protected fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
+    private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
         run {
             val tileBounds = layoutInfo.geomWithAxisBounds
             val rect = SvgRectElement(tileBounds)
