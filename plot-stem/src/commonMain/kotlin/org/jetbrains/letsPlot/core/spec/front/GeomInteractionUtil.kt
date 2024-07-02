@@ -412,7 +412,8 @@ object GeomInteractionUtil {
     private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.H_LINE,
-            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            GeomKind.V_LINE,
+            GeomKind.BAND -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
 
             else -> emptyMap()
         }

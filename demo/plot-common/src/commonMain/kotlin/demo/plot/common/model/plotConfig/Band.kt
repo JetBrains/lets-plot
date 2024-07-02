@@ -10,13 +10,34 @@ import demoAndTestShared.parsePlotSpec
 class Band {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            basic("x"),
-            basic("y"),
+            basic(),
+            oriented("x"),
+            oriented("y"),
             polar(),
         )
     }
 
-    private fun basic(orientation: String): MutableMap<String, Any> {
+    private fun basic(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'ggtitle': {
+                'text': 'Band demo'
+              },
+              'layers': [
+                {
+                  'geom': 'band',
+                  'xmin': -1,
+                  'xmax': 1
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun oriented(orientation: String): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
