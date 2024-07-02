@@ -184,7 +184,7 @@ internal open class SquareFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
@@ -203,7 +203,7 @@ internal open class SquareFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
