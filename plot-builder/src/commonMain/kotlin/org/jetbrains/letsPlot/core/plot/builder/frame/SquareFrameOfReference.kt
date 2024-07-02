@@ -178,7 +178,7 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+        (layoutInfo.axisInfos.left ?: layoutInfo.axisInfos.right)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
 
             val gridComponent = GridComponent(
@@ -197,7 +197,7 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+        (layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
 
             val gridComponent = GridComponent(
