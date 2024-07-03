@@ -11,9 +11,8 @@ import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
 
 internal class DummyTransientState : ComponentTransientState(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) {
-    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-        UNSUPPORTED("Not yet implemented")
-    }
+    override val dataBounds: DoubleRectangle
+        get() = UNSUPPORTED("Not yet implemented")
 
     override fun repaint() {
         UNSUPPORTED("Not yet implemented")
