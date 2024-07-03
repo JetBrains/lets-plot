@@ -42,7 +42,7 @@ class DomMouseEventMapper(
     private val regs = CompositeRegistration()
     private val mouseEventPeer = MouseEventPeer()
 
-    private var state: MouseState = MouseOverState()
+    private var state: MouseState = MouseOutsideState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
                 println(
@@ -128,7 +128,8 @@ class DomMouseEventMapper(
 
     private abstract inner class MouseState {
         fun onMouseEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
-            log("${type.name} at (${e.x}, ${e.y})")
+            val (x, y) = toEventTargetOffsetCoord(e)
+            log("${type.name} at ($x, $y)")
             handleEvent(type, e)
         }
 
@@ -163,6 +164,7 @@ class DomMouseEventMapper(
             if (!inEventArea(e)) {
                 dispatch(MouseEventSpec.MOUSE_LEFT, e)
                 state = MouseOutsideState()
+                return
             }
 
             if (type == DomEventType.MOUSE_DOWN) {
