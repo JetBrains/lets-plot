@@ -122,7 +122,7 @@ object PlotHtmlHelper {
             |                       width: containerDiv.clientWidth
             |           };
             |           
-            |           <!-- Wrapper for toolbar and chart -->
+            |           // Wrapper for toolbar and chart
             |           var outputDiv = document.createElement('div');
             |           outputDiv.setAttribute('style', 'display: inline-block;');
             |           containerDiv.appendChild(outputDiv);
