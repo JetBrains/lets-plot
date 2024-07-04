@@ -182,10 +182,9 @@ class DomMouseEventMapper(
                 }
 
                 DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
-                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
                 DomEventType.MOUSE_WHEEL -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e as DomWheelEvent)
                 DomEventType.MOUSE_ENTER -> {} // should be handled by OutsideState
-                DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
+                DomEventType.MOUSE_UP, DomEventType.CLICK, DomEventType.DOUBLE_CLICK -> {} // clicks handled by MouseClickState. Ignore clicks here to prevent ghost clicks on drag end.
             }
         }
     }
@@ -197,12 +196,10 @@ class DomMouseEventMapper(
 
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             when (type) {
-                DomEventType.MOUSE_UP -> dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-
-                // It's safe to set MouseHoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
-                DomEventType.CLICK -> {
-                    dispatch(MouseEventSpec.MOUSE_CLICKED, e)
-                    state = MouseHoverState()
+                // After MOUSE_UP may be CLICK or CLICK+DOUBLE_CLICK event.
+                DomEventType.MOUSE_UP -> {
+                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                    state = MouseClickState()
                 }
 
                 DomEventType.MOUSE_MOVE -> {
@@ -211,6 +208,40 @@ class DomMouseEventMapper(
                         dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
                         state = MouseDragState()
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * State when the mouse button is released. It can be a click or click + double click.
+     * We can't guess which event it will be, so we keep the state as MouseClickState until move events.
+     */
+    private inner class MouseClickState : MouseState() {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
+            if (!inEventArea(e)) {
+                dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                state = MouseOutsideState()
+                return
+            }
+
+            when (type) {
+                DomEventType.CLICK -> dispatch(MouseEventSpec.MOUSE_CLICKED, e)
+                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
+
+                DomEventType.MOUSE_MOVE -> {
+                    dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                    state = MouseHoverState()
+                }
+
+                DomEventType.MOUSE_DOWN -> {
+                    dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    state = MousePressedState(pressEvent = e)
+                }
+
+                DomEventType.MOUSE_LEAVE -> {
+                    dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                    state = MouseOutsideState()
                 }
             }
         }
