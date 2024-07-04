@@ -36,17 +36,34 @@ object AxisUtil {
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
     ): AxisComponent.BreaksData {
+        return breaksData(
+            scaleBreaks.transformedValues,
+            scaleBreaks.labels,
+            coord, domain, flipAxis, orientation, axisTheme, labelAdjustments
+        )
+    }
+
+    fun breaksData(
+        breakTransformedValues: List<Double>,
+        breakLabels: List<String>,
+        coord: CoordinateSystem,
+        domain: DoubleRectangle,
+        flipAxis: Boolean,
+        orientation: Orientation,
+        axisTheme: AxisTheme,
+        labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation)
+    ): AxisComponent.BreaksData {
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
         val labelsMap = TickLabelsMap(orientation.isHorizontal, axisTick(axisTheme), labelAdjustments.rotationDegree)
 
         val gridRect = toClient(domain, coord, flipAxis)
             ?: DoubleRectangle.LTRB(-1_000_000, -1_000_000, 1_000_000, 1_000_000) // better than fail
 
-        val majorBreaks = toClient(scaleBreaks.transformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorBreaks = toClient(breakTransformedValues, domain, coord, flipAxis, orientation.isHorizontal)
             .mapIndexedNotNull { i, clientTick ->
                 when (clientTick) {
                     null, !in gridRect -> null
-                    else -> IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
+                    else -> IndexedValue(i, Triple(breakLabels[i], breakTransformedValues[i], clientTick))
                 }
             }
             .filter { (i, br) ->

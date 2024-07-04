@@ -10,4 +10,12 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 
 interface MouseEventSource {
     fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration
+    
+    fun on(eventSpec: MouseEventSpec, eventHandler: (MouseEvent) -> Unit): Registration {
+        return addEventHandler(eventSpec, object : EventHandler<MouseEvent> {
+            override fun onEvent(event: MouseEvent) {
+                eventHandler(event)
+            }
+        })
+    }
 }

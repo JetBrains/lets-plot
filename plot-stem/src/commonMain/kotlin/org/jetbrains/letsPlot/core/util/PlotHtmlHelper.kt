@@ -116,7 +116,13 @@ object PlotHtmlHelper {
             |       (function() {
             |           var plotSpec=$plotSpecAsJsObjectInitializer;
             |           var containerDiv = document.getElementById("$outputId");
-            |           <!-- Wrapper for toolbar and chart -->
+            |           var sizingPolicy = {
+            |                       width_mode: "min",
+            |                       height_mode: "scaled",
+            |                       width: containerDiv.clientWidth
+            |           };
+            |           
+            |           // Wrapper for toolbar and chart
             |           var outputDiv = document.createElement('div');
             |           outputDiv.setAttribute('style', 'display: inline-block;');
             |           containerDiv.appendChild(outputDiv);
@@ -130,12 +136,7 @@ object PlotHtmlHelper {
             |           outputDiv.appendChild(plotContainer);
             |           window.letsPlotCall(function() {{
             |               var options = {
-            |                   sizing: {
-            |                       width_mode: "min",
-            |                       height_mode: "scaled",
-            |                       width: containerDiv.clientWidth,
-            |                       height: containerDiv.clientHeight
-            |                   }
+            |                   sizing: sizingPolicy
             |               };
             |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
             |               toolbar.bind(fig);
