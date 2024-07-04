@@ -103,6 +103,9 @@ class DomMouseEventMapper(
             else -> MouseEvent(x, y, button, modifiers)
         }
 
+        if (ENABLE_DEBUG_LOG) {
+            println("DomMouseEventMapper(${this.hashCode().toString(36)}): dispatching $eventSpec at ($x, $y)")
+        }
         mouseEventPeer.dispatch(eventSpec, mouseEvent)
 
         if (mouseEvent.preventDefault) {
@@ -151,15 +154,15 @@ class DomMouseEventMapper(
 
             when (type) {
                 DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
-                        dispatch(MouseEventSpec.MOUSE_ENTERED, e)
-                        state = MouseOverState()
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                    state = MouseHoverState()
                 }
                 // Ignore buttons/leave events
             }
         }
     }
 
-    private inner class MouseOverState : MouseState() {
+    private inner class MouseHoverState : MouseState() {
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             if (!inEventArea(e)) {
                 dispatch(MouseEventSpec.MOUSE_LEFT, e)
@@ -167,21 +170,19 @@ class DomMouseEventMapper(
                 return
             }
 
-            if (type == DomEventType.MOUSE_DOWN) {
-                dispatch(MouseEventSpec.MOUSE_PRESSED, e)
-                state = MousePressedState(pressEvent = e)
-                return
-            }
-
             when (type) {
-                DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                DomEventType.MOUSE_DOWN -> {
+                    dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    state = MousePressedState(pressEvent = e)
+                }
 
                 DomEventType.MOUSE_LEAVE -> {
                     dispatch(MouseEventSpec.MOUSE_LEFT, e)
                     state = MouseOutsideState()
                 }
 
-                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e) // wish can handle in ButtonDownState
+                DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
                 DomEventType.MOUSE_WHEEL -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e as DomWheelEvent)
                 DomEventType.MOUSE_ENTER -> {} // should be handled by OutsideState
                 DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
@@ -198,10 +199,10 @@ class DomMouseEventMapper(
             when (type) {
                 DomEventType.MOUSE_UP -> dispatch(MouseEventSpec.MOUSE_RELEASED, e)
 
-                // It's safe to set HoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
+                // It's safe to set MouseHoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
                 DomEventType.CLICK -> {
                     dispatch(MouseEventSpec.MOUSE_CLICKED, e)
-                    state = MouseOverState()
+                    state = MouseHoverState()
                 }
 
                 DomEventType.MOUSE_MOVE -> {
@@ -227,7 +228,7 @@ class DomMouseEventMapper(
 
         private fun onDocumentMouseUp(e: DomMouseEvent) {
             dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-            state = MouseOverState()
+            state = MouseHoverState()
             myDocumentMouseEventsRegistration.dispose()
         }
 
