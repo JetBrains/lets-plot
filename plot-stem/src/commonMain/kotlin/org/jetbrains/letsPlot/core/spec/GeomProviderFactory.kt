@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
@@ -402,22 +401,8 @@ internal object GeomProviderFactory {
     }
 
     private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, superscriptExponent: Boolean) {
-        val userFormat = layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)
-        if (userFormat != null) {
-            geom.formatter = StringFormat.forOneArg(userFormat, superscriptExponent = superscriptExponent)::format
-        } else {
-            val autoFormat = layerConfig.varBindings
-                .firstOrNull { it.aes == Aes.LABEL }
-                ?.let { labelBinding ->
-                    when (layerConfig.dtypes[labelBinding.variable.name]) {
-                        DataType.INTEGER -> "d"
-                        DataType.FLOATING -> "g"
-                        DataType.INSTANT -> "%d.%m.%y %H:%M:%S"
-                        else -> "{}"
-                    }
-                } ?: "{}" // no mappings/data
-
-            geom.formatter = StringFormat.forOneArg(autoFormat, superscriptExponent = superscriptExponent)::format
+        layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
+            geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it

@@ -7,16 +7,17 @@ package demo.plot.common.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
 
 /**
  * Used in demos only.
@@ -26,7 +27,7 @@ class EmptyGeomContext : GeomContext {
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
     override val annotation: Annotation? = null
     override val backgroundColor: Color = Color.WHITE
-    override val plotContext: PlotContext? = null
+    override val plotContext: PlotContext = NullPlotContext
 
     override fun getResolution(aes: Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")
