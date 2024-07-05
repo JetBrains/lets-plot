@@ -156,7 +156,7 @@ class ScaleFormatWhenDiscreteDateTimeTest {
             Option.Meta.SeriesAnnotation.TAG to listOf(
                 mapOf(
                     Option.Meta.SeriesAnnotation.COLUMN to columnName,
-                    Option.Meta.SeriesAnnotation.TYPE to Option.Meta.SeriesAnnotation.DateTime.DATE_TIME
+                    Option.Meta.SeriesAnnotation.TYPE to Option.Meta.SeriesAnnotation.Types.DATE_TIME
                 )
             )
         )

@@ -3,7 +3,6 @@
 
 import json
 
-from geo_data_test_util import get_data_meta, get_map_data_meta
 from geopandas import GeoDataFrame
 from shapely.geometry import MultiPolygon, Polygon, LinearRing, Point, mapping
 
@@ -28,11 +27,6 @@ MULTIPOLYGON = MultiPolygon([
 names = ['A', 'B', 'C']
 geoms = [POINT, POLYGON, MULTIPOLYGON]
 
-EXPECTED_GDF_META = {
-    'geodataframe': {
-        'geometry': 'coord'
-    }
-}
 
 def make_geodataframe() -> GeoDataFrame:
     return GeoDataFrame(
@@ -56,18 +50,27 @@ def test_geodataframe_should_be_mapped():
 def test_plot_should_has_meta_data_for_geodataframe():
     plot_spec = ggplot() + geom_polygon(data=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_data_meta(plot_spec, 0)
+    assert plot_spec.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
+        {'column': 'name', 'type': 'str'},
+        {'column': 'coord', 'type': 'unknown(pandas:unknown-array)'}
+    ]
+
+    assert plot_spec.as_dict()['layers'][0]['data_meta']['geodataframe'] == {'geometry': 'coord'}
 
 
 def test_plot_should_has_meta_map_for_geodataframe():
     plot_spec = ggplot() + geom_polygon(map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
+    # map doesn't define type meta (maybe it should?)
+    assert plot_spec.as_dict()['layers'][0]['map_data_meta']['geodataframe'] == {'geometry': 'coord'}
 
 
 def test_when_both_data_and_map_are_gdf_should_has_geodataframe_meta_only_for_map():
     plot_spec = ggplot() + geom_polygon(data=make_geodataframe(), map=make_geodataframe())
 
-    assert EXPECTED_GDF_META == get_map_data_meta(plot_spec, 0)
-    assert {} == get_data_meta(plot_spec, 0)
-
+    # map doesn't define type meta (maybe it should?)
+    assert plot_spec.as_dict()['layers'][0]['map_data_meta']['geodataframe'] == {'geometry': 'coord'}
+    assert plot_spec.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
+        {'column': 'name', 'type': 'str'},
+        {'column': 'coord', 'type': 'unknown(pandas:unknown-array)'}
+    ]

@@ -15,10 +15,10 @@ class Annotation constructor(
     val textStyle: TextStyle,
     private val useCustomColor: Boolean
 ) {
-    fun getAnnotationText(index: Int, ctx: PlotContext?): String {
-        return lines.mapNotNull { line ->
-            ctx?.let { line.getDataPoint(index, it)?.value }
-        }.joinToString("\n")
+    fun getAnnotationText(index: Int, ctx: PlotContext): String {
+        return lines
+            .mapNotNull { line -> line.getDataPoint(index, ctx) }
+            .joinToString(transform = LineSpec.DataPoint::value, separator = "\n")
     }
 
     fun getTextColor(background: Color? = null): Color {

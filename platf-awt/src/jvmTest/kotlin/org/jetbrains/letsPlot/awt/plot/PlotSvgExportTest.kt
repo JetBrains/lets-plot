@@ -5,11 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-import demoAndTestShared.parsePlotSpec
-import demoAndTestShared.EXPECTED_BUNCH_SVG
-import demoAndTestShared.EXPECTED_SINGLE_PLOT_SVG
-import demoAndTestShared.rawSpec_GGBunch
-import demoAndTestShared.rawSpec_SinglePlot
+import demoAndTestShared.*
 import junit.framework.TestCase.assertEquals
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
@@ -146,6 +142,41 @@ internal class PlotSvgExportTest {
         // Just keep how it was before - without <rect> element.
         // But it's better to not have that last empty <svg> element at all.
         assertEquals(0, findAll(lastSvgElement, "<rect").count())
+    }
+
+    @Test
+    fun `LP-626 inconsistent number format`() {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [0.0],
+            |    "y": [0.0],
+            |    "label": [717273.0]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "column": "x", "type": "int" },
+            |      { "column": "y", "type": "int" },
+            |      { "column": "label", "type": "int" }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "label",
+            |      "mapping": { "x": "x", "y": "y", "label": "label" }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        PlotSvgExport.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            useCssPixelatedImageRendering = true
+        ).let {
+            assertEquals(-1, it.indexOf("717273.0"))
+            assertTrue { it.indexOf("717273") >= 0 }
+        }
+
     }
 
 }

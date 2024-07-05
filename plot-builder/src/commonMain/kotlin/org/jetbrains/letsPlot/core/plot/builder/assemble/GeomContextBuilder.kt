@@ -7,18 +7,14 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
@@ -30,7 +26,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotation: Annotation? = null
     private var backgroundColor: Color = Color.WHITE
-    private var plotContext: PlotContext? = null
+    private var plotContext: PlotContext = NullPlotContext
 
     constructor()
 
@@ -104,7 +100,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override val targetCollector = b.geomTargetCollector
         override val annotation = b.annotation
         override val backgroundColor = b.backgroundColor
-        override val plotContext: PlotContext? = b.plotContext
+        override val plotContext: PlotContext = b.plotContext
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 

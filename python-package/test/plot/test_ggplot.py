@@ -11,9 +11,12 @@ mapping_empty = gg.aes()
 mapping_x = gg.aes('X')
 
 result_empty = {'kind': 'plot', 'mapping': {}, 'data_meta': {}, 'layers': [], 'scales': [], 'metainfo_list': []}
-result_data = {'data': data, 'kind': 'plot', 'mapping': {}, 'data_meta': {}, 'layers': [], 'scales': [], 'metainfo_list': []}
-result_data_mapping_empty = {'data': data, 'kind': 'plot', 'mapping': {}, 'data_meta': {}, 'layers': [], 'scales': [], 'metainfo_list': []}
-result_data_mapping_x = {'data': data, 'mapping': {'x': 'X'}, 'data_meta': {}, 'kind': 'plot', 'layers': [], 'scales': [], 'metainfo_list': []}
+result_data = {'data': data, 'kind': 'plot', 'mapping': {}, 'data_meta': {'series_annotations': [{'column': 'a', 'type': 'int'},
+                                                                                                 {'column': 'b', 'type': 'int'}]}, 'layers': [], 'scales': [], 'metainfo_list': []}
+result_data_mapping_empty = {'data': data, 'kind': 'plot', 'mapping': {}, 'data_meta': {'series_annotations': [{'column': 'a', 'type': 'int'},
+                                                                                                               {'column': 'b', 'type': 'int'}]}, 'layers': [], 'scales': [], 'metainfo_list': []}
+result_data_mapping_x = {'data': data, 'mapping': {'x': 'X'}, 'data_meta': {'series_annotations': [{'column': 'a', 'type': 'int'},
+                                                                                                   {'column': 'b', 'type': 'int'}]}, 'kind': 'plot', 'layers': [], 'scales': [], 'metainfo_list': []}
 result_mapping_x = {'mapping': {'x': 'X'}, 'data_meta': {}, 'kind': 'plot', 'layers': [], 'scales': [], 'metainfo_list': []}
 
 
@@ -25,5 +28,5 @@ result_mapping_x = {'mapping': {'x': 'X'}, 'data_meta': {}, 'kind': 'plot', 'lay
     ([None, mapping_x], result_mapping_x),
 ])
 def test_ggplot(args, expected):
-    spec = gg.ggplot(*args)
-    assert spec.as_dict() == expected
+    spec = gg.ggplot(*args).as_dict()
+    assert spec == expected

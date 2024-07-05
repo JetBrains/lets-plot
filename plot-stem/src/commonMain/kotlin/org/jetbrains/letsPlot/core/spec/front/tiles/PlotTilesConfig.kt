@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -108,13 +110,45 @@ internal object PlotTilesConfig {
             )
         }
 
+        val defaultFormatters = createDefaultFormatters(layerConfigs)
+
         return SimplePlotGeomTiles(
             geomLayers,
             commonScalesBeforeFacets,
+            defaultFormatters,
             mappersNP,
             coordProvider,
             containsLiveMap
         )
+    }
+
+    private fun createDefaultFormatters(layerConfigs: List<LayerConfig>): Map<Pair<Aes<*>?, String?>, (Any) -> String> {
+        fun key(varName: String) = Pair(null, varName)
+        fun key(aes: Aes<*>) = Pair(aes, null)
+
+        val variableDefaultFormatters = mutableMapOf<Pair<Aes<*>?, String?>, (Any) -> String>()
+
+        layerConfigs
+            .flatMap { it.dtypes.entries }
+            .forEach { (varName, dtype) -> variableDefaultFormatters[key(varName)] = dtype.formatter }
+
+        Stats.VARS.keys
+            .forEach { statVarName -> variableDefaultFormatters[key(statVarName)] = DataType.FLOATING.formatter }
+
+        val aesDefaultFormatters = layerConfigs
+            .flatMap(LayerConfig::varBindings)
+            .associate { binding ->
+                val formatter = variableDefaultFormatters[key(binding.variable.name)]
+                    ?: when {
+                        binding.variable.isStat || binding.variable.isTransform -> DataType.FLOATING.formatter
+                        else -> DataType.STRING.formatter
+                    }
+
+                key(binding.aes) to formatter
+            }
+
+        val defaultFormatters = variableDefaultFormatters + aesDefaultFormatters
+        return defaultFormatters
     }
 
     private fun createFacetTiles(
@@ -194,6 +228,7 @@ internal object PlotTilesConfig {
             geomLayersByTile,
             commonScalesBeforeFacets,
             mappersByAesNP,
+            createDefaultFormatters(layerConfigs),
             coordProvider,
             containsLiveMap
         )
