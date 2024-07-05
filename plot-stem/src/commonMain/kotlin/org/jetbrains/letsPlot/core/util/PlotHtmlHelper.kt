@@ -127,14 +127,15 @@ object PlotHtmlHelper {
             |           outputDiv.setAttribute('style', 'display: inline-block;');
             |           containerDiv.appendChild(outputDiv);
             |           
-            |           // Toolbar
-            |           var toolbar = new LetsPlot.tools.SandboxToolbar();
-            |           outputDiv.appendChild(toolbar.getElement());
-            |           
-            |           // Plot
-            |           var plotContainer = document.createElement('div');
-            |           outputDiv.appendChild(plotContainer);
             |           window.letsPlotCall(function() {{
+            |               // Toolbar
+            |               var toolbar = new LetsPlot.tools.SandboxToolbar();
+            |               outputDiv.appendChild(toolbar.getElement());
+            |               
+            |               // Plot
+            |               var plotContainer = document.createElement('div');
+            |               outputDiv.appendChild(plotContainer);
+            |               
             |               var options = {
             |                   sizing: sizingPolicy
             |               };
