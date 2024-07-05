@@ -16,7 +16,7 @@ class FacetedPlotGeomTiles constructor(
     private val layersByTile: List<List<GeomLayer>>,
     scalesBeforeFacets: Map<Aes<*>, Scale>,
     override val mappersNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
-    override val defaultFormatters: Map<Pair<Aes<*>?, String?>, (Any) -> String>,
+    override val defaultFormatters: Map<Any, (Any) -> String>,
     coordProvider: CoordProvider,
     containsLiveMap: Boolean
 ) : PlotGeomTilesBase(

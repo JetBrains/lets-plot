@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 class SimplePlotGeomTiles constructor(
     private val geomLayers: List<GeomLayer>,
     scalesBeforeFacets: Map<Aes<*>, Scale>,
-    override val defaultFormatters: Map<Pair<Aes<*>?, String?>, (Any) -> String>,
+    override val defaultFormatters: Map<Any, (Any) -> String>,
     override val mappersNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
     coordProvider: CoordProvider,
     containsLiveMap: Boolean

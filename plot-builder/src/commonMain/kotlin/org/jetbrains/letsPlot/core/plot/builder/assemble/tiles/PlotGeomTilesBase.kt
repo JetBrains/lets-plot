@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 abstract class PlotGeomTilesBase(
     override val scalesBeforeFacets: Map<Aes<*>, Scale>,
-    override val defaultFormatters: Map<Pair<Aes<*>?, String?>, (Any) -> String>,
+    override val defaultFormatters: Map<Any, (Any) -> String>,
     override val coordProvider: CoordProvider,
     override val containsLiveMap: Boolean
 ) : PlotGeomTiles {

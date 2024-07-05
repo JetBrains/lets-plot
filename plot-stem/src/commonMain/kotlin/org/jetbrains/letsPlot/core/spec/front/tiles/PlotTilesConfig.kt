@@ -122,29 +122,26 @@ internal object PlotTilesConfig {
         )
     }
 
-    private fun createDefaultFormatters(layerConfigs: List<LayerConfig>): Map<Pair<Aes<*>?, String?>, (Any) -> String> {
-        fun key(varName: String) = Pair(null, varName)
-        fun key(aes: Aes<*>) = Pair(aes, null)
-
-        val variableDefaultFormatters = mutableMapOf<Pair<Aes<*>?, String?>, (Any) -> String>()
+    private fun createDefaultFormatters(layerConfigs: List<LayerConfig>): Map<Any, (Any) -> String> {
+        val variableDefaultFormatters = mutableMapOf<Any, (Any) -> String>()
 
         layerConfigs
             .flatMap { it.dtypes.entries }
-            .forEach { (varName, dtype) -> variableDefaultFormatters[key(varName)] = dtype.formatter }
+            .forEach { (varName, dtype) -> variableDefaultFormatters[varName] = dtype.formatter }
 
         Stats.VARS.keys
-            .forEach { statVarName -> variableDefaultFormatters[key(statVarName)] = DataType.FLOATING.formatter }
+            .forEach { statVarName -> variableDefaultFormatters[statVarName] = DataType.FLOATING.formatter }
 
         val aesDefaultFormatters = layerConfigs
             .flatMap(LayerConfig::varBindings)
             .associate { binding ->
-                val formatter = variableDefaultFormatters[key(binding.variable.name)]
+                val formatter = variableDefaultFormatters[binding.variable.name]
                     ?: when {
                         binding.variable.isStat || binding.variable.isTransform -> DataType.FLOATING.formatter
                         else -> DataType.STRING.formatter
                     }
 
-                key(binding.aes) to formatter
+                binding.aes to formatter
             }
 
         val defaultFormatters = variableDefaultFormatters + aesDefaultFormatters

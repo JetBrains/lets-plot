@@ -37,12 +37,12 @@ internal class PlotAssemblerPlotContext constructor(
     }
 
     override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
-        return geomTiles.defaultFormatters[aes to null]
+        return geomTiles.defaultFormatters[aes]
             ?: Any::toString
     }
 
     override fun getDefaultFormatter(varName: String): (Any) -> String {
-        return geomTiles.defaultFormatters[null to varName]
+        return geomTiles.defaultFormatters[varName]
             ?: Any::toString
     }
 
