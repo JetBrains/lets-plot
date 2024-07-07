@@ -3,22 +3,29 @@
 
 from datetime import datetime
 
+import numpy as np
 from pandas import DataFrame, Categorical
 
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
 
 data_dict = {
-    'v1': [(datetime(2020, 1, 1))],
-    'v2': [0.0],
-    'v3': [0],
-    'v4': ['foo']
+    'python_datetime': [(datetime(2020, 1, 1))],
+    'python_float': [0.0],
+    'python_int': [0],
+    'python_str': ['foo'],
+    'python_bool': [True],
+    'np_int': np.array([1], dtype=np.int64),
+    'np_float': np.array([1.0], dtype=np.float64),
 }
 expected_series_annotations = [
-    {'column': 'v1', 'type': 'datetime'},
-    {'column': 'v2', 'type': 'float'},
-    {'column': 'v3', 'type': 'int'},
-    {'column': 'v4', 'type': 'str'}
+    {'column': 'python_datetime', 'type': 'datetime'},
+    {'column': 'python_float', 'type': 'float'},
+    {'column': 'python_int', 'type': 'int'},
+    {'column': 'python_str', 'type': 'str'},
+    {'column': 'python_bool', 'type': 'bool'},
+    {'column': 'np_int', 'type': 'int'},
+    {'column': 'np_float', 'type': 'float'},
 ]
 
 

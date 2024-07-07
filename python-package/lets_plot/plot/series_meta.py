@@ -92,17 +92,30 @@ def infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Dic
                     type_info[var_name] = 'unknown(mixed types)'
                     continue
 
+                try:
+                    import numpy
+                except ImportError:
+                    numpy = None
+
                 type_obj = list(type_set)[0]
-                if type_obj == int:
-                    type_info[var_name] = TYPE_INTEGER
-                elif type_obj == float:
-                    type_info[var_name] = TYPE_FLOATING
-                elif type_obj == bool:
+                if type_obj == bool:
                     type_info[var_name] = TYPE_BOOLEAN
-                elif type_obj == str:
+                elif issubclass(type_obj, int):
+                    type_info[var_name] = TYPE_INTEGER
+                elif issubclass(type_obj, float):
+                    type_info[var_name] = TYPE_FLOATING
+                elif issubclass(type_obj, str):
                     type_info[var_name] = TYPE_STRING
-                elif type_obj == datetime:
+                elif issubclass(type_obj, datetime):
                     type_info[var_name] = TYPE_DATE_TIME
+                elif numpy and issubclass(type_obj, numpy.datetime64):
+                    type_info[var_name] = TYPE_DATE_TIME
+                elif numpy and issubclass(type_obj, numpy.timedelta64):
+                    type_info[var_name] = TYPE_DATE_TIME
+                elif numpy and issubclass(type_obj, numpy.integer):
+                    type_info[var_name] = TYPE_INTEGER
+                elif numpy and issubclass(type_obj, numpy.floating):
+                    type_info[var_name] = TYPE_FLOATING
                 else:
                     type_info[var_name] = 'unknown(python:' + str(type_obj) + ')'
 

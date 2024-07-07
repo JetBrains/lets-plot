@@ -99,8 +99,8 @@ object DataMetaUtil {
     }
 
     fun getDataTypes(dataMeta: Map<*, *>): Map<String, DataType> {
-        fun toDType(option: String?): DataType {
-            return when (option) {
+        fun toDType(dataType: String?): DataType {
+            return when (dataType) {
                 null -> DataType.UNKNOWN
                 SeriesAnnotation.Types.INTEGER -> DataType.INTEGER
                 SeriesAnnotation.Types.FLOATING -> DataType.FLOATING
@@ -108,7 +108,7 @@ object DataMetaUtil {
                 SeriesAnnotation.Types.BOOLEAN -> DataType.BOOLEAN
                 SeriesAnnotation.Types.DATE_TIME -> DataType.INSTANT
                 SeriesAnnotation.Types.UNKNOWN -> DataType.UNKNOWN
-                else -> throw IllegalArgumentException("Unknown data type: $option")
+                else -> DataType.UNKNOWN
             }
         }
 
