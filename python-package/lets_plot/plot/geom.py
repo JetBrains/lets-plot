@@ -118,13 +118,13 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -295,11 +295,11 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows.
 
@@ -2460,13 +2460,13 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -2646,13 +2646,13 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows.
 
@@ -4441,7 +4441,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density2d' stat to compute weighted density.
 
-    |
+    ----
 
     'density2d' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
@@ -4663,7 +4663,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - weight : used by 'density2df' stat to compute weighted density.
 
-    |
+    ----
 
     'density2df' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
@@ -5718,13 +5718,13 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `limits()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6361,13 +6361,13 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6599,13 +6599,13 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6831,13 +6831,13 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - stroke : width of inner and outer arcs of pie sector.
     - color : color of inner and outer arcs of pie sector.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6860,8 +6860,6 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    |
 
     Examples
     --------
@@ -7054,7 +7052,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - linewidth : stick width.
     - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
-    |
+    ----
 
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
     So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
@@ -7190,7 +7188,6 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
 
     Examples
     --------
