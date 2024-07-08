@@ -18,10 +18,6 @@ class TimeBreaksGen : BreaksGenerator {
         return ScaleBreaks(ticks, ticks, labels)
     }
 
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return breaksHelper(domain, targetCount).formatter
-    }
-
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return breaksHelper(domain, targetCount).formatter
     }

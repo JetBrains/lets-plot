@@ -23,12 +23,9 @@ internal class ScaleProviderBuilderTest {
                 return ScaleBreaks.EMPTY
             }
 
-            override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
+            override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
                 return { "hi" }
             }
-
-            override fun defaultFormatter(domain: DoubleSpan, targetCount: Int) =
-                labelFormatter(domain, targetCount)
         }
 
         val builder = ScaleProviderBuilder(Aes.X).breaksGenerator(bg)

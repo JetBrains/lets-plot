@@ -25,10 +25,6 @@ internal class LinearBreaksGen(
         return ScaleBreaks(breaks, breaks, labels)
     }
 
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return formatter ?: defaultFormatter(domain, targetCount)
-    }
-
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return createFormatter(generateBreakValues(domain, targetCount))
     }
