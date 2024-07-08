@@ -116,18 +116,18 @@ object PlotHtmlHelper {
             |       (function() {
             |           var plotSpec=$plotSpecAsJsObjectInitializer;
             |           var containerDiv = document.getElementById("$outputId");
-            |           var sizingPolicy = {
-            |                       width_mode: "min",
-            |                       height_mode: "scaled",
-            |                       width: containerDiv.clientWidth
-            |           };
-            |           
-            |           // Wrapper for toolbar and chart
-            |           var outputDiv = document.createElement('div');
-            |           outputDiv.setAttribute('style', 'display: inline-block;');
-            |           containerDiv.appendChild(outputDiv);
-            |           
             |           window.letsPlotCall(function() {{
+            |               var sizingPolicy = {
+            |                           width_mode: "min",
+            |                           height_mode: "scaled",
+            |                           width: containerDiv.clientWidth
+            |               };
+            |               
+            |               // Wrapper for toolbar and chart
+            |               var outputDiv = document.createElement('div');
+            |               outputDiv.setAttribute('style', 'display: inline-block;');
+            |               containerDiv.appendChild(outputDiv);
+            |           
             |               // Toolbar
             |               var toolbar = new LetsPlot.tools.SandboxToolbar();
             |               outputDiv.appendChild(toolbar.getElement());
