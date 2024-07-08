@@ -83,6 +83,43 @@ class DomMouseEventMapperTest {
         }
     }
 
+    /**
+     * Test the consequence of two click events without any mouse movement
+     */
+    @Test
+    fun twoConsecutiveClicksWithoutMouseMove() {
+        val div = EventTargetAdapter(600, 600)
+        val m = div.createEventMapper()
+
+        div.dispatchEvent(DomEventType.MOUSE_MOVE, 300, 300).let {
+            assertEvent(it[m]!!.single(), MOUSE_ENTERED, 300, 300)
+        }
+        div.dispatchEvent(DomEventType.MOUSE_DOWN, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_PRESSED, 300, 300)
+        }
+
+        div.dispatchEvent(DomEventType.MOUSE_UP, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_RELEASED, 300, 300)
+        }
+
+        div.dispatchEvent(DomEventType.CLICK, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_CLICKED, 300, 300)
+        }
+
+        div.dispatchEvent(DomEventType.MOUSE_DOWN, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_PRESSED, 300, 300)
+        }
+
+        div.dispatchEvent(DomEventType.MOUSE_UP, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_RELEASED, 300, 300)
+        }
+
+        div.dispatchEvent(DomEventType.CLICK, 300, 300).let { events ->
+            assertEvent(events[m]!!.single(), MOUSE_CLICKED, 300, 300)
+        }
+    }
+
+
     @Test
     fun dragThresholdShouldSuppressMoveEventsAndGenerateTwoDragEventsWithOneAtTheMouseDownLocation() {
         val div = EventTargetAdapter(600, 600)
