@@ -27,12 +27,12 @@ class TimeBreaksGen : BreaksGenerator {
     }
 
     private fun breaksHelper(
-        domainAfterTransform: DoubleSpan,
+        domain: DoubleSpan,
         targetCount: Int
     ): TimeBreaksHelper {
         return TimeBreaksHelper(
-            domainAfterTransform.lowerEnd,
-            domainAfterTransform.upperEnd,
+            domain.lowerEnd,
+            domain.upperEnd,
             targetCount
         )
     }

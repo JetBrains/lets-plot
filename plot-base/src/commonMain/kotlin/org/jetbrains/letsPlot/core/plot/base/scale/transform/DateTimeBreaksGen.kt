@@ -25,12 +25,12 @@ class DateTimeBreaksGen(
     }
 
     private fun breaksHelper(
-        domainAfterTransform: DoubleSpan,
+        domain: DoubleSpan,
         targetCount: Int
     ): DateTimeBreaksHelper {
         return DateTimeBreaksHelper(
-            domainAfterTransform.lowerEnd,
-            domainAfterTransform.upperEnd,
+            domain.lowerEnd,
+            domain.upperEnd,
             targetCount
         )
     }
