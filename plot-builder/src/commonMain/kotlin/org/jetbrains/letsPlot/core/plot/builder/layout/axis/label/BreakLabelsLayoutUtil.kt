@@ -21,15 +21,17 @@ import kotlin.math.*
 internal object BreakLabelsLayoutUtil {
 
     fun getFlexBreaks(breaksProvider: AxisBreaksProvider, maxCount: Int): ScaleBreaks {
-        require(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
-        require(maxCount > 0) { "maxCount=$maxCount" }
+        check(!breaksProvider.isFixedBreaks) { "fixed breaks not expected" }
+        check(maxCount > 0) { "maxCount=$maxCount" }
         var breaks = breaksProvider.getBreaks(maxCount)
 
         if (maxCount == 1 && !breaks.isEmpty) {
             return ScaleBreaks(
                 breaks.domainValues.subList(0, 1),
                 breaks.transformedValues.subList(0, 1),
-                breaks.labels.subList(0, 1)
+                breaks.labels.subList(0, 1),
+                breaks.fixed,
+                breaks.formatter
             )
         }
         var count = maxCount

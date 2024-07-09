@@ -15,20 +15,20 @@ import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
-    private val formatter: ((Any) -> String)? = null,
+    private val providedFormatter: ((Any) -> String)? = null,
     private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val breakValues = generateBreakValues(domain, recalculateBreaksCount(targetCount, domain, transform), transform)
-        val breakFormatters = if (formatter != null) {
-            List(breakValues.size) { formatter }
-        } else {
-            createFormatters(breakValues)
-        }
 
-        val labels = breakValues.mapIndexed() { i, v -> breakFormatters[i](v) }
-        return ScaleBreaks(breakValues, breakValues, labels)
+        // ToDo: compute formats in a breaks helper.
+        val formatter = providedFormatter ?: createMultiFormatter(breakValues)
+        return ScaleBreaks(
+            domainValues = breakValues,
+            transformedValues = breakValues,
+            formatter = formatter
+        )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {

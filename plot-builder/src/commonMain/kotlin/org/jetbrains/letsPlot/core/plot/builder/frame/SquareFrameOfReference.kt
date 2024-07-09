@@ -10,9 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.coord.TransformedCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -35,6 +35,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 internal open class SquareFrameOfReference(
     hScaleBreaks: ScaleBreaks,
     vScaleBreaks: ScaleBreaks,
+    hTransform: Transform,
+    vTransform: Transform,
     private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -53,6 +55,8 @@ internal open class SquareFrameOfReference(
     override val transientState: TransientState = TransientState(
         hScaleBreaks,
         vScaleBreaks,
+        hTransform,
+        vTransform,
         adjustedDomain
     )
 
@@ -449,24 +453,26 @@ internal open class SquareFrameOfReference(
     }
 
     inner class TransientState(
-        hScaleBreaks: ScaleBreaks,
-        vScaleBreaks: ScaleBreaks,
+        private val hScaleBreaks: ScaleBreaks,
+        private val vScaleBreaks: ScaleBreaks,
+        private val hTransform: Transform,
+        private val vTransform: Transform,
         dataBounds: DoubleRectangle  // transformed domain
     ) : ComponentTransientState(
         viewBounds = layoutInfo.geomContentBounds  // px
     ) {
         val hBreaksTransformedValues = hScaleBreaks.transformedValues.toMutableList()
-        val hBreaksLabels = hScaleBreaks.labels.toMutableList()
         val vBreaksTransformedValues = vScaleBreaks.transformedValues.toMutableList()
+        val hBreaksLabels = hScaleBreaks.labels.toMutableList()
         val vBreaksLabels = vScaleBreaks.labels.toMutableList()
 
         override var dataBounds: DoubleRectangle = dataBounds
             private set
 
-        override fun transform(scale: DoubleVector, offset: DoubleVector) {
+        override fun transformView(scale: DoubleVector, offset: DoubleVector) {
             val transientBounds = calculateTransientBounds(viewBounds, scale, offset)
             this.dataBounds = toDataBounds(transientBounds.subtract(viewBounds.origin))
-            super.transform(scale, offset)
+            super.transformView(scale, offset)
         }
 
         override fun repaint() {
@@ -478,49 +484,44 @@ internal open class SquareFrameOfReference(
         }
 
         private fun validateHorizontalBreaks() {
-            if (hBreaksTransformedValues.size < 2) {
+            if (hScaleBreaks.fixed || hBreaksTransformedValues.size < 2) {
                 // not generated - don't validate.
-                return
-            }
-            val hScale = plotContext.getScale(if (flipAxis) Aes.Y else Aes.X)
-            if (hScale.hasBreaks()) {
-                // discrete or manually set breaks - don't validate.
                 return
             }
 
             val dataRange: DoubleSpan = dataBounds.xRange()
-            validateBreaksIntern(dataRange, hBreaksTransformedValues, hBreaksLabels)
+            validateBreaksIntern(dataRange, hBreaksTransformedValues, hBreaksLabels, hTransform, hScaleBreaks.formatter)
         }
 
         private fun validateVerticalBreaks() {
-            if (vBreaksTransformedValues.size < 2) {
+            if (vScaleBreaks.fixed || vBreaksTransformedValues.size < 2) {
                 // not generated - don't validate.
-                return
-            }
-            val vScale = plotContext.getScale(if (flipAxis) Aes.X else Aes.Y)
-            if (vScale.hasBreaks()) {
-                // discrete or manually set breaks - don't validate.
                 return
             }
 
             val dataRange: DoubleSpan = dataBounds.yRange()
-            validateBreaksIntern(dataRange, vBreaksTransformedValues, vBreaksLabels)
+            validateBreaksIntern(dataRange, vBreaksTransformedValues, vBreaksLabels, vTransform, vScaleBreaks.formatter)
         }
 
         private fun validateBreaksIntern(
             dataRange: DoubleSpan,
-            values: MutableList<Double>,
-            labels: MutableList<String>
+            transformedBreaks: MutableList<Double>,
+            labels: MutableList<String>,
+            transform: Transform,
+            formatter: (Any) -> String
         ) {
-            if (dataRange.contains(values.first())) {
-                val newFirstBreak = values[0] - (values[1] - values[0])
-                values.add(0, newFirstBreak)
-                labels.add(0, newFirstBreak.toString())
+            if (dataRange.contains(transformedBreaks.first())) {
+                val newFirstBreak = transformedBreaks[0] - (transformedBreaks[1] - transformedBreaks[0])
+                transformedBreaks.add(0, newFirstBreak)
+                val domainV = transform.applyInverse(newFirstBreak)
+                labels.add(0, domainV?.let { formatter(domainV) } ?: "---")
             }
-            if (dataRange.contains(values.last())) {
-                val newLastBreak = values.last() + (values.last() - values[values.size - 2])
-                values.add(newLastBreak)
-                labels.add(newLastBreak.toString())
+            if (dataRange.contains(transformedBreaks.last())) {
+                val newLastBreak =
+                    transformedBreaks.last() + (transformedBreaks.last() - transformedBreaks[transformedBreaks.size - 2])
+                transformedBreaks.add(newLastBreak)
+                val domainV = transform.applyInverse(newLastBreak)
+                labels.add(domainV?.let { formatter(domainV) } ?: "---")
             }
         }
     }

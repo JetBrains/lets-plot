@@ -81,7 +81,13 @@ object Transforms {
                 it as Double // Should not contain NULLs
             }
 
-            return ScaleBreaks(originalBreaks, transformedBreaks, scaleBreaks.labels)
+            return ScaleBreaks(
+                originalBreaks,
+                transformedBreaks,
+                scaleBreaks.labels,
+                scaleBreaks.fixed,
+                scaleBreaks.formatter
+            )
         }
     }
 }

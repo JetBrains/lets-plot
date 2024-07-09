@@ -238,7 +238,7 @@ internal class PlotTile(
 
         override fun repaint() {
             geomInteractionGroup.rootGroup.transform().set(transform)
-            coreTransientState.transform(scale, offset)
+            coreTransientState.transformView(scale, offset)
         }
     }
 }

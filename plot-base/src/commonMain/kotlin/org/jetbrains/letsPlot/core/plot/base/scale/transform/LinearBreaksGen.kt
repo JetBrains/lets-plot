@@ -14,15 +14,18 @@ import kotlin.math.abs
 import kotlin.math.max
 
 internal class LinearBreaksGen(
-    private val formatter: ((Any) -> String)? = null,
+    private val providedFormatter: ((Any) -> String)? = null,
     private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val breaks = generateBreakValues(domain, targetCount)
-        val fmt = formatter ?: createFormatter(breaks)
-        val labels = breaks.map { fmt(it) }
-        return ScaleBreaks(breaks, breaks, labels)
+        val formatter = providedFormatter ?: createFormatter(breaks)
+        return ScaleBreaks(
+            domainValues = breaks,
+            transformedValues = breaks,
+            formatter = formatter
+        )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {

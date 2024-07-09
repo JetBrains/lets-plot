@@ -55,7 +55,7 @@ class PolarBreaksTest {
         val angleBreaks = computeBreaks(startAngleDeg = 45.0)
 
         assertDoubleVectorEquals(x = 155, y = -155, angleBreaks.majorBreaks[0])
-        assertDoubleVectorEquals(x = 195, y=100, angleBreaks.majorBreaks[1])
+        assertDoubleVectorEquals(x = 195, y = 100, angleBreaks.majorBreaks[1])
         assertDoubleVectorEquals(x = -34, y = 216, angleBreaks.majorBreaks[2])
         assertDoubleVectorEquals(x = -216, y = 34, angleBreaks.majorBreaks[3])
         assertDoubleVectorEquals(x = -100, y = -195, angleBreaks.majorBreaks[4])

@@ -73,20 +73,12 @@ internal class PolarFrameOfReferenceProvider(
 
         val gridDomain = coordProvider.gridDomain(adjustedDomain)
 
-        val hScale = hScaleProto.with()
-            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(hAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
-        val vScale = vScaleProto.with()
-            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(vAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
         val tileFrameOfReference = PolarFrameOfReference(
             plotContext,
-            hScaleBreaks = hScale.getScaleBreaks(),
-            vScaleBreaks = vScale.getScaleBreaks(),
+            hScaleBreaks = hAxisLayoutInfo.axisBreaks,
+            vScaleBreaks = vAxisLayoutInfo.axisBreaks,
+            hTransform = hScaleProto.transform,
+            vTransform = vScaleProto.transform,
             gridDomain,
             coord,
             layoutInfo,
