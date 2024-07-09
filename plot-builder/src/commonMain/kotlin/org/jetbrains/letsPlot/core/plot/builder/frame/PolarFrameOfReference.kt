@@ -108,7 +108,7 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
@@ -127,7 +127,7 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,

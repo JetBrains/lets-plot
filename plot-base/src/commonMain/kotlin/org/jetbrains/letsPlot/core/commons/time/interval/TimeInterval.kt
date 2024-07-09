@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.commons.time.interval
 
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.formatterDateUTC
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
-import org.jetbrains.letsPlot.core.commons.data.DataType
 
 abstract class TimeInterval protected constructor(val count: Int) {
 
@@ -62,32 +61,6 @@ abstract class TimeInterval protected constructor(val count: Int) {
 
         fun years(count: Int): TimeInterval {
             return YearInterval(count)
-        }
-
-        fun fromIntervalDataType(dataType: DataType): TimeInterval {
-            return when (dataType) {
-                DataType.INSTANT_OF_DAY -> days(
-                    1
-                )
-
-                DataType.INSTANT_OF_MONTH -> months(
-                    1
-                )
-
-                DataType.INSTANT_OF_QUARTER -> quarter(
-                    1
-                )
-
-                DataType.INSTANT_OF_HALF_YEAR -> semester(
-                    1
-                )
-
-                DataType.INSTANT_OF_YEAR -> years(
-                    1
-                )
-
-                else -> throw IllegalArgumentException("Can't create interval from data type: $dataType")
-            }
         }
     }
 }

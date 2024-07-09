@@ -229,13 +229,12 @@ internal class PlotTile(
     }
 
     inner class TransientState : ComponentTransientState(
-        bounds = tileLayoutInfo.geomContentBounds
+        viewBounds = tileLayoutInfo.geomContentBounds
     ) {
         private val coreTransientState: ComponentTransientState = frameOfReference.transientState
 
-        override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-            return coreTransientState.toDataBounds(clientRect)
-        }
+        override val dataBounds: DoubleRectangle
+            get() = coreTransientState.dataBounds
 
         override fun repaint() {
             geomInteractionGroup.rootGroup.transform().set(transform)

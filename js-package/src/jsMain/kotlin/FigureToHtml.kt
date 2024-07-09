@@ -68,7 +68,7 @@ internal class FigureToHtml(
         val svgRoot = buildInfo.createSvgRoot()
 
         if (isRoot) {
-            // Setup fixed dimentions for plot wrapper element.
+            // Setup fixed dimensions for plot wrapper element.
             setupRootHTMLElement(
                 parentElement,
                 svgRoot.bounds.dimension
@@ -85,7 +85,8 @@ internal class FigureToHtml(
             processPlotFigure(
                 svgRoot = svgRoot as PlotSvgRoot,
                 parentElement = parentElement,
-                eventArea = buildInfo.bounds
+//                eventArea = buildInfo.bounds
+                eventArea = DoubleRectangle(DoubleVector.ZERO, buildInfo.bounds.dimension)
             )
         }
 
@@ -166,13 +167,13 @@ internal class FigureToHtml(
                 val elementOrigin = figureSvgRoot.bounds.origin.add(origin)
                 if (figureSvgRoot is PlotSvgRoot) {
                     // Create "container" with absolute positioning.
-                    val figureContainer = createContainerElement(elementOrigin).apply {
-                        parentElement.appendChild(this)
-                    }
+                    val figureContainer = createContainerElement(elementOrigin)
+                    parentElement.appendChild(figureContainer)
                     processPlotFigure(
                         svgRoot = figureSvgRoot,
                         parentElement = figureContainer,
-                        eventArea = figureSvgRoot.bounds.add(origin)
+//                        eventArea = figureSvgRoot.bounds.add(origin)
+                        eventArea = DoubleRectangle(DoubleVector.ZERO, figureSvgRoot.bounds.dimension)
                     )
                 } else {
                     figureSvgRoot as CompositeFigureSvgRoot

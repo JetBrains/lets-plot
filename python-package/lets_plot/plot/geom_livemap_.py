@@ -86,6 +86,10 @@ def geom_livemap(*,
     -----
     `geom_livemap()` draws a map, which can be dragged and zoomed.
 
+    ----
+
+    By default the livemap area has a non-zero inset. You can get rid of this with the theme: `theme(plot_inset=0)`.
+
     Examples
     --------
     .. jupyter-execute::

@@ -18,7 +18,7 @@ class MappingMeta:
 
 def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     """
-    The function is used to annotate a numeric data series as categorical data with the possibility of its ordering for the purposes of given visualization.
+    The function converts a column to a discrete scale and allows you to specify the order of its values.
 
     Parameters
     ----------

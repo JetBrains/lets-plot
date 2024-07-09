@@ -44,7 +44,7 @@ object Stats {
 
     val IDENTITY: Stat = IdentityStat()
 
-    private val VARS: Map<String, DataFrame.Variable> = run {
+    val VARS: Map<String, DataFrame.Variable> = run {
         val variableList = listOf(
             X,
             Y,

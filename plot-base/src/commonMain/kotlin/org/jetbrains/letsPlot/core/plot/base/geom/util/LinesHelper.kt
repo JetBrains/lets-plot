@@ -8,9 +8,12 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isRingNormalized
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.normalizeRing
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
@@ -32,7 +35,7 @@ open class LinesHelper(
 
     // Polar coordinate system with discrete X scale.
     fun meetsRadarPlotReq(): Boolean {
-        return coord.isPolar && ctx.plotContext?.getScale(Aes.X)?.isContinuous != true
+        return coord.isPolar && ctx.plotContext.hasScale(Aes.X) && !ctx.plotContext.getScale(Aes.X).isContinuous
     }
 
     fun setAlphaEnabled(b: Boolean) {

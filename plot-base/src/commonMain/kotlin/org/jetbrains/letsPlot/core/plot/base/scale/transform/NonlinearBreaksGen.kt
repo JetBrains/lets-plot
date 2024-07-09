@@ -31,10 +31,6 @@ internal class NonlinearBreaksGen(
         return ScaleBreaks(breakValues, breakValues, labels)
     }
 
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return formatter ?: defaultFormatter(domain, targetCount)
-    }
-
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
@@ -95,13 +91,15 @@ internal class NonlinearBreaksGen(
                 is Log10Transform,
                 is SymlogTransform -> {
                     val transformedDomain = ScaleUtil.applyTransform(domain, transform)
-                    val recalculatedBreaksCount = (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
+                    val recalculatedBreaksCount =
+                        (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
                     if (recalculatedBreaksCount in MIN_BREAKS_COUNT..breaksCount) {
                         recalculatedBreaksCount
                     } else {
                         breaksCount
                     }
                 }
+
                 else -> breaksCount
             }
         }

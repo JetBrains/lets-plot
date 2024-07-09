@@ -27,6 +27,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
 
             SvgElement.ID.name -> target.id = value as? String // TODO: or ignore it?
+            SvgConstants.DISPLAY -> {} // not needed for JavaFX
 
             else -> throw IllegalArgumentException("Unsupported attribute `$name` in ${target.javaClass.simpleName}")
         }

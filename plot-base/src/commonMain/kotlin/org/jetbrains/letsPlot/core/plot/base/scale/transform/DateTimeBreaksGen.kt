@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksHelper
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 class DateTimeBreaksGen(
     private val labelFormatter: ((Any) -> String)? = null
@@ -25,18 +25,14 @@ class DateTimeBreaksGen(
     }
 
     private fun breaksHelper(
-        domainAfterTransform: DoubleSpan,
+        domain: DoubleSpan,
         targetCount: Int
     ): DateTimeBreaksHelper {
         return DateTimeBreaksHelper(
-            domainAfterTransform.lowerEnd,
-            domainAfterTransform.upperEnd,
+            domain.lowerEnd,
+            domain.upperEnd,
             targetCount
         )
-    }
-
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return labelFormatter ?: defaultFormatter(domain, targetCount)
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {

@@ -6,18 +6,18 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
@@ -40,10 +40,11 @@ open class TextGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
+
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
-            val text = toString(p.label())
+            val text = toString(p.label(), ctx.plotContext)
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
                 val point = DoubleVector(x!!, y!!)
                 val loc = helper.toClient(point, p)
@@ -105,12 +106,11 @@ open class TextGeom : GeomBase() {
         return g
     }
 
-    private fun toString(label: Any?): String {
-        return when {
-            label == null -> naValue
-            formatter != null -> formatter!!.invoke(label)
-            else -> label.toString()
-        }
+    private fun toString(label: Any?, plotContext: PlotContext): String {
+        if (label == null) return naValue
+
+        val formatter = formatter ?: plotContext.getDefaultFormatter(Aes.LABEL)
+        return formatter(label)
     }
 
     companion object {

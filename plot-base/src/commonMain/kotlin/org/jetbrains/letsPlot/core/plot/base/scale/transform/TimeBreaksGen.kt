@@ -18,21 +18,17 @@ class TimeBreaksGen : BreaksGenerator {
         return ScaleBreaks(ticks, ticks, labels)
     }
 
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return breaksHelper(domain, targetCount).formatter
-    }
-
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return breaksHelper(domain, targetCount).formatter
     }
 
     private fun breaksHelper(
-        domainAfterTransform: DoubleSpan,
+        domain: DoubleSpan,
         targetCount: Int
     ): TimeBreaksHelper {
         return TimeBreaksHelper(
-            domainAfterTransform.lowerEnd,
-            domainAfterTransform.upperEnd,
+            domain.lowerEnd,
+            domain.upperEnd,
             targetCount
         )
     }
