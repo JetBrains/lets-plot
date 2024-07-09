@@ -8,6 +8,7 @@ plugins {
 }
 
 val jfxVersion = extra["jfx_version"] as String
+val jfxPlatform = extra["jfxPlatformResolved"] as String
 
 kotlin {
     jvm()
@@ -30,9 +31,9 @@ kotlin {
 
         named("jvmMain") {
             dependencies {
-                compileOnly("org.openjfx:javafx-base:$jfxVersion")
-                compileOnly("org.openjfx:javafx-graphics:$jfxVersion")
-                compileOnly("org.openjfx:javafx-swing:$jfxVersion")
+                compileOnly("org.openjfx:javafx-base:$jfxVersion:$jfxPlatform")
+                compileOnly("org.openjfx:javafx-graphics:$jfxVersion:$jfxPlatform")
+                compileOnly("org.openjfx:javafx-swing:$jfxVersion:$jfxPlatform")
 
                 compileOnly(project(":platf-awt"))
             }

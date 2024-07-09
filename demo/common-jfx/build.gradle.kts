@@ -10,6 +10,7 @@ plugins {
 kotlin {
     jvm()
 
+    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     sourceSets {
@@ -33,7 +34,7 @@ kotlin {
                 implementation(project(":platf-awt"))
                 implementation(project(":platf-jfx-swing"))
 
-                compileOnly("org.openjfx:javafx-swing:${jfxVersion}")
+                compileOnly("org.openjfx:javafx-swing:${jfxVersion}:${jfxPlatform}")
             }
         }
     }

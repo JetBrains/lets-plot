@@ -39,6 +39,20 @@ allprojects {
         targetCompatibility = "1.8"
     }
 
+    fun getJfxPlatform(): String {
+        if (os.isWindows()) {
+            return "win"
+        } else if (os.isLinux()) {
+            return "linux"
+        } else if (os.isMacOsX()) {
+            return "mac"
+        } else {
+            return "unknown"
+        }
+    }
+
+    val jfxPlatformResolved by extra { getJfxPlatform() }
+
     repositories {
         mavenCentral()
     }
