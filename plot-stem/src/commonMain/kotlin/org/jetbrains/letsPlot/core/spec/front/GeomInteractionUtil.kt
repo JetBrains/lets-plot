@@ -157,7 +157,7 @@ object GeomInteractionUtil {
                 // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
                 // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
                 // but not above a column).
-                if (geomKind in setOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY, GeomKind.RIBBON)) {
+                if (geomKind in setOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY, GeomKind.RIBBON, GeomKind.BAND)) {
                     multilayerLookup = true
                 } else if (statKind === StatKind.SMOOTH) {
                     multilayerLookup = geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR)
@@ -214,7 +214,8 @@ object GeomInteractionUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> {
+            GeomKind.ERROR_BAR,
+            GeomKind.BAND -> {
                 return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
                     GeomTooltipSetup.xUnivariateFunction(
                         GeomTargetLocator.LookupStrategy.HOVER,
@@ -279,8 +280,7 @@ object GeomInteractionUtil {
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
             GeomKind.MAP,
-            GeomKind.RECT,
-            GeomKind.BAND -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+            GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
 
             GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
@@ -302,7 +302,8 @@ object GeomInteractionUtil {
             GeomKind.SPOKE -> listOf(Aes.X, Aes.Y, Aes.ANGLE, Aes.RADIUS)
             GeomKind.RIBBON,
             GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> {
+            GeomKind.ERROR_BAR,
+            GeomKind.BAND -> {
                 // ToDo Need refactoring...
                 // Error bar supports a dual set of aesthetics (vertical and horizontal representation).
                 // Here the `layerConfig.renderedAes` (full aesthetic list) is used.
@@ -402,7 +403,8 @@ object GeomInteractionUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
+            GeomKind.ERROR_BAR,
+            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
@@ -412,8 +414,7 @@ object GeomInteractionUtil {
     private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.H_LINE,
-            GeomKind.V_LINE,
-            GeomKind.BAND -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
 
             else -> emptyMap()
         }
@@ -445,6 +446,7 @@ object GeomInteractionUtil {
             GeomKind.CURVE,
             GeomKind.SPOKE,
             GeomKind.RIBBON,
+            GeomKind.BAND,
             GeomKind.SMOOTH,
             GeomKind.STEP -> true
 
