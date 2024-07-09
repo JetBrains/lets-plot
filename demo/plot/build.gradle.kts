@@ -30,7 +30,6 @@ kotlin {
     val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
     val kotlinxCoroutinesVersion = extra["kotlinx_coroutines_version"] as String
     val ktorVersion = extra["ktor_version"] as String
-    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
@@ -84,9 +83,9 @@ kotlin {
                 implementation(project(":platf-jfx-swing"))
                 implementation(project(":demo-common-jfx"))
 
-                implementation("org.openjfx:javafx-base:${jfxVersion}:${jfxPlatform}")
-                implementation("org.openjfx:javafx-graphics:${jfxVersion}:${jfxPlatform}")
-                implementation("org.openjfx:javafx-swing:${jfxVersion}:${jfxPlatform}")
+                implementation("org.openjfx:javafx-base:${jfxVersion}")
+                implementation("org.openjfx:javafx-graphics:${jfxVersion}")
+                implementation("org.openjfx:javafx-swing:${jfxVersion}")
             }
         }
         named("jvmBrowserMain") {

@@ -38,7 +38,6 @@ kotlin {
     val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
     val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
     val ktorVersion = extra["ktor_version"] as String
-    val jfxPlatform = extra["jfxPlatformResolved"] as String
     val jfxVersion = extra["jfx_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
@@ -69,10 +68,10 @@ kotlin {
                 compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
-                implementation("org.openjfx:javafx-base:${jfxVersion}:${jfxPlatform}")
-                implementation("org.openjfx:javafx-controls:${jfxVersion}:${jfxPlatform}")
-                implementation("org.openjfx:javafx-graphics:${jfxVersion}:${jfxPlatform}")
-                implementation("org.openjfx:javafx-swing:${jfxVersion}:${jfxPlatform}")
+                implementation("org.openjfx:javafx-base:${jfxVersion}")
+                implementation("org.openjfx:javafx-controls:${jfxVersion}")
+                implementation("org.openjfx:javafx-graphics:${jfxVersion}")
+                implementation("org.openjfx:javafx-swing:${jfxVersion}")
                 implementation("org.slf4j:slf4j-simple:${extra["slf4j_version"]}")  // Enable logging to console
             }
         }
