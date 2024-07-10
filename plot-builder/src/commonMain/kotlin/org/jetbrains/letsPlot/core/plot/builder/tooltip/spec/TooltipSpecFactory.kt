@@ -85,12 +85,18 @@ class TooltipSpecFactory(
                 Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue),
-                Aes.XMIN to axisDataPoints().filter { Aes.XMIN == it.aes }
+                Aes.XMIN to axisDataPoints().filter { Aes.XMIN == it.aes || Aes.XMAX == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue),
-                Aes.YMIN to axisDataPoints().filter { Aes.YMIN == it.aes }
+                Aes.XMAX to axisDataPoints().filter { Aes.XMIN == it.aes || Aes.XMAX == it.aes }
                     .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue)
+                    .map(TooltipSpec.Line.Companion::withValue),
+                Aes.YMIN to axisDataPoints().filter { Aes.YMIN == it.aes || Aes.YMAX == it.aes }
+                    .map(DataPoint::value)
+                    .map(TooltipSpec.Line.Companion::withValue),
+                Aes.YMAX to axisDataPoints().filter { Aes.YMAX == it.aes || Aes.YMAX == it.aes }
+                    .map(DataPoint::value)
+                    .map(TooltipSpec.Line.Companion::withValue),
             )
             axis.forEach { (aes, lines) ->
                 if (lines.isNotEmpty()) {
@@ -159,6 +165,8 @@ class TooltipSpecFactory(
                     flippedAxis && it == Aes.Y -> Aes.X
                     flippedAxis && it == Aes.XMIN -> Aes.YMIN
                     flippedAxis && it == Aes.YMIN -> Aes.XMIN
+                    flippedAxis && it == Aes.XMAX -> Aes.YMAX
+                    flippedAxis && it == Aes.YMAX -> Aes.XMAX
                     else -> it
                 }
             }
@@ -187,7 +195,23 @@ class TooltipSpecFactory(
                     )
                 }
 
+                Aes.XMAX -> {
+                    TipLayoutHint.xAxisTooltip(
+                        coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
+                        axisRadius = AXIS_RADIUS,
+                        fillColor = xAxisTheme.tooltipFill()
+                    )
+                }
+
                 Aes.YMIN -> {
+                    TipLayoutHint.yAxisTooltip(
+                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
+                        axisRadius = AXIS_RADIUS,
+                        fillColor = yAxisTheme.tooltipFill()
+                    )
+                }
+
+                Aes.YMAX -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
                         axisRadius = AXIS_RADIUS,

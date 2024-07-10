@@ -229,6 +229,23 @@ object GeomInteractionUtil {
                     GeomTooltipSetup.none()
                 }
             }
+            GeomKind.BAND -> {
+                return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
+                    GeomTooltipSetup.xUnivariateFunction(
+                        GeomTargetLocator.LookupStrategy.HOVER,
+                        axisTooltipVisibilityFromConfig = true,
+                        isBand = true
+                    )
+                } else if (definedAesList.containsAll(listOf(Aes.XMIN, Aes.XMAX))) {
+                    GeomTooltipSetup.yUnivariateFunction(
+                        GeomTargetLocator.LookupStrategy.HOVER,
+                        axisTooltipVisibilityFromConfig = true,
+                        isBand = true
+                    )
+                } else {
+                    GeomTooltipSetup.none()
+                }
+            }
 
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -280,8 +297,6 @@ object GeomInteractionUtil {
             GeomKind.POLYGON,
             GeomKind.MAP,
             GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
-
-            GeomKind.BAND -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, true)
 
             GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
@@ -404,7 +419,8 @@ object GeomInteractionUtil {
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
+            GeomKind.ERROR_BAR,
+            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
@@ -414,8 +430,7 @@ object GeomInteractionUtil {
     private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.H_LINE,
-            GeomKind.V_LINE,
-            GeomKind.BAND -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+            GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
 
             else -> emptyMap()
         }

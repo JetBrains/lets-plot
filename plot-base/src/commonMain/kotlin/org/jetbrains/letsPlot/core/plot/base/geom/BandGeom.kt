@@ -7,17 +7,19 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 /*
   For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
 */
-class BandGeom(isVertical: Boolean) : GeomBase() {
+class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private val flipHelper = FlippableGeomHelper(isVertical)
 
     private fun afterRotation(aes: Aes<Double>): Aes<Double> {
@@ -49,14 +51,16 @@ class BandGeom(isVertical: Boolean) : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
-        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
         val viewPort = overallAesBounds(ctx)
 
-        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear) { p, linePath, polygon ->
+        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear) { linePath ->
             root.appendNodes(listOf(linePath))
-            buildHints(p, polygon, geomHelper, colorMapper(p), ctx)
         }
-        buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { root.add(it) }
+        buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { svg ->
+            root.add(svg)
+        }
+
+        buildHints(aesthetics, pos, coord, ctx)
     }
 
     private fun toStrip(
@@ -88,8 +92,8 @@ class BandGeom(isVertical: Boolean) : GeomBase() {
                     afterRotation(strip).top,
                     afterRotation(strip).bottom
                 ).forEach { intercept ->
-                    buildStripBorder(intercept, viewPort, p, helper)?.let { svgNode ->
-                        handler(svgNode)
+                    buildStripBorder(intercept, viewPort, p, helper)?.let { (svg, _) ->
+                        handler(svg)
                     }
                 }
             }
@@ -101,25 +105,58 @@ class BandGeom(isVertical: Boolean) : GeomBase() {
         viewPort: DoubleRectangle,
         p: DataPointAesthetics,
         helper: GeomHelper.SvgElementHelper
-    ): SvgNode? {
+    ): Pair<SvgNode, List<DoubleVector>>? {
         val start = afterRotation(DoubleVector(afterRotation(viewPort).left, intercept))
         val end = afterRotation(DoubleVector(afterRotation(viewPort).right, intercept))
-        return helper.createLine(start, end, p)?.first ?: return null
+        return helper.createLine(start, end, p)
     }
 
-    private fun buildHints(
-        p: DataPointAesthetics,
-        polygon: List<DoubleVector>,
-        helper: GeomHelper,
-        markerColors: List<Color>,
-        ctx: GeomContext
-    ) {
-        val hintsCollection = HintsCollection(p, helper)
-        val tooltipParams = GeomTargetCollector.TooltipParams(
-            tipLayoutHints = hintsCollection.hints,
-            markerColors = markerColors
-        )
-        ctx.targetCollector.addPolygon(polygon, p.index(), tooltipParams)
+    private fun resample(range: DoubleSpan, n: Int = 512): List<Double> {
+        return (0 until n).map { i ->
+            range.lowerEnd + (i.toDouble() / (n - 1)) * (range.upperEnd - range.lowerEnd)
+        }
+    }
+
+    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+        val helper = GeomHelper(pos, coord, ctx)
+        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
+        val isVerticallyOriented = when (isVertical) {
+            true -> !ctx.flipped
+            false -> ctx.flipped
+        }
+        val hint = HintsCollection.HintConfigFactory()
+            .defaultObjectRadius(0.0)
+            .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
+
+        val minAes = afterRotation(Aes.YMIN)
+        val maxAes = afterRotation(Aes.YMAX)
+        val viewPort = afterRotation(overallAesBounds(ctx))
+        val xRange = resample(DoubleSpan(viewPort.left, viewPort.right))
+
+        for (p in aesthetics.dataPoints()) {
+            for (x in xRange) {
+                val top = p[maxAes] ?: continue
+                val bottom = p[minAes] ?: continue
+                val defaultColor = p.fill() ?: continue
+
+                hint.defaultCoord(x)
+                    .defaultColor(defaultColor, alpha = null)
+
+                val hintsCollection = HintsCollection(p, helper)
+
+                val tooltipParams = GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintsCollection.hints,
+                    markerColors = colorMapper(p)
+                )
+
+                helper.toClient(afterRotation(DoubleVector(x, top)), p)?.let { topPoint ->
+                    ctx.targetCollector.addPoint(p.index(), topPoint, 0.0, tooltipParams)
+                }
+                helper.toClient(afterRotation(DoubleVector(x, bottom)), p)?.let { bottomPoint ->
+                    ctx.targetCollector.addPoint(p.index(), bottomPoint, 0.0, tooltipParams)
+                }
+            }
+        }
     }
 
     companion object {

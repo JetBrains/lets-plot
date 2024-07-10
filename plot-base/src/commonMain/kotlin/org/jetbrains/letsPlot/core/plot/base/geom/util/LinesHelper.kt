@@ -170,7 +170,7 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         toStrip: (DataPointAesthetics) -> DoubleRectangle?,
         isLinear: Boolean,
-        handler: (DataPointAesthetics, LinePath, List<DoubleVector>) -> Unit
+        handler: (LinePath) -> Unit
     ) {
         dataPoints.mapNotNull { p ->
             toStrip(p)?.let { stripRect ->
@@ -189,10 +189,11 @@ open class LinesHelper(
                         ) { toClient(it, p) }
                     }
                 }.let { clientVertices ->
-                    val linePath = LinePath.polygon(clientVertices).also { path ->
-                        decorateFillingPart(path, p)
+                    LinePath.polygon(clientVertices).also { linePath ->
+                        decorateFillingPart(linePath, p)
+                    }.let { linePath ->
+                        handler(linePath)
                     }
-                    handler(p, linePath, clientVertices)
                 }
             }
         }
