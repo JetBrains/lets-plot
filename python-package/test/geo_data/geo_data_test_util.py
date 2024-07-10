@@ -42,6 +42,7 @@ GEO_RECT_MAX_LAT: float = 7
 
 COLUMN_NAME_CITY = 'city'
 
+
 def run_intergration_tests() -> bool:
     import os
     if 'RUN_GEOCODING_INTEGRATION_TEST' in os.environ.keys():
@@ -166,8 +167,8 @@ def assert_row(
 
         def assert_geo_ring(geo_ring, ring: GJRing):
             for i, point in enumerate(ring):
-                assert point[0] == geo_ring[i][0] # lon
-                assert point[1] == geo_ring[i][1] # lat
+                assert point[0] == geo_ring[i][0]  # lon
+                assert point[1] == geo_ring[i][1]  # lat
 
         geometry = df.geometry[index]
         if isinstance(geometry, shapely.geometry.Polygon):
@@ -177,7 +178,8 @@ def assert_row(
             assert_geo_multipolygon(geometry, boundary)
 
 
-def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str], level_kind: LevelKind = LevelKind.city) -> Geocodes:
+def make_geocode_region(request: str, name: str, geo_object_id: str, highlights: List[str],
+                        level_kind: LevelKind = LevelKind.city) -> Geocodes:
     return Geocodes(
         level_kind=level_kind,
         queries=[RegionQuery(request=request)],
@@ -323,19 +325,13 @@ def lat(p: GJPoint) -> float:
     return p[1]
 
 
-def get_data_meta(plotSpec, layerIdx: int) -> dict:
-    return plotSpec.as_dict()['layers'][layerIdx]['data_meta']
-
-
-def get_map_data_meta(plotSpec, layerIdx: int) -> dict:
-    return plotSpec.as_dict()['layers'][layerIdx]['map_data_meta']
-
-
 def feature_to_answer(feature: GeocodedFeature) -> Answer:
     return Answer([feature])
 
+
 def features_to_answers(features: List[GeocodedFeature]) -> List[Answer]:
     return [Answer([feature]) for feature in features]
+
 
 def features_to_queries(features: List[GeocodedFeature]) -> List[RegionQuery]:
     return [RegionQuery(feature.name) for feature in features]

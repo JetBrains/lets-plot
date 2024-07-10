@@ -44,6 +44,8 @@ interface Scale {
 
         fun labels(l: List<String>): Builder
 
+        fun scaleBreaks(v: ScaleBreaks): Builder
+
         fun labelLengthLimit(v: Int): Builder
 
         fun labelFormatter(v: (Any) -> String): Builder

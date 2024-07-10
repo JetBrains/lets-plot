@@ -16,7 +16,7 @@ interface GeomContext {
     val targetCollector: GeomTargetCollector
     val annotation: Annotation?
     val backgroundColor: Color
-    val plotContext: PlotContext? // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
+    val plotContext: PlotContext // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
 
     fun getResolution(aes: Aes<Double>): Double
 

@@ -23,7 +23,7 @@ internal class DiscreteScale : AbstractScale<Any> {
     constructor(
         name: String,
         discreteTransform: DiscreteTransform,
-    ) : super(name, breaks = null) {
+    ) : super(name) {
         this.discreteTransform = discreteTransform
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html

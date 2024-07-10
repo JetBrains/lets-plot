@@ -15,24 +15,20 @@ import kotlin.math.*
 
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
-    private val formatter: ((Any) -> String)? = null,
+    private val providedFormatter: ((Any) -> String)? = null,
     private val superscriptExponent: Boolean,
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val breakValues = generateBreakValues(domain, recalculateBreaksCount(targetCount, domain, transform), transform)
-        val breakFormatters = if (formatter != null) {
-            List(breakValues.size) { formatter }
-        } else {
-            createFormatters(breakValues)
-        }
 
-        val labels = breakValues.mapIndexed() { i, v -> breakFormatters[i](v) }
-        return ScaleBreaks(breakValues, breakValues, labels)
-    }
-
-    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return formatter ?: defaultFormatter(domain, targetCount)
+        // ToDo: compute formats in a breaks helper.
+        val formatter = providedFormatter ?: createMultiFormatter(breakValues)
+        return ScaleBreaks(
+            domainValues = breakValues,
+            transformedValues = breakValues,
+            formatter = formatter
+        )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
@@ -95,13 +91,15 @@ internal class NonlinearBreaksGen(
                 is Log10Transform,
                 is SymlogTransform -> {
                     val transformedDomain = ScaleUtil.applyTransform(domain, transform)
-                    val recalculatedBreaksCount = (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
+                    val recalculatedBreaksCount =
+                        (floor(transformedDomain.upperEnd) - ceil(transformedDomain.lowerEnd)).roundToInt() + 1
                     if (recalculatedBreaksCount in MIN_BREAKS_COUNT..breaksCount) {
                         recalculatedBreaksCount
                     } else {
                         breaksCount
                     }
                 }
+
                 else -> breaksCount
             }
         }

@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.COLUMN
-import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.DateTime.DATE_TIME
-import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.TYPE
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.COLUMN
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.TYPE
+import org.jetbrains.letsPlot.core.spec.Option.Meta.SeriesAnnotation.Types.DATE_TIME
 import kotlin.test.Test
 
 class DataMetaStoreFactorLevelsTest {

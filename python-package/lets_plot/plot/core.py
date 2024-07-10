@@ -175,26 +175,6 @@ class FeatureSpec():
         self.__props.update(**kwargs)
 
     def props(self):
-        """
-        Return the dictionary of all properties of the object in their initial form.
-
-        Returns
-        -------
-        dict
-            Dictionary of properties.
-
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 4
-
-            from lets_plot import *
-            LetsPlot.setup_html()
-            p = ggplot({'x': [0], 'y': [0]}) + geom_point(aes('x', 'y'))
-            p.props()
-
-        """
         return self.__props
 
     def as_dict(self):

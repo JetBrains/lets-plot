@@ -39,6 +39,10 @@ def standardize_dict(value: Dict) -> Dict:
     return result
 
 
+def is_pandas_data_frame(v) -> bool:
+    return pandas and isinstance(v, pandas.DataFrame)
+
+
 def is_polars_dataframe(v):
     return polars and isinstance(v, polars.DataFrame)
 
@@ -53,6 +57,10 @@ def is_int(v):
 
 def is_float(v):
     return isinstance(v, float) or (numpy and isinstance(v, numpy.floating))
+
+
+def is_ndarray(data) -> bool:
+    return numpy and isinstance(data, numpy.ndarray)
 
 
 def is_number(v):

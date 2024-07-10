@@ -19,12 +19,13 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Pos
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
+    fun geomProvider(layerConfig: LayerConfig, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
     }
 

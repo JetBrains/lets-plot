@@ -6,16 +6,19 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.coord.TransformedCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.*
@@ -30,8 +33,10 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal open class SquareFrameOfReference(
-    private val hScaleBreaks: ScaleBreaks,
-    private val vScaleBreaks: ScaleBreaks,
+    hScaleBreaks: ScaleBreaks,
+    vScaleBreaks: ScaleBreaks,
+    hTransform: Transform,
+    vTransform: Transform,
     private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -47,7 +52,13 @@ internal open class SquareFrameOfReference(
     protected val hAxisTheme = theme.horizontalAxis(flipAxis)
     protected val vAxisTheme = theme.verticalAxis(flipAxis)
 
-    override val transientState: ComponentTransientState = TransientState()
+    override val transientState: TransientState = TransientState(
+        hScaleBreaks,
+        vScaleBreaks,
+        hTransform,
+        vTransform,
+        adjustedDomain
+    )
 
     override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
         val domainPoint0 = coord.fromClient(clientRect.origin)
@@ -129,7 +140,12 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawVAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
+            val (labelAdjustments, breaksData) = prepareAxisData(
+                axisInfo,
+                transientState.vBreaksTransformedValues,
+                transientState.vBreaksLabels,
+                vAxisTheme
+            )
 
             val axisComponent = buildAxis(
                 breaksData = breaksData,
@@ -154,7 +170,12 @@ internal open class SquareFrameOfReference(
 
     protected open fun doDrawHAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-            val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
+            val (labelAdjustments, breaksData) = prepareAxisData(
+                axisInfo,
+                transientState.hBreaksTransformedValues,
+                transientState.hBreaksLabels,
+                hAxisTheme
+            )
 
             val axisComponent = buildAxis(
                 breaksData = breaksData,
@@ -178,13 +199,18 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
-            val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks, vAxisTheme, theme.panel())
+        (layoutInfo.axisInfos.left ?: layoutInfo.axisInfos.right)?.let { axisInfo ->
+            val (_, breaksData) = prepareAxisData(
+                axisInfo,
+                transientState.vBreaksTransformedValues,
+                transientState.vBreaksLabels,
+                vAxisTheme
+            )
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
@@ -197,13 +223,18 @@ internal open class SquareFrameOfReference(
     }
 
     protected open fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
-            val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks, hAxisTheme, theme.panel())
+        (layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom)?.let { axisInfo ->
+            val (_, breaksData) = prepareAxisData(
+                axisInfo,
+                transientState.hBreaksTransformedValues,
+                transientState.hBreaksLabels,
+                hAxisTheme
+            )
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = true,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
@@ -233,11 +264,11 @@ internal open class SquareFrameOfReference(
     }
 
 
-    protected open fun prepareAxisData(
+    private fun prepareAxisData(
         axisInfo: AxisLayoutInfo,
-        scaleBreaks: ScaleBreaks,
+        breakTransformedValues: List<Double>,
+        breakLabels: List<String>,
         axisTheme: AxisTheme,
-        panelTheme: PanelTheme
     ): Pair<TickLabelAdjustments, BreaksData> {
         val labelAdjustments = TickLabelAdjustments(
             orientation = axisInfo.orientation,
@@ -248,13 +279,14 @@ internal open class SquareFrameOfReference(
         )
 
         val breaksData = AxisUtil.breaksData(
-            scaleBreaks = scaleBreaks,
+            breakTransformedValues,
+            breakLabels,
             coord = TransformedCoordinateSystem(
                 coord,
                 translate = transientState.offset,
                 scale = transientState.scale
             ),
-            domain = adjustedDomain,
+            domain = transientState.dataBounds,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
             axisTheme = axisTheme,
@@ -263,7 +295,7 @@ internal open class SquareFrameOfReference(
         return Pair(labelAdjustments, breaksData)
     }
 
-    protected fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
+    private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
         run {
             val tileBounds = layoutInfo.geomWithAxisBounds
             val rect = SvgRectElement(tileBounds)
@@ -405,18 +437,92 @@ internal open class SquareFrameOfReference(
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
         }
+
+        private fun calculateTransientBounds(
+            bounds: DoubleRectangle, // component bounds in px
+            scale: DoubleVector,
+            offset: DoubleVector
+        ): DoubleRectangle {
+            val viewport = InteractionUtil.viewportFromTransform(
+                rect = bounds,
+                scale = scale,
+                translate = offset
+            )
+            return viewport
+        }
     }
 
-    inner class TransientState : ComponentTransientState(
-        bounds = layoutInfo.geomContentBounds
+    inner class TransientState(
+        private val hScaleBreaks: ScaleBreaks,
+        private val vScaleBreaks: ScaleBreaks,
+        private val hTransform: Transform,
+        private val vTransform: Transform,
+        dataBounds: DoubleRectangle  // transformed domain
+    ) : ComponentTransientState(
+        viewBounds = layoutInfo.geomContentBounds  // px
     ) {
-        override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-            return this@SquareFrameOfReference.toDataBounds(clientRect)
+        val hBreaksTransformedValues = hScaleBreaks.transformedValues.toMutableList()
+        val vBreaksTransformedValues = vScaleBreaks.transformedValues.toMutableList()
+        val hBreaksLabels = hScaleBreaks.labels.toMutableList()
+        val vBreaksLabels = vScaleBreaks.labels.toMutableList()
+
+        override var dataBounds: DoubleRectangle = dataBounds
+            private set
+
+        override fun transformView(scale: DoubleVector, offset: DoubleVector) {
+            val transientBounds = calculateTransientBounds(viewBounds, scale, offset)
+            this.dataBounds = toDataBounds(transientBounds.subtract(viewBounds.origin))
+            super.transformView(scale, offset)
         }
 
         override fun repaint() {
+            validateHorizontalBreaks()
+            validateVerticalBreaks()
+
             // Repaint axis and grid.
             repaintFrame()
+        }
+
+        private fun validateHorizontalBreaks() {
+            if (hScaleBreaks.fixed || hBreaksTransformedValues.size < 2) {
+                // not generated - don't validate.
+                return
+            }
+
+            val dataRange: DoubleSpan = dataBounds.xRange()
+            validateBreaksIntern(dataRange, hBreaksTransformedValues, hBreaksLabels, hTransform, hScaleBreaks.formatter)
+        }
+
+        private fun validateVerticalBreaks() {
+            if (vScaleBreaks.fixed || vBreaksTransformedValues.size < 2) {
+                // not generated - don't validate.
+                return
+            }
+
+            val dataRange: DoubleSpan = dataBounds.yRange()
+            validateBreaksIntern(dataRange, vBreaksTransformedValues, vBreaksLabels, vTransform, vScaleBreaks.formatter)
+        }
+
+        private fun validateBreaksIntern(
+            dataRange: DoubleSpan,
+            transformedBreaks: MutableList<Double>,
+            labels: MutableList<String>,
+            transform: Transform,
+            formatter: (Any) -> String
+        ) {
+            if (dataRange.contains(transformedBreaks.first())) {
+                val newFirstBreak = transformedBreaks[0] - (transformedBreaks[1] - transformedBreaks[0])
+                transformedBreaks.add(0, newFirstBreak)
+                val domainV = transform.applyInverse(newFirstBreak)
+                labels.add(0, domainV?.let { formatter(domainV) } ?: "---")
+            }
+            if (dataRange.contains(transformedBreaks.last())) {
+                val newLastBreak =
+                    transformedBreaks.last() + (transformedBreaks.last() - transformedBreaks[transformedBreaks.size - 2])
+                transformedBreaks.add(newLastBreak)
+                val domainV = transform.applyInverse(newLastBreak)
+                labels.add(domainV?.let { formatter(domainV) } ?: "---")
+            }
         }
     }
 }

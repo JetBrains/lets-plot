@@ -16,11 +16,8 @@ object ScaleBreaksUtil {
         breakCount: Int
     ): Scale {
         val scaleBreaks = scale.getBreaksGenerator().generateBreaks(transformedDomain, breakCount)
-        val breaks = scaleBreaks.domainValues
-        val labels = scaleBreaks.labels
         return scale.with()
-            .breaks(breaks)
-            .labels(labels)
+            .scaleBreaks(scaleBreaks)
             .build()
     }
 }

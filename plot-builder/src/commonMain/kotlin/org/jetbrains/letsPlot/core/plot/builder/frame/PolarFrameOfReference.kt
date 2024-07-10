@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
@@ -36,6 +37,8 @@ internal class PolarFrameOfReference(
     plotContext: PlotContext,
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
+    hTransform: Transform,
+    vTransform: Transform,
     private val adjustedDomain: DoubleRectangle,
     private val coord: PolarCoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -45,6 +48,8 @@ internal class PolarFrameOfReference(
 ) : SquareFrameOfReference(
     hScaleBreaks,
     vScaleBreaks,
+    hTransform,
+    vTransform,
     adjustedDomain,
     coord,
     layoutInfo,
@@ -108,7 +113,7 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,
@@ -127,7 +132,7 @@ internal class PolarFrameOfReference(
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
                 gridTheme = gridTheme,

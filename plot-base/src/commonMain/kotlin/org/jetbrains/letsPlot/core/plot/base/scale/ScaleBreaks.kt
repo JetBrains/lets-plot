@@ -10,8 +10,36 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 class ScaleBreaks constructor(
     val domainValues: List<Any>,
     val transformedValues: List<Double>,
-    val labels: List<String>
+    val labels: List<String>,
+    val fixed: Boolean,
+    val formatter: (Any) -> String,
 ) {
+    // For auto-generated breaks.
+    constructor(
+        domainValues: List<Any>,
+        transformedValues: List<Double>,
+        formatter: (Any) -> String,
+    ) : this(
+        domainValues,
+        transformedValues,
+        labels = domainValues.map { formatter(it) },
+        fixed = false,
+        formatter = formatter,
+    )
+
+    // For manual breaks or categoricals.
+    constructor(
+        domainValues: List<Any>,
+        transformedValues: List<Double>,
+        labels: List<String>,
+    ) : this(
+        domainValues,
+        transformedValues,
+        labels = labels,
+        fixed = true,
+        formatter = DUMMY_FORMATTER,
+    )
+
     val isEmpty: Boolean
         get() = domainValues.isEmpty()
 
@@ -57,12 +85,17 @@ class ScaleBreaks constructor(
             ScaleBreaks(
                 domainValues = domainValues.slice(includeIndices),
                 transformedValues = transformedValues.slice(includeIndices),
-                labels = labels.slice(includeIndices)
+                labels = labels.slice(includeIndices),
+                fixed = fixed,
+                formatter = formatter,
             )
         }
     }
 
     companion object {
+        internal val DUMMY_FORMATTER: (Any) -> String =
+            { v -> throw IllegalStateException("An attempt to format $v using 'dummy formatter'.") }
+
         val EMPTY: ScaleBreaks = ScaleBreaks(emptyList(), emptyList(), emptyList())
     }
 }

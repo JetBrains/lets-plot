@@ -10,7 +10,7 @@ from .geom import _geom
 from .scale import scale_gradientn
 from .scale import scale_grey
 from .util import as_boolean
-from .util import is_ndarray
+from .._type_utils import is_ndarray
 
 try:
     import png

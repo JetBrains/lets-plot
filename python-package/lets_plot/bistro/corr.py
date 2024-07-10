@@ -5,7 +5,7 @@
 """Correlation matrix implementation module"""
 from typing import Any
 
-from lets_plot.plot.util import is_data_frame
+from lets_plot.plot.util import is_pandas_data_frame
 
 try:
     import numpy
@@ -418,7 +418,7 @@ class corr_plot:
         if _is_corr_matrix(data):
             coefficients = True
         else:
-            if is_data_frame(data):
+            if is_pandas_data_frame(data):
                 data = data.corr(numeric_only=True)
                 coefficients = True
             else:

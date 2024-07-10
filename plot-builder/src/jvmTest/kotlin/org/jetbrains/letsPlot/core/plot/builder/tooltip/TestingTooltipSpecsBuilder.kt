@@ -9,6 +9,7 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.axisTheme
@@ -27,7 +28,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
     private val mockSettings = withSettings()
         .defaultAnswer(ReturnsNotNullValuesAnswer())
 
-    private val plotContext = TestingPlotContextWithTooltipFormatters()
+    private val plotContext = NullPlotContext
 
     fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()

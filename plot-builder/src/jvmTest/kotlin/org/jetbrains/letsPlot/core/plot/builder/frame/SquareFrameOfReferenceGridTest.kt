@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
@@ -160,6 +161,8 @@ class SquareFrameOfReferenceGridTest {
         val squareFrameOfReference = SquareFrameOfReference(
             hScaleBreaks = scaleBreaks,
             vScaleBreaks = scaleBreaks,
+            hTransform = Transforms.IDENTITY,
+            vTransform = Transforms.IDENTITY,
             adjustedDomain = transformedDomain,
             coord = Coords.create(
                 CoordinatesMapper.create(
@@ -203,6 +206,8 @@ class SquareFrameOfReferenceGridTest {
                 override fun getScale(aes: Aes<*>): Scale = error("unexpected call")
                 override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan = error("unexpected call")
                 override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String = error("unexpected call")
+                override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String = error("unexpected call")
+                override fun getDefaultFormatter(varName: String): (Any) -> String = error("unexpected call")
             }
         )
 

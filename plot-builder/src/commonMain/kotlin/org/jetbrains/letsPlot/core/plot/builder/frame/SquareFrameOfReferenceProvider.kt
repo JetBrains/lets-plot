@@ -124,19 +124,11 @@ internal open class SquareFrameOfReferenceProvider(
 
         val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
-        val hScale = hScaleProto.with()
-            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(hAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
-        val vScale = vScaleProto.with()
-            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(vAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
         val tileFrameOfReference = SquareFrameOfReference(
-            hScaleBreaks = hScale.getScaleBreaks(),
-            vScaleBreaks = vScale.getScaleBreaks(),
+            hScaleBreaks = hAxisLayoutInfo.axisBreaks,
+            vScaleBreaks = vAxisLayoutInfo.axisBreaks,
+            hTransform = hScaleProto.transform,
+            vTransform = vScaleProto.transform,
             adjustedDomain,
             coord,
             layoutInfo,

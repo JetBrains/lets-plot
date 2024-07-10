@@ -125,6 +125,8 @@ internal object PlotAssemblerUtil {
             // custom legend
             layerInfo.customLegendOptions?.let { legendOptions ->
                 val guideKey = GuideKey.fromName(legendOptions.group)
+                if (guideOptionsMap[guideKey]?.hasNone() == true) return@let
+
                 val legendTitle = guideOptionsMap[guideKey]?.getTitle() ?: legendOptions.group
 
                 val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {

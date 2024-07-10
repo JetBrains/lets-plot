@@ -155,7 +155,7 @@ class layer_tooltips(FeatureSpec):
         - field='^X' - for all positional x,
         - field='^Y' - for all positional y.
 
-        |
+        ----
 
         The string template in `format` will allow to change lines
         for the default tooltip without `line` specifying.
@@ -163,7 +163,7 @@ class layer_tooltips(FeatureSpec):
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
 
-        |
+        ----
 
         For more info see https://lets-plot.org/python/pages/formats.html.
 
@@ -420,29 +420,29 @@ class layer_tooltips(FeatureSpec):
         The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
         A long title can be split into multiple lines using `\\\\n` as a text separator.
 
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 15
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 15
 
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        n = 100
-        np.random.seed(42)
-        data = {
-            'id': np.arange(n),
-            'x': np.random.normal(size=n),
-            'y': np.random.normal(size=n),
-            'c': np.random.choice(['a', 'b'], size=n),
-            'w': np.random.randint(1, 11, size=n)
-        }
-        ggplot(data, aes('x', 'y')) + \\
-            geom_point(aes(color='c', size='w'), show_legend=False, \\
-                       tooltips=layer_tooltips().title('@id')
-                                                .line('color|@c')
-                                                .line('size|@w'))
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 100
+            np.random.seed(42)
+            data = {
+                'id': np.arange(n),
+                'x': np.random.normal(size=n),
+                'y': np.random.normal(size=n),
+                'c': np.random.choice(['a', 'b'], size=n),
+                'w': np.random.randint(1, 11, size=n)
+            }
+            ggplot(data, aes('x', 'y')) + \\
+                geom_point(aes(color='c', size='w'), show_legend=False, \\
+                           tooltips=layer_tooltips().title('@id')
+                                                    .line('color|@c')
+                                                    .line('size|@w'))
 
         """
         self._tooltip_title = value

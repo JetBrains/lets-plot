@@ -77,7 +77,7 @@ object PieAnnotation {
         annotation: Annotation,
         textSizeGetter: (String, DataPointAesthetics) -> DoubleVector,
         offsetForPointer: Double,
-        plotContext: PlotContext?
+        plotContext: PlotContext
     ): AnnotationLabel {
         val text = annotation.getAnnotationText(sector.p.index(), plotContext)
         val textSize = textSizeGetter(text, sector.p)
@@ -212,7 +212,7 @@ object PieAnnotation {
             }
         }
 
-        return Side.values().flatMap(::createForSide)
+        return Side.entries.flatMap(::createForSide)
     }
 
     private fun createAnnotationElement(

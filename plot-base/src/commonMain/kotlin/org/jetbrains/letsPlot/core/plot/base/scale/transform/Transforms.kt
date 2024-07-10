@@ -68,11 +68,6 @@ object Transforms {
         private val transform: ContinuousTransform,
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
-        override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
-            return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
-        }
-
         override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
@@ -86,7 +81,13 @@ object Transforms {
                 it as Double // Should not contain NULLs
             }
 
-            return ScaleBreaks(originalBreaks, transformedBreaks, scaleBreaks.labels)
+            return ScaleBreaks(
+                originalBreaks,
+                transformedBreaks,
+                scaleBreaks.labels,
+                scaleBreaks.fixed,
+                scaleBreaks.formatter
+            )
         }
     }
 }

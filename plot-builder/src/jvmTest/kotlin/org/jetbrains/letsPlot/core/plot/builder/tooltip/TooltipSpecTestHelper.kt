@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.MappedDataAccessMock.Mapping
@@ -29,7 +30,7 @@ open class TooltipSpecTestHelper {
     private lateinit var nonTooltipAes: List<Aes<*>>
     private lateinit var axisAes: List<Aes<*>>
 
-    private val plotContext = TestingPlotContextWithTooltipFormatters()
+    private val plotContext = NullPlotContext
 
     internal fun init() {
         geomTargetBuilder =

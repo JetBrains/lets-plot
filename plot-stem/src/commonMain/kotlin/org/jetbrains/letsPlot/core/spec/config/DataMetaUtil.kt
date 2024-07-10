@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Meta.MappingAnnotation
@@ -92,9 +93,29 @@ object DataMetaUtil {
         return options
             .getMaps(SeriesAnnotation.TAG)
             ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
-            ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
+            ?.filterValues(SeriesAnnotation.Types.DATE_TIME::equals)
             ?.keys
             ?: emptySet()
+    }
+
+    fun getDataTypes(dataMeta: Map<*, *>): Map<String, DataType> {
+        fun toDType(dataType: String?): DataType {
+            return when (dataType) {
+                null -> DataType.UNKNOWN
+                SeriesAnnotation.Types.INTEGER -> DataType.INTEGER
+                SeriesAnnotation.Types.FLOATING -> DataType.FLOATING
+                SeriesAnnotation.Types.STRING -> DataType.STRING
+                SeriesAnnotation.Types.BOOLEAN -> DataType.BOOLEAN
+                SeriesAnnotation.Types.DATE_TIME -> DataType.INSTANT
+                SeriesAnnotation.Types.UNKNOWN -> DataType.UNKNOWN
+                else -> DataType.UNKNOWN
+            }
+        }
+
+        return dataMeta
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(COLUMN)!! to toDType(it.getString(SeriesAnnotation.TYPE)) }
+            ?: emptyMap()
     }
 
     fun getCategoricalVariables(dataMeta: Map<*, *>): Set<String> {

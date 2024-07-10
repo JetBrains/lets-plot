@@ -7,11 +7,10 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 abstract class ComponentTransientState(
-    val bounds: DoubleRectangle
+    val viewBounds: DoubleRectangle
 ) {
     var scale: DoubleVector = DoubleVector(1.0, 1.0)
         private set
@@ -19,12 +18,12 @@ abstract class ComponentTransientState(
         private set
     var transform = SvgTransformBuilder().build()
         private set
-    lateinit var dataBounds: DoubleRectangle
-        private set
 
-    fun scale(scale: DoubleVector) = transform(scale, this.offset)
+    abstract val dataBounds: DoubleRectangle
 
-    fun translate(offset: DoubleVector) = transform(this.scale, offset)
+    fun scale(scale: DoubleVector) = transformView(scale, this.offset)
+
+    fun translate(offset: DoubleVector) = transformView(this.scale, offset)
 
     fun applyDelta(scaleDelta: DoubleVector, offsetDelta: DoubleVector) {
         val offset = DoubleVector(
@@ -36,12 +35,12 @@ abstract class ComponentTransientState(
             scale.y * scaleDelta.y
         )
 
-        transform(scale, offset)
+        transformView(scale, offset)
     }
 
-    fun reset() = transform(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
+    fun reset() = transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
 
-    fun transform(scale: DoubleVector, offset: DoubleVector) {
+    open fun transformView(scale: DoubleVector, offset: DoubleVector) {
         this.scale = scale
         this.offset = offset
 
@@ -50,21 +49,8 @@ abstract class ComponentTransientState(
             .translate(offset)
             .build()
 
-        this.dataBounds = calculateDataBounds()
-
         repaint()
     }
-
-    private fun calculateDataBounds(): DoubleRectangle {
-        val viewport = InteractionUtil.viewportFromTransform(
-            rect = bounds,
-            scale = scale,
-            translate = offset
-        )
-        return toDataBounds(viewport.subtract(bounds.origin))
-    }
-
-    abstract fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 
     internal abstract fun repaint()
 }
