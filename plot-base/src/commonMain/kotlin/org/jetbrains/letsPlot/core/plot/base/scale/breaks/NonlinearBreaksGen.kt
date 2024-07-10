@@ -21,6 +21,7 @@ internal class NonlinearBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
+            providedFormatter,
             superscriptExponent,
             transform,
             niceLogBreaks = true
@@ -37,6 +38,7 @@ internal class NonlinearBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
+            providedFormatter = null,
             superscriptExponent,
             transform,
             niceLogBreaks = false

@@ -23,14 +23,21 @@ import kotlin.math.ceil
 internal class TimeBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
-    count: Int
+    count: Int,
+    private val providedFormatter: ((Any) -> String)?,
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
+
     override val breaks: List<Double>
     val formatter: (Any) -> String
 
     init {
         val ticks: List<Double> = when {
-            targetStep < 1000 -> LinearBreaksHelper(rangeStart, rangeEnd, count, false).breaks
+            targetStep < 1000 -> LinearBreaksHelper(
+                rangeStart, rangeEnd, count,
+                providedFormatter = DUMMY_FORMATTER,
+                false,
+            ).breaks
+
             else -> computeNiceTicks()
         }
 
@@ -39,7 +46,7 @@ internal class TimeBreaksHelper(
             false -> ticks
         }
 
-        formatter = { v -> formatString((v as Number).toLong()) }
+        formatter = providedFormatter ?: { v -> formatString((v as Number).toLong()) }
     }
 
     fun formatBreaks(ticks: List<Double>): List<String> {

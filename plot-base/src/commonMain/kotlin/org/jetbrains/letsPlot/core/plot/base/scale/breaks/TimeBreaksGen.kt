@@ -9,12 +9,15 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
-class TimeBreaksGen : BreaksGenerator {
+class TimeBreaksGen(
+    private val providedFormatter: ((Any) -> String)? = null,
+) : BreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = TimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
-            targetCount
+            targetCount,
+            providedFormatter
         )
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
@@ -25,7 +28,8 @@ class TimeBreaksGen : BreaksGenerator {
         return TimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
-            targetCount
+            targetCount,
+            providedFormatter = null
         ).formatter
     }
 }

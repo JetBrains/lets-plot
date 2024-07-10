@@ -19,10 +19,12 @@ internal class NonlinearBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
     targetCount: Int,
+    private val providedFormatter: ((Any) -> String)?,
     superscriptExponent: Boolean,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
 ) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
+
     override val breaks: List<Double>
     val formatter: (Any) -> String
 
@@ -52,14 +54,16 @@ internal class NonlinearBreaksHelper(
                 transformedDomain.lowerEnd,
                 transformedDomain.upperEnd,
                 targetCount,
-                superscriptExponent
+                providedFormatter = DUMMY_FORMATTER,
+                superscriptExponent,
             ).breaks
 
         // Transform back to data space.
         this.breaks = transform.applyInverse(transformedBreakValues).filterNotNull()
-
-        val breakFormatters = createFormatters(this.breaks, superscriptExponent)
-        this.formatter = MultiFormatter(this.breaks, breakFormatters)::apply
+        this.formatter = providedFormatter ?: let {
+            val breakFormatters = createFormatters(this.breaks, superscriptExponent)
+            MultiFormatter(this.breaks, breakFormatters)::apply
+        }
     }
 
     companion object {

@@ -132,7 +132,7 @@ class LinearBreaksHelperTest {
         }
 
         private fun computeBreaks(domainStart: Double, domainEnd: Double, targetCount: Int): Array<Double> {
-            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, false)
+            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, null, false)
             return helper.breaks.toTypedArray()
         }
 

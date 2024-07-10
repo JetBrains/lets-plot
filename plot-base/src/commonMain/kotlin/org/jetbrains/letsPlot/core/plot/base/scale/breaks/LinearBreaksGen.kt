@@ -19,13 +19,13 @@ internal class LinearBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
+            providedFormatter,
             superscriptExponent
         )
-        val formatter = providedFormatter ?: helper.formatter
         return ScaleBreaks(
             domainValues = helper.breaks,
             transformedValues = helper.breaks,
-            formatter = formatter
+            formatter = helper.formatter
         )
     }
 
@@ -34,6 +34,7 @@ internal class LinearBreaksGen(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount,
+            providedFormatter = null,
             superscriptExponent
         )
         return helper.formatter

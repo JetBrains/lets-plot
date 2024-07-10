@@ -16,23 +16,23 @@ class DateTimeBreaksGen(
         val helper = DateTimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
-            targetCount
+            targetCount,
+            providedFormatter
         )
 
-        val formatter = providedFormatter ?: helper.formatter
         return ScaleBreaks(
             domainValues = helper.breaks,
             transformedValues = helper.breaks,
-            formatter = { v: Any -> formatter(v as Number) }
+            formatter = helper.formatter
         )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        val numFormatter = DateTimeBreaksHelper(
+        return DateTimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
-            targetCount
+            targetCount,
+            providedFormatter = null
         ).formatter
-        return { v: Any -> numFormatter(v as Number) }
     }
 }

@@ -12,6 +12,7 @@ internal class LinearBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
     targetCount: Int,
+    private val providedFormatter: ((Any) -> String)?,
     superscriptExponent: Boolean,
     precise: Boolean = false
 ) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
@@ -45,7 +46,7 @@ internal class LinearBreaksHelper(
             breaks
         }
 
-        this.formatter = createFormatter(this.breaks, superscriptExponent)
+        this.formatter = providedFormatter ?: createFormatter(this.breaks, superscriptExponent)
     }
 
     companion object {

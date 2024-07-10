@@ -402,7 +402,14 @@ open class PlotConfigBackend(
             // Try the same formatter that is used for the continuous scale
             val breaksPattern = SeriesUtil.toDoubleList(distinctValues.toList())
                 ?.let { doubleList -> SeriesUtil.range(doubleList) }
-                ?.let { range -> DateTimeBreaksHelper(range.lowerEnd, range.upperEnd, distinctValues.size).pattern }
+                ?.let { range ->
+                    DateTimeBreaksHelper(
+                        range.lowerEnd,
+                        range.upperEnd,
+                        distinctValues.size,
+                        providedFormatter = null
+                    ).pattern
+                }
 
             // Other patterns to choose the most good one
             val patterns = listOf(
