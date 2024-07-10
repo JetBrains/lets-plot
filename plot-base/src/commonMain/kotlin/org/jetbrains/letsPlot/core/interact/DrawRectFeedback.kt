@@ -128,10 +128,15 @@ class DrawRectFeedback(
         target: InteractionTarget
     ): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
-        val dragTo = DoubleVector(
-            x = dragTo.x.coerceIn(target.geomBounds.left, target.geomBounds.right),
-            y = dragTo.y.coerceIn(target.geomBounds.top, target.geomBounds.bottom)
-        )
+        val dragTo = if (fixAspectRatio == true) {
+            dragTo // do not limit selection for fixed aspect ratio to allow zooming out
+        } else {
+            DoubleVector(
+                x = dragTo.x.coerceIn(target.geomBounds.left, target.geomBounds.right),
+                y = dragTo.y.coerceIn(target.geomBounds.top, target.geomBounds.bottom)
+            )
+        }
+
         val drag = dragTo.subtract(dragFrom)
 
         if (fixAspectRatio == null && drag.length() > 20) {
@@ -141,27 +146,10 @@ class DrawRectFeedback(
         return if (fixAspectRatio == true) {
             val ratio = target.geomBounds.width / target.geomBounds.height
             val size = if (ratio > 1) {
-                val dragHeight = abs(drag.y)
-
-                val height = when {
-                    dragFrom.y + dragHeight > target.geomBounds.bottom -> (target.geomBounds.bottom - dragFrom.y)
-                    dragFrom.y - dragHeight < target.geomBounds.top -> (dragFrom.y - target.geomBounds.top)
-                    else -> dragHeight
-                }
-
-                val width = (height * ratio)
-
-                val finalWidth = when {
-                    dragFrom.x + width > target.geomBounds.right -> target.geomBounds.right - dragFrom.x
-                    dragFrom.x - width < target.geomBounds.left -> dragFrom.x - target.geomBounds.left
-                    else -> width
-                }
-
-                val finalHeight = finalWidth / ratio
-
-                DoubleVector(finalWidth, finalHeight)
+                val width = (abs(drag.y) * ratio)
+                val height = width / ratio
+                DoubleVector(width, height)
             } else {
-                // Simple implementation for now. Try to flip and use the code above.
                 val width = abs(drag.x)
                 val height = width / ratio
                 DoubleVector(width, height)
