@@ -12,24 +12,21 @@ import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksHelper
 
 class TimeBreaksGen : BreaksGenerator {
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
-        val helper = breaksHelper(domain, targetCount)
+        val helper = TimeBreaksHelper(
+            domain.lowerEnd,
+            domain.upperEnd,
+            targetCount
+        )
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
         return ScaleBreaks(ticks, ticks, labels, fixed = false, formatter = helper.formatter)
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return breaksHelper(domain, targetCount).formatter
-    }
-
-    private fun breaksHelper(
-        domain: DoubleSpan,
-        targetCount: Int
-    ): TimeBreaksHelper {
         return TimeBreaksHelper(
             domain.lowerEnd,
             domain.upperEnd,
             targetCount
-        )
+        ).formatter
     }
 }

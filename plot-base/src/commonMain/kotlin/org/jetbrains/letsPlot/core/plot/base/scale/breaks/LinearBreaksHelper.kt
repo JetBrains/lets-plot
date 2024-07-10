@@ -8,28 +8,31 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
-class LinearBreaksHelper(
+internal class LinearBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
-    count: Int,
+    targetCount: Int,
+    superscriptExponent: Boolean,
     precise: Boolean = false
-) : BreaksHelperBase(rangeStart, rangeEnd, count) {
+) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
+
     override val breaks: List<Double>
+    val formatter: (Any) -> String
 
     init {
-        check(count > 0) { "Can't compute breaks for count: $count" }
+        check(targetCount > 0) { "Can't compute breaks for count: $targetCount" }
 
         val step = if (precise) {
             this.targetStep
         } else {
-            computeNiceStep(this.span, count)
+            computeNiceStep(this.span, targetCount)
         }
 
         val breaks =
             if (SeriesUtil.isBeyondPrecision(normalStart, step) || SeriesUtil.isBeyondPrecision(normalEnd, step)) {
                 emptyList()
             } else if (precise) {
-                (0 until count).map { normalStart + step / 2 + it * step }
+                (0 until targetCount).map { normalStart + step / 2 + it * step }
             } else {
                 computeNiceBreaks(normalStart, normalEnd, step)
             }
@@ -41,6 +44,8 @@ class LinearBreaksHelper(
         } else {
             breaks
         }
+
+        this.formatter = createFormatter(this.breaks, superscriptExponent)
     }
 
     companion object {
@@ -88,6 +93,28 @@ class LinearBreaksHelper(
             }
 
             return breaks
+        }
+
+        private fun createFormatter(breakValues: List<Double>, superscriptExponent: Boolean): (Any) -> String {
+            val (referenceValue, step) = when {
+                breakValues.isEmpty() -> Pair(0.0, 0.5)
+                else -> {
+                    val v = max(abs(breakValues.first()), abs(breakValues.last()))
+                    val s = when {
+                        breakValues.size == 1 -> v / 10
+                        else -> abs(breakValues[1] - breakValues[0])
+                    }
+                    Pair(v, s)
+                }
+            }
+
+            val formatter = NumericBreakFormatter(
+                referenceValue,
+                step,
+                allowMetricPrefix = true,
+                superscriptExponent = superscriptExponent
+            )
+            return formatter::apply
         }
     }
 }

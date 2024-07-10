@@ -29,7 +29,7 @@ class DateTimeBreaksHelper(
             formatter = interval.getFormatter(step)
             pattern = interval.formatPattern(step)
             // compute step so that it is multiple of automatic time steps
-            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count).breaks
+            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, false).breaks
 
         } else {
 
@@ -59,7 +59,8 @@ class DateTimeBreaksHelper(
                 val helper = LinearBreaksHelper(
                     startYear.toDouble(),
                     endYear.toDouble(),
-                    count
+                    count,
+                    superscriptExponent = false
                 )
                 for (tickYear in helper.breaks) {
                     val tickDate = TimeUtil.yearStart(round(tickYear).toInt())

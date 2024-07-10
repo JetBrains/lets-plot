@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.DAY
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
@@ -16,11 +17,10 @@ import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.millis
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.minute
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.second
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.totalDays
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 
-class TimeBreaksHelper(
+internal class TimeBreaksHelper(
     rangeStart: Double,
     rangeEnd: Double,
     count: Int
@@ -30,7 +30,7 @@ class TimeBreaksHelper(
 
     init {
         val ticks: List<Double> = when {
-            targetStep < 1000 -> LinearBreaksHelper(rangeStart, rangeEnd, count).breaks
+            targetStep < 1000 -> LinearBreaksHelper(rangeStart, rangeEnd, count, false).breaks
             else -> computeNiceTicks()
         }
 
@@ -94,7 +94,7 @@ class TimeBreaksHelper(
         timeParts.toString().takeIf(String::isNotBlank)?.let(parts::add)
 
         val sign = "-".takeIf { v < 0 } ?: ""
-        return  parts.joinToString(prefix = sign, separator = " ")
+        return parts.joinToString(prefix = sign, separator = " ")
     }
 
     private fun computeNiceTicks(): List<Double> {
