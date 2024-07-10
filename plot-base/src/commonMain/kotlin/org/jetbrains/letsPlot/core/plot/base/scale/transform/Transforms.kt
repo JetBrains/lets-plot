@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearBreaksGen
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
