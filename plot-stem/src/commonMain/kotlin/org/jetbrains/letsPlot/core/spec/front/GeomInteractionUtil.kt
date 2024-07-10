@@ -279,8 +279,9 @@ object GeomInteractionUtil {
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
             GeomKind.MAP,
-            GeomKind.RECT,
-            GeomKind.BAND -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+            GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+
+            GeomKind.BAND -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, true)
 
             GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
@@ -338,6 +339,7 @@ object GeomInteractionUtil {
             !isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.AREA_RIDGES ||
                     geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
+            geomKind == GeomKind.BAND -> listOf(Aes.XMIN, Aes.XMAX, Aes.YMIN, Aes.YMAX)
 
             else -> axisAesFromFunctionKind
         }
