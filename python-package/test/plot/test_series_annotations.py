@@ -122,6 +122,8 @@ def test_factor_levels_with_ordering():
     p = ggplot(data, mapping) + geom_point()
 
     assert p.as_dict()['data_meta']['mapping_annotations'] == [
+        {'aes': 'x', 'annotation': 'as_discrete'},
+        {'aes': 'a', 'annotation': 'as_discrete'},
         {'aes': 'b', 'annotation': 'as_discrete', 'parameters': {'label': 'V2'}},
     ]
     assert p.as_dict()['data_meta']['series_annotations'] == [
@@ -151,6 +153,7 @@ def test_with_mapping_annotations():
     assert p.as_dict()['data_meta']['mapping_annotations'] == [
         {'aes': 'x', 'annotation': 'as_discrete', 'parameters': {'order_by': 'v2'}},
         {'aes': 'a', 'annotation': 'as_discrete', 'parameters': {'order': -1}},
+        {'aes': 'y', 'annotation': 'as_discrete'},
         {'aes': 'b', 'annotation': 'as_discrete', 'parameters': {'label': 'V2'}},
     ]
 
@@ -219,6 +222,9 @@ def test_as_discrete():
 
     # no meta for 'c' in the layer -> no series_annotations
     assert 'series_annotations' not in p.as_dict()['layers'][0]['data_meta']
+    assert p.as_dict()['layers'][0]['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete'}
+    ]
 
 
 def test_as_discrete_with_levels():
