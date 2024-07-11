@@ -53,7 +53,9 @@ class Waterfall {
                 'name': 'waterfall',
                 'x': 'x',
                 'y': 'y',
-                'calc_total': false
+                'calc_total': true,
+                'sorted_value': false,
+                'max_values': 3
               }
             }
         """.trimIndent()

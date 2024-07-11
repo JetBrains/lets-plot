@@ -29,7 +29,10 @@ class WaterfallPlotSpecChange : SpecChange {
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
-            calcTotal = bistroSpec.getBool(Waterfall.CALC_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL
+            calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
+            sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
+            threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
+            maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES)
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)

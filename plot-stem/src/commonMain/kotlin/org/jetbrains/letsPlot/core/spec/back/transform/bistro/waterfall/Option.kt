@@ -9,7 +9,10 @@ object Option {
     object Waterfall {
         const val X = "x"
         const val Y = "y"
-        const val CALC_TOTAL = "calc_total"
+        const val CALCULATE_TOTAL = "calc_total"
+        const val SORTED_VALUE = "sorted_value"
+        const val THRESHOLD = "threshold"
+        const val MAX_VALUES = "max_values"
     }
 
     object WaterfallBox {

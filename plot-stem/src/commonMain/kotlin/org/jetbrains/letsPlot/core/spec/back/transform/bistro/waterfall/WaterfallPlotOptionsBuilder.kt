@@ -17,10 +17,13 @@ class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
     private val x: String?,
     private val y: String?,
-    private val calcTotal: Boolean = DEF_CALC_TOTAL
+    private val calcTotal: Boolean,
+    private val sortedValue: Boolean,
+    private val threshold: Double?,
+    private val maxValues: Int?
 ) {
     fun build(): PlotOptions {
-        val boxLayerData = boxLayerData(data, x, y, calcTotal)
+        val boxLayerData = boxLayerData(data, x, y, calcTotal, sortedValue, threshold, maxValues)
         return plot {
             layerOptions = listOf(
                 LayerOptions().apply {
@@ -36,11 +39,22 @@ class WaterfallPlotOptionsBuilder(
         data: Map<*, *>,
         x: String?,
         y: String?,
-        calcTotal: Boolean
+        calcTotal: Boolean,
+        sortedValue: Boolean,
+        threshold: Double?,
+        maxValues: Int?
     ): Map<String, List<Any?>> {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
-        return WaterfallUtil.computeBoxStat(DataUtil.standardiseData(data), xVar, yVar, calcTotal)
+        return WaterfallUtil.calculateBoxStat(
+            DataUtil.standardiseData(data),
+            x = xVar,
+            y = yVar,
+            calcTotal = calcTotal,
+            sortedValue = sortedValue,
+            threshold = threshold,
+            maxValues = maxValues
+        )
     }
 
     private fun getBoxMappings(): HashMap<String, String> {
@@ -54,5 +68,6 @@ class WaterfallPlotOptionsBuilder(
 
     companion object {
         const val DEF_CALC_TOTAL: Boolean = true
+        const val DEF_SORTED_VALUE: Boolean = false
     }
 }
