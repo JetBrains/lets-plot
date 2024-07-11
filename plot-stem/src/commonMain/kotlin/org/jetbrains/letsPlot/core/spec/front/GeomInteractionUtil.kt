@@ -230,21 +230,7 @@ object GeomInteractionUtil {
                 }
             }
             GeomKind.BAND -> {
-                return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
-                    GeomTooltipSetup.xUnivariateFunction(
-                        GeomTargetLocator.LookupStrategy.HOVER,
-                        axisTooltipVisibilityFromConfig = true,
-                        isBand = true
-                    )
-                } else if (definedAesList.containsAll(listOf(Aes.XMIN, Aes.XMAX))) {
-                    GeomTooltipSetup.yUnivariateFunction(
-                        GeomTargetLocator.LookupStrategy.HOVER,
-                        axisTooltipVisibilityFromConfig = true,
-                        isBand = true
-                    )
-                } else {
-                    GeomTooltipSetup.none()
-                }
+                return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, axisTooltipVisibilityFromConfig = true, isBand = true)
             }
 
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {

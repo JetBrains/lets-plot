@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.Aes
 
 // `open` - for Mockito tests
 open class TipLayoutHint(
@@ -15,7 +16,8 @@ open class TipLayoutHint(
     open val objectRadius: Double,
     open val stemLength: StemLength,
     open val fillColor: Color?,
-    open val markerColors: List<Color>
+    open val markerColors: List<Color>,
+    open val aes: Aes<Double>? = null
 ) {
     enum class StemLength(val value: Double) {
         NORMAL(12.0),
@@ -45,7 +47,8 @@ open class TipLayoutHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            markerColors: List<Color> = emptyList(),
+            aes: Aes<Double>? = null
         ): TipLayoutHint {
             return TipLayoutHint(
                 Kind.VERTICAL_TOOLTIP,
@@ -53,7 +56,8 @@ open class TipLayoutHint(
                 objectRadius,
                 stemLength,
                 fillColor,
-                markerColors
+                markerColors,
+                aes
             )
         }
 
@@ -62,7 +66,8 @@ open class TipLayoutHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            markerColors: List<Color> = emptyList(),
+            aes: Aes<Double>? = null
         ): TipLayoutHint {
             return TipLayoutHint(
                 Kind.HORIZONTAL_TOOLTIP,
@@ -70,7 +75,8 @@ open class TipLayoutHint(
                 objectRadius,
                 stemLength,
                 fillColor,
-                markerColors
+                markerColors,
+                aes
             )
         }
 
@@ -78,7 +84,8 @@ open class TipLayoutHint(
             coord: DoubleVector?,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            markerColors: List<Color> = emptyList(),
+            aes: Aes<Double>? = null
         ): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.CURSOR_TOOLTIP,
@@ -86,7 +93,8 @@ open class TipLayoutHint(
                 objectRadius = 0.0,
                 stemLength,
                 fillColor,
-                markerColors
+                markerColors,
+                aes
             )
         }
 
@@ -94,7 +102,8 @@ open class TipLayoutHint(
             coord: DoubleVector?,
             axisRadius: Double = 0.0,
             stemLength: StemLength = StemLength.NONE,
-            fillColor: Color? = null
+            fillColor: Color? = null,
+            aes: Aes<Double>? = null
         ): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.X_AXIS_TOOLTIP,
@@ -102,7 +111,8 @@ open class TipLayoutHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                markerColors = emptyList()
+                markerColors = emptyList(),
+                aes
             )
         }
 
@@ -110,7 +120,8 @@ open class TipLayoutHint(
             coord: DoubleVector?,
             axisRadius: Double = 0.0,
             stemLength: StemLength = StemLength.NONE,
-            fillColor: Color? = null
+            fillColor: Color? = null,
+            aes: Aes<Double>? = null
         ): TipLayoutHint {
             return TipLayoutHint(
                 kind = Kind.Y_AXIS_TOOLTIP,
@@ -118,18 +129,20 @@ open class TipLayoutHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                markerColors = emptyList()
+                markerColors = emptyList(),
+                aes
             )
         }
 
-        fun rotatedTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL): TipLayoutHint {
+        fun rotatedTooltip(coord: DoubleVector?, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL, aes: Aes<Double>? = null): TipLayoutHint {
             return TipLayoutHint(
                 Kind.ROTATED_TOOLTIP,
                 coord,
                 objectRadius,
                 stemLength,
                 color,
-                markerColors = emptyList()
+                markerColors = emptyList(),
+                aes
             )
         }
     }

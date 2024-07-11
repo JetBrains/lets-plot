@@ -142,18 +142,23 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                 hint.defaultCoord(x)
                     .defaultColor(defaultColor, alpha = null)
 
-                val hintsCollection = HintsCollection(p, helper)
-
-                val tooltipParams = GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hintsCollection.hints,
+                val hintsCollectionTop = HintsCollection(p, helper, maxAes)
+                    .addHint(hint.create(maxAes))
+                val tooltipParamsTop = GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintsCollectionTop.hints,
                     markerColors = colorMapper(p)
                 )
-
                 helper.toClient(afterRotation(DoubleVector(x, top)), p)?.let { topPoint ->
-                    ctx.targetCollector.addPoint(p.index(), topPoint, 0.0, tooltipParams)
+                    ctx.targetCollector.addPoint(p.index(), topPoint, 0.0, tooltipParamsTop)
                 }
+                val hintsCollectionBottom = HintsCollection(p, helper, minAes)
+                    .addHint(hint.create(minAes))
+                val tooltipParamsBottom = GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintsCollectionBottom.hints,
+                    markerColors = colorMapper(p)
+                )
                 helper.toClient(afterRotation(DoubleVector(x, bottom)), p)?.let { bottomPoint ->
-                    ctx.targetCollector.addPoint(p.index(), bottomPoint, 0.0, tooltipParams)
+                    ctx.targetCollector.addPoint(p.index(), bottomPoint, 0.0, tooltipParamsBottom)
                 }
             }
         }
