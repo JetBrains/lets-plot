@@ -57,7 +57,7 @@ class Waterfall {
                 'fill': 'grey',
                 'size': 2,
                 'alpha': 0.75,
-                'linetype': 'longdash',
+                'linetype': 'dotted',
                 'width': 0.35,
                 'show_legend': true,
                 'tooltips': {
@@ -74,7 +74,8 @@ class Waterfall {
                 'calc_total': true,
                 'total_title': 'result',
                 'sorted_value': true,
-                'max_values': 3
+                'max_values': 3,
+                'hline': {'color': 'magenta', 'size': 2}
               }
             }
         """.trimIndent()

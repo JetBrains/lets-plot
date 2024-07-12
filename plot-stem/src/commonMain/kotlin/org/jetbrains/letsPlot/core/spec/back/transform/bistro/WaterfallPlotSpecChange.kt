@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
+import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
@@ -41,7 +42,17 @@ class WaterfallPlotSpecChange : SpecChange {
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
-            maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES)
+            maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
+            hLineOptions = bistroSpec.getMap(Waterfall.H_LINE)?.let { hLineSpec ->
+                WaterfallPlotOptionsBuilder.DEF_H_LINE.merge(
+                    WaterfallPlotOptionsBuilder.ElementLineOptions(
+                        color = hLineSpec.getString(Option.Theme.Elem.COLOR),
+                        size = hLineSpec.getDouble(Option.Theme.Elem.SIZE),
+                        lineType = hLineSpec.read(Option.Theme.Elem.LINETYPE)?.let { LineTypeOptionConverter().apply(it) },
+                        blank = hLineSpec.getBool(Option.Theme.Elem.BLANK) ?: false
+                    )
+                )
+            } ?: WaterfallPlotOptionsBuilder.DEF_H_LINE
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)

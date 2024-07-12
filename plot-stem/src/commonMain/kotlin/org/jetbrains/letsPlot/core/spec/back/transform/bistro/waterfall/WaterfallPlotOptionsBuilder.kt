@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.commons.intern.json.getDouble
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
@@ -33,47 +34,41 @@ class WaterfallPlotOptionsBuilder(
     private val totalTitle: String?,
     private val sortedValue: Boolean,
     private val threshold: Double?,
-    private val maxValues: Int?
+    private val maxValues: Int?,
+    private val hLineOptions: ElementLineOptions?
 ) {
     fun build(): PlotOptions {
         if (totalTitle != null) {
             FlowType.TOTAL.changeTitle(totalTitle)
         }
-        val boxLayerData = boxLayerData(data, x, y, calcTotal, sortedValue, threshold, maxValues)
+        val boxLayerData = boxLayerData()
+        val boxOptionsList = listOf(
+            LayerOptions().apply {
+                geom = GeomKind.CROSS_BAR
+                this.data = boxLayerData
+                mappings = boxMappings()
+                color = when (this@WaterfallPlotOptionsBuilder.color) {
+                    FLOW_TYPE_COLOR_VALUE -> null
+                    else -> this@WaterfallPlotOptionsBuilder.color
+                }
+                fill = when (this@WaterfallPlotOptionsBuilder.fill) {
+                    FLOW_TYPE_COLOR_VALUE -> null
+                    else -> this@WaterfallPlotOptionsBuilder.fill
+                }
+                size = this@WaterfallPlotOptionsBuilder.size
+                alpha = this@WaterfallPlotOptionsBuilder.alpha
+                linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
+                width = this@WaterfallPlotOptionsBuilder.width
+                showLegend = this@WaterfallPlotOptionsBuilder.showLegend
+                tooltipsOptions = boxTooltipsOptions()
+            },
+        )
         return plot {
-            layerOptions = listOf(
-                LayerOptions().apply {
-                    geom = GeomKind.CROSS_BAR
-                    this.data = boxLayerData
-                    mappings = getBoxMappings()
-                    color = when (this@WaterfallPlotOptionsBuilder.color) {
-                        FLOW_TYPE_COLOR_VALUE -> null
-                        else -> this@WaterfallPlotOptionsBuilder.color
-                    }
-                    fill = when (this@WaterfallPlotOptionsBuilder.fill) {
-                        FLOW_TYPE_COLOR_VALUE -> null
-                        else -> this@WaterfallPlotOptionsBuilder.fill
-                    }
-                    size = this@WaterfallPlotOptionsBuilder.size
-                    alpha = this@WaterfallPlotOptionsBuilder.alpha
-                    linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
-                    width = this@WaterfallPlotOptionsBuilder.width
-                    showLegend = this@WaterfallPlotOptionsBuilder.showLegend
-                    tooltipsOptions = readTooltipsOptions(this@WaterfallPlotOptionsBuilder.tooltipsOptions)
-                },
-            )
+            layerOptions = boxOptionsList + hLineOptionsList()
         }
     }
 
-    private fun boxLayerData(
-        data: Map<*, *>,
-        x: String?,
-        y: String?,
-        calcTotal: Boolean,
-        sortedValue: Boolean,
-        threshold: Double?,
-        maxValues: Int?
-    ): Map<String, List<Any?>> {
+    private fun boxLayerData(): Map<String, List<Any?>> {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
         return WaterfallUtil.calculateBoxStat(
@@ -83,11 +78,12 @@ class WaterfallPlotOptionsBuilder(
             calcTotal = calcTotal,
             sortedValue = sortedValue,
             threshold = threshold,
-            maxValues = maxValues
+            maxValues = maxValues,
+            initialY = INITIAL_Y
         )
     }
 
-    private fun getBoxMappings(): Map<Aes<*>, String> {
+    private fun boxMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
             WaterfallBox.AES_X to WaterfallBox.Var.X,
             WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
@@ -102,7 +98,7 @@ class WaterfallPlotOptionsBuilder(
         return mappings
     }
 
-    private fun readTooltipsOptions(tooltipsOptions: Map<String, Any>?): TooltipsOptions? {
+    private fun boxTooltipsOptions(): TooltipsOptions? {
         if (tooltipsOptions == null) return null
         return tooltips {
             anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
@@ -119,6 +115,19 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
+    private fun hLineOptionsList(): List<LayerOptions> {
+        if (hLineOptions == null || hLineOptions.blank) return emptyList()
+        return listOf(
+            LayerOptions().apply {
+                geom = GeomKind.H_LINE
+                yintercept = INITIAL_Y
+                color = hLineOptions.color
+                size = hLineOptions.size
+                linetype = hLineOptions.lineType
+            }
+        )
+    }
+
     enum class FlowType(private var title: String) {
         INCREASE("Increase"),
         DECREASE("Decrease"),
@@ -133,9 +142,20 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
+    data class ElementLineOptions(var color: String?, var size: Double?, var lineType: LineType?, var blank: Boolean) {
+        fun merge(other: ElementLineOptions): ElementLineOptions {
+            color = other.color ?: color
+            size = other.size ?: size
+            lineType = other.lineType ?: lineType
+            blank = other.blank
+            return this
+        }
+    }
+
     companion object {
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_COLOR_VALUE = "flow_type"
+        private const val INITIAL_Y = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
@@ -153,6 +173,12 @@ class WaterfallPlotOptionsBuilder(
                 "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.CUMULATIVE_SUM}",
             ),
             Option.Layer.DISABLE_SPLITTING to true
+        )
+        val DEF_H_LINE = ElementLineOptions(
+            color = null,
+            size = null,
+            lineType = LineTypeOptionConverter().apply("dashed"),
+            blank = true
         )
     }
 }

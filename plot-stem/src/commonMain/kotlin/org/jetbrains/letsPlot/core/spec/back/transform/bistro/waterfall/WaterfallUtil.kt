@@ -20,23 +20,24 @@ internal object WaterfallUtil {
         calcTotal: Boolean,
         sortedValue: Boolean,
         threshold: Double?,
-        maxValues: Int?
+        maxValues: Int?,
+        initialY: Double
     ): Map<String, List<Any?>> {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
-        val yPrev = ys.runningFold(0.0) { sum, value -> sum + value }.subList(0, ys.size)
-        val yNext = ys.runningReduce { sum, value -> sum + value }
+        val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.subList(0, ys.size)
+        val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.subList(1, ys.size + 1)
         val (yMin, yMax) = (yPrev zip yNext).map { Pair(min(it.first, it.second), max(it.first, it.second)) }.unzip()
         val flowType = ys.map { if (it >= 0) FlowType.INCREASE.toString() else FlowType.DECREASE.toString() }
 
         val calculateLast: (Any) -> List<Any> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
         val xsLast = calculateLast(FlowType.TOTAL.toString())
-        val ysLast = calculateLast(yNext.last() - ys.first())
-        val yPrevLast = calculateLast(ys.first())
+        val ysLast = calculateLast(yNext.last() - (initialY + ys.first()))
+        val yPrevLast = calculateLast(initialY + ys.first())
         val yNextLast = calculateLast(yNext.last())
-        val yMinLast = calculateLast(min(yNext.last(), 0.0))
-        val yMaxLast = calculateLast(max(yNext.last(), 0.0))
+        val yMinLast = calculateLast(min(yNext.last(), initialY))
+        val yMaxLast = calculateLast(max(yNext.last(), initialY))
         val flowTypeLast = calculateLast(FlowType.TOTAL.toString())
 
         return mapOf(

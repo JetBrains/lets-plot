@@ -24,6 +24,7 @@ object Option {
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"
         const val MAX_VALUES = "max_values"
+        const val H_LINE = "hline"
     }
 
     object WaterfallBox {
