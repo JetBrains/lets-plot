@@ -19,6 +19,7 @@ class WaterfallPlotOptionsBuilder(
     private val y: String?,
     private val color: String?,
     private val fill: String?,
+    private val size: Double?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -38,6 +39,7 @@ class WaterfallPlotOptionsBuilder(
                     setParameter(Option.PlotBase.MAPPING, getBoxMappings(this@WaterfallPlotOptionsBuilder.fill))
                     color = this@WaterfallPlotOptionsBuilder.color
                     fill = boxFill
+                    size = this@WaterfallPlotOptionsBuilder.size
                 },
             )
         }
@@ -90,6 +92,7 @@ class WaterfallPlotOptionsBuilder(
     companion object {
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
+        const val DEF_SIZE = 0.0
 
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_COLOR_VALUE = "flow_type"

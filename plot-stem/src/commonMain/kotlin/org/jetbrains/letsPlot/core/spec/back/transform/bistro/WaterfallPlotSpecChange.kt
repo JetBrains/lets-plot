@@ -31,6 +31,7 @@ class WaterfallPlotSpecChange : SpecChange {
             y = bistroSpec.getString(Waterfall.Y),
             color = bistroSpec.getString(Waterfall.COLOR),
             fill = bistroSpec.getString(Waterfall.FILL) ?: WaterfallPlotOptionsBuilder.FLOW_TYPE_COLOR_VALUE,
+            size = bistroSpec.getDouble(Waterfall.SIZE) ?: WaterfallPlotOptionsBuilder.DEF_SIZE,
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),

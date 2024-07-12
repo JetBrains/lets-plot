@@ -11,6 +11,7 @@ object Option {
         const val Y = "y"
         const val COLOR = "color"
         const val FILL = "fill"
+        const val SIZE = "size"
         const val CALCULATE_TOTAL = "calc_total"
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"
