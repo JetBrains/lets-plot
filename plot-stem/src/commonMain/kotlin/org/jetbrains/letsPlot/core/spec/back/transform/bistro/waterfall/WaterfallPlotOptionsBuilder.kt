@@ -24,6 +24,7 @@ class WaterfallPlotOptionsBuilder(
     private val alpha: Double?,
     private val lineType: Any?,
     private val width: Double?,
+    private val showLegend: Boolean?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -47,6 +48,7 @@ class WaterfallPlotOptionsBuilder(
                     alpha = this@WaterfallPlotOptionsBuilder.alpha
                     linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
                     width = this@WaterfallPlotOptionsBuilder.width
+                    showLegend = this@WaterfallPlotOptionsBuilder.showLegend
                 },
             )
         }
@@ -100,6 +102,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
         const val DEF_SIZE = 0.0
+        const val DEF_SHOW_LEGEND = false
 
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_COLOR_VALUE = "flow_type"
