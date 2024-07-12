@@ -5,9 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.encoding
 
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
-
-class UnsupportedRGBEncoder : RGBEncoder {
+object UnsupportedRGBEncoder : RGBEncoder {
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
         throw IllegalStateException("Can't encode RGB data as Data URL: operation is not supported.")
     }

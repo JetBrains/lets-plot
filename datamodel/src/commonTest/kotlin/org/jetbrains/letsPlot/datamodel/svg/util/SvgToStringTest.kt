@@ -25,7 +25,7 @@ class SvgToStringTest {
             )
         }
 
-        val svgString = SvgToString(UnsupportedRGBEncoder()).render(svg)
+        val svgString = SvgToString(UnsupportedRGBEncoder).render(svg)
 
         // There should be no spaces between <tspan> elements
         assertEquals(
@@ -78,7 +78,7 @@ class SvgToStringTest {
             )
         }
 
-        val svgString = SvgToString(UnsupportedRGBEncoder()).render(svg)
+        val svgString = SvgToString(UnsupportedRGBEncoder).render(svg)
 
         // There should be no spaces between <tspan> elements
         assertTrue(svgString.contains("<tspan>1</tspan><tspan>2</tspan><tspan>3</tspan>"))
