@@ -20,6 +20,7 @@ object Option {
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
         const val CALCULATE_TOTAL = "calc_total"
+        const val TOTAL_TITLE = "total_title"
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"
         const val MAX_VALUES = "max_values"

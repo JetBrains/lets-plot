@@ -71,7 +71,8 @@ class Waterfall {
                   ],
                   'disable_splitting': true
                 },
-                'calc_total': false,
+                'calc_total': true,
+                'total_title': 'result',
                 'sorted_value': true,
                 'max_values': 3
               }

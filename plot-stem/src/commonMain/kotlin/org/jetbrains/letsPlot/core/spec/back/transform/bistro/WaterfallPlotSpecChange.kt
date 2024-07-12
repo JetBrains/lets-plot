@@ -38,6 +38,7 @@ class WaterfallPlotSpecChange : SpecChange {
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: WaterfallPlotOptionsBuilder.DEF_SHOW_LEGEND,
             tooltipsOptions = bistroSpec.getMap(Waterfall.TOOLTIPS) ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS,
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
+            totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES)

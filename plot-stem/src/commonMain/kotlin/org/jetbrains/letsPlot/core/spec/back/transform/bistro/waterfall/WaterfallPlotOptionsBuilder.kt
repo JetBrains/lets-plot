@@ -30,11 +30,15 @@ class WaterfallPlotOptionsBuilder(
     private val showLegend: Boolean?,
     private val tooltipsOptions: Map<String, Any>?,
     private val calcTotal: Boolean,
+    private val totalTitle: String?,
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?
 ) {
     fun build(): PlotOptions {
+        if (totalTitle != null) {
+            FlowType.TOTAL.changeTitle(totalTitle)
+        }
         val boxLayerData = boxLayerData(data, x, y, calcTotal, sortedValue, threshold, maxValues)
         val boxFill = when (fill) {
             FLOW_TYPE_COLOR_VALUE -> null
@@ -110,13 +114,17 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    enum class FlowType {
-        INCREASE,
-        DECREASE,
-        TOTAL;
+    enum class FlowType(private var title: String) {
+        INCREASE("Increase"),
+        DECREASE("Decrease"),
+        TOTAL("Total");
+
+        fun changeTitle(title: String) {
+            this.title = title
+        }
 
         override fun toString(): String {
-            return name.lowercase().replaceFirstChar(Char::titlecase)
+            return title
         }
     }
 
