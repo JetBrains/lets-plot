@@ -103,8 +103,8 @@ class WaterfallPlotOptionsBuilder(
             lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
             formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
                 TooltipsOptions.format {
-                    field = formatOptions["field"]
-                    format = formatOptions["format"]
+                    field = formatOptions[Option.LinesSpec.Format.FIELD]
+                    format = formatOptions[Option.LinesSpec.Format.FORMAT]
                 }
             }
         }
@@ -121,12 +121,24 @@ class WaterfallPlotOptionsBuilder(
     }
 
     companion object {
+        const val OTHER_NAME = "Other"
+        const val FLOW_TYPE_COLOR_VALUE = "flow_type"
+        private const val INITIAL_TOOLTIP_NAME = "Initial"
+        private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
+        private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
+
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
         const val DEF_SIZE = 0.0
         const val DEF_SHOW_LEGEND = false
-
-        const val OTHER_NAME = "Other"
-        const val FLOW_TYPE_COLOR_VALUE = "flow_type"
+        val DEF_TOOLTIPS = mapOf(
+            Option.Layer.TOOLTIP_TITLE to "^x",
+            Option.LinesSpec.LINES to listOf(
+                "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
+                "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
+                "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.CUMULATIVE_SUM}",
+            ),
+            Option.Layer.DISABLE_SPLITTING to true
+        )
     }
 }
