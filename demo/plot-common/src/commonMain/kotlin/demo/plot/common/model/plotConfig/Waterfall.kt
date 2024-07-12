@@ -53,8 +53,9 @@ class Waterfall {
                 'name': 'waterfall',
                 'x': 'x',
                 'y': 'y',
-                'calc_total': true,
-                'sorted_value': false,
+                'color': 'cyan',
+                'calc_total': false,
+                'sorted_value': true,
                 'max_values': 3
               }
             }

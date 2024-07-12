@@ -29,6 +29,7 @@ class WaterfallPlotSpecChange : SpecChange {
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
+            color = bistroSpec.getString(Waterfall.COLOR),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),

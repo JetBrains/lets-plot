@@ -17,6 +17,7 @@ class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
     private val x: String?,
     private val y: String?,
+    private val color: String?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -30,6 +31,7 @@ class WaterfallPlotOptionsBuilder(
                     geom = GeomKind.CROSS_BAR
                     this.data = boxLayerData
                     setParameter(Option.PlotBase.MAPPING, getBoxMappings())
+                    color = this@WaterfallPlotOptionsBuilder.color
                 },
             )
         }
