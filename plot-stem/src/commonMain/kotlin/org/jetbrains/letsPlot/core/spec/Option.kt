@@ -505,6 +505,8 @@ object Option {
     }
 
     object Pos {
+        const val NAME = "name"
+
         object Dodge {
             const val WIDTH = "width"
         }

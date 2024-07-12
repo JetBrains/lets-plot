@@ -26,6 +26,7 @@ object Option {
         const val MAX_VALUES = "max_values"
         const val H_LINE = "hline"
         const val H_LINE_ON_TOP = "hline_ontop"
+        const val CONNECTOR = "connector"
     }
 
     object WaterfallBox {
@@ -43,6 +44,16 @@ object Option {
             const val INITIAL = "initial"
             const val CUMULATIVE_SUM = "cumsum"
             const val DIFFERENCE = "dy"
+        }
+    }
+
+    object WaterfallConnector {
+        val AES_X = Aes.X
+        val AES_Y = Aes.Y
+
+        object Var {
+            const val X = "x"
+            const val Y = "y"
         }
     }
 }

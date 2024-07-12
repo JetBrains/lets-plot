@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
@@ -48,6 +49,17 @@ internal object WaterfallUtil {
             WaterfallBox.Var.INITIAL to yPrev + yPrevLast,
             WaterfallBox.Var.CUMULATIVE_SUM to yNext + yNextLast,
             WaterfallBox.Var.DIFFERENCE to ys + ysLast,
+        )
+    }
+
+    fun calculateConnectorStat(
+        boxData: Map<String, List<Any?>>
+    ): Map<String, List<Any?>> {
+        val xs = boxData.getValue(WaterfallBox.Var.X)
+        val ys = boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM)
+        return mapOf(
+            WaterfallConnector.Var.X to xs.subList(0, xs.size - 1),
+            WaterfallConnector.Var.Y to ys.subList(0, ys.size - 1),
         )
     }
 

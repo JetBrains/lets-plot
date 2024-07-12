@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 
 class WaterfallPlotOptionsBuilder(
@@ -23,7 +24,7 @@ class WaterfallPlotOptionsBuilder(
     private val size: Double?,
     private val alpha: Double?,
     private val lineType: Any?,
-    private val width: Double?,
+    private val width: Double,
     private val showLegend: Boolean?,
     private val tooltipsOptions: TooltipsOptions,
     private val calcTotal: Boolean,
@@ -32,7 +33,8 @@ class WaterfallPlotOptionsBuilder(
     private val threshold: Double?,
     private val maxValues: Int?,
     private val hLineOptions: ElementLineOptions,
-    private val hLineOnTop: Boolean
+    private val hLineOnTop: Boolean,
+    private val connectorOptions: ElementLineOptions
 ) {
     fun build(): PlotOptions {
         if (totalTitle != null) {
@@ -62,9 +64,9 @@ class WaterfallPlotOptionsBuilder(
         )
         return plot {
             layerOptions = if (hLineOnTop) {
-                boxOptionsList + hLineOptionsList()
+                connectorOptionsList(boxLayerData) + boxOptionsList + hLineOptionsList()
             } else {
-                hLineOptionsList() + boxOptionsList
+                hLineOptionsList() + connectorOptionsList(boxLayerData) + boxOptionsList
             }
         }
     }
@@ -112,6 +114,29 @@ class WaterfallPlotOptionsBuilder(
         )
     }
 
+    private fun connectorOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
+        if (connectorOptions.blank) return emptyList()
+        return listOf(
+            LayerOptions().apply {
+                geom = GeomKind.SPOKE
+                this.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
+                mappings = mapOf(
+                    WaterfallConnector.AES_X to WaterfallConnector.Var.X,
+                    WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
+                )
+                angle = 0.0
+                radius = 1.0 - this@WaterfallPlotOptionsBuilder.width
+                position = position {
+                    name = CONNECTOR_POSITION_NAME
+                    x = 0.5 - (1 - this@WaterfallPlotOptionsBuilder.width) / 2.0
+                }
+                color = connectorOptions.color
+                size = connectorOptions.size
+                linetype = connectorOptions.lineType
+            }
+        )
+    }
+
     enum class FlowType(private var title: String) {
         INCREASE("Increase"),
         DECREASE("Decrease"),
@@ -143,9 +168,11 @@ class WaterfallPlotOptionsBuilder(
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
+        private const val CONNECTOR_POSITION_NAME = "nudge"
 
         const val DEF_COLOR = "black"
         const val DEF_SIZE = 0.0
+        const val DEF_WIDTH = 0.9
         const val DEF_SHOW_LEGEND = false
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
@@ -165,5 +192,11 @@ class WaterfallPlotOptionsBuilder(
             blank = true
         )
         const val DEF_H_LINE_ON_TOP = true
+        val DEF_CONNECTOR = ElementLineOptions(
+            color = null,
+            size = null,
+            lineType = null,
+            blank = false
+        )
     }
 }

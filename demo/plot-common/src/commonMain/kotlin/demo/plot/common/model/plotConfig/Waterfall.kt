@@ -47,7 +47,7 @@ class Waterfall {
                 'y': [100, 200, -400, 500, -200]
               },
               'ggtitle': {
-                'text': 'Basic waterfall demo'
+                'text': 'Try different parameters'
               },
               'bistro': {
                 'name': 'waterfall',
@@ -55,7 +55,7 @@ class Waterfall {
                 'y': 'y',
                 'color': 'flow_type',
                 'fill': 'grey',
-                'size': 2,
+                'size': 3,
                 'alpha': 0.75,
                 'linetype': 'dotted',
                 'width': 0.35,
@@ -77,9 +77,13 @@ class Waterfall {
                 'max_values': 3,
                 'hline': {
                   'color': 'magenta',
-                  'size': 2
+                  'size': 5
                 },
-                'hline_ontop': false
+                'hline_ontop': false,
+                'connector': {
+                  'color': 'cyan',
+                  'size': 1.5
+                }
               }
             }
         """.trimIndent()

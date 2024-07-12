@@ -22,7 +22,7 @@ class LayerOptions : Options() {
     var samplingOptions: SamplingOptions? by map(Layer.SAMPLING)
     var stat: String? by map(Layer.STAT)
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
-    var position: String? by map(Layer.POS)
+    var position: PositionOptions? by map(Layer.POS)
 
     // geom_text
     var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)

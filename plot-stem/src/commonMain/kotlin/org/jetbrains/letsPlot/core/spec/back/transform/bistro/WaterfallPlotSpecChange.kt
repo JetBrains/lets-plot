@@ -37,7 +37,7 @@ class WaterfallPlotSpecChange : SpecChange {
             size = bistroSpec.getDouble(Waterfall.SIZE) ?: WaterfallPlotOptionsBuilder.DEF_SIZE,
             alpha = bistroSpec.getDouble(Waterfall.ALPHA),
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
-            width = bistroSpec.getDouble(Waterfall.WIDTH),
+            width = bistroSpec.getDouble(Waterfall.WIDTH) ?: WaterfallPlotOptionsBuilder.DEF_WIDTH,
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: WaterfallPlotOptionsBuilder.DEF_SHOW_LEGEND,
             tooltipsOptions = readBoxTooltipsOptions(bistroSpec),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
@@ -46,7 +46,8 @@ class WaterfallPlotSpecChange : SpecChange {
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, WaterfallPlotOptionsBuilder.DEF_H_LINE),
-            hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP
+            hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP,
+            connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, WaterfallPlotOptionsBuilder.DEF_CONNECTOR)
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)
