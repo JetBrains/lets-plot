@@ -29,7 +29,7 @@ class WaterfallPlotSpecChange : SpecChange {
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
-            color = bistroSpec.getString(Waterfall.COLOR),
+            color = bistroSpec.getString(Waterfall.COLOR) ?: WaterfallPlotOptionsBuilder.DEF_COLOR,
             fill = bistroSpec.getString(Waterfall.FILL) ?: WaterfallPlotOptionsBuilder.FLOW_TYPE_COLOR_VALUE,
             size = bistroSpec.getDouble(Waterfall.SIZE) ?: WaterfallPlotOptionsBuilder.DEF_SIZE,
             alpha = bistroSpec.getDouble(Waterfall.ALPHA),

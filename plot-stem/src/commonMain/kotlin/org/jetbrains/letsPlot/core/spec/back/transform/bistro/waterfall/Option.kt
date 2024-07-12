@@ -30,6 +30,7 @@ object Option {
         val AES_X = Aes.X
         val AES_YMIN = Aes.YMIN
         val AES_YMAX = Aes.YMAX
+        val AES_COLOR = Aes.COLOR
         val AES_FILL = Aes.FILL
 
         object Var {

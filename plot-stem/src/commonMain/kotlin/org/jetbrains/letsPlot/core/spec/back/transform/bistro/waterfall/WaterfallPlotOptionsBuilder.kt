@@ -40,18 +40,20 @@ class WaterfallPlotOptionsBuilder(
             FlowType.TOTAL.changeTitle(totalTitle)
         }
         val boxLayerData = boxLayerData(data, x, y, calcTotal, sortedValue, threshold, maxValues)
-        val boxFill = when (fill) {
-            FLOW_TYPE_COLOR_VALUE -> null
-            else -> fill
-        }
         return plot {
             layerOptions = listOf(
                 LayerOptions().apply {
                     geom = GeomKind.CROSS_BAR
                     this.data = boxLayerData
-                    mappings = getBoxMappings(this@WaterfallPlotOptionsBuilder.fill)
-                    color = this@WaterfallPlotOptionsBuilder.color
-                    fill = boxFill
+                    mappings = getBoxMappings()
+                    color = when (this@WaterfallPlotOptionsBuilder.color) {
+                        FLOW_TYPE_COLOR_VALUE -> null
+                        else -> this@WaterfallPlotOptionsBuilder.color
+                    }
+                    fill = when (this@WaterfallPlotOptionsBuilder.fill) {
+                        FLOW_TYPE_COLOR_VALUE -> null
+                        else -> this@WaterfallPlotOptionsBuilder.fill
+                    }
                     size = this@WaterfallPlotOptionsBuilder.size
                     alpha = this@WaterfallPlotOptionsBuilder.alpha
                     linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
@@ -85,16 +87,19 @@ class WaterfallPlotOptionsBuilder(
         )
     }
 
-    private fun getBoxMappings(fill: String?): Map<Aes<*>, String> {
-        val fillMapping = when (fill) {
-            FLOW_TYPE_COLOR_VALUE -> hashMapOf(WaterfallBox.AES_FILL to WaterfallBox.Var.FLOW_TYPE)
-            else -> emptyMap()
-        }
-        return hashMapOf(
+    private fun getBoxMappings(): Map<Aes<*>, String> {
+        val mappings = mutableMapOf<Aes<*>, String>(
             WaterfallBox.AES_X to WaterfallBox.Var.X,
             WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
             WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX,
-        ) + fillMapping
+        )
+        if (color == FLOW_TYPE_COLOR_VALUE) {
+            mappings[WaterfallBox.AES_COLOR] = WaterfallBox.Var.FLOW_TYPE
+        }
+        if (fill == FLOW_TYPE_COLOR_VALUE) {
+            mappings[WaterfallBox.AES_FILL] = WaterfallBox.Var.FLOW_TYPE
+        }
+        return mappings
     }
 
     private fun readTooltipsOptions(tooltipsOptions: Map<String, Any>?): TooltipsOptions? {
@@ -135,10 +140,11 @@ class WaterfallPlotOptionsBuilder(
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
 
-        const val DEF_CALC_TOTAL = true
-        const val DEF_SORTED_VALUE = false
+        const val DEF_COLOR = "black"
         const val DEF_SIZE = 0.0
         const val DEF_SHOW_LEGEND = false
+        const val DEF_CALC_TOTAL = true
+        const val DEF_SORTED_VALUE = false
         val DEF_TOOLTIPS = mapOf(
             Option.Layer.TOOLTIP_TITLE to "^x",
             Option.LinesSpec.LINES to listOf(
