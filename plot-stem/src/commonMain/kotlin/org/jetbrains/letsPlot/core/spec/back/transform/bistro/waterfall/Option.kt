@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
+
 object Option {
     object Waterfall {
         const val X = "x"
@@ -21,12 +23,11 @@ object Option {
     }
 
     object WaterfallBox {
-        object Aes {
-            const val X = "x"
-            const val YMIN = "ymin"
-            const val YMAX = "ymax"
-            const val FILL = "fill"
-        }
+        val AES_X = Aes.X
+        val AES_YMIN = Aes.YMIN
+        val AES_YMAX = Aes.YMAX
+        val AES_FILL = Aes.FILL
+
         object Var {
             const val X = "x"
             const val YMIN = "ymin"

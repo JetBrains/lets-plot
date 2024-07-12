@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.LayerOptions
@@ -39,7 +39,7 @@ class WaterfallPlotOptionsBuilder(
                 LayerOptions().apply {
                     geom = GeomKind.CROSS_BAR
                     this.data = boxLayerData
-                    setParameter(Option.PlotBase.MAPPING, getBoxMappings(this@WaterfallPlotOptionsBuilder.fill))
+                    mappings = getBoxMappings(this@WaterfallPlotOptionsBuilder.fill)
                     color = this@WaterfallPlotOptionsBuilder.color
                     fill = boxFill
                     size = this@WaterfallPlotOptionsBuilder.size
@@ -72,15 +72,15 @@ class WaterfallPlotOptionsBuilder(
         )
     }
 
-    private fun getBoxMappings(fill: String?): Map<String, String> {
+    private fun getBoxMappings(fill: String?): Map<Aes<*>, String> {
         val fillMapping = when (fill) {
-            FLOW_TYPE_COLOR_VALUE -> hashMapOf(WaterfallBox.Aes.FILL to WaterfallBox.Var.FLOW_TYPE)
+            FLOW_TYPE_COLOR_VALUE -> hashMapOf(WaterfallBox.AES_FILL to WaterfallBox.Var.FLOW_TYPE)
             else -> emptyMap()
         }
         return hashMapOf(
-            WaterfallBox.Aes.X to WaterfallBox.Var.X,
-            WaterfallBox.Aes.YMIN to WaterfallBox.Var.YMIN,
-            WaterfallBox.Aes.YMAX to WaterfallBox.Var.YMAX,
+            WaterfallBox.AES_X to WaterfallBox.Var.X,
+            WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
+            WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX,
         ) + fillMapping
     }
 
