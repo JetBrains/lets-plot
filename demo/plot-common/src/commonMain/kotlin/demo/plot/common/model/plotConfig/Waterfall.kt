@@ -58,6 +58,7 @@ class Waterfall {
                 'size': 2,
                 'alpha': 0.75,
                 'linetype': 'longdash',
+                'width': 0.35,
                 'calc_total': false,
                 'sorted_value': true,
                 'max_values': 3

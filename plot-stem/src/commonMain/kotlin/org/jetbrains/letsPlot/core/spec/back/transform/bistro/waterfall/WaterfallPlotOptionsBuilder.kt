@@ -23,6 +23,7 @@ class WaterfallPlotOptionsBuilder(
     private val size: Double?,
     private val alpha: Double?,
     private val lineType: Any?,
+    private val width: Double?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -45,6 +46,7 @@ class WaterfallPlotOptionsBuilder(
                     size = this@WaterfallPlotOptionsBuilder.size
                     alpha = this@WaterfallPlotOptionsBuilder.alpha
                     linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
+                    width = this@WaterfallPlotOptionsBuilder.width
                 },
             )
         }

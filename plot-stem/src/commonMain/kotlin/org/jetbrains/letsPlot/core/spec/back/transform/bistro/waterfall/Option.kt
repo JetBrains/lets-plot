@@ -16,6 +16,7 @@ object Option {
         const val SIZE = "size"
         const val ALPHA = "alpha"
         const val LINE_TYPE = "linetype"
+        const val WIDTH = "width"
         const val CALCULATE_TOTAL = "calc_total"
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"
