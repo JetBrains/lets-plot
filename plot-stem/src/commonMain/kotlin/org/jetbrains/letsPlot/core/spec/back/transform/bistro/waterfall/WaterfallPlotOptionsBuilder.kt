@@ -20,6 +20,7 @@ class WaterfallPlotOptionsBuilder(
     private val color: String?,
     private val fill: String?,
     private val size: Double?,
+    private val alpha: Double?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -40,6 +41,7 @@ class WaterfallPlotOptionsBuilder(
                     color = this@WaterfallPlotOptionsBuilder.color
                     fill = boxFill
                     size = this@WaterfallPlotOptionsBuilder.size
+                    alpha = this@WaterfallPlotOptionsBuilder.alpha
                 },
             )
         }
