@@ -5,14 +5,17 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.commons.intern.json.getDouble
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.LayerOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.plot
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
+import org.jetbrains.letsPlot.core.spec.getBool
+import org.jetbrains.letsPlot.core.spec.getList
+import org.jetbrains.letsPlot.core.spec.getString
 
 class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
@@ -25,6 +28,7 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double?,
     private val showLegend: Boolean?,
+    private val tooltipsOptions: Map<String, Any>?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -49,6 +53,7 @@ class WaterfallPlotOptionsBuilder(
                     linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
                     width = this@WaterfallPlotOptionsBuilder.width
                     showLegend = this@WaterfallPlotOptionsBuilder.showLegend
+                    tooltipsOptions = readTooltipsOptions(this@WaterfallPlotOptionsBuilder.tooltipsOptions)
                 },
             )
         }
@@ -86,6 +91,23 @@ class WaterfallPlotOptionsBuilder(
             WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
             WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX,
         ) + fillMapping
+    }
+
+    private fun readTooltipsOptions(tooltipsOptions: Map<String, Any>?): TooltipsOptions? {
+        if (tooltipsOptions == null) return null
+        return tooltips {
+            anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
+            minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+            title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
+            disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+            lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
+            formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
+                TooltipsOptions.format {
+                    field = formatOptions["field"]
+                    format = formatOptions["format"]
+                }
+            }
+        }
     }
 
     enum class FlowType {

@@ -18,6 +18,7 @@ object Option {
         const val LINE_TYPE = "linetype"
         const val WIDTH = "width"
         const val SHOW_LEGEND = "show_legend"
+        const val TOOLTIPS = "tooltips"
         const val CALCULATE_TOTAL = "calc_total"
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"

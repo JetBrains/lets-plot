@@ -60,6 +60,17 @@ class Waterfall {
                 'linetype': 'longdash',
                 'width': 0.35,
                 'show_legend': true,
+                'tooltips': {
+                  'title': 'Category: @x',
+                  'tooltip_min_width': 200,
+                  'tooltip_anchor': 'top_center',
+                  'lines': ['@|@ymax', 'ymin|^ymin'],
+                  'formats': [
+                    {'field': '@ymax', 'format': '.3f'},
+                    {'field': 'ymin', 'format': 'd'}
+                  ],
+                  'disable_splitting': true
+                },
                 'calc_total': false,
                 'sorted_value': true,
                 'max_values': 3

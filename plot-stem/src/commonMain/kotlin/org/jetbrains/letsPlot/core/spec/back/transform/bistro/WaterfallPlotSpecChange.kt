@@ -36,6 +36,7 @@ class WaterfallPlotSpecChange : SpecChange {
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
             width = bistroSpec.getDouble(Waterfall.WIDTH),
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: WaterfallPlotOptionsBuilder.DEF_SHOW_LEGEND,
+            tooltipsOptions = bistroSpec.getMap(Waterfall.TOOLTIPS),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
