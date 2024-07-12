@@ -54,6 +54,7 @@ class Waterfall {
                 'x': 'x',
                 'y': 'y',
                 'color': 'cyan',
+                'fill': 'flow_type',
                 'calc_total': false,
                 'sorted_value': true,
                 'max_values': 3

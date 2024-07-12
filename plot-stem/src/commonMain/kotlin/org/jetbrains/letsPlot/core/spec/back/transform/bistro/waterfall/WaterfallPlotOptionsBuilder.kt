@@ -18,6 +18,7 @@ class WaterfallPlotOptionsBuilder(
     private val x: String?,
     private val y: String?,
     private val color: String?,
+    private val fill: String?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -25,13 +26,18 @@ class WaterfallPlotOptionsBuilder(
 ) {
     fun build(): PlotOptions {
         val boxLayerData = boxLayerData(data, x, y, calcTotal, sortedValue, threshold, maxValues)
+        val boxFill = when (fill) {
+            FLOW_TYPE_COLOR_VALUE -> null
+            else -> fill
+        }
         return plot {
             layerOptions = listOf(
                 LayerOptions().apply {
                     geom = GeomKind.CROSS_BAR
                     this.data = boxLayerData
-                    setParameter(Option.PlotBase.MAPPING, getBoxMappings())
+                    setParameter(Option.PlotBase.MAPPING, getBoxMappings(this@WaterfallPlotOptionsBuilder.fill))
                     color = this@WaterfallPlotOptionsBuilder.color
+                    fill = boxFill
                 },
             )
         }
@@ -59,17 +65,33 @@ class WaterfallPlotOptionsBuilder(
         )
     }
 
-    private fun getBoxMappings(): HashMap<String, String> {
+    private fun getBoxMappings(fill: String?): Map<String, String> {
+        val fillMapping = when (fill) {
+            FLOW_TYPE_COLOR_VALUE -> hashMapOf(WaterfallBox.Aes.FILL to WaterfallBox.Var.FLOW_TYPE)
+            else -> emptyMap()
+        }
         return hashMapOf(
             WaterfallBox.Aes.X to WaterfallBox.Var.X,
             WaterfallBox.Aes.YMIN to WaterfallBox.Var.YMIN,
             WaterfallBox.Aes.YMAX to WaterfallBox.Var.YMAX,
-            WaterfallBox.Aes.FILL to WaterfallBox.Var.FLOW_TYPE
-        )
+        ) + fillMapping
+    }
+
+    enum class FlowType {
+        INCREASE,
+        DECREASE,
+        TOTAL;
+
+        override fun toString(): String {
+            return name.lowercase().replaceFirstChar(Char::titlecase)
+        }
     }
 
     companion object {
-        const val DEF_CALC_TOTAL: Boolean = true
-        const val DEF_SORTED_VALUE: Boolean = false
+        const val DEF_CALC_TOTAL = true
+        const val DEF_SORTED_VALUE = false
+
+        const val OTHER_NAME = "Other"
+        const val FLOW_TYPE_COLOR_VALUE = "flow_type"
     }
 }

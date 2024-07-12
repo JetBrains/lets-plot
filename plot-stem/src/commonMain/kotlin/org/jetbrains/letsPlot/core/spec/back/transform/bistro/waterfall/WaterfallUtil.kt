@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
 import kotlin.math.*
 
 internal object WaterfallUtil {
@@ -101,15 +103,5 @@ internal object WaterfallUtil {
         }
     }
 
-    private enum class FlowType {
-        INCREASE,
-        DECREASE,
-        TOTAL;
 
-        override fun toString(): String {
-            return name.lowercase().replaceFirstChar(Char::titlecase)
-        }
-    }
-
-    private const val OTHER_NAME = "Other"
 }
