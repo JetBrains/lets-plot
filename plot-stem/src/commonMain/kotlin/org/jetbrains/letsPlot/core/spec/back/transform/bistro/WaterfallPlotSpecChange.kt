@@ -9,6 +9,8 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.TooltipsOptions
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.tooltips
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
@@ -37,26 +39,51 @@ class WaterfallPlotSpecChange : SpecChange {
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
             width = bistroSpec.getDouble(Waterfall.WIDTH),
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: WaterfallPlotOptionsBuilder.DEF_SHOW_LEGEND,
-            tooltipsOptions = bistroSpec.getMap(Waterfall.TOOLTIPS) ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS,
+            tooltipsOptions = readBoxTooltipsOptions(bistroSpec),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
-            hLineOptions = bistroSpec.getMap(Waterfall.H_LINE)?.let { hLineSpec ->
-                WaterfallPlotOptionsBuilder.DEF_H_LINE.merge(
-                    WaterfallPlotOptionsBuilder.ElementLineOptions(
-                        color = hLineSpec.getString(Option.Theme.Elem.COLOR),
-                        size = hLineSpec.getDouble(Option.Theme.Elem.SIZE),
-                        lineType = hLineSpec.read(Option.Theme.Elem.LINETYPE)?.let { LineTypeOptionConverter().apply(it) },
-                        blank = hLineSpec.getBool(Option.Theme.Elem.BLANK) ?: false
-                    )
-                )
-            } ?: WaterfallPlotOptionsBuilder.DEF_H_LINE,
+            hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, WaterfallPlotOptionsBuilder.DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)
+    }
+
+    private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions {
+        val tooltipsOptions = bistroSpec.getMap(Waterfall.TOOLTIPS) ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS
+        return tooltips {
+            anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
+            minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+            title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
+            disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+            lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
+            formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
+                TooltipsOptions.format {
+                    field = formatOptions[Option.LinesSpec.Format.FIELD]
+                    format = formatOptions[Option.LinesSpec.Format.FORMAT]
+                }
+            }
+        }
+    }
+
+    private fun readElementLineOptions(
+        bistroSpec: Map<String, Any>,
+        option: String,
+        defaults: WaterfallPlotOptionsBuilder.ElementLineOptions
+    ): WaterfallPlotOptionsBuilder.ElementLineOptions {
+        return bistroSpec.getMap(option)?.let { elementLineSpec ->
+            defaults.merge(
+                WaterfallPlotOptionsBuilder.ElementLineOptions(
+                    color = elementLineSpec.getString(Option.Theme.Elem.COLOR),
+                    size = elementLineSpec.getDouble(Option.Theme.Elem.SIZE),
+                    lineType = elementLineSpec.read(Option.Theme.Elem.LINETYPE)?.let { LineTypeOptionConverter().apply(it) },
+                    blank = elementLineSpec.getBool(Option.Theme.Elem.BLANK) ?: false
+                )
+            )
+        } ?: defaults
     }
 
     companion object {

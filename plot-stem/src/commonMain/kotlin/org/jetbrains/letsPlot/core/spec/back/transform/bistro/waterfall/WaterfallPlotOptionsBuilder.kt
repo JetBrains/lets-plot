@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
-import org.jetbrains.letsPlot.commons.intern.json.getDouble
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
@@ -14,9 +13,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
-import org.jetbrains.letsPlot.core.spec.getBool
-import org.jetbrains.letsPlot.core.spec.getList
-import org.jetbrains.letsPlot.core.spec.getString
 
 class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
@@ -29,13 +25,13 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double?,
     private val showLegend: Boolean?,
-    private val tooltipsOptions: Map<String, Any>?,
+    private val tooltipsOptions: TooltipsOptions,
     private val calcTotal: Boolean,
     private val totalTitle: String?,
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?,
-    private val hLineOptions: ElementLineOptions?,
+    private val hLineOptions: ElementLineOptions,
     private val hLineOnTop: Boolean
 ) {
     fun build(): PlotOptions {
@@ -61,7 +57,7 @@ class WaterfallPlotOptionsBuilder(
                 linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
                 width = this@WaterfallPlotOptionsBuilder.width
                 showLegend = this@WaterfallPlotOptionsBuilder.showLegend
-                tooltipsOptions = boxTooltipsOptions()
+                tooltipsOptions = this@WaterfallPlotOptionsBuilder.tooltipsOptions
             },
         )
         return plot {
@@ -103,25 +99,8 @@ class WaterfallPlotOptionsBuilder(
         return mappings
     }
 
-    private fun boxTooltipsOptions(): TooltipsOptions? {
-        if (tooltipsOptions == null) return null
-        return tooltips {
-            anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
-            minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-            title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
-            disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
-            lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
-            formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
-                TooltipsOptions.format {
-                    field = formatOptions[Option.LinesSpec.Format.FIELD]
-                    format = formatOptions[Option.LinesSpec.Format.FORMAT]
-                }
-            }
-        }
-    }
-
     private fun hLineOptionsList(): List<LayerOptions> {
-        if (hLineOptions == null || hLineOptions.blank) return emptyList()
+        if (hLineOptions.blank) return emptyList()
         return listOf(
             LayerOptions().apply {
                 geom = GeomKind.H_LINE
