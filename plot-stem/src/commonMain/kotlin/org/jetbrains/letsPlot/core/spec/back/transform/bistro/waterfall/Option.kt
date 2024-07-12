@@ -25,6 +25,7 @@ object Option {
         const val THRESHOLD = "threshold"
         const val MAX_VALUES = "max_values"
         const val H_LINE = "hline"
+        const val H_LINE_ON_TOP = "hline_ontop"
     }
 
     object WaterfallBox {

@@ -52,7 +52,8 @@ class WaterfallPlotSpecChange : SpecChange {
                         blank = hLineSpec.getBool(Option.Theme.Elem.BLANK) ?: false
                     )
                 )
-            } ?: WaterfallPlotOptionsBuilder.DEF_H_LINE
+            } ?: WaterfallPlotOptionsBuilder.DEF_H_LINE,
+            hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)

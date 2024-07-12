@@ -35,7 +35,8 @@ class WaterfallPlotOptionsBuilder(
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?,
-    private val hLineOptions: ElementLineOptions?
+    private val hLineOptions: ElementLineOptions?,
+    private val hLineOnTop: Boolean
 ) {
     fun build(): PlotOptions {
         if (totalTitle != null) {
@@ -64,7 +65,11 @@ class WaterfallPlotOptionsBuilder(
             },
         )
         return plot {
-            layerOptions = boxOptionsList + hLineOptionsList()
+            layerOptions = if (hLineOnTop) {
+                boxOptionsList + hLineOptionsList()
+            } else {
+                hLineOptionsList() + boxOptionsList
+            }
         }
     }
 
@@ -180,5 +185,6 @@ class WaterfallPlotOptionsBuilder(
             lineType = LineTypeOptionConverter().apply("dashed"),
             blank = true
         )
+        const val DEF_H_LINE_ON_TOP = true
     }
 }

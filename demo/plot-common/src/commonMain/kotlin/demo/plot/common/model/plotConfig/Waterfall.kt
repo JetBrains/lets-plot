@@ -75,7 +75,11 @@ class Waterfall {
                 'total_title': 'result',
                 'sorted_value': true,
                 'max_values': 3,
-                'hline': {'color': 'magenta', 'size': 2}
+                'hline': {
+                  'color': 'magenta',
+                  'size': 2
+                },
+                'hline_ontop': false
               }
             }
         """.trimIndent()
