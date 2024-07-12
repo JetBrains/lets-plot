@@ -53,10 +53,11 @@ class Waterfall {
                 'name': 'waterfall',
                 'x': 'x',
                 'y': 'y',
-                'color': 'cyan',
+                'color': 'grey',
                 'fill': 'flow_type',
                 'size': 2,
                 'alpha': 0.75,
+                'linetype': 'longdash',
                 'calc_total': false,
                 'sorted_value': true,
                 'max_values': 3

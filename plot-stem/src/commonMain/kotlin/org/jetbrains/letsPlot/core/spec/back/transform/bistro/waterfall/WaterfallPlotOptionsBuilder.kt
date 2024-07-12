@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.LayerOptions
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.plot
+import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 
 class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
@@ -21,6 +22,7 @@ class WaterfallPlotOptionsBuilder(
     private val fill: String?,
     private val size: Double?,
     private val alpha: Double?,
+    private val lineType: Any?,
     private val calcTotal: Boolean,
     private val sortedValue: Boolean,
     private val threshold: Double?,
@@ -42,6 +44,7 @@ class WaterfallPlotOptionsBuilder(
                     fill = boxFill
                     size = this@WaterfallPlotOptionsBuilder.size
                     alpha = this@WaterfallPlotOptionsBuilder.alpha
+                    linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
                 },
             )
         }
