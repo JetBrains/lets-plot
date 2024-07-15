@@ -26,10 +26,9 @@ internal class NonlinearBreaksGen(
             transform,
             niceLogBreaks = true
         )
-        return ScaleBreaks(
+        return ScaleBreaks.ContinuousFlex.noTransform(
             domainValues = helper.breaks,
-            transformedValues = helper.breaks,
-            formatter = providedFormatter ?: helper.formatter
+            formatter = helper.formatter
         )
     }
 

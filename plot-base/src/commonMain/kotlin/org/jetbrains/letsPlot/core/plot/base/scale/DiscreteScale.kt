@@ -45,32 +45,53 @@ internal class DiscreteScale : AbstractScale<Any> {
         return true
     }
 
-    protected override fun getBreaksIntern(): List<Any> {
-        return if (hasDefinedBreaks()) {
+    override fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks {
+        // Discrete scale ignores 'providedScaleBreaks'
+
+        // Breaks
+        val breaksEffective = if (providedBreaks != null) {
             // Intersect, preserve the order in the 'domain'.
-            val breaksSet = super.getBreaksIntern().toSet()
+            val breaksSet = providedBreaks.toSet()
             discreteTransform.effectiveDomain.filter { it in breaksSet }
         } else {
             discreteTransform.effectiveDomain
         }
+
+        // Labels
+        val labels = providedLabels?.let { it ->
+            if (!transform.hasDomainLimits()) {
+                val breaksFull = providedBreaks ?: discreteTransform.initialDomain
+                alignLablesAndBreaks(breaksFull, it)
+            } else if (providedBreaks == null) {
+                alignLablesAndBreaks(breaksEffective, it)
+            } else {
+                // Limits + provived breaks - allign labels with the limits
+                // Associate 'defined labels' with 'defined breaks', then re-order according to the domain order.
+                val labelsAligned = alignLablesAndBreaks(providedBreaks, it)
+
+                // Filter and preserve the order in "limits".
+                val labelByBreak = providedBreaks.zip(labelsAligned).toMap()
+                discreteTransform.effectiveDomain
+                    .filter { labelByBreak.containsKey(it) }
+                    .map { labelByBreak.getValue(it) }
+            }
+        }
+
+        val labelsEffective = labels?.map { if (shortenLabels) shorten(it) else it }
+
+        return ScaleBreaks.Fixed.withTransform(
+            breaksEffective,
+            transform = transform,
+            formatter = providedFormatter ?: ScaleBreaks.IDENTITY_FORMATTER,
+            labelsEffective
+        )
     }
 
-    protected override fun getLabelsIntern(): List<String> {
-        val labels = super.getLabelsIntern()
-        return if (!transform.hasDomainLimits() || labels.isEmpty()) {
-            labels
-        } else if (!hasDefinedBreaks()) {
-            labels
+    private fun shorten(str: String): String {
+        return if (labelLengthLimit > 0 && str.length > labelLengthLimit) {
+            str.take(labelLengthLimit) + "..."
         } else {
-            // Associate 'defined labels' with 'defined breaks', then re-order according to the domain order.
-            val breaks = super.getBreaksIntern()  // Defined breaks!
-            val breakLabels = List(breaks.size) { i -> if (i < labels.size) labels[i] else "" }
-
-            // Filter and preserve the order.
-            val labelByBreak = breaks.zip(breakLabels).toMap()
-            discreteTransform.effectiveDomain
-                .filter { labelByBreak.containsKey(it) }
-                .map { labelByBreak.getValue(it) }
+            str
         }
     }
 

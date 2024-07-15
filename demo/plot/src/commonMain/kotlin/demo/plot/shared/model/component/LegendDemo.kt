@@ -64,7 +64,7 @@ open class LegendDemo : SimpleDemoBase() {
         val mapper = ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
 
         val breakValues = List(3) { i -> (i + 1).toDouble() }
-        val scaleBreaks = ScaleBreaks(breakValues, breakValues, breakValues.map { "$it" })
+        val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(breakValues)
         val spec = ColorBarAssembler.createColorBarSpec(
             "Color Bar", domain, scaleBreaks,
             mapper,

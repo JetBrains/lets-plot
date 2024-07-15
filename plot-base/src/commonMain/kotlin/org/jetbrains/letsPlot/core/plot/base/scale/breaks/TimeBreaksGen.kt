@@ -21,7 +21,11 @@ class TimeBreaksGen(
         )
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
-        return ScaleBreaks(ticks, ticks, labels, fixed = false, formatter = helper.formatter)
+        return ScaleBreaks.ContinuousFlex.noTransform(
+            ticks,
+            formatter = helper.formatter,
+            alternativeLabels = labels
+        )
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {

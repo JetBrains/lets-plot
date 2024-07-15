@@ -135,7 +135,7 @@ class TopDownTileLayoutTest {
             AxisBreaksProviderFactory.AdaptableBreaksProviderFactory(
                 Transforms.createBreaksGeneratorForTransformedDomain(
                     Transforms.IDENTITY,
-                    labelFormatter = null,
+                    providedFormatter = null,
                     superscriptExponent = false
                 )
 

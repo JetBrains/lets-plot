@@ -8,18 +8,19 @@ package org.jetbrains.letsPlot.core.plot.base
 import kotlin.math.roundToInt
 
 final class DiscreteTransform constructor(
-    private val domainValues: Collection<Any>,
+    domainValues: Collection<Any>,
     private val domainLimits: List<Any>
 ) : Transform {
 
     private val indexByDomainValue: Map<Any, Int>
 
+    val initialDomain: List<Any> = domainValues.distinct()
     val effectiveDomain: List<Any>
     val effectiveDomainTransformed: List<Double>
 
     init {
         effectiveDomain = if (domainLimits.isEmpty()) {
-            domainValues.distinct()
+            initialDomain
         } else {
             domainLimits.distinct()
         }
@@ -76,7 +77,7 @@ final class DiscreteTransform constructor(
 
     fun withMoreLimits(limits: Collection<Any>): DiscreteTransform {
         val expandedLimits = domainLimits.union(limits).toList()
-        return DiscreteTransform(domainValues, expandedLimits)
+        return DiscreteTransform(initialDomain, expandedLimits)
     }
 
     fun withDomain(domainValues: Collection<Any>): DiscreteTransform {
@@ -88,10 +89,10 @@ final class DiscreteTransform constructor(
             val domainValues = LinkedHashSet<Any>()
             val domainLimits = LinkedHashSet<Any>()
             for (transform in l) {
-                domainValues.addAll(transform.domainValues)
+                domainValues.addAll(transform.initialDomain)
                 domainLimits.addAll(transform.domainLimits)
             }
-            return DiscreteTransform(domainValues.toList(), domainLimits.toList())
+            return DiscreteTransform(domainValues, domainLimits.toList())
         }
     }
 }
