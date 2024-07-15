@@ -48,7 +48,8 @@ class WaterfallPlotSpecChange : SpecChange {
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, WaterfallPlotOptionsBuilder.DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP,
             connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, WaterfallPlotOptionsBuilder.DEF_CONNECTOR),
-            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, WaterfallPlotOptionsBuilder.DEF_LABEL)
+            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, WaterfallPlotOptionsBuilder.DEF_LABEL),
+            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)

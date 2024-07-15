@@ -58,7 +58,7 @@ class Waterfall {
                 'size': 3,
                 'alpha': 0.75,
                 'linetype': 'dotted',
-                'width': 0.6,
+                'width': 0.4,
                 'show_legend': true,
                 'tooltips': {
                   'title': 'Category: @x',
@@ -90,7 +90,8 @@ class Waterfall {
                   'face': 'bold',
                   'size': 5,
                   'angle': 45
-                }
+                },
+                'label_format': 'd'
               }
             }
         """.trimIndent()

@@ -28,6 +28,7 @@ object Option {
         const val H_LINE_ON_TOP = "hline_ontop"
         const val CONNECTOR = "connector"
         const val LABEL = "label"
+        const val LABEL_FORMAT = "label_format"
     }
 
     object WaterfallBox {

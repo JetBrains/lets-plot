@@ -36,7 +36,8 @@ class WaterfallPlotOptionsBuilder(
     private val hLineOptions: ElementLineOptions,
     private val hLineOnTop: Boolean,
     private val connectorOptions: ElementLineOptions,
-    private val labelOptions: ElementTextOptions
+    private val labelOptions: ElementTextOptions,
+    private val labelFormat: String?
 ) {
     fun build(): PlotOptions {
         if (totalTitle != null) {
@@ -159,6 +160,7 @@ class WaterfallPlotOptionsBuilder(
                 hjust = labelOptions.hjust
                 vjust = labelOptions.vjust
                 showLegend = this@WaterfallPlotOptionsBuilder.showLegend
+                labelFormat = this@WaterfallPlotOptionsBuilder.labelFormat
             }
         )
     }
