@@ -26,13 +26,7 @@ internal object BreakLabelsLayoutUtil {
         var breaks = breaksProvider.getBreaks(maxCount)
 
         if (maxCount == 1 && !breaks.isEmpty) {
-            return ScaleBreaks(
-                breaks.domainValues.subList(0, 1),
-                breaks.transformedValues.subList(0, 1),
-                breaks.labels.subList(0, 1),
-                breaks.fixed,
-                breaks.formatter
-            )
+            return breaks.withOneBreak()
         }
         var count = maxCount
         while (breaks.size > maxCount) {

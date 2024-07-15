@@ -20,9 +20,8 @@ class DateTimeBreaksGen(
             providedFormatter
         )
 
-        return ScaleBreaks(
+        return ScaleBreaks.ContinuousFlex.noTransform(
             domainValues = helper.breaks,
-            transformedValues = helper.breaks,
             formatter = helper.formatter
         )
     }

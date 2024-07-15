@@ -22,9 +22,8 @@ internal class LinearBreaksGen(
             providedFormatter,
             superscriptExponent
         )
-        return ScaleBreaks(
+        return ScaleBreaks.ContinuousFlex.noTransform(
             domainValues = helper.breaks,
-            transformedValues = helper.breaks,
             formatter = helper.formatter
         )
     }

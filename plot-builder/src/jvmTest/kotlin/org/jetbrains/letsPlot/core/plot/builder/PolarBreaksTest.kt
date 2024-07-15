@@ -110,6 +110,7 @@ class PolarBreaksTest {
         breaks: List<Double>? = null
     ): PolarAxisUtil.PolarBreaksData {
         val dataDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.0)
+
         @Suppress("NAME_SHADOWING")
         val breaks = breaks ?: when (axisKind) {
             ANGLE -> listOf(-5.0, -4.0, -3.0, -2.0, -1.0, 0.0)
@@ -130,10 +131,9 @@ class PolarBreaksTest {
 
         if (axisKind == ANGLE) {
             return breaksData(
-                scaleBreaks = ScaleBreaks(
+                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
                     domainValues = breaks,
-                    transformedValues = breaks,
-                    labels = breaks.map { it.toInt().toString() },
+                    formatter = { v -> (v as Number).toInt().toString() },
                 ),
                 coord = coordinateSystem,
                 gridDomain = gridDomain,
@@ -143,10 +143,9 @@ class PolarBreaksTest {
             )
         } else {
             return breaksData(
-                scaleBreaks = ScaleBreaks(
+                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
                     domainValues = breaks,
-                    transformedValues = breaks,
-                    labels = breaks.map { it.toInt().toString() },
+                    formatter = { v -> (v as Number).toInt().toString() },
                 ),
                 coord = coordinateSystem,
                 gridDomain = gridDomain,
