@@ -115,6 +115,10 @@ class WaterfallPlotSpecChange : SpecChange {
         } ?: defaults
     }
 
+    override fun isApplicable(spec: Map<String, Any>): Boolean {
+        return spec.getString(Option.Plot.BISTRO, Option.Meta.NAME) == Waterfall.NAME
+    }
+
     companion object {
         fun specSelector(): SpecSelector {
             return SpecSelector.root()
