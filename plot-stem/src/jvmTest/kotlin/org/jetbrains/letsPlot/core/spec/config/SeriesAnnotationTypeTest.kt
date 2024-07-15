@@ -14,7 +14,7 @@ import org.junit.Test
 class SeriesAnnotationTypeTest {
 
     @Test
-    fun simple() {
+    fun `ggplot(data) + geom_label(aes(label='t')) + geom_label(aes(label='f')) + geom_label(aes(label='i'))`() {
         val spec = """
             |{
             |  "data": {
@@ -64,4 +64,51 @@ class SeriesAnnotationTypeTest {
             assertThat(svg).contains("<tspan>01.01.24 11:34:56</tspan>")
         }
     }
+
+    @Test
+    fun `ggplot(foo_int) + geom_label(aes(label='foo'), data=foo_date) + geom_label(aes(label='foo'), data=foo_float) + geom_label(aes(label='foo'))`() {
+        val spec = """
+            |{
+            |  "data": { "foo": [54321.1] },
+            |  "data_meta": { "series_annotations": [ { "column": "foo", "type": "int" } ] },
+            |  "kind": "plot",
+            |  "layers": [
+            |    {
+            |      "geom": "label",
+            |      "data": { "foo": [1704108896000.0] },
+            |      "data_meta": { "series_annotations": [ { "column": "foo", "type": "datetime" } ] },
+            |      "mapping": { "label": "foo" },
+            |      "x": 0.0,
+            |      "y": 0.0
+            |    },
+            |    {
+            |      "geom": "label",
+            |      "data": { "foo": [12345.1] },
+            |      "data_meta": { "series_annotations": [ { "column": "foo", "type": "float" } ] },
+            |      "mapping": { "label": "foo" },
+            |      "x": 0.0,
+            |      "y": 1.0
+            |    },
+            |    {
+            |      "geom": "label",
+            |      "mapping": { "label": "foo" },
+            |      "x": 0.0,
+            |      "y": 2.0
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+
+        PlotSvgExportCommon.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            rgbEncoder = UnsupportedRGBEncoder,
+            useCssPixelatedImageRendering = false
+        ).let { svg ->
+            assertThat(svg).contains("<tspan>54321</tspan>")
+            assertThat(svg).contains("<tspan>12345.1</tspan>")
+            assertThat(svg).contains("<tspan>01.01.24 11:34:56</tspan>")
+        }
+    }
+
 }
