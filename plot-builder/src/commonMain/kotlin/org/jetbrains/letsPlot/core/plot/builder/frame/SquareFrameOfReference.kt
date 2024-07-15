@@ -35,8 +35,6 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 internal open class SquareFrameOfReference(
     hScaleBreaks: ScaleBreaks,
     vScaleBreaks: ScaleBreaks,
-    hTransform: Transform,
-    vTransform: Transform,
     private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -55,8 +53,6 @@ internal open class SquareFrameOfReference(
     override val transientState: TransientState = TransientState(
         hScaleBreaks,
         vScaleBreaks,
-        hTransform,
-        vTransform,
         adjustedDomain
     )
 
@@ -455,8 +451,8 @@ internal open class SquareFrameOfReference(
     inner class TransientState(
         private val hScaleBreaks: ScaleBreaks,
         private val vScaleBreaks: ScaleBreaks,
-        private val hTransform: Transform,
-        private val vTransform: Transform,
+//        private val hTransform: Transform,
+//        private val vTransform: Transform,
         dataBounds: DoubleRectangle  // transformed domain
     ) : ComponentTransientState(
         viewBounds = layoutInfo.geomContentBounds  // px
@@ -490,7 +486,13 @@ internal open class SquareFrameOfReference(
             }
 
             val dataRange: DoubleSpan = dataBounds.xRange()
-            validateBreaksIntern(dataRange, hBreaksTransformedValues, hBreaksLabels, hTransform, hScaleBreaks.formatter)
+            validateBreaksIntern(
+                dataRange,
+                hBreaksTransformedValues,
+                hBreaksLabels,
+                hScaleBreaks.transform,
+                hScaleBreaks.formatter
+            )
         }
 
         private fun validateVerticalBreaks() {
@@ -500,7 +502,13 @@ internal open class SquareFrameOfReference(
             }
 
             val dataRange: DoubleSpan = dataBounds.yRange()
-            validateBreaksIntern(dataRange, vBreaksTransformedValues, vBreaksLabels, vTransform, vScaleBreaks.formatter)
+            validateBreaksIntern(
+                dataRange,
+                vBreaksTransformedValues,
+                vBreaksLabels,
+                vScaleBreaks.transform,
+                vScaleBreaks.formatter
+            )
         }
 
         private fun validateBreaksIntern(

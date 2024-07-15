@@ -127,8 +127,6 @@ internal open class SquareFrameOfReferenceProvider(
         val tileFrameOfReference = SquareFrameOfReference(
             hScaleBreaks = hAxisLayoutInfo.axisBreaks,
             vScaleBreaks = vAxisLayoutInfo.axisBreaks,
-            hTransform = hScaleProto.transform,
-            vTransform = vScaleProto.transform,
             adjustedDomain,
             coord,
             layoutInfo,

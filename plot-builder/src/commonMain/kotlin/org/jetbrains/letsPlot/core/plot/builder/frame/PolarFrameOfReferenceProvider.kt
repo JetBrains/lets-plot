@@ -77,8 +77,6 @@ internal class PolarFrameOfReferenceProvider(
             plotContext,
             hScaleBreaks = hAxisLayoutInfo.axisBreaks,
             vScaleBreaks = vAxisLayoutInfo.axisBreaks,
-            hTransform = hScaleProto.transform,
-            vTransform = vScaleProto.transform,
             gridDomain,
             coord,
             layoutInfo,
