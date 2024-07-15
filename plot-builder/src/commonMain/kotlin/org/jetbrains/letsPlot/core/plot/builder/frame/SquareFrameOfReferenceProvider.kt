@@ -75,6 +75,7 @@ internal class SquareFrameOfReferenceProvider(
         val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
         val tileFrameOfReference = SquareFrameOfReference(
+            plotContext,
             hScaleBreaks = hAxisLayoutInfo.axisBreaks,
             vScaleBreaks = vAxisLayoutInfo.axisBreaks,
             adjustedDomain,
@@ -83,7 +84,6 @@ internal class SquareFrameOfReferenceProvider(
             marginsLayout,
             theme,
             flipAxis,
-            plotContext
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
         return tileFrameOfReference
