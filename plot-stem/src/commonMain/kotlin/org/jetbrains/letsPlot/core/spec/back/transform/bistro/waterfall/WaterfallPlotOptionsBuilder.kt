@@ -212,11 +212,12 @@ class WaterfallPlotOptionsBuilder(
         var blank: Boolean = false
     ) {
         fun merge(other: ElementLineOptions): ElementLineOptions {
-            color = other.color ?: color
-            size = other.size ?: size
-            lineType = other.lineType ?: lineType
-            blank = other.blank
-            return this
+            return ElementLineOptions(
+                color = other.color ?: color,
+                size = other.size ?: size,
+                lineType = other.lineType ?: lineType,
+                blank = other.blank
+            )
         }
     }
 
@@ -231,15 +232,16 @@ class WaterfallPlotOptionsBuilder(
         var blank: Boolean = false
     ) {
         fun merge(other: ElementTextOptions): ElementTextOptions {
-            color = other.color ?: color
-            family = other.family ?: family
-            face = other.face ?: face
-            size = other.size ?: size
-            angle = other.angle ?: angle
-            hjust = other.hjust ?: hjust
-            vjust = other.vjust ?: vjust
-            blank = other.blank
-            return this
+            return ElementTextOptions(
+                color = other.color ?: color,
+                family = other.family ?: family,
+                face = other.face ?: face,
+                size = other.size ?: size,
+                angle = other.angle ?: angle,
+                hjust = other.hjust ?: hjust,
+                vjust = other.vjust ?: vjust,
+                blank = other.blank
+            )
         }
     }
 
