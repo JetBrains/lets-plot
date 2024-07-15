@@ -73,6 +73,20 @@ class WaterfallPlotOptionsBuilder(
                 hLineOptionsList() +
                         connectorOptionsList(boxLayerData) + boxOptionsList + labelOptionsList(boxLayerData)
             }
+            scaleOptions = listOf(
+                scale {
+                    aes = Aes.COLOR
+                    name = FLOW_TYPE_NAME
+                    breaks = FlowType.entries.map(FlowType::toString)
+                    values = FlowType.entries.map(FLOW_TYPE_COLORS::getValue)
+                },
+                scale {
+                    aes = Aes.FILL
+                    name = FLOW_TYPE_NAME
+                    breaks = FlowType.entries.map(FlowType::toString)
+                    values = FlowType.entries.map(FLOW_TYPE_COLORS::getValue)
+                }
+            )
         }
     }
 
@@ -231,12 +245,18 @@ class WaterfallPlotOptionsBuilder(
 
     companion object {
         const val OTHER_NAME = "Other"
+        const val FLOW_TYPE_NAME = "Flow type"
         const val FLOW_TYPE_COLOR_VALUE = "flow_type"
         private const val INITIAL_Y = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
         private const val CONNECTOR_POSITION_NAME = "nudge"
+        private val FLOW_TYPE_COLORS = mapOf(
+            FlowType.INCREASE to "#4daf4a",
+            FlowType.DECREASE to "#e41a1c",
+            FlowType.TOTAL to "#377eb8",
+        )
 
         const val DEF_COLOR = "black"
         const val DEF_SIZE = 0.0

@@ -23,6 +23,11 @@ class WaterfallPlotSpecChange : SpecChange {
         // Set layers
         spec[Option.Plot.LAYERS] = waterfallPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in waterfall plot")
 
+        // Merge scales
+        val waterfallScales = waterfallPlotSpec.getList(Option.Plot.SCALES) ?: error("Missing scales in waterfall plot")
+        val plotScales = spec.getList(Option.Plot.SCALES) ?: emptyList<Any>()
+        spec[Option.Plot.SCALES] = (waterfallScales + plotScales).toMutableList()
+
         spec.remove("bistro")
     }
 
