@@ -23,7 +23,7 @@ __all__ = ['corr_plot']
 
 
 def _is_corr_matrix(data: Any):
-    if is_data_frame(data):
+    if is_pandas_data_frame(data):
         if data.shape[0] != data.shape[1]:
             return False
 
