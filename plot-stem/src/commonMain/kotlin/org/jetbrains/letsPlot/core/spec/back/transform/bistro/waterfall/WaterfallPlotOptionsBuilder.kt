@@ -77,14 +77,14 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.COLOR
                     name = FLOW_TYPE_NAME
-                    breaks = FlowType.entries.map(FlowType::toString)
-                    values = FlowType.entries.map(FLOW_TYPE_COLORS::getValue)
+                    breaks = FlowType.list(!calcTotal).map(FlowType::toString)
+                    values = FlowType.list(!calcTotal).map(FLOW_TYPE_COLORS::getValue)
                 },
                 scale {
                     aes = Aes.FILL
                     name = FLOW_TYPE_NAME
-                    breaks = FlowType.entries.map(FlowType::toString)
-                    values = FlowType.entries.map(FLOW_TYPE_COLORS::getValue)
+                    breaks = FlowType.list(!calcTotal).map(FlowType::toString)
+                    values = FlowType.list(!calcTotal).map(FLOW_TYPE_COLORS::getValue)
                 }
             )
         }
@@ -202,6 +202,12 @@ class WaterfallPlotOptionsBuilder(
 
         override fun toString(): String {
             return title
+        }
+
+        companion object {
+            fun list(skipTotal: Boolean): Iterable<FlowType> {
+                return FlowType.entries.filterNot { skipTotal && it == TOTAL }
+            }
         }
     }
 
