@@ -19,8 +19,8 @@ class SeriesAnnotationTypeTest {
             |{
             |  "data": {
             |    "t": [1704108896000.0],
-            |    "f": [12345.0],
-            |    "i": [54321.0]
+            |    "f": [12345.1],
+            |    "i": [54321.1]
             |  },
             |  "data_meta": {
             |    "series_annotations": [
@@ -60,8 +60,8 @@ class SeriesAnnotationTypeTest {
             useCssPixelatedImageRendering = false
         ).let { svg ->
             assertThat(svg).contains("<tspan>54321</tspan>")
-            assertThat(svg).contains("<tspan>12345.0</tspan>")
-            assertThat(svg).contains("<tspan>01.01.2024 11:34:56</tspan>")
+            assertThat(svg).contains("<tspan>12345.1</tspan>")
+            assertThat(svg).contains("<tspan>01.01.24 11:34:56</tspan>")
         }
     }
 }

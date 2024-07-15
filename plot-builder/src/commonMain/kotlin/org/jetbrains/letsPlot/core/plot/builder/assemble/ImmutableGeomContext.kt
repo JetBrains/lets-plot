@@ -6,15 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface ImmutableGeomContext : GeomContext {
 
@@ -34,6 +30,8 @@ interface ImmutableGeomContext : GeomContext {
         fun fontFamilyRegistry(v: FontFamilyRegistry): Builder
 
         fun annotation(annotation: Annotation?): Builder
+
+        fun defaultFormatters(defaultFormatters: Map<Any, (Any) -> String>): Builder
 
         fun backgroundColor(color: Color): Builder
 

@@ -427,6 +427,7 @@ internal open class SquareFrameOfReference(
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
+                .defaultFormatters(layer.defaultFormatters)
                 .annotation(rendererData.annotation)
                 .backgroundColor(backgroundColor)
                 .plotContext(plotContext)

@@ -41,6 +41,15 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
+
+    override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
+    override fun getDefaultFormatter(varName: String): (Any) -> String {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
     override fun isMappedAes(aes: Aes<*>): Boolean = false
     override fun estimateTextSize(
         text: String,
