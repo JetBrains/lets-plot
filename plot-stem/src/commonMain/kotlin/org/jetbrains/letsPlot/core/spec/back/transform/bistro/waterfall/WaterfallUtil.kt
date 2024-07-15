@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
 import kotlin.math.*
 
@@ -23,7 +22,8 @@ internal object WaterfallUtil {
         sortedValue: Boolean,
         threshold: Double?,
         maxValues: Int?,
-        initialY: Double
+        initialY: Double,
+        flowTypes: Map<String, WaterfallPlotOptionsBuilder.FlowType>
     ): Map<String, List<Any?>> {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
@@ -31,16 +31,16 @@ internal object WaterfallUtil {
         val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
         val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
         val (yMin, yMax) = (yPrev zip yNext).map { Pair(min(it.first, it.second), max(it.first, it.second)) }.unzip()
-        val flowType = ys.map { if (it >= 0) FlowType.INCREASE.toString() else FlowType.DECREASE.toString() }
+        val flowType = ys.map { if (it >= 0) flowTypes.getValue("increase").name else flowTypes.getValue("decrease").name }
 
-        val calculateLast: (Any) -> List<Any> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
-        val xsLast = calculateLast(FlowType.TOTAL.toString())
+        val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
+        val xsLast = calculateLast(flowTypes["total"]?.name)
         val ysLast = calculateLast(yNext.last() - (initialY + ys.first()))
         val yPrevLast = calculateLast(initialY + ys.first())
         val yNextLast = calculateLast(yNext.last())
         val yMinLast = calculateLast(min(yNext.last(), initialY))
         val yMaxLast = calculateLast(max(yNext.last(), initialY))
-        val flowTypeLast = calculateLast(FlowType.TOTAL.toString())
+        val flowTypeLast = calculateLast(flowTypes["total"]?.name)
 
         return mapOf(
             WaterfallBox.Var.X to xs + xsLast,
