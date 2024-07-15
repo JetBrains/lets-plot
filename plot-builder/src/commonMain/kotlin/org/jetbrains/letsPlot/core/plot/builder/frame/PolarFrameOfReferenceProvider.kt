@@ -22,15 +22,15 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.tile.PolarTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
 internal class PolarFrameOfReferenceProvider(
-    private val plotContext: PlotContext,
-    private val hScaleProto: Scale,
-    private val vScaleProto: Scale,
-    private val adjustedDomain: DoubleRectangle,
+    plotContext: PlotContext,
+    hScaleProto: Scale,
+    vScaleProto: Scale,
+    adjustedDomain: DoubleRectangle,
     flipAxis: Boolean,
-    private val theme: Theme,
-    private val marginsLayout: GeomMarginsLayout,
+    theme: Theme,
+    marginsLayout: GeomMarginsLayout,
     domainByMargin: Map<MarginSide, DoubleSpan>
-) : SquareFrameOfReferenceProvider(
+) : FrameOfReferenceProviderBase(
     plotContext,
     hScaleProto,
     vScaleProto,
@@ -40,10 +40,9 @@ internal class PolarFrameOfReferenceProvider(
     AxisPosition.LEFT,
     theme,
     marginsLayout,
-    domainByMargin
+    domainByMargin,
+    isPolar = true
 ) {
-
-    override val isPolar: Boolean = true
 
     override fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
         return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset())
