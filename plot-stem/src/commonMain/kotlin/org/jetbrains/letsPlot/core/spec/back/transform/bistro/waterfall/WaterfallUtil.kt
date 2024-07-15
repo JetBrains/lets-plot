@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
@@ -27,8 +28,8 @@ internal object WaterfallUtil {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
-        val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.subList(0, ys.size)
-        val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.subList(1, ys.size + 1)
+        val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
+        val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
         val (yMin, yMax) = (yPrev zip yNext).map { Pair(min(it.first, it.second), max(it.first, it.second)) }.unzip()
         val flowType = ys.map { if (it >= 0) FlowType.INCREASE.toString() else FlowType.DECREASE.toString() }
 
@@ -55,11 +56,32 @@ internal object WaterfallUtil {
     fun calculateConnectorStat(
         boxData: Map<String, List<Any?>>
     ): Map<String, List<Any?>> {
-        val xs = boxData.getValue(WaterfallBox.Var.X)
-        val ys = boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM)
         return mapOf(
-            WaterfallConnector.Var.X to xs.subList(0, xs.size - 1),
-            WaterfallConnector.Var.Y to ys.subList(0, ys.size - 1),
+            WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X).dropLast(1),
+            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).dropLast(1),
+        )
+    }
+
+    fun calculateLabelStat(
+        boxData: Map<String, List<Any?>>,
+        calcTotal: Boolean
+    ): Map<String, List<Any?>> {
+        val yMin = boxData.getValue(WaterfallBox.Var.YMIN) as List<Double>
+        val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
+        val ys = (yMin zip yMax).map { (it.first + it.second) / 2 }
+        val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
+        val labels = dys.dropLast(1) + listOf(
+            if (calcTotal) {
+                boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).last()
+            } else {
+                dys.last()
+            }
+        )
+        return mapOf(
+            WaterfallLabel.Var.X to boxData.getValue(WaterfallBox.Var.X),
+            WaterfallLabel.Var.Y to ys,
+            WaterfallLabel.Var.LABEL to labels,
+            WaterfallLabel.Var.FLOW_TYPE to boxData.getValue(WaterfallBox.Var.FLOW_TYPE)
         )
     }
 

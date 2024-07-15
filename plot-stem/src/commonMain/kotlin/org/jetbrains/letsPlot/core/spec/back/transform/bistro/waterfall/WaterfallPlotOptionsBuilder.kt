@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 
 class WaterfallPlotOptionsBuilder(
@@ -34,7 +35,8 @@ class WaterfallPlotOptionsBuilder(
     private val maxValues: Int?,
     private val hLineOptions: ElementLineOptions,
     private val hLineOnTop: Boolean,
-    private val connectorOptions: ElementLineOptions
+    private val connectorOptions: ElementLineOptions,
+    private val labelOptions: ElementTextOptions
 ) {
     fun build(): PlotOptions {
         if (totalTitle != null) {
@@ -64,9 +66,11 @@ class WaterfallPlotOptionsBuilder(
         )
         return plot {
             layerOptions = if (hLineOnTop) {
-                connectorOptionsList(boxLayerData) + boxOptionsList + hLineOptionsList()
+                connectorOptionsList(boxLayerData) + boxOptionsList + labelOptionsList(boxLayerData) +
+                        hLineOptionsList()
             } else {
-                hLineOptionsList() + connectorOptionsList(boxLayerData) + boxOptionsList
+                hLineOptionsList() +
+                        connectorOptionsList(boxLayerData) + boxOptionsList + labelOptionsList(boxLayerData)
             }
         }
     }
@@ -137,6 +141,40 @@ class WaterfallPlotOptionsBuilder(
         )
     }
 
+    private fun labelOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
+        if (labelOptions.blank) return emptyList()
+        return listOf(
+            LayerOptions().apply {
+                geom = GeomKind.TEXT
+                this.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
+                mappings = labelMappings()
+                color = when (labelOptions.color) {
+                    FLOW_TYPE_COLOR_VALUE -> null
+                    else -> labelOptions.color
+                }
+                family = labelOptions.family
+                fontface = labelOptions.face
+                size = labelOptions.size
+                angle = labelOptions.angle
+                hjust = labelOptions.hjust
+                vjust = labelOptions.vjust
+                showLegend = this@WaterfallPlotOptionsBuilder.showLegend
+            }
+        )
+    }
+
+    private fun labelMappings(): Map<Aes<*>, String> {
+        val mappings = mutableMapOf<Aes<*>, String>(
+            WaterfallLabel.AES_X to WaterfallLabel.Var.X,
+            WaterfallLabel.AES_Y to WaterfallLabel.Var.Y,
+            WaterfallLabel.AES_LABEL to WaterfallLabel.Var.LABEL,
+        )
+        if (labelOptions.color == FLOW_TYPE_COLOR_VALUE) {
+            mappings[WaterfallLabel.AES_COLOR] = WaterfallLabel.Var.FLOW_TYPE
+        }
+        return mappings
+    }
+
     enum class FlowType(private var title: String) {
         INCREASE("Increase"),
         DECREASE("Decrease"),
@@ -151,11 +189,39 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    data class ElementLineOptions(var color: String?, var size: Double?, var lineType: LineType?, var blank: Boolean) {
+    data class ElementLineOptions(
+        var color: String? = null,
+        var size: Double? = null,
+        var lineType: LineType? = null,
+        var blank: Boolean = false
+    ) {
         fun merge(other: ElementLineOptions): ElementLineOptions {
             color = other.color ?: color
             size = other.size ?: size
             lineType = other.lineType ?: lineType
+            blank = other.blank
+            return this
+        }
+    }
+
+    data class ElementTextOptions(
+        var color: String? = null,
+        var family: String? = null,
+        var face: String? = null,
+        var size: Double? = null,
+        var angle: Double? = null,
+        var hjust: Double? = null,
+        var vjust: Double? = null,
+        var blank: Boolean = false
+    ) {
+        fun merge(other: ElementTextOptions): ElementTextOptions {
+            color = other.color ?: color
+            family = other.family ?: family
+            face = other.face ?: face
+            size = other.size ?: size
+            angle = other.angle ?: angle
+            hjust = other.hjust ?: hjust
+            vjust = other.vjust ?: vjust
             blank = other.blank
             return this
         }
@@ -186,17 +252,13 @@ class WaterfallPlotOptionsBuilder(
             Option.Layer.DISABLE_SPLITTING to true
         )
         val DEF_H_LINE = ElementLineOptions(
-            color = null,
-            size = null,
             lineType = LineTypeOptionConverter().apply("dashed"),
             blank = true
         )
         const val DEF_H_LINE_ON_TOP = true
-        val DEF_CONNECTOR = ElementLineOptions(
-            color = null,
-            size = null,
-            lineType = null,
-            blank = false
+        val DEF_CONNECTOR = ElementLineOptions()
+        val DEF_LABEL = ElementTextOptions(
+            color = "white"
         )
     }
 }

@@ -27,6 +27,7 @@ object Option {
         const val H_LINE = "hline"
         const val H_LINE_ON_TOP = "hline_ontop"
         const val CONNECTOR = "connector"
+        const val LABEL = "label"
     }
 
     object WaterfallBox {
@@ -54,6 +55,20 @@ object Option {
         object Var {
             const val X = "x"
             const val Y = "y"
+        }
+    }
+
+    object WaterfallLabel {
+        val AES_X = Aes.X
+        val AES_Y = Aes.Y
+        val AES_LABEL = Aes.LABEL
+        val AES_COLOR = Aes.COLOR
+
+        object Var {
+            const val X = "x"
+            const val Y = "y"
+            const val LABEL = "label"
+            const val FLOW_TYPE = "flow_type"
         }
     }
 }

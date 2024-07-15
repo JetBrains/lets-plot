@@ -54,11 +54,11 @@ class Waterfall {
                 'x': 'x',
                 'y': 'y',
                 'color': 'flow_type',
-                'fill': 'grey',
+                'fill': 'lightgrey',
                 'size': 3,
                 'alpha': 0.75,
                 'linetype': 'dotted',
-                'width': 0.35,
+                'width': 0.6,
                 'show_legend': true,
                 'tooltips': {
                   'title': 'Category: @x',
@@ -83,6 +83,13 @@ class Waterfall {
                 'connector': {
                   'color': 'cyan',
                   'size': 1.5
+                },
+                'label': {
+                  'color': 'flow_type',
+                  'family': 'Times',
+                  'face': 'bold',
+                  'size': 5,
+                  'angle': 45
                 }
               }
             }

@@ -47,7 +47,8 @@ class WaterfallPlotSpecChange : SpecChange {
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, WaterfallPlotOptionsBuilder.DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP,
-            connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, WaterfallPlotOptionsBuilder.DEF_CONNECTOR)
+            connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, WaterfallPlotOptionsBuilder.DEF_CONNECTOR),
+            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, WaterfallPlotOptionsBuilder.DEF_LABEL)
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)
@@ -82,6 +83,27 @@ class WaterfallPlotSpecChange : SpecChange {
                     size = elementLineSpec.getDouble(Option.Theme.Elem.SIZE),
                     lineType = elementLineSpec.read(Option.Theme.Elem.LINETYPE)?.let { LineTypeOptionConverter().apply(it) },
                     blank = elementLineSpec.getBool(Option.Theme.Elem.BLANK) ?: false
+                )
+            )
+        } ?: defaults
+    }
+
+    private fun readElementTextOptions(
+        bistroSpec: Map<String, Any>,
+        option: String,
+        defaults: WaterfallPlotOptionsBuilder.ElementTextOptions
+    ): WaterfallPlotOptionsBuilder.ElementTextOptions {
+        return bistroSpec.getMap(option)?.let { elementTextSpec ->
+            defaults.merge(
+                WaterfallPlotOptionsBuilder.ElementTextOptions(
+                    color = elementTextSpec.getString(Option.Theme.Elem.COLOR),
+                    family = elementTextSpec.getString(Option.Theme.Elem.FONT_FAMILY),
+                    face = elementTextSpec.getString(Option.Theme.Elem.FONT_FACE),
+                    size = elementTextSpec.getDouble(Option.Theme.Elem.SIZE),
+                    angle = elementTextSpec.getDouble(Option.Theme.Elem.ANGLE),
+                    hjust = elementTextSpec.getDouble(Option.Theme.Elem.HJUST),
+                    vjust = elementTextSpec.getDouble(Option.Theme.Elem.VJUST),
+                    blank = elementTextSpec.getBool(Option.Theme.Elem.BLANK) ?: false
                 )
             )
         } ?: defaults
