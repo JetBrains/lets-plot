@@ -37,7 +37,7 @@ class WaterfallPlotOptionsBuilder(
     private val hLineOnTop: Boolean,
     private val connectorOptions: ElementLineOptions,
     private val labelOptions: ElementTextOptions,
-    private val labelFormat: String?
+    private val labelFormat: String
 ) {
     private val flowTypes = mapOf(
         "increase" to FlowType("Increase", "#4daf4a"),
@@ -49,24 +49,18 @@ class WaterfallPlotOptionsBuilder(
     fun build(): PlotOptions {
         val boxLayerData = boxLayerData()
         val boxOptionsList = listOf(
-            LayerOptions().apply {
-                geom = GeomKind.CROSS_BAR
-                this.data = boxLayerData
-                mappings = boxMappings()
-                color = when (this@WaterfallPlotOptionsBuilder.color) {
-                    FLOW_TYPE_COLOR_VALUE -> null
-                    else -> this@WaterfallPlotOptionsBuilder.color
-                }
-                fill = when (this@WaterfallPlotOptionsBuilder.fill) {
-                    FLOW_TYPE_COLOR_VALUE -> null
-                    else -> this@WaterfallPlotOptionsBuilder.fill
-                }
-                size = this@WaterfallPlotOptionsBuilder.size
-                alpha = this@WaterfallPlotOptionsBuilder.alpha
-                linetype = LineTypeOptionConverter().apply(this@WaterfallPlotOptionsBuilder.lineType)
-                width = this@WaterfallPlotOptionsBuilder.width
-                showLegend = this@WaterfallPlotOptionsBuilder.showLegend
-                tooltipsOptions = this@WaterfallPlotOptionsBuilder.tooltipsOptions
+            LayerOptions().also {
+                it.geom = GeomKind.CROSS_BAR
+                it.data = boxLayerData
+                it.mappings = boxMappings()
+                it.color = color.takeUnless { color == FLOW_TYPE_COLOR_VALUE }
+                it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_VALUE }
+                it.size = size
+                it.alpha = alpha
+                it.linetype = LineTypeOptionConverter().apply(lineType)
+                it.width = width
+                it.showLegend = showLegend
+                it.tooltipsOptions = tooltipsOptions
             },
         )
         return plot {
@@ -134,6 +128,7 @@ class WaterfallPlotOptionsBuilder(
                 color = hLineOptions.color
                 size = hLineOptions.size
                 linetype = hLineOptions.lineType
+                setParameter(Option.Layer.TOOLTIPS, "none")
             }
         )
     }
@@ -141,22 +136,22 @@ class WaterfallPlotOptionsBuilder(
     private fun connectorOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
         if (connectorOptions.blank) return emptyList()
         return listOf(
-            LayerOptions().apply {
-                geom = GeomKind.SPOKE
-                this.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
-                mappings = mapOf(
+            LayerOptions().also {
+                it.geom = GeomKind.SPOKE
+                it.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
+                it.mappings = mapOf(
                     WaterfallConnector.AES_X to WaterfallConnector.Var.X,
                     WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
                 )
-                angle = 0.0
-                radius = 1.0 - this@WaterfallPlotOptionsBuilder.width
-                position = position {
+                it.angle = 0.0
+                it.radius = 1.0 - width
+                it.position = position {
                     name = CONNECTOR_POSITION_NAME
-                    x = 0.5 - (1 - this@WaterfallPlotOptionsBuilder.width) / 2.0
+                    x = 0.5 - (1 - width) / 2.0
                 }
-                color = connectorOptions.color
-                size = connectorOptions.size
-                linetype = connectorOptions.lineType
+                it.color = connectorOptions.color
+                it.size = connectorOptions.size
+                it.linetype = connectorOptions.lineType
             }
         )
     }
@@ -164,22 +159,19 @@ class WaterfallPlotOptionsBuilder(
     private fun labelOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
         if (labelOptions.blank) return emptyList()
         return listOf(
-            LayerOptions().apply {
-                geom = GeomKind.TEXT
-                this.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
-                mappings = labelMappings()
-                color = when (labelOptions.color) {
-                    FLOW_TYPE_COLOR_VALUE -> null
-                    else -> labelOptions.color
-                }
-                family = labelOptions.family
-                fontface = labelOptions.face
-                size = labelOptions.size
-                angle = labelOptions.angle
-                hjust = labelOptions.hjust
-                vjust = labelOptions.vjust
-                showLegend = this@WaterfallPlotOptionsBuilder.showLegend
-                labelFormat = this@WaterfallPlotOptionsBuilder.labelFormat
+            LayerOptions().also {
+                it.geom = GeomKind.TEXT
+                it.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
+                it.mappings = labelMappings()
+                it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_VALUE }
+                it.family = labelOptions.family
+                it.fontface = labelOptions.face
+                it.size = labelOptions.size
+                it.angle = labelOptions.angle
+                it.hjust = labelOptions.hjust
+                it.vjust = labelOptions.vjust
+                it.showLegend = showLegend
+                it.labelFormat = labelFormat
             }
         )
     }
@@ -247,6 +239,7 @@ class WaterfallPlotOptionsBuilder(
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
         private const val CONNECTOR_POSITION_NAME = "nudge"
+        private const val TOOLTIPS_VALUE_FORMAT = ".2~f"
 
         const val DEF_COLOR = "black"
         const val DEF_SIZE = 0.0
@@ -261,6 +254,14 @@ class WaterfallPlotOptionsBuilder(
                 "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
                 "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.CUMULATIVE_SUM}",
             ),
+            Option.LinesSpec.FORMATS to listOf(
+                WaterfallBox.Var.INITIAL,
+                WaterfallBox.Var.DIFFERENCE,
+                WaterfallBox.Var.CUMULATIVE_SUM,
+            ).map { mapOf(
+                Option.LinesSpec.Format.FIELD to it,
+                Option.LinesSpec.Format.FORMAT to TOOLTIPS_VALUE_FORMAT
+            ) },
             Option.Layer.DISABLE_SPLITTING to true
         )
         val DEF_H_LINE = ElementLineOptions(
@@ -272,5 +273,6 @@ class WaterfallPlotOptionsBuilder(
         val DEF_LABEL = ElementTextOptions(
             color = "white"
         )
+        const val DEF_LABEL_FORMAT = ".2~f"
     }
 }
