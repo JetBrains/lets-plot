@@ -68,10 +68,7 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     for var_name, meta_data in mapping_meta_by_var.items():
         for aesthetic, mapping_meta in meta_data.items():
             if mapping_meta.annotation == 'as_discrete':
-                mapping_annotation = {
-                    'aes': aesthetic,
-                    'annotation': 'as_discrete'
-                }
+                mapping_annotation = {}
 
                 label = mapping_meta.parameters.get('label')
                 if label is not None and label != var_name:  # backend uses var_name as label by default
@@ -90,7 +87,12 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
                     if order is not None:
                         mapping_annotation.setdefault('parameters', {})['order'] = order
 
-                mapping_annotations.append(mapping_annotation)
+                # add mapping meta if custom label is set or if series annotation for var doesn't contain order options
+                # otherwise don't add mapping meta - it's redundant, nothing unique compared to series annotation
+                if len(mapping_annotation) > 0:
+                    mapping_annotation['aes'] = aesthetic
+                    mapping_annotation['annotation'] = 'as_discrete'
+                    mapping_annotations.append(mapping_annotation)
 
     data_meta = {}
 
