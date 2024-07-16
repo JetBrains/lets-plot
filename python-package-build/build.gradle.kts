@@ -37,24 +37,17 @@ if (enablePythonPackage) {
 
     val pythonBinPath = rootProject.extra["python.bin_path"]
 
-    val pythonBuildCommand = if (os.isWindows) {
-        listOf("${pythonBinPath}/python",
-            "setup.py",
-            "bdist_wheel",
-            "--dist-dir=${pythonPackageDistDir}",
-            "build",
-            "-c",
-            "mingw32")
-    } else {
-         listOf("${pythonBinPath}/python",
-            "-m",
-            "build",
-            "-w",
-            "-o",
-            pythonPackageDistDir)
-    }
+    val pythonBuildParams = listOf("${pythonBinPath}/python",
+        "-m",
+        "build",
+        "-w",
+        "-o",
+        pythonPackageDistDir
+    )
 
     val pythonTwineCommand = if (os.isWindows) "${pythonBinPath}/Scripts/twine" else "${pythonBinPath}/twine"
+    val pythonExtraBuildParams = if (os.isWindows) listOf("-C--build-option=\"build", "--compiler", "mingw32\"") else emptyList()
+    val commandLine = pythonBuildParams + pythonExtraBuildParams
 
     tasks.register<Exec>("buildPythonPackage") {
         group = rootProject.extra["letsPlotTaskGroup"] as String
@@ -63,7 +56,7 @@ if (enablePythonPackage) {
         dependsOn(":python-extension:build")
 
         workingDir(pythonPackagePath)
-        commandLine(pythonBuildCommand)
+        commandLine(commandLine)
     }
 
     tasks.build {
