@@ -55,7 +55,7 @@ class SandboxToolbarJs() {
     }
 
     fun bind(figure: FigureModelJs) {
-        check(this.figureModel == null) { "Tollbar is already bound to another figure." }
+        check(this.figureModel == null) { "Toolbar is already bound to another figure." }
         this.figureModel = figure
         figure.onToolEvent { e: dynamic ->
             val event = dynamicObjectToMap(e)
