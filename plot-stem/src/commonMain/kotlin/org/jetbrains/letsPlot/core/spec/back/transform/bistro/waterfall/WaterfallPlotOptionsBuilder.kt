@@ -255,7 +255,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
         val DEF_TOOLTIPS = mapOf(
-            Option.Layer.TOOLTIP_TITLE to "^x",
+            Option.Layer.TOOLTIP_TITLE to "@x",
             Option.LinesSpec.LINES to listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
                 "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",

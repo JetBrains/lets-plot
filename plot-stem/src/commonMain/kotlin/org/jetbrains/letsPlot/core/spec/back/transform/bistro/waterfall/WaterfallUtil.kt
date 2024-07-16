@@ -28,6 +28,17 @@ internal object WaterfallUtil {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
+        if (xs.isEmpty()) {
+            return mapOf(
+                WaterfallBox.Var.X to emptyList(),
+                WaterfallBox.Var.YMIN to emptyList<Double>(),
+                WaterfallBox.Var.YMAX to emptyList<Double>(),
+                WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
+                WaterfallBox.Var.INITIAL to emptyList<Double>(),
+                WaterfallBox.Var.CUMULATIVE_SUM to emptyList<Double>(),
+                WaterfallBox.Var.DIFFERENCE to emptyList<Double>(),
+            )
+        }
         val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
         val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
         val (yMin, yMax) = (yPrev zip yNext).map { Pair(min(it.first, it.second), max(it.first, it.second)) }.unzip()
@@ -67,6 +78,14 @@ internal object WaterfallUtil {
         calcTotal: Boolean
     ): Map<String, List<Any?>> {
         val yMin = boxData.getValue(WaterfallBox.Var.YMIN) as List<Double>
+        if (yMin.isEmpty()) {
+            return mapOf(
+                WaterfallLabel.Var.X to emptyList(),
+                WaterfallLabel.Var.Y to emptyList<Double>(),
+                WaterfallLabel.Var.LABEL to emptyList(),
+                WaterfallLabel.Var.FLOW_TYPE to emptyList<String>()
+            )
+        }
         val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
         val ys = (yMin zip yMax).map { (it.first + it.second) / 2 }
         val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
