@@ -32,103 +32,32 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
-internal open class SquareFrameOfReference(
+internal class SquareFrameOfReference(
+    plotContext: PlotContext,
     hScaleBreaks: ScaleBreaks,
     vScaleBreaks: ScaleBreaks,
-    hTransform: Transform,
-    vTransform: Transform,
-    private val adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
-    private val coord: CoordinateSystem,
-    private val layoutInfo: TileLayoutInfo,
-    private val marginsLayout: GeomMarginsLayout,
-    private val theme: Theme,
-    private val flipAxis: Boolean,
-    private val plotContext: PlotContext
-) : FrameOfReference() {
-
-    var isDebugDrawing: Boolean = false
-
-    // Flip theme
-    protected val hAxisTheme = theme.horizontalAxis(flipAxis)
-    protected val vAxisTheme = theme.verticalAxis(flipAxis)
+    adjustedDomain: DoubleRectangle,         // Transformed and adjusted XY data ranges.
+    protected override val coord: CoordinateSystem,
+    layoutInfo: TileLayoutInfo,
+    marginsLayout: GeomMarginsLayout,
+    theme: Theme,
+    flipAxis: Boolean,
+) : FrameOfReferenceBase(
+    plotContext,
+    adjustedDomain,
+    layoutInfo,
+    marginsLayout,
+    theme,
+    flipAxis,
+) {
 
     override val transientState: TransientState = TransientState(
         hScaleBreaks,
         vScaleBreaks,
-        hTransform,
-        vTransform,
         adjustedDomain
     )
 
-    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-        val domainPoint0 = coord.fromClient(clientRect.origin)
-            ?: error("Can't translate client ${clientRect.origin} to data domain.")
-        val clientBottomRight = clientRect.origin.add(clientRect.dimension)
-        val domainPoint1 = coord.fromClient(clientBottomRight)
-            ?: error("Can't translate client $clientBottomRight to data domain.")
-        return DoubleRectangle.span(domainPoint0, domainPoint1)
-    }
-
-    // Rendering
-
-    override fun drawBeforeGeomLayer(parent: SvgComponent) {
-        drawPanelAndAxis(parent, beforeGeomLayer = true)
-    }
-
-    override fun drawAfterGeomLayer(parent: SvgComponent) {
-        drawPanelAndAxis(parent, beforeGeomLayer = false)
-    }
-
-    protected open fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
-        val geomInnerBounds: DoubleRectangle = layoutInfo.geomInnerBounds
-        val panelTheme = theme.panel()
-
-        val vGridTheme = panelTheme.verticalGrid(flipAxis)
-        val hGridTheme = panelTheme.horizontalGrid(flipAxis)
-
-        val fillBkgr = panelTheme.showRect() && beforeGeomLayer
-        val strokeBkgr = panelTheme.showRect() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
-        val drawPanelBorder = panelTheme.showBorder() && (panelTheme.borderIsOntop() xor beforeGeomLayer)
-
-        val drawVGrid = beforeGeomLayer xor vGridTheme.isOntop()
-        val drawHGrid = beforeGeomLayer xor hGridTheme.isOntop()
-        val drawHAxis = beforeGeomLayer xor hAxisTheme.isOntop()
-        val drawVAxis = beforeGeomLayer xor vAxisTheme.isOntop()
-
-        if (fillBkgr) {
-            doFillBkgr(parent)
-        }
-
-        if (drawVGrid) {
-            doDrawVGrid(vGridTheme, parent)
-        }
-
-        if (drawHGrid) {
-            doDrawHGrid(hGridTheme, parent)
-        }
-
-        if (drawHAxis) {
-            doDrawHAxis(parent)
-        }
-
-        if (drawVAxis) {
-            doDrawVAxis(parent)
-        }
-
-        if (strokeBkgr) {
-            doStrokeBkgr(parent)
-        }
-
-        if (drawPanelBorder) {
-            doDrawPanelBorder(parent)
-        }
-
-        if (isDebugDrawing && !beforeGeomLayer) {
-            drawDebugShapes(parent, geomInnerBounds)
-        }
-    }
-
-    protected open fun doDrawPanelBorder(parent: SvgComponent) {
+    override fun doDrawPanelBorder(parent: SvgComponent) {
         val panelBorder = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().borderColor())
             strokeWidth().set(theme.panel().borderWidth())
@@ -138,7 +67,7 @@ internal open class SquareFrameOfReference(
         parent.add(panelBorder)
     }
 
-    protected open fun doDrawVAxis(parent: SvgComponent) {
+    override fun doDrawVAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (labelAdjustments, breaksData) = prepareAxisData(
                 axisInfo,
@@ -168,7 +97,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawHAxis(parent: SvgComponent) {
+    override fun doDrawHAxis(parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (labelAdjustments, breaksData) = prepareAxisData(
                 axisInfo,
@@ -198,7 +127,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         (layoutInfo.axisInfos.left ?: layoutInfo.axisInfos.right)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(
                 axisInfo,
@@ -222,7 +151,7 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         (layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(
                 axisInfo,
@@ -246,14 +175,14 @@ internal open class SquareFrameOfReference(
         }
     }
 
-    protected open fun doFillBkgr(parent: SvgComponent) {
+    override fun doFillBkgr(parent: SvgComponent) {
         val panel = SvgRectElement(layoutInfo.geomContentBounds).apply {
             fillColor().set(theme.panel().rectFill())
         }
         parent.add(panel)
     }
 
-    protected open fun doStrokeBkgr(parent: SvgComponent) {
+    override fun doStrokeBkgr(parent: SvgComponent) {
         val panelRectStroke = SvgRectElement(layoutInfo.geomContentBounds).apply {
             strokeColor().set(theme.panel().rectColor())
             strokeWidth().set(theme.panel().rectStrokeWidth())
@@ -262,7 +191,6 @@ internal open class SquareFrameOfReference(
         }
         parent.add(panelRectStroke)
     }
-
 
     private fun prepareAxisData(
         axisInfo: AxisLayoutInfo,
@@ -295,52 +223,12 @@ internal open class SquareFrameOfReference(
         return Pair(labelAdjustments, breaksData)
     }
 
-    private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
-        run {
-            val tileBounds = layoutInfo.geomWithAxisBounds
-            val rect = SvgRectElement(tileBounds)
-            rect.fillColor().set(Color.BLACK)
-            rect.strokeWidth().set(0.0)
-            rect.fillOpacity().set(0.1)
-            parent.add(rect)
-        }
-
-//        run {
-//            val clipBounds = layoutInfo.clipBounds
-//            val rect = SvgRectElement(clipBounds)
-//            rect.fillColor().set(Color.DARK_GREEN)
-//            rect.strokeWidth().set(0.0)
-//            rect.fillOpacity().set(0.3)
-//            parent.add(rect)
-//        }
-
-        run {
-            val rect = SvgRectElement(geomBounds)
-            rect.fillColor().set(Color.PINK)
-            rect.strokeWidth().set(1.0)
-            rect.fillOpacity().set(0.5)
-            parent.add(rect)
-        }
-    }
-
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         return buildGeom(layer, targetCollector)
     }
 
     override fun setClip(element: SvgComponent) {
         element.clipBounds(layoutInfo.geomContentBounds)
-    }
-
-    protected fun buildGeom(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        return buildGeom(
-            plotContext,
-            layer,  // positional aesthetics are the same as positional data.
-            xyAesBounds = adjustedDomain,
-            coord,
-            flipAxis,
-            targetCollector,
-            backgroundColor = if (theme.panel().showRect()) theme.panel().rectFill() else theme.plot().backgroundFill()
-        )
     }
 
 
@@ -453,11 +341,10 @@ internal open class SquareFrameOfReference(
         }
     }
 
+
     inner class TransientState(
         private val hScaleBreaks: ScaleBreaks,
         private val vScaleBreaks: ScaleBreaks,
-        private val hTransform: Transform,
-        private val vTransform: Transform,
         dataBounds: DoubleRectangle  // transformed domain
     ) : ComponentTransientState(
         viewBounds = layoutInfo.geomContentBounds  // px
@@ -491,7 +378,13 @@ internal open class SquareFrameOfReference(
             }
 
             val dataRange: DoubleSpan = dataBounds.xRange()
-            validateBreaksIntern(dataRange, hBreaksTransformedValues, hBreaksLabels, hTransform, hScaleBreaks.formatter)
+            validateBreaksIntern(
+                dataRange,
+                hBreaksTransformedValues,
+                hBreaksLabels,
+                hScaleBreaks.transform,
+                hScaleBreaks.formatter
+            )
         }
 
         private fun validateVerticalBreaks() {
@@ -501,7 +394,13 @@ internal open class SquareFrameOfReference(
             }
 
             val dataRange: DoubleSpan = dataBounds.yRange()
-            validateBreaksIntern(dataRange, vBreaksTransformedValues, vBreaksLabels, vTransform, vScaleBreaks.formatter)
+            validateBreaksIntern(
+                dataRange,
+                vBreaksTransformedValues,
+                vBreaksLabels,
+                vScaleBreaks.transform,
+                vScaleBreaks.formatter
+            )
         }
 
         private fun validateBreaksIntern(
