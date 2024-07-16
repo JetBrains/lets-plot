@@ -61,7 +61,7 @@ class SeriesAnnotationTypeTest {
         ).let { svg ->
             assertThat(svg).contains("<tspan>54321</tspan>")
             assertThat(svg).contains("<tspan>12345.1</tspan>")
-            assertThat(svg).contains("<tspan>01.01.24 11:34:56</tspan>")
+            assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")
         }
     }
 
@@ -107,7 +107,7 @@ class SeriesAnnotationTypeTest {
         ).let { svg ->
             assertThat(svg).contains("<tspan>54321</tspan>")
             assertThat(svg).contains("<tspan>12345.1</tspan>")
-            assertThat(svg).contains("<tspan>01.01.24 11:34:56</tspan>")
+            assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")
         }
     }
 
