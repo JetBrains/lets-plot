@@ -17,12 +17,10 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
 internal class TestingPlotGeomTiles(
     private val geomLayers: List<GeomLayer>,
     override val scalesBeforeFacets: Map<Aes<*>, Scale>,
-    override val defaultFormatters: Map<Any, (Any) -> String> = emptyMap(),
     coordProvider: CoordProvider = CoordProviders.cartesian(),
     containsLiveMap: Boolean = false
 ) : PlotGeomTilesBase(
     scalesBeforeFacets,
-    defaultFormatters,
     coordProvider,
     containsLiveMap
 ) {

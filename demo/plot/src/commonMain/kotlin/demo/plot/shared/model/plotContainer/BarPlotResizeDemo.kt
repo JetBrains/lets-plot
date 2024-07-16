@@ -85,7 +85,6 @@ class BarPlotResizeDemo private constructor(
         val geomTiles = SimplePlotGeomTiles(
             listOf(layer),
             scaleByAes,
-            emptyMap(),
             scaleMappersNP,
             CoordProviders.cartesian(),
             containsLiveMap = false

@@ -36,17 +36,6 @@ internal class PlotAssemblerPlotContext constructor(
         }
     }
 
-    override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
-        return geomTiles.defaultFormatters[aes]
-            ?: Any::toString
-    }
-
-    override fun getDefaultFormatter(varName: String): (Any) -> String {
-        return geomTiles.defaultFormatters[varName]
-            ?: Any::toString
-    }
-
-
     private companion object {
         fun checkPositionalAes(aes: Aes<*>) {
             // expect only X,Y or not positional

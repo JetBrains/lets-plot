@@ -39,6 +39,14 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
+    override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
+        error("Not available in a bogus geom context")
+    }
+
+    override fun getDefaultFormatter(varName: String): (Any) -> String {
+        error("Not available in a bogus geom context")
+    }
+
     override fun estimateTextSize(
         text: String,
         family: String,

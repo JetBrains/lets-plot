@@ -20,7 +20,6 @@ interface PlotGeomTiles {
     val xyContinuousTransforms: Pair<Transform?, Transform?> // same cont. transforms are shared by all tiles
     val scalesBeforeFacets: Map<Aes<*>, Scale>
     val mappersNP: Map<Aes<*>, ScaleMapper<*>>   // all non-positional mappers
-    val defaultFormatters: Map<Any, (Any) -> String>
     val coordProvider: CoordProvider
 
     fun layersByTile(): List<List<GeomLayer>>

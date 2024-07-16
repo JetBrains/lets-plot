@@ -9,14 +9,14 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
-import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 
 interface GeomLayer {
     val dataFrame: DataFrame
@@ -58,6 +58,8 @@ interface GeomLayer {
     val colorByAes: Aes<Color>
 
     val fillByAes: Aes<Color>
+
+    val defaultFormatters: Map<Any, (Any) -> String>
 
     fun renderedAes(considerOrientation: Boolean = false): List<Aes<*>>
 

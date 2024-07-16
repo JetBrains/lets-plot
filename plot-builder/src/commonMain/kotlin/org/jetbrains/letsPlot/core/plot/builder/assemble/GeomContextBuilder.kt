@@ -25,6 +25,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotation: Annotation? = null
+    private var defaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private var backgroundColor: Color = Color.WHITE
     private var plotContext: PlotContext = NullPlotContext
 
@@ -37,6 +38,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
         annotation = ctx.annotation
+        defaultFormatters = ctx.defaultFormatters
         backgroundColor = ctx.backgroundColor
         plotContext = ctx.plotContext
     }
@@ -76,6 +78,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun defaultFormatters(defaultFormatters: Map<Any, (Any) -> String>): ImmutableGeomContext.Builder {
+        this.defaultFormatters = defaultFormatters
+        return this
+    }
+
     override fun backgroundColor(color: Color): ImmutableGeomContext.Builder {
         this.backgroundColor = color
         return this
@@ -95,6 +102,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val aesthetics = b.aesthetics
         val aestheticMappers = b.aestheticMappers
         val _aesBounds: DoubleRectangle? = b.aesBounds
+        val defaultFormatters = b.defaultFormatters
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -139,6 +147,14 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                     isItalic = isItalic
                 ),
             ).dimensions(text)
+        }
+
+        override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
+            return defaultFormatters[aes] ?: Any::toString
+        }
+
+        override fun getDefaultFormatter(varName: String): (Any) -> String {
+            return defaultFormatters[varName] ?: Any::toString
         }
 
         override fun getAesBounds(): DoubleRectangle {
