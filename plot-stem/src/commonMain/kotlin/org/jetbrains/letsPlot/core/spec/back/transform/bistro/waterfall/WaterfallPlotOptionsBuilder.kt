@@ -29,7 +29,7 @@ class WaterfallPlotOptionsBuilder(
     private val showLegend: Boolean?,
     private val tooltipsOptions: TooltipsOptions,
     private val calcTotal: Boolean,
-    totalTitle: String?,
+    private val totalTitle: String?,
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?,
@@ -39,13 +39,6 @@ class WaterfallPlotOptionsBuilder(
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
-    private val flowTypes = mapOf(
-        "increase" to FlowType("Increase", "#4daf4a"),
-        "decrease" to FlowType("Decrease", "#e41a1c"),
-    ) + if (calcTotal) {
-        mapOf("total" to FlowType(totalTitle ?: "Total", "#377eb8"))
-    } else emptyMap()
-
     fun build(): PlotOptions {
         val boxLayerData = boxLayerData()
         val boxOptions = LayerOptions().also {
@@ -79,14 +72,14 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.COLOR
                     name = FLOW_TYPE_NAME
-                    breaks = flowTypes.values.map { it.name }
-                    values = flowTypes.values.map { it.color }
+                    breaks = FlowType.titles(calcTotal, totalTitle).values.toList()
+                    values = FlowType.list(calcTotal).map(FlowType::color)
                 },
                 scale {
                     aes = Aes.FILL
                     name = FLOW_TYPE_NAME
-                    breaks = flowTypes.values.map { it.name }
-                    values = flowTypes.values.map { it.color }
+                    breaks = FlowType.titles(calcTotal, totalTitle).values.toList()
+                    values = FlowType.list(calcTotal).map(FlowType::color)
                 }
             )
         }
@@ -104,7 +97,7 @@ class WaterfallPlotOptionsBuilder(
             threshold = threshold,
             maxValues = maxValues,
             initialY = INITIAL_Y,
-            flowTypes = flowTypes
+            flowTypeTitles = FlowType.titles(calcTotal, totalTitle)
         )
     }
 
@@ -186,7 +179,30 @@ class WaterfallPlotOptionsBuilder(
         return mappings
     }
 
-    data class FlowType(val name: String, val color: String)
+    enum class FlowType(val color: String) {
+        INCREASE("#4daf4a"),
+        DECREASE("#e41a1c"),
+        TOTAL("#377eb8");
+
+        override fun toString(): String {
+            return name.lowercase().replaceFirstChar(Char::uppercase)
+        }
+
+        companion object {
+            fun list(withTotal: Boolean): List<FlowType> {
+                return entries.filterNot { !withTotal && it == TOTAL }
+            }
+
+            fun titles(withTotal: Boolean, totalTitle: String?): Map<FlowType, String> {
+                return list(withTotal).associateWith { flowType ->
+                    when (flowType) {
+                        TOTAL -> totalTitle ?: flowType.toString()
+                        else -> flowType.toString()
+                    }
+                }
+            }
+        }
+    }
 
     data class ElementLineOptions(
         var color: String? = null,
