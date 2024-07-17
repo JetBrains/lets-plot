@@ -61,20 +61,21 @@ class WaterfallPlotSpecChange : SpecChange {
     }
 
     private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions {
-        val tooltipsOptions = bistroSpec.getMap(Waterfall.TOOLTIPS) ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS
-        return tooltips {
-            anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
-            minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-            title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
-            disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
-            lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
-            formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
-                TooltipsOptions.format {
-                    field = formatOptions[Option.LinesSpec.Format.FIELD]
-                    format = formatOptions[Option.LinesSpec.Format.FORMAT]
+        return bistroSpec.getMap(Waterfall.TOOLTIPS)?.let { tooltipsOptions ->
+            tooltips {
+                anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
+                minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
+                title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
+                disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+                lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
+                formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
+                    TooltipsOptions.format {
+                        field = formatOptions[Option.LinesSpec.Format.FIELD]
+                        format = formatOptions[Option.LinesSpec.Format.FORMAT]
+                    }
                 }
             }
-        }
+        } ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS
     }
 
     private fun readElementLineOptions(

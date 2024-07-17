@@ -261,23 +261,25 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_SHOW_LEGEND = false
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
-        val DEF_TOOLTIPS = mapOf(
-            Option.Layer.TOOLTIP_TITLE to "@x",
-            Option.LinesSpec.LINES to listOf(
+        val DEF_TOOLTIPS = tooltips {
+            title = "@x"
+            disableSplitting = true
+            lines = listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
                 "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
                 "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.CUMULATIVE_SUM}",
-            ),
-            Option.LinesSpec.FORMATS to listOf(
+            )
+            formats = listOf(
                 WaterfallBox.Var.INITIAL,
                 WaterfallBox.Var.DIFFERENCE,
                 WaterfallBox.Var.CUMULATIVE_SUM,
-            ).map { mapOf(
-                Option.LinesSpec.Format.FIELD to it,
-                Option.LinesSpec.Format.FORMAT to TOOLTIPS_VALUE_FORMAT
-            ) },
-            Option.Layer.DISABLE_SPLITTING to true
-        )
+            ).map { f ->
+                TooltipsOptions.format {
+                    field = f
+                    format = TOOLTIPS_VALUE_FORMAT
+                }
+            }
+        }
         val DEF_H_LINE = ElementLineOptions(
             lineType = LineTypeOptionConverter().apply("dashed"),
             blank = true
