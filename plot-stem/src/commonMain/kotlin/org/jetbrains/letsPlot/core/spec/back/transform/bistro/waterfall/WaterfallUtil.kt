@@ -87,7 +87,7 @@ internal object WaterfallUtil {
             )
         }
         val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
-        val ys = (yMin zip yMax).map { (it.first + it.second) / 2 }
+        val ys = (yMin zip yMax).map { (min, max) -> (min + max) / 2 }
         val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
         val labels = dys.dropLast(1) + listOf(
             if (calcTotal) {

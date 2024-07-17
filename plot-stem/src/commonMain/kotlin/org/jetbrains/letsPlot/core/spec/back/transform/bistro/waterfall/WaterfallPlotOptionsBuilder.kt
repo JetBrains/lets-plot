@@ -48,29 +48,25 @@ class WaterfallPlotOptionsBuilder(
 
     fun build(): PlotOptions {
         val boxLayerData = boxLayerData()
-        val boxOptionsList = listOf(
-            LayerOptions().also {
-                it.geom = GeomKind.CROSS_BAR
-                it.data = boxLayerData
-                it.mappings = boxMappings()
-                it.color = color.takeUnless { color == FLOW_TYPE_COLOR_VALUE }
-                it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_VALUE }
-                it.size = size
-                it.alpha = alpha
-                it.linetype = LineTypeOptionConverter().apply(lineType)
-                it.width = width
-                it.showLegend = showLegend
-                it.tooltipsOptions = tooltipsOptions
-            },
-        )
+        val boxOptions = LayerOptions().also {
+            it.geom = GeomKind.CROSS_BAR
+            it.data = boxLayerData
+            it.mappings = boxMappings()
+            it.color = color.takeUnless { color == FLOW_TYPE_COLOR_VALUE }
+            it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_VALUE }
+            it.size = size
+            it.alpha = alpha
+            it.linetype = LineTypeOptionConverter().apply(lineType)
+            it.width = width
+            it.showLegend = showLegend
+            it.tooltipsOptions = tooltipsOptions
+        }
         return plot {
             layerOptions = if (hLineOnTop) {
-                connectorOptionsList(boxLayerData) + boxOptionsList + labelOptionsList(boxLayerData) +
-                        hLineOptionsList()
+                listOf(connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData), hLineOptions())
             } else {
-                hLineOptionsList() +
-                        connectorOptionsList(boxLayerData) + boxOptionsList + labelOptionsList(boxLayerData)
-            }
+                listOf(hLineOptions(), connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData))
+            }.filterNotNull()
             scaleOptions = listOf(
                 scale {
                     aes = Aes.X
@@ -127,61 +123,55 @@ class WaterfallPlotOptionsBuilder(
         return mappings
     }
 
-    private fun hLineOptionsList(): List<LayerOptions> {
-        if (hLineOptions.blank) return emptyList()
-        return listOf(
-            LayerOptions().apply {
-                geom = GeomKind.H_LINE
-                yintercept = INITIAL_Y
-                color = hLineOptions.color
-                size = hLineOptions.size
-                linetype = hLineOptions.lineType
-                setParameter(Option.Layer.TOOLTIPS, "none")
-            }
-        )
+    private fun hLineOptions(): LayerOptions? {
+        if (hLineOptions.blank) return null
+        return LayerOptions().apply {
+            geom = GeomKind.H_LINE
+            yintercept = INITIAL_Y
+            color = hLineOptions.color
+            size = hLineOptions.size
+            linetype = hLineOptions.lineType
+            setParameter(Option.Layer.TOOLTIPS, "none")
+        }
     }
 
-    private fun connectorOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
-        if (connectorOptions.blank) return emptyList()
-        return listOf(
-            LayerOptions().also {
-                it.geom = GeomKind.SPOKE
-                it.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
-                it.mappings = mapOf(
-                    WaterfallConnector.AES_X to WaterfallConnector.Var.X,
-                    WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
-                )
-                it.angle = 0.0
-                it.radius = 1.0 - width
-                it.position = position {
-                    name = CONNECTOR_POSITION_NAME
-                    x = 0.5 - (1 - width) / 2.0
-                }
-                it.color = connectorOptions.color
-                it.size = connectorOptions.size
-                it.linetype = connectorOptions.lineType
+    private fun connectorOptions(boxLayerData: Map<String, List<Any?>>): LayerOptions? {
+        if (connectorOptions.blank) return null
+        return LayerOptions().also {
+            it.geom = GeomKind.SPOKE
+            it.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
+            it.mappings = mapOf(
+                WaterfallConnector.AES_X to WaterfallConnector.Var.X,
+                WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
+            )
+            it.angle = 0.0
+            it.radius = 1.0 - width
+            it.position = position {
+                name = CONNECTOR_POSITION_NAME
+                x = 0.5 - (1 - width) / 2.0
             }
-        )
+            it.color = connectorOptions.color
+            it.size = connectorOptions.size
+            it.linetype = connectorOptions.lineType
+        }
     }
 
-    private fun labelOptionsList(boxLayerData: Map<String, List<Any?>>): List<LayerOptions> {
-        if (labelOptions.blank) return emptyList()
-        return listOf(
-            LayerOptions().also {
-                it.geom = GeomKind.TEXT
-                it.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
-                it.mappings = labelMappings()
-                it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_VALUE }
-                it.family = labelOptions.family
-                it.fontface = labelOptions.face
-                it.size = labelOptions.size
-                it.angle = labelOptions.angle
-                it.hjust = labelOptions.hjust
-                it.vjust = labelOptions.vjust
-                it.showLegend = showLegend
-                it.labelFormat = labelFormat
-            }
-        )
+    private fun labelOptions(boxLayerData: Map<String, List<Any?>>): LayerOptions? {
+        if (labelOptions.blank) return null
+        return LayerOptions().also {
+            it.geom = GeomKind.TEXT
+            it.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
+            it.mappings = labelMappings()
+            it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_VALUE }
+            it.family = labelOptions.family
+            it.fontface = labelOptions.face
+            it.size = labelOptions.size
+            it.angle = labelOptions.angle
+            it.hjust = labelOptions.hjust
+            it.vjust = labelOptions.vjust
+            it.showLegend = showLegend
+            it.labelFormat = labelFormat
+        }
     }
 
     private fun labelMappings(): Map<Aes<*>, String> {
