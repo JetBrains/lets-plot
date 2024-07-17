@@ -214,14 +214,12 @@ def test_as_discrete():
     }
     p = ggplot(d) + geom_point(aes(x='x', y='y', color=as_discrete('c')))
 
-    assert p.as_dict()['data_meta']['series_annotations'] == [
-        {'column': 'x', 'type': 'int'},
-        {'column': 'y', 'type': 'int'},
-        {'column': 'c', 'type': 'int'}
-    ]
-
     # no meta for 'c' in the layer -> no series_annotations
     assert 'series_annotations' not in p.as_dict()['layers'][0]['data_meta']
+
+    assert p.as_dict()['layers'][0]['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
+    ]
 
 
 def test_as_discrete_with_levels():
@@ -232,12 +230,12 @@ def test_as_discrete_with_levels():
     }
     p = ggplot(d) + geom_point(aes(x='x', y='y', color=as_discrete('c', levels=[3, 2, 1])))
 
-    assert p.as_dict()['data_meta']['series_annotations'] == [
-        {'column': 'x', 'type': 'int'},
-        {'column': 'y', 'type': 'int'},
-        {'column': 'c', 'type': 'int'}
-    ]
-
+    # order options are in series_annotations
     assert p.as_dict()['layers'][0]['data_meta']['series_annotations'] == [
         {'column': 'c', 'factor_levels': [3, 2, 1]}
+    ]
+
+    # label is used to avoid 'color.cyl' scale title
+    assert p.as_dict()['layers'][0]['data_meta']['mapping_annotations'] == [
+        {'aes': 'color', 'annotation': 'as_discrete', 'parameters': {'label': 'c'}}
     ]

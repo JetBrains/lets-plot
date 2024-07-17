@@ -70,12 +70,13 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
             if mapping_meta.annotation == 'as_discrete':
                 mapping_annotation = {}
 
+                # Note that the label is always set; otherwise, the scale title will appear as 'color.cyl'
                 label = mapping_meta.parameters.get('label')
                 if label is not None:
                     mapping_annotation.setdefault('parameters', {})['label'] = label
 
-                # order options are either in series or in mapping, but not in both
-                if var_name not in series_annotations or 'factor_levels' not in series_annotations[var_name]:
+                # ordering options (levels, order_by, order) are either in series or in mapping, but not in both
+                if 'factor_levels' not in series_annotations.get(var_name, {}):
                     if mapping_meta.levels is not None:
                         mapping_annotation['levels'] = mapping_meta.levels
 
