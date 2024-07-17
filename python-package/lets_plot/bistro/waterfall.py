@@ -56,16 +56,20 @@ def waterfall_plot(data, x, y, *,
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
     total_title : str
         The header of the last box with the final cumulative sum.
-    hline : dict
+    hline : str or dict
         Horizontal line passing through 0.
+        Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_line()` to specify parameters.
     hline_ontop : bool, default=True
         Option to place horizontal line over the other layers.
-    connector : dict
+    connector : str or dict
         Line between neighbouring boxes connecting the end of the previous box and the beginning of the next box.
+        Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_line()` to specify parameters.
-    label : dict
+    label : str or dict
         Label on the box. Shows change value.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_text()` to specify parameters.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:

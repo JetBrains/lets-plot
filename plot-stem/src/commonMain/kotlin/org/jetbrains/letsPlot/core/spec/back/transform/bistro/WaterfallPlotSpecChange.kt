@@ -82,6 +82,9 @@ class WaterfallPlotSpecChange : SpecChange {
         option: String,
         defaults: WaterfallPlotOptionsBuilder.ElementLineOptions
     ): WaterfallPlotOptionsBuilder.ElementLineOptions {
+        bistroSpec.getString(option)?.let {
+            if (it == Option.Theme.Elem.BLANK) return WaterfallPlotOptionsBuilder.ElementLineOptions(blank = true)
+        }
         return bistroSpec.getMap(option)?.let { elementLineSpec ->
             defaults.merge(
                 WaterfallPlotOptionsBuilder.ElementLineOptions(
@@ -99,6 +102,9 @@ class WaterfallPlotSpecChange : SpecChange {
         option: String,
         defaults: WaterfallPlotOptionsBuilder.ElementTextOptions
     ): WaterfallPlotOptionsBuilder.ElementTextOptions {
+        bistroSpec.getString(option)?.let {
+            if (it == Option.Theme.Elem.BLANK) return WaterfallPlotOptionsBuilder.ElementTextOptions(blank = true)
+        }
         return bistroSpec.getMap(option)?.let { elementTextSpec ->
             defaults.merge(
                 WaterfallPlotOptionsBuilder.ElementTextOptions(
