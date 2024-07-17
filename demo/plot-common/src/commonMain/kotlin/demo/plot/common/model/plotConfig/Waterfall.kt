@@ -20,16 +20,16 @@ class Waterfall {
             {
               'kind': 'plot',
               'data': {
-                'x': ['A', 'B', 'C', 'D', 'E'],
-                'y': [100, 200, -400, 500, -200]
+                'cat': ['A', 'B', 'C', 'D', 'E'],
+                'val': [100, 200, -400, 500, -200]
               },
               'ggtitle': {
                 'text': 'Basic waterfall demo'
               },
               'bistro': {
                 'name': 'waterfall',
-                'x': 'x',
-                'y': 'y'
+                'x': 'cat',
+                'y': 'val'
               }
             }
         """.trimIndent()
@@ -43,16 +43,16 @@ class Waterfall {
             {
               'kind': 'plot',
               'data': {
-                'x': ['A', 'B', 'C', 'D', 'E'],
-                'y': [100, 200, -400, 500, -200]
+                'cat': ['A', 'B', 'C', 'D', 'E'],
+                'val': [100, 200, -400, 500, -200]
               },
               'ggtitle': {
                 'text': 'Try different parameters'
               },
               'bistro': {
                 'name': 'waterfall',
-                'x': 'x',
-                'y': 'y',
+                'x': 'cat',
+                'y': 'val',
                 'color': 'flow_type',
                 'fill': 'lightgrey',
                 'size': 3,

@@ -73,6 +73,14 @@ class WaterfallPlotOptionsBuilder(
             }
             scaleOptions = listOf(
                 scale {
+                    aes = Aes.X
+                    name = x
+                },
+                scale {
+                    aes = Aes.Y
+                    name = y
+                },
+                scale {
                     aes = Aes.COLOR
                     name = FLOW_TYPE_NAME
                     breaks = flowTypes.values.map { it.name }
