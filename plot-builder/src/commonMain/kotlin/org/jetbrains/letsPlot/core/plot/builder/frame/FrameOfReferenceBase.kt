@@ -15,6 +15,9 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil
+import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
@@ -62,10 +65,10 @@ internal abstract class FrameOfReferenceBase(
     }
 
     protected fun buildGeom(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        return SquareFrameOfReference.buildGeom(
+        return buildGeom(
             plotContext,
             layer,  // positional aesthetics are the same as positional data.
-            xyAesBounds = adjustedDomain,
+            xyAesBounds = adjustedDomain.flipIf(flipAxis), // Data space -> View space
             coord,
             flipAxis,
             targetCollector,
@@ -147,6 +150,68 @@ internal abstract class FrameOfReferenceBase(
             rect.strokeWidth().set(1.0)
             rect.fillOpacity().set(0.5)
             parent.add(rect)
+        }
+    }
+
+    companion object {
+        /**
+         * 'internal' access for tests.
+         */
+        internal fun buildGeom(
+            plotContext: PlotContext,
+            layer: GeomLayer,
+            xyAesBounds: DoubleRectangle,
+            coord: CoordinateSystem,
+            flippedAxis: Boolean,
+            targetCollector: GeomTargetCollector,
+            backgroundColor: Color
+        ): SvgComponent {
+            val rendererData = LayerRendererUtil.createLayerRendererData(layer)
+
+            @Suppress("NAME_SHADOWING")
+            // val flippedAxis = layer.isYOrientation xor flippedAxis
+            // (XOR issue: https://youtrack.jetbrains.com/issue/KT-52296/Kotlin-JS-the-xor-operation-sometimes-evaluates-to-int-value-ins)
+            val flippedAxis = if (layer.isYOrientation) !flippedAxis else flippedAxis
+
+            val aestheticMappers = rendererData.aestheticMappers
+            val aesthetics = rendererData.aesthetics
+
+            @Suppress("NAME_SHADOWING")
+            val coord = when (layer.isYOrientation) {
+                true -> coord.flip()
+                false -> coord
+            }
+
+            @Suppress("NAME_SHADOWING")
+            val targetCollector = targetCollector.let {
+                when {
+                    flippedAxis -> it.withFlippedAxis()
+                    else -> it
+                }
+            }.let {
+                when {
+                    layer.isYOrientation -> it.withYOrientation()
+                    else -> it
+                }
+            }
+
+            val ctx = GeomContextBuilder()
+                .flipped(flippedAxis)
+                .aesthetics(aesthetics)
+                .aestheticMappers(aestheticMappers)
+                .aesBounds(xyAesBounds)
+                .geomTargetCollector(targetCollector)
+                .fontFamilyRegistry(layer.fontFamilyRegistry)
+                .defaultFormatters(layer.defaultFormatters)
+                .annotation(rendererData.annotation)
+                .backgroundColor(backgroundColor)
+                .plotContext(plotContext)
+                .build()
+
+            val pos = rendererData.pos
+            val geom = layer.geom
+
+            return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
         }
     }
 }

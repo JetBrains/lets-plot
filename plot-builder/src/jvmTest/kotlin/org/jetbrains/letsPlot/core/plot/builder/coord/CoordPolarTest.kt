@@ -31,7 +31,7 @@ class PolarCoordTest {
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
         val polarMapper = polarCoordProvider.createCoordinateMapper(
-            adjustedDomain = adjustedDomain,
+            adjustedDomain = adjustedDomain.flipIf(true), // FixMe: polar hack: should work without a flip
             clientSize = clientSize
         )
 
@@ -51,7 +51,10 @@ class PolarCoordTest {
         )
         val adjustedDomain = polarCoordProvider.adjustDomain(domain)
 
-        val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
+        val coordinateSystem = polarCoordProvider.createCoordinateSystem(
+            adjustedDomain.flipIf(true),  // FixMe: polar hack: should work without a flip
+            clientSize
+        )
 
         return x.zip(y)
             .mapNotNull { (x, y) -> coordinateSystem.toClient(DoubleVector(x.toDouble(), y.toDouble())) }

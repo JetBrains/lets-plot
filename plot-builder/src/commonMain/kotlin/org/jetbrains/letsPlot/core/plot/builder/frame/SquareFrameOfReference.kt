@@ -21,8 +21,9 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.*
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomContextBuilder
+import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
+import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.BreaksData
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent.TickLabelAdjustments
@@ -214,7 +215,7 @@ internal class SquareFrameOfReference(
                 translate = transientState.offset,
                 scale = transientState.scale
             ),
-            domain = transientState.dataBounds,
+            dataDomain = transientState.dataBounds,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
             axisTheme = axisTheme,
@@ -267,66 +268,6 @@ internal class SquareFrameOfReference(
             return axis
         }
 
-        /**
-         * 'internal' access for tests.
-         */
-        internal fun buildGeom(
-            plotContext: PlotContext,
-            layer: GeomLayer,
-            xyAesBounds: DoubleRectangle,
-            coord: CoordinateSystem,
-            flippedAxis: Boolean,
-            targetCollector: GeomTargetCollector,
-            backgroundColor: Color
-        ): SvgComponent {
-            val rendererData = LayerRendererUtil.createLayerRendererData(layer)
-
-            @Suppress("NAME_SHADOWING")
-            // val flippedAxis = layer.isYOrientation xor flippedAxis
-            // (XOR issue: https://youtrack.jetbrains.com/issue/KT-52296/Kotlin-JS-the-xor-operation-sometimes-evaluates-to-int-value-ins)
-            val flippedAxis = if (layer.isYOrientation) !flippedAxis else flippedAxis
-
-            val aestheticMappers = rendererData.aestheticMappers
-            val aesthetics = rendererData.aesthetics
-
-            @Suppress("NAME_SHADOWING")
-            val coord = when (layer.isYOrientation) {
-                true -> coord.flip()
-                false -> coord
-            }
-
-            @Suppress("NAME_SHADOWING")
-            val targetCollector = targetCollector.let {
-                when {
-                    flippedAxis -> it.withFlippedAxis()
-                    else -> it
-                }
-            }.let {
-                when {
-                    layer.isYOrientation -> it.withYOrientation()
-                    else -> it
-                }
-            }
-
-            val ctx = GeomContextBuilder()
-                .flipped(flippedAxis)
-                .aesthetics(aesthetics)
-                .aestheticMappers(aestheticMappers)
-                .aesBounds(xyAesBounds)
-                .geomTargetCollector(targetCollector)
-                .fontFamilyRegistry(layer.fontFamilyRegistry)
-                .defaultFormatters(layer.defaultFormatters)
-                .annotation(rendererData.annotation)
-                .backgroundColor(backgroundColor)
-                .plotContext(plotContext)
-                .build()
-
-            val pos = rendererData.pos
-            val geom = layer.geom
-
-            return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
-        }
-
         private fun calculateTransientBounds(
             bounds: DoubleRectangle, // component bounds in px
             scale: DoubleVector,
@@ -377,9 +318,9 @@ internal class SquareFrameOfReference(
                 return
             }
 
-            val dataRange: DoubleSpan = dataBounds.xRange()
+            val hDataRange: DoubleSpan = dataBounds.flipIf(flipAxis).xRange()
             validateBreaksIntern(
-                dataRange,
+                hDataRange,
                 hBreaksTransformedValues,
                 hBreaksLabels,
                 hScaleBreaks.transform,
@@ -393,9 +334,9 @@ internal class SquareFrameOfReference(
                 return
             }
 
-            val dataRange: DoubleSpan = dataBounds.yRange()
+            val vDataRange: DoubleSpan = dataBounds.flipIf(flipAxis).yRange()
             validateBreaksIntern(
-                dataRange,
+                vDataRange,
                 vBreaksTransformedValues,
                 vBreaksLabels,
                 vScaleBreaks.transform,

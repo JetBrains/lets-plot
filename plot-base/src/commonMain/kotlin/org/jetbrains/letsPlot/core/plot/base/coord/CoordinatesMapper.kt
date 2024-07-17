@@ -98,32 +98,24 @@ class CoordinatesMapper(
             projection: Projection,
             flipAxis: Boolean,
         ): CoordinatesMapper {
-            val validDomain = when (flipAxis) {
-                true -> adjustedDomain.flip()  // un-flip before projecting.
-                false -> adjustedDomain
-            }
+            val domainProjected = projectDomain(projection, adjustedDomain)
+            val hvDomain = domainProjected.flipIf(flipAxis)
 
-            val domainProjected = projectDomain(projection, validDomain).let {
-                when (flipAxis) {
-                    true -> it.flip()  // un-flip the domain
-                    false -> it
-                }
-            }
-            check(domainProjected.xRange().length != 0.0) {
+            check(hvDomain.xRange().length != 0.0) {
                 "Can't create coordinates mapper: X-domain size is 0.0"
             }
-            check(domainProjected.yRange().length != 0.0) {
+            check(hvDomain.yRange().length != 0.0) {
                 "Can't create coordinates mapper: Y-domain size is 0.0"
             }
 
-            val hScaleMapper = Mappers.mul(domainProjected.xRange(), clientSize.x)
-            val hScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.x), domainProjected.xRange().length)
-            val vScaleMapper = Mappers.mul(domainProjected.yRange(), clientSize.y)
-            val vScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.y), domainProjected.yRange().length)
+            val hScaleMapper = Mappers.mul(hvDomain.xRange(), clientSize.x)
+            val hScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.x), hvDomain.xRange().length)
+            val vScaleMapper = Mappers.mul(hvDomain.yRange(), clientSize.y)
+            val vScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.y), hvDomain.yRange().length)
 
             val clientOrigin = DoubleVector(
-                hScaleMapper(domainProjected.origin.x)!!,
-                vScaleMapper(domainProjected.origin.y)!!,
+                hScaleMapper(hvDomain.origin.x)!!,
+                vScaleMapper(hvDomain.origin.y)!!,
             )
             val clientBounds = DoubleRectangle(clientOrigin, clientSize)
             return CoordinatesMapper(

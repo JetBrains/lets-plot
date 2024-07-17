@@ -28,7 +28,6 @@ internal abstract class FrameOfReferenceProviderBase(
     protected val plotContext: PlotContext,
     private val hScaleProto: Scale,
     private val vScaleProto: Scale,
-    protected val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val hAxisPosition: AxisPosition,
     private val vAxisPosition: AxisPosition,

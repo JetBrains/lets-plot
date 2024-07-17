@@ -24,7 +24,7 @@ internal class SquareFrameOfReferenceProvider(
     plotContext: PlotContext,
     hScaleProto: Scale,
     vScaleProto: Scale,
-    adjustedDomain: DoubleRectangle,
+    private val adjustedDomain: DoubleRectangle,
     flipAxis: Boolean,
     hAxisPosition: AxisPosition,
     vAxisPosition: AxisPosition,
@@ -35,7 +35,6 @@ internal class SquareFrameOfReferenceProvider(
     plotContext,
     hScaleProto,
     vScaleProto,
-    adjustedDomain,
     flipAxis,
     hAxisPosition,
     vAxisPosition,
@@ -46,7 +45,7 @@ internal class SquareFrameOfReferenceProvider(
 ) {
 
     override fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
-        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset())
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset(), flipAxis)
     }
 
     override fun createTileFrame(
@@ -92,15 +91,18 @@ internal class SquareFrameOfReferenceProvider(
 
     private class MyTileLayoutProvider(
         private val axisLayoutQuad: AxisLayoutQuad,
-        private val adjustedDomain: DoubleRectangle,
+        adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
         private val panelInset: Thickness,
+        flipAxis: Boolean,
     ) : TileLayoutProvider {
+        private val hvDomain = adjustedDomain.flipIf(flipAxis)
+
         override fun createTopDownTileLayout(): TileLayout {
             return TopDownTileLayout(
                 axisLayoutQuad,
-                hDomain = adjustedDomain.xRange(),
-                vDomain = adjustedDomain.yRange(),
+                hDomain = hvDomain.xRange(),
+                vDomain = hvDomain.yRange(),
                 marginsLayout,
                 panelInset
             )
@@ -109,8 +111,8 @@ internal class SquareFrameOfReferenceProvider(
         override fun createInsideOutTileLayout(): TileLayout {
             return InsideOutTileLayout(
                 axisLayoutQuad,
-                hDomain = adjustedDomain.xRange(),
-                vDomain = adjustedDomain.yRange(),
+                hDomain = hvDomain.xRange(),
+                vDomain = hvDomain.yRange(),
                 marginsLayout
             )
         }
