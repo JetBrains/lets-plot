@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.core.spec.Option
 
 class TooltipsOptions : Options() {
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
-    var minWidth: String? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
+    var minWidth: Double? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
+    var title: String? by map(Option.Layer.TOOLTIP_TITLE)
+    var disableSplitting: Boolean? by map(Option.Layer.DISABLE_SPLITTING)
     var formats: List<Format>? by map(Option.LinesSpec.FORMATS)
     var lines: List<String>? by map(Option.LinesSpec.LINES)
 

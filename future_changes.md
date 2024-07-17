@@ -1,6 +1,10 @@
 ## [4.3.4] - 2024-mm-dd
 
 ### Added
+- Waterfall plot [[#975](https://github.com/JetBrains/lets-plot/issues/975)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
+
 - Legend title in `guide_legend()` and `guide_colorbar()`.
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
