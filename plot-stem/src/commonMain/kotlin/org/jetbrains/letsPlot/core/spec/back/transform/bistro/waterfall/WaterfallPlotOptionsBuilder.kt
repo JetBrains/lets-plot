@@ -56,10 +56,10 @@ class WaterfallPlotOptionsBuilder(
         }
         return plot {
             layerOptions = if (hLineOnTop) {
-                listOf(connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData), hLineOptions())
+                listOfNotNull(connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData), hLineOptions())
             } else {
-                listOf(hLineOptions(), connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData))
-            }.filterNotNull()
+                listOfNotNull(hLineOptions(), connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData))
+            }
             scaleOptions = listOf(
                 scale {
                     aes = Aes.X
