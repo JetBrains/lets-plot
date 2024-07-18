@@ -70,8 +70,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         val mainRange = afterRotation(viewPort).yRange()
         val secondaryRange = afterRotation(viewPort).xRange()
         fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-            val minValue = p.finiteOrNull(minAes) ?: return null
-            val maxValue = p.finiteOrNull(maxAes) ?: return null
+            val minValue = p.finiteOrNull(minAes) ?: mainRange.lowerEnd
+            val maxValue = p.finiteOrNull(maxAes) ?: mainRange.upperEnd
             if (minValue > maxValue) return null
             if (minValue !in mainRange && maxValue !in mainRange) return null
             return afterRotation(DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue))
@@ -90,7 +90,9 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                 listOf(
                     afterRotation(strip).top,
                     afterRotation(strip).bottom
-                ).forEach { intercept ->
+                ).filterNot { intercept ->
+                    intercept in setOf(afterRotation(viewPort).top, afterRotation(viewPort).bottom)
+                }.forEach { intercept ->
                     buildStripBorder(intercept, viewPort, p, helper)?.let { (svg, _) ->
                         handler(svg)
                     }
@@ -134,30 +136,22 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
 
         for (p in aesthetics.dataPoints()) {
             for (x in xRange) {
-                val top = p[maxAes] ?: continue
-                val bottom = p[minAes] ?: continue
-                val defaultColor = p.fill() ?: continue
+                for (aes in listOf(minAes, maxAes)) {
+                    val value = p[aes] ?: continue
+                    val defaultColor = p.fill() ?: continue
 
-                hint.defaultCoord(x)
-                    .defaultColor(defaultColor, alpha = null)
+                    hint.defaultCoord(x)
+                        .defaultColor(defaultColor, alpha = null)
 
-                val hintsCollectionTop = HintsCollection(p, helper)
-                    .addHint(hint.create(maxAes))
-                val tooltipParamsTop = GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hintsCollectionTop.hints,
-                    markerColors = colorMapper(p)
-                )
-                helper.toClient(afterRotation(DoubleVector(x, top)), p)?.let { topPoint ->
-                    ctx.targetCollector.addPoint(p.index(), topPoint, 0.0, tooltipParamsTop)
-                }
-                val hintsCollectionBottom = HintsCollection(p, helper)
-                    .addHint(hint.create(minAes))
-                val tooltipParamsBottom = GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hintsCollectionBottom.hints,
-                    markerColors = colorMapper(p)
-                )
-                helper.toClient(afterRotation(DoubleVector(x, bottom)), p)?.let { bottomPoint ->
-                    ctx.targetCollector.addPoint(p.index(), bottomPoint, 0.0, tooltipParamsBottom)
+                    val hintsCollection = HintsCollection(p, helper)
+                        .addHint(hint.create(aes))
+                    val tooltipParams = GeomTargetCollector.TooltipParams(
+                        tipLayoutHints = hintsCollection.hints,
+                        markerColors = colorMapper(p)
+                    )
+                    helper.toClient(afterRotation(DoubleVector(x, value)), p)?.let { point ->
+                        ctx.targetCollector.addPoint(p.index(), point, 0.0, tooltipParams)
+                    }
                 }
             }
         }
