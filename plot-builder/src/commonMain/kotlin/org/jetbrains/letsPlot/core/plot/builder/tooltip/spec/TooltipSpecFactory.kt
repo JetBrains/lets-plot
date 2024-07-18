@@ -78,26 +78,13 @@ class TooltipSpecFactory(
 
         private fun axisTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
-            val currentAes = this.myGeomTarget.aesTipLayoutHints.keys.firstOrNull()
             val axis = mapOf(
                 Aes.X to axisDataPoints().filter { Aes.X == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue),
                 Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }
                     .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue),
-                Aes.XMIN to axisDataPoints().filter { Aes.XMIN == it.aes && Aes.XMIN == currentAes }
-                    .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue),
-                Aes.XMAX to axisDataPoints().filter { Aes.XMAX == it.aes && Aes.XMAX == currentAes }
-                    .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue),
-                Aes.YMIN to axisDataPoints().filter { Aes.YMIN == it.aes && Aes.YMIN == currentAes }
-                    .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue),
-                Aes.YMAX to axisDataPoints().filter { Aes.YMAX == it.aes && Aes.YMAX == currentAes }
-                    .map(DataPoint::value)
-                    .map(TooltipSpec.Line.Companion::withValue),
+                    .map(TooltipSpec.Line.Companion::withValue)
             )
             axis.forEach { (aes, lines) ->
                 if (lines.isNotEmpty()) {
@@ -164,10 +151,6 @@ class TooltipSpecFactory(
                 when {
                     flippedAxis && it == Aes.X -> Aes.Y
                     flippedAxis && it == Aes.Y -> Aes.X
-                    flippedAxis && it == Aes.XMIN -> Aes.YMIN
-                    flippedAxis && it == Aes.YMIN -> Aes.XMIN
-                    flippedAxis && it == Aes.XMAX -> Aes.YMAX
-                    flippedAxis && it == Aes.YMAX -> Aes.XMAX
                     else -> it
                 }
             }
@@ -185,42 +168,6 @@ class TooltipSpecFactory(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
                         axisRadius = AXIS_RADIUS,
                         fillColor = yAxisTheme.tooltipFill()
-                    )
-                }
-
-                Aes.XMIN -> {
-                    TipLayoutHint.xAxisTooltip(
-                        coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                        axisRadius = AXIS_RADIUS,
-                        fillColor = xAxisTheme.tooltipFill(),
-                        aes = Aes.XMIN
-                    )
-                }
-
-                Aes.XMAX -> {
-                    TipLayoutHint.xAxisTooltip(
-                        coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                        axisRadius = AXIS_RADIUS,
-                        fillColor = xAxisTheme.tooltipFill(),
-                        aes = Aes.XMAX
-                    )
-                }
-
-                Aes.YMIN -> {
-                    TipLayoutHint.yAxisTooltip(
-                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                        axisRadius = AXIS_RADIUS,
-                        fillColor = yAxisTheme.tooltipFill(),
-                        aes = Aes.YMIN
-                    )
-                }
-
-                Aes.YMAX -> {
-                    TipLayoutHint.yAxisTooltip(
-                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                        axisRadius = AXIS_RADIUS,
-                        fillColor = yAxisTheme.tooltipFill(),
-                        aes = Aes.YMAX
                     )
                 }
 

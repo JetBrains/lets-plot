@@ -169,10 +169,9 @@ open class LinesHelper(
     fun createStrips(
         dataPoints: Iterable<DataPointAesthetics>,
         toStrip: (DataPointAesthetics) -> DoubleRectangle?,
-        isLinear: Boolean,
-        handler: (LinePath) -> Unit
-    ) {
-        dataPoints.mapNotNull { p ->
+        isLinear: Boolean
+    ): List<LinePath> {
+        return dataPoints.mapNotNull { p ->
             toStrip(p)?.let { stripRect ->
                 listOf(
                     DoubleVector(stripRect.left, stripRect.top),
@@ -191,8 +190,6 @@ open class LinesHelper(
                 }.let { clientVertices ->
                     LinePath.polygon(clientVertices).also { linePath ->
                         decorateFillingPart(linePath, p)
-                    }.let { linePath ->
-                        handler(linePath)
                     }
                 }
             }

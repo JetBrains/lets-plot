@@ -229,9 +229,6 @@ object GeomInteractionUtil {
                     GeomTooltipSetup.none()
                 }
             }
-            GeomKind.BAND -> {
-                return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, axisTooltipVisibilityFromConfig = true, isBand = true)
-            }
 
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -278,6 +275,7 @@ object GeomInteractionUtil {
 
             GeomKind.H_LINE,
             GeomKind.V_LINE,
+            GeomKind.BAND,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
@@ -340,7 +338,6 @@ object GeomInteractionUtil {
             !isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.AREA_RIDGES ||
                     geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
-            geomKind == GeomKind.BAND -> listOf(Aes.XMIN, Aes.XMAX, Aes.YMIN, Aes.YMAX)
 
             else -> axisAesFromFunctionKind
         }

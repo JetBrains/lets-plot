@@ -53,13 +53,12 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         val viewPort = overallAesBounds(ctx)
 
-        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear) { linePath ->
+        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear).forEach { linePath ->
             root.appendNodes(listOf(linePath))
         }
         buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { svg ->
             root.add(svg)
         }
-
         buildHints(aesthetics, pos, coord, ctx)
     }
 
@@ -111,9 +110,9 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         return helper.createLine(start, end, p)
     }
 
-    private fun resample(range: DoubleSpan, n: Int = 512): List<Double> {
-        return (0 until n).map { i ->
-            range.lowerEnd + (i.toDouble() / (n - 1)) * (range.upperEnd - range.lowerEnd)
+    private fun resample(range: DoubleSpan): List<Double> {
+        return (0 until TOOLTIP_SAMPLE_SIZE).map { i ->
+            range.lowerEnd + (i.toDouble() / (TOOLTIP_SAMPLE_SIZE - 1)) * (range.upperEnd - range.lowerEnd)
         }
     }
 
@@ -142,7 +141,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                 hint.defaultCoord(x)
                     .defaultColor(defaultColor, alpha = null)
 
-                val hintsCollectionTop = HintsCollection(p, helper, maxAes)
+                val hintsCollectionTop = HintsCollection(p, helper)
                     .addHint(hint.create(maxAes))
                 val tooltipParamsTop = GeomTargetCollector.TooltipParams(
                     tipLayoutHints = hintsCollectionTop.hints,
@@ -151,7 +150,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                 helper.toClient(afterRotation(DoubleVector(x, top)), p)?.let { topPoint ->
                     ctx.targetCollector.addPoint(p.index(), topPoint, 0.0, tooltipParamsTop)
                 }
-                val hintsCollectionBottom = HintsCollection(p, helper, minAes)
+                val hintsCollectionBottom = HintsCollection(p, helper)
                     .addHint(hint.create(minAes))
                 val tooltipParamsBottom = GeomTargetCollector.TooltipParams(
                     tipLayoutHints = hintsCollectionBottom.hints,
@@ -165,6 +164,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     }
 
     companion object {
+        const val TOOLTIP_SAMPLE_SIZE = 512
         const val HANDLES_GROUPS = false
     }
 }

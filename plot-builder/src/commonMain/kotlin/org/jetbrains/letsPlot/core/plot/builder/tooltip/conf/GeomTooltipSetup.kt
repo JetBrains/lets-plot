@@ -33,20 +33,16 @@ class GeomTooltipSetup private constructor(
         private val AES_X = listOf(Aes.X)
         private val AES_Y = listOf(Aes.Y)
         private val AES_XY = listOf(Aes.X, Aes.Y)
-        private val AES_X_MINMAX = listOf(Aes.XMIN, Aes.XMAX)
-        private val AES_Y_MINMAX = listOf(Aes.YMIN, Aes.YMAX)
-        private val AES_XY_MINMAX = listOf(Aes.XMIN, Aes.XMAX, Aes.YMIN, Aes.YMAX)
 
         fun xUnivariateFunction(
             lookupStrategy: GeomTargetLocator.LookupStrategy,
-            axisTooltipVisibilityFromConfig: Boolean? = null,
-            isBand: Boolean = false
+            axisTooltipVisibilityFromConfig: Boolean? = null
         ): GeomTooltipSetup {
             val axisTooltipVisibilityFromFunctionKind = true
             return GeomTooltipSetup(
                 locatorLookupStrategy = lookupStrategy,
                 locatorLookupSpace = GeomTargetLocator.LookupSpace.X,
-                axisAesFromFunctionKind = if (isBand) AES_X_MINMAX else AES_X,
+                axisAesFromFunctionKind = AES_X,
                 axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
                 axisTooltipEnabled = isAxisTooltipEnabled(
                     axisTooltipVisibilityFromConfig,
@@ -57,14 +53,13 @@ class GeomTooltipSetup private constructor(
 
         fun yUnivariateFunction(
             lookupStrategy: GeomTargetLocator.LookupStrategy,
-            axisTooltipVisibilityFromConfig: Boolean? = null,
-            isBand: Boolean = false
+            axisTooltipVisibilityFromConfig: Boolean? = null
         ): GeomTooltipSetup {
             val axisTooltipVisibilityFromFunctionKind = true
             return GeomTooltipSetup(
                 locatorLookupStrategy = lookupStrategy,
                 locatorLookupSpace = GeomTargetLocator.LookupSpace.Y,
-                axisAesFromFunctionKind = if (isBand) AES_Y_MINMAX else AES_Y,
+                axisAesFromFunctionKind = AES_Y,
                 axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
                 axisTooltipEnabled = isAxisTooltipEnabled(
                     axisTooltipVisibilityFromConfig,
@@ -75,8 +70,7 @@ class GeomTooltipSetup private constructor(
 
         fun bivariateFunction(
             area: Boolean,
-            axisTooltipVisibilityFromConfig: Boolean? = null,
-            isBand: Boolean = false
+            axisTooltipVisibilityFromConfig: Boolean? = null
         ): GeomTooltipSetup {
             val axisTooltipVisibilityFromFunctionKind = !area
             val locatorLookupStrategy = if (area) {
@@ -88,7 +82,7 @@ class GeomTooltipSetup private constructor(
             return GeomTooltipSetup(
                 locatorLookupStrategy = locatorLookupStrategy,
                 locatorLookupSpace = GeomTargetLocator.LookupSpace.XY,
-                axisAesFromFunctionKind = if (isBand) AES_XY_MINMAX else AES_XY,
+                axisAesFromFunctionKind = AES_XY,
                 axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
                 axisTooltipEnabled = isAxisTooltipEnabled(
                     axisTooltipVisibilityFromConfig,
