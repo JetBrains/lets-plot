@@ -162,17 +162,18 @@ class DomMouseEventMapper(
             if (e.buttons > 0) return
 
             when (type) {
-                DomEventType.MOUSE_WHEEL -> {
-                    e.preventDefault()
+                DomEventType.MOUSE_ENTER -> {
                     dispatch(MouseEventSpec.MOUSE_ENTERED, e)
                     state = MouseHoverState()
+                }
+                DomEventType.MOUSE_WHEEL, DomEventType.MOUSE_MOVE -> {
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
 
-                }
-                DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
-                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
                     state = MouseHoverState()
+                    state.handleEvent(type, e) // allow to invoke preventDefault to prevent scrolling or selection
                 }
-                // Ignore buttons/leave events
+                // Ignore leave events
+                // Ignore button events - browser sends MOUSE_ENTER before MOUSE_DOWN
             }
         }
     }
