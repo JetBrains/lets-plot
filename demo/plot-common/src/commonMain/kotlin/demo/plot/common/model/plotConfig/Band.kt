@@ -14,7 +14,6 @@ class Band {
             oriented("x"),
             oriented("y"),
             polar(),
-            outOfViewPort(),
         )
     }
 
@@ -104,51 +103,5 @@ class Band {
         """.trimIndent()
 
         return HashMap(parsePlotSpec(spec))
-    }
-
-    private fun outOfViewPort(): MutableMap<String, Any> {
-        val spec = """
-            {
-              'kind': 'plot',
-              'data': {
-                'xmin': [-3, 1],
-                'xmax': [-1, 3],
-                'ymin': [-3, 1],
-                'ymax': [-1, 3]
-              },
-              'ggtitle': {
-                'text': 'Out of panel'
-              },
-              'layers': [
-                {
-                  'geom': 'band',
-                  'mapping': {
-                    'xmin': 'xmin',
-                    'xmax': 'xmax'
-                  }
-                },
-                {
-                  'geom': 'band',
-                  'mapping': {
-                    'ymin': 'ymin',
-                    'ymax': 'ymax'
-                  }
-                }
-              ],
-              'scales': [
-                {
-                  'aesthetic': 'x',
-                  'limits': [-2, 2]
-                },
-                {
-                  'aesthetic': 'y',
-                  'limits': [-2, 2]
-                }
-              ]
-            }
-        """.trimIndent()
-
-        return HashMap(parsePlotSpec(spec))
-
     }
 }

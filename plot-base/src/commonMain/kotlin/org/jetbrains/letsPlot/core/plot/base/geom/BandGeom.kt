@@ -70,8 +70,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         val mainRange = afterRotation(viewPort).yRange()
         val secondaryRange = afterRotation(viewPort).xRange()
         fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-            val minValue = p.finiteOrNull(minAes) ?: mainRange.lowerEnd
-            val maxValue = p.finiteOrNull(maxAes) ?: mainRange.upperEnd
+            val minValue = p.finiteOrNull(minAes) ?: return null
+            val maxValue = p.finiteOrNull(maxAes) ?: return null
             if (minValue > maxValue) return null
             if (minValue !in mainRange && maxValue !in mainRange) return null
             return afterRotation(DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue))
