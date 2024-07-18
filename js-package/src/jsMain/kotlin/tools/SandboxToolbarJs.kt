@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTI
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.spec.Option.SpecOverride
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
@@ -38,9 +39,8 @@ class SandboxToolbarJs() {
 
         toolButtons = listOf(
             toolButton(PAN_TOOL_SPEC),
-            toolButton(BOX_ZOOM_TOOL_SPEC),
-            toolButton(WHEEL_ZOOM_TOOL_SPEC),
-            toolButton(WHEEL_BOX_ZOOM_TOOL_SPEC),
+            toolButton(BBOX_ZOOM_TOOL_SPEC),
+            toolButton(CBOX_ZOOM_TOOL_SPEC),
         )
 
         toolButtons.forEach {
@@ -116,6 +116,9 @@ class SandboxToolbarJs() {
         button.textContent = "Reset"
         button.style.margin = "0 5px"
         button.addEventListener("click", {
+            toolButtons.map { it.first }.filter { it.active }.forEach {
+                figureModel?.deactivateInteractions(it.name)
+            }
             figureModel?.updateView()
         })
         return button
@@ -158,33 +161,32 @@ class SandboxToolbarJs() {
             "interactions" to listOf(
                 mapOf(
                     ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
-                )
-            )
-        )
-        val BOX_ZOOM_TOOL_SPEC = mapOf(
-            "name" to "my-zoom-box",
-            "label" to "Zoom Box",
-            "interactions" to listOf(
-                mapOf(
-                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
-                )
-            )
-        )
-        val WHEEL_ZOOM_TOOL_SPEC = mapOf(
-            "name" to "my-zoom-wheel",
-            "label" to "Zoom Wheel",
-            "interactions" to listOf(
+                ),
                 mapOf(
                     ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
                 )
             )
         )
-        val WHEEL_BOX_ZOOM_TOOL_SPEC = mapOf(
-            "name" to "my-zoom-wheel-box",
-            "label" to "Zoom Wheel/Box",
+        val BBOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom-bounds-box",
+            "label" to "Zoom B-Box",
             "interactions" to listOf(
                 mapOf(
-                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM,
+                    ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CORNER_START
+                ),
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
+                )
+            )
+        )
+        val CBOX_ZOOM_TOOL_SPEC = mapOf(
+            "name" to "my-zoom_centroid-box",
+            "label" to "Zoom C-Box",
+            "interactions" to listOf(
+                mapOf(
+                    ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM,
+                    ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CORNER_START
                 ),
                 mapOf(
                     ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
