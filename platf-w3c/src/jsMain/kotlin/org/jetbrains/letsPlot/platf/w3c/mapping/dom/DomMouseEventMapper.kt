@@ -162,6 +162,12 @@ class DomMouseEventMapper(
             if (e.buttons > 0) return
 
             when (type) {
+                DomEventType.MOUSE_WHEEL -> {
+                    e.preventDefault()
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                    state = MouseHoverState()
+
+                }
                 DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
                     dispatch(MouseEventSpec.MOUSE_ENTERED, e)
                     state = MouseHoverState()
