@@ -24,9 +24,9 @@ interface CoordProvider {
     ): CoordProvider
 
     /**
-     * Reshape and flip the domain if necessary.
+     * Reshape the domain if necessary.
      */
-    fun adjustDomain(domain: DoubleRectangle): DoubleRectangle
+    fun adjustDomain(dataDomain: DoubleRectangle): DoubleRectangle
 
     fun adjustGeomSize(
         hDomain: DoubleSpan,

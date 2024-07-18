@@ -8,9 +8,10 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
-import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.toClient
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
@@ -123,6 +124,36 @@ object PolarAxisUtil {
                         false -> it.rotateAround(center, coord.startAngle * coord.direction)
                     }
                 }
+
+
+        /**
+         * FixMe: polar hack:
+         *   The generic `AxisUtil.toClient()` doesn't work bekause the `dataDomain` here might
+         *   be "flipped" for polar `theta=Y`.
+         *
+         *  Duplicates AxisUtil.toClient()
+         */
+        private fun toClient(
+            breaks: List<Double>,
+            dataDomain: DoubleRectangle,
+            coordinateSystem: CoordinateSystem,
+            flipAxis: Boolean,
+            horizontal: Boolean
+        ): List<DoubleVector?> {
+//            val hvDomain = dataDomain.flipIf(flipAxis)
+            val hvDomain = dataDomain
+
+            return breaks.map { breakValue ->
+                when (horizontal) {
+                    true -> DoubleVector(breakValue, hvDomain.yRange().upperEnd)
+                    else -> DoubleVector(hvDomain.xRange().lowerEnd, breakValue)
+                }
+            }.map {
+                val pointInDataDomain = it.flipIf(flipAxis)
+                finiteOrNull(coordinateSystem.toClient(pointInDataDomain))
+                    ?: return@map null
+            }
+        }
 
         private fun toClient(v: DoubleVector): DoubleVector {
             return coord.toClient(v.flipIf(flipAxis)) ?: error("Unexpected null value")

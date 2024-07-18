@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.TimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper

@@ -171,6 +171,7 @@ object Option {
         const val SHOW_LEGEND = "show_legend"
         const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
+        const val TOOLTIP_TITLE = "title"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
         const val DISABLE_SPLITTING = "disable_splitting"
@@ -504,6 +505,8 @@ object Option {
     }
 
     object Pos {
+        const val NAME = "name"
+
         object Dodge {
             const val WIDTH = "width"
         }

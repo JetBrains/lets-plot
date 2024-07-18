@@ -121,7 +121,11 @@ class BoundariesGeoDataFrame:
         geo_rings: List[ShapelyLinearRing] = [
             ShapelyLinearRing([(p.lon, p.lat) for p in ring.points]) for ring in polygon.rings
         ]
-        return ShapelyPolygon(shell=geo_rings[0], holes=geo_rings[1:])
+
+        if len(geo_rings) == 0:
+            return ShapelyPolygon()
+        else:
+            return ShapelyPolygon(shell=geo_rings[0], holes=geo_rings[1:])
 
     def _geo_parse_point(self, geometry_data: GeoPoint) -> ShapelyPoint:
         return ShapelyPoint((geometry_data.lon, geometry_data.lat))

@@ -10,7 +10,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
 
-class NumericBreakFormatter(
+internal class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,

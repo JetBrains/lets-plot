@@ -29,29 +29,28 @@ class CoordinatesMapper(
     val isLinear: Boolean = !projection.nonlinear
 
     fun toClient(p: DoubleVector): DoubleVector? {
-        val projected = projection.project(p)
-        if (projected != null) {
-            val mappedX = hScaleMapper(
-                if (!flipAxis) projected.x else projected.y
-            )
-            val mappedY = vScaleMapper(
-                if (!flipAxis) projected.y else projected.x
-            )
-            if (mappedX != null && mappedY != null) {
-                return DoubleVector(mappedX, mappedY)
+        return projection.project(p)
+            ?.flipIf(flipAxis)
+            ?.let { (projectedH, projectedV) ->
+                val mappedH = hScaleMapper(projectedH)
+                val mappedV = vScaleMapper(projectedV)
+                if (mappedH != null && mappedV != null) {
+                    DoubleVector(mappedH, mappedV)
+                } else {
+                    null
+                }
             }
-        }
-        return null
     }
 
     fun fromClient(p: DoubleVector): DoubleVector? {
-        val (mappedX, mappedY) = p.flipIf(flipAxis)
+        val (mappedH, mappedV) = p
 
-        val projectedX = hScaleInverseMapper(mappedX) ?: return null
-        val projectedY = vScaleInverseMapper(mappedY) ?: return null
+        val projectedH = hScaleInverseMapper(mappedH) ?: return null
+        val projectedV = vScaleInverseMapper(mappedV) ?: return null
+        val projected = DoubleVector(projectedH, projectedV)
+            .flipIf(flipAxis)
 
-        val projected = projection.invert(DoubleVector(projectedX, projectedY)) ?: return null
-        return projected.flipIf(flipAxis)
+        return projection.invert(projected)
     }
 
     fun unitSize(p: DoubleVector): DoubleVector {
@@ -99,35 +98,35 @@ class CoordinatesMapper(
             projection: Projection,
             flipAxis: Boolean,
         ): CoordinatesMapper {
-            val validDomain = when (flipAxis) {
-                true -> adjustedDomain.flip()  // un-flip before projecting.
-                false -> adjustedDomain
-            }
+            val domainProjected = projectDomain(projection, adjustedDomain)
+            val hvDomain = domainProjected.flipIf(flipAxis)
 
-            val domainProjected = projectDomain(projection, validDomain).let {
-                when (flipAxis) {
-                    true -> it.flip()  // un-flip the domain
-                    false -> it
-                }
-            }
-            check(domainProjected.xRange().length != 0.0) {
+            check(hvDomain.xRange().length != 0.0) {
                 "Can't create coordinates mapper: X-domain size is 0.0"
             }
-            check(domainProjected.yRange().length != 0.0) {
+            check(hvDomain.yRange().length != 0.0) {
                 "Can't create coordinates mapper: Y-domain size is 0.0"
             }
 
-            val hScaleMapper = Mappers.mul(domainProjected.xRange(), clientSize.x)
-            val hScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.x), domainProjected.xRange().length)
-            val vScaleMapper = Mappers.mul(domainProjected.yRange(), clientSize.y)
-            val vScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.y), domainProjected.yRange().length)
+            val hScaleMapper = Mappers.mul(hvDomain.xRange(), clientSize.x)
+            val hScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.x), hvDomain.xRange().length)
+            val vScaleMapper = Mappers.mul(hvDomain.yRange(), clientSize.y)
+            val vScaleInverseMapper = Mappers.mul(DoubleSpan(0.0, clientSize.y), hvDomain.yRange().length)
 
             val clientOrigin = DoubleVector(
-                hScaleMapper(domainProjected.origin.x)!!,
-                vScaleMapper(domainProjected.origin.y)!!,
+                hScaleMapper(hvDomain.origin.x)!!,
+                vScaleMapper(hvDomain.origin.y)!!,
             )
             val clientBounds = DoubleRectangle(clientOrigin, clientSize)
-            return CoordinatesMapper(hScaleMapper, hScaleInverseMapper, vScaleMapper, vScaleInverseMapper, clientBounds, projection, flipAxis)
+            return CoordinatesMapper(
+                hScaleMapper,
+                hScaleInverseMapper,
+                vScaleMapper,
+                vScaleInverseMapper,
+                clientBounds,
+                projection,
+                flipAxis
+            )
         }
 
         fun toValidUnitSquareCenter(p: DoubleVector, projection: Projection): DoubleVector {
@@ -160,8 +159,10 @@ fun projectDomain(
             return listOf(min) + (0..n).map { min + it * step } + listOf(max)
         }
 
-        val hLines = points(domain.top, domain.bottom).map { DoubleVector(domain.left, it) to DoubleVector(domain.right, it) }
-        val vLines = points(domain.left, domain.right).map { DoubleVector(it, domain.top) to DoubleVector(it, domain.bottom) }
+        val hLines =
+            points(domain.top, domain.bottom).map { DoubleVector(domain.left, it) to DoubleVector(domain.right, it) }
+        val vLines =
+            points(domain.left, domain.right).map { DoubleVector(it, domain.top) to DoubleVector(it, domain.bottom) }
         val grid = (hLines + vLines).map { (p1, p2) -> resample(p1, p2, PIXEL_PRECISION, projection::project) }
 
         val projectedDomain = boundingBox(grid.flatten()) ?: error("Can't calculate bounding box for projected domain")

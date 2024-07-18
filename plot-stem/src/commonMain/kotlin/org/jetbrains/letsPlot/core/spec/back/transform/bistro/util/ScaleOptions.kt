@@ -17,6 +17,7 @@ class ScaleOptions : Options() {
     var naValue: Any? by map(Option.Scale.NA_VALUE)
     var limits: List<Any>? by map(Option.Scale.LIMITS)
     var breaks: List<Any>? by map(Option.Scale.BREAKS)
+    var values: List<Any>? by map(Option.Scale.OUTPUT_VALUES)
     var labels: List<String>? by map(Option.Scale.LABELS)
     var expand: List<Any>? by map(Option.Scale.EXPAND)
     var low: String? by map(Option.Scale.LOW)

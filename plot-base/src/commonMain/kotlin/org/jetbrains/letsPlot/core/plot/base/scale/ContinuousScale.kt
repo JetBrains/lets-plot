@@ -46,8 +46,32 @@ internal class ContinuousScale : AbstractScale<Double> {
         return if (customBreaksGenerator != null) {
             Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
         } else {
-            createBreaksGeneratorForTransformedDomain(continuousTransform, labelFormatter, superscriptExponent)
+            createBreaksGeneratorForTransformedDomain(continuousTransform, providedFormatter, superscriptExponent)
         }
+    }
+
+    override fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks {
+        // Continuous scale ignores "shortenLabels" argument.
+
+        val makeFixed = (providedBreaks != null || providedLabels != null)
+        val scaleBreaksOrNull = if (makeFixed) {
+            val fixedDomainValues = providedBreaks ?: providedScaleBreaks?.domainValues
+            val fixedLabels = providedLabels ?: providedScaleBreaks?.labels
+            fixedDomainValues?.let { domainValues ->
+                val alignedLabels = fixedLabels?.let { alignLablesAndBreaks(domainValues, it) }
+                providedScaleBreaks?.withFixedBreaks(fixedDomainValues, alignedLabels)
+                    ?: ScaleBreaks.Fixed.withTransform(
+                        domainValues,
+                        transform,
+                        formatter = providedFormatter
+                            ?: ScaleBreaks.IDENTITY_FORMATTER, // ToDo: need "default formatter"
+                        alternativeLabels = fixedLabels
+                    )
+            }
+        } else {
+            providedScaleBreaks
+        }
+        return scaleBreaksOrNull ?: ScaleBreaks.EMPTY
     }
 
     override fun with(): Scale.Builder {
