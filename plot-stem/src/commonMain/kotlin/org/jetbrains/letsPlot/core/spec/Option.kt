@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 
 object Option {
 
@@ -72,6 +73,7 @@ object Option {
                 const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
                 const val TIME_ZONE = "time_zone" // TODO: remove or move to Types
             }
+
             object Types {
                 const val DATE_TIME = "datetime"
                 const val INTEGER = "int"
@@ -1045,8 +1047,8 @@ object Option {
     }
 
     object SpecOverride {
-        // Tools can temporary override default or provided limits.
-        const val COORD_XLIM_TRANSFORMED = "coord_xlim_transformed"  // array of two nullable numbers
-        const val COORD_YLIM_TRANSFORMED = "coord_ylim_transformed"
+        // Tools can temporarily override default or provided limits.
+        const val COORD_XLIM_TRANSFORMED = FigureModelOptions.COORD_XLIM_TRANSFORMED  // array of two nullable numbers
+        const val COORD_YLIM_TRANSFORMED = FigureModelOptions.COORD_YLIM_TRANSFORMED
     }
 }
