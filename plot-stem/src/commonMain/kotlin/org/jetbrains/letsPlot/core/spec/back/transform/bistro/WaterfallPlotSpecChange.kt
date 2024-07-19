@@ -72,7 +72,10 @@ class WaterfallPlotSpecChange : SpecChange {
         return OptionsUtil.toSpec(waterfallPlotOptions)
     }
 
-    private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions {
+    private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions? {
+        bistroSpec.getString(Waterfall.TOOLTIPS)?.let {
+            if (it == Option.Layer.NONE) return null
+        }
         return bistroSpec.getMap(Waterfall.TOOLTIPS)?.let { tooltipsOptions ->
             tooltips {
                 anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)

@@ -27,7 +27,7 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double,
     private val showLegend: Boolean?,
-    private val tooltipsOptions: TooltipsOptions,
+    private val tooltipsOptions: TooltipsOptions?,
     private val calcTotal: Boolean,
     totalTitle: String?,
     private val sortedValue: Boolean,
@@ -54,7 +54,11 @@ class WaterfallPlotOptionsBuilder(
             it.linetype = LineTypeOptionConverter().apply(lineType)
             it.width = width
             it.showLegend = showLegend
-            it.tooltipsOptions = tooltipsOptions
+            if (tooltipsOptions != null) {
+                it.tooltipsOptions = tooltipsOptions
+            } else {
+                it.setParameter(Option.Layer.TOOLTIPS, "none")
+            }
         }
         return plot {
             layerOptions = if (hLineOnTop) {
