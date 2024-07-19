@@ -115,7 +115,7 @@ internal object WaterfallUtil {
         val df = DataFrameUtil.fromMap(data)
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
-        val xs = df[xVar]
+        val xs = df[xVar].map { it?.toString() }
         val ys = df.getNumeric(yVar)
         return (xs zip ys)
             .filter { (x, y) -> x != null && SeriesUtil.isFinite(y) }
