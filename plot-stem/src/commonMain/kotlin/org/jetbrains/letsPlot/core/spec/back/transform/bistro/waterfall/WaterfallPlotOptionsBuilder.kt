@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
@@ -70,6 +71,8 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.X
                     name = x
+                    breaks = boxLayerData.getValue(WaterfallBox.Var.X) as List<Double>
+                    labels = boxLayerData.getValue(WaterfallBox.Var.XLAB) as List<String>
                 },
                 scale {
                     aes = Aes.Y
@@ -88,6 +91,9 @@ class WaterfallPlotOptionsBuilder(
                     values = flowTypes.values.map(FlowType.FlowTypeData::color)
                 }
             )
+            themeOptions = theme {
+                setParameter(ThemeOption.AXIS_TOOLTIP, "blank")
+            }
         }
     }
 
@@ -264,7 +270,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
         val DEF_TOOLTIPS = tooltips {
-            title = "@x"
+            title = "@${WaterfallBox.Var.XLAB}"
             disableSplitting = true
             lines = listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",

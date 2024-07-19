@@ -40,6 +40,11 @@ class WaterfallPlotSpecChange : SpecChange {
         val plotScales = spec.getList(Option.Plot.SCALES) ?: emptyList<Any>()
         spec[Option.Plot.SCALES] = (waterfallScales + plotScales).toMutableList()
 
+        // Merge theme
+        val waterfallTheme = waterfallPlotSpec.getMap(Option.Plot.THEME) ?: emptyMap()
+        val plotTheme = spec.getMap(Option.Plot.THEME) ?: emptyMap()
+        spec[Option.Plot.THEME] = (waterfallTheme + plotTheme).toMutableMap()
+
         spec.remove("bistro")
     }
 

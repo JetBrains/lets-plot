@@ -32,6 +32,7 @@ internal object WaterfallUtil {
         if (xs.isEmpty()) {
             return mapOf(
                 WaterfallBox.Var.X to emptyList(),
+                WaterfallBox.Var.XLAB to emptyList(),
                 WaterfallBox.Var.YMIN to emptyList<Double>(),
                 WaterfallBox.Var.YMAX to emptyList<Double>(),
                 WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
@@ -55,7 +56,8 @@ internal object WaterfallUtil {
         val flowTypeLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
 
         return mapOf(
-            WaterfallBox.Var.X to xs + xsLast,
+            WaterfallBox.Var.X to (xs + xsLast).indices.map { it.toDouble() }.toList(),
+            WaterfallBox.Var.XLAB to xs + xsLast,
             WaterfallBox.Var.YMIN to yMin + yMinLast,
             WaterfallBox.Var.YMAX to yMax + yMaxLast,
             WaterfallBox.Var.FLOW_TYPE to flowType + flowTypeLast,
@@ -114,7 +116,6 @@ internal object WaterfallUtil {
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
         val xs = df[xVar]
-        require(xs.size == xs.distinct().size) { "All values in column '$x' should be distinct" }
         val ys = df.getNumeric(yVar)
         return (xs zip ys)
             .filter { (x, y) -> x != null && SeriesUtil.isFinite(y) }

@@ -41,6 +41,7 @@ object Option {
 
         object Var {
             const val X = "x"
+            const val XLAB = "xlabel"
             const val YMIN = "ymin"
             const val YMAX = "ymax"
             const val FLOW_TYPE = "flow_type"

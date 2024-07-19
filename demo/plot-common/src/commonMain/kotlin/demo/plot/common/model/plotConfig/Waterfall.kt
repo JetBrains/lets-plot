@@ -61,11 +61,12 @@ class Waterfall {
                 'width': 0.4,
                 'show_legend': true,
                 'tooltips': {
-                  'title': 'Category: @x',
+                  'title': 'Category: @xlabel (#@x)',
                   'tooltip_min_width': 200,
                   'tooltip_anchor': 'top_center',
                   'lines': ['@|@ymax', 'ymin|^ymin'],
                   'formats': [
+                    {'field': '@x', 'format': 'd'},
                     {'field': '@ymax', 'format': '.3f'},
                     {'field': 'ymin', 'format': 'd'}
                   ],
