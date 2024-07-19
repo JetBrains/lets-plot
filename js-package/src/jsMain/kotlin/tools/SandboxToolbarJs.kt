@@ -28,7 +28,7 @@ class SandboxToolbarJs() {
 
     init {
         element.style.display = "flex"
-        element.style.justifyContent = "right"
+        element.style.justifyContent = "center"
 //        element.style.alignItems = "center"
         element.style.padding = "10px"
         element.style.backgroundColor = "#f0f0f0"
@@ -37,7 +37,7 @@ class SandboxToolbarJs() {
             ToolSpecs.PAN_TOOL_SPEC,
             ToolSpecs.BBOX_ZOOM_TOOL_SPEC,
             ToolSpecs.CBOX_ZOOM_TOOL_SPEC,
-        ).map {
+        ).forEach {
             val button = createToolButton(it)
             element.appendChild(button)
         }

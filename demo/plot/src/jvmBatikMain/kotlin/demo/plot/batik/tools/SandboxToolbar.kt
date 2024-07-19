@@ -30,7 +30,7 @@ internal class SandboxToolbar(
             PAN_TOOL_SPEC,
             BBOX_ZOOM_TOOL_SPEC,
             CBOX_ZOOM_TOOL_SPEC,
-        ).map {
+        ).forEach {
             val button = createToolButton(it)
             this.add(button)
         }

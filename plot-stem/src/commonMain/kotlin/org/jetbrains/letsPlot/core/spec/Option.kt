@@ -23,6 +23,7 @@ object Option {
             const val SUBPLOTS = "subplots"
             const val GG_BUNCH = "ggbunch"
             const val ERROR_GEN = "error_gen" // for internal use: testing etc.
+            const val GG_TOOLBAR = "ggtoolbar"
         }
 
         object PubSub {
