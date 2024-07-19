@@ -8,6 +8,18 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_COLOR
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.FLOW_TYPE_COLOR_VALUE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SIZE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SHOW_LEGEND
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CALC_TOTAL
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SORTED_VALUE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE_ON_TOP
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL_FORMAT
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.TooltipsOptions
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.tooltips
@@ -37,24 +49,24 @@ class WaterfallPlotSpecChange : SpecChange {
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
-            color = bistroSpec.getString(Waterfall.COLOR) ?: WaterfallPlotOptionsBuilder.DEF_COLOR,
-            fill = bistroSpec.getString(Waterfall.FILL) ?: WaterfallPlotOptionsBuilder.FLOW_TYPE_COLOR_VALUE,
-            size = bistroSpec.getDouble(Waterfall.SIZE) ?: WaterfallPlotOptionsBuilder.DEF_SIZE,
+            color = bistroSpec.getString(Waterfall.COLOR) ?: DEF_COLOR,
+            fill = bistroSpec.getString(Waterfall.FILL) ?: FLOW_TYPE_COLOR_VALUE,
+            size = bistroSpec.getDouble(Waterfall.SIZE) ?: DEF_SIZE,
             alpha = bistroSpec.getDouble(Waterfall.ALPHA),
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
-            width = bistroSpec.getDouble(Waterfall.WIDTH) ?: WaterfallPlotOptionsBuilder.DEF_WIDTH,
-            showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: WaterfallPlotOptionsBuilder.DEF_SHOW_LEGEND,
+            width = bistroSpec.getDouble(Waterfall.WIDTH) ?: DEF_WIDTH,
+            showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: DEF_SHOW_LEGEND,
             tooltipsOptions = readBoxTooltipsOptions(bistroSpec),
-            calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: WaterfallPlotOptionsBuilder.DEF_CALC_TOTAL,
+            calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: DEF_CALC_TOTAL,
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
-            sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: WaterfallPlotOptionsBuilder.DEF_SORTED_VALUE,
+            sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
-            hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, WaterfallPlotOptionsBuilder.DEF_H_LINE),
-            hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: WaterfallPlotOptionsBuilder.DEF_H_LINE_ON_TOP,
-            connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, WaterfallPlotOptionsBuilder.DEF_CONNECTOR),
-            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, WaterfallPlotOptionsBuilder.DEF_LABEL),
-            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT) ?: WaterfallPlotOptionsBuilder.DEF_LABEL_FORMAT
+            hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, DEF_H_LINE),
+            hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: DEF_H_LINE_ON_TOP,
+            connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, DEF_CONNECTOR),
+            labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, DEF_LABEL),
+            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT) ?: DEF_LABEL_FORMAT
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(waterfallPlotOptions)

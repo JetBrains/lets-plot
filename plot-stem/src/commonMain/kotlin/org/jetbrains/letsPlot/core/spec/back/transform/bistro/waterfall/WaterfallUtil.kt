@@ -16,7 +16,7 @@ import kotlin.math.*
 
 internal object WaterfallUtil {
     fun calculateBoxStat(
-        data: Map<String, List<Any?>>,
+        data: Map<String, List<*>>,
         x: String,
         y: String,
         calcTotal: Boolean,
@@ -25,7 +25,7 @@ internal object WaterfallUtil {
         maxValues: Int?,
         initialY: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
-    ): Map<String, List<Any?>> {
+    ): Map<String, List<*>> {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
@@ -42,7 +42,7 @@ internal object WaterfallUtil {
         }
         val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
         val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
-        val (yMin, yMax) = (yPrev zip yNext).map { Pair(min(it.first, it.second), max(it.first, it.second)) }.unzip()
+        val (yMin, yMax) = (yPrev zip yNext).map { (x, y) -> Pair(min(x, y), max(x, y)) }.unzip()
         val flowType = ys.map { if (it >= 0) flowTypeTitles.getValue(FlowType.INCREASE).title else flowTypeTitles.getValue(FlowType.DECREASE).title }
 
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
@@ -66,8 +66,8 @@ internal object WaterfallUtil {
     }
 
     fun calculateConnectorStat(
-        boxData: Map<String, List<Any?>>
-    ): Map<String, List<Any?>> {
+        boxData: Map<String, List<*>>
+    ): Map<String, List<*>> {
         return mapOf(
             WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X).dropLast(1),
             WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).dropLast(1),
@@ -75,9 +75,10 @@ internal object WaterfallUtil {
     }
 
     fun calculateLabelStat(
-        boxData: Map<String, List<Any?>>,
+        boxData: Map<String, List<*>>,
         calcTotal: Boolean
-    ): Map<String, List<Any?>> {
+    ): Map<String, List<*>> {
+        @Suppress("UNCHECKED_CAST")
         val yMin = boxData.getValue(WaterfallBox.Var.YMIN) as List<Double>
         if (yMin.isEmpty()) {
             return mapOf(
@@ -87,16 +88,15 @@ internal object WaterfallUtil {
                 WaterfallLabel.Var.FLOW_TYPE to emptyList<String>()
             )
         }
+        @Suppress("UNCHECKED_CAST")
         val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
         val ys = (yMin zip yMax).map { (min, max) -> (min + max) / 2 }
         val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
-        val labels = dys.dropLast(1) + listOf(
-            if (calcTotal) {
-                boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).last()
-            } else {
-                dys.last()
-            }
-        )
+        val labels = if (!calcTotal) {
+            dys
+        } else {
+            dys.dropLast(1) + boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).last()
+        }
         return mapOf(
             WaterfallLabel.Var.X to boxData.getValue(WaterfallBox.Var.X),
             WaterfallLabel.Var.Y to ys,
@@ -106,19 +106,19 @@ internal object WaterfallUtil {
     }
 
     private fun extractXYSeries(
-        data: Map<String, List<Any?>>,
+        data: Map<String, List<*>>,
         x: String,
         y: String
     ): Pair<List<Any>, List<Double>> {
         val df = DataFrameUtil.fromMap(data)
-        val xVar = df.variables().firstOrNull { it.name == x } ?: error("There is no column '$x' in data")
-        val yVar = df.variables().firstOrNull { it.name == y } ?: error("There is no column '$y' in data")
+        val xVar = DataFrameUtil.findVariableOrFail(df, x)
+        val yVar = DataFrameUtil.findVariableOrFail(df, y)
         val xs = df[xVar]
         require(xs.size == xs.distinct().size) { "All values in column '$x' should be distinct" }
         val ys = df.getNumeric(yVar)
         return (xs zip ys)
-            .filter { it.first != null && SeriesUtil.isFinite(it.second) }
-            .map { Pair(it.first!!, it.second!!) }
+            .filter { (x, y) -> x != null && SeriesUtil.isFinite(y) }
+            .map { (x, y) -> Pair(x!!, y!!) }
             .unzip()
     }
 
@@ -128,7 +128,7 @@ internal object WaterfallUtil {
     ): Pair<List<Any>, List<Double>> {
         if (!sortedValue) return xySeries
         return (xySeries.first zip xySeries.second)
-            .sortedByDescending { it.second.absoluteValue }
+            .sortedByDescending { (_, y) -> y.absoluteValue }
             .unzip()
     }
 
@@ -140,13 +140,17 @@ internal object WaterfallUtil {
         return when {
             threshold != null -> {
                 val otherValue = xySeries.second.filter { it.absoluteValue < threshold }.sum()
-                val (xs, ys) = (xySeries.first zip xySeries.second).filter { it.second.absoluteValue >= threshold }.unzip()
+                val (xs, ys) = (xySeries.first zip xySeries.second).filter { (_, y) -> y.absoluteValue >= threshold }.unzip()
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
                 Pair(xs + xsLast, ys + ysLast)
             }
             maxValues != null && maxValues > 0 -> {
-                val indices = xySeries.second.withIndex().map { Pair(it.index, it.value) }.sortedByDescending { it.second.absoluteValue }.unzip().first.subList(0, maxValues)
+                val indices = xySeries.second.withIndex()
+                    .map { Pair(it.index, it.value) }
+                    .sortedByDescending { (_, y) -> y.absoluteValue }
+                    .unzip().first
+                    .subList(0, maxValues)
                 val otherValue = xySeries.second.withIndex().filter { it.index !in indices }.sumOf { it.value }
                 val xs = xySeries.first.slice(indices)
                 val ys = xySeries.second.slice(indices)

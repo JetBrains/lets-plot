@@ -191,7 +191,7 @@ class WaterfallPlotOptionsBuilder(
         companion object {
             fun list(withTotal: Boolean, totalTitle: String?): Map<FlowType, FlowTypeData> {
                 return entries
-                    .filterNot { !withTotal && it == TOTAL }
+                    .filter { withTotal || it != TOTAL }
                     .associateWith { flowType ->
                         when (flowType) {
                             TOTAL -> FlowTypeData(totalTitle ?: flowType.title, flowType.color)
