@@ -78,8 +78,8 @@ class WaterfallPlotSpecChange : SpecChange {
     }
 
     private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions? {
-        bistroSpec.getString(Waterfall.TOOLTIPS)?.let {
-            if (it == Option.Layer.NONE) return null
+        if (bistroSpec.getString(Waterfall.TOOLTIPS) == Option.Layer.NONE) {
+            return null
         }
         return bistroSpec.getMap(Waterfall.TOOLTIPS)?.let { tooltipsOptions ->
             tooltips {
@@ -103,8 +103,8 @@ class WaterfallPlotSpecChange : SpecChange {
         option: String,
         defaults: WaterfallPlotOptionsBuilder.ElementLineOptions
     ): WaterfallPlotOptionsBuilder.ElementLineOptions {
-        bistroSpec.getString(option)?.let {
-            if (it == Option.Theme.Elem.BLANK) return WaterfallPlotOptionsBuilder.ElementLineOptions(blank = true)
+        if (bistroSpec.getString(option) == Option.Theme.Elem.BLANK) {
+            return WaterfallPlotOptionsBuilder.ElementLineOptions(blank = true)
         }
         return bistroSpec.getMap(option)?.let { elementLineSpec ->
             defaults.merge(
@@ -123,8 +123,8 @@ class WaterfallPlotSpecChange : SpecChange {
         option: String,
         defaults: WaterfallPlotOptionsBuilder.ElementTextOptions
     ): WaterfallPlotOptionsBuilder.ElementTextOptions {
-        bistroSpec.getString(option)?.let {
-            if (it == Option.Theme.Elem.BLANK) return WaterfallPlotOptionsBuilder.ElementTextOptions(blank = true)
+        if (bistroSpec.getString(option) == Option.Theme.Elem.BLANK) {
+            return WaterfallPlotOptionsBuilder.ElementTextOptions(blank = true)
         }
         return bistroSpec.getMap(option)?.let { elementTextSpec ->
             defaults.merge(
