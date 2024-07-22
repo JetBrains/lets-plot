@@ -45,8 +45,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val geomHelper = GeomHelper(pos, coord, ctx)
-        val helper = geomHelper.createSvgElementHelper()
+        val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
@@ -55,7 +54,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear).forEach { linePath ->
             root.appendNodes(listOf(linePath))
         }
-        buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { svg ->
+        getStripBorders(aesthetics.dataPoints(), viewPort, helper).forEach { svg ->
             root.add(svg)
         }
         buildHints(aesthetics, pos, coord, ctx, viewPort)
@@ -76,13 +75,12 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         return ::stripRectByDataPoint
     }
 
-    private fun buildStripBorders(
+    private fun getStripBorders(
         dataPoints: Iterable<DataPointAesthetics>,
         viewPort: DoubleRectangle,
-        helper: GeomHelper.SvgElementHelper,
-        handler: (SvgNode) -> Unit
-    ) {
-        for (p in dataPoints) {
+        helper: GeomHelper.SvgElementHelper
+    ): List<SvgNode> {
+        return dataPoints.mapNotNull { p ->
             toStrip(viewPort)(p)?.let { strip ->
                 if (isVertical) {
                     listOf(strip.top, strip.bottom)
@@ -90,24 +88,22 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                     listOf(strip.left, strip.right)
                 }.filterNot { intercept ->
                     intercept in setOf(viewPort.top, viewPort.bottom)
-                }.forEach { intercept ->
-                    buildStripBorder(intercept, viewPort, p, helper)?.let { (svg, _) ->
-                        handler(svg)
-                    }
+                }.mapNotNull { intercept ->
+                    getStripBorder(intercept, viewPort, p, helper)
                 }
             }
-        }
+        }.flatten()
     }
 
-    private fun buildStripBorder(
+    private fun getStripBorder(
         intercept: Double,
         viewPort: DoubleRectangle,
         p: DataPointAesthetics,
         helper: GeomHelper.SvgElementHelper
-    ): Pair<SvgNode, List<DoubleVector>>? {
+    ): SvgNode? {
         val start = afterRotation(DoubleVector(viewPort.left, intercept))
         val end = afterRotation(DoubleVector(viewPort.right, intercept))
-        return helper.createLine(start, end, p)
+        return helper.createLine(start, end, p)?.first
     }
 
     private fun resample(range: DoubleSpan): List<Double> {
@@ -133,10 +129,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .defaultObjectRadius(0.0)
             .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
 
-        val xRange = resample(DoubleSpan(viewPort.left, viewPort.right))
-
         for (p in aesthetics.dataPoints()) {
-            for (x in xRange) {
+            for (x in resample(viewPort.xRange())) {
                 for (aes in listOf(minAes, maxAes)) {
                     val value = p[aes] ?: continue
                     val defaultColor = p.fill() ?: continue
