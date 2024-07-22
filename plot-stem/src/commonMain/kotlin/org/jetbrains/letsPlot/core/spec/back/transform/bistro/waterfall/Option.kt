@@ -12,6 +12,7 @@ object Option {
         const val NAME = "waterfall"
         const val X = "x"
         const val Y = "y"
+        const val GROUP = "group"
         const val COLOR = "color"
         const val FILL = "fill"
         const val SIZE = "size"

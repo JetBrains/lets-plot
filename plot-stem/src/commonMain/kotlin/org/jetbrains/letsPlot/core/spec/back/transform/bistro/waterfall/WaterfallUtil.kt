@@ -15,6 +15,31 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import kotlin.math.*
 
 internal object WaterfallUtil {
+    fun groupBy(
+        data: Map<String, List<*>>,
+        group: String?
+    ): List<Map<String, List<*>>> {
+        return if (group != null && group in data.keys) {
+            val groupValues = data.getValue(group)
+            val result = mutableListOf<Map<String, List<*>>>()
+            for (g in groupValues.distinct()) {
+                val indices = groupValues.withIndex().map { (i, v) -> Pair(i, v) }.filter { (i, v) -> v == g }.unzip().first
+                result.add(data.entries.associate { (k, v) -> k to v.slice(indices) })
+            }
+            result
+        } else {
+            listOf(data)
+        }
+    }
+
+    fun concat(datasets: List<Map<String, List<*>>>): Map<String, List<*>> {
+        val keys = datasets.firstOrNull { data -> data.keys.any() }?.keys ?: return emptyBoxStat()
+        return keys.associateWith { key ->
+            datasets.map { data -> data[key] ?: emptyList<Any?>() }
+                    .fold(emptyList<Any?>()) { result, values -> result + values }
+        }
+    }
+
     fun calculateBoxStat(
         data: Map<String, List<*>>,
         x: String,
@@ -23,23 +48,16 @@ internal object WaterfallUtil {
         sortedValue: Boolean,
         threshold: Double?,
         maxValues: Int?,
+        initialX: Int,
         initialY: Double,
+        base: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
     ): Map<String, List<*>> {
         val (xs, ys) = extractXYSeries(data, x, y)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
         if (xs.isEmpty()) {
-            return mapOf(
-                WaterfallBox.Var.X to emptyList(),
-                WaterfallBox.Var.XLAB to emptyList(),
-                WaterfallBox.Var.YMIN to emptyList<Double>(),
-                WaterfallBox.Var.YMAX to emptyList<Double>(),
-                WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
-                WaterfallBox.Var.INITIAL to emptyList<Double>(),
-                WaterfallBox.Var.CUMULATIVE_SUM to emptyList<Double>(),
-                WaterfallBox.Var.DIFFERENCE to emptyList<Double>(),
-            )
+            return emptyBoxStat()
         }
         val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
         val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
@@ -48,15 +66,15 @@ internal object WaterfallUtil {
 
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
         val xsLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
-        val ysLast = calculateLast(yNext.last() - (initialY + ys.first()))
-        val yPrevLast = calculateLast(initialY + ys.first())
+        val ysLast = calculateLast(yNext.last() - (base + initialY + ys.first()))
+        val yPrevLast = calculateLast(base + initialY + ys.first())
         val yNextLast = calculateLast(yNext.last())
-        val yMinLast = calculateLast(min(yNext.last(), initialY))
-        val yMaxLast = calculateLast(max(yNext.last(), initialY))
+        val yMinLast = calculateLast(min(yNext.last(), base))
+        val yMaxLast = calculateLast(max(yNext.last(), base))
         val flowTypeLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
 
         return mapOf(
-            WaterfallBox.Var.X to (xs + xsLast).indices.map { it.toDouble() }.toList(),
+            WaterfallBox.Var.X to (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList(),
             WaterfallBox.Var.XLAB to xs + xsLast,
             WaterfallBox.Var.YMIN to yMin + yMinLast,
             WaterfallBox.Var.YMAX to yMax + yMaxLast,
@@ -64,6 +82,19 @@ internal object WaterfallUtil {
             WaterfallBox.Var.INITIAL to yPrev + yPrevLast,
             WaterfallBox.Var.CUMULATIVE_SUM to yNext + yNextLast,
             WaterfallBox.Var.DIFFERENCE to ys + ysLast,
+        )
+    }
+
+    private fun emptyBoxStat(): Map<String, List<*>> {
+        return mapOf(
+            WaterfallBox.Var.X to emptyList(),
+            WaterfallBox.Var.XLAB to emptyList(),
+            WaterfallBox.Var.YMIN to emptyList<Double>(),
+            WaterfallBox.Var.YMAX to emptyList<Double>(),
+            WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
+            WaterfallBox.Var.INITIAL to emptyList<Double>(),
+            WaterfallBox.Var.CUMULATIVE_SUM to emptyList<Double>(),
+            WaterfallBox.Var.DIFFERENCE to emptyList<Double>(),
         )
     }
 
@@ -78,7 +109,7 @@ internal object WaterfallUtil {
 
     fun calculateLabelStat(
         boxData: Map<String, List<*>>,
-        calcTotal: Boolean
+        totalTitle: String?
     ): Map<String, List<*>> {
         @Suppress("UNCHECKED_CAST")
         val yMin = boxData.getValue(WaterfallBox.Var.YMIN) as List<Double>
@@ -94,10 +125,14 @@ internal object WaterfallUtil {
         val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
         val ys = (yMin zip yMax).map { (min, max) -> (min + max) / 2 }
         val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
-        val labels = if (!calcTotal) {
-            dys
-        } else {
-            dys.dropLast(1) + boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).last()
+        val cumulativeSum = boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM)
+        val flowType = boxData.getValue(WaterfallBox.Var.FLOW_TYPE)
+        val labels = flowType.indices.map { i ->
+            if (totalTitle != null && flowType[i] == totalTitle) {
+                cumulativeSum[i]
+            } else {
+                dys[i]
+            }
         }
         return mapOf(
             WaterfallLabel.Var.X to boxData.getValue(WaterfallBox.Var.X),

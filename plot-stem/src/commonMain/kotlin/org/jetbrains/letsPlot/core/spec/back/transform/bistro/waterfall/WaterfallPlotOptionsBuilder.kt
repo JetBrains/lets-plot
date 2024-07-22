@@ -21,6 +21,7 @@ class WaterfallPlotOptionsBuilder(
     private val data: Map<*, *>,
     private val x: String?,
     private val y: String?,
+    private val group: String?,
     private val color: String?,
     private val fill: String?,
     private val size: Double?,
@@ -63,9 +64,9 @@ class WaterfallPlotOptionsBuilder(
         }
         return plot {
             layerOptions = if (hLineOnTop) {
-                listOfNotNull(connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData), hLineOptions())
+                listOfNotNull(connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData, flowTypes), hLineOptions())
             } else {
-                listOfNotNull(hLineOptions(), connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData))
+                listOfNotNull(hLineOptions(), connectorOptions(boxLayerData), boxOptions, labelOptions(boxLayerData, flowTypes))
             }
             scaleOptions = listOf(
                 scale {
@@ -100,17 +101,30 @@ class WaterfallPlotOptionsBuilder(
     private fun boxLayerData(): Map<String, List<Any?>> {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
-        return WaterfallUtil.calculateBoxStat(
-            DataUtil.standardiseData(data),
-            x = xVar,
-            y = yVar,
-            calcTotal = calcTotal,
-            sortedValue = sortedValue,
-            threshold = threshold,
-            maxValues = maxValues,
-            initialY = INITIAL_Y,
-            flowTypeTitles = flowTypes
-        )
+        var initialX = 0
+        var initialY = BASE
+        return WaterfallUtil.groupBy(DataUtil.standardiseData(data), group)
+            .map { groupData ->
+                val statData = WaterfallUtil.calculateBoxStat(
+                    groupData,
+                    x = xVar,
+                    y = yVar,
+                    calcTotal = calcTotal,
+                    sortedValue = sortedValue,
+                    threshold = threshold,
+                    maxValues = maxValues,
+                    initialX = initialX,
+                    initialY = initialY,
+                    base = BASE,
+                    flowTypeTitles = flowTypes
+                )
+                initialX += statData[WaterfallBox.Var.X]?.size ?: 0
+                initialY = statData[WaterfallBox.Var.CUMULATIVE_SUM]?.lastOrNull() as? Double ?: BASE
+                statData
+            }
+            .let { datasets ->
+                WaterfallUtil.concat(datasets)
+            }
     }
 
     private fun boxMappings(): Map<Aes<*>, String> {
@@ -132,7 +146,7 @@ class WaterfallPlotOptionsBuilder(
         if (hLineOptions.blank) return null
         return LayerOptions().apply {
             geom = GeomKind.H_LINE
-            yintercept = INITIAL_Y
+            yintercept = BASE
             color = hLineOptions.color
             size = hLineOptions.size
             linetype = hLineOptions.lineType
@@ -161,11 +175,14 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun labelOptions(boxLayerData: Map<String, List<Any?>>): LayerOptions? {
+    private fun labelOptions(
+        boxLayerData: Map<String, List<Any?>>,
+        flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
+    ): LayerOptions? {
         if (labelOptions.blank) return null
         return LayerOptions().also {
             it.geom = GeomKind.TEXT
-            it.data = WaterfallUtil.calculateLabelStat(boxLayerData, calcTotal)
+            it.data = WaterfallUtil.calculateLabelStat(boxLayerData, flowTypeTitles[FlowType.TOTAL]?.title)
             it.mappings = labelMappings()
             it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_VALUE }
             it.family = labelOptions.family
@@ -256,7 +273,7 @@ class WaterfallPlotOptionsBuilder(
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_NAME = "Flow type"
         const val FLOW_TYPE_COLOR_VALUE = "flow_type"
-        private const val INITIAL_Y = 0.0
+        private const val BASE = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"

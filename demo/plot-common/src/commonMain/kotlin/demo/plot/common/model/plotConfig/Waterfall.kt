@@ -12,6 +12,7 @@ class Waterfall {
         return listOf(
             basic(),
             checkParameters(),
+            withGrouping(),
         )
     }
 
@@ -93,6 +94,31 @@ class Waterfall {
                   'angle': 45
                 },
                 'label_format': 'd'
+              }
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withGrouping(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'cat': ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'],
+                'val': [1.2, 2.2, -.4, 1.5, -2.0, 1.3, -0.8, 1.0],
+                'group': ['p', 'p', 'p', 'p', 'q', 'q', 'q', 'q']
+              },
+              'ggtitle': {
+                'text': 'With grouping'
+              },
+              'bistro': {
+                'name': 'waterfall',
+                'x': 'cat',
+                'y': 'val',
+                'group': 'group'
               }
             }
         """.trimIndent()
