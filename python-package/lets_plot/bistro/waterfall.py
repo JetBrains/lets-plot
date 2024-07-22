@@ -49,9 +49,9 @@ def waterfall_plot(data, x, y, *,
     sorted_value : bool, default=False
         Sorts categories by absolute value of the changes.
     threshold : float
-        Groups all categories under a certain threshold value into an "Other" category.
+        Groups all categories under a certain threshold value into "Other" category.
     max_values : int
-        Groups all categories with the smallest changes, except the first `max_values`, into an "Other" category.
+        Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
     calc_total : bool, default=True
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
     total_title : str
