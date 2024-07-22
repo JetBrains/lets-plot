@@ -25,14 +25,6 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private val minAes = flipHelper.getEffectiveAes(Aes.YMIN)
     private val maxAes = flipHelper.getEffectiveAes(Aes.YMAX)
 
-    private fun afterRotation(vector: DoubleVector): DoubleVector {
-        return flipHelper.flip(vector)
-    }
-
-    private fun afterRotation(rectangle: DoubleRectangle): DoubleRectangle {
-        return flipHelper.flip(rectangle)
-    }
-
     override val wontRender: List<Aes<*>>
         get() {
             return listOf(Aes.XMIN, Aes.XMAX).map(flipHelper::getEffectiveAes)
@@ -49,7 +41,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
-        val viewPort = afterRotation(overallAesBounds(ctx))
+        val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
 
         linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear).forEach { linePath ->
             root.appendNodes(listOf(linePath))
@@ -70,7 +62,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             val maxValue = p.finiteOrNull(maxAes) ?: return null
             if (minValue > maxValue) return null
             if (minValue !in mainRange && maxValue !in mainRange) return null
-            return afterRotation(DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue))
+            return DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue).flipIf(!isVertical)
         }
         return ::stripRectByDataPoint
     }
@@ -101,8 +93,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         p: DataPointAesthetics,
         helper: GeomHelper.SvgElementHelper
     ): SvgNode? {
-        val start = afterRotation(DoubleVector(viewPort.left, intercept))
-        val end = afterRotation(DoubleVector(viewPort.right, intercept))
+        val start = DoubleVector(viewPort.left, intercept).flipIf(!isVertical)
+        val end = DoubleVector(viewPort.right, intercept).flipIf(!isVertical)
         return helper.createLine(start, end, p)?.first
     }
 
@@ -144,7 +136,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                         tipLayoutHints = hintsCollection.hints,
                         markerColors = colorMapper(p)
                     )
-                    helper.toClient(afterRotation(DoubleVector(x, value)), p)?.let { point ->
+                    helper.toClient(DoubleVector(x, value).flipIf(!isVertical), p)?.let { point ->
                         ctx.targetCollector.addPoint(p.index(), point, 0.0, tooltipParams)
                     }
                 }
