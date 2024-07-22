@@ -97,7 +97,7 @@ internal object PlotToolsBrowserDemoUtil {
                         |var rootElement = document.getElementById("root");
                         |
                         |// Toolbar
-                        |var toolbar = new LetsPlot.tools.SandboxToolbar();
+                        |var toolbar = new LetsPlot.tools.DefaultToolbar();
                         |rootElement.appendChild(toolbar.getElement());
                         |
                         |var parentElement = document.createElement('div');

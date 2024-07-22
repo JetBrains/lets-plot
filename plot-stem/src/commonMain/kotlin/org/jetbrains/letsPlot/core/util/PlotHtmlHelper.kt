@@ -136,7 +136,7 @@ object PlotHtmlHelper {
             |               containerDiv.appendChild(outputDiv);
             |           
             |               // Toolbar
-            |               var toolbar = new LetsPlot.tools.SandboxToolbar();
+            |               var toolbar = new LetsPlot.tools.DefaultToolbar();
             |               outputDiv.appendChild(toolbar.getElement());
             |               
             |               // Plot
