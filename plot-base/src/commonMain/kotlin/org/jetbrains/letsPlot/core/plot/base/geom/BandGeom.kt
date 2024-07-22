@@ -22,9 +22,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private val flipHelper = FlippableGeomHelper(isVertical)
 
-    private fun afterRotation(aes: Aes<Double>): Aes<Double> {
-        return flipHelper.getEffectiveAes(aes)
-    }
+    private val minAes = flipHelper.getEffectiveAes(Aes.YMIN)
+    private val maxAes = flipHelper.getEffectiveAes(Aes.YMAX)
 
     private fun afterRotation(vector: DoubleVector): DoubleVector {
         return flipHelper.flip(vector)
@@ -36,7 +35,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
 
     override val wontRender: List<Aes<*>>
         get() {
-            return listOf(Aes.XMIN, Aes.XMAX).map(::afterRotation)
+            return listOf(Aes.XMIN, Aes.XMAX).map(flipHelper::getEffectiveAes)
         }
 
     override fun buildIntern(
@@ -51,7 +50,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
         val linesHelper = LinesHelper(pos, coord, ctx)
-        val viewPort = overallAesBounds(ctx)
+        val viewPort = afterRotation(overallAesBounds(ctx))
 
         linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear).forEach { linePath ->
             root.appendNodes(listOf(linePath))
@@ -59,16 +58,14 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         buildStripBorders(aesthetics.dataPoints(), viewPort, helper) { svg ->
             root.add(svg)
         }
-        buildHints(aesthetics, pos, coord, ctx)
+        buildHints(aesthetics, pos, coord, ctx, viewPort)
     }
 
     private fun toStrip(
         viewPort: DoubleRectangle
     ): (DataPointAesthetics) -> DoubleRectangle? {
-        val minAes = afterRotation(Aes.YMIN)
-        val maxAes = afterRotation(Aes.YMAX)
-        val mainRange = afterRotation(viewPort).yRange()
-        val secondaryRange = afterRotation(viewPort).xRange()
+        val mainRange = viewPort.yRange()
+        val secondaryRange = viewPort.xRange()
         fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
             val minValue = p.finiteOrNull(minAes) ?: return null
             val maxValue = p.finiteOrNull(maxAes) ?: return null
@@ -87,11 +84,12 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     ) {
         for (p in dataPoints) {
             toStrip(viewPort)(p)?.let { strip ->
-                listOf(
-                    afterRotation(strip).top,
-                    afterRotation(strip).bottom
-                ).filterNot { intercept ->
-                    intercept in setOf(afterRotation(viewPort).top, afterRotation(viewPort).bottom)
+                if (isVertical) {
+                    listOf(strip.top, strip.bottom)
+                } else {
+                    listOf(strip.left, strip.right)
+                }.filterNot { intercept ->
+                    intercept in setOf(viewPort.top, viewPort.bottom)
                 }.forEach { intercept ->
                     buildStripBorder(intercept, viewPort, p, helper)?.let { (svg, _) ->
                         handler(svg)
@@ -107,8 +105,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         p: DataPointAesthetics,
         helper: GeomHelper.SvgElementHelper
     ): Pair<SvgNode, List<DoubleVector>>? {
-        val start = afterRotation(DoubleVector(afterRotation(viewPort).left, intercept))
-        val end = afterRotation(DoubleVector(afterRotation(viewPort).right, intercept))
+        val start = afterRotation(DoubleVector(viewPort.left, intercept))
+        val end = afterRotation(DoubleVector(viewPort.right, intercept))
         return helper.createLine(start, end, p)
     }
 
@@ -118,7 +116,13 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         }
     }
 
-    private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildHints(
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext,
+        viewPort: DoubleRectangle
+    ) {
         val helper = GeomHelper(pos, coord, ctx)
         val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
         val isVerticallyOriented = when (isVertical) {
@@ -129,9 +133,6 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .defaultObjectRadius(0.0)
             .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
 
-        val minAes = afterRotation(Aes.YMIN)
-        val maxAes = afterRotation(Aes.YMAX)
-        val viewPort = afterRotation(overallAesBounds(ctx))
         val xRange = resample(DoubleSpan(viewPort.left, viewPort.right))
 
         for (p in aesthetics.dataPoints()) {
