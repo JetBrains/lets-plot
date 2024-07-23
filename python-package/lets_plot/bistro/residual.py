@@ -114,7 +114,7 @@ def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
     elif isinstance(data, pd.DataFrame):
         df = data.copy()
     elif pl is not None and isinstance(data, pl.DataFrame):
-        df = pd.DataFrame(data.to_dict(False))
+        df = pd.DataFrame(data.to_dict(as_series=False))
     else:
         raise Exception("Unsupported type of data: {0}".format(data))
     df = df[(df[x].notna()) & df[y].notna()]
