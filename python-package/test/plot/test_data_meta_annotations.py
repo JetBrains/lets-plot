@@ -17,6 +17,7 @@ data_dict = {
     'python_bool': [True],
     'np_int': np.array([1], dtype=np.int64),
     'np_float': np.array([1.0], dtype=np.float64),
+    'unknown': [type({})]
 }
 expected_series_annotations = [
     {'column': 'python_datetime', 'type': 'datetime'},
@@ -26,6 +27,7 @@ expected_series_annotations = [
     {'column': 'python_bool', 'type': 'bool'},
     {'column': 'np_int', 'type': 'int'},
     {'column': 'np_float', 'type': 'float'},
+    # {'column': 'unknown', 'type': 'unknown'}, unknown type should not be added to series_annotations
 ]
 
 
@@ -171,20 +173,20 @@ def test_values_list_in_aes_doest_not_produce_series_annotations():
 
 def test_as_annotated_data_dict():
     p = ggplot(data_dict) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations
+    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': "unknown(python:<class 'type'>)"}]
 
 
 def test_as_annotated_data_dataframe():
     df = DataFrame(data_dict)
     p = ggplot(df) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations
+    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': 'unknown(pandas:mixed)'}]
 
 
 def test_as_annotated_data_polars_dataframe():
     from polars import DataFrame as plDataFrame
     df = plDataFrame(data_dict)
     p = ggplot(df) + geom_point()
-    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations
+    assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [{'column': 'unknown', 'type': 'unknown(polars:Object)'}]
 
 
 def test_as_annotated_data_list():

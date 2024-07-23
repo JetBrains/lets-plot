@@ -62,18 +62,19 @@ def infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Dic
                     type_info[var_name] = 'unknown(pandas:' + inferred_type + ')'
     elif is_polars_dataframe(data):
         import polars as pl
+        from polars.datatypes.group import INTEGER_DTYPES, FLOAT_DTYPES
         for var_name, var_type in data.schema.items():
 
             # https://docs.pola.rs/api/python/stable/reference/datatypes.html
-            if var_type in pl.FLOAT_DTYPES:
+            if var_type in FLOAT_DTYPES:
                 type_info[var_name] = TYPE_FLOATING
-            elif var_type in pl.INTEGER_DTYPES:
+            elif var_type in INTEGER_DTYPES:
                 type_info[var_name] = TYPE_INTEGER
-            elif var_type == pl.datatypes.Utf8:
+            elif var_type == pl.datatypes.String:
                 type_info[var_name] = TYPE_STRING
             elif var_type == pl.datatypes.Boolean:
                 type_info[var_name] = TYPE_BOOLEAN
-            elif var_type in pl.datatypes.DATETIME_DTYPES:
+            elif var_type == pl.datatypes.Date or var_type == pl.datatypes.Datetime:
                 type_info[var_name] = TYPE_DATE_TIME
             else:
                 type_info[var_name] = 'unknown(polars:' + str(var_type) + ')'
