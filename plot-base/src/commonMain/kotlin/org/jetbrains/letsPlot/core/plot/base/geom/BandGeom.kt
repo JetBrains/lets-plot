@@ -48,12 +48,12 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             root.appendNodes(listOf(linePath))
         }
 
-        val toOrientedTopBorder = { p: DataPointAesthetics -> toBorder(viewPort) { rect -> rect.top }(p)?.flipIf(!isVertical) }
-        createStripBorders(aesthetics.dataPoints(), toOrientedTopBorder, helper).forEach { svgNode ->
+        val toTopBorder = toBorder(viewPort) { rect -> rect.top }
+        createStripBorders(aesthetics.dataPoints(), toTopBorder, helper).forEach { svgNode ->
             root.add(svgNode)
         }
-        val toOrientedBottomBorder = { p: DataPointAesthetics -> toBorder(viewPort) { rect -> rect.bottom }(p)?.flipIf(!isVertical) }
-        createStripBorders(aesthetics.dataPoints(), toOrientedBottomBorder, helper).forEach { svgNode ->
+        val toBottomBorder = toBorder(viewPort) { rect -> rect.bottom }
+        createStripBorders(aesthetics.dataPoints(), toBottomBorder, helper).forEach { svgNode ->
             root.add(svgNode)
         }
 
@@ -76,10 +76,10 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private fun toBorder(
         viewPort: DoubleRectangle,
         select: (DoubleRectangle) -> Double
-    ): (DataPointAesthetics) -> Border? {
+    ): (DataPointAesthetics) -> Pair<DoubleVector, DoubleVector>? {
         return { p ->
             toStrip(viewPort)(p)?.let(select)?.let { intercept ->
-                Border(
+                Pair(
                     DoubleVector(viewPort.left, intercept),
                     DoubleVector(viewPort.right, intercept)
                 )
@@ -89,13 +89,15 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
 
     private fun createStripBorders(
         dataPoints: Iterable<DataPointAesthetics>,
-        toBorder: (DataPointAesthetics) -> Border?,
+        toBorder: (DataPointAesthetics) -> Pair<DoubleVector, DoubleVector>?,
         helper: GeomHelper.SvgElementHelper
     ): List<SvgNode> {
         return dataPoints
             .mapNotNull { p ->
                 toBorder(p)?.let { border ->
-                    helper.createLine(border.start, border.end, p)?.first
+                    val start = border.first.flipIf(!isVertical)
+                    val end = border.second.flipIf(!isVertical)
+                    helper.createLine(start, end, p)?.first
                 }
             }
     }
@@ -143,12 +145,6 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private fun resample(range: DoubleSpan): List<Double> {
         return (0 until TOOLTIP_SAMPLE_SIZE).map { i ->
             range.lowerEnd + (i.toDouble() / (TOOLTIP_SAMPLE_SIZE - 1)) * (range.upperEnd - range.lowerEnd)
-        }
-    }
-
-    data class Border(val start: DoubleVector, val end: DoubleVector) {
-        fun flipIf(flipped: Boolean): Border {
-            return Border(start.flipIf(flipped), end.flipIf(flipped))
         }
     }
 
