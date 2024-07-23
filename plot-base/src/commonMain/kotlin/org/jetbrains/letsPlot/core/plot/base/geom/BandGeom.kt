@@ -43,18 +43,25 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
 
-        linesHelper.createStrips(aesthetics.dataPoints(), toStrip(viewPort), coord.isLinear).forEach { linePath ->
+        val toOrientedStrip = { p: DataPointAesthetics -> toStrip(viewPort)(p)?.flipIf(!isVertical) }
+        linesHelper.createStrips(aesthetics.dataPoints(), toOrientedStrip).forEach { linePath ->
             root.appendNodes(listOf(linePath))
         }
-        getStripBorders(aesthetics.dataPoints(), viewPort, helper).forEach { svg ->
-            root.add(svg)
+
+        val toOrientedBorder = { intercept: Double ->
+            Pair(
+                DoubleVector(viewPort.left, intercept).flipIf(!isVertical),
+                DoubleVector(viewPort.right, intercept).flipIf(!isVertical)
+            )
         }
+        createStripBorders(aesthetics.dataPoints(), viewPort, helper, toOrientedBorder).forEach { svgNode ->
+            root.add(svgNode)
+        }
+
         buildHints(aesthetics, pos, coord, ctx, viewPort)
     }
 
-    private fun toStrip(
-        viewPort: DoubleRectangle
-    ): (DataPointAesthetics) -> DoubleRectangle? {
+    private fun toStrip(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleRectangle? {
         val mainRange = viewPort.yRange()
         val secondaryRange = viewPort.xRange()
         fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
@@ -62,46 +69,25 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             val maxValue = p.finiteOrNull(maxAes) ?: return null
             if (minValue > maxValue) return null
             if (minValue !in mainRange && maxValue !in mainRange) return null
-            return DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue).flipIf(!isVertical)
+            return DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue)
         }
         return ::stripRectByDataPoint
     }
 
-    private fun getStripBorders(
+    private fun createStripBorders(
         dataPoints: Iterable<DataPointAesthetics>,
         viewPort: DoubleRectangle,
-        helper: GeomHelper.SvgElementHelper
+        helper: GeomHelper.SvgElementHelper,
+        toBorder: (Double) -> Pair<DoubleVector, DoubleVector>
     ): List<SvgNode> {
-        return dataPoints.mapNotNull { p ->
-            toStrip(viewPort)(p)?.let { strip ->
-                if (isVertical) {
-                    listOf(strip.top, strip.bottom)
-                } else {
-                    listOf(strip.left, strip.right)
-                }.filterNot { intercept ->
-                    intercept in setOf(viewPort.top, viewPort.bottom)
-                }.mapNotNull { intercept ->
-                    getStripBorder(intercept, viewPort, p, helper)
-                }
+        return dataPoints
+            .mapNotNull { p -> toStrip(viewPort)(p)?.let { strip -> Pair(p, strip) } }
+            .map { (p, strip) -> listOf(Pair(p, strip.top), Pair(p, strip.bottom)) }
+            .flatten()
+            .mapNotNull { (p, intercept) ->
+                val (start, end) = toBorder(intercept)
+                helper.createLine(start, end, p)?.first
             }
-        }.flatten()
-    }
-
-    private fun getStripBorder(
-        intercept: Double,
-        viewPort: DoubleRectangle,
-        p: DataPointAesthetics,
-        helper: GeomHelper.SvgElementHelper
-    ): SvgNode? {
-        val start = DoubleVector(viewPort.left, intercept).flipIf(!isVertical)
-        val end = DoubleVector(viewPort.right, intercept).flipIf(!isVertical)
-        return helper.createLine(start, end, p)?.first
-    }
-
-    private fun resample(range: DoubleSpan): List<Double> {
-        return (0 until TOOLTIP_SAMPLE_SIZE).map { i ->
-            range.lowerEnd + (i.toDouble() / (TOOLTIP_SAMPLE_SIZE - 1)) * (range.upperEnd - range.lowerEnd)
-        }
     }
 
     private fun buildHints(
@@ -141,6 +127,12 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
                     }
                 }
             }
+        }
+    }
+
+    private fun resample(range: DoubleSpan): List<Double> {
+        return (0 until TOOLTIP_SAMPLE_SIZE).map { i ->
+            range.lowerEnd + (i.toDouble() / (TOOLTIP_SAMPLE_SIZE - 1)) * (range.upperEnd - range.lowerEnd)
         }
     }
 

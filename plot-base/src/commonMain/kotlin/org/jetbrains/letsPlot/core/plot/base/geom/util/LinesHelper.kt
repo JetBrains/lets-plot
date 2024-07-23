@@ -168,27 +168,26 @@ open class LinesHelper(
 
     fun createStrips(
         dataPoints: Iterable<DataPointAesthetics>,
-        toStrip: (DataPointAesthetics) -> DoubleRectangle?,
-        isLinear: Boolean
+        toStrip: (DataPointAesthetics) -> DoubleRectangle?
     ): List<LinePath> {
         return dataPoints.mapNotNull { p ->
-            toStrip(p)?.let { stripRect ->
+            toStrip(p)?.let { rect ->
                 listOf(
-                    DoubleVector(stripRect.left, stripRect.top),
-                    DoubleVector(stripRect.right, stripRect.top),
-                    DoubleVector(stripRect.right, stripRect.bottom),
-                    DoubleVector(stripRect.left, stripRect.bottom),
-                    DoubleVector(stripRect.left, stripRect.top),
-                ).let { stripVertices ->
-                    when (isLinear) {
-                        true -> stripVertices.mapNotNull { v -> toClient(v, p) }
+                    DoubleVector(rect.left, rect.top),
+                    DoubleVector(rect.right, rect.top),
+                    DoubleVector(rect.right, rect.bottom),
+                    DoubleVector(rect.left, rect.bottom),
+                    DoubleVector(rect.left, rect.top),
+                ).let { vertices ->
+                    when (myResamplingEnabled) {
+                        true -> vertices.mapNotNull { v -> toClient(v, p) }
                         false -> resample(
                             precision = PIXEL_PRECISION,
-                            points = stripVertices
+                            points = vertices
                         ) { toClient(it, p) }
                     }
-                }.let { clientVertices ->
-                    LinePath.polygon(clientVertices).also { linePath ->
+                }.let { vertices ->
+                    LinePath.polygon(vertices).also { linePath ->
                         decorateFillingPart(linePath, p)
                     }
                 }
