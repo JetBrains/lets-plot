@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
@@ -27,7 +28,7 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double,
     private val showLegend: Boolean?,
-    private val tooltipsOptions: TooltipsOptions,
+    private val tooltipsOptions: TooltipsOptions?,
     private val calcTotal: Boolean,
     totalTitle: String?,
     private val sortedValue: Boolean,
@@ -54,7 +55,11 @@ class WaterfallPlotOptionsBuilder(
             it.linetype = LineTypeOptionConverter().apply(lineType)
             it.width = width
             it.showLegend = showLegend
-            it.tooltipsOptions = tooltipsOptions
+            if (tooltipsOptions != null) {
+                it.tooltipsOptions = tooltipsOptions
+            } else {
+                it.setParameter(Option.Layer.TOOLTIPS, "none")
+            }
         }
         return plot {
             layerOptions = if (hLineOnTop) {
@@ -66,6 +71,8 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.X
                     name = x
+                    breaks = boxLayerData.getValue(WaterfallBox.Var.X) as List<Double>
+                    labels = boxLayerData.getValue(WaterfallBox.Var.XLAB) as List<String>
                 },
                 scale {
                     aes = Aes.Y
@@ -84,6 +91,9 @@ class WaterfallPlotOptionsBuilder(
                     values = flowTypes.values.map(FlowType.FlowTypeData::color)
                 }
             )
+            themeOptions = theme {
+                setParameter(ThemeOption.AXIS_TOOLTIP, "blank")
+            }
         }
     }
 
@@ -191,7 +201,7 @@ class WaterfallPlotOptionsBuilder(
         companion object {
             fun list(withTotal: Boolean, totalTitle: String?): Map<FlowType, FlowTypeData> {
                 return entries
-                    .filterNot { !withTotal && it == TOTAL }
+                    .filter { withTotal || it != TOTAL }
                     .associateWith { flowType ->
                         when (flowType) {
                             TOTAL -> FlowTypeData(totalTitle ?: flowType.title, flowType.color)
@@ -260,7 +270,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
         val DEF_TOOLTIPS = tooltips {
-            title = "@x"
+            title = "@${WaterfallBox.Var.XLAB}"
             disableSplitting = true
             lines = listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",

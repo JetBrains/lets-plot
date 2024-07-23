@@ -20,7 +20,7 @@ def waterfall_plot(data, x, y, *,
 
     Parameters
     ----------
-    data : dict or Pandas `DataFrame`
+    data : dict or Pandas or Polars `DataFrame`
         The data to be displayed.
     x : str
         Name of a variable. All values should be distinct.
@@ -49,9 +49,9 @@ def waterfall_plot(data, x, y, *,
     sorted_value : bool, default=False
         Sorts categories by absolute value of the changes.
     threshold : float
-        Groups all categories under a certain threshold value into an "Other" category.
+        Groups all categories under a certain threshold value into "Other" category.
     max_values : int
-        Groups all categories with the smallest changes, except the first `max_values`, into an "Other" category.
+        Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
     calc_total : bool, default=True
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
     total_title : str
@@ -89,7 +89,8 @@ def waterfall_plot(data, x, y, *,
     -----
     Computed variables:
 
-    - @x : category name; could be used in tooltips
+    - @x : category id; could be used in tooltips
+    - @xlabel : category name; could be used in tooltips
     - @ymin : lower value of the change; could be used in tooltips
     - @ymax : upper value of the change; could be used in tooltips
     - @flow_type : direction of the flow: increasing, decreasing, or the result (total); could be used in tooltips
