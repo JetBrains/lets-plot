@@ -10,23 +10,26 @@ import kotlinx.browser.document
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setFill
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setStroke
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.svg.SVGSVGElement
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("DefaultToolbar")
 @JsExport
 class DefaultToolbarJs() {
     private val element: HTMLElement = (document.createElement("div") as HTMLElement).apply {
-        style.display = "flex"
-        style.justifyContent = "center"
-//        style.alignItems = "center"
-//        style.padding = "10px"
-        style.padding = "0 0 5px 0"
-//        style.backgroundColor = "#f0f0f0"
+        style.apply {
+            display = "flex"
+            justifyContent = "center"
+//        alignItems = "center"
+            padding = "0 0 5px 0"
+        }
     }
 
     private var figureModel: FigureModelJs? = null
@@ -41,8 +44,8 @@ class DefaultToolbarJs() {
                 position = "relative"
                 display = "inline-flex"
                 justifyContent = "center"
-                padding = "5px"
-                backgroundColor = "rgb(240, 240, 240)"
+                padding = "2px 5px"
+                backgroundColor = "$C_BACKGR"
                 border = "1px solid rgb(200, 200, 200)"
                 borderRadius = "8px"
             }
@@ -78,24 +81,17 @@ class DefaultToolbarJs() {
     private fun createToolButton(toolSpec: Map<String, Any>): HTMLButtonElement {
         val tool = ToggleTool(toolSpec)
         val button = (document.createElement("button") as HTMLButtonElement).apply {
-            style.width = "24px"
-            style.height = "24px"
-            style.margin = "0 3px"
-            style.padding = "3px"
-//            style.backgroundColor = "transparent"
-            style.border = "none"
-            style.borderRadius = "4px"
-            style.cursor = "pointer"
+            styleToolButton(this)
 
             title = toolSpec["label"] as String
             innerHTML = toolSpec["icon"] as String
         }
 
-        updateToggleButtonState(button, on = false)
+        updateButtonState(button, selected = false)
 
         val view = object : ToggleToolView {
-            override fun setState(on: Boolean) {
-                updateToggleButtonState(button, on)
+            override fun setState(selected: Boolean) {
+                updateButtonState(button, selected)
             }
 
             override fun onAction(handler: () -> Unit) {
@@ -108,36 +104,66 @@ class DefaultToolbarJs() {
         return button
     }
 
-    private fun updateToggleButtonState(button: HTMLButtonElement, on: Boolean) {
-        if (on) {
-            button.style.backgroundColor = "rgb(91, 145, 202)"
-            button.setAttribute("onmouseover", "this.style.backgroundColor='rgb(110, 175, 241)'")
-            button.setAttribute("onmouseout", "this.style.backgroundColor='rgb(91, 145, 202)'")
+    private fun styleToolButton(button: HTMLButtonElement) {
+        button.style.apply {
+            width = "24px"
+            height = "24px"
+            margin = "0 3px"
+            padding = "3px"
+            border = "none"
+            borderRadius = "4px"
+            cursor = "pointer"
+        }
+
+        button.setAttribute(
+            "onmouseover", """
+            if (!this.classList.contains('$SELECTED')) {
+                this.style.backgroundColor = '$C_BACKGR_HOVER';
+            }
+        """.trimIndent()
+        )
+
+        button.setAttribute(
+            "onmouseout", """
+            if (!this.classList.contains('$SELECTED')) {
+                this.style.backgroundColor = '$C_BACKGR';
+            }
+        """.trimIndent()
+        )
+    }
+
+    private fun updateButtonState(button: HTMLButtonElement, selected: Boolean) {
+        if (selected) {
+            button.classList.add(SELECTED)
+            button.style.backgroundColor = "$C_BACKGR_SEL"
+
+            button.querySelector("svg")?.apply {
+                this as SVGSVGElement
+                style.setStroke(C_STROKE_SEL)
+                style.setFill(C_STROKE_SEL)
+            }
         } else {
-            button.style.backgroundColor = "transparent"
-            button.setAttribute("onmouseover", "this.style.backgroundColor='rgb(220, 220, 220)'")
-            button.setAttribute("onmouseout", "this.style.backgroundColor='transparent'")
+            button.classList.remove(SELECTED)
+            button.style.backgroundColor = "$C_BACKGR"
+
+            button.querySelector("svg")?.apply {
+                this as SVGSVGElement
+                style.setStroke(C_STROKE)
+                style.setFill(C_STROKE)
+            }
         }
     }
 
 
     private fun resetButton(): HTMLButtonElement {
         val button = (document.createElement("button") as HTMLButtonElement).apply {
-            style.width = "24px"
-            style.height = "24px"
-            style.margin = "0 3px"
-            style.padding = "3px"
-            style.backgroundColor = "transparent"
-            style.border = "none"
-            style.borderRadius = "4px"
-            style.cursor = "pointer"
+            styleToolButton(this)
 
             title = "Reset"
             innerHTML = ToolbarIcons.RESET
         }
 
-        button.setAttribute("onmouseover", "this.style.backgroundColor='rgb(220, 220, 220)'")
-        button.setAttribute("onmouseout", "this.style.backgroundColor='transparent'")
+        updateButtonState(button, selected = false)
 
         button.addEventListener("click", {
             controller.reset()
@@ -170,5 +196,13 @@ class DefaultToolbarJs() {
 
     companion object {
         private val LOG = PortableLogging.logger("SandboxToolbar")
+
+        private const val SELECTED = "selected"
+
+        private const val C_BACKGR = "rgb(247, 248, 250)"
+        private const val C_STROKE = "rgb(110, 110, 110)"
+        private const val C_BACKGR_HOVER = "rgb(218, 219, 221)"
+        private const val C_BACKGR_SEL = "rgb(69, 114, 232)"
+        private const val C_STROKE_SEL = "white"
     }
 }

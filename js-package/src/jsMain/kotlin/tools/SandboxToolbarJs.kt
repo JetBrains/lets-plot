@@ -49,6 +49,7 @@ class SandboxToolbarJs() {
         return element
     }
 
+    @Suppress("DuplicatedCode")
     fun bind(figure: FigureModelJs) {
         check(this.figureModel == null) { "Toolbar is already bound to another figure." }
         this.figureModel = figure
@@ -66,8 +67,8 @@ class SandboxToolbarJs() {
         button.style.margin = "0 5px"
 
         val view = object : ToggleToolView {
-            override fun setState(on: Boolean) {
-                button.textContent = "${tool.label} ${if (on) "on" else "off"}"
+            override fun setState(selected: Boolean) {
+                button.textContent = "${tool.label} ${if (selected) "on" else "off"}"
             }
 
             override fun onAction(handler: () -> Unit) {

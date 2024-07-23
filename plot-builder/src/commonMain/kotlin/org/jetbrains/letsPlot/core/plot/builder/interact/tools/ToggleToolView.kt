@@ -6,6 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
 interface ToggleToolView {
-    fun setState(on: Boolean)
+    fun setState(selected: Boolean)
     fun onAction(handler: () -> Unit)
 }

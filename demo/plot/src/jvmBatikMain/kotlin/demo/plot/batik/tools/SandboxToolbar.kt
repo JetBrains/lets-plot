@@ -48,8 +48,8 @@ internal class SandboxToolbar(
         val button = JButton("${tool.label} off")
 
         val view = object : ToggleToolView {
-            override fun setState(on: Boolean) {
-                button.text = "${tool.label} ${if (on) "on" else "off"}"
+            override fun setState(selected: Boolean) {
+                button.text = "${tool.label} ${if (selected) "on" else "off"}"
             }
 
             override fun onAction(handler: () -> Unit) {
