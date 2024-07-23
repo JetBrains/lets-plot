@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
@@ -168,18 +167,12 @@ open class LinesHelper(
 
     fun createStrips(
         dataPoints: Iterable<DataPointAesthetics>,
-        toStrip: (DataPointAesthetics) -> DoubleRectangle?,
+        toVertices: (DataPointAesthetics) -> List<DoubleVector>?,
         isLinear: Boolean
     ): List<LinePath> {
         return dataPoints.mapNotNull { p ->
-            toStrip(p)?.let { stripRect ->
-                listOf(
-                    DoubleVector(stripRect.left, stripRect.top),
-                    DoubleVector(stripRect.right, stripRect.top),
-                    DoubleVector(stripRect.right, stripRect.bottom),
-                    DoubleVector(stripRect.left, stripRect.bottom),
-                    DoubleVector(stripRect.left, stripRect.top),
-                ).let { stripVertices ->
+            toVertices(p)?.let { vertices ->
+                vertices.let { stripVertices ->
                     when (isLinear) {
                         true -> stripVertices.mapNotNull { v -> toClient(v, p) }
                         false -> resample(
