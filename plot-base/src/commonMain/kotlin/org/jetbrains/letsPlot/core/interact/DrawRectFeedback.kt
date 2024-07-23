@@ -16,9 +16,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.abs
 
 class DrawRectFeedback(
+    private val fixAspectRatio: Boolean,
     private val onCompleted: ((DoubleRectangle) -> Unit)
 ) : DragFeedback {
-    private var fixAspectRatio: Boolean? = null
 
     private val dragRectSvg = SvgRectElement().apply {
         strokeColor().set(Color.BLACK)
@@ -104,7 +104,6 @@ class DrawRectFeedback(
                     onCompleted(dataBounds)
                 }
 
-                fixAspectRatio = null
                 decorationsLayer.children().remove(dragRectSvg)
                 decorationsLayer.children().remove(selectionSvg)
             },
@@ -128,7 +127,7 @@ class DrawRectFeedback(
         target: InteractionTarget
     ): DoubleRectangle {
         @Suppress("NAME_SHADOWING")
-        val dragTo = if (fixAspectRatio == true) {
+        val dragTo = if (fixAspectRatio) {
             dragTo // do not limit selection for fixed aspect ratio to allow zooming out
         } else {
             DoubleVector(
@@ -139,11 +138,7 @@ class DrawRectFeedback(
 
         val drag = dragTo.subtract(dragFrom)
 
-        if (fixAspectRatio == null && drag.length() > 20) {
-            fixAspectRatio = abs(drag.x) < 7
-        }
-
-        return if (fixAspectRatio == true) {
+        return if (fixAspectRatio) {
             val ratio = target.geomBounds.width / target.geomBounds.height
             val size = if (ratio > 1) {
                 val width = (abs(drag.y) * ratio)
