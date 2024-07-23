@@ -50,7 +50,7 @@ object ToolSpecs {
         "interactions" to listOf(
             mapOf(
                 ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM,
-                ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CORNER_START
+                ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CENTER_START
             ),
             mapOf(
                 ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
