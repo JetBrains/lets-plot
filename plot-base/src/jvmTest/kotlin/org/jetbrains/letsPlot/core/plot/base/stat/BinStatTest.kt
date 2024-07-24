@@ -11,9 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameAssert
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.stat.BinStat
-import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
-import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import kotlin.test.Test
 
 class BinStatTest {
@@ -23,7 +20,8 @@ class BinStatTest {
             binCount,
             null,
             BinStat.XPosKind.NONE,
-            0.0
+            0.0,
+            false
         )
         val statDf = stat.apply(df, SimpleStatContext(df))
         DataFrameAssert.assertHasVars(statDf, listOf(Stats.X, Stats.COUNT, Stats.DENSITY), binCount)

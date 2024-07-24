@@ -847,7 +847,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None,
+                   sampling=None, trim=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -888,6 +888,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
+    trim : bool, default=False
+        If False, each histogram is computed on the full range of the data.
+        If True, each histogram is computed over the range of that group.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -995,6 +998,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  manual_key=manual_key,
                  sampling=sampling,
+                 trim=trim,
                  tooltips=tooltips,
                  labels=labels,
                  orientation=orientation,
