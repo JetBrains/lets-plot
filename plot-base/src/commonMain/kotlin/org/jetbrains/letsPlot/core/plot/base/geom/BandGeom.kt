@@ -9,12 +9,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 /*
   For this geometry 'isVertical' means that it has vertical bounds: ymin and ymax.
@@ -22,8 +24,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 class BandGeom(private val isVertical: Boolean) : GeomBase() {
     private val flipHelper = FlippableGeomHelper(isVertical)
 
-    private val minAes = flipHelper.getEffectiveAes(Aes.YMIN)
-    private val maxAes = flipHelper.getEffectiveAes(Aes.YMAX)
+    private val yMinAes = flipHelper.getEffectiveAes(Aes.YMIN)
+    private val yMaxAes = flipHelper.getEffectiveAes(Aes.YMAX)
 
     override val wontRender: List<Aes<*>>
         get() {
@@ -37,69 +39,30 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
+        val svgHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
-        val linesHelper = LinesHelper(pos, coord, ctx)
-        val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
 
-        val toOrientedStrip = { p: DataPointAesthetics -> toStrip(viewPort)(p)?.flipIf(!isVertical) }
-        linesHelper.createStrips(aesthetics.dataPoints(), toOrientedStrip).forEach { linePath ->
-            root.appendNodes(listOf(linePath))
+        val viewPort = overallAesBounds(ctx)
+
+        for (p in aesthetics.dataPoints()) {
+            val yMin = p.finiteOrNull(yMinAes) ?: continue
+            val yMax = p.finiteOrNull(yMaxAes) ?: continue
+            if (yMin > yMax) continue
+            val rect = DoubleRectangle.hvRange(viewPort.xRange(), DoubleSpan(yMin, yMax))
+            val (topSide, _, _, bottomSide) = rect.parts.toList()
+
+            // strokeScaler = { 0.0 } to avoid rendering stroke
+            val (rectSvg, _) = svgHelper.createRectangle(rect.flipIf(!isVertical), p, strokeScaler = { 0.0 }) ?: continue
+            val (topSvg, _) = svgHelper.createLine(topSide.flipIf(!isVertical), p) ?: continue
+            val (bottomSvg, _) = svgHelper.createLine(bottomSide.flipIf(!isVertical), p) ?: continue
+
+            root.add(rectSvg)
+            root.add(topSvg)
+            root.add(bottomSvg)
         }
 
-        val toTopBorder = toBorder(viewPort) { rect -> rect.top }
-        createStripBorders(aesthetics.dataPoints(), toTopBorder, helper).forEach { svgNode ->
-            root.add(svgNode)
-        }
-        val toBottomBorder = toBorder(viewPort) { rect -> rect.bottom }
-        createStripBorders(aesthetics.dataPoints(), toBottomBorder, helper).forEach { svgNode ->
-            root.add(svgNode)
-        }
-
-        buildHints(aesthetics, pos, coord, ctx, viewPort)
-    }
-
-    private fun toStrip(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleRectangle? {
-        val mainRange = viewPort.yRange()
-        val secondaryRange = viewPort.xRange()
-        fun stripRectByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-            val minValue = p.finiteOrNull(minAes) ?: return null
-            val maxValue = p.finiteOrNull(maxAes) ?: return null
-            if (minValue > maxValue) return null
-            if (minValue !in mainRange && maxValue !in mainRange) return null
-            return DoubleRectangle.LTRB(secondaryRange.lowerEnd, maxValue, secondaryRange.upperEnd, minValue)
-        }
-        return ::stripRectByDataPoint
-    }
-
-    private fun toBorder(
-        viewPort: DoubleRectangle,
-        select: (DoubleRectangle) -> Double
-    ): (DataPointAesthetics) -> Pair<DoubleVector, DoubleVector>? {
-        return { p ->
-            toStrip(viewPort)(p)?.let(select)?.let { intercept ->
-                Pair(
-                    DoubleVector(viewPort.left, intercept),
-                    DoubleVector(viewPort.right, intercept)
-                )
-            }
-        }
-    }
-
-    private fun createStripBorders(
-        dataPoints: Iterable<DataPointAesthetics>,
-        toBorder: (DataPointAesthetics) -> Pair<DoubleVector, DoubleVector>?,
-        helper: GeomHelper.SvgElementHelper
-    ): List<SvgNode> {
-        return dataPoints
-            .mapNotNull { p ->
-                toBorder(p)?.let { border ->
-                    val start = border.first.flipIf(!isVertical)
-                    val end = border.second.flipIf(!isVertical)
-                    helper.createLine(start, end, p)?.first
-                }
-            }
+        buildHints(aesthetics, pos, coord, ctx, viewPort.flipIf(!isVertical))
     }
 
     private fun buildHints(
@@ -121,7 +84,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
 
         for (p in aesthetics.dataPoints()) {
             for (x in resample(viewPort.xRange())) {
-                for (aes in listOf(minAes, maxAes)) {
+                for (aes in listOf(yMinAes, yMaxAes)) {
                     val value = p[aes] ?: continue
                     val defaultColor = p.fill() ?: continue
 
@@ -130,6 +93,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
 
                     val hintsCollection = HintsCollection(p, helper)
                         .addHint(hint.create(aes))
+
                     val tooltipParams = GeomTargetCollector.TooltipParams(
                         tipLayoutHints = hintsCollection.hints,
                         markerColors = colorMapper(p)

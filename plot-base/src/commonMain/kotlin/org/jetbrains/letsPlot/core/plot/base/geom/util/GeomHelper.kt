@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
@@ -128,6 +129,18 @@ open class GeomHelper(
         fun debugRendering(value: Boolean) = apply { myDebugRendering = value }
         fun geometryWithPadding(value: Boolean) = apply { myGeometryWithPadding = value }
 
+        fun createRectangle(
+            rect: DoubleRectangle,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            val lineString = createLineGeometry(rect.points, p) ?: return null
+            val svgElement = renderSvgElement(p, lineString, strokeScaler, filled = true) ?: return null
+            val geometry = takeGeometry(lineString, p)
+
+            return svgElement to geometry
+        }
+
         fun createCurve(
             start: DoubleVector,
             end: DoubleVector,
@@ -148,10 +161,18 @@ open class GeomHelper(
 
             val lineString = curve(start, end, curvature, angle, ncp)
 
-            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+            val svgElement = renderSvgElement(p, lineString, strokeScaler, filled = false) ?: return null
             val geometry = takeGeometry(lineString, p)
 
             return svgElement to geometry
+        }
+
+        fun createLine(
+            segment: DoubleSegment,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): Pair<SvgNode, List<DoubleVector>>? {
+            return createLine(segment.start, segment.end, p, strokeScaler)
         }
 
         fun createLine(
@@ -161,7 +182,7 @@ open class GeomHelper(
             strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
         ): Pair<SvgNode, List<DoubleVector>>? {
             val lineString = createLineGeometry(start, end, p) ?: return null
-            val svgElement = renderSvgElement(p, lineString, strokeScaler) ?: return null
+            val svgElement = renderSvgElement(p, lineString, strokeScaler, filled = false) ?: return null
             val geometry = takeGeometry(lineString, p)
 
             return svgElement to geometry
@@ -187,13 +208,17 @@ open class GeomHelper(
             end: DoubleVector,
             aes: DataPointAesthetics,
         ): List<DoubleVector>? {
-            if (myResamplingEnabled) {
-                return resample(listOf(start, end), myResamplingPrecision) { toClient(it, aes) }
-            } else {
-                val from = toClient(start, aes) ?: return null
-                val to = toClient(end, aes) ?: return null
+            return createLineGeometry(listOf(start, end), aes)
+        }
 
-                return listOf(from, to)
+        private fun createLineGeometry(
+            points: List<DoubleVector>,
+            aes: DataPointAesthetics,
+        ): List<DoubleVector>? {
+            if (myResamplingEnabled) {
+                return resample(points, myResamplingPrecision) { toClient(it, aes) }
+            } else {
+                return points.map { toClient(it, aes) ?: return null }
             }
         }
 
@@ -204,7 +229,8 @@ open class GeomHelper(
         private fun renderSvgElement(
             p: DataPointAesthetics,
             lineString: List<DoubleVector>,
-            strokeScaler: (DataPointAesthetics) -> Double
+            strokeScaler: (DataPointAesthetics) -> Double,
+            filled: Boolean
         ): SvgNode? {
             if (myNoSvg) return SvgGElement()
 
@@ -234,7 +260,7 @@ open class GeomHelper(
                     )
                 }
             }
-            decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled = false)
+            decorate(lineElement, p, myStrokeAlphaEnabled, strokeScaler, filled)
 
             val arrowElements = myArrowSpec?.let { arrowSpec ->
                 val (startHead, endHead) = ArrowSupport.createArrowHeads(

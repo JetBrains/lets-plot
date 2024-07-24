@@ -13,7 +13,11 @@ class Band {
             basic(),
             oriented("x"),
             oriented("y"),
+            regular(),
             polar(),
+            // TODO: coord_flip
+            // TODO: coord_flip+horizontal
+            // TODO: alpha+fill+stroke+color
         )
     }
 
@@ -60,9 +64,50 @@ class Band {
             }
         """.trimIndent()
 
-        return HashMap(parsePlotSpec(spec))
+        return parsePlotSpec(spec)
     }
 
+    private fun regular(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'xmin': [-4, -1, 2],
+                'xmax': [-2, 1, 4],
+                'ymin': [-4, -1, 2],
+                'ymax': [-2, 1, 4]
+              },
+              'ggtitle': {
+                'text': 'Polar coordinates'
+              },
+              'layers': [
+                {
+                  'geom': 'band',
+                  'mapping': {
+                    'ymin': 'ymin',
+                    'ymax': 'ymax'
+                  },
+                  'size': 0,
+                  'fill': 'yellow',
+                  'alpha': 0.5
+                },
+                {
+                  'geom': 'band',
+                  'mapping': {
+                    'xmin': 'xmin',
+                    'xmax': 'xmax'
+                  },
+                  'size': 0,
+                  'fill': 'black',
+                  'alpha': 0.5
+                }
+              ],
+              'coord': {'name': 'cartesian', 'xlim': [-4.5, 4.5], 'ylim': [-4.5, 4.5]}
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
     private fun polar(): MutableMap<String, Any> {
         val spec = """
             {
@@ -102,6 +147,6 @@ class Band {
             }
         """.trimIndent()
 
-        return HashMap(parsePlotSpec(spec))
+        return parsePlotSpec(spec)
     }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
@@ -164,35 +163,6 @@ open class LinesHelper(
         }
 
         return linePaths
-    }
-
-    fun createStrips(
-        dataPoints: Iterable<DataPointAesthetics>,
-        toStrip: (DataPointAesthetics) -> DoubleRectangle?
-    ): List<LinePath> {
-        return dataPoints.mapNotNull { p ->
-            toStrip(p)?.let { rect ->
-                listOf(
-                    DoubleVector(rect.left, rect.top),
-                    DoubleVector(rect.right, rect.top),
-                    DoubleVector(rect.right, rect.bottom),
-                    DoubleVector(rect.left, rect.bottom),
-                    DoubleVector(rect.left, rect.top),
-                ).let { vertices ->
-                    when (myResamplingEnabled) {
-                        true -> vertices.mapNotNull { v -> toClient(v, p) }
-                        false -> resample(
-                            precision = PIXEL_PRECISION,
-                            points = vertices
-                        ) { toClient(it, p) }
-                    }
-                }.let { vertices ->
-                    LinePath.polygon(vertices).also { linePath ->
-                        decorateFillingPart(linePath, p)
-                    }
-                }
-            }
-        }
     }
 
     // TODO: inline. N.B.: for linear geoms, be careful with the closePath parameter
