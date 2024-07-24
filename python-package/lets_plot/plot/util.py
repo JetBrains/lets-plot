@@ -68,6 +68,10 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
     for var_name, meta_data in mapping_meta_by_var.items():
         for aesthetic, mapping_meta in meta_data.items():
             if mapping_meta.annotation == 'as_discrete':
+                if 'factor_levels' in series_annotations.get(var_name, {}):
+                    #  there is a bug - if label is set then levels are not applied
+                    continue
+
                 mapping_annotation = {}
 
                 # Note that the label is always set; otherwise, the scale title will appear as 'color.cyl'
@@ -75,18 +79,16 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
                 if label is not None:
                     mapping_annotation.setdefault('parameters', {})['label'] = label
 
-                # ordering options (levels, order_by, order) are either in series or in mapping, but not in both
-                if 'factor_levels' not in series_annotations.get(var_name, {}):
-                    if mapping_meta.levels is not None:
-                        mapping_annotation['levels'] = mapping_meta.levels
+                if mapping_meta.levels is not None:
+                    mapping_annotation['levels'] = mapping_meta.levels
 
-                    order_by = mapping_meta.parameters.get('order_by')
-                    if order_by is not None:
-                        mapping_annotation.setdefault('parameters', {})['order_by'] = order_by
+                order_by = mapping_meta.parameters.get('order_by')
+                if order_by is not None:
+                    mapping_annotation.setdefault('parameters', {})['order_by'] = order_by
 
-                    order = mapping_meta.parameters.get('order')
-                    if order is not None:
-                        mapping_annotation.setdefault('parameters', {})['order'] = order
+                order = mapping_meta.parameters.get('order')
+                if order is not None:
+                    mapping_annotation.setdefault('parameters', {})['order'] = order
 
                 # add mapping meta if custom label is set or if series annotation for var doesn't contain order options
                 # otherwise don't add mapping meta - it's redundant, nothing unique compared to series annotation

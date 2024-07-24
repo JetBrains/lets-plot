@@ -183,9 +183,8 @@ internal object WaterfallUtil {
             }
             maxValues != null && maxValues > 0 -> {
                 val indices = xySeries.second.withIndex()
-                    .map { Pair(it.index, it.value) }
                     .sortedByDescending { (_, y) -> y.absoluteValue }
-                    .unzip().first
+                    .map(IndexedValue<*>::index)
                     .subList(0, maxValues)
                 val otherValue = xySeries.second.withIndex().filter { it.index !in indices }.sumOf { it.value }
                 val xs = xySeries.first.slice(indices)

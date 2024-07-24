@@ -102,16 +102,23 @@ object PlotHtmlHelper {
         @Suppress("NAME_SHADOWING")
         val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return getDynamicDisplayHtml(plotSpecJs, size)
+        return getDynamicDisplayHtml(
+            plotSpecJs, size,
+            showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
+        )
     }
 
-    private fun getDynamicDisplayHtml(plotSpecAsJsObjectInitializer: String, size: DoubleVector?): String {
+    private fun getDynamicDisplayHtml(
+        plotSpecAsJsObjectInitializer: String,
+        size: DoubleVector?,
+        showToolbar: Boolean
+    ): String {
         val outputId = randomString(6)
         val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
-        if(PLOT_VIEW_TOOLBOX_HTML) {
+        if (PLOT_VIEW_TOOLBOX_HTML || showToolbar) {
             // Experimental
             return """
-            |   <div id="$outputId" style="background-color: orange;"></div>
+            |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       (function() {
             |           var plotSpec=$plotSpecAsJsObjectInitializer;
@@ -129,7 +136,7 @@ object PlotHtmlHelper {
             |               containerDiv.appendChild(outputDiv);
             |           
             |               // Toolbar
-            |               var toolbar = new LetsPlot.tools.SandboxToolbar();
+            |               var toolbar = new LetsPlot.tools.DefaultToolbar();
             |               outputDiv.appendChild(toolbar.getElement());
             |               
             |               // Plot
@@ -162,30 +169,35 @@ object PlotHtmlHelper {
         }
     }
 
-/*
-This is for experimenting with responsive mode.
+    /*
+    This is for experimenting with responsive mode.
 
-            |               var figModel = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer,
-            |                   {
-            |                   "sizing": {
-            |                       "width_margin":100
-            |                   }});
-            |               console.info('info I: ' + figModel);
-            |               var resizeHandler = function() {
-            |                   console.info('info II: ' + figModel);
-            |                   if(figModel) {
-            |                       figModel.updateView();
-            |                   }
-            |               };
-            |               window.addEventListener('resize', resizeHandler)
+                |               var figModel = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer,
+                |                   {
+                |                   "sizing": {
+                |                       "width_margin":100
+                |                   }});
+                |               console.info('info I: ' + figModel);
+                |               var resizeHandler = function() {
+                |                   console.info('info II: ' + figModel);
+                |                   if(figModel) {
+                |                       figModel.updateView();
+                |                   }
+                |               };
+                |               window.addEventListener('resize', resizeHandler)
 
- */
+     */
 
     fun getStaticConfigureHtml(scriptUrl: String): String {
         return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
     }
 
-    fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null, removeComputationMessages: Boolean = false, logComputationMessages: Boolean = false): String {
+    fun getStaticDisplayHtmlForRawSpec(
+        plotSpec: MutableMap<String, Any>,
+        size: DoubleVector? = null,
+        removeComputationMessages: Boolean = false,
+        logComputationMessages: Boolean = false
+    ): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
         val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
