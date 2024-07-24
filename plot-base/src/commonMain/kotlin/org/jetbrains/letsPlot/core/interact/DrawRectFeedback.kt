@@ -20,6 +20,146 @@ class DrawRectFeedback(
     private val onCompleted: ((DoubleRectangle) -> Unit)
 ) : DragFeedback {
 
+    private var selector: Selector = UnknownSelector()
+
+    private abstract class Selector(
+        private val limitToGeomBounds: Boolean
+    ) {
+        fun getSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            if (limitToGeomBounds) {
+                val limitedDragTo = DoubleVector(
+                    x = dragTo.x.coerceIn(target.geomBounds.left, target.geomBounds.right),
+                    y = dragTo.y.coerceIn(target.geomBounds.top, target.geomBounds.bottom)
+                )
+                return onGetSelection(dragFrom, limitedDragTo, target)
+            } else {
+                return onGetSelection(dragFrom, dragTo, target)
+            }
+        }
+
+        protected abstract fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle
+
+        abstract fun isAcceptable(selection: DoubleRectangle): Boolean
+
+        companion object {
+            internal const val MIN_SIZE = 15.0
+        }
+    }
+
+    private inner class UnknownSelector : Selector(limitToGeomBounds = true) {
+        override fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            val drag = dragTo.subtract(dragFrom)
+
+            if (drag.length() > 20) {
+                selector = when {
+                    abs(drag.x) < 7 -> VerticalBandSelector()
+                    abs(drag.y) < 7 -> HorizontalBandSelector()
+                    fixAspectRatio -> CenterBoxSelector()
+                    else -> CornerBoxSelector()
+                }
+            }
+
+            return DoubleRectangle.span(dragFrom, dragTo)
+        }
+
+        override fun isAcceptable(selection: DoubleRectangle): Boolean {
+            return false
+        }
+    }
+
+    private inner class VerticalBandSelector : Selector(limitToGeomBounds = true) {
+        override fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            return DoubleRectangle.LTRB(
+                left = target.geomBounds.left,
+                right = target.geomBounds.right,
+                top = minOf(dragFrom.y, dragTo.y),
+                bottom = maxOf(dragFrom.y, dragTo.y)
+            )
+        }
+
+        override fun isAcceptable(selection: DoubleRectangle): Boolean {
+            return selection.height > MIN_SIZE
+        }
+    }
+
+    private inner class HorizontalBandSelector : Selector(limitToGeomBounds = true) {
+        override fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            return DoubleRectangle.LTRB(
+                left = minOf(dragFrom.x, dragTo.x),
+                right = maxOf(dragFrom.x, dragTo.x),
+                top = target.geomBounds.top,
+                bottom = target.geomBounds.bottom
+            )
+        }
+
+        override fun isAcceptable(selection: DoubleRectangle): Boolean {
+            return selection.width > MIN_SIZE
+        }
+    }
+
+    private inner class CenterBoxSelector : Selector(limitToGeomBounds = false) {
+        override fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            val drag = dragTo.subtract(dragFrom)
+            val ratio = target.geomBounds.width / target.geomBounds.height
+            val size = if (ratio > 1) {
+                val width = (abs(drag.y) * ratio)
+                val height = width / ratio
+                DoubleVector(width, height)
+            } else {
+                val width = abs(drag.x)
+                val height = width / ratio
+                DoubleVector(width, height)
+            }
+
+            return DoubleRectangle(
+                origin = dragFrom.subtract(size),
+                dimension = size.mul(2.0)
+            )
+        }
+
+        override fun isAcceptable(selection: DoubleRectangle): Boolean {
+            return selection.width > MIN_SIZE || selection.height > MIN_SIZE
+        }
+    }
+
+    private inner class CornerBoxSelector : Selector(limitToGeomBounds = true) {
+        override fun onGetSelection(
+            dragFrom: DoubleVector,
+            dragTo: DoubleVector,
+            target: InteractionTarget
+        ): DoubleRectangle {
+            return DoubleRectangle.span(dragFrom, dragTo)
+        }
+
+        override fun isAcceptable(selection: DoubleRectangle): Boolean {
+            return selection.width > MIN_SIZE || selection.height > MIN_SIZE
+        }
+    }
+
     private val dragRectSvg = SvgRectElement().apply {
         strokeColor().set(Color.BLACK)
         fillColor().set(Color.TRANSPARENT)
@@ -37,7 +177,7 @@ class DrawRectFeedback(
         fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
     }
 
-    private fun drawSelection(geomBounds: DoubleRectangle, selection: DoubleRectangle) {
+    private fun drawSelection(geomBounds: DoubleRectangle, selection: DoubleRectangle, isAcceptable: Boolean) {
         dragRectSvg.apply {
             visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
             x().set(selection.left)
@@ -46,7 +186,7 @@ class DrawRectFeedback(
             height().set(selection.height)
         }
 
-        if (isSelectionAcceptable(selection)) {
+        if (isAcceptable) {
             selectionSvg.apply {
                 visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
                 d().set(SvgPathDataBuilder().apply {
@@ -77,19 +217,21 @@ class DrawRectFeedback(
                 decorationsLayer.children().add(dragRectSvg)
                 decorationsLayer.children().add(selectionSvg)
 
-                val selection = getSelection(dragFrom, dragTo, target)
+                val selection = selector.getSelection(dragFrom, dragTo, target)
                 drawSelection(
                     geomBounds = target.geomBounds,
-                    selection = selection
+                    selection = selection,
+                    isAcceptable = selector.isAcceptable(selection)
                 )
             },
             onDragged = {
                 val (target, dragFrom, dragTo, _) = it
 
-                val selection = getSelection(dragFrom, dragTo, target)
+                val selection = selector.getSelection(dragFrom, dragTo, target)
                 drawSelection(
                     geomBounds = target.geomBounds,
-                    selection = selection
+                    selection = selection,
+                    isAcceptable = selector.isAcceptable(selection)
                 )
             },
             onCompleted = {
@@ -97,13 +239,14 @@ class DrawRectFeedback(
 
                 it.reset()
 
-                val selection = getSelection(dragFrom, dragTo, target)
+                val selection = selector.getSelection(dragFrom, dragTo, target)
 
-                if (isSelectionAcceptable(selection)) {
+                if (selector.isAcceptable(selection)) {
                     val dataBounds = target.applyViewport(selection)
                     onCompleted(dataBounds)
                 }
 
+                selector = UnknownSelector()
                 decorationsLayer.children().remove(dragRectSvg)
                 decorationsLayer.children().remove(selectionSvg)
             },
@@ -119,49 +262,5 @@ class DrawRectFeedback(
                 interaction.dispose()
             }
         }
-    }
-
-    private fun getSelection(
-        dragFrom: DoubleVector,
-        dragTo: DoubleVector,
-        target: InteractionTarget
-    ): DoubleRectangle {
-        @Suppress("NAME_SHADOWING")
-        val dragTo = if (fixAspectRatio) {
-            dragTo // do not limit selection for fixed aspect ratio to allow zooming out
-        } else {
-            DoubleVector(
-                x = dragTo.x.coerceIn(target.geomBounds.left, target.geomBounds.right),
-                y = dragTo.y.coerceIn(target.geomBounds.top, target.geomBounds.bottom)
-            )
-        }
-
-        val drag = dragTo.subtract(dragFrom)
-
-        return if (fixAspectRatio) {
-            val ratio = target.geomBounds.width / target.geomBounds.height
-            val size = if (ratio > 1) {
-                val width = (abs(drag.y) * ratio)
-                val height = width / ratio
-                DoubleVector(width, height)
-            } else {
-                val width = abs(drag.x)
-                val height = width / ratio
-                DoubleVector(width, height)
-            }
-
-            DoubleRectangle(
-                origin = dragFrom.subtract(size),
-                dimension = size.mul(2.0)
-            )
-        } else {
-            DoubleRectangle.span(dragFrom, dragTo)
-                .intersect(target.geomBounds)
-                ?: DoubleRectangle(dragFrom, DoubleVector.ZERO) // at least move the selection rect to the drag start point
-        }
-    }
-
-    private fun isSelectionAcceptable(selection: DoubleRectangle): Boolean {
-        return selection.width > 25 || selection.height > 25
     }
 }
