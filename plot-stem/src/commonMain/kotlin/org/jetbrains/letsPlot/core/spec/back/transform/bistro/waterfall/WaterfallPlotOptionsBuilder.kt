@@ -18,10 +18,10 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 
 class WaterfallPlotOptionsBuilder(
-    private val data: Map<*, *>,
+    data: Map<*, *>,
     private val x: String?,
     private val y: String?,
-    private val group: String?,
+    private val measure: String?,
     private val color: String?,
     private val fill: String?,
     private val size: Double?,
@@ -41,6 +41,7 @@ class WaterfallPlotOptionsBuilder(
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
+    private val data = WaterfallUtil.prepareData(data, measure, calcTotal)
     private val flowTypes = FlowType.list(calcTotal, totalTitle)
 
     fun build(): PlotOptions {
@@ -103,13 +104,13 @@ class WaterfallPlotOptionsBuilder(
         val yVar = y ?: error("Parameter y should be specified")
         var initialX = 0
         var initialY = BASE
-        return WaterfallUtil.groupBy(DataUtil.standardiseData(data), group)
+        return WaterfallUtil.groupBy(data, WaterfallBox.MEASURE_GROUP)
             .map { groupData ->
                 val statData = WaterfallUtil.calculateBoxStat(
                     groupData,
                     x = xVar,
                     y = yVar,
-                    calcTotal = calcTotal,
+                    measure = measure ?: "_measure_",
                     sortedValue = sortedValue,
                     threshold = threshold,
                     maxValues = maxValues,

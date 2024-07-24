@@ -12,7 +12,7 @@ object Option {
         const val NAME = "waterfall"
         const val X = "x"
         const val Y = "y"
-        const val GROUP = "group"
+        const val MEASURE = "measure"
         const val COLOR = "color"
         const val FILL = "fill"
         const val SIZE = "size"
@@ -34,6 +34,8 @@ object Option {
     }
 
     object WaterfallBox {
+        const val MEASURE_GROUP = "measure_group"
+
         val AES_X = Aes.X
         val AES_YMIN = Aes.YMIN
         val AES_YMAX = Aes.YMAX

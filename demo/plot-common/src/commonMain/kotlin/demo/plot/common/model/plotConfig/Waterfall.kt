@@ -12,7 +12,7 @@ class Waterfall {
         return listOf(
             basic(),
             checkParameters(),
-            withGrouping(),
+            withMeasure(),
         )
     }
 
@@ -102,14 +102,14 @@ class Waterfall {
 
     }
 
-    private fun withGrouping(): MutableMap<String, Any> {
+    private fun withMeasure(): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
               'data': {
-                'cat': ['A', 'B', 'C', 'D', 'A', 'B', 'C', 'D'],
-                'val': [1.2, 2.2, -.4, 1.5, -2.0, 1.3, -0.8, 1.0],
-                'group': ['p', 'p', 'p', 'p', 'q', 'q', 'q', 'q']
+                'cat': ['A', 'B', 'C', 'D', 'T1', 'A', 'B', 'C', 'D', 'T2'],
+                'val': [1.2, 2.2, -0.4, 1.5, null, -2.0, 1.3, -0.8, 1.0, 0.0],
+                'm': ['relative', 'relative', 'relative', 'relative', 'total', 'relative', 'relative', 'relative', 'relative', 'total']
               },
               'ggtitle': {
                 'text': 'With grouping'
@@ -118,7 +118,8 @@ class Waterfall {
                 'name': 'waterfall',
                 'x': 'cat',
                 'y': 'val',
-                'group': 'group'
+                'measure': 'm',
+                'show_legend': true
               }
             }
         """.trimIndent()

@@ -10,11 +10,45 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
 import kotlin.math.*
 
 internal object WaterfallUtil {
+    fun prepareData(
+        data: Map<*, *>,
+        measure: String?,
+        calcTotal: Boolean
+    ): Map<String, List<*>> {
+        val standardData = DataUtil.standardiseData(data).let { d ->
+            if (measure == null) {
+                val measures = List(d.values.firstOrNull()?.size ?: 0) { "relative" }.let { if (calcTotal) it + listOf("total") else it }
+                d.toList().associate { (column, values) ->
+                    column to if (calcTotal) {
+                        values + listOf(null)
+                    } else {
+                        values
+                    }
+                } + mapOf("_measure_" to measures)
+            } else {
+                d
+            }
+        }
+        val df = DataFrameUtil.fromMap(standardData)
+        val measureVar = DataFrameUtil.findVariableOrFail(df, measure ?: "_measure_")
+        val measures = df[measureVar].map { it?.toString() }
+        val measureGroup = mutableListOf<Int>()
+        var group = 0
+        for (m in measures) {
+            measureGroup.add(group)
+            if (m == "total") {
+                group += 1
+            }
+        }
+        return standardData + mapOf(WaterfallBox.MEASURE_GROUP to measureGroup)
+    }
+
     fun groupBy(
         data: Map<String, List<*>>,
         group: String?
@@ -44,7 +78,7 @@ internal object WaterfallUtil {
         data: Map<String, List<*>>,
         x: String,
         y: String,
-        calcTotal: Boolean,
+        measure: String,
         sortedValue: Boolean,
         threshold: Double?,
         maxValues: Int?,
@@ -53,7 +87,10 @@ internal object WaterfallUtil {
         base: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
     ): Map<String, List<*>> {
-        val (xs, ys) = extractXYSeries(data, x, y)
+        val measures = extractMeasures(data, measure)
+        val calcTotal = measures.lastOrNull() == "total"
+        val totalTitle = extractTotalTitle(data, x, flowTypeTitles, calcTotal)
+        val (xs, ys) = extractXYSeries(data, x, y, calcTotal)
             .let { sortXYSeries(it, sortedValue) }
             .let { filterXYSeries(it, threshold, maxValues) }
         if (xs.isEmpty()) {
@@ -65,7 +102,7 @@ internal object WaterfallUtil {
         val flowType = ys.map { if (it >= 0) flowTypeTitles.getValue(FlowType.INCREASE).title else flowTypeTitles.getValue(FlowType.DECREASE).title }
 
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
-        val xsLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
+        val xsLast = calculateLast(totalTitle)
         val ysLast = calculateLast(yNext.last() - (base + initialY + ys.first()))
         val yPrevLast = calculateLast(base + initialY + ys.first())
         val yNextLast = calculateLast(yNext.last())
@@ -142,16 +179,42 @@ internal object WaterfallUtil {
         )
     }
 
+    private fun extractMeasures(
+        data: Map<String, List<*>>,
+        measure: String
+    ): List<String> {
+        val df = DataFrameUtil.fromMap(data)
+        val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
+        return df[measureVar].map { it!!.toString() }
+    }
+
+    private fun extractTotalTitle(
+        data: Map<String, List<*>>,
+        x: String,
+        flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>,
+        calcTotal: Boolean
+    ): String? {
+        return when (calcTotal) {
+            true -> {
+                val df = DataFrameUtil.fromMap(data)
+                val xVar = DataFrameUtil.findVariableOrFail(df, x)
+                return df[xVar].map { it?.toString() }.last() ?: flowTypeTitles[FlowType.TOTAL]?.title
+            }
+            false -> null
+        }
+    }
+
     private fun extractXYSeries(
         data: Map<String, List<*>>,
         x: String,
-        y: String
+        y: String,
+        dropLast: Boolean
     ): Pair<List<Any>, List<Double>> {
         val df = DataFrameUtil.fromMap(data)
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
-        val xs = df[xVar].map { it?.toString() }
-        val ys = df.getNumeric(yVar)
+        val xs = df[xVar].map { it?.toString() }.let { if (dropLast) it.dropLast(1) else it }
+        val ys = df.getNumeric(yVar).let { if (dropLast) it.dropLast(1) else it }
         return (xs zip ys)
             .filter { (x, y) -> x != null && SeriesUtil.isFinite(y) }
             .map { (x, y) -> Pair(x!!, y!!) }

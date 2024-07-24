@@ -7,7 +7,7 @@ __all__ = ['waterfall_plot']
 
 
 def waterfall_plot(data, x, y, *,
-                   group=None,
+                   measure=None,
                    color=None, fill=None, size=None, alpha=None, linetype=None,
                    width=None,
                    show_legend=None, tooltips=None,
@@ -27,9 +27,8 @@ def waterfall_plot(data, x, y, *,
         Name of a variable. All values should be distinct.
     y : str
         Name of a numeric variable.
-    group : str
-        Grouping variable.
-        If calc_total=True, an intermediate total is calculated for each group.
+    measure : {'relative', 'total'}
+        Kind of numeric value.
     color : str
         Color of the box boundary lines.
     fill : str
@@ -177,7 +176,7 @@ def waterfall_plot(data, x, y, *,
         'name': 'waterfall',
         'x': x,
         'y': y,
-        'group': group,
+        'measure': measure,
         'color': color,
         'fill': fill,
         'size': size,
