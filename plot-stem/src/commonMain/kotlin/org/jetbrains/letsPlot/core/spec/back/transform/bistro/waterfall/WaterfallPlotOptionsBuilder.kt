@@ -104,18 +104,19 @@ class WaterfallPlotOptionsBuilder(
         var initialX = 0
         return WaterfallUtil.groupBy(data, group)
             .map { groupData ->
-                val groupStatData = boxLayerGroupData(initialX, groupData)
+                val groupStatData = boxLayerGroupData(groupData, initialX)
                 initialX += groupStatData[WaterfallBox.Var.X]?.size ?: 0
                 groupStatData
             }
             .let(WaterfallUtil::concat)
     }
 
-    private fun boxLayerGroupData(initialX: Int, groupData: Map<String, List<Any?>>): Map<String, List<Any?>> {
+    private fun boxLayerGroupData(groupData: Map<String, List<Any?>>, initialX: Int): Map<String, List<Any?>> {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
         var measureInitialX = initialX
         var measureInitialY = BASE
+        // Need to calculate total for each measure group separately because of sorting and thresholding
         return WaterfallUtil.groupBy(WaterfallUtil.prepareData(groupData, measure, calcTotal), WaterfallBox.MEASURE_GROUP)
             .map { measureGroupData ->
                 val statData = WaterfallUtil.calculateBoxStat(

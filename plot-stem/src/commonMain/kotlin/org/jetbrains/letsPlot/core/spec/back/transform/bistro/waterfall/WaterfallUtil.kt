@@ -86,23 +86,23 @@ internal object WaterfallUtil {
         base: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
     ): Map<String, List<*>> {
-        val measures = extractMeasures(data, measure)
-        val calcTotal = measures.lastOrNull() == "total"
-        val totalTitle = extractTotalTitle(data, x, flowTypeTitles, calcTotal)
-        val (xs, ys) = extractXYSeries(data, x, y, calcTotal)
-            .let { sortXYSeries(it, sortedValue) }
-            .let { filterXYSeries(it, threshold, maxValues) }
+        val (xs, ys, measures) = extractSeries(data, x, y, measure)
+            .let { sortSeries(it, sortedValue) }
+            .let { filterSeries(it, threshold, maxValues) }
         if (xs.isEmpty()) {
             return emptyBoxStat()
         }
+
+        val calcTotal = calcTotal(data, measure)
         val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
         val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
         val (yMin, yMax) = (yPrev zip yNext).map { (x, y) -> Pair(min(x, y), max(x, y)) }.unzip()
         val flowType = ys.map { if (it >= 0) flowTypeTitles.getValue(FlowType.INCREASE).title else flowTypeTitles.getValue(FlowType.DECREASE).title }
 
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
-        val xsLast = calculateLast(totalTitle)
+        val xsLast = calculateLast(extractTotalTitle(data, x, flowTypeTitles, calcTotal))
         val ysLast = calculateLast(yNext.last() - (base + initialY + ys.first()))
+        val measuresLast = calculateLast("total")
         val yPrevLast = calculateLast(base + initialY + ys.first())
         val yNextLast = calculateLast(yNext.last())
         val yMinLast = calculateLast(min(yNext.last(), base))
@@ -114,7 +114,7 @@ internal object WaterfallUtil {
             WaterfallBox.Var.XLAB to xs + xsLast,
             WaterfallBox.Var.YMIN to yMin + yMinLast,
             WaterfallBox.Var.YMAX to yMax + yMaxLast,
-            WaterfallBox.Var.MEASURE to measures,
+            WaterfallBox.Var.MEASURE to measures + measuresLast,
             WaterfallBox.Var.FLOW_TYPE to flowType + flowTypeLast,
             WaterfallBox.Var.INITIAL to yPrev + yPrevLast,
             WaterfallBox.Var.CUMULATIVE_SUM to yNext + yNextLast,
@@ -183,13 +183,14 @@ internal object WaterfallUtil {
         )
     }
 
-    private fun extractMeasures(
+    private fun calcTotal(
         data: Map<String, List<*>>,
         measure: String
-    ): List<String> {
+    ): Boolean {
         val df = DataFrameUtil.fromMap(data)
         val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
-        return df[measureVar].map { it!!.toString() }
+        val measures = df[measureVar].map { it!!.toString() }
+        return measures.lastOrNull() == "total"
     }
 
     private fun extractTotalTitle(
@@ -208,59 +209,78 @@ internal object WaterfallUtil {
         }
     }
 
-    private fun extractXYSeries(
+    private fun extractSeries(
         data: Map<String, List<*>>,
         x: String,
         y: String,
-        dropLast: Boolean
-    ): Pair<List<Any>, List<Double>> {
+        measure: String
+    ): Triple<List<Any>, List<Double>, List<String>> {
         val df = DataFrameUtil.fromMap(data)
+
+        val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
-        val xs = df[xVar].map { it?.toString() }.let { if (dropLast) it.dropLast(1) else it }
-        val ys = df.getNumeric(yVar).let { if (dropLast) it.dropLast(1) else it }
-        return (xs zip ys)
-            .filter { (x, y) -> x != null && SeriesUtil.isFinite(y) }
-            .map { (x, y) -> Pair(x!!, y!!) }
+
+        val measures = df[measureVar].map { it!!.toString() }
+        val xs = df[xVar].map { it?.toString() }
+        val ys = df.getNumeric(yVar)
+
+        fun <T> dropLastFilter(s: List<T>): List<T> {
+            if (measures.lastOrNull() == "total") {
+                return s.dropLast(1)
+            }
+            return s
+        }
+        val (ms, ps) = (dropLastFilter(measures) zip (dropLastFilter(xs) zip dropLastFilter(ys)))
+            .filter { (_, p) -> p.first != null && SeriesUtil.isFinite(p.second) }
+            .map { (m, p) -> Pair(m, Pair(p.first!!, p.second!!)) }
             .unzip()
+        val (newXs, newYs) = ps.unzip()
+        return Triple(newXs, newYs, ms)
     }
 
-    private fun sortXYSeries(
-        xySeries: Pair<List<Any>, List<Double>>,
+    private fun sortSeries(
+        series: Triple<List<Any>, List<Double>, List<String>>,
         sortedValue: Boolean
-    ): Pair<List<Any>, List<Double>> {
-        if (!sortedValue) return xySeries
-        return (xySeries.first zip xySeries.second)
-            .sortedByDescending { (_, y) -> y.absoluteValue }
+    ): Triple<List<Any>, List<Double>, List<String>> {
+        if (!sortedValue) return series
+        val (ys, ps) = (series.second zip (series.third zip series.third))
+            .sortedByDescending { (y, _) -> y.absoluteValue }
             .unzip()
+        val (xs, ms) = ps.unzip()
+        return Triple(xs, ys, ms)
     }
 
-    private fun filterXYSeries(
-        xySeries: Pair<List<Any>, List<Double>>,
+    private fun filterSeries(
+        series: Triple<List<Any>, List<Double>, List<String>>,
         threshold: Double?,
         maxValues: Int?
-    ): Pair<List<Any>, List<Double>> {
+    ): Triple<List<Any>, List<Double>, List<String>> {
         return when {
             threshold != null -> {
-                val otherValue = xySeries.second.filter { it.absoluteValue < threshold }.sum()
-                val (xs, ys) = (xySeries.first zip xySeries.second).filter { (_, y) -> y.absoluteValue >= threshold }.unzip()
+                val otherValue = series.second.filter { it.absoluteValue < threshold }.sum()
+                val (ys, ps) = (series.second zip (series.first zip series.third)).filter { (y, _) -> y.absoluteValue >= threshold }.unzip()
+                val (xs, ms) = ps.unzip()
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
-                Pair(xs + xsLast, ys + ysLast)
+                val msLast = if (otherValue.absoluteValue > 0) listOf("relative") else emptyList()
+                Triple(xs + xsLast, ys + ysLast, ms + msLast)
             }
             maxValues != null && maxValues > 0 -> {
-                val indices = xySeries.second.withIndex()
+                val indices = series.second.withIndex()
                     .sortedByDescending { (_, y) -> y.absoluteValue }
                     .map(IndexedValue<*>::index)
                     .subList(0, maxValues)
-                val otherValue = xySeries.second.withIndex().filter { it.index !in indices }.sumOf { it.value }
-                val xs = xySeries.first.slice(indices)
-                val ys = xySeries.second.slice(indices)
+                val otherValue = series.second.withIndex().filter { it.index !in indices }.sumOf { it.value }
+                val xs = series.first.slice(indices)
+                val ys = series.second.slice(indices)
+                val ms = series.third.slice(indices)
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
-                Pair(xs + xsLast, ys + ysLast)
+                val msLast = if (otherValue.absoluteValue > 0) listOf("relative") else emptyList()
+                Triple(xs + xsLast, ys + ysLast, ms + msLast)
             }
-            else -> xySeries
+            else -> series
         }
     }
 
