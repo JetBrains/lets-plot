@@ -21,6 +21,7 @@ from .plot import *
 from .pos import *
 from .sampling import *
 from .scale import *
+from .scale_colormap_mpl import *
 from .scale_convenience import *
 from .scale_identity_ import *
 from .scale_position import *
@@ -43,6 +44,7 @@ __all__ = (coord.__all__ +
            pos.__all__ +
            sampling.__all__ +
            scale.__all__ +
+           scale_colormap_mpl.__all__ +
            scale_convenience.__all__ +
            scale_identity_.__all__ +
            scale_position.__all__ +

@@ -7,7 +7,8 @@ channels:
 dependencies:
   - python=3.8
   - numpy>=1.24.2
-  - jupyter #=1.0.0
+  #- jupyter #=1.0.0
+  - statsmodels # Required for residual plots 'lm' and 'loess' methods.
   - pandas>=1.5.3
   - geopandas>=0.12.2
   - shapely>=2.0.0

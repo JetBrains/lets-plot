@@ -17,12 +17,12 @@ try:
 except ImportError:
     pl = None
 
-from ..plot.plot import ggplot
+from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 from ..plot.core import DummySpec, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
+from ..plot.plot import ggplot
 from ..plot.theme_ import *
-from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 __all__ = ['residual_plot']
 
@@ -207,6 +207,11 @@ def residual_plot(data=None, x=None, y=None, *,
     -------
     `PlotSpec`
         Plot object specification.
+
+    Notes
+    -----
+    When using 'lm' and 'loess' methods,
+    this function requires the `statsmodels` and `scipy` libraries to be installed.
 
     Examples
     --------
