@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -33,7 +32,7 @@ internal object PlotAssemblerUtil {
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-        for (layerInfo in geomTiles.layerInfos()) {
+        for ((layerIndex, layerInfo) in geomTiles.layerInfos().withIndex()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
                 if (layerInfo.hasConstant(aes)) {
@@ -126,7 +125,11 @@ internal object PlotAssemblerUtil {
                         theme
                     )
                 }
-                val allOverrideAesValues = guideOptionsMap[guideKey]?.getLegendOptions()?.overrideAesValues.orEmpty()
+                val allOverrideAesValues = processOverrideAesValues(
+                    guideOptionsMap[guideKey]?.getLegendOptions()?.overrideAesValues,
+                    legendOptions.index ?: layerIndex
+                )
+
                 customLegendAssembler.addCustomLayer(
                     customLegendOptions = legendOptions,
                     keyFactory = layerInfo.legendKeyElementFactory,
@@ -155,6 +158,21 @@ internal object PlotAssemblerUtil {
             }
         }
         return legendBoxInfos
+    }
+
+    private fun processOverrideAesValues(overrideAesValues: Map<Aes<*>, Any>?, index: Int): Map<Aes<*>, Any> {
+        if (overrideAesValues == null) {
+            return emptyMap()
+        }
+
+        return overrideAesValues.mapNotNull { (key, value) ->
+            val processedValue = if (value is List<*>) {
+                if (index in value.indices) value[index] else value.lastOrNull()
+            } else {
+                value
+            }
+            if (processedValue != null) key to processedValue else null
+        }.toMap()
     }
 
     fun createPlotLayout(
