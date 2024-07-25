@@ -414,7 +414,7 @@ object Option {
         }
 
         object Bin {
-            const val TRIM = "trim"
+            const val THRESHOLD = "threshold"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val METHOD = "method"

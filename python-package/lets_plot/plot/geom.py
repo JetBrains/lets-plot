@@ -848,7 +848,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None, trim=None,
+                   sampling=None, threshold=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -889,9 +889,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    trim : bool, default=False
-        If False, each histogram is computed on the full range of the data.
-        If True, each histogram is computed over the range of that group.
+    threshold : float, default=None
+        If a bin's `..count..` is less than the threshold, the bin will be removed. This is useful for free scales in facets.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -990,6 +989,29 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                            center=0, binwidth=1, \\
                            color='black', fill='gray', size=1)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14
+
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        import numpy as np
+
+        LetsPlot.setup_html()
+
+        data = {
+            "x": np.append(np.random.normal(0, 5, 1000), np.random.normal(10, 1, 1000)),
+            "g1": np.append(np.repeat("2", 1000), np.repeat("1", 1000)),
+            "g2": np.random.binomial(1,0.5,2000)
+        }
+
+        ggplot(data, aes(x = "x", fill = as_discrete("g2"))) + \\
+            geom_histogram(threshold=0) + \\
+            scale_fill_hue() + \\
+            facet_wrap(facets = "g1", scales = "free_x")
+
     """
     return _geom('histogram',
                  mapping=mapping,
@@ -999,7 +1021,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  manual_key=manual_key,
                  sampling=sampling,
-                 trim=trim,
+                 threshold=threshold,
                  tooltips=tooltips,
                  labels=labels,
                  orientation=orientation,
