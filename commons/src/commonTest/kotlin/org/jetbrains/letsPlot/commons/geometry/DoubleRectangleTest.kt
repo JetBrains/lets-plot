@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.geometry
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,6 +16,21 @@ class DoubleRectangleTest {
             DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode(),
             DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode()
         )
+    }
+
+    @Test
+    fun partsOrderIsTopLeftRightBottom() {
+        val rect = DoubleRectangle(DoubleVector(1.0, 2.0), DoubleVector(3.0, 4.0))
+
+        val (t, l, r, b) = rect.parts.toList()
+        assertEquals(DoubleVector(1.0, 2.0), t.start)
+        assertEquals(DoubleVector(4.0, 2.0), t.end)
+        assertEquals(DoubleVector(1.0, 2.0), l.start)
+        assertEquals(DoubleVector(1.0, 6.0), l.end)
+        assertEquals(DoubleVector(4.0, 6.0), r.start)
+        assertEquals(DoubleVector(4.0, 2.0), r.end)
+        assertEquals(DoubleVector(4.0, 6.0), b.start)
+        assertEquals(DoubleVector(1.0, 6.0), b.end)
     }
 
 }

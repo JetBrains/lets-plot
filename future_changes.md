@@ -5,6 +5,10 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
 
+- Band geometry [[#733](https://github.com/JetBrains/lets-plot/issues/733)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_band.ipynb).
+
 - Legend title in `guide_legend()` and `guide_colorbar()`.
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).

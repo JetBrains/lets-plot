@@ -137,6 +137,10 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.BAND -> GeomProvider.band { ctx ->
+                BandGeom(isVertical(ctx, geomKind.name))
+            }
+
             GeomKind.BOX_PLOT -> GeomProvider.boxplot { ctx ->
                 val geom = BoxplotGeom()
                 if (layerConfig.hasOwn(Option.Geom.Boxplot.FATTEN)) {

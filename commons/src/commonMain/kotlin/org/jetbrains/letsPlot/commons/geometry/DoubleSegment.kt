@@ -58,6 +58,14 @@ class DoubleSegment(val start: DoubleVector, val end: DoubleVector) {
         return start.subtract(end).length()
     }
 
+    fun flipIf(flip: Boolean): DoubleSegment {
+        return if (flip) flip() else this
+    }
+    
+    fun flip(): DoubleSegment {
+        return DoubleSegment(start.flip(), end.flip())
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other !is DoubleSegment) {
             return false
