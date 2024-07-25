@@ -22,6 +22,7 @@ class WaterfallPlotOptionsBuilder(
     private val x: String?,
     private val y: String?,
     private val measure: String?,
+    private val group: String?,
     private val color: String?,
     private val fill: String?,
     private val size: Double?,
@@ -41,7 +42,7 @@ class WaterfallPlotOptionsBuilder(
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
-    private val data = WaterfallUtil.prepareData(data, measure, calcTotal)
+    private val data = DataUtil.standardiseData(data)
     private val flowTypes = FlowType.list(calcTotal, totalTitle)
 
     fun build(): PlotOptions {
@@ -100,27 +101,38 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun boxLayerData(): Map<String, List<Any?>> {
+        var initialX = 0
+        return WaterfallUtil.groupBy(data, group)
+            .map { groupData ->
+                val groupStatData = boxLayerGroupData(initialX, groupData)
+                initialX += groupStatData[WaterfallBox.Var.X]?.size ?: 0
+                groupStatData
+            }
+            .let(WaterfallUtil::concat)
+    }
+
+    private fun boxLayerGroupData(initialX: Int, groupData: Map<String, List<Any?>>): Map<String, List<Any?>> {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
-        var initialX = 0
-        var initialY = BASE
-        return WaterfallUtil.groupBy(data, WaterfallBox.MEASURE_GROUP)
-            .map { groupData ->
+        var measureInitialX = initialX
+        var measureInitialY = BASE
+        return WaterfallUtil.groupBy(WaterfallUtil.prepareData(groupData, measure, calcTotal), WaterfallBox.MEASURE_GROUP)
+            .map { measureGroupData ->
                 val statData = WaterfallUtil.calculateBoxStat(
-                    groupData,
+                    measureGroupData,
                     x = xVar,
                     y = yVar,
                     measure = measure ?: "_measure_",
                     sortedValue = sortedValue,
                     threshold = threshold,
                     maxValues = maxValues,
-                    initialX = initialX,
-                    initialY = initialY,
+                    initialX = measureInitialX,
+                    initialY = measureInitialY,
                     base = BASE,
                     flowTypeTitles = flowTypes
                 )
-                initialX += statData[WaterfallBox.Var.X]?.size ?: 0
-                initialY = statData[WaterfallBox.Var.CUMULATIVE_SUM]?.lastOrNull() as? Double ?: BASE
+                measureInitialX += statData[WaterfallBox.Var.X]?.size ?: initialX
+                measureInitialY = statData[WaterfallBox.Var.CUMULATIVE_SUM]?.lastOrNull() as? Double ?: BASE
                 statData
             }
             .let { datasets ->
@@ -159,13 +171,13 @@ class WaterfallPlotOptionsBuilder(
         if (connectorOptions.blank) return null
         return LayerOptions().also {
             it.geom = GeomKind.SPOKE
-            it.data = WaterfallUtil.calculateConnectorStat(boxLayerData)
+            it.data = WaterfallUtil.calculateConnectorStat(boxLayerData, 1.0 - width)
             it.mappings = mapOf(
                 WaterfallConnector.AES_X to WaterfallConnector.Var.X,
                 WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
+                WaterfallConnector.AES_RADIUS to WaterfallConnector.Var.RADIUS
             )
             it.angle = 0.0
-            it.radius = 1.0 - width
             it.position = position {
                 name = CONNECTOR_POSITION_NAME
                 x = 0.5 - (1 - width) / 2.0

@@ -13,6 +13,7 @@ object Option {
         const val X = "x"
         const val Y = "y"
         const val MEASURE = "measure"
+        const val GROUP = "group"
         const val COLOR = "color"
         const val FILL = "fill"
         const val SIZE = "size"
@@ -47,6 +48,7 @@ object Option {
             const val XLAB = "xlabel"
             const val YMIN = "ymin"
             const val YMAX = "ymax"
+            const val MEASURE = "measure"
             const val FLOW_TYPE = "flow_type"
             const val INITIAL = "initial"
             const val CUMULATIVE_SUM = "cumsum"
@@ -57,10 +59,12 @@ object Option {
     object WaterfallConnector {
         val AES_X = Aes.X
         val AES_Y = Aes.Y
+        val AES_RADIUS = Aes.RADIUS
 
         object Var {
             const val X = "x"
             const val Y = "y"
+            const val RADIUS = "radius"
         }
     }
 

@@ -10,18 +10,17 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
 import kotlin.math.*
 
 internal object WaterfallUtil {
     fun prepareData(
-        data: Map<*, *>,
+        data: Map<String, List<*>>,
         measure: String?,
         calcTotal: Boolean
     ): Map<String, List<*>> {
-        val standardData = DataUtil.standardiseData(data).let { d ->
+        val standardData = data.let { d ->
             if (measure == null) {
                 val measures = List(d.values.firstOrNull()?.size ?: 0) { "relative" }.let { if (calcTotal) it + listOf("total") else it }
                 d.toList().associate { (column, values) ->
@@ -115,6 +114,7 @@ internal object WaterfallUtil {
             WaterfallBox.Var.XLAB to xs + xsLast,
             WaterfallBox.Var.YMIN to yMin + yMinLast,
             WaterfallBox.Var.YMAX to yMax + yMaxLast,
+            WaterfallBox.Var.MEASURE to measures,
             WaterfallBox.Var.FLOW_TYPE to flowType + flowTypeLast,
             WaterfallBox.Var.INITIAL to yPrev + yPrevLast,
             WaterfallBox.Var.CUMULATIVE_SUM to yNext + yNextLast,
@@ -136,11 +136,15 @@ internal object WaterfallUtil {
     }
 
     fun calculateConnectorStat(
-        boxData: Map<String, List<*>>
+        boxData: Map<String, List<*>>,
+        radius: Double
     ): Map<String, List<*>> {
         return mapOf(
-            WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X).dropLast(1),
-            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM).dropLast(1),
+            WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X),
+            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM),
+            WaterfallConnector.Var.RADIUS to boxData.getValue(WaterfallBox.Var.MEASURE).map {
+                if (it == "total") 0.0 else radius
+            }
         )
     }
 
