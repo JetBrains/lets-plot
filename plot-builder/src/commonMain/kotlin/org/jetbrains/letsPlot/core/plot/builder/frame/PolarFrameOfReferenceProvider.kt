@@ -22,28 +22,26 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.tile.PolarTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
 internal class PolarFrameOfReferenceProvider(
-    private val plotContext: PlotContext,
-    private val hScaleProto: Scale,
-    private val vScaleProto: Scale,
+    plotContext: PlotContext,
+    hScaleProto: Scale,
+    vScaleProto: Scale,
     private val adjustedDomain: DoubleRectangle,
     flipAxis: Boolean,
-    private val theme: Theme,
-    private val marginsLayout: GeomMarginsLayout,
+    theme: Theme,
+    marginsLayout: GeomMarginsLayout,
     domainByMargin: Map<MarginSide, DoubleSpan>
-) : SquareFrameOfReferenceProvider(
+) : FrameOfReferenceProviderBase(
     plotContext,
     hScaleProto,
     vScaleProto,
-    adjustedDomain,
     flipAxis,
     AxisPosition.BOTTOM,
     AxisPosition.LEFT,
     theme,
     marginsLayout,
-    domainByMargin
+    domainByMargin,
+    isPolar = true
 ) {
-
-    override val isPolar: Boolean = true
 
     override fun createTileLayoutProvider(axisLayoutQuad: AxisLayoutQuad): TileLayoutProvider {
         return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout, theme.panel().inset())
@@ -73,20 +71,10 @@ internal class PolarFrameOfReferenceProvider(
 
         val gridDomain = coordProvider.gridDomain(adjustedDomain)
 
-        val hScale = hScaleProto.with()
-            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(hAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
-        val vScale = vScaleProto.with()
-            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
-            .labels(vAxisLayoutInfo.axisBreaks.labels)
-            .build()
-
         val tileFrameOfReference = PolarFrameOfReference(
             plotContext,
-            hScaleBreaks = hScale.getScaleBreaks(),
-            vScaleBreaks = vScale.getScaleBreaks(),
+            hScaleBreaks = hAxisLayoutInfo.axisBreaks,
+            vScaleBreaks = vAxisLayoutInfo.axisBreaks,
             gridDomain,
             coord,
             layoutInfo,

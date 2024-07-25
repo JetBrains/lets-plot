@@ -105,11 +105,10 @@ class PolarTileLayoutTest {
         val breaksProviderFactory: AxisBreaksProviderFactory =
             AxisBreaksProviderFactory.FixedBreaksProviderFactory(
                 FixedAxisBreaksProvider(
-                    ScaleBreaks(
+                    ScaleBreaks.DemoAndTest.continuous(
                         domainValues = listOf(0.0, 0.25, 0.5, 0.75, 1.0),
-                        transformedValues = listOf(0.0, 0.25, 0.5, 0.75, 1.0),
-                        labels = listOf("0", "0.25", "0.5", "0.75", "1")
-                    )
+                        labels = listOf("0", "0.25", "0.5", "0.75", "1"),
+                    ),
                 )
             )
 

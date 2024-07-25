@@ -99,7 +99,7 @@ class DomMouseEventMapper(
         val modifiers = DomEventUtil.getModifiers(domMouseEvent)
 
         val mouseEvent = when (domMouseEvent) {
-            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
+            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, toScrollAmount(domMouseEvent))
             else -> MouseEvent(x, y, button, modifiers)
         }
 
@@ -111,6 +111,15 @@ class DomMouseEventMapper(
         if (mouseEvent.preventDefault) {
             domMouseEvent.preventDefault()
         }
+    }
+
+    private fun toScrollAmount(domMouseEvent: WheelEvent): Double {
+        // Simple heuristic to determine scroll source.
+        // 120 is a default value for a single wheel tick.
+        // With touchpad scrolling, the deltaY is varying from 1 to 430.
+        // Normalize it to the range [-1, 1] using 120 as a reference.
+        // Note that the scroll speed can be set to 1 line per tick, then the deltaY will be ~40.
+        return domMouseEvent.deltaY / 120
     }
 
     private fun inEventArea(e: DomMouseEvent): Boolean {
@@ -153,11 +162,18 @@ class DomMouseEventMapper(
             if (e.buttons > 0) return
 
             when (type) {
-                DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
+                DomEventType.MOUSE_ENTER -> {
                     dispatch(MouseEventSpec.MOUSE_ENTERED, e)
                     state = MouseHoverState()
                 }
-                // Ignore buttons/leave events
+                DomEventType.MOUSE_WHEEL, DomEventType.MOUSE_MOVE -> {
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+
+                    state = MouseHoverState()
+                    state.handleEvent(type, e) // allow to invoke preventDefault to prevent scrolling or selection
+                }
+                // Ignore leave events
+                // Ignore button events - browser sends MOUSE_ENTER before MOUSE_DOWN
             }
         }
     }

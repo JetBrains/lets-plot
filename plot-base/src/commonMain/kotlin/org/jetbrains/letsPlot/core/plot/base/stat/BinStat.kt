@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -29,7 +31,8 @@ open class BinStat(
     binCount: Int,
     binWidth: Double?,
     private val xPosKind: XPosKind,
-    private val xPos: Double
+    private val xPos: Double,
+    private val trim: Boolean
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
@@ -46,7 +49,14 @@ open class BinStat(
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
 
-        val rangeX = statCtx.overallXRange()
+        val rangeX = if (trim) {
+            val xs = data.getNumeric(TransformVar.X).mapNotNull(SeriesUtil::finiteOrNull)
+            val xSummary = FiveNumberSummary(xs)
+            DoubleSpan(xSummary.min, xSummary.max)
+        } else {
+            statCtx.overallXRange()
+        }
+
         if (rangeX != null) { // null means all input values are null
             val binsData = BinStatUtil.computeHistogramStatSeries(
                 data,
@@ -74,6 +84,7 @@ open class BinStat(
 
     companion object {
         const val DEF_BIN_COUNT = 30
+        const val DEF_TRIM = false
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

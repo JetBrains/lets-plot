@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 
 object Option {
 
@@ -22,6 +23,7 @@ object Option {
             const val SUBPLOTS = "subplots"
             const val GG_BUNCH = "ggbunch"
             const val ERROR_GEN = "error_gen" // for internal use: testing etc.
+            const val GG_TOOLBAR = "ggtoolbar"
         }
 
         object PubSub {
@@ -69,8 +71,17 @@ object Option {
 
             // Values of the "TYPE" property
             object DateTime {
+                const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
+                const val TIME_ZONE = "time_zone" // TODO: remove or move to Types
+            }
+
+            object Types {
                 const val DATE_TIME = "datetime"
-                const val TIME_ZONE = "time_zone"
+                const val INTEGER = "int"
+                const val FLOATING = "float"
+                const val STRING = "str"
+                const val BOOLEAN = "bool"
+                const val UNKNOWN = "unknown"
             }
         }
     }
@@ -163,6 +174,7 @@ object Option {
         const val SHOW_LEGEND = "show_legend"
         const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
+        const val TOOLTIP_TITLE = "title"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
         const val DISABLE_SPLITTING = "disable_splitting"
@@ -402,6 +414,7 @@ object Option {
         }
 
         object Bin {
+            const val TRIM = "trim"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val METHOD = "method"
@@ -496,6 +509,8 @@ object Option {
     }
 
     object Pos {
+        const val NAME = "name"
+
         object Dodge {
             const val WIDTH = "width"
         }
@@ -1035,8 +1050,8 @@ object Option {
     }
 
     object SpecOverride {
-        // Tools can temporary override default or provided limits.
-        const val COORD_XLIM_TRANSFORMED = "coord_xlim_transformed"  // array of two nullable numbers
-        const val COORD_YLIM_TRANSFORMED = "coord_ylim_transformed"
+        // Tools can temporarily override default or provided limits.
+        const val COORD_XLIM_TRANSFORMED = FigureModelOptions.COORD_XLIM_TRANSFORMED  // array of two nullable numbers
+        const val COORD_YLIM_TRANSFORMED = FigureModelOptions.COORD_YLIM_TRANSFORMED
     }
 }

@@ -14,4 +14,10 @@ object ToolInteractionSpec {
     const val NAME = "name"
     const val ZOOM_DIRECTION = "direction"
     const val DRAG_DIRECTION = "direction"
+    const val ZOOM_BOX_MODE = "zoom-box-mode"
+
+    object ZoomBoxMode {
+        const val CORNER_START = "corner_start"
+        const val CENTER_START = "center_start"
+    }
 }

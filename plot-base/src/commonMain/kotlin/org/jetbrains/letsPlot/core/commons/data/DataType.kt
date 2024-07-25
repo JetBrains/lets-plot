@@ -5,34 +5,15 @@
 
 package org.jetbrains.letsPlot.core.commons.data
 
-enum class DataType {
-    NUMBER,
-    STRING,
-    INSTANT,
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 
-    /**
-     * INSTANT_OF_DAY and INSTANT_OF_MONTH are INSTANTS formatted as year-month-day or year-month
-     */
-    INSTANT_OF_DAY,
-    INSTANT_OF_MONTH,
-    INSTANT_OF_QUARTER,
-    INSTANT_OF_HALF_YEAR,
-    INSTANT_OF_YEAR;
-
-
-    val isTime: Boolean
-        get() = this == INSTANT || isTimeInterval
-
-    val isTimeInterval: Boolean
-        get() = (this == INSTANT_OF_DAY
-                || this == INSTANT_OF_MONTH
-                || this == INSTANT_OF_QUARTER
-                || this == INSTANT_OF_HALF_YEAR
-                || this == INSTANT_OF_YEAR)
-
-    val isString: Boolean
-        get() = this == STRING
-
-    val isNumber: Boolean
-        get() = this == NUMBER
+enum class DataType(
+    val formatter: (Any) -> String = Any::toString
+){
+    UNKNOWN(StringFormat.forOneArg("{}")::format),
+    INTEGER(StringFormat.forOneArg("d")::format),
+    FLOATING(StringFormat.forOneArg("g")::format),
+    STRING(StringFormat.forOneArg("{}")::format),
+    INSTANT(StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S")::format),
+    BOOLEAN(StringFormat.forOneArg("{}")::format),
 }

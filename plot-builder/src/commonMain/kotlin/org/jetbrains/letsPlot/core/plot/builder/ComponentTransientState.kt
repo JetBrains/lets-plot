@@ -21,9 +21,9 @@ abstract class ComponentTransientState(
 
     abstract val dataBounds: DoubleRectangle
 
-    fun scale(scale: DoubleVector) = transform(scale, this.offset)
+    fun scale(scale: DoubleVector) = transformView(scale, this.offset)
 
-    fun translate(offset: DoubleVector) = transform(this.scale, offset)
+    fun translate(offset: DoubleVector) = transformView(this.scale, offset)
 
     fun applyDelta(scaleDelta: DoubleVector, offsetDelta: DoubleVector) {
         val offset = DoubleVector(
@@ -35,12 +35,12 @@ abstract class ComponentTransientState(
             scale.y * scaleDelta.y
         )
 
-        transform(scale, offset)
+        transformView(scale, offset)
     }
 
-    fun reset() = transform(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
+    fun reset() = transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
 
-    open fun transform(scale: DoubleVector, offset: DoubleVector) {
+    open fun transformView(scale: DoubleVector, offset: DoubleVector) {
         this.scale = scale
         this.offset = offset
 

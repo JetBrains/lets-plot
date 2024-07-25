@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTI
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 
@@ -65,12 +66,14 @@ internal class PlotToolEventDispatcher(
                 }
             )
 
-            ToolInteractionSpec.BOX_ZOOM -> DrawRectFeedback(
-                onCompleted = { dataBounds ->
+            ToolInteractionSpec.BOX_ZOOM -> {
+                val fixedAspectRatio = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
+                DrawRectFeedback(fixedAspectRatio) { dataBounds ->
                     println("client: data $dataBounds")
                     completeInteraction(origin, interactionName, dataBounds)
                 }
-            )
+            }
+
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
                 onCompleted = { dataBounds ->

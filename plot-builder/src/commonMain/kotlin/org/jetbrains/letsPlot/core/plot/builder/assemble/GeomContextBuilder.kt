@@ -7,18 +7,14 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
@@ -29,8 +25,9 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotation: Annotation? = null
+    private var defaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private var backgroundColor: Color = Color.WHITE
-    private var plotContext: PlotContext? = null
+    private var plotContext: PlotContext = NullPlotContext
 
     constructor()
 
@@ -41,6 +38,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
         annotation = ctx.annotation
+        defaultFormatters = ctx.defaultFormatters
         backgroundColor = ctx.backgroundColor
         plotContext = ctx.plotContext
     }
@@ -80,6 +78,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun defaultFormatters(defaultFormatters: Map<Any, (Any) -> String>): ImmutableGeomContext.Builder {
+        this.defaultFormatters = defaultFormatters
+        return this
+    }
+
     override fun backgroundColor(color: Color): ImmutableGeomContext.Builder {
         this.backgroundColor = color
         return this
@@ -99,12 +102,13 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val aesthetics = b.aesthetics
         val aestheticMappers = b.aestheticMappers
         val _aesBounds: DoubleRectangle? = b.aesBounds
+        val defaultFormatters = b.defaultFormatters
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
         override val annotation = b.annotation
         override val backgroundColor = b.backgroundColor
-        override val plotContext: PlotContext? = b.plotContext
+        override val plotContext: PlotContext = b.plotContext
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 
@@ -143,6 +147,14 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                     isItalic = isItalic
                 ),
             ).dimensions(text)
+        }
+
+        override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
+            return defaultFormatters[aes] ?: Any::toString
+        }
+
+        override fun getDefaultFormatter(varName: String): (Any) -> String {
+            return defaultFormatters[varName] ?: Any::toString
         }
 
         override fun getAesBounds(): DoubleRectangle {

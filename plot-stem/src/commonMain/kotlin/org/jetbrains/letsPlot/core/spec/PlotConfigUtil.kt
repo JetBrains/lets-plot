@@ -30,6 +30,11 @@ internal object PlotConfigUtil {
         }
     }
 
+    fun containsToolbar(figSpec: Map<String, Any>): Boolean {
+        // For now only check the top figure
+        return figSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
+    }
+
     // backend
     fun addComputationMessage(accessor: OptionsAccessor, message: String?) {
         require(message != null)
@@ -128,7 +133,6 @@ internal object PlotConfigUtil {
     private fun associateVarBindingsWithData(
         bindingsByLayer: List<List<VarBinding>>,
         dataByLayer: List<DataFrame>,
-//    ): Map<VarBinding, DataFrame> {
     ): List<Pair<VarBinding, DataFrame>> {
         val dataByVarBinding = bindingsByLayer.zip(dataByLayer)
             .flatMap { (varBindings, data) ->

@@ -162,7 +162,7 @@ class FeatureSpec():
 
     Do not use this class explicitly.
 
-    Instead you should construct its objects with functions `ggplot()`, `geom_point()`,
+    Instead, you should construct its objects with functions `ggplot()`, `geom_point()`,
     `position_dodge()`, `scale_x_continuous()` etc.
     """
 
@@ -175,26 +175,6 @@ class FeatureSpec():
         self.__props.update(**kwargs)
 
     def props(self):
-        """
-        Return the dictionary of all properties of the object in their initial form.
-
-        Returns
-        -------
-        dict
-            Dictionary of properties.
-
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 4
-
-            from lets_plot import *
-            LetsPlot.setup_html()
-            p = ggplot({'x': [0], 'y': [0]}) + geom_point(aes('x', 'y'))
-            p.props()
-
-        """
         return self.__props
 
     def as_dict(self):
@@ -228,16 +208,16 @@ class FeatureSpec():
             # nothing
             return self
 
-        """
-            self + plot -> fail
-            self + other_feature -> [self,other_feature]
-        """
-        if isinstance(other, PlotSpec):
-            # pass and fail
+        if self.kind in ["plot", "subplots"]:
+            # pass and fail: don't allow to add plot to a feature list.
             pass
-        if isinstance(other, FeatureSpec):
-            arr = FeatureSpecArray(self, other)
-            return arr
+        elif isinstance(other, FeatureSpec):
+            if other.kind in ["plot", "subplots"]:
+                # pass and fail: don't allow to add plot to a feature list.
+                pass
+            else:
+                arr = FeatureSpecArray(self, other)
+                return arr
 
         raise TypeError('unsupported operand type(s) for +: {} and {}'
                         .format(self.__class__, other.__class__))

@@ -1,6 +1,10 @@
 ## [4.3.4] - 2024-mm-dd
 
 ### Added
+- Waterfall plot [[#975](https://github.com/JetBrains/lets-plot/issues/975)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
+
 - Legend title in `guide_legend()` and `guide_colorbar()`.
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
@@ -18,6 +22,9 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
 
+- `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)].  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
+
 
 
 ### Changed
@@ -25,6 +32,7 @@
 - The triangular point shape is now anchored to the data point via the centroid.
  
 ### Fixed
+- ggsave (.svg) transforms geom_text integer to float [[#626](https://github.com/JetBrains/lets-plot/issues/626)].
 - `linetype` = 0 ('blank') should make lines invisible [[#712](https://github.com/JetBrains/lets-plot/issues/712)].
 - `geom_density2d`: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
 - Int DataFrame column names are being converted to float string representation [[#901](https://github.com/JetBrains/lets-plot/issues/901)].

@@ -11,8 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 interface Scale {
     val name: String
 
-    val labelFormatter: ((Any) -> String)?
-
     /**
      * TRUE if both, domain and range are continuous
      */
@@ -43,6 +41,8 @@ interface Scale {
         fun breaks(l: List<Any>): Builder
 
         fun labels(l: List<String>): Builder
+
+        fun scaleBreaks(v: ScaleBreaks): Builder
 
         fun labelLengthLimit(v: Int): Builder
 

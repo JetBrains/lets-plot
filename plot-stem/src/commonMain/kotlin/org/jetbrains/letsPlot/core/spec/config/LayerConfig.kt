@@ -58,6 +58,7 @@ class LayerConfig(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
+    val dtypes = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
 

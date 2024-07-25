@@ -2,14 +2,13 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from collections.abc import Iterable
-from datetime import datetime
-from typing import Any, Tuple, Sequence, Optional, Dict
+from typing import Any, Tuple, Sequence, Optional, Dict, List
 
-from lets_plot._type_utils import is_dict_or_dataframe, is_polars_dataframe
+from lets_plot._type_utils import is_pandas_data_frame
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
-from lets_plot.plot.core import aes
+from lets_plot.plot.core import aes, FeatureSpec
+from lets_plot.plot.series_meta import infer_type, TYPE_UNKNOWN
 
 
 def as_boolean(val, *, default):
@@ -19,104 +18,94 @@ def as_boolean(val, *, default):
     return bool(val) and val != 'False'
 
 
-def as_annotated_data(raw_data: Any, raw_mapping: Any) -> Tuple:
+def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
+    data_type_by_var: Dict[str, str] = {}  # VarName to Type
+    mapping_meta_by_var: Dict[str, Dict[str, MappingMeta]] = {}  # VarName to Dict[Aes, MappingMeta]
+    mappings = {}  # Aes to VarName
+
+    # fill mapping_meta_by_var, mappings and data_type_by_var.
+    if mapping_spec is not None:
+        for key, spec in mapping_spec.props().items():
+            # key is either an aesthetic name or 'name' (FeatureSpec.name property)
+            if key == 'name':  # ignore FeatureSpec.name property
+                continue
+                
+            if isinstance(spec, MappingMeta):
+                mappings[key] = spec.variable
+                mapping_meta_by_var.setdefault(spec.variable, {})[key] = spec
+                data_type_by_var[spec.variable] = TYPE_UNKNOWN
+            else:
+                mappings[key] = spec  # spec is a variable name
+
+    data_type_by_var.update(infer_type(data))
+
+    # fill series annotations
+    series_annotations = {}  # var to series_annotation
+    for var_name, data_type in data_type_by_var.items():
+        series_annotation = {}
+
+        if data_type != TYPE_UNKNOWN:
+            series_annotation['type'] = data_type
+
+        if is_pandas_data_frame(data) and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
+            series_annotation['factor_levels'] = data[var_name].cat.categories.to_list()
+        elif var_name in mapping_meta_by_var:
+            levels = last_not_none(list(map(lambda mm: mm.levels, mapping_meta_by_var[var_name].values())))
+            if levels is not None:
+                series_annotation['factor_levels'] = levels
+
+        if 'factor_levels' in series_annotation and var_name in mapping_meta_by_var:
+            order = last_not_none(list(map(lambda mm: mm.parameters['order'], mapping_meta_by_var[var_name].values())))
+            if order is not None:
+                series_annotation['order'] = order
+
+        if len(series_annotation) > 0:
+            series_annotation['column'] = var_name
+            series_annotations[var_name] = series_annotation
+
+    # fill mapping annotations
+    mapping_annotations = []
+    for var_name, meta_data in mapping_meta_by_var.items():
+        for aesthetic, mapping_meta in meta_data.items():
+            if mapping_meta.annotation == 'as_discrete':
+                if 'factor_levels' in series_annotations.get(var_name, {}):
+                    #  there is a bug - if label is set then levels are not applied
+                    continue
+
+                mapping_annotation = {}
+
+                # Note that the label is always set; otherwise, the scale title will appear as 'color.cyl'
+                label = mapping_meta.parameters.get('label')
+                if label is not None:
+                    mapping_annotation.setdefault('parameters', {})['label'] = label
+
+                if mapping_meta.levels is not None:
+                    mapping_annotation['levels'] = mapping_meta.levels
+
+                order_by = mapping_meta.parameters.get('order_by')
+                if order_by is not None:
+                    mapping_annotation.setdefault('parameters', {})['order_by'] = order_by
+
+                order = mapping_meta.parameters.get('order')
+                if order is not None:
+                    mapping_annotation.setdefault('parameters', {})['order'] = order
+
+                # add mapping meta if custom label is set or if series annotation for var doesn't contain order options
+                # otherwise don't add mapping meta - it's redundant, nothing unique compared to series annotation
+                if len(mapping_annotation):
+                    mapping_annotation['aes'] = aesthetic
+                    mapping_annotation['annotation'] = 'as_discrete'
+                    mapping_annotations.append(mapping_annotation)
+
     data_meta = {}
 
-    # data
-    data = raw_data
+    if len(series_annotations) > 0:
+        data_meta.update({'series_annotations': list(series_annotations.values())})
 
-    if is_data_pub_stream(data):
-        data = {}
-        for col_name in raw_data.col_names:
-            data[col_name] = []
+    if len(mapping_annotations) > 0:
+        data_meta.update({'mapping_annotations': mapping_annotations})
 
-        data_meta.update({'pubsub': {'channel_id': raw_data.channel_id, 'col_names': raw_data.col_names}})
-
-    # mapping
-    mapping = {}
-    mapping_meta = []
-    # series annotations
-    series_meta = []
-
-    class VariableMeta:
-        def __init__(self):
-            self.levels = None
-            self.aesthetics = []
-            self.order = None
-
-    variables_meta: Dict[str, VariableMeta] = {}
-
-    if is_data_frame(data):
-        dtypes = data.dtypes.to_dict().items()
-        for column_name, dtype in dtypes:
-            if dtype.name == 'category' and dtype.ordered:
-                var_meta = VariableMeta()
-                var_meta.levels = dtype.categories.to_list()
-                variables_meta[column_name] = var_meta
-
-    if raw_mapping is not None:
-        for aesthetic, variable in raw_mapping.as_dict().items():
-            if aesthetic == 'name':  # ignore FeatureSpec.name property
-                continue
-
-            if isinstance(variable, MappingMeta):
-                mapping[aesthetic] = variable.variable
-                if variable.variable in variables_meta:
-                    var_meta = variables_meta[variable.variable]
-                else:
-                    var_meta = VariableMeta()
-                var_meta.aesthetics.append(aesthetic)
-                if variable.levels is not None:
-                    var_meta.levels = variable.levels
-                order = variable.parameters.get('order')
-                if order is not None:
-                    var_meta.order = order
-                variables_meta[variable.variable] = var_meta
-            else:
-                mapping[aesthetic] = variable
-
-    for variableName, settings in variables_meta.items():
-        if settings.levels is not None:
-            # series annotations
-            series_meta.append({
-                'column': variableName,
-                'factor_levels': settings.levels,
-                'order': settings.order
-            })
-        else:
-            # mapping annotations
-            for aesthetic in settings.aesthetics:
-                value = raw_mapping.as_dict().get(aesthetic)
-                if value is not None and isinstance(value, MappingMeta):
-                    mapping_meta.append({
-                        'aes': aesthetic,
-                        'annotation': value.annotation,
-                        'parameters': value.parameters
-                    })
-
-    data_as_dict = None
-    if is_dict_or_dataframe(data):
-        data_as_dict = data
-    elif is_polars_dataframe(data):
-        data_as_dict = data.to_dict()
-
-    if data_as_dict is not None:
-        for column_name, values in data_as_dict.items():
-            if isinstance(values, Iterable):
-                not_empty_series = any(True for _ in values)
-                if not_empty_series and all(isinstance(val, datetime) for val in values):
-                    series_meta.append({
-                        'column': column_name,
-                        'type': 'datetime'
-                    })
-
-    if len(series_meta) > 0:
-        data_meta.update({'series_annotations': series_meta})
-
-    if len(mapping_meta) > 0:
-        data_meta.update({'mapping_annotations': mapping_meta})
-
-    return data, aes(**mapping), {'data_meta': data_meta}
+    return data, aes(**mappings), {'data_meta': data_meta}
 
 
 def is_data_pub_stream(data: Any) -> bool:
@@ -147,7 +136,8 @@ def normalize_map_join(map_join):
                 data_names = [map_join[0]]
                 map_names = [map_join[1]]
             elif len(map_join) > 2:  # ['foo', 'bar', 'baz'] -> error
-                raise ValueError("map_join of type list[str] expected to have 1 or 2 items, but was {}".format(len(map_join)))
+                raise ValueError(
+                    "map_join of type list[str] expected to have 1 or 2 items, but was {}".format(len(map_join)))
             else:
                 raise invalid_map_join_format()
         elif all(isinstance(v, Sequence) and not isinstance(v, str) for v in map_join):  # all items are lists
@@ -217,24 +207,8 @@ def geo_data_frame_to_crs(gdf: 'GeoDataFrame', use_crs: Optional[str]):
     return gdf.to_crs('EPSG:4326' if use_crs is None else use_crs)
 
 
-def is_ndarray(data) -> bool:
-    try:
-        from numpy import ndarray
-        return isinstance(data, ndarray)
-    except ImportError:
-        return False
-
-
-def is_data_frame(data: Any) -> bool:
-    try:
-        from pandas import DataFrame
-        return isinstance(data, DataFrame)
-    except ImportError:
-        return False
-
-
 def key_int2str(data):
-    if is_data_frame(data):
+    if is_pandas_data_frame(data):
         if data.columns.inferred_type == 'integer':
             data.columns = data.columns.astype(str)
         return data
@@ -243,3 +217,10 @@ def key_int2str(data):
         return {(str(k) if isinstance(k, int) else k): v for k, v in data.items()}
 
     return data
+
+
+def last_not_none(lst: List) -> Optional[Any]:
+    for i in reversed(lst):
+        if i is not None:
+            return i
+    return None

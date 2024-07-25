@@ -192,9 +192,9 @@ class DateTimeBreaksHelperTest {
         private val BASE_TIME = Time(7, 7, 7, 7)             // 07:07:07.007
         private val BASE_INSTANT = TimeZone.UTC.toInstant(
             DateTime(
-            BASE_DATE,
-            BASE_TIME
-        )
+                BASE_DATE,
+                BASE_TIME
+            )
         )
         private val MILLISECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).milliseconds }
         private val SECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).seconds }
@@ -261,7 +261,12 @@ class DateTimeBreaksHelperTest {
             )
         }
 
-        private fun assertDays(expected: IntArray, dCount: Long, targetBreakCount: Int, minInterval: TimeInterval? = null) {
+        private fun assertDays(
+            expected: IntArray,
+            dCount: Long,
+            targetBreakCount: Int,
+            minInterval: TimeInterval? = null
+        ) {
             val instant2 = BASE_INSTANT.add(Duration.DAY.mul(dCount))
             val breaks = computeBreaks(
                 BASE_INSTANT.timeSinceEpoch,
@@ -298,16 +303,23 @@ class DateTimeBreaksHelperTest {
             )
         }
 
-        private fun assertMonths(expected: IntArray, mCount: Int, targetBreakCount: Int, minInterval: TimeInterval? = null) {
+        private fun assertMonths(
+            expected: IntArray,
+            mCount: Int,
+            targetBreakCount: Int,
+            minInterval: TimeInterval? = null
+        ) {
             val date = Date(1, Month.APRIL, 2013)
             val month1 = date.month.ordinal()
             val month2 = (month1 + mCount) % 12
             val addYear = (month1 + mCount) / 12
-            val dateTime1 = DateTime(date,
+            val dateTime1 = DateTime(
+                date,
                 BASE_TIME
             )
             val month = Month.values()[month2.toInt()]
-            val dateTime2 = DateTime(Date(1, month, date.year + addYear),
+            val dateTime2 = DateTime(
+                Date(1, month, date.year + addYear),
                 BASE_TIME
             )
 
@@ -334,10 +346,12 @@ class DateTimeBreaksHelperTest {
 
         private fun assertYears(expected: IntArray, yCount: Int, targetBreakCount: Int) {
             val date = Date(1, Month.APRIL, 2013)
-            val dateTime1 = DateTime(date,
+            val dateTime1 = DateTime(
+                date,
                 BASE_TIME
             )
-            val dateTime2 = DateTime(Date(1, Month.APRIL, date.year + yCount),
+            val dateTime2 = DateTime(
+                Date(1, Month.APRIL, date.year + yCount),
                 BASE_TIME
             )
 
@@ -365,13 +379,16 @@ class DateTimeBreaksHelperTest {
             )
         }
 
-        private fun computeBreaks(fromInstant: Long, toInstant: Long,
-                                  targetBreakCount: Int,
-                                  minInterval: TimeInterval? = null): Array<Double> {
+        private fun computeBreaks(
+            fromInstant: Long, toInstant: Long,
+            targetBreakCount: Int,
+            minInterval: TimeInterval? = null
+        ): Array<Double> {
             val helper = DateTimeBreaksHelper(
                 fromInstant.toDouble(),
                 toInstant.toDouble(),
                 targetBreakCount,
+                providedFormatter = null,
                 minInterval
             )
             return helper.breaks.toTypedArray()
@@ -392,8 +409,10 @@ class DateTimeBreaksHelperTest {
             }
         }
 
-        private fun assertTimePartEquals(expected: IntArray, breaks: Array<Double>,
-                                         timePartExtractor: (Double) -> Int) {
+        private fun assertTimePartEquals(
+            expected: IntArray, breaks: Array<Double>,
+            timePartExtractor: (Double) -> Int
+        ) {
             val result = take(
                 timePartExtractor,
                 breaks

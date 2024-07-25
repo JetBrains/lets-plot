@@ -13,6 +13,7 @@ from .geom_function_ import *
 from .geom_imshow_ import *
 from .geom_livemap_ import *
 from .gggrid_ import *
+from .ggtb_ import *
 from .guide import *
 from .label import *
 from .marginal_layer import *
@@ -52,5 +53,6 @@ __all__ = (coord.__all__ +
            annotation.__all__ +
            marginal_layer.__all__ +
            font_features.__all__ +
-           gggrid_.__all__
+           gggrid_.__all__ +
+           ggtb_.__all__
            )

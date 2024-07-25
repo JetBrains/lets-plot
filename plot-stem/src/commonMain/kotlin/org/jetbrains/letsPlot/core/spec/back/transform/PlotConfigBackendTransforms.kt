@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
 import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.CorrPlotSpecChange
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.QQPlotSpecChange
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.WaterfallPlotSpecChange
 
 object PlotConfigBackendTransforms {
     fun migrationTransform(): PlotSpecTransform {
@@ -55,6 +56,10 @@ object PlotConfigBackendTransforms {
             .change(
                 QQPlotSpecChange.specSelector(),
                 QQPlotSpecChange()
+            )
+            .change(
+                WaterfallPlotSpecChange.specSelector(),
+                WaterfallPlotSpecChange()
             )
             .build()
     }

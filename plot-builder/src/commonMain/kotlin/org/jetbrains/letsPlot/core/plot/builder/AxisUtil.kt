@@ -30,7 +30,7 @@ object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
         coord: CoordinateSystem,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
         axisTheme: AxisTheme,
@@ -39,7 +39,7 @@ object AxisUtil {
         return breaksData(
             scaleBreaks.transformedValues,
             scaleBreaks.labels,
-            coord, domain, flipAxis, orientation, axisTheme, labelAdjustments
+            coord, dataDomain, flipAxis, orientation, axisTheme, labelAdjustments
         )
     }
 
@@ -47,7 +47,7 @@ object AxisUtil {
         breakTransformedValues: List<Double>,
         breakLabels: List<String>,
         coord: CoordinateSystem,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
         axisTheme: AxisTheme,
@@ -56,10 +56,10 @@ object AxisUtil {
         val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
         val labelsMap = TickLabelsMap(orientation.isHorizontal, axisTick(axisTheme), labelAdjustments.rotationDegree)
 
-        val gridRect = toClient(domain, coord, flipAxis)
+        val gridRect = coord.toClient(dataDomain)
             ?: DoubleRectangle.LTRB(-1_000_000, -1_000_000, 1_000_000, 1_000_000) // better than fail
 
-        val majorBreaks = toClient(breakTransformedValues, domain, coord, flipAxis, orientation.isHorizontal)
+        val majorBreaks = toClient(breakTransformedValues, dataDomain, coord, flipAxis, orientation.isHorizontal)
             .mapIndexedNotNull { i, clientTick ->
                 when (clientTick) {
                     null, !in gridRect -> null
@@ -75,7 +75,7 @@ object AxisUtil {
 
         val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
             .let { minorDomainBreaks ->
-                toClient(minorDomainBreaks, domain, coord, flipAxis, orientation.isHorizontal)
+                toClient(minorDomainBreaks, dataDomain, coord, flipAxis, orientation.isHorizontal)
                     .mapIndexedNotNull { i, clientBreak ->
                         when (clientBreak) {
                             null, !in gridRect -> null
@@ -86,13 +86,13 @@ object AxisUtil {
 
         val majorBreaksData = majorBreaks.mapNotNull { (_, br) ->
             val (label, domainTick, clientTick) = br
-            val clientLine = buildGridLine(domainTick, domain, coord, flipAxis, orientation.isHorizontal)
+            val clientLine = buildGridLine(domainTick, dataDomain, coord, flipAxis, orientation.isHorizontal)
                 ?: return@mapNotNull null
             Triple(label, clientTick, clientLine)
         }
 
         val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
-            val clientLine = buildGridLine(domainTick, domain, coord, flipAxis, orientation.isHorizontal)
+            val clientLine = buildGridLine(domainTick, dataDomain, coord, flipAxis, orientation.isHorizontal)
                 ?: return@mapNotNull null
             Pair(clientTick, clientLine)
         }
@@ -106,49 +106,56 @@ object AxisUtil {
         )
     }
 
-    private fun toClient(v: DoubleVector, coordinateSystem: CoordinateSystem, flipAxis: Boolean): DoubleVector? {
-        return finiteOrNull(coordinateSystem.toClient(v.flipIf(flipAxis)))
-    }
-
-    private fun toClient(v: DoubleRectangle, coordinateSystem: CoordinateSystem, flipAxis: Boolean): DoubleRectangle? {
-        return coordinateSystem.toClient(v.flipIf(flipAxis))
-    }
-
-    internal fun toClient(
+    private fun toClient(
         breaks: List<Double>,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<DoubleVector?> {
+        // Data space -> View space
+        val hvDomain = dataDomain.flipIf(flipAxis)
+
         return breaks.map { breakValue ->
             when (horizontal) {
-                true -> DoubleVector(breakValue, domain.yRange().upperEnd)
-                false -> DoubleVector(domain.xRange().lowerEnd, breakValue)
+                true -> DoubleVector(breakValue, hvDomain.yRange().upperEnd)
+                else -> DoubleVector(hvDomain.xRange().lowerEnd, breakValue)
             }
-        }.map { toClient(it, coordinateSystem, flipAxis) ?: return@map null }
+        }.map {
+            // View space -> Data space
+            val pointInDataDomain = it.flipIf(flipAxis)
+            finiteOrNull(coordinateSystem.toClient(pointInDataDomain))
+                ?: return@map null
+        }
     }
 
     private fun buildGridLine(
         tick: Double,
-        domain: DoubleRectangle,
+        dataDomain: DoubleRectangle,
         coordinateSystem: CoordinateSystem,
         flipAxis: Boolean,
         horizontal: Boolean
     ): List<DoubleVector>? {
+        // Data space -> View space
+        val hvDomain = dataDomain.flipIf(flipAxis)
+
         val domainLine = when (horizontal) {
             true -> listOf(
-                DoubleVector(tick, domain.yRange().lowerEnd),
-                DoubleVector(tick, domain.yRange().upperEnd)
+                DoubleVector(tick, hvDomain.yRange().lowerEnd),
+                DoubleVector(tick, hvDomain.yRange().upperEnd)
             )
-
-            false -> listOf(
-                DoubleVector(domain.xRange().lowerEnd, tick),
-                DoubleVector(domain.xRange().upperEnd, tick)
+            else -> listOf(
+                DoubleVector(hvDomain.xRange().lowerEnd, tick),
+                DoubleVector(hvDomain.xRange().upperEnd, tick)
             )
         }
 
-        val clientLine = domainLine.map { toClient(it, coordinateSystem, flipAxis) }
+        val clientLine = domainLine.map {
+            // View space -> Data space
+            val pointInDataDomain = it.flipIf(flipAxis)
+
+            finiteOrNull(coordinateSystem.toClient(pointInDataDomain))
+        }
 
         return when {
             null in clientLine -> null

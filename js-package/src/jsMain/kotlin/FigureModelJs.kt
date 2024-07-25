@@ -66,7 +66,7 @@ class FigureModelJs internal constructor(
         }
     }
 
-    fun activateInteraction(origin: String, interactionSpecListJs: dynamic) {
+    fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {
         val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
         require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
         @Suppress("UNCHECKED_CAST")

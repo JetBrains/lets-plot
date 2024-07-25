@@ -44,7 +44,7 @@ object Stats {
 
     val IDENTITY: Stat = IdentityStat()
 
-    private val VARS: Map<String, DataFrame.Variable> = run {
+    val VARS: Map<String, DataFrame.Variable> = run {
         val variableList = listOf(
             X,
             Y,
@@ -121,7 +121,8 @@ object Stats {
         binCount: Int = BinStat.DEF_BIN_COUNT,
         binWidth: Double? = null,
         center: Double? = null,
-        boundary: Double? = null
+        boundary: Double? = null,
+        trim: Boolean = BinStat.DEF_TRIM
     ): BinStat {
         var xPosKind = BinStat.XPosKind.NONE
         var xPosValue = 0.0
@@ -137,7 +138,8 @@ object Stats {
             binCount = binCount,
             binWidth = binWidth,
             xPosKind = xPosKind,
-            xPos = xPosValue
+            xPos = xPosValue,
+            trim = trim
         )
     }
 

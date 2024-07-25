@@ -45,10 +45,10 @@ internal class MarginalFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = SquareFrameOfReference.buildGeom(
+        val layerComponent = FrameOfReferenceBase.buildGeom(
             plotContext,
             layer,
-            xyAesBounds = adjustedDomain,
+            xyAesBounds = adjustedDomain,     // Never flip axis
             coord,
             flippedAxis = false,
             targetCollector,
