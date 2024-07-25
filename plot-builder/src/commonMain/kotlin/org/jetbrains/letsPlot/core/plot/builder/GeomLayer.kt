@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendOptions
 
 interface GeomLayer {
     val dataFrame: DataFrame
@@ -39,6 +40,8 @@ interface GeomLayer {
     val isLiveMap: Boolean
 
     val isLegendDisabled: Boolean
+
+    val customLegendOptions: CustomLegendOptions?
 
     val locatorLookupSpec: LookupSpec
 

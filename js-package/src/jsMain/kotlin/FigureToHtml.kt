@@ -9,6 +9,7 @@ import kotlinx.dom.createElement
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -35,23 +36,28 @@ import org.w3c.dom.svg.SVGSVGElement
 
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
-    private val containerElement: HTMLElement
+//    private val containerElement: HTMLElement,
+    private val parentElement: HTMLElement,
 ) {
 
-    private val parentElement: HTMLElement = if (buildInfo.isComposite) {
-        // The `containerElement` may also contain "computation messages".
-        // Container for a composite figure must be another `div`
-        // because it is going to have "relative" positioning.
-        document.createElement("div") {
-            containerElement.appendChild(this)
-        } as HTMLElement
-    } else {
-        containerElement
-    }
+//    private val parentElement: HTMLElement = if (buildInfo.isComposite) {
+//        // The `containerElement` may also contain "computation messages".
+//        // Container for a composite figure must be another `div`
+//        // because it is going to have "relative" positioning.
+//        document.createElement("div") {
+//            containerElement.appendChild(this)
+//        } as HTMLElement
+//    } else {
+//        containerElement
+//    }
 
-    fun eval(): Result {
+    fun eval(isRoot: Boolean): Result {
 
         val buildInfo = buildInfo.layoutedByOuterSize()
+//        containerElement.style.apply {
+//            width = "${buildInfo.layoutInfo.figureSize.x}px"
+//            height = "${buildInfo.layoutInfo.figureSize.y}px"
+//        }
 
         buildInfo.injectLiveMapProvider { tiles: List<List<GeomLayer>>, spec: Map<String, Any> ->
             val cursorServiceConfig = CursorServiceConfig()
@@ -60,34 +66,48 @@ internal class FigureToHtml(
         }
 
         val svgRoot = buildInfo.createSvgRoot()
-        val toolEventDispatcher = if (svgRoot is CompositeFigureSvgRoot) {
-            processCompositeFigure(
-                svgRoot,
-                origin = null,      // The topmost SVG
-                parentElement = parentElement
-            )
-        } else {
-            processPlotFigure(
-                svgRoot as PlotSvgRoot,
-                parentElement = parentElement
+
+        if (isRoot) {
+            // Setup fixed dimensions for plot wrapper element.
+            setupRootHTMLElement(
+                parentElement,
+                svgRoot.bounds.dimension
             )
         }
 
-        val registration = object : Registration() {
+        val (toolEventDispatcher, eventsRegistration) = if (svgRoot is CompositeFigureSvgRoot) {
+            processCompositeFigure(
+                svgRoot,
+                origin = null,      // The topmost SVG
+                parentElement = parentElement,
+            )
+        } else {
+            processPlotFigure(
+                svgRoot = svgRoot as PlotSvgRoot,
+                parentElement = parentElement,
+//                eventArea = buildInfo.bounds
+                eventArea = DoubleRectangle(DoubleVector.ZERO, buildInfo.bounds.dimension)
+            )
+        }
+
+        val domCleanupRegistration = object : Registration() {
             override fun doRemove() {
-                while (containerElement.firstChild != null) {
-                    containerElement.removeChild(containerElement.firstChild!!)
+                while (parentElement.firstChild != null) {
+                    parentElement.removeChild(parentElement.firstChild!!)
                 }
             }
         }
 
         return Result(
             toolEventDispatcher,
-            registration
+            CompositeRegistration().add(
+                eventsRegistration,
+                domCleanupRegistration
+            )
         )
     }
 
-    class Result(
+    data class Result(
         val toolEventDispatcher: ToolEventDispatcher,
         val figureRegistration: Registration
     )
@@ -96,10 +116,11 @@ internal class FigureToHtml(
         private fun processPlotFigure(
             svgRoot: PlotSvgRoot,
             parentElement: HTMLElement,
-        ): ToolEventDispatcher {
+            eventArea: DoubleRectangle
+        ): Pair<ToolEventDispatcher, Registration> {
 
             val plotContainer = PlotContainer(svgRoot)
-            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement)
+            val (rootSVG, cleanupRegistration) = buildPlotFigureSVG(plotContainer, parentElement, eventArea)
             rootSVG.style.setCursor(CssCursor.CROSSHAIR)
 
             // Livemap cursor pointer
@@ -110,23 +131,23 @@ internal class FigureToHtml(
             }
 
             parentElement.appendChild(rootSVG)
-            return plotContainer.toolEventDispatcher
+            return plotContainer.toolEventDispatcher to cleanupRegistration
         }
 
         private fun processCompositeFigure(
             svgRoot: CompositeFigureSvgRoot,
             origin: DoubleVector?,
             parentElement: HTMLElement,
-        ): ToolEventDispatcher {
+        ): Pair<ToolEventDispatcher, Registration> {
             svgRoot.ensureContentBuilt()
 
             val rootSvgSvg: SvgSvgElement = svgRoot.svg
             val domSVGSVG: SVGSVGElement = mapSvgToSVG(rootSvgSvg)
             val rootNode: Node = if (origin == null) {
-                setupRootHTMLElement(
-                    parentElement,
-                    svgRoot.bounds.dimension
-                )
+//                setupRootHTMLElement(
+//                    parentElement,
+//                    svgRoot.bounds.dimension
+//                )
                 domSVGSVG
             } else {
                 // Not a root - put in "container" with absolute positioning.
@@ -146,12 +167,13 @@ internal class FigureToHtml(
                 val elementOrigin = figureSvgRoot.bounds.origin.add(origin)
                 if (figureSvgRoot is PlotSvgRoot) {
                     // Create "container" with absolute positioning.
-                    val figureContainer = createContainerElement(elementOrigin).apply {
-                        parentElement.appendChild(this)
-                    }
+                    val figureContainer = createContainerElement(elementOrigin)
+                    parentElement.appendChild(figureContainer)
                     processPlotFigure(
                         svgRoot = figureSvgRoot,
-                        parentElement = figureContainer
+                        parentElement = figureContainer,
+//                        eventArea = figureSvgRoot.bounds.add(origin)
+                        eventArea = DoubleRectangle(DoubleVector.ZERO, figureSvgRoot.bounds.dimension)
                     )
                 } else {
                     figureSvgRoot as CompositeFigureSvgRoot
@@ -159,7 +181,7 @@ internal class FigureToHtml(
                 }
             }
 
-            return UnsupportedToolEventDispatcher()
+            return UnsupportedToolEventDispatcher() to Registration.EMPTY
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
@@ -187,9 +209,9 @@ internal class FigureToHtml(
 
         private fun buildPlotFigureSVG(
             plotContainer: PlotContainer,
-            parentElement: Element
-        ): SVGSVGElement {
-
+            parentElement: Element,
+            eventArea: DoubleRectangle,
+        ): Pair<SVGSVGElement, Registration> {
             val svg: SVGSVGElement = mapSvgToSVG(plotContainer.svg)
 
             if (plotContainer.isLiveMap) {
@@ -198,7 +220,12 @@ internal class FigureToHtml(
                 }
             }
 
-            plotContainer.mouseEventPeer.addEventSource(DomMouseEventMapper(svg))
+            val plotMouseEventMapper = DomMouseEventMapper(parentElement, eventArea)
+
+            val eventsRegistration = CompositeRegistration()
+            eventsRegistration.add(Registration.from(plotMouseEventMapper))
+
+            plotContainer.mouseEventPeer.addEventSource(plotMouseEventMapper)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -211,18 +238,19 @@ internal class FigureToHtml(
                     setPosition(CssPosition.RELATIVE)
                 }
 
+                val canvasMouseEventMapper = DomMouseEventMapper(
+                    parentElement,
+                    DoubleRectangle(
+                        eventArea.origin.add(bounds.origin.toDoubleVector()),
+                        bounds.dimension.toDoubleVector()
+                    )
+                )
+                eventsRegistration.add(Registration.from(canvasMouseEventMapper))
+
                 val canvasControl = DomCanvasControl(
                     myRootElement = liveMapDiv,
                     size = Vector(bounds.dimension.x, bounds.dimension.y),
-                    mouseEventSource = DomMouseEventMapper(
-                        eventSource = svg,
-                        bounds = DoubleRectangle.XYWH(
-                            bounds.origin.x,
-                            bounds.origin.y,
-                            bounds.dimension.x,
-                            bounds.dimension.y
-                        )
-                    )
+                    mouseEventSource = canvasMouseEventMapper
                 )
 
                 val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
@@ -231,10 +259,10 @@ internal class FigureToHtml(
                 liveMapDiv.onDisconnect(liveMapReg::dispose)
             }
 
-            return svg
+            return svg to eventsRegistration
         }
 
-        private fun HTMLElement.onDisconnect(onDisconnected: () -> Unit): Int {
+        private fun Node.onDisconnect(onDisconnected: () -> Unit): Int {
             fun checkConnection() {
                 if (!isConnected) {
                     onDisconnected()

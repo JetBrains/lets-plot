@@ -101,17 +101,17 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawVGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = vGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
@@ -120,17 +120,17 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawHGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
+    override fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = hGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin

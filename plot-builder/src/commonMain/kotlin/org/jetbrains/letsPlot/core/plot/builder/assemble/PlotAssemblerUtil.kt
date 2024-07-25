@@ -42,14 +42,13 @@ internal object PlotAssemblerUtil {
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+        guideOptionsMap: Map<GuideKey, GuideOptionsList>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-//        for (layerInfo in geomTiles.coreLayerInfos()) {
         for (layerInfo in geomTiles.layerInfos()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
@@ -62,16 +61,11 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = guideOptionsMap[aes]?.title ?: scale.name
+                val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]?.let {
-                    if (it is ColorBarOptions) {
-                        checkFitsColorBar(aes, scale)
-                        it
-                    } else {
-                        null
-                    }
-                }
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[GuideKey.fromAes(aes)]
+                    ?.getColorBarOptions()
+                    ?.also { checkFitsColorBar(aes, scale) }
 
                 if (colorBarOptions != null || fitsColorBar(aes, scale)) {
                     // Colorbar
@@ -116,14 +110,14 @@ internal object PlotAssemblerUtil {
                 val aesListForScaleName = aesListByScaleName.getValue(scaleName)
                 val legendKeyFactory = layerInfo.legendKeyElementFactory
                 val aestheticsDefaults = layerInfo.aestheticsDefaults
+                val filteredGuideOptionsMap = guideOptionsMap.filterKeys { guideKey ->
+                    aesListForScaleName.any { aes -> guideKey.matchesAes(aes) }
+                }
 
-                val allOverrideAesValues =
-                    guideOptionsMap
-                    .filter { (aes, _) -> aes in aesListForScaleName }
-                    .values
-                    .filterIsInstance<LegendOptions>()
-                    .map{it.overrideAesValues.orEmpty()}
-                    .fold(mapOf<Aes<*>, Any>(), { acc, overrideAesValues -> acc + overrideAesValues })
+                val allOverrideAesValues = filteredGuideOptionsMap.values
+                    .mapNotNull { it.getLegendOptions()?.overrideAesValues }
+                    .flatMap { it.entries }
+                    .associate { it.key to it.value }
 
                 legendAssembler.addLayer(
                     legendKeyFactory,
@@ -135,6 +129,34 @@ internal object PlotAssemblerUtil {
                     layerInfo.fillByAes,
                     layerInfo.isMarginal,
                     ctx,
+                )
+            }
+
+            // custom legend
+            layerInfo.customLegendOptions?.let { legendOptions ->
+                val guideKey = GuideKey.fromName(legendOptions.group)
+                if (guideOptionsMap[guideKey]?.hasNone() == true) return@let
+
+                val legendTitle = guideOptionsMap[guideKey]?.getTitle() ?: legendOptions.group
+
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
+                    LegendAssembler(
+                        legendTitle,
+                        guideOptionsMap,
+                        scaleMappersNP,
+                        theme
+                    )
+                }
+                val allOverrideAesValues = guideOptionsMap[guideKey]?.getLegendOptions()?.overrideAesValues.orEmpty()
+                customLegendAssembler.addCustomLayer(
+                    legendOptions,
+                    layerInfo.legendKeyElementFactory,
+                    allOverrideAesValues,
+                    layerConstantByAes,
+                    layerInfo.aestheticsDefaults,
+                    layerInfo.colorByAes,
+                    layerInfo.fillByAes,
+                    layerInfo.isMarginal
                 )
             }
         }

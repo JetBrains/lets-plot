@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
 import org.w3c.dom.HTMLElement
+import sizing.SizingPolicy
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
@@ -49,7 +50,8 @@ class FigureModelJs internal constructor(
             monolithicParameters.width,
             monolithicParameters.height,
             monolithicParameters.parentElement,
-            monolithicParameters.options
+            monolithicParameters.sizingPolicy,
+            monolithicParameters.messageHandler,
         )
 
         if (newFigureModel == null) return  // something went wrong.
@@ -89,5 +91,6 @@ internal class MonolithicParameters(
     val width: Double,
     val height: Double,
     val parentElement: HTMLElement,
-    val options: Map<String, Any>
+    val sizingPolicy: SizingPolicy,
+    val messageHandler: MessageHandler,
 )

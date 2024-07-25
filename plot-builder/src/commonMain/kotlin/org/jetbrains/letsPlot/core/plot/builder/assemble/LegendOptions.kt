@@ -7,17 +7,16 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
-class LegendOptions constructor(
+class LegendOptions(
     val colCount: Int? = null,
     val rowCount: Int? = null,
     val byRow: Boolean = false,
     title: String? = null,
-    val overrideAesValues: Map<Aes<*>, Any>? = null,
-    isReverse: Boolean = false
-) : GuideOptions(title, isReverse) {
+    val overrideAesValues: Map<Aes<*>, Any>? = null
+) : GuideOptions(title) {
     init {
         require(colCount == null || colCount > 0) { "Invalid value: colCount=$colCount" }
-        require(rowCount == null || rowCount > 0) { "Invalid value: colCount=$rowCount" }
+        require(rowCount == null || rowCount > 0) { "Invalid value: rowCount=$rowCount" }
     }
 
     fun hasColCount(): Boolean {
@@ -28,15 +27,9 @@ class LegendOptions constructor(
         return rowCount != null
     }
 
-    override fun withReverse(reverse: Boolean): LegendOptions {
-        return LegendOptions(
-            colCount, rowCount, byRow, title, overrideAesValues, isReverse = reverse
-        )
-    }
-
     override fun withTitle(title: String?): LegendOptions {
         return LegendOptions(
-            colCount, rowCount, byRow, title = title, overrideAesValues, isReverse
+            colCount, rowCount, byRow, title = title, overrideAesValues
         )
     }
 
@@ -71,6 +64,8 @@ class LegendOptions constructor(
             var rowCount: Int? = null
             var byRow = false
             var title: String? = null
+            var overrideAesValues: Map<Aes<*>, Any>? = null
+
             for (options in optionsList) {
                 if (options.byRow) {
                     byRow = true
@@ -84,8 +79,11 @@ class LegendOptions constructor(
                 if (options.title != null) {
                     title = options.title
                 }
+                if (options.overrideAesValues != null) {
+                    overrideAesValues = options.overrideAesValues
+                }
             }
-            return LegendOptions(colCount, rowCount, byRow, title)
+            return LegendOptions(colCount, rowCount, byRow, title, overrideAesValues)
         }
     }
 }

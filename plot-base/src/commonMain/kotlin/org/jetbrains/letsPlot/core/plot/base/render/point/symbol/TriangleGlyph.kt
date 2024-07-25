@@ -17,7 +17,7 @@ internal class TriangleGlyph @JvmOverloads constructor(
     size: Double,
     stroke: Double,
     pointingUp: Boolean,
-    pinnedToCentroid: Boolean = false,
+    pinnedToCentroid: Boolean = true,
     inscribedInSquare: Boolean = false
 ) : SingletonGlyph(
     createTriangleShape(

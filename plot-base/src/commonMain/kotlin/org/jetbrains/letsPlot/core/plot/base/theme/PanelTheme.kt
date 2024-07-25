@@ -25,8 +25,8 @@ interface PanelTheme {
     fun borderIsOntop(): Boolean
     fun borderLineType(): LineType
 
-    fun gridX(flipAxis: Boolean = false): PanelGridTheme
-    fun gridY(flipAxis: Boolean = false): PanelGridTheme
+    fun verticalGrid(flipAxis: Boolean = false): PanelGridTheme
+    fun horizontalGrid(flipAxis: Boolean = false): PanelGridTheme
 
     fun inset(): Thickness
 }

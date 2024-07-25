@@ -78,10 +78,10 @@ class GridComponentTest {
                 hline(y = 98, x = 0 to 100), // too close to the border => NOT drawn
             ),
             minorGrid = emptyList(),
-            orientation = Orientation.LEFT,
+            isHorizontal = true,
             isOrthogonal = true,
             geomContentBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(100, 100)),
-            gridTheme = theme.panel().gridY(),
+            gridTheme = theme.panel().horizontalGrid(),
             panelTheme = theme.panel()
         )
 

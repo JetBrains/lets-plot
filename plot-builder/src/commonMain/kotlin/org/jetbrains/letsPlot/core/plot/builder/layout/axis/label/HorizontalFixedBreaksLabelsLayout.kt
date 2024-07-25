@@ -15,10 +15,10 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.H_AXIS_LA
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
 import kotlin.math.max
 
-internal class HorizontalFixedBreaksLabelsLayout(
+internal class HorizontalFixedBreaksLabelsLayout constructor(
     orientation: Orientation,
     breaks: ScaleBreaks,
-    geomAreaInsets: Insets,
+    private val geomAreaInsets: Insets,
     theme: AxisTheme,
     private val polar: Boolean
 ) : AbstractFixedBreaksLabelsLayout(
@@ -77,6 +77,16 @@ internal class HorizontalFixedBreaksLabelsLayout(
             }
         }
         return labelsLayoutInfo
+    }
+
+    override fun withScaleBreaks(breaks: ScaleBreaks): AxisLabelsLayout {
+        return HorizontalFixedBreaksLabelsLayout(
+            orientation,
+            breaks,
+            geomAreaInsets,
+            theme,
+            polar
+        )
     }
 
     private fun simpleLayout(): AxisLabelsLayout {

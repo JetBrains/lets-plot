@@ -7,13 +7,14 @@ package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptions
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptionsMap
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuideOptions
 import org.jetbrains.letsPlot.core.spec.transform.PlotSpecTransform
 import org.jetbrains.letsPlot.core.spec.transform.migration.MoveGeomPropertiesToLayerMigration
 
@@ -26,14 +27,13 @@ class PlotConfigFrontend private constructor(
     isClientSide = true
 ) {
 
-    internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
+    internal val guideOptionsMap: Map<GuideKey, GuideOptionsList>
 
     internal val xAxisPosition: AxisPosition
     internal val yAxisPosition: AxisPosition
 
     init {
-        guideOptionsMap = createGuideOptionsMap(this.scaleConfigs, aopConversion) +
-                createGuideOptionsMap(getMap(GUIDES), aopConversion)
+        guideOptionsMap = createGuideOptions(this.scaleConfigs, getMap(GUIDES), aopConversion)
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition

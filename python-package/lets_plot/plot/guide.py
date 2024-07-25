@@ -4,7 +4,7 @@
 #
 from .core import FeatureSpec
 
-__all__ = ['guide_legend', 'guide_colorbar', 'guides']
+__all__ = ['guide_legend', 'guide_colorbar', 'guides', 'layer_key']
 
 
 def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None, override_aes=None):
@@ -118,7 +118,7 @@ def guides(**kwargs):
     Parameters
     ----------
     kwargs
-        Name-guide pairs where name should be an aesthetic.
+        Name-guide pairs where name should be an aesthetic or group name used in the `layer_key()` function.
         The guide can either be a string ('colorbar', 'legend'),
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments, or 'none' to hide the guide.
@@ -149,5 +149,64 @@ def guides(**kwargs):
             guides(shape=guide_legend(ncol=2), \\
                    color=guide_colorbar(nbin=8, barwidth=20))
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = list(range(n))
+        y = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(color='red', manual_key="point") + \\
+            geom_line(color='blue', manual_key="line") + \\
+            guides(manual=guide_legend('Zones', ncol=2))
+
     """
     return FeatureSpec('guides', name=None, **kwargs)
+
+
+def layer_key(label, group=None, *, index=None, **kwargs):
+    """
+    Configure custom legend.
+
+    Parameters
+    ----------
+    label : str
+        Text for the element in the custom legend.
+    group : str
+        Group name by which elements are combined into a legend group.
+    index : int
+        Position of the element in the custom legend.
+    kwargs :
+        A list of aesthetic parameters to use in the custom legend.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Custom legend specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = list(range(n))
+        y = np.random.uniform(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_point(color='red', manual_key=layer_key("point", shape=21)) + \\
+            geom_line(color='blue', linetype=2, manual_key=layer_key("line", linetype=1))
+
+    """
+    return FeatureSpec('layer_key', name=None, label=label, group=group, index=index, **kwargs)

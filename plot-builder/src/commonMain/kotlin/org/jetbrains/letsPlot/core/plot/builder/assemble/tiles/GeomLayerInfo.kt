@@ -15,6 +15,7 @@ class GeomLayerInfo(
     val isLegendDisabled = geomLayer.isLegendDisabled
     val aestheticsDefaults = geomLayer.aestheticsDefaults
     val legendKeyElementFactory = geomLayer.legendKeyElementFactory
+    val customLegendOptions = geomLayer.customLegendOptions
     val colorByAes: Aes<Color> = geomLayer.colorByAes
     val fillByAes: Aes<Color> = geomLayer.fillByAes
     val isMarginal: Boolean = geomLayer.isMarginal

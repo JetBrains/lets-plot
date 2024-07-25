@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
@@ -31,10 +32,12 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
@@ -174,6 +177,9 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.Inset.BOTTOM to 6.5,
                 Elem.Inset.LEFT to 6.5
             ),
+
+            PLOT_TITLE_POSITION to TitlePosition.PANEL,
+            PLOT_CAPTION_POSITION to TitlePosition.PANEL,
         )
     }
 }

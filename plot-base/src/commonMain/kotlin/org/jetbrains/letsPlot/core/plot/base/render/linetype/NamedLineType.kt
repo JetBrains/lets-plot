@@ -8,10 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.linetype
 enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) :
     LineType {
     // 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
-    BLANK(0, null) {
-        override val isBlank: Boolean
-            get() = true
-    },
+    BLANK(0, listOf(0.0, 1.0)),
     SOLID(1, null) {
         override val isSolid: Boolean
             get() = true
@@ -28,12 +25,9 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
     override val isSolid: Boolean
         get() = false
 
-    override val isBlank: Boolean
-        get() = false
-
     override val dashArray: List<Double>
         get() {
-            if (!(isSolid || isBlank)) {
+            if (!isSolid) {
                 return myDashArray!!
             }
             throw IllegalStateException("No dash array in " + name.lowercase() + " linetype")

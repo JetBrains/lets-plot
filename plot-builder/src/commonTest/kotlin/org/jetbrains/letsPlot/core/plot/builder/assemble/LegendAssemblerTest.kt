@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 import org.jetbrains.letsPlot.core.plot.base.Aes
 
 
-internal class LegendLayerTest {
+class LegendLayerTest {
     @Test
     fun testProcessOverrideAesValuesWithNoOverrideValues() {
         val labelsValuesByAes = mutableMapOf<Aes<*>, Pair<List<String>, List<Any?>>>(

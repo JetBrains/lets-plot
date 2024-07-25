@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderBuilder
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper
@@ -52,8 +51,7 @@ internal object PlotConfigScaleProviders {
             .distinct()
             .filter { aes -> aes !in scaleProviderBuilderByAes }
             .forEach { aes ->
-                val name = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
-                scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(aes, name)
+                scaleProviderBuilderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProviderBuilder(aes)
             }
 
         // All aes used in bindings and x/y aes.

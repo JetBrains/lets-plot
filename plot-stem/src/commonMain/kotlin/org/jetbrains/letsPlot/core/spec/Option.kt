@@ -161,6 +161,7 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
@@ -191,6 +192,14 @@ object Option {
         object CRS {
             const val PROVIDED = "provided"
         }
+
+        object LayerKey {
+            const val LABEL = "label"
+            const val GROUP = "group"
+            const val INDEX = "index"
+        }
+
+        const val DEFAULT_LEGEND_GROUP_NAME = "manual"
     }
 
     object LinesSpec {
@@ -674,7 +683,7 @@ object Option {
         const val COLOR_BAR = "colorbar"
         const val COLOR_BAR_GB = "colourbar"
 
-        const val REVERSE = "reverse"
+        const val REVERSE = "reverse" // not implemented
         const val TITLE = "title"
 
         object Legend {
@@ -722,6 +731,8 @@ object Option {
         const val PLOT_MESSAGE = ThemeOption.PLOT_MESSAGE
         const val PLOT_MARGIN = ThemeOption.PLOT_MARGIN
         const val PLOT_INSET = ThemeOption.PLOT_INSET
+        const val PLOT_TITLE_POSITION = ThemeOption.PLOT_TITLE_POSITION
+        const val PLOT_CAPTION_POSITION = ThemeOption.PLOT_CAPTION_POSITION
 
         // Axis
         const val AXIS = ThemeOption.AXIS
