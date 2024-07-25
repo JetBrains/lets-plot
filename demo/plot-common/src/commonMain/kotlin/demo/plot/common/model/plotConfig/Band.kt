@@ -13,11 +13,8 @@ class Band {
             basic(),
             oriented("x"),
             oriented("y"),
-            regular(),
+            cartesian(false),
             polar(),
-            // TODO: coord_flip
-            // TODO: coord_flip+horizontal
-            // TODO: alpha+fill+stroke+color
         )
     }
 
@@ -67,18 +64,18 @@ class Band {
         return parsePlotSpec(spec)
     }
 
-    private fun regular(): MutableMap<String, Any> {
+    private fun cartesian(flip: Boolean): MutableMap<String, Any> {
         val spec = """
             {
               'kind': 'plot',
               'data': {
                 'xmin': [-4, -1, 2],
                 'xmax': [-2, 1, 4],
-                'ymin': [-4, -1, 2],
-                'ymax': [-2, 1, 4]
+                'ymin': [0, 6, 12],
+                'ymax': [4, 10, 16]
               },
               'ggtitle': {
-                'text': 'Polar coordinates'
+                'text': 'Cartesian coordinates'
               },
               'layers': [
                 {
@@ -87,8 +84,9 @@ class Band {
                     'ymin': 'ymin',
                     'ymax': 'ymax'
                   },
-                  'size': 0,
-                  'fill': 'yellow',
+                  'size': 1,
+                  'color': '#ff0000',
+                  'fill': '#ff7777',
                   'alpha': 0.5
                 },
                 {
@@ -97,12 +95,18 @@ class Band {
                     'xmin': 'xmin',
                     'xmax': 'xmax'
                   },
-                  'size': 0,
-                  'fill': 'black',
+                  'size': 1,
+                  'color': '#0000ff',
+                  'fill': '#7777ff',
                   'alpha': 0.5
                 }
               ],
-              'coord': {'name': 'cartesian', 'xlim': [-4.5, 4.5], 'ylim': [-4.5, 4.5]}
+              'coord': {
+                'name': 'cartesian',
+                'xlim': [-4.5, 4.5],
+                'ylim': [-1, 17],
+                'flip': $flip
+              }
             }
         """.trimIndent()
 
@@ -115,8 +119,8 @@ class Band {
               'data': {
                 'xmin': [-4, -1, 2],
                 'xmax': [-2, 1, 4],
-                'ymin': [-4, -1, 2],
-                'ymax': [-2, 1, 4]
+                'ymin': [0, 6, 12],
+                'ymax': [4, 10, 16]
               },
               'ggtitle': {
                 'text': 'Polar coordinates'
@@ -143,7 +147,11 @@ class Band {
                   'alpha': 0.5
                 }
               ],
-              'coord': {'name': 'polar', 'xlim': [-4.5, 4.5], 'ylim': [-4.5, 4.5]}
+              'coord': {
+                'name': 'polar',
+                'xlim': [-4.5, 4.5],
+                'ylim': [-1, 17]
+              }
             }
         """.trimIndent()
 

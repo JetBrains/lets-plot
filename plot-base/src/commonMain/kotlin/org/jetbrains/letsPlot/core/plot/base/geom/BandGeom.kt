@@ -43,7 +43,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
 
-        val viewPort = overallAesBounds(ctx)
+        val viewPort = overallAesBounds(ctx).flipIf(!isVertical)
 
         for (p in aesthetics.dataPoints()) {
             val yMin = p.finiteOrNull(yMinAes) ?: continue
@@ -62,7 +62,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             root.add(bottomSvg)
         }
 
-        buildHints(aesthetics, pos, coord, ctx, viewPort.flipIf(!isVertical))
+        buildHints(aesthetics, pos, coord, ctx, viewPort)
     }
 
     private fun buildHints(
