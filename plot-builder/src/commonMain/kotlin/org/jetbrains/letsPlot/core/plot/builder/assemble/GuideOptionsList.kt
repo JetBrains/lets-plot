@@ -41,6 +41,4 @@ data class GuideKey internal constructor(private val key: String) {
         fun fromAes(aes: Aes<*>) = GuideKey(aes.name)
         fun fromName(name: String) = GuideKey(name)
     }
-
-    fun matchesAes(aes: Aes<*>) = this.key == aes.name
 }

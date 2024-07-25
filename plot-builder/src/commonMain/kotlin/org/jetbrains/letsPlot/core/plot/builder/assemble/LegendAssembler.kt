@@ -168,7 +168,7 @@ class LegendAssembler(
                 }
 
                 val labelValues = processOverrideAesValues(labelsValuesByAes, overrideAesValues)
-                // build 'key' aesthetics
+
                 val keyAesthetics = mapToAesthetics(
                     labelValues.second,
                     constantByAes.filterKeys {
@@ -204,7 +204,6 @@ class LegendAssembler(
                 fillByAes: Aes<Color>,
                 isMarginal: Boolean
             ): LegendLayer {
-                 // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
                     listOf(customLegendOptions.aesValues + overrideAesValues),
                     constantByAes,

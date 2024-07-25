@@ -22,22 +22,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.*
 
 internal object PlotAssemblerUtil {
 
-    private fun updateAesRangeMap(
-        aes: Aes<*>,
-        range: DoubleSpan?,
-        rangeByAes: MutableMap<Aes<*>, DoubleSpan>
-    ) {
-        @Suppress("NAME_SHADOWING")
-        var range = range
-        if (range != null) {
-            val wasRange = rangeByAes[aes]
-            if (wasRange != null) {
-                range = wasRange.union(range)
-            }
-            rangeByAes[aes] = range
-        }
-    }
-
     fun createLegends(
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
@@ -61,7 +45,6 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = scale.name
 
                 val colorBarOptions: ColorBarOptions? = guideOptionsMap[GuideKey.fromAes(aes)]
                     ?.getColorBarOptions()
@@ -71,7 +54,7 @@ internal object PlotAssemblerUtil {
                     // Colorbar
                     @Suppress("UNCHECKED_CAST")
                     val colorBarAssembler = createColorBarAssembler(
-                        scaleName,
+                        scale.name,
                         ctx.overallTransformedDomain(aes),
                         scale,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
@@ -79,25 +62,25 @@ internal object PlotAssemblerUtil {
                         theme
                     )
 
-                    val colorbarName = colorBarAssemblerByTitle[scaleName]?.let { existingAssembler ->
+                    val colorbarName = colorBarAssemblerByTitle[scale.name]?.let { existingAssembler ->
                         if (colorBarAssembler.equalScalesAndOptions(existingAssembler)) {
-                            scaleName
+                            scale.name
                         } else {
                             // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
                             // Add under another key
-                            "$scaleName (${aes.name})"
+                            "$scale.name (${aes.name})"
                         }
-                    } ?: scaleName
+                    } ?: scale.name
 
                     colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(colorbarName)
 
                 } else {
                     // Legend
-                    aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
+                    aesListByScaleName.getOrPut(scale.name) { ArrayList() }.add(aes)
                 }
             }
 
-            for (scaleName in aesListByScaleName.keys) {
+            for ((scaleName, aesListForScaleName) in aesListByScaleName) {
                 val legendAssembler = legendAssemblerByTitle.getOrPut(scaleName) {
                     LegendAssembler(
                         scaleName,
@@ -107,28 +90,24 @@ internal object PlotAssemblerUtil {
                     )
                 }
 
-                val aesListForScaleName = aesListByScaleName.getValue(scaleName)
-                val legendKeyFactory = layerInfo.legendKeyElementFactory
-                val aestheticsDefaults = layerInfo.aestheticsDefaults
-                val filteredGuideOptionsMap = guideOptionsMap.filterKeys { guideKey ->
-                    aesListForScaleName.any { aes -> guideKey.matchesAes(aes) }
-                }
-
-                val allOverrideAesValues = filteredGuideOptionsMap.values
+                val guideKeysForScaleName = aesListForScaleName.map(GuideKey.Companion::fromAes)
+                val allOverrideAesValues = guideOptionsMap
+                    .filterKeys { it in guideKeysForScaleName }
+                    .values
                     .mapNotNull { it.getLegendOptions()?.overrideAesValues }
                     .flatMap { it.entries }
                     .associate { it.key to it.value }
 
                 legendAssembler.addLayer(
-                    legendKeyFactory,
-                    aesListForScaleName,
-                    allOverrideAesValues,
-                    layerConstantByAes,
-                    aestheticsDefaults,
-                    layerInfo.colorByAes,
-                    layerInfo.fillByAes,
-                    layerInfo.isMarginal,
-                    ctx,
+                    keyFactory = layerInfo.legendKeyElementFactory,
+                    aesList = aesListForScaleName,
+                    overrideAesValues = allOverrideAesValues,
+                    constantByAes = layerConstantByAes,
+                    aestheticsDefaults = layerInfo.aestheticsDefaults,
+                    colorByAes = layerInfo.colorByAes,
+                    fillByAes = layerInfo.fillByAes,
+                    isMarginal = layerInfo.isMarginal,
+                    ctx = ctx
                 )
             }
 
@@ -149,14 +128,14 @@ internal object PlotAssemblerUtil {
                 }
                 val allOverrideAesValues = guideOptionsMap[guideKey]?.getLegendOptions()?.overrideAesValues.orEmpty()
                 customLegendAssembler.addCustomLayer(
-                    legendOptions,
-                    layerInfo.legendKeyElementFactory,
-                    allOverrideAesValues,
-                    layerConstantByAes,
-                    layerInfo.aestheticsDefaults,
-                    layerInfo.colorByAes,
-                    layerInfo.fillByAes,
-                    layerInfo.isMarginal
+                    customLegendOptions = legendOptions,
+                    keyFactory = layerInfo.legendKeyElementFactory,
+                    overrideAesValues = allOverrideAesValues,
+                    constantByAes = layerConstantByAes,
+                    aestheticsDefaults = layerInfo.aestheticsDefaults,
+                    colorByAes = layerInfo.colorByAes,
+                    fillByAes = layerInfo.fillByAes,
+                    isMarginal = layerInfo.isMarginal
                 )
             }
         }
