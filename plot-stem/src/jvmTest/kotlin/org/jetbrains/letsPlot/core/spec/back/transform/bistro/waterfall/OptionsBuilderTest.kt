@@ -60,7 +60,7 @@ class OptionsBuilderTest {
                 "measure" to listOf("relative", "relative", "total", "relative", "relative", "total"),
                 "flow_type" to listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"),
                 "initial" to listOf(0.0, 2.0, 2.0, 1.0, 3.0, 3.0),
-                "cumsum" to listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0),
+                "value" to listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0),
                 "dy" to listOf(2.0, -1.0, -1.0, 2.0, -1.0, -1.0),
             ),
             actual = boxOptions.data
@@ -109,7 +109,7 @@ class OptionsBuilderTest {
             assertThat(it["measure"]).isEqualTo(listOf("relative", "relative", "total", "relative", "relative", "total"))
             assertThat(it["flow_type"]).isEqualTo(listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"))
             assertThat(it["initial"]).isEqualTo(listOf(0.0, 2.0, 2.0, 0.0, 2.0, 2.0))
-            assertThat(it["cumsum"]).isEqualTo(listOf(2.0, 1.0, 1.0, 2.0, 1.0, 1.0))
+            assertThat(it["value"]).isEqualTo(listOf(2.0, 1.0, 1.0, 2.0, 1.0, 1.0))
             assertThat(it["dy"]).isEqualTo(listOf(2.0, -1.0, -1.0, 2.0, -1.0, -1.0))
         }
 

@@ -51,7 +51,7 @@ object Option {
             const val MEASURE = "measure"
             const val FLOW_TYPE = "flow_type"
             const val INITIAL = "initial"
-            const val CUMULATIVE_SUM = "cumsum"
+            const val VALUE = "value"
             const val DIFFERENCE = "dy"
         }
     }

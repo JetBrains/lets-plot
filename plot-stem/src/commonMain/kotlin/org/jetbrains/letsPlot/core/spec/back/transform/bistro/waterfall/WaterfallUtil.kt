@@ -93,31 +93,54 @@ internal object WaterfallUtil {
             return emptyBoxStat()
         }
 
-        val calcTotal = calcTotal(data, measure)
-        val yPrev = ys.runningFold(initialY) { sum, value -> sum + value }.dropLast(1)
-        val yNext = ys.runningFold(initialY) { sum, value -> sum + value }.drop(1)
-        val (yMin, yMax) = (yPrev zip yNext).map { (x, y) -> Pair(min(x, y), max(x, y)) }.unzip()
-        val flowType = ys.map { if (it >= 0) flowTypeTitles.getValue(FlowType.INCREASE).title else flowTypeTitles.getValue(FlowType.DECREASE).title }
+        val initials = mutableListOf<Double>()
+        val values = mutableListOf<Double>()
+        val yMins = mutableListOf<Double>()
+        val yMaxs = mutableListOf<Double>()
+        val flowTypes = mutableListOf<String>()
+        for (i in ys.indices) {
+            val yPrev = if (measures[i] == "relative") {
+                values.lastOrNull() ?: initialY
+            } else {
+                initialY
+            }
+            val yNext = if (measures[i] == "relative") {
+                yPrev + ys[i]
+            } else {
+                ys[i]
+            }
+            initials.add(yPrev)
+            values.add(yNext)
+            yMins.add(min(yPrev, yNext))
+            yMaxs.add(max(yPrev, yNext))
+            val flowType = when {
+                measures[i] == "absolute" -> flowTypeTitles.getValue(FlowType.ABSOLUTE).title
+                yPrev <= yNext -> flowTypeTitles.getValue(FlowType.INCREASE).title
+                else -> flowTypeTitles.getValue(FlowType.DECREASE).title
+            }
+            flowTypes.add(flowType)
+        }
 
+        val calcTotal = calcTotal(data, measure)
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
         val xsLast = calculateLast(extractTotalTitle(data, x, flowTypeTitles, calcTotal))
-        val ysLast = calculateLast(yNext.last() - (base + initialY + ys.first()))
+        val ysLast = calculateLast(values.last() - (base + initialY + ys.first()))
         val measuresLast = calculateLast("total")
-        val yPrevLast = calculateLast(base + initialY + ys.first())
-        val yNextLast = calculateLast(yNext.last())
-        val yMinLast = calculateLast(min(yNext.last(), base))
-        val yMaxLast = calculateLast(max(yNext.last(), base))
-        val flowTypeLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
+        val initialsLast = calculateLast(base + initialY + ys.first())
+        val valuesLast = calculateLast(values.last())
+        val yMinsLast = calculateLast(min(values.last(), base))
+        val yMaxsLast = calculateLast(max(values.last(), base))
+        val flowTypesLast = calculateLast(flowTypeTitles[FlowType.TOTAL]?.title)
 
         return mapOf(
             WaterfallBox.Var.X to (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList(),
             WaterfallBox.Var.XLAB to xs + xsLast,
-            WaterfallBox.Var.YMIN to yMin + yMinLast,
-            WaterfallBox.Var.YMAX to yMax + yMaxLast,
+            WaterfallBox.Var.YMIN to yMins + yMinsLast,
+            WaterfallBox.Var.YMAX to yMaxs + yMaxsLast,
             WaterfallBox.Var.MEASURE to measures + measuresLast,
-            WaterfallBox.Var.FLOW_TYPE to flowType + flowTypeLast,
-            WaterfallBox.Var.INITIAL to yPrev + yPrevLast,
-            WaterfallBox.Var.CUMULATIVE_SUM to yNext + yNextLast,
+            WaterfallBox.Var.FLOW_TYPE to flowTypes + flowTypesLast,
+            WaterfallBox.Var.INITIAL to initials + initialsLast,
+            WaterfallBox.Var.VALUE to values + valuesLast,
             WaterfallBox.Var.DIFFERENCE to ys + ysLast,
         )
     }
@@ -128,9 +151,10 @@ internal object WaterfallUtil {
             WaterfallBox.Var.XLAB to emptyList(),
             WaterfallBox.Var.YMIN to emptyList<Double>(),
             WaterfallBox.Var.YMAX to emptyList<Double>(),
+            WaterfallBox.Var.MEASURE to emptyList<String>(),
             WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
             WaterfallBox.Var.INITIAL to emptyList<Double>(),
-            WaterfallBox.Var.CUMULATIVE_SUM to emptyList<Double>(),
+            WaterfallBox.Var.VALUE to emptyList<Double>(),
             WaterfallBox.Var.DIFFERENCE to emptyList<Double>(),
         )
     }
@@ -139,16 +163,22 @@ internal object WaterfallUtil {
         boxData: Map<String, List<*>>,
         radius: Double
     ): Map<String, List<*>> {
-        val rs = boxData.getValue(WaterfallBox.Var.X).let { xs ->
-            if (xs.isEmpty()) {
+        val rs = boxData.getValue(WaterfallBox.Var.MEASURE).let { measures ->
+            if (measures.isEmpty()) {
                 emptyList()
             } else {
-                List(xs.size - 1) { radius } + listOf(0.0)
+                measures.drop(1).map {
+                    if (it == "absolute") {
+                        0.0
+                    } else {
+                        radius
+                    }
+                } + listOf(0.0)
             }
         }
         return mapOf(
             WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X),
-            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM),
+            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.VALUE),
             WaterfallConnector.Var.RADIUS to rs
         )
     }
@@ -171,11 +201,11 @@ internal object WaterfallUtil {
         val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
         val ys = (yMin zip yMax).map { (min, max) -> (min + max) / 2 }
         val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
-        val cumulativeSum = boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM)
+        val values = boxData.getValue(WaterfallBox.Var.VALUE)
         val flowType = boxData.getValue(WaterfallBox.Var.FLOW_TYPE)
         val labels = flowType.indices.map { i ->
             if (totalTitle != null && flowType[i] == totalTitle) {
-                cumulativeSum[i]
+                values[i]
             } else {
                 dys[i]
             }

@@ -46,7 +46,19 @@ class WaterfallPlotOptionsBuilder(
 
     fun build(): PlotOptions {
         val layerData = getLayerData()
-        val totalIsCalculated = layerData.box[WaterfallBox.Var.MEASURE]?.contains("total") ?: calcTotal
+        val flowTypesForLegend = layerData.box.getValue(WaterfallBox.Var.MEASURE).let {
+            if (it.contains("total")) {
+                emptySet()
+            } else {
+                setOf(FlowType.TOTAL)
+            } + if (it.contains("absolute")) {
+                emptySet()
+            } else {
+                setOf(FlowType.ABSOLUTE)
+            }
+        }.let {
+            FlowType.list(totalTitle, it).values
+        }
         val boxOptions = LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
             it.data = layerData.box
@@ -84,14 +96,14 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.COLOR
                     name = FLOW_TYPE_NAME
-                    breaks = FlowType.list(totalTitle, totalIsCalculated).values.map(FlowType.FlowTypeData::title)
-                    values = FlowType.list(totalTitle, totalIsCalculated).values.map(FlowType.FlowTypeData::color)
+                    breaks = flowTypesForLegend.map(FlowType.FlowTypeData::title)
+                    values = flowTypesForLegend.map(FlowType.FlowTypeData::color)
                 },
                 scale {
                     aes = Aes.FILL
                     name = FLOW_TYPE_NAME
-                    breaks = FlowType.list(totalTitle, totalIsCalculated).values.map(FlowType.FlowTypeData::title)
-                    values = FlowType.list(totalTitle, totalIsCalculated).values.map(FlowType.FlowTypeData::color)
+                    breaks = flowTypesForLegend.map(FlowType.FlowTypeData::title)
+                    values = flowTypesForLegend.map(FlowType.FlowTypeData::color)
                 }
             )
             themeOptions = theme {
@@ -140,7 +152,7 @@ class WaterfallPlotOptionsBuilder(
                     flowTypeTitles = FlowType.list(totalTitle)
                 )
                 measureInitialX += statData[WaterfallBox.Var.X]?.size ?: initialX
-                measureInitialY = statData[WaterfallBox.Var.CUMULATIVE_SUM]?.lastOrNull() as? Double ?: BASE
+                measureInitialY = statData[WaterfallBox.Var.VALUE]?.lastOrNull() as? Double ?: BASE
                 statData
             }
             .let { datasets ->
@@ -229,14 +241,15 @@ class WaterfallPlotOptionsBuilder(
     enum class FlowType(val title: String, val color: String) {
         INCREASE( "Increase", "#4daf4a"),
         DECREASE("Decrease", "#e41a1c"),
+        ABSOLUTE("Absolute", "#377eb8"),
         TOTAL( "Total","#377eb8");
 
         data class FlowTypeData(val title: String, val color: String)
 
         companion object {
-            fun list(totalTitle: String?, withTotal: Boolean = true): Map<FlowType, FlowTypeData> {
+            fun list(totalTitle: String?, skip: Set<FlowType> = emptySet()): Map<FlowType, FlowTypeData> {
                 return entries
-                    .filter { withTotal || it != TOTAL }
+                    .filter { it !in skip }
                     .associateWith { flowType ->
                         when (flowType) {
                             TOTAL -> FlowTypeData(totalTitle ?: flowType.title, flowType.color)
@@ -296,7 +309,7 @@ class WaterfallPlotOptionsBuilder(
         private const val BASE = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
-        private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
+        private const val VALUE_TOOLTIP_NAME = "Current value"
         private const val CONNECTOR_POSITION_NAME = "nudge"
         private const val TOOLTIPS_VALUE_FORMAT = ".2~f"
 
@@ -312,12 +325,12 @@ class WaterfallPlotOptionsBuilder(
             lines = listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
                 "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
-                "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.CUMULATIVE_SUM}",
+                "$VALUE_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
             )
             formats = listOf(
                 WaterfallBox.Var.INITIAL,
                 WaterfallBox.Var.DIFFERENCE,
-                WaterfallBox.Var.CUMULATIVE_SUM,
+                WaterfallBox.Var.VALUE,
             ).map { f ->
                 TooltipsOptions.format {
                     field = f
