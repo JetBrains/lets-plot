@@ -269,6 +269,7 @@ internal object WaterfallUtil {
                     .sortedByDescending { (_, y) -> y.absoluteValue }
                     .map(IndexedValue<*>::index)
                     .subList(0, maxValues)
+                    .sorted()
                 val otherValue = series.second.withIndex().filter { it.index !in indices }.sumOf { it.value }
                 val xs = series.first.slice(indices)
                 val ys = series.second.slice(indices)
