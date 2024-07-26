@@ -27,8 +27,14 @@ def waterfall_plot(data, x, y, *,
         Name of a variable. All values should be distinct.
     y : str
         Name of a numeric variable.
-    measure : {'relative', 'total'}
-        Kind of numeric value.
+    measure : str
+        Kind of a calculation.
+        Values in 'measure' column could be:
+
+        'absolute' - the value is shown as is;
+        'relative' - the value is shown as a difference from the previous value;
+        'total' - the value is shown as a cumulative sum of all previous values.
+
     group : str
         Grouping variable. Each group calculates its own statistics.
     color : str
@@ -59,8 +65,10 @@ def waterfall_plot(data, x, y, *,
         Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
     calc_total : bool, default=True
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
+        Taken into account only if the 'measure' column isn't provided.
     total_title : str
-        The header of the last box with the final cumulative sum.
+        The header of the last box with the final cumulative sum, if 'measure' column isn't provided.
+        Also used as a title in the legend for columns of type 'total'.
     hline : str or dict
         Horizontal line passing through 0.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -100,7 +108,7 @@ def waterfall_plot(data, x, y, *,
     - @ymax : upper value of the change; could be used in tooltips
     - @flow_type : direction of the flow: increasing, decreasing, or the result (total); could be used in tooltips
     - @initial : initial value of the change; could be used in tooltips
-    - @cumsum : current cumsum (result of the change); could be used in tooltips
+    - @value : current cumsum (result of the change) or absolute value (depending on the 'measure' column); could be used in tooltips
     - @dy : value of the change; could be used in tooltips
 
     Examples
@@ -165,13 +173,32 @@ def waterfall_plot(data, x, y, *,
         waterfall_plot(data, 'x', 'y', sorted_value=True, max_values=5, calc_total=False, \
                        tooltips=layer_tooltips().title("Category: @x")
                                                 .format("@initial", ".2~f")
-                                                .format("@cumsum", ".2~f")
+                                                .format("@value", ".2~f")
                                                 .format("@dy", ".2~f")
-                                                .line("@{flow_type}d from @initial to @cumsum")
+                                                .line("@{flow_type}d from @initial to @value")
                                                 .line("Difference: @dy")
                                                 .disable_splitting(), \
                        size=1, alpha=.5, \
                        label=element_text(color="black"), label_format=".4f")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        from lets_plot import *
+        from lets_plot.bistro.waterfall import *
+        LetsPlot.setup_html()
+        data = {
+            'company': ["Badgersoft"] * 7 + ["AIlien Co."] * 7,
+            'accounts': ["initial", "revenue", "costs", "Q1", "revenue", "costs", "Q2"] * 2,
+            'values': [200, 200, -100, None, 250, -100, None, \\
+                       150, 50, -100, None, 100, -100, None],
+            'measure': ['absolute', 'relative', 'relative', 'total', 'relative', 'relative', 'total'] * 2,
+        }
+        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company') + \\
+            facet_wrap(facets='company', scales='free_x')
 
     """
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
