@@ -22,8 +22,8 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
 
-- `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
+- `threshold` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)].  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_threshold.ipynb).
                                                           
 - Color Scales Using Matplotlib's Colormap [[#1110](https://github.com/JetBrains/lets-plot/issues/1110)].
 
