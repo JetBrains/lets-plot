@@ -9,36 +9,35 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_band.ipynb).
 
-- Legend title in `guide_legend()` and `guide_colorbar()`.
+- Legend title in `guide_legend()` and `guide_colorbar()`:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
 
-- Parameter `override_aes` in `guide_legend()`.
+- Parameter `override_aes` in `guide_legend()` [[#807](https://github.com/JetBrains/lets-plot/issues/807)]:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_override_aes.ipynb).
 
-- Manual customization of the legend [[#774](https://github.com/JetBrains/lets-plot/issues/774)]:<br/>
+- Manual customization of the legend [[#774](https://github.com/JetBrains/lets-plot/issues/774)]:  
   `manual_key` layer parameter that specifies a legend label or advanced settings using the `layer_key()` function.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
 
-- `plot_title_position` and `plot_caption_position` parameters in `theme()` [[#1027](https://github.com/JetBrains/lets-plot/issues/1027)].
+- `plot_title_position` and `plot_caption_position` parameters in `theme()` [[#1027](https://github.com/JetBrains/lets-plot/issues/1027)]:
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
 
-- `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)].  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
+- `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
                                                           
-- Color Scales Using Matplotlib's Colormap [[#1110](https://github.com/JetBrains/lets-plot/issues/1110)].
+- Color scales using Matplotlib's colormap [[#1110](https://github.com/JetBrains/lets-plot/issues/1110)]:
 
   Thanks to a contribution by Eric Gayer.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/scale_cmapmpl.ipynb).
-
-
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/scale_cmapmpl.ipynb).
 
 ### Changed
-- [**breaking change**] `guide_legend()/guide_colorbar()` require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
+- [**breaking change**] `guide_legend()`/`guide_colorbar()` require keyword arguments for 'nrow'/'barwidth' and other parameters except 'title'.
 - The triangular point shape is now anchored to the data point via the centroid.
  
 ### Fixed
@@ -46,5 +45,6 @@
 - `linetype` = 0 ('blank') should make lines invisible [[#712](https://github.com/JetBrains/lets-plot/issues/712)].
 - `geom_density2d`: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
 - Int DataFrame column names are being converted to float string representation [[#901](https://github.com/JetBrains/lets-plot/issues/901)].
-- Discrete axis labels unnecessary rotate 90 degrees when applying coord system limits.
+- Discrete axis labels unnecessarily rotate 90 degrees when applying coord system limits.
 - Axis title via `labs()` breaks the date-time scale [[#1113](https://github.com/JetBrains/lets-plot/issues/1113)].
+
