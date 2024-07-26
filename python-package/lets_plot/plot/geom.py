@@ -18,6 +18,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
+           'geom_band',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
@@ -847,7 +848,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None, trim=None,
+                   sampling=None, threshold=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -888,9 +889,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    trim : bool, default=False
-        If False, each histogram is computed on the full range of the data.
-        If True, each histogram is computed over the range of that group.
+    threshold : float, default=None
+        If a bin's `..count..` is less than the threshold, the bin will be removed. This is useful for free scales in facets.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -989,6 +989,29 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                            center=0, binwidth=1, \\
                            color='black', fill='gray', size=1)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 14
+
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        import numpy as np
+
+        LetsPlot.setup_html()
+
+        data = {
+            "x": np.append(np.random.normal(0, 5, 1000), np.random.normal(10, 1, 1000)),
+            "g1": np.append(np.repeat("2", 1000), np.repeat("1", 1000)),
+            "g2": np.random.binomial(1,0.5,2000)
+        }
+
+        ggplot(data, aes(x = "x", fill = as_discrete("g2"))) + \\
+            geom_histogram(threshold=0) + \\
+            scale_fill_hue() + \\
+            facet_wrap(facets = "g1", scales = "free_x")
+
     """
     return _geom('histogram',
                  mapping=mapping,
@@ -998,7 +1021,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  manual_key=manual_key,
                  sampling=sampling,
-                 trim=trim,
+                 threshold=threshold,
                  tooltips=tooltips,
                  labels=labels,
                  orientation=orientation,
@@ -2853,6 +2876,118 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  slope=slope,
                  intercept=intercept,
                  color_by=color_by,
+                 **other_args)
+
+
+def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+              tooltips=None,
+              color_by=None, fill_by=None,
+              **other_args):
+    """
+    Add a straight vertical or horizontal band to the plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_band()` understands the following aesthetics mappings:
+
+    - xmin : x-axis value.
+    - xmax : x-axis value.
+    - ymin : y-axis value.
+    - ymax : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - size : lines width.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_band(xmin=-1, xmax=1)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 16-19
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 11
+        w = 5
+        color = "orange"
+        xdata = {
+            "xmin": list(range(0, w * n, w)),
+            "xmax": list(range(1, w * n + 1, w)),
+        }
+        ydata = {
+            "ymin": [0, 10],
+            "ymax": [10, 15],
+            "color": [color, "white"],
+        }
+        ggplot() + \\
+            geom_band(aes(xmin="xmin", xmax="xmax"), data=xdata, \\
+                      size=0, fill=color, tooltips='none') + \\
+            geom_band(aes(ymin="ymin", ymax="ymax", fill="color"), data=ydata, \\
+                      size=0, tooltips='none') + \\
+            scale_fill_identity() + \\
+            coord_polar(xlim=[0, w * n], ylim=[0, 25]) + \\
+            theme_void()
+
+    """
+    return _geom('band',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 color_by=color_by,
+                 fill_by=fill_by,
                  **other_args)
 
 

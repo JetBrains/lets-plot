@@ -5,6 +5,10 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
 
+- Band geometry [[#733](https://github.com/JetBrains/lets-plot/issues/733)]:
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_band.ipynb).
+
 - Legend title in `guide_legend()` and `guide_colorbar()`.
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
@@ -24,6 +28,12 @@
 
 - `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)].  
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
+                                                          
+- Color Scales Using Matplotlib's Colormap [[#1110](https://github.com/JetBrains/lets-plot/issues/1110)].
+
+  Thanks to a contribution by Eric Gayer.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/scale_cmapmpl.ipynb).
 
 
 

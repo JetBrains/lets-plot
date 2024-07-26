@@ -45,7 +45,7 @@ object StatProto {
                     binWidth = options.getDouble(Bin.BINWIDTH),
                     center = options.getDouble(Bin.CENTER),
                     boundary = options.getDouble(Bin.BOUNDARY),
-                    trim = options.getBoolean(Bin.TRIM, BinStat.DEF_TRIM)
+                    threshold = options.getDouble(Bin.THRESHOLD)
                 )
             }
 

@@ -414,7 +414,7 @@ object Option {
         }
 
         object Bin {
-            const val TRIM = "trim"
+            const val THRESHOLD = "threshold"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val METHOD = "method"
@@ -888,6 +888,7 @@ object Option {
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
+        private const val BAND = "band"
         const val BOX_PLOT = "boxplot"
         private const val AREA_RIDGES = "area_ridges"
         private const val VIOLIN = "violin"
@@ -941,6 +942,7 @@ object Option {
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
+            map[BAND] = GeomKind.BAND
             map[BOX_PLOT] = GeomKind.BOX_PLOT
             map[AREA_RIDGES] = GeomKind.AREA_RIDGES
             map[VIOLIN] = GeomKind.VIOLIN

@@ -103,6 +103,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.DENSITY,
                 GeomKind.RECT,
                 GeomKind.RIBBON,
+                GeomKind.BAND,
                 GeomKind.MAP -> Colors.withOpacity(color, 0.1)
 
                 GeomKind.BAR,

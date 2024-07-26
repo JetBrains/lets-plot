@@ -67,8 +67,8 @@ internal class PlotToolEventDispatcher(
             )
 
             ToolInteractionSpec.BOX_ZOOM -> {
-                val fixedAspectRatio = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
-                DrawRectFeedback(fixedAspectRatio) { dataBounds ->
+                val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
+                DrawRectFeedback(centerStart) { dataBounds ->
                     println("client: data $dataBounds")
                     completeInteraction(origin, interactionName, dataBounds)
                 }

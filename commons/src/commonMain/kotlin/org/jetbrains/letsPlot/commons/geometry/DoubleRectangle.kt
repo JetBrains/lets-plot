@@ -37,6 +37,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
     val height: Double
         get() = dimension.y
 
+    // top, left, right, bottom
     val parts: Iterable<DoubleSegment>
         get() {
             val result = ArrayList<DoubleSegment>()
@@ -46,6 +47,15 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             result.add(DoubleSegment(origin.add(dimension), origin.add(DoubleVector(0.0, dimension.y))))
             return result
         }
+
+    val points: List<DoubleVector>
+        get() = listOf(
+            origin,
+            origin.add(DoubleVector(dimension.x, 0.0)),
+            origin.add(dimension),
+            origin.add(DoubleVector(0.0, dimension.y)),
+            origin
+        )
 
     constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h))
 
