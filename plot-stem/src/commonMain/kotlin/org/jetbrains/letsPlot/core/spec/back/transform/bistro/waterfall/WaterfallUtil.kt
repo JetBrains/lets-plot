@@ -56,7 +56,7 @@ internal object WaterfallUtil {
             val groupValues = data.getValue(group)
             val result = mutableListOf<Map<String, List<*>>>()
             for (g in groupValues.distinct()) {
-                val indices = groupValues.withIndex().map { (i, v) -> Pair(i, v) }.filter { (i, v) -> v == g }.unzip().first
+                val indices = groupValues.withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> v == g }.unzip().first
                 result.add(data.entries.associate { (k, v) -> k to v.slice(indices) })
             }
             result
@@ -139,10 +139,17 @@ internal object WaterfallUtil {
         boxData: Map<String, List<*>>,
         radius: Double
     ): Map<String, List<*>> {
+        val rs = boxData.getValue(WaterfallBox.Var.X).let { xs ->
+            if (xs.isEmpty()) {
+                emptyList()
+            } else {
+                List(xs.size - 1) { radius } + listOf(0.0)
+            }
+        }
         return mapOf(
             WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X),
             WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM),
-            WaterfallConnector.Var.RADIUS to List(boxData.getValue(WaterfallBox.Var.X).size - 1) { radius } + listOf(0.0)
+            WaterfallConnector.Var.RADIUS to rs
         )
     }
 
@@ -187,7 +194,7 @@ internal object WaterfallUtil {
     ): Boolean {
         val df = DataFrameUtil.fromMap(data)
         val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
-        val measures = df[measureVar].map { it!!.toString() }
+        val measures = df[measureVar].map { it?.toString() }
         return measures.lastOrNull() == "total"
     }
 
@@ -219,7 +226,7 @@ internal object WaterfallUtil {
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
 
-        val measures = df[measureVar].map { it!!.toString() }
+        val measures = df[measureVar].map { it?.toString() }
         val xs = df[xVar].map { it?.toString() }
         val ys = df.getNumeric(yVar)
 
@@ -230,8 +237,8 @@ internal object WaterfallUtil {
             return s
         }
         val (ms, ps) = (dropLastFilter(measures) zip (dropLastFilter(xs) zip dropLastFilter(ys)))
-            .filter { (_, p) -> p.first != null && SeriesUtil.isFinite(p.second) }
-            .map { (m, p) -> Pair(m, Pair(p.first!!, p.second!!)) }
+            .filter { (m, p) -> m != null && p.first != null && SeriesUtil.isFinite(p.second) }
+            .map { (m, p) -> Pair(m!!, Pair(p.first!!, p.second!!)) }
             .unzip()
         val (newXs, newYs) = ps.unzip()
         return Triple(newXs, newYs, ms)
