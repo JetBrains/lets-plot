@@ -26,9 +26,9 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
 
-- `trim` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)]:
+- `threshold` for `geom_histogram()` [[#1122](https://github.com/JetBrains/lets-plot/issues/1122)]:  
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_trim.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_histogram_threshold.ipynb).
                                                           
 - Color scales using Matplotlib's colormap [[#1110](https://github.com/JetBrains/lets-plot/issues/1110)]:
 
@@ -47,4 +47,5 @@
 - Int DataFrame column names are being converted to float string representation [[#901](https://github.com/JetBrains/lets-plot/issues/901)].
 - Discrete axis labels unnecessarily rotate 90 degrees when applying coord system limits.
 - Axis title via `labs()` breaks the date-time scale [[#1113](https://github.com/JetBrains/lets-plot/issues/1113)].
+- JavaFX IllegalArgumentException: Unsupported attribute `display` in Pane.
 
