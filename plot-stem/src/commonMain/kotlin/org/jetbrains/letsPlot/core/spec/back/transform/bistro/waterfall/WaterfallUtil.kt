@@ -142,9 +142,7 @@ internal object WaterfallUtil {
         return mapOf(
             WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X),
             WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.CUMULATIVE_SUM),
-            WaterfallConnector.Var.RADIUS to boxData.getValue(WaterfallBox.Var.MEASURE).map {
-                if (it == "total") 0.0 else radius
-            }
+            WaterfallConnector.Var.RADIUS to List(boxData.getValue(WaterfallBox.Var.X).size - 1) { radius } + listOf(0.0)
         )
     }
 
@@ -244,7 +242,7 @@ internal object WaterfallUtil {
         sortedValue: Boolean
     ): Triple<List<Any>, List<Double>, List<String>> {
         if (!sortedValue) return series
-        val (ys, ps) = (series.second zip (series.third zip series.third))
+        val (ys, ps) = (series.second zip (series.first zip series.third))
             .sortedByDescending { (y, _) -> y.absoluteValue }
             .unzip()
         val (xs, ms) = ps.unzip()
