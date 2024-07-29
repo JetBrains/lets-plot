@@ -73,6 +73,17 @@ internal object WaterfallUtil {
         }
     }
 
+    fun markSkipBoxes(data: Map<String, List<*>>, key: String, filter: (Any?) -> Boolean): Map<String, List<*>> {
+        val indices = data.getValue(key).withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
+        return data.entries.associate { (k, v) ->
+            k to when (k) {
+                WaterfallBox.Var.YMIN,
+                WaterfallBox.Var.YMAX -> v.mapIndexed { i, y -> if (i in indices) y else null }
+                else -> v
+            }
+        }
+    }
+
     fun calculateBoxStat(
         data: Map<String, List<*>>,
         x: String,
@@ -124,9 +135,9 @@ internal object WaterfallUtil {
         val calcTotal = calcTotal(data, measure)
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
         val xsLast = calculateLast(extractTotalTitle(data, x, flowTypeTitles, calcTotal))
-        val ysLast = calculateLast(values.last() - (base + initialY + ys.first()))
+        val ysLast = calculateLast(values.last() - (base + initialY))
         val measuresLast = calculateLast("total")
-        val initialsLast = calculateLast(base + initialY + ys.first())
+        val initialsLast = calculateLast(base + initialY)
         val valuesLast = calculateLast(values.last())
         val yMinsLast = calculateLast(min(values.last(), base))
         val yMaxsLast = calculateLast(max(values.last(), base))

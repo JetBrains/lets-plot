@@ -112,7 +112,7 @@ class Waterfall {
                 'm': ['absolute', 'relative', 'relative', 'relative', 'total', 'relative', 'relative', 'relative', 'relative', null, 'total']
               },
               'ggtitle': {
-                'text': 'With grouping'
+                'text': 'With measure'
               },
               'bistro': {
                 'name': 'waterfall',

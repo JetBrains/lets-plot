@@ -10,7 +10,7 @@ def waterfall_plot(data, x, y, *,
                    measure=None, group=None,
                    color=None, fill=None, size=None, alpha=None, linetype=None,
                    width=None,
-                   show_legend=None, tooltips=None,
+                   show_legend=None, tooltips=None, absolute_tooltips=None,
                    sorted_value=None, threshold=None, max_values=None,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
@@ -55,6 +55,11 @@ def waterfall_plot(data, x, y, *,
     show_legend : bool, default=False
         True - show the legend.
     tooltips : `layer_tooltips`
+        Tooltips for boxes with relative values.
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    absolute_tooltips : `layer_tooltips`
+        Tooltips for boxes with absolute values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     sorted_value : bool, default=False
@@ -215,6 +220,7 @@ def waterfall_plot(data, x, y, *,
         'width': width,
         'show_legend': show_legend,
         'tooltips': tooltips,
+        'absolute_tooltips': absolute_tooltips,
         'sorted_value': sorted_value,
         'threshold': threshold,
         'max_values': max_values,

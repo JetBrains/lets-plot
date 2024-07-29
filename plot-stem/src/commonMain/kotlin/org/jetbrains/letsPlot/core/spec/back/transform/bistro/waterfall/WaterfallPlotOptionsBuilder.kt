@@ -31,6 +31,7 @@ class WaterfallPlotOptionsBuilder(
     private val width: Double,
     private val showLegend: Boolean?,
     private val tooltipsOptions: TooltipsOptions?,
+    private val absoluteTooltipsOptions: TooltipsOptions?,
     private val calcTotal: Boolean,
     private val totalTitle: String?,
     private val sortedValue: Boolean,
@@ -59,28 +60,31 @@ class WaterfallPlotOptionsBuilder(
         }.let {
             FlowType.list(totalTitle, it).values
         }
-        val boxOptions = LayerOptions().also {
-            it.geom = GeomKind.CROSS_BAR
-            it.data = layerData.box
-            it.mappings = boxMappings()
-            it.color = color.takeUnless { color == FLOW_TYPE_COLOR_VALUE }
-            it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_VALUE }
-            it.size = size
-            it.alpha = alpha
-            it.linetype = LineTypeOptionConverter().apply(lineType)
-            it.width = width
-            it.showLegend = showLegend
-            if (tooltipsOptions != null) {
-                it.tooltipsOptions = tooltipsOptions
-            } else {
-                it.setParameter(Option.Layer.TOOLTIPS, "none")
-            }
-        }
+        val relativeBoxOptions = boxOptions(
+            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it == "relative" },
+            tooltipsOptions
+        )
+        val absoluteBoxOptions = boxOptions(
+            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it != "relative" },
+            absoluteTooltipsOptions
+        )
         return plot {
             layerOptions = if (hLineOnTop) {
-                listOfNotNull(connectorOptions(layerData.connector), boxOptions, labelOptions(layerData.label), hLineOptions())
+                listOfNotNull(
+                    connectorOptions(layerData.connector),
+                    relativeBoxOptions,
+                    absoluteBoxOptions,
+                    labelOptions(layerData.label),
+                    hLineOptions()
+                )
             } else {
-                listOfNotNull(hLineOptions(), connectorOptions(layerData.connector), boxOptions, labelOptions(layerData.label))
+                listOfNotNull(
+                    hLineOptions(),
+                    connectorOptions(layerData.connector),
+                    relativeBoxOptions,
+                    absoluteBoxOptions,
+                    labelOptions(layerData.label)
+                )
             }
             scaleOptions = listOf(
                 scale {
@@ -160,11 +164,31 @@ class WaterfallPlotOptionsBuilder(
             }
     }
 
+    private fun boxOptions(boxData: Map<String, List<Any?>>, tooltipsOptions: TooltipsOptions?): LayerOptions {
+        return LayerOptions().also {
+            it.geom = GeomKind.CROSS_BAR
+            it.data = boxData
+            it.mappings = boxMappings()
+            it.color = color.takeUnless { color == FLOW_TYPE_COLOR_VALUE }
+            it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_VALUE }
+            it.size = size
+            it.alpha = alpha
+            it.linetype = LineTypeOptionConverter().apply(lineType)
+            it.width = width
+            it.showLegend = showLegend
+            if (tooltipsOptions != null) {
+                it.tooltipsOptions = tooltipsOptions
+            } else {
+                it.setParameter(Option.Layer.TOOLTIPS, "none")
+            }
+        }
+    }
+
     private fun boxMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
             WaterfallBox.AES_X to WaterfallBox.Var.X,
             WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
-            WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX,
+            WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX
         )
         if (color == FLOW_TYPE_COLOR_VALUE) {
             mappings[WaterfallBox.AES_COLOR] = WaterfallBox.Var.FLOW_TYPE
@@ -309,7 +333,8 @@ class WaterfallPlotOptionsBuilder(
         private const val BASE = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
-        private const val VALUE_TOOLTIP_NAME = "Current value"
+        private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
+        private const val VALUE_TOOLTIP_NAME = "Value"
         private const val CONNECTOR_POSITION_NAME = "nudge"
         private const val TOOLTIPS_VALUE_FORMAT = ".2~f"
 
@@ -325,7 +350,7 @@ class WaterfallPlotOptionsBuilder(
             lines = listOf(
                 "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
                 "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
-                "$VALUE_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
+                "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
             )
             formats = listOf(
                 WaterfallBox.Var.INITIAL,
@@ -337,6 +362,19 @@ class WaterfallPlotOptionsBuilder(
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             }
+        }
+        val DEF_ABSOLUTE_TOOLTIPS = tooltips {
+            title = "@${WaterfallBox.Var.XLAB}"
+            disableSplitting = true
+            lines = listOf(
+                "$VALUE_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
+            )
+            formats = listOf(
+                TooltipsOptions.format {
+                    field = WaterfallBox.Var.VALUE
+                    format = TOOLTIPS_VALUE_FORMAT
+                }
+            )
         }
         val DEF_H_LINE = ElementLineOptions(
             lineType = LineTypeOptionConverter().apply("dashed"),

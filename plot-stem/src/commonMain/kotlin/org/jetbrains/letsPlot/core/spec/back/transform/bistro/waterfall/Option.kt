@@ -22,6 +22,7 @@ object Option {
         const val WIDTH = "width"
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
+        const val ABSOLUTE_TOOLTIPS = "absolute_tooltips"
         const val CALCULATE_TOTAL = "calc_total"
         const val TOTAL_TITLE = "total_title"
         const val SORTED_VALUE = "sorted_value"
