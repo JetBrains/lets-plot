@@ -191,15 +191,15 @@ class WaterfallPlotOptionsBuilder(
 
     private fun boxMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
-            WaterfallBox.AES_X to WaterfallBox.Var.X,
-            WaterfallBox.AES_YMIN to WaterfallBox.Var.YMIN,
-            WaterfallBox.AES_YMAX to WaterfallBox.Var.YMAX
+            Aes.X to WaterfallBox.Var.X,
+            Aes.YMIN to WaterfallBox.Var.YMIN,
+            Aes.YMAX to WaterfallBox.Var.YMAX
         )
         if (color == FLOW_TYPE_COLOR_VALUE) {
-            mappings[WaterfallBox.AES_COLOR] = WaterfallBox.Var.FLOW_TYPE
+            mappings[Aes.COLOR] = WaterfallBox.Var.FLOW_TYPE
         }
         if (fill == FLOW_TYPE_COLOR_VALUE) {
-            mappings[WaterfallBox.AES_FILL] = WaterfallBox.Var.FLOW_TYPE
+            mappings[Aes.FILL] = WaterfallBox.Var.FLOW_TYPE
         }
         return mappings
     }
@@ -222,9 +222,9 @@ class WaterfallPlotOptionsBuilder(
             it.geom = GeomKind.SPOKE
             it.data = connectorData
             it.mappings = mapOf(
-                WaterfallConnector.AES_X to WaterfallConnector.Var.X,
-                WaterfallConnector.AES_Y to WaterfallConnector.Var.Y,
-                WaterfallConnector.AES_RADIUS to WaterfallConnector.Var.RADIUS
+                Aes.X to WaterfallConnector.Var.X,
+                Aes.Y to WaterfallConnector.Var.Y,
+                Aes.RADIUS to WaterfallConnector.Var.RADIUS
             )
             it.angle = 0.0
             it.position = position {
@@ -257,12 +257,12 @@ class WaterfallPlotOptionsBuilder(
 
     private fun labelMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
-            WaterfallLabel.AES_X to WaterfallLabel.Var.X,
-            WaterfallLabel.AES_Y to WaterfallLabel.Var.Y,
-            WaterfallLabel.AES_LABEL to WaterfallLabel.Var.LABEL,
+            Aes.X to WaterfallLabel.Var.X,
+            Aes.Y to WaterfallLabel.Var.Y,
+            Aes.LABEL to WaterfallLabel.Var.LABEL,
         )
         if (labelOptions.color == FLOW_TYPE_COLOR_VALUE) {
-            mappings[WaterfallLabel.AES_COLOR] = WaterfallLabel.Var.FLOW_TYPE
+            mappings[Aes.COLOR] = WaterfallLabel.Var.FLOW_TYPE
         }
         return mappings
     }

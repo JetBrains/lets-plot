@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-
 object Option {
     object Waterfall {
         const val NAME = "waterfall"
@@ -39,12 +37,6 @@ object Option {
         const val MEASURE_GROUP = "..measure_group.."
         const val DEF_MEASURE = "..measure.."
 
-        val AES_X = Aes.X
-        val AES_YMIN = Aes.YMIN
-        val AES_YMAX = Aes.YMAX
-        val AES_COLOR = Aes.COLOR
-        val AES_FILL = Aes.FILL
-
         object Var {
             const val X = "x"
             const val XLAB = "xlabel"
@@ -59,10 +51,6 @@ object Option {
     }
 
     object WaterfallConnector {
-        val AES_X = Aes.X
-        val AES_Y = Aes.Y
-        val AES_RADIUS = Aes.RADIUS
-
         object Var {
             const val X = "x"
             const val Y = "y"
@@ -71,11 +59,6 @@ object Option {
     }
 
     object WaterfallLabel {
-        val AES_X = Aes.X
-        val AES_Y = Aes.Y
-        val AES_LABEL = Aes.LABEL
-        val AES_COLOR = Aes.COLOR
-
         object Var {
             const val X = "x"
             const val Y = "y"
