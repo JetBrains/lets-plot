@@ -304,9 +304,9 @@ internal object WaterfallUtil {
     ): Triple<List<Any>, List<Double>, List<String>> {
         return when {
             threshold != null -> {
-                val toRemove: (Double) -> Boolean = { it.absoluteValue <= threshold }
-                val otherValue = series.second.filter { toRemove(it) }.sum()
-                val (ys, ps) = (series.second zip (series.first zip series.third)).filter { (y, _) -> !toRemove(y) }.unzip()
+                val toExclude: (Double) -> Boolean = { it.absoluteValue <= threshold }
+                val otherValue = series.second.filter { toExclude(it) }.sum()
+                val (ys, ps) = (series.second zip (series.first zip series.third)).filter { (y, _) -> !toExclude(y) }.unzip()
                 val (xs, ms) = ps.unzip()
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
