@@ -36,7 +36,7 @@ object Option {
     }
 
     object WaterfallBox {
-        const val MEASURE_GROUP = "measure_group"
+        const val MEASURE_GROUP = "..measure_group.."
         const val DEF_MEASURE = "..measure.."
 
         val AES_X = Aes.X
