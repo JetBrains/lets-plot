@@ -7,7 +7,7 @@ from .core import FeatureSpec
 __all__ = ['guide_legend', 'guide_colorbar', 'guides', 'layer_key']
 
 
-def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None):
+def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None, override_aes=None):
     """
     Legend guide.
 
@@ -21,6 +21,10 @@ def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None):
         Number of columns in legend's guide.
     byrow : bool, default=True
         Type of output: by row, or by column.
+    override_aes : dict
+        Dictionary that maps aesthetic parameters to new values, overriding the default legend appearance.
+        Each value can be a constant applied to all keys or a list that changes particular keys.
+
 
     Returns
     -------

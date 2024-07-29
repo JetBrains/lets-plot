@@ -705,6 +705,7 @@ object Option {
             const val ROW_COUNT = "nrow"
             const val COL_COUNT = "ncol"
             const val BY_ROW = "byrow"
+            const val OVERRIDE_AES = "override_aes"
         }
 
         object ColorBar {

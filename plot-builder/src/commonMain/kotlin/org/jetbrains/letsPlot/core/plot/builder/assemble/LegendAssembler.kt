@@ -38,6 +38,7 @@ class LegendAssembler(
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
         aesList: List<Aes<*>>,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         colorByAes: Aes<Color>,
@@ -49,6 +50,7 @@ class LegendAssembler(
             LegendLayer.createDefaultLegendLayer(
                 keyFactory,
                 aesList,
+                overrideAesValues,
                 constantByAes,
                 aestheticsDefaults,
                 scaleMappers,
@@ -63,6 +65,7 @@ class LegendAssembler(
     fun addCustomLayer(
         customLegendOptions: CustomLegendOptions,
         keyFactory: LegendKeyElementFactory,
+        overrideAesValues: Map<Aes<*>, Any>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         colorByAes: Aes<Color>,
@@ -73,6 +76,7 @@ class LegendAssembler(
             LegendLayer.createCustomLegendLayer(
                 customLegendOptions,
                 keyFactory,
+                overrideAesValues,
                 constantByAes,
                 aestheticsDefaults,
                 colorByAes,
@@ -99,15 +103,7 @@ class LegendAssembler(
             }
         }
 
-        val legendBreaks = ArrayList<LegendBreak>()
-        for (legendBreak in legendBreaksByLabel.values) {
-            if (legendBreak.isEmpty) {
-                continue
-            }
-            legendBreaks.add(legendBreak)
-        }
-
-
+        val legendBreaks = legendBreaksByLabel.values.filterNot { it.isEmpty }
         if (legendBreaks.isEmpty()) {
             return LegendBoxInfo.EMPTY
         }
@@ -143,6 +139,7 @@ class LegendAssembler(
             fun createDefaultLegendLayer(
                 keyElementFactory: LegendKeyElementFactory,
                 aesList: List<Aes<*>>,
+                overrideAesValues: Map<Aes<*>, Any>,
                 constantByAes: Map<Aes<*>, Any>,
                 aestheticsDefaults: AestheticsDefaults,
                 scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
@@ -152,7 +149,7 @@ class LegendAssembler(
                 ctx: PlotContext
             ): LegendLayer {
 
-                val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
+                val labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>> = mutableMapOf()
 
                 for (aes in aesList) {
                     var scale = ctx.getScale(aes)
@@ -165,14 +162,15 @@ class LegendAssembler(
                     val aesValues = scaleBreaks.transformedValues.map {
                         scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
                     }
+
                     val labels = scaleBreaks.labels
-                    for ((label, aesValue) in labels.zip(aesValues)) {
-                        aesValuesByLabel.getOrPut(label) { HashMap() }[aes] = aesValue
-                    }
+                    labelsValuesByAes[aes] = labels to aesValues
                 }
-                // build 'key' aesthetics
+
+                val labelValues = processOverrideAesValues(labelsValuesByAes, overrideAesValues)
+
                 val keyAesthetics = mapToAesthetics(
-                    aesValuesByLabel.values,
+                    labelValues.second,
                     constantByAes.filterKeys {
                         // Derive some aesthetics from constants
                         it in listOf(
@@ -190,7 +188,7 @@ class LegendAssembler(
                 return LegendLayer(
                     keyElementFactory,
                     keyAesthetics,
-                    labels = aesValuesByLabel.keys.toList(),
+                    labels = labelValues.first,
                     guideKeys = aesList.map(GuideKey::fromAes),
                     isMarginal = isMarginal
                 )
@@ -199,15 +197,15 @@ class LegendAssembler(
             fun createCustomLegendLayer(
                 customLegendOptions: CustomLegendOptions,
                 keyElementFactory: LegendKeyElementFactory,
+                overrideAesValues: Map<Aes<*>, Any>,
                 constantByAes: Map<Aes<*>, Any>,
                 aestheticsDefaults: AestheticsDefaults,
                 colorByAes: Aes<Color>,
                 fillByAes: Aes<Color>,
                 isMarginal: Boolean
             ): LegendLayer {
-                 // build 'key' aesthetics
                 val keyAesthetics = mapToAesthetics(
-                    listOf(customLegendOptions.aesValues),
+                    listOf(customLegendOptions.aesValues + overrideAesValues),
                     constantByAes,
                     aestheticsDefaults,
                     colorByAes,
@@ -314,3 +312,62 @@ class LegendAssembler(
         }
     }
 }
+
+internal fun processOverrideAesValues(
+    labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>>,
+    overrideAesValues: Map<Aes<*>, Any>
+): Pair<List<String>, List<Map<Aes<*>, Any>>> {
+    val maxLabelsSize = labelsValuesByAes.values.map { it.first.size }.maxOrNull() ?: 0
+    val overrideAesValueLists = createOverrideAesValueLists(overrideAesValues, maxLabelsSize)
+    return applyOverrideAesLists(overrideAesValueLists, labelsValuesByAes)
+}
+
+internal fun applyOverrideAesLists(
+    overrideAesValueLists: Map<Aes<*>, List<Any?>>,
+    labelsValuesByAes: MutableMap<Aes<*>, Pair<List<String>, List<Any?>>>
+): Pair<List<String>, List<Map<Aes<*>, Any>>> {
+    val labelsLists = labelsValuesByAes.values.map{ it.first }
+
+    labelsLists.forEach { labels ->
+        overrideAesValueLists.forEach { (aesToOverride, valueList) ->
+            val currentValues = labelsValuesByAes.getOrPut(aesToOverride) { labels to valueList }.second
+            val updatedValues = currentValues
+                .zip(valueList)
+                .map { (oldValue, newValue) -> newValue ?: oldValue }
+
+            labelsValuesByAes[aesToOverride] = labels to updatedValues
+        }
+    }
+
+    val keyLabels = labelsLists.flatten().distinct()
+
+    val mapsByLabel = keyLabels.map { label ->
+        labelsValuesByAes.mapNotNull { (aes, pair) ->
+            pair.first.zip(pair.second)
+                .lastOrNull { it.first == label }
+                ?.second
+                ?.let { aes to it }
+        }.toMap()
+    }
+
+    return keyLabels to mapsByLabel
+}
+
+internal fun createOverrideAesValueLists(
+    overrideAesValues: Map<Aes<*>, Any>,
+    maxLabelsSize: Int
+): Map<Aes<*>, List<Any?>> {
+    val overrideAesValueLists = overrideAesValues.mapValues { (_, value) ->
+        val valueList = when (value) {
+            is List<*> -> value.ifEmpty { listOf(null) }
+            else -> listOf(value)
+        }
+        if (maxLabelsSize <= valueList.size) {
+            valueList
+        } else {
+            valueList + List(maxLabelsSize - valueList.size) { valueList.last() }
+        }
+    }
+    return overrideAesValueLists
+}
+

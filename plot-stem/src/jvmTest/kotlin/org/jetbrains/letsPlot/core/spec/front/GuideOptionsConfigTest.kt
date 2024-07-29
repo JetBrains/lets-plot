@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.front
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.assemble.ColorBarOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
@@ -53,7 +54,11 @@ class GuideOptionsConfigTest {
         val guideOptions = mapOf(
             Option.Meta.NAME to Option.Guide.LEGEND,
             Option.Guide.TITLE to "guide title",
-            Option.Guide.Legend.BY_ROW to false
+            Option.Guide.Legend.BY_ROW to false,
+            Option.Guide.Legend.OVERRIDE_AES to mapOf(
+                Aes.COLOR.name to "red",
+                Aes.SIZE.name to 5
+            )
         )
         val options = createGuideOptions(scaleOptions, guideOptions)
 
@@ -62,6 +67,8 @@ class GuideOptionsConfigTest {
         assertEquals("guide title", legendOptions.title)
         assertEquals(2, legendOptions.rowCount)
         assertEquals(false, legendOptions.byRow)
+        assertEquals(Color.RED, legendOptions.overrideAesValues!![Aes.COLOR])
+        assertEquals(5.0, legendOptions.overrideAesValues!![Aes.SIZE])
     }
 
     @Test
@@ -110,7 +117,8 @@ class GuideOptionsConfigTest {
         )
         val guideOptions = PlotConfigFrontendUtil.createGuideOptions(
             listOf(scaleConfig),
-            mapOf(Aes.COLOR.name to guideOptionsMap)
+            mapOf(Aes.COLOR.name to guideOptionsMap),
+            AesOptionConversion.demoAndTest
         )
         return guideOptions[GuideKey.fromAes(Aes.COLOR)]!!
     }

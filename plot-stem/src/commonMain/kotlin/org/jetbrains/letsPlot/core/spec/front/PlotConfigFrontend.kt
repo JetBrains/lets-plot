@@ -33,7 +33,7 @@ class PlotConfigFrontend private constructor(
     internal val yAxisPosition: AxisPosition
 
     init {
-        guideOptionsMap = createGuideOptions(this.scaleConfigs, getMap(GUIDES))
+        guideOptionsMap = createGuideOptions(this.scaleConfigs, getMap(GUIDES), aopConversion)
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition

@@ -70,3 +70,12 @@ def test_guides_and_labs():
     assert as_dict['name'] == 'legend'
     assert as_dict['nrow'] == 1
     assert as_dict['title'] == "Title"
+
+
+def test_override_aes():
+    spec = (gg.ggplot() + gg.guides(color=guide_legend(override_aes=dict(color=['red'], size=10))))
+
+    as_dict = spec.as_dict()['guides']['color']['override_aes']
+    assert as_dict['color'][0] == 'red'
+    assert as_dict['size'] == 10
+
