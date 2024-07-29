@@ -86,6 +86,7 @@ open class BinStat(
 
     companion object {
         const val DEF_BIN_COUNT = 30
+        const val DEF_THRESHOLD = 0.0
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
