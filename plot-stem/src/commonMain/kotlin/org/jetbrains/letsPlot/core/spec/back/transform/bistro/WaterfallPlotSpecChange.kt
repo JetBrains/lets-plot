@@ -63,7 +63,7 @@ class WaterfallPlotSpecChange : SpecChange {
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
             width = bistroSpec.getDouble(Waterfall.WIDTH) ?: DEF_WIDTH,
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: DEF_SHOW_LEGEND,
-            tooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_TOOLTIPS),
+            relativeTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.RELATIVE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_RELATIVE_TOOLTIPS),
             absoluteTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.ABSOLUTE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_ABSOLUTE_TOOLTIPS),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: DEF_CALC_TOTAL,
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),

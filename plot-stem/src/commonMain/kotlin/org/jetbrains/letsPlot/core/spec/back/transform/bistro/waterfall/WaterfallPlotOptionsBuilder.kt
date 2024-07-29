@@ -31,7 +31,7 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double,
     private val showLegend: Boolean?,
-    private val tooltipsOptions: TooltipsOptions?,
+    private val relativeTooltipsOptions: TooltipsOptions?,
     private val absoluteTooltipsOptions: TooltipsOptions?,
     private val calcTotal: Boolean,
     private val totalTitle: String?,
@@ -51,7 +51,7 @@ class WaterfallPlotOptionsBuilder(
         val flowTypeData = getFlowTypeDataForLegend(layerData.box)
         val relativeBoxOptions = boxOptions(
             WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it == Measure.RELATIVE.value },
-            tooltipsOptions
+            relativeTooltipsOptions
         )
         val absoluteBoxOptions = boxOptions(
             WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it != Measure.RELATIVE.value },
@@ -212,7 +212,7 @@ class WaterfallPlotOptionsBuilder(
             color = hLineOptions.color
             size = hLineOptions.size
             linetype = hLineOptions.lineType
-            setParameter(Option.Layer.TOOLTIPS, "none")
+            setParameter(Option.Layer.TOOLTIPS, Option.Layer.NONE)
         }
     }
 
@@ -355,7 +355,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_SHOW_LEGEND = false
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
-        val DEF_TOOLTIPS = tooltips {
+        val DEF_RELATIVE_TOOLTIPS = tooltips {
             title = "@${WaterfallBox.Var.XLAB}"
             disableSplitting = true
             lines = listOf(

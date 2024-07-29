@@ -10,7 +10,7 @@ def waterfall_plot(data, x, y, *,
                    measure=None, group=None,
                    color=None, fill=None, size=None, alpha=None, linetype=None,
                    width=None,
-                   show_legend=None, tooltips=None, absolute_tooltips=None,
+                   show_legend=None, relative_tooltips=None, absolute_tooltips=None,
                    sorted_value=None, threshold=None, max_values=None,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
@@ -54,7 +54,7 @@ def waterfall_plot(data, x, y, *,
         Values that are greater than 1 lead to overlapping of the boxes.
     show_legend : bool, default=False
         True - show the legend.
-    tooltips : `layer_tooltips`
+    relative_tooltips : `layer_tooltips`
         Tooltips for boxes with relative values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -177,13 +177,13 @@ def waterfall_plot(data, x, y, *,
             'y': np.random.uniform(-1, 1, size=len(categories))
         }
         waterfall_plot(data, 'x', 'y', sorted_value=True, max_values=5, calc_total=False, \
-                       tooltips=layer_tooltips().title("Category: @x")
-                                                .format("@initial", ".2~f")
-                                                .format("@value", ".2~f")
-                                                .format("@dy", ".2~f")
-                                                .line("@{flow_type}d from @initial to @value")
-                                                .line("Difference: @dy")
-                                                .disable_splitting(), \
+                       relative_tooltips=layer_tooltips().title("Category: @x")
+                                                         .format("@initial", ".2~f")
+                                                         .format("@value", ".2~f")
+                                                         .format("@dy", ".2~f")
+                                                         .line("@{flow_type}d from @initial to @value")
+                                                         .line("Difference: @dy")
+                                                         .disable_splitting(), \
                        size=1, alpha=.5, \
                        label=element_text(color="black"), label_format=".4f")
 
@@ -220,7 +220,7 @@ def waterfall_plot(data, x, y, *,
         'linetype': linetype,
         'width': width,
         'show_legend': show_legend,
-        'tooltips': tooltips,
+        'relative_tooltips': relative_tooltips,
         'absolute_tooltips': absolute_tooltips,
         'sorted_value': sorted_value,
         'threshold': threshold,
