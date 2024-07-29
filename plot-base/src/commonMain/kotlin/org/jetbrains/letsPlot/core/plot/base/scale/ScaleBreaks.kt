@@ -173,6 +173,7 @@ class ScaleBreaks private constructor(
             transform: Transform,
             formatter: (Any) -> String,
             alternativeLabels: List<String>? = null,
+            labelLengthLimit: Int? = null
         ): ScaleBreaks {
             @Suppress("DuplicatedCode")
             if (alternativeLabels != null) {
@@ -180,7 +181,12 @@ class ScaleBreaks private constructor(
                     "Scale breaks size: ${domainValues.size} and labels size: ${alternativeLabels.size} but expected to be the same"
                 }
             }
-            val labels = alternativeLabels ?: domainValues.map(formatter)
+            val labels = (alternativeLabels ?: domainValues.map(formatter)).let { labels ->
+                labelLengthLimit?.let { limit ->
+                    labels.map { shorten(it, limit) }
+                } ?: labels
+            }
+
             val (
                 filteredDomainValues,
                 filteredTransformedValues,
@@ -198,6 +204,14 @@ class ScaleBreaks private constructor(
                 fixed = true,
                 formatter = formatter,
             )
+        }
+
+        private fun shorten(str: String, limit: Int): String {
+            return if (limit > 0 && str.length > limit) {
+                str.take(limit) + "..."
+            } else {
+                str
+            }
         }
     }
 

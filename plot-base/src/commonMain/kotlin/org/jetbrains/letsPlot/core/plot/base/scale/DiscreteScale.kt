@@ -77,22 +77,13 @@ internal class DiscreteScale : AbstractScale<Any> {
             }
         }
 
-        val labelsEffective = labels?.map { if (shortenLabels) shorten(it) else it }
-
         return ScaleBreaks.Fixed.withTransform(
             breaksEffective,
             transform = transform,
             formatter = providedFormatter ?: ScaleBreaks.IDENTITY_FORMATTER,
-            labelsEffective
+            alternativeLabels = labels,
+            labelLengthLimit = if (shortenLabels) labelLengthLimit else null
         )
-    }
-
-    private fun shorten(str: String): String {
-        return if (labelLengthLimit > 0 && str.length > labelLengthLimit) {
-            str.take(labelLengthLimit) + "..."
-        } else {
-            str
-        }
     }
 
     override fun with(): Scale.Builder {
