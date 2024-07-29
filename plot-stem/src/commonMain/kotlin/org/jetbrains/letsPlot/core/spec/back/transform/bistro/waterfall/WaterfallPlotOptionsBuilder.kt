@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
@@ -134,7 +135,7 @@ class WaterfallPlotOptionsBuilder(
                     measureGroupData,
                     x = xVar,
                     y = yVar,
-                    measure = measure ?: "_measure_",
+                    measure = measure ?: DEF_MEASURE,
                     sortedValue = sortedValue,
                     threshold = threshold,
                     maxValues = maxValues,
@@ -183,7 +184,7 @@ class WaterfallPlotOptionsBuilder(
             if (tooltipsOptions != null) {
                 it.tooltipsOptions = tooltipsOptions
             } else {
-                it.setParameter(Option.Layer.TOOLTIPS, "none")
+                it.setParameter(Option.Layer.TOOLTIPS, Option.Layer.NONE)
             }
         }
     }
@@ -273,10 +274,10 @@ class WaterfallPlotOptionsBuilder(
     }
 
     enum class FlowType(val title: String, val color: String) {
-        INCREASE( "Increase", "#4daf4a"),
+        INCREASE("Increase", "#4daf4a"),
         DECREASE("Decrease", "#e41a1c"),
         ABSOLUTE("Absolute", "#377eb8"),
-        TOTAL( "Total","#377eb8");
+        TOTAL("Total","#377eb8");
 
         data class FlowTypeData(val title: String, val color: String)
 
