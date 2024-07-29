@@ -7,9 +7,10 @@ __all__ = ['waterfall_plot']
 
 
 def waterfall_plot(data, x, y, *,
+                   measure=None, group=None,
                    color=None, fill=None, size=None, alpha=None, linetype=None,
                    width=None,
-                   show_legend=None, tooltips=None,
+                   show_legend=None, relative_tooltips=None, absolute_tooltips=None,
                    sorted_value=None, threshold=None, max_values=None,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
@@ -26,6 +27,16 @@ def waterfall_plot(data, x, y, *,
         Name of a variable. All values should be distinct.
     y : str
         Name of a numeric variable.
+    measure : str
+        Kind of a calculation.
+        Values in 'measure' column could be:
+
+        'absolute' - the value is shown as is;
+        'relative' - the value is shown as a difference from the previous value;
+        'total' - the value is shown as a cumulative sum of all previous values.
+
+    group : str
+        Grouping variable. Each group calculates its own statistics.
     color : str
         Color of the box boundary lines.
     fill : str
@@ -43,7 +54,12 @@ def waterfall_plot(data, x, y, *,
         Values that are greater than 1 lead to overlapping of the boxes.
     show_legend : bool, default=False
         True - show the legend.
-    tooltips : `layer_tooltips`
+    relative_tooltips : `layer_tooltips`
+        Tooltips for boxes with relative values.
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    absolute_tooltips : `layer_tooltips`
+        Tooltips for boxes with absolute values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     sorted_value : bool, default=False
@@ -54,8 +70,10 @@ def waterfall_plot(data, x, y, *,
         Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
     calc_total : bool, default=True
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
+        Taken into account only if the 'measure' column isn't provided.
     total_title : str
-        The header of the last box with the final cumulative sum.
+        The header of the last box with the final cumulative sum, if 'measure' column isn't provided.
+        Also used as a title in the legend for columns of type 'total'.
     hline : str or dict
         Horizontal line passing through 0.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -93,9 +111,10 @@ def waterfall_plot(data, x, y, *,
     - @xlabel : category name; could be used in tooltips
     - @ymin : lower value of the change; could be used in tooltips
     - @ymax : upper value of the change; could be used in tooltips
+    - @measure : kind of a calculation; could be used in tooltips
     - @flow_type : direction of the flow: increasing, decreasing, or the result (total); could be used in tooltips
     - @initial : initial value of the change; could be used in tooltips
-    - @cumsum : current cumsum (result of the change); could be used in tooltips
+    - @value : current cumsum (result of the change) or absolute value (depending on the 'measure' column); could be used in tooltips
     - @dy : value of the change; could be used in tooltips
 
     Examples
@@ -158,21 +177,42 @@ def waterfall_plot(data, x, y, *,
             'y': np.random.uniform(-1, 1, size=len(categories))
         }
         waterfall_plot(data, 'x', 'y', sorted_value=True, max_values=5, calc_total=False, \
-                       tooltips=layer_tooltips().title("Category: @x")
-                                                .format("@initial", ".2~f")
-                                                .format("@cumsum", ".2~f")
-                                                .format("@dy", ".2~f")
-                                                .line("@{flow_type}d from @initial to @cumsum")
-                                                .line("Difference: @dy")
-                                                .disable_splitting(), \
+                       relative_tooltips=layer_tooltips().title("Category: @x")
+                                                         .format("@initial", ".2~f")
+                                                         .format("@value", ".2~f")
+                                                         .format("@dy", ".2~f")
+                                                         .line("@{flow_type}d from @initial to @value")
+                                                         .line("Difference: @dy")
+                                                         .disable_splitting(), \
                        size=1, alpha=.5, \
                        label=element_text(color="black"), label_format=".4f")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11
+
+        from lets_plot import *
+        from lets_plot.bistro.waterfall import *
+        LetsPlot.setup_html()
+        data = {
+            'company': ["Badgersoft"] * 7 + ["AIlien Co."] * 7,
+            'accounts': ["initial", "revenue", "costs", "Q1", "revenue", "costs", "Q2"] * 2,
+            'values': [200, 200, -100, None, 250, -100, None, \\
+                       150, 50, -100, None, 100, -100, None],
+            'measure': ['absolute', 'relative', 'relative', 'total', 'relative', 'relative', 'total'] * 2,
+        }
+        waterfall_plot(data, 'accounts', 'values', measure='measure', group='company') + \\
+            facet_wrap(facets='company', scales='free_x')
 
     """
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'waterfall',
         'x': x,
         'y': y,
+        'measure': measure,
+        'group': group,
         'color': color,
         'fill': fill,
         'size': size,
@@ -180,7 +220,8 @@ def waterfall_plot(data, x, y, *,
         'linetype': linetype,
         'width': width,
         'show_legend': show_legend,
-        'tooltips': tooltips,
+        'relative_tooltips': relative_tooltips,
+        'absolute_tooltips': absolute_tooltips,
         'sorted_value': sorted_value,
         'threshold': threshold,
         'max_values': max_values,

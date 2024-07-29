@@ -12,6 +12,7 @@ class Waterfall {
         return listOf(
             basic(),
             checkParameters(),
+            withMeasure(),
         )
     }
 
@@ -72,7 +73,7 @@ class Waterfall {
                   ],
                   'disable_splitting': true
                 },
-                'calc_total': true,
+                'calc_total': false,
                 'total_title': 'result',
                 'sorted_value': true,
                 'max_values': 3,
@@ -93,6 +94,32 @@ class Waterfall {
                   'angle': 45
                 },
                 'label_format': 'd'
+              }
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withMeasure(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'cat': ['A', 'B', 'C', 'D', 'T1', 'A', 'B', 'C', null, 'E', 'T2'],
+                'val': [1.2, 2.2, -0.4, 1.5, null, -2.0, 1.3, -0.8, 1.0, 1.0, 0.0],
+                'm': ['absolute', 'relative', 'relative', 'relative', 'total', 'relative', 'relative', 'relative', 'relative', null, 'total']
+              },
+              'ggtitle': {
+                'text': 'With measure'
+              },
+              'bistro': {
+                'name': 'waterfall',
+                'x': 'cat',
+                'y': 'val',
+                'measure': 'm',
+                'show_legend': true
               }
             }
         """.trimIndent()

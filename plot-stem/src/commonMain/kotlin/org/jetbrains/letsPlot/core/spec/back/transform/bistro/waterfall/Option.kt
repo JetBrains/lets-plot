@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-
 object Option {
     object Waterfall {
         const val NAME = "waterfall"
         const val X = "x"
         const val Y = "y"
+        const val MEASURE = "measure"
+        const val GROUP = "group"
         const val COLOR = "color"
         const val FILL = "fill"
         const val SIZE = "size"
@@ -19,7 +19,8 @@ object Option {
         const val LINE_TYPE = "linetype"
         const val WIDTH = "width"
         const val SHOW_LEGEND = "show_legend"
-        const val TOOLTIPS = "tooltips"
+        const val RELATIVE_TOOLTIPS = "relative_tooltips"
+        const val ABSOLUTE_TOOLTIPS = "absolute_tooltips"
         const val CALCULATE_TOTAL = "calc_total"
         const val TOTAL_TITLE = "total_title"
         const val SORTED_VALUE = "sorted_value"
@@ -33,40 +34,31 @@ object Option {
     }
 
     object WaterfallBox {
-        val AES_X = Aes.X
-        val AES_YMIN = Aes.YMIN
-        val AES_YMAX = Aes.YMAX
-        val AES_COLOR = Aes.COLOR
-        val AES_FILL = Aes.FILL
+        const val MEASURE_GROUP = "..measure_group.."
+        const val DEF_MEASURE = "..measure.."
 
         object Var {
             const val X = "x"
             const val XLAB = "xlabel"
             const val YMIN = "ymin"
             const val YMAX = "ymax"
+            const val MEASURE = "measure"
             const val FLOW_TYPE = "flow_type"
             const val INITIAL = "initial"
-            const val CUMULATIVE_SUM = "cumsum"
+            const val VALUE = "value"
             const val DIFFERENCE = "dy"
         }
     }
 
     object WaterfallConnector {
-        val AES_X = Aes.X
-        val AES_Y = Aes.Y
-
         object Var {
             const val X = "x"
             const val Y = "y"
+            const val RADIUS = "radius"
         }
     }
 
     object WaterfallLabel {
-        val AES_X = Aes.X
-        val AES_Y = Aes.Y
-        val AES_LABEL = Aes.LABEL
-        val AES_COLOR = Aes.COLOR
-
         object Var {
             const val X = "x"
             const val Y = "y"

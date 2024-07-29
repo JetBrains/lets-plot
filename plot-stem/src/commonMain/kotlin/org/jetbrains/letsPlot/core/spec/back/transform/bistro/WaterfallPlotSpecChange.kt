@@ -54,6 +54,8 @@ class WaterfallPlotSpecChange : SpecChange {
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
+            measure = bistroSpec.getString(Waterfall.MEASURE),
+            group = bistroSpec.getString(Waterfall.GROUP),
             color = bistroSpec.getString(Waterfall.COLOR) ?: DEF_COLOR,
             fill = bistroSpec.getString(Waterfall.FILL) ?: FLOW_TYPE_COLOR_VALUE,
             size = bistroSpec.getDouble(Waterfall.SIZE) ?: DEF_SIZE,
@@ -61,7 +63,8 @@ class WaterfallPlotSpecChange : SpecChange {
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
             width = bistroSpec.getDouble(Waterfall.WIDTH) ?: DEF_WIDTH,
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: DEF_SHOW_LEGEND,
-            tooltipsOptions = readBoxTooltipsOptions(bistroSpec),
+            relativeTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.RELATIVE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_RELATIVE_TOOLTIPS),
+            absoluteTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.ABSOLUTE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_ABSOLUTE_TOOLTIPS),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: DEF_CALC_TOTAL,
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: DEF_SORTED_VALUE,
@@ -77,11 +80,15 @@ class WaterfallPlotSpecChange : SpecChange {
         return OptionsUtil.toSpec(waterfallPlotOptions)
     }
 
-    private fun readBoxTooltipsOptions(bistroSpec: Map<String, Any>): TooltipsOptions? {
-        if (bistroSpec.getString(Waterfall.TOOLTIPS) == Option.Layer.NONE) {
+    private fun readBoxTooltipsOptions(
+        bistroSpec: Map<String, Any>,
+        optionName: String,
+        defaultTooltips: TooltipsOptions
+    ): TooltipsOptions? {
+        if (bistroSpec.getString(optionName) == Option.Layer.NONE) {
             return null
         }
-        return bistroSpec.getMap(Waterfall.TOOLTIPS)?.let { tooltipsOptions ->
+        return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
             tooltips {
                 anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
                 minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
@@ -95,7 +102,7 @@ class WaterfallPlotSpecChange : SpecChange {
                     }
                 }
             }
-        } ?: WaterfallPlotOptionsBuilder.DEF_TOOLTIPS
+        } ?: defaultTooltips
     }
 
     private fun readElementLineOptions(
