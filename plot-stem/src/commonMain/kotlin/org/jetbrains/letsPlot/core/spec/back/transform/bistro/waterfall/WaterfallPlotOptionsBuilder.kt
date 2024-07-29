@@ -47,25 +47,13 @@ class WaterfallPlotOptionsBuilder(
 
     fun build(): PlotOptions {
         val layerData = getLayerData()
-        val flowTypesForLegend = layerData.box.getValue(WaterfallBox.Var.MEASURE).let {
-            if (it.contains("total")) {
-                emptySet()
-            } else {
-                setOf(FlowType.TOTAL)
-            } + if (it.contains("absolute")) {
-                emptySet()
-            } else {
-                setOf(FlowType.ABSOLUTE)
-            }
-        }.let {
-            FlowType.list(totalTitle, it).values
-        }
+        val flowTypeData = getFlowTypeDataForLegend(layerData.box)
         val relativeBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it == "relative" },
+            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it == Measure.RELATIVE.value },
             tooltipsOptions
         )
         val absoluteBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it != "relative" },
+            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it != Measure.RELATIVE.value },
             absoluteTooltipsOptions
         )
         return plot {
@@ -100,14 +88,14 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.COLOR
                     name = FLOW_TYPE_NAME
-                    breaks = flowTypesForLegend.map(FlowType.FlowTypeData::title)
-                    values = flowTypesForLegend.map(FlowType.FlowTypeData::color)
+                    breaks = flowTypeData.map(FlowType.FlowTypeData::title)
+                    values = flowTypeData.map(FlowType.FlowTypeData::color)
                 },
                 scale {
                     aes = Aes.FILL
                     name = FLOW_TYPE_NAME
-                    breaks = flowTypesForLegend.map(FlowType.FlowTypeData::title)
-                    values = flowTypesForLegend.map(FlowType.FlowTypeData::color)
+                    breaks = flowTypeData.map(FlowType.FlowTypeData::title)
+                    values = flowTypeData.map(FlowType.FlowTypeData::color)
                 }
             )
             themeOptions = theme {
@@ -162,6 +150,22 @@ class WaterfallPlotOptionsBuilder(
             .let { datasets ->
                 WaterfallUtil.concat(datasets)
             }
+    }
+
+    private fun getFlowTypeDataForLegend(boxData: Map<String, List<Any?>>): List<FlowType.FlowTypeData> {
+        return boxData.getValue(WaterfallBox.Var.MEASURE).let {
+            if (it.contains(Measure.TOTAL.value)) {
+                emptySet()
+            } else {
+                setOf(FlowType.TOTAL)
+            } + if (it.contains(Measure.ABSOLUTE.value)) {
+                emptySet()
+            } else {
+                setOf(FlowType.ABSOLUTE)
+            }
+        }.let {
+            FlowType.list(totalTitle, it).values.toList()
+        }
     }
 
     private fun boxOptions(boxData: Map<String, List<Any?>>, tooltipsOptions: TooltipsOptions?): LayerOptions {
@@ -260,6 +264,12 @@ class WaterfallPlotOptionsBuilder(
             mappings[WaterfallLabel.AES_COLOR] = WaterfallLabel.Var.FLOW_TYPE
         }
         return mappings
+    }
+
+    enum class Measure(val value: String) {
+        RELATIVE("relative"),
+        ABSOLUTE("absolute"),
+        TOTAL("total")
     }
 
     enum class FlowType(val title: String, val color: String) {

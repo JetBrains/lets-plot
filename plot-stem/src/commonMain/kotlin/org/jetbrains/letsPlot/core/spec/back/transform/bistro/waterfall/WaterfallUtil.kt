@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Measure
 import kotlin.math.*
 
 internal object WaterfallUtil {
@@ -22,7 +23,9 @@ internal object WaterfallUtil {
     ): Map<String, List<*>> {
         val standardData = data.let { d ->
             if (measure == null) {
-                val measures = List(d.values.firstOrNull()?.size ?: 0) { "relative" }.let { if (calcTotal) it + listOf("total") else it }
+                val measures = List(d.values.firstOrNull()?.size ?: 0) { Measure.RELATIVE.value }.let {
+                    if (calcTotal) it + listOf(Measure.TOTAL.value) else it
+                }
                 d.toList().associate { (column, values) ->
                     column to if (calcTotal) {
                         values + listOf(null)
@@ -41,7 +44,7 @@ internal object WaterfallUtil {
         var group = 0
         for (m in measures) {
             measureGroup.add(group)
-            if (m == "total") {
+            if (m == Measure.TOTAL.value) {
                 group += 1
             }
         }
@@ -110,22 +113,20 @@ internal object WaterfallUtil {
         val yMaxs = mutableListOf<Double>()
         val flowTypes = mutableListOf<String>()
         for (i in ys.indices) {
-            val yPrev = if (measures[i] == "relative") {
-                values.lastOrNull() ?: initialY
-            } else {
-                initialY
+            val yPrev = when (measures[i]) {
+                Measure.RELATIVE.value -> values.lastOrNull() ?: initialY
+                else -> initialY
             }
-            val yNext = if (measures[i] == "relative") {
-                yPrev + ys[i]
-            } else {
-                ys[i]
+            val yNext = when (measures[i]) {
+                Measure.RELATIVE.value -> yPrev + ys[i]
+                else -> ys[i]
             }
             initials.add(yPrev)
             values.add(yNext)
             yMins.add(min(yPrev, yNext))
             yMaxs.add(max(yPrev, yNext))
             val flowType = when {
-                measures[i] == "absolute" -> flowTypeTitles.getValue(FlowType.ABSOLUTE).title
+                measures[i] == Measure.ABSOLUTE.value -> flowTypeTitles.getValue(FlowType.ABSOLUTE).title
                 yPrev <= yNext -> flowTypeTitles.getValue(FlowType.INCREASE).title
                 else -> flowTypeTitles.getValue(FlowType.DECREASE).title
             }
@@ -136,7 +137,7 @@ internal object WaterfallUtil {
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
         val xsLast = calculateLast(extractTotalTitle(data, x, flowTypeTitles, calcTotal))
         val ysLast = calculateLast(values.last() - (base + initialY))
-        val measuresLast = calculateLast("total")
+        val measuresLast = calculateLast(Measure.TOTAL.value)
         val initialsLast = calculateLast(base + initialY)
         val valuesLast = calculateLast(values.last())
         val yMinsLast = calculateLast(min(values.last(), base))
@@ -179,10 +180,9 @@ internal object WaterfallUtil {
                 emptyList()
             } else {
                 measures.drop(1).map {
-                    if (it == "absolute") {
-                        0.0
-                    } else {
-                        radius
+                    when (it) {
+                        Measure.ABSOLUTE.value -> 0.0
+                        else -> radius
                     }
                 } + listOf(0.0)
             }
@@ -236,7 +236,7 @@ internal object WaterfallUtil {
         val df = DataFrameUtil.fromMap(data)
         val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
         val measures = df[measureVar].map { it?.toString() }
-        return measures.lastOrNull() == "total"
+        return measures.lastOrNull() == Measure.TOTAL.value
     }
 
     private fun extractTotalTitle(
@@ -272,7 +272,7 @@ internal object WaterfallUtil {
         val ys = df.getNumeric(yVar)
 
         fun <T> dropLastFilter(s: List<T>): List<T> {
-            if (measures.lastOrNull() == "total") {
+            if (measures.lastOrNull() == Measure.TOTAL.value) {
                 return s.dropLast(1)
             }
             return s
@@ -309,7 +309,7 @@ internal object WaterfallUtil {
                 val (xs, ms) = ps.unzip()
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
-                val msLast = if (otherValue.absoluteValue > 0) listOf("relative") else emptyList()
+                val msLast = if (otherValue.absoluteValue > 0) listOf(Measure.RELATIVE.value) else emptyList()
                 Triple(xs + xsLast, ys + ysLast, ms + msLast)
             }
             maxValues != null && maxValues > 0 -> {
@@ -324,7 +324,7 @@ internal object WaterfallUtil {
                 val ms = series.third.slice(indices)
                 val xsLast = if (otherValue.absoluteValue > 0) listOf(OTHER_NAME) else emptyList()
                 val ysLast = if (otherValue.absoluteValue > 0) listOf(otherValue) else emptyList()
-                val msLast = if (otherValue.absoluteValue > 0) listOf("relative") else emptyList()
+                val msLast = if (otherValue.absoluteValue > 0) listOf(Measure.RELATIVE.value) else emptyList()
                 Triple(xs + xsLast, ys + ysLast, ms + msLast)
             }
             else -> series
