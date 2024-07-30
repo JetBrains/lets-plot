@@ -358,11 +358,11 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_SORTED_VALUE = false
         val DEF_RELATIVE_TOOLTIPS = tooltips {
             lines = listOf(
-                "@${WaterfallBox.Var.VALUE}",
+                "@${WaterfallBox.Var.DIFFERENCE}",
             )
             formats = listOf(
                 TooltipsOptions.format {
-                    field = WaterfallBox.Var.VALUE
+                    field = WaterfallBox.Var.DIFFERENCE
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             )
