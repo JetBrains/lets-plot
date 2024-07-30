@@ -118,10 +118,17 @@ def guides(**kwargs):
     Parameters
     ----------
     kwargs
-        Name-guide pairs where name should be an aesthetic or group name used in the `layer_key()` function.
-        The guide can either be a string ('colorbar', 'legend'),
-        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
-        specifying additional arguments, or 'none' to hide the guide.
+        Key-value pairs where the key can be:
+        
+        - An aesthetic name
+        - 'manual' - a key referring to the default custom legend
+        - A group name referring to a custom legend where the group is defined via the `layer_key()` function
+
+        The value can be either:
+
+        - A string ('colorbar', 'legend')
+        - A call to a guide function (`guide_colorbar()`, `guide_legend()`) specifying additional arguments
+        - 'none' to hide the guide
 
     Returns
     -------
