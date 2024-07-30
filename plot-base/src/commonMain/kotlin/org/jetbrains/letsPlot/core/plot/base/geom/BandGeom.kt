@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.FlippableGeomHelper
@@ -39,7 +38,8 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val svgHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val svgHelper = geomHelper.createSvgElementHelper()
             .setStrokeAlphaEnabled(true)
             .setResamplingEnabled(!coord.isLinear)
 
@@ -60,60 +60,37 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             root.add(rectSvg)
             root.add(topSvg)
             root.add(bottomSvg)
-        }
 
-        buildHints(aesthetics, pos, coord, ctx, viewPort)
-    }
+            // tooltip
+            val defaultColor = p.fill() ?: continue
 
-    private fun buildHints(
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext,
-        viewPort: DoubleRectangle
-    ) {
-        val helper = GeomHelper(pos, coord, ctx)
-        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)
-        val isVerticallyOriented = when (isVertical) {
-            true -> !ctx.flipped
-            false -> ctx.flipped
-        }
-        val hint = HintsCollection.HintConfigFactory()
-            .defaultObjectRadius(0.0)
-            .defaultKind(VERTICAL_TOOLTIP.takeIf { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
+            val isVerticallyOriented = when (isVertical) {
+                true -> !ctx.flipped
+                false -> ctx.flipped
+            }
 
-        for (p in aesthetics.dataPoints()) {
-            for (x in resample(viewPort.xRange())) {
-                for (aes in listOf(yMinAes, yMaxAes)) {
-                    val value = p[aes] ?: continue
-                    val defaultColor = p.fill() ?: continue
+            val axisTooltip = HintsCollection.HintConfigFactory()
+                .defaultObjectRadius(0.0)
+                .defaultKind(VERTICAL_TOOLTIP.takeUnless { isVerticallyOriented } ?: HORIZONTAL_TOOLTIP)
+                .defaultColor(defaultColor, alpha = null)
+                .defaultCoord(viewPort.xRange().lowerEnd)
 
-                    hint.defaultCoord(x)
-                        .defaultColor(defaultColor, alpha = null)
+            val hintsCollection = HintsCollection(p, geomHelper)
+                .addHint(axisTooltip.create(yMinAes))
+                .addHint(axisTooltip.create(yMaxAes))
 
-                    val hintsCollection = HintsCollection(p, helper)
-                        .addHint(hint.create(aes))
+            val tooltipParams = GeomTargetCollector.TooltipParams(
+                tipLayoutHints = hintsCollection.hints,
+                markerColors = HintColorUtil.createColorMarkerMapper(GeomKind.BAND, ctx)(p)
+            )
 
-                    val tooltipParams = GeomTargetCollector.TooltipParams(
-                        tipLayoutHints = hintsCollection.hints,
-                        markerColors = colorMapper(p)
-                    )
-                    helper.toClient(DoubleVector(x, value).flipIf(!isVertical), p)?.let { point ->
-                        ctx.targetCollector.addPoint(p.index(), point, 0.0, tooltipParams)
-                    }
-                }
+            geomHelper.toClient(rect.flipIf(!isVertical), p)?.let { r ->
+                ctx.targetCollector.addPolygon(r.points, p.index(), tooltipParams)
             }
         }
     }
 
-    private fun resample(range: DoubleSpan): List<Double> {
-        return (0 until TOOLTIP_SAMPLE_SIZE).map { i ->
-            range.lowerEnd + (i.toDouble() / (TOOLTIP_SAMPLE_SIZE - 1)) * (range.upperEnd - range.lowerEnd)
-        }
-    }
-
     companion object {
-        const val TOOLTIP_SAMPLE_SIZE = 512
         const val HANDLES_GROUPS = false
     }
 }
