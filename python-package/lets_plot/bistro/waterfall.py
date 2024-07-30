@@ -39,8 +39,10 @@ def waterfall_plot(data, x, y, *,
         Grouping variable. Each group calculates its own statistics.
     color : str
         Color of the box boundary lines.
+        Use 'flow_type' to color lines by the direction of the flow.
     fill : str
         Fill color of the boxes.
+        Use 'flow_type' to color boxes by the direction of the flow.
     size : float, default=0.0
         Line width of the box boundary lines.
     alpha : float
@@ -92,6 +94,7 @@ def waterfall_plot(data, x, y, *,
         Label on the box. Shows change value.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_text()` to specify parameters.
+        Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
