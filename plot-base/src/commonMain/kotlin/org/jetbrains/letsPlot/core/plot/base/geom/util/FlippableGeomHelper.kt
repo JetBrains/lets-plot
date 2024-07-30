@@ -100,20 +100,32 @@ class FlippableGeomHelper(
                 }
                 .hints
 
-            ctx.targetCollector.addRectangle(
-                p.index(),
-                clientRect,
-                GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hints,
-                    fillColor = fillColorMapper(p),
-                    markerColors = colorMarkerMapper(p)
-                ),
-                tooltipKind = defaultTooltipKind ?: if (isVerticallyOriented) {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                } else {
-                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                }
-            )
+            if (true) {
+                ctx.targetCollector.addRectangle(
+                    p.index(),
+                    clientRect,
+                    GeomTargetCollector.TooltipParams(
+                        tipLayoutHints = hints,
+                        fillColor = fillColorMapper(p),
+                        markerColors = colorMarkerMapper(p)
+                    ),
+                    tooltipKind = defaultTooltipKind ?: if (isVerticallyOriented) {
+                        TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                    } else {
+                        TipLayoutHint.Kind.VERTICAL_TOOLTIP
+                    }
+                )
+            } else {
+                ctx.targetCollector.addPolygon(
+                    clientRect.points,
+                    p.index(),
+                    GeomTargetCollector.TooltipParams(
+                        tipLayoutHints = hints,
+                        fillColor = fillColorMapper(p),
+                        markerColors = colorMarkerMapper(p)
+                    ),
+                )
+            }
         }
     }
 }

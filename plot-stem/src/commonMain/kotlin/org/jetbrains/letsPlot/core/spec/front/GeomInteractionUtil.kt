@@ -211,7 +211,6 @@ object GeomInteractionUtil {
                 axisTooltipVisibilityFromConfig = true
             )
             GeomKind.RIBBON,
-            GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR -> {
@@ -238,6 +237,7 @@ object GeomInteractionUtil {
 
             GeomKind.PIE,
             GeomKind.BOX_PLOT,
+            GeomKind.CROSS_BAR,
             GeomKind.Y_DOT_PLOT,
             GeomKind.BIN_2D,
             GeomKind.TILE -> return GeomTooltipSetup.bivariateFunction(
@@ -398,8 +398,8 @@ object GeomInteractionUtil {
 
     private fun createSideTooltipAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
+            GeomKind.CROSS_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN, Aes.Y, Aes.X)
             GeomKind.RIBBON,
-            GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR,

@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 
 class CrossBarGeom(
     private val isVertical: Boolean
@@ -72,10 +73,14 @@ class CrossBarGeom(
         )
         // tooltip
         flipHelper.buildHints(
-            listOf(Aes.YMIN, Aes.YMAX).map(::afterRotation),
-            aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
-            { HintColorUtil.colorWithAlpha(it) }
+            hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX).map(::afterRotation),
+            aesthetics = aesthetics,
+            pos = pos,
+            coord = coord,
+            ctx = ctx,
+            clientRectFactory = clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
+            fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
+            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
 
@@ -103,8 +108,8 @@ class CrossBarGeom(
             if (isHintRect) {
                 // yAes (middle bar) is optional => use mid of interval for tooltip
                 val y = p[yAes] ?: ((ymin + ymax) / 2)
-                origin = DoubleVector(x - width / 2, y)
-                dimension = DoubleVector(width, 0.0)
+                origin = DoubleVector(x - width / 2, ymin)
+                dimension = DoubleVector(width, ymax - ymin)
             } else {
                 origin = DoubleVector(x - width / 2, ymin)
                 dimension = DoubleVector(width, ymax - ymin)
