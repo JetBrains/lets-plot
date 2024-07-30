@@ -39,8 +39,10 @@ def waterfall_plot(data, x, y, *,
         Grouping variable. Each group calculates its own statistics.
     color : str
         Color of the box boundary lines.
+        Use 'flow_type' to color lines by the direction of the flow.
     fill : str
         Fill color of the boxes.
+        Use 'flow_type' to color boxes by the direction of the flow.
     size : float, default=0.0
         Line width of the box boundary lines.
     alpha : float
@@ -54,14 +56,18 @@ def waterfall_plot(data, x, y, *,
         Values that are greater than 1 lead to overlapping of the boxes.
     show_legend : bool, default=False
         True - show the legend.
-    relative_tooltips : `layer_tooltips`
+    relative_tooltips : `layer_tooltips` or str
         Tooltips for boxes with relative values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    absolute_tooltips : `layer_tooltips`
+        When 'none', tooltips are not shown.
+        When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
+    absolute_tooltips : `layer_tooltips` or str
         Tooltips for boxes with absolute values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        When 'none', tooltips are not shown.
+        When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
     sorted_value : bool, default=False
         Sorts categories by absolute value of the changes.
     threshold : float
@@ -88,6 +94,7 @@ def waterfall_plot(data, x, y, *,
         Label on the box. Shows change value.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_text()` to specify parameters.
+        Use 'flow_type' for `color` parameter of the `element_text()` to color labels by the direction of the flow.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
