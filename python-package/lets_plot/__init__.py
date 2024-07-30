@@ -15,11 +15,13 @@ from ._global_settings import NO_JS, OFFLINE
 from .plot import *
 from .export import *
 from .frontend_context import *
+from .mapping import *
 from .settings_utils import *
 from .plot._global_theme import _set_global_theme
 
 __all__ = (plot.__all__ +
            frontend_context.__all__ +
+           mapping.__all__ +
            settings_utils.__all__ +
            export.__all__ +
            ['LetsPlot'])

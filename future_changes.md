@@ -39,6 +39,7 @@
 ### Changed
 - [**breaking change**] `guide_legend()`/`guide_colorbar()` require keyword arguments for 'nrow'/'barwidth' and other parameters except 'title'.
 - The triangular point shape is now anchored to the data point via the centroid.
+- `as_discrete()` is now imported automatically with the `lets-plot` import.
  
 ### Fixed
 - ggsave (.svg) transforms geom_text integer to float [[#626](https://github.com/JetBrains/lets-plot/issues/626)].
