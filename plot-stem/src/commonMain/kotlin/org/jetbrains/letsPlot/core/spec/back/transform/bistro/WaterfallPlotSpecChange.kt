@@ -8,8 +8,9 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.FLOW_TYPE_COLOR_KEYWORD
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.TOOLTIP_DETAILED_KEYWORD
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_COLOR
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.FLOW_TYPE_COLOR_VALUE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SIZE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SHOW_LEGEND
@@ -20,6 +21,10 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL_FORMAT
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_ABSOLUTE_TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_RELATIVE_TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.TooltipsOptions
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.tooltips
@@ -57,14 +62,24 @@ class WaterfallPlotSpecChange : SpecChange {
             measure = bistroSpec.getString(Waterfall.MEASURE),
             group = bistroSpec.getString(Waterfall.GROUP),
             color = bistroSpec.getString(Waterfall.COLOR) ?: DEF_COLOR,
-            fill = bistroSpec.getString(Waterfall.FILL) ?: FLOW_TYPE_COLOR_VALUE,
+            fill = bistroSpec.getString(Waterfall.FILL) ?: FLOW_TYPE_COLOR_KEYWORD,
             size = bistroSpec.getDouble(Waterfall.SIZE) ?: DEF_SIZE,
             alpha = bistroSpec.getDouble(Waterfall.ALPHA),
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
             width = bistroSpec.getDouble(Waterfall.WIDTH) ?: DEF_WIDTH,
             showLegend = bistroSpec.getBool(Waterfall.SHOW_LEGEND) ?: DEF_SHOW_LEGEND,
-            relativeTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.RELATIVE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_RELATIVE_TOOLTIPS),
-            absoluteTooltipsOptions = readBoxTooltipsOptions(bistroSpec, Waterfall.ABSOLUTE_TOOLTIPS, WaterfallPlotOptionsBuilder.DEF_ABSOLUTE_TOOLTIPS),
+            relativeTooltipsOptions = readBoxTooltipsOptions(
+                bistroSpec,
+                Waterfall.RELATIVE_TOOLTIPS,
+                DEF_RELATIVE_TOOLTIPS,
+                DETAILED_RELATIVE_TOOLTIPS
+            ),
+            absoluteTooltipsOptions = readBoxTooltipsOptions(
+                bistroSpec,
+                Waterfall.ABSOLUTE_TOOLTIPS,
+                DEF_ABSOLUTE_TOOLTIPS,
+                DETAILED_ABSOLUTE_TOOLTIPS
+            ),
             calcTotal = bistroSpec.getBool(Waterfall.CALCULATE_TOTAL) ?: DEF_CALC_TOTAL,
             totalTitle = bistroSpec.getString(Waterfall.TOTAL_TITLE),
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: DEF_SORTED_VALUE,
@@ -83,10 +98,12 @@ class WaterfallPlotSpecChange : SpecChange {
     private fun readBoxTooltipsOptions(
         bistroSpec: Map<String, Any>,
         optionName: String,
-        defaultTooltips: TooltipsOptions
+        defaultTooltips: TooltipsOptions,
+        detailedTooltips: TooltipsOptions
     ): TooltipsOptions? {
-        if (bistroSpec.getString(optionName) == Option.Layer.NONE) {
-            return null
+        when (bistroSpec.getString(optionName)) {
+            Option.Layer.NONE -> return null
+            TOOLTIP_DETAILED_KEYWORD -> return detailedTooltips
         }
         return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
             tooltips {

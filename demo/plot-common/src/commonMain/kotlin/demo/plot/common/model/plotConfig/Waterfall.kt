@@ -61,7 +61,7 @@ class Waterfall {
                 'linetype': 'dotted',
                 'width': 0.4,
                 'show_legend': true,
-                'tooltips': {
+                'relative_tooltips': {
                   'title': 'Category: @xlabel (#@x)',
                   'tooltip_min_width': 200,
                   'tooltip_anchor': 'top_center',

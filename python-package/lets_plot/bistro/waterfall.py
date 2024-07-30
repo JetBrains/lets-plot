@@ -54,14 +54,18 @@ def waterfall_plot(data, x, y, *,
         Values that are greater than 1 lead to overlapping of the boxes.
     show_legend : bool, default=False
         True - show the legend.
-    relative_tooltips : `layer_tooltips`
+    relative_tooltips : `layer_tooltips` or str
         Tooltips for boxes with relative values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    absolute_tooltips : `layer_tooltips`
+        When 'none', tooltips are not shown.
+        When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
+    absolute_tooltips : `layer_tooltips` or str
         Tooltips for boxes with absolute values.
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        When 'none', tooltips are not shown.
+        When 'detailed', a more detailed (compared to the default) version of the tooltips is shown.
     sorted_value : bool, default=False
         Sorts categories by absolute value of the changes.
     threshold : float
