@@ -990,29 +990,6 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                            center=0, binwidth=1, \\
                            color='black', fill='gray', size=1)
 
-    |
-
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 14
-
-        from lets_plot import *
-        from lets_plot.mapping import as_discrete
-        import numpy as np
-
-        LetsPlot.setup_html()
-
-        data = {
-            "x": np.append(np.random.normal(0, 5, 1000), np.random.normal(10, 1, 1000)),
-            "g1": np.append(np.repeat("2", 1000), np.repeat("1", 1000)),
-            "g2": np.random.binomial(1,0.5,2000)
-        }
-
-        ggplot(data, aes(x = "x", fill = as_discrete("g2"))) + \\
-            geom_histogram(threshold=0) + \\
-            scale_fill_hue() + \\
-            facet_wrap(facets = "g1", scales = "free_x")
-
     """
     return _geom('histogram',
                  mapping=mapping,
@@ -7040,10 +7017,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-9
+        :emphasize-lines: 4-8
 
         from lets_plot import *
-        from lets_plot.mapping import *
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
@@ -7056,10 +7032,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-7
+        :emphasize-lines: 4-6
 
         from lets_plot import *
-        from lets_plot.mapping import *
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
@@ -7333,11 +7308,10 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -7350,11 +7324,10 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)

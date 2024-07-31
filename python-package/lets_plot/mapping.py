@@ -54,11 +54,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
@@ -74,11 +73,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
@@ -93,11 +91,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13-14
+        :emphasize-lines: 12-13
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
