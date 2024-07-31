@@ -114,15 +114,15 @@ def waterfall_plot(data, x, y, *,
     -----
     Computed variables:
 
-    - ..x.. : category id; could be used in tooltips
-    - ..xlabel.. : category name; could be used in tooltips
-    - ..ymin.. : lower value of the change; could be used in tooltips
-    - ..ymax.. : upper value of the change; could be used in tooltips
-    - ..measure.. : kind of a calculation; could be used in tooltips
-    - ..flow_type.. : direction of the flow: increasing, decreasing, or the result (total); could be used in tooltips
-    - ..initial.. : initial value of the change; could be used in tooltips
-    - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column); could be used in tooltips
-    - ..dy.. : value of the change; could be used in tooltips
+    - ..x.. : category id
+    - ..xlabel.. : category name
+    - ..ymin.. : lower value of the change
+    - ..ymax.. : upper value of the change
+    - ..measure.. : kind of a calculation
+    - ..flow_type.. : direction of the flow: increasing, decreasing, or the result (total)
+    - ..initial.. : initial value of the change
+    - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column)
+    - ..dy.. : value of the change
 
     Examples
     --------
