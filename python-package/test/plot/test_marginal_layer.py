@@ -22,7 +22,7 @@ def expected_x_stat_t(geom):
     return dict(
         geom=geom,
         margin_side='t',
-        marginal=True,
+        marginal=True
     )
 
 
@@ -77,11 +77,11 @@ def _clean_input(input):
 @pytest.mark.parametrize('marginal_layer_spec, expected', [
     (
         gg.ggmarginal("l", layer=gg.geom_histogram()),
-        expected_x_stat_l("histogram")
+        {**expected_x_stat_l("histogram"), 'threshold': 0}
     ),
     (
         gg.ggmarginal("t", layer=gg.geom_histogram()),
-        expected_x_stat_t("histogram")
+        {**expected_x_stat_t("histogram"), 'threshold': 0}
     ),
     (
         gg.ggmarginal("tl", layer=gg.geom_point(stat='bin')),
@@ -89,7 +89,9 @@ def _clean_input(input):
     ),
     (
         gg.ggmarginal("tl", layer=gg.geom_histogram()),
-        _to_feature_list(expected_x_stat_t("histogram"), expected_x_stat_l("histogram"))
+        _to_feature_list(
+            {**expected_x_stat_t("histogram"), 'threshold': 0},
+            {**expected_x_stat_l("histogram"), 'threshold': 0})
     ),
     (
         gg.ggmarginal("tl", layer=gg.geom_density()),
@@ -120,7 +122,7 @@ def _clean_input(input):
     # Don't change 'orientation' if specified.
     (
         gg.ggmarginal("l", layer=gg.geom_histogram(orientation='x')),
-        {**expected_x_stat_l("histogram"), 'orientation': 'x'}
+        {**expected_x_stat_l("histogram"), 'orientation': 'x', 'threshold': 0}
     )
 ])
 def test_marginal_layer(marginal_layer_spec, expected):
