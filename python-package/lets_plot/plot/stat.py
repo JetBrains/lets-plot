@@ -498,11 +498,10 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -515,11 +514,10 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
