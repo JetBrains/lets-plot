@@ -205,7 +205,7 @@ class LegendAssembler(
                 isMarginal: Boolean
             ): LegendLayer {
                 val keyAesthetics = mapToAesthetics(
-                    listOf(customLegendOptions.aesValues + overrideAesValues),
+                    listOf(overrideAesValues + customLegendOptions.aesValues),
                     constantByAes,
                     aestheticsDefaults,
                     colorByAes,

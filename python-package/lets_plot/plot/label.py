@@ -123,8 +123,13 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     caption : str
         The text for the plot caption.
     labels
-        Name-value pairs where name should be an aesthetic or group name used in the `layer_key()` function
-        and value should be a string, e.g. `color="New Color label"`.
+        Name-value pairs where the name can be:
+
+        - An aesthetic name
+        - 'manual' - a key referring to the default custom legend
+        - A group name referring to a custom legend where the group is defined via the `layer_key()` function
+
+        The value should be a string, e.g. `color="New Color label"`.
 
     Returns
     -------
