@@ -140,6 +140,12 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::

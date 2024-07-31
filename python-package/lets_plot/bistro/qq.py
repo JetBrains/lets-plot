@@ -81,6 +81,18 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     If the two distributions being compared are similar, the points in the Q-Q plot
     will approximately lie on the straight line.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::

@@ -124,6 +124,12 @@ def waterfall_plot(data, x, y, *,
     - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column).
     - ..dy.. : value of the change.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::

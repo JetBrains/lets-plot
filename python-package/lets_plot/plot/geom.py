@@ -149,6 +149,12 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
       - map_join=['County_name', 'State_Name']
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -324,6 +330,12 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
       - map_join=['County_name', 'State_Name']
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -462,6 +474,12 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -615,6 +633,12 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -1404,6 +1428,12 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -1642,6 +1672,12 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -1787,6 +1823,12 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -1925,6 +1967,18 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : line width.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -2045,6 +2099,12 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -2169,6 +2229,12 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -2495,6 +2561,12 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
       - map_join=['County_name', 'State_Name']
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -2681,6 +2753,12 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
       - map_join=['County_name', 'State_Name']
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -2805,6 +2883,12 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -2915,6 +2999,12 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3027,6 +3117,12 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3147,6 +3243,12 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3309,6 +3411,12 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3534,6 +3642,12 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'ydensity' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3934,6 +4048,12 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -4074,6 +4194,12 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -4197,6 +4323,12 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4359,6 +4491,12 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4562,6 +4700,12 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     'density2d' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4999,6 +5143,12 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -5141,6 +5291,12 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -5262,6 +5418,12 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -5375,6 +5537,12 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5492,6 +5660,12 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -5594,6 +5768,12 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5709,6 +5889,12 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5865,6 +6051,12 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
       - map_join=['County_name', 'State_Name']
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -6007,6 +6199,12 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size_end : offset from the segment end coordinate (usually equal to the size of the point object from which the segment ends to avoid overlapping with it).
     - stroke_start : offset from the segment start coordinate (usually equal to the stroke of the point object from which the segment starts to avoid overlapping with it).
     - stroke_end : offset from the segment end coordinate (usually equal to the stroke of the point object from which the segment ends to avoid overlapping with it).
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -6170,6 +6368,12 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
     - stroke_end : offset from the end coordinate (usually equal to the stroke of the point object from which the curve ends to avoid overlapping with it).
 
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -6301,6 +6505,12 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
     - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -7172,6 +7382,18 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
     So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
 
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
+
+    ----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
@@ -7303,6 +7525,12 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
+
+    ----
+
+    Available point shapes:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------

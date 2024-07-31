@@ -407,6 +407,13 @@ def element_rect(
     `dict`
         Theme element specification.
 
+    Notes
+    -----
+
+    Available line types:
+
+    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+
     Examples
     --------
     .. jupyter-execute::
