@@ -64,13 +64,23 @@ open class BinStat(
         }
 
         if (threshold != null) {
-            val dropList = statCount.withIndex().mapNotNull { (i, v) -> i.takeIf { v <= threshold } }
+            val leftDropPart = statCount.withIndex().takeWhile { it.value <= threshold }.map { it.index }
+            val rightDropPart = statCount.withIndex().reversed().takeWhile { it.value <= threshold }.map { it.index }
+
+            val dropList = leftDropPart + rightDropPart
 
             dropList.forEach {
-                statX[it] = Double.NaN
                 statCount[it] = Double.NaN
                 statDensity[it] = Double.NaN
             }
+
+            // resolution hack - need at least two consecutive X values, or width of the bin will be incorrect
+            when {
+                statX.size - dropList.size > 1 -> dropList // already have at least two consecutive X values
+                leftDropPart.isNotEmpty() -> leftDropPart.dropLast(1) + rightDropPart
+                rightDropPart.isNotEmpty() -> leftDropPart + rightDropPart.dropLast(1) // dropLast b/c reversed
+                else -> emptyList()
+            }.forEach { statX[it] = Double.NaN }
         }
 
         return DataFrame.Builder()
