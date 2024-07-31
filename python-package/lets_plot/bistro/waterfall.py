@@ -114,15 +114,15 @@ def waterfall_plot(data, x, y, *,
     -----
     Computed variables:
 
-    - ..x.. : category id
-    - ..xlabel.. : category name
-    - ..ymin.. : lower value of the change
-    - ..ymax.. : upper value of the change
-    - ..measure.. : kind of a calculation
-    - ..flow_type.. : direction of the flow: increasing, decreasing, or the result (total)
-    - ..initial.. : initial value of the change
-    - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column)
-    - ..dy.. : value of the change
+    - ..x.. : category id.
+    - ..xlabel.. : category name.
+    - ..ymin.. : lower value of the change.
+    - ..ymax.. : upper value of the change.
+    - ..measure.. : kind of a calculation: absolute, relative or total.
+    - ..flow_type.. : direction of the flow: increasing, decreasing, or the result (total).
+    - ..initial.. : initial value of the change.
+    - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column).
+    - ..dy.. : value of the change.
 
     Examples
     --------
