@@ -184,12 +184,12 @@ def waterfall_plot(data, x, y, *,
             'y': np.random.uniform(-1, 1, size=len(categories))
         }
         waterfall_plot(data, 'x', 'y', sorted_value=True, max_values=5, calc_total=False, \
-                       relative_tooltips=layer_tooltips().title("Category: @x")
-                                                         .format("@initial", ".2~f")
-                                                         .format("@value", ".2~f")
-                                                         .format("@dy", ".2~f")
-                                                         .line("@{flow_type}d from @initial to @value")
-                                                         .line("Difference: @dy")
+                       relative_tooltips=layer_tooltips().title("Category: @..xlabel..")
+                                                         .format("@..initial..", ".2~f")
+                                                         .format("@..value..", ".2~f")
+                                                         .format("@..dy..", ".2~f")
+                                                         .line("@{..flow_type..}d from @..initial.. to @..value..")
+                                                         .line("Difference: @..dy..")
                                                          .disable_splitting(), \
                        size=1, alpha=.5, \
                        label=element_text(color="black"), label_format=".4f")
