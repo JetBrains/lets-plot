@@ -38,32 +38,32 @@ object Option {
         const val DEF_MEASURE = "..measure.."
 
         object Var {
-            const val X = "x"
-            const val XLAB = "xlabel"
-            const val YMIN = "ymin"
-            const val YMAX = "ymax"
-            const val MEASURE = "measure"
-            const val FLOW_TYPE = "flow_type"
-            const val INITIAL = "initial"
-            const val VALUE = "value"
-            const val DIFFERENCE = "dy"
+            const val X = "..x.."
+            const val XLAB = "..xlabel.."
+            const val YMIN = "..ymin.."
+            const val YMAX = "..ymax.."
+            const val MEASURE = "..measure.."
+            const val FLOW_TYPE = "..flow_type.."
+            const val INITIAL = "..initial.."
+            const val VALUE = "..value.."
+            const val DIFFERENCE = "..dy.."
         }
     }
 
     object WaterfallConnector {
         object Var {
-            const val X = "x"
-            const val Y = "y"
-            const val RADIUS = "radius"
+            const val X = "..x.."
+            const val Y = "..y.."
+            const val RADIUS = "..radius.."
         }
     }
 
     object WaterfallLabel {
         object Var {
-            const val X = "x"
-            const val Y = "y"
-            const val LABEL = "label"
-            const val FLOW_TYPE = "flow_type"
+            const val X = "..x.."
+            const val Y = "..y.."
+            const val LABEL = "..label.."
+            const val FLOW_TYPE = "..flow_type.."
         }
     }
 }

@@ -114,15 +114,15 @@ def waterfall_plot(data, x, y, *,
     -----
     Computed variables:
 
-    - x : category id; could be used in tooltips
-    - xlabel : category name; could be used in tooltips
-    - ymin : lower value of the change; could be used in tooltips
-    - ymax : upper value of the change; could be used in tooltips
-    - measure : kind of a calculation; could be used in tooltips
-    - flow_type : direction of the flow: increasing, decreasing, or the result (total); could be used in tooltips
-    - initial : initial value of the change; could be used in tooltips
-    - value : current cumsum (result of the change) or absolute value (depending on the 'measure' column); could be used in tooltips
-    - dy : value of the change; could be used in tooltips
+    - ..x.. : category id.
+    - ..xlabel.. : category name.
+    - ..ymin.. : lower value of the change.
+    - ..ymax.. : upper value of the change.
+    - ..measure.. : kind of a calculation: absolute, relative or total.
+    - ..flow_type.. : direction of the flow: increasing, decreasing, or the result (total).
+    - ..initial.. : initial value of the change.
+    - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column).
+    - ..dy.. : value of the change.
 
     Examples
     --------
@@ -184,12 +184,12 @@ def waterfall_plot(data, x, y, *,
             'y': np.random.uniform(-1, 1, size=len(categories))
         }
         waterfall_plot(data, 'x', 'y', sorted_value=True, max_values=5, calc_total=False, \\
-                       relative_tooltips=layer_tooltips().title("Category: @xlabel")
-                                                         .format("@initial", ".2~f")
-                                                         .format("@value", ".2~f")
-                                                         .format("@dy", ".2~f")
-                                                         .line("@{flow_type}d from @initial to @value")
-                                                         .line("Difference: @dy")
+                       relative_tooltips=layer_tooltips().title("Category: @..xlabel..")
+                                                         .format("@..initial..", ".2~f")
+                                                         .format("@..value..", ".2~f")
+                                                         .format("@..dy..", ".2~f")
+                                                         .line("@{..flow_type..}d from @..initial.. to @..value..")
+                                                         .line("Difference: @..dy..")
                                                          .disable_splitting(), \\
                        size=1, alpha=.5, \\
                        label=element_text(color="black"), label_format=".4f")
