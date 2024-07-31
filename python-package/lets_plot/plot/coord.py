@@ -218,11 +218,10 @@ def coord_polar(xlim=None, ylim=None, theta=None, start=None, direction=None, tr
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 14
+        :emphasize-lines: 13
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         np.random.seed(42)
         n = 20

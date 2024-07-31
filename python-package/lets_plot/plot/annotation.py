@@ -109,10 +109,9 @@ class layer_labels(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8
+            :emphasize-lines: 7
 
             from lets_plot import *
-            from lets_plot.mapping import *
             LetsPlot.setup_html()
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
@@ -124,10 +123,9 @@ class layer_labels(FeatureSpec):
 
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8, 10, 12, 14
+            :emphasize-lines: 7, 9, 11, 13
 
             from lets_plot import *
-            from lets_plot.mapping import *
             LetsPlot.setup_html()
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..', order=1), weight='value'), \\

@@ -159,12 +159,12 @@ def waterfall_plot(data, x, y, *,
             'x': categories,
             'y': np.random.randint(2 * m + 1, size=len(categories)) - m
         }
-        waterfall_plot(data, 'x', 'y', \
-                       threshold=2, \
-                       width=.7, size=1, fill="white", color='flow_type', \
-                       hline=element_line(linetype='solid'), hline_ontop=False, \
-                       connector=element_line(linetype='dotted'), \
-                       label=element_text(color='flow_type'), \
+        waterfall_plot(data, 'x', 'y', \\
+                       threshold=2, \\
+                       width=.7, size=1, fill="white", color='flow_type', \\
+                       hline=element_line(linetype='solid'), hline_ontop=False, \\
+                       connector=element_line(linetype='dotted'), \\
+                       label=element_text(color='flow_type'), \\
                        total_title="Result", show_legend=True)
 
     |

@@ -51,7 +51,7 @@ def guide_legend(title=None, *, nrow=None, ncol=None, byrow=None, override_aes=N
         c = np.random.choice(list('abcdefgh'), size=n)
         ggplot({'x': x, 'y': y, 'c': c}, aes('x', 'y')) + \\
             geom_point(aes(shape='c'), size=4, alpha=.7) + \\
-            scale_shape(guide=guide_legend(nrow=3))
+            scale_shape(guide=guide_legend(nrow=3, override_aes={'color': 'red'}))
 
     """
     return _guide('legend', **locals())
