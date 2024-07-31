@@ -64,7 +64,18 @@ open class BinStat(
         }
 
         if (threshold != null) {
-            val dropList = statCount.withIndex().mapNotNull { (i, v) -> i.takeIf { v <= threshold } }
+            val dropFromStart = statCount.withIndex().takeWhile { it.value <= threshold }.map { it.index }
+            val dropFromEnd = statCount.withIndex().reversed().takeWhile { it.value <= threshold }.map { it.index }
+
+            val dropList = if (true) {
+                when {
+                    dropFromStart.isNotEmpty() -> dropFromStart.dropLast(1) + dropFromEnd
+                    dropFromEnd.isNotEmpty() -> dropFromStart + dropFromEnd.drop(1)
+                    else -> emptyList()
+                }
+            } else {
+                dropFromStart + dropFromEnd
+            }
 
             dropList.forEach {
                 statX[it] = Double.NaN
