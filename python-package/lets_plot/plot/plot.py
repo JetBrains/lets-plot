@@ -83,9 +83,9 @@ def ggplot(data=None, mapping=None):
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    data, mapping, data_meta = as_annotated_data(data, mapping)
-
     data = key_int2str(data)
+
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     plot_spec = PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
 

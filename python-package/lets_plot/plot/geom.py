@@ -7365,17 +7365,17 @@ def _geom(name, *,
         if not (isinstance(mapping, FeatureSpec) and mapping.kind == 'mapping'):
             raise ValueError("Unexpected value for argument 'mapping'. Hint: try to use function aes()")
 
-    data, mapping, data_meta = as_annotated_data(data, mapping)
-
     if is_geocoder(data):
         data = data.get_geocodes()
+
+    data = key_int2str(data)
+
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     # GDF in a map parameter has higher priority for defining a geo_data_meta
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
-
-    data = key_int2str(data)
 
     return LayerSpec(geom=name,
                      stat=stat,

@@ -73,3 +73,19 @@ def assert_column_values(data):
     p = gg.ggplot() + gg.geom_point(data=data, mapping=gg.aes(x="0", y="1"))
     st = _standardize_value(p.as_dict())
     assert list(st['layers'][0]['data'].keys()) == ['0', '1']
+
+
+def test_mixed_int():
+    data = [np.array([194, 5, 189, 200, 190, 198]),
+            np.array([189, 9, 197, 199, 180, 181]),
+            np.array([60, 5, 56, 54, 67, 62])]
+
+    df = pd.DataFrame(data)
+    df = df.rename(columns={0: 'color', 1: 'std'})
+    df = df.sort_values(by=['color', 'std']).reset_index(drop=True)
+
+    p = gg.ggplot() + gg.geom_bar(gg.aes(x='color', fill='color'), data=df)
+    d = _standardize_value(p.as_dict())
+
+    assert list(d['layers'][0]['data'].keys()) == ['color', 'std', '2', '3', '4', '5']
+
