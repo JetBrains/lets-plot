@@ -54,61 +54,37 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.3.0
+## What is new in 4.4.0
 
-- #### `coord_polar()`
-
-    The polar coordinate system is most commonly used for pie charts, but</br>
-    it can also be used for constructing **Spider or Radar charts** using the `flat` option.
-    
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/polar_coord_pie.png" alt="f-24a/images/polar_coord_pie.png" width="256" height="214">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/radar_chart.png" alt="f-24a/images/radar_chart.png" width="256" height="196">
-    
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/coord_polar.ipynb).  
-
-- #### In the `theme()`:
-
-    - `panel_inset`  parameter - primarily used for plots with polar coordinates.
-    
-        See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/theme_panel_inset.ipynb).
-    
-    - `panel_border_ontop` parameter - enables the drawing of panel border on top of the plot geoms.
-    - `panel_grid_ontop, panel_grid_ontop_x, panel_grid_ontop_y` parameters - enable the drawing of grid lines on top of the plot geoms.
-
-- #### `geom_curve()` 
-
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/curve_annotation.png" alt="f-24a/images/curve_annotation.png" width="338" height="296">
-    
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve.ipynb).
-
-- #### [**UNIQUE**] Visualizing Graph-like Data with `geom_segment()` and `geom_curve()`
-
-  - Aesthetics `size_start, size_end, stroke_start` and `stroke_end` enable better alignment of</br>
-    segments/curves with nodes of the graph by considering the size of the nodes.
-
-  - The `spacer` parameter allows for additional manual fine-tuning.
-
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_simple.png" alt="f-24a/images/graph_simple.png" width="256" height="168">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24a/images/graph_on_map.png" alt="f-24a/images/graph_on_map.png" width="256" height="184">
-
-  See:
-  - [A simple graph example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/graph_edges.ipynb)
-  - [An interactive map example](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_curve_on_map.ipynb)
+- #### Waterfall Plot
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/waterfall.png" alt="f-24e/images/waterfall.png" width="460" height="220">
   
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
 
-- #### The `alpha_stroke` Parameter in `geom_label()`
+- #### **`geom_band()`**:
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/geom_band.png" alt="f-24e/images/geom_band.png.png" width="615" height="220">
 
-  Use the `alpha_stroke` parameter to apply `alpha` to entire `label`. By default, `alpha` is only applied to the label background.
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_band.ipynb).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24a/geom_label_alpha_stroke.ipynb).
+- #### Custom Legends 
+  - `manual_key` parameter in plot layer
+  - `layer_key()` function
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/custom_legend.png" alt="f-24e/images/custom_legend.png.png" width="294" height="147">
 
-- #### Showing Plots in External Browser
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
+   
+- #### Customizing Legends Appearence
+  The `override_aes` parameter in the `guide_legend()` function.
+     
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_override_aes.ipynb).
 
-  The [setup_show_ext()](https://lets-plot.org/python/pages/api/lets_plot.LetsPlot.html#lets_plot.LetsPlot.setup_show_ext) directive allows plots to be displayed in an external browser window.
-                                          
+
+- #### And More
+
+  See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for a full list of changes.
+
+
 ## Recent Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
   <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/venn_diagram.ipynb">
@@ -141,7 +117,7 @@ Also read:
 
 ## Change Log
 
-See [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md) for other changes and fixes.
+[CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md)
 
 
 ## Code of Conduct
