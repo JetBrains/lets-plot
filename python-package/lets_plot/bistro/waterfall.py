@@ -51,6 +51,7 @@ def waterfall_plot(data, x, y, *,
         Type of the box boundary lines.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
         3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     width : float, default=0.9
         Width of the boxes. Typically range between 0 and 1.
         Values that are greater than 1 lead to overlapping of the boxes.
@@ -123,12 +124,6 @@ def waterfall_plot(data, x, y, *,
     - ..initial.. : initial value of the change.
     - ..value.. : current cumsum (result of the change) or absolute value (depending on the 'measure' column).
     - ..dy.. : value of the change.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------

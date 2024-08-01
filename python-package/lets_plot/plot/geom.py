@@ -114,7 +114,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - angle : rotation angle of the point shape, in degrees.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -148,12 +148,6 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------
@@ -299,7 +293,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     ----
@@ -329,12 +323,6 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -472,14 +460,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -631,14 +613,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -1426,13 +1402,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
-    - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1670,13 +1640,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1821,13 +1785,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1962,22 +1920,10 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : size of mid-point.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-    - shape : shape of the mid-point, an integer from 0 to 25.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - shape : shape of the mid-point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : line width.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -2098,13 +2044,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2228,13 +2168,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2529,7 +2463,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -2560,12 +2494,6 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -2721,7 +2649,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -2752,12 +2680,6 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -2881,13 +2803,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2998,13 +2914,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3116,13 +3026,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3242,13 +3146,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3409,14 +3307,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -3639,15 +3531,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'ydensity' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4044,15 +3930,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4192,13 +4072,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -4322,13 +4196,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -4488,15 +4356,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -4693,19 +4555,13 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density2d' stat to compute weighted density.
 
     ----
 
     'density2d' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5139,15 +4995,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------
@@ -5287,15 +5137,9 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------
@@ -5414,15 +5258,9 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------
@@ -5535,14 +5373,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5657,14 +5489,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -5767,13 +5593,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -5888,13 +5708,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -6019,7 +5833,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -6050,12 +5864,6 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -6194,17 +6002,11 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the segment start coordinate (usually equal to the size of the point object from which the segment starts to avoid overlapping with it).
     - size_end : offset from the segment end coordinate (usually equal to the size of the point object from which the segment ends to avoid overlapping with it).
     - stroke_start : offset from the segment start coordinate (usually equal to the stroke of the point object from which the segment starts to avoid overlapping with it).
     - stroke_end : offset from the segment end coordinate (usually equal to the stroke of the point object from which the segment ends to avoid overlapping with it).
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -6362,17 +6164,11 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the start coordinate (usually equal to the size of the point object from which the curve starts to avoid overlapping with it).
     - size_end : offset from the end coordinate (usually equal to the size of the point object from which the curve ends to avoid overlapping with it).
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
     - stroke_end : offset from the end coordinate (usually equal to the stroke of the point object from which the curve ends to avoid overlapping with it).
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -6504,13 +6300,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -7371,28 +7161,16 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : stick width.
-    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
     So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
@@ -7522,15 +7300,9 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
     - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
 
     Examples
     --------

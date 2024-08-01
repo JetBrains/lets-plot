@@ -59,6 +59,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         Size of the points.
     shape : int
         Shape of the points, an integer from 0 to 25.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     line_color : str, default='#FF0000'
         Color of the fitting line.
     line_size : float, default=0.75
@@ -67,6 +68,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         Type of the fitting line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
         3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Returns
     -------
@@ -80,18 +82,6 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
 
     If the two distributions being compared are similar, the points in the Q-Q plot
     will approximately lie on the straight line.
-
-    ----
-
-    Available point shapes:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/point_shapes.png
-
-    ----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------

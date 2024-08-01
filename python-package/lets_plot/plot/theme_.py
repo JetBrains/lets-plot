@@ -399,6 +399,7 @@ def element_rect(
     linetype : int or str
         Type of the line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -406,13 +407,6 @@ def element_rect(
     -------
     `dict`
         Theme element specification.
-
-    Notes
-    -----
-
-    Available line types:
-
-    .. image:: https://raw.githubusercontent.com/JetBrains/lets-plot-docs/master/source/_static/images/line_types.png
 
     Examples
     --------
