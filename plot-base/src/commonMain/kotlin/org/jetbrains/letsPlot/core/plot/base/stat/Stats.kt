@@ -122,7 +122,7 @@ object Stats {
         binWidth: Double? = null,
         center: Double? = null,
         boundary: Double? = null,
-        threshold: Double? = BinStat.DEF_THRESHOLD
+        threshold: Double? = null
     ): BinStat {
         var xPosKind = BinStat.XPosKind.NONE
         var xPosValue = 0.0

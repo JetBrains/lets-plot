@@ -848,7 +848,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None, threshold=0,
+                   sampling=None, threshold=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -889,9 +889,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    threshold : float, default=0
-        If a bin's `..count..` value is less than the threshold, the bin will be removed. This is useful for free scales in facets.
-        If threshold is set to None, all bins will be displayed.
+    threshold : float, default=None
+        If a bin's `..count..` is less than the threshold, the bin will be removed.
+        Dropping empty bins is particularly useful for faceted plots with free scales.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
