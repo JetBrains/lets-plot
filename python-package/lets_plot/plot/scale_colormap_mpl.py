@@ -45,10 +45,8 @@ def _cmapmpl_to_hex(cmap) -> List[str]:
         colors = cmap.colors
     else:
         # colors from a continuous colormap (like "plasma")
-        # colors = cmap(range(64))
         n = 256
         values = [i / (n - 1) for i in range(n)]
-        # colors = cmap(range(64))
         colors = [cmap(value) for value in values]
 
     return [matplotlib.colors.to_hex(c) for c in colors]
