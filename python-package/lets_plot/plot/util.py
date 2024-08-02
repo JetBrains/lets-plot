@@ -209,7 +209,7 @@ def geo_data_frame_to_crs(gdf: 'GeoDataFrame', use_crs: Optional[str]):
 
 def key_int2str(data):
     if is_pandas_data_frame(data):
-        if data.columns.inferred_type == 'integer':
+        if data.columns.inferred_type == 'integer' or data.columns.inferred_type == 'mixed-integer':
             data.columns = data.columns.astype(str)
         return data
 

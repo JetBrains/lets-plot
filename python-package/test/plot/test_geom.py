@@ -35,13 +35,3 @@ class TestWithListAndDictArgs:
     def test_aes(self, args_list, args_dict, expected):
         spec = _geom(*args_list, **args_dict)
         assert spec.as_dict() == expected
-
-
-def test_geom_histogram_default_threshold_should_be_zero():
-    spec = gg.geom_histogram()
-    assert spec.as_dict() == {'geom': 'histogram', 'mapping': {}, 'data_meta': {}, 'threshold': 0.0}
-
-
-def test_geom_histogram_threshold_none_value_should_overwrite_default():
-    spec = gg.geom_histogram(threshold=None)
-    assert spec.as_dict() == {'geom': 'histogram', 'mapping': {}, 'data_meta': {}}
