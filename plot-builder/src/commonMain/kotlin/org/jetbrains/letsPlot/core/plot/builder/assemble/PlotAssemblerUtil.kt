@@ -67,7 +67,7 @@ internal object PlotAssemblerUtil {
                         } else {
                             // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
                             // Add under another key
-                            "$scale.name (${aes.name})"
+                            "${scale.name} (${aes.name})"
                         }
                     } ?: scale.name
 
