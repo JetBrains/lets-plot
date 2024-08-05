@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
@@ -100,7 +99,7 @@ class WaterfallPlotOptionsBuilder(
                 }
             )
             themeOptions = theme {
-                setParameter(ThemeOption.AXIS_TOOLTIP, "blank")
+                axisTooltip = ThemeOptions.Element.BLANK
             }
         }
     }
