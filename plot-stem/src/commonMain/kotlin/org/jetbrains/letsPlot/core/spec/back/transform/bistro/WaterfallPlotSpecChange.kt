@@ -111,7 +111,9 @@ class WaterfallPlotSpecChange : SpecChange {
                 minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
                 title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
                 disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+                @Suppress("UNCHECKED_CAST")
                 lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
+                @Suppress("UNCHECKED_CAST")
                 formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
                     TooltipsOptions.format {
                         field = formatOptions[Option.LinesSpec.Format.FIELD]
