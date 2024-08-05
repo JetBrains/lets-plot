@@ -87,6 +87,9 @@ Also read:
 
 ## Recent Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
+  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/us_unemployment.ipynb">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/us_unemployment.png" alt="f-24e/images/us_unemployment.png" width="128" height="128">
+  </a>
   <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/venn_diagram.ipynb">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24b/images/gal_venn_diagram.png" alt="f-24b/images/gal_venn_diagram.png" width="128" height="128">
   </a>
