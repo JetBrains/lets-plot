@@ -31,6 +31,12 @@ object Option {
         const val CONNECTOR = "connector"
         const val LABEL = "label"
         const val LABEL_FORMAT = "label_format"
+
+        // Special values that parameters can take
+        object Keyword {
+            const val COLOR_FLOW_TYPE = "flow_type" // for params: color, fill, label#color
+            const val TOOLTIP_DETAILED = "detailed" // for params: relative_tooltips, absolute_tooltips
+        }
     }
 
     object WaterfallBox {

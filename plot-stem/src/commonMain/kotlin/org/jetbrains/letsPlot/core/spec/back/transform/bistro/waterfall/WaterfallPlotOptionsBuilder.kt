@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
@@ -175,8 +176,8 @@ class WaterfallPlotOptionsBuilder(
             it.geom = GeomKind.CROSS_BAR
             it.data = boxData
             it.mappings = boxMappings()
-            it.color = color.takeUnless { color == FLOW_TYPE_COLOR_KEYWORD }
-            it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_KEYWORD }
+            it.color = color.takeUnless { color == COLOR_FLOW_TYPE }
+            it.fill = fill.takeUnless { fill == COLOR_FLOW_TYPE }
             it.size = size
             it.alpha = alpha
             it.linetype = LineTypeOptionConverter().apply(lineType)
@@ -196,10 +197,10 @@ class WaterfallPlotOptionsBuilder(
             Aes.YMIN to WaterfallBox.Var.YMIN,
             Aes.YMAX to WaterfallBox.Var.YMAX
         )
-        if (color == FLOW_TYPE_COLOR_KEYWORD) {
+        if (color == COLOR_FLOW_TYPE) {
             mappings[Aes.COLOR] = WaterfallBox.Var.FLOW_TYPE
         }
-        if (fill == FLOW_TYPE_COLOR_KEYWORD) {
+        if (fill == COLOR_FLOW_TYPE) {
             mappings[Aes.FILL] = WaterfallBox.Var.FLOW_TYPE
         }
         return mappings
@@ -244,7 +245,7 @@ class WaterfallPlotOptionsBuilder(
             it.geom = GeomKind.TEXT
             it.data = labelData
             it.mappings = labelMappings()
-            it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_KEYWORD }
+            it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
             it.family = labelOptions.family
             it.fontface = labelOptions.face
             it.size = labelOptions.size
@@ -262,7 +263,7 @@ class WaterfallPlotOptionsBuilder(
             Aes.Y to WaterfallLabel.Var.Y,
             Aes.LABEL to WaterfallLabel.Var.LABEL,
         )
-        if (labelOptions.color == FLOW_TYPE_COLOR_KEYWORD) {
+        if (labelOptions.color == COLOR_FLOW_TYPE) {
             mappings[Aes.COLOR] = WaterfallLabel.Var.FLOW_TYPE
         }
         return mappings
@@ -339,8 +340,6 @@ class WaterfallPlotOptionsBuilder(
     data class LayerData(val box: Map<String, List<Any?>>, val connector: Map<String, List<Any?>>, val label: Map<String, List<Any?>>)
 
     companion object {
-        const val FLOW_TYPE_COLOR_KEYWORD = "flow_type"
-        const val TOOLTIP_DETAILED_KEYWORD = "detailed"
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_NAME = "Flow type"
         private const val BASE = 0.0
