@@ -78,7 +78,9 @@ class WaterfallPlotOptionsBuilder(
                 scale {
                     aes = Aes.X
                     name = x
-                    breaks = layerData.box.getValue(WaterfallBox.Var.X) as List<Double>
+                    @Suppress("UNCHECKED_CAST")
+                    breaks = layerData.box.getValue(WaterfallBox.Var.X) as List<Any>
+                    @Suppress("UNCHECKED_CAST")
                     labels = layerData.box.getValue(WaterfallBox.Var.XLAB) as List<String>
                 },
                 scale {
