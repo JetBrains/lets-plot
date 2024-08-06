@@ -52,31 +52,6 @@ internal object WaterfallUtil {
         return standardData + mapOf(WaterfallBox.MEASURE_GROUP to measureGroup)
     }
 
-    fun groupBy(
-        data: Map<String, List<*>>,
-        group: String?
-    ): List<Map<String, List<*>>> {
-        return if (group != null && group in data.keys) {
-            val groupValues = data.getValue(group)
-            val result = mutableListOf<Map<String, List<*>>>()
-            for (groupValue in groupValues.distinct()) {
-                val indices = groupValues.withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> v == groupValue }.unzip().first
-                result.add(data.entries.associate { (k, v) -> k to v.slice(indices) })
-            }
-            result
-        } else {
-            listOf(data)
-        }
-    }
-
-    fun concat(datasets: List<Map<String, List<*>>>): Map<String, List<*>> {
-        val keys = datasets.firstOrNull { data -> data.keys.any() }?.keys ?: return emptyBoxStat()
-        return keys.associateWith { key ->
-            datasets.map { data -> data[key] ?: emptyList<Any?>() }
-                    .fold(emptyList<Any?>()) { result, values -> result + values }
-        }
-    }
-
     fun markSkipBoxes(data: Map<String, List<*>>, key: String, filter: (Any?) -> Boolean): Map<String, List<*>> {
         val indices = data.getValue(key).withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
         return data.entries.associate { (k, v) ->
@@ -160,7 +135,7 @@ internal object WaterfallUtil {
         )
     }
 
-    private fun emptyBoxStat(): Map<String, List<*>> {
+    fun emptyBoxStat(): Map<String, List<*>> {
         return mapOf(
             WaterfallBox.Var.X to emptyList(),
             WaterfallBox.Var.XLAB to emptyList(),
@@ -331,6 +306,5 @@ internal object WaterfallUtil {
             else -> series
         }
     }
-
 
 }

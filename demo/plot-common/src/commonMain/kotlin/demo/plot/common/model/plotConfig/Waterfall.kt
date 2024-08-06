@@ -12,8 +12,8 @@ class Waterfall {
         return listOf(
             basic(),
             checkParameters(),
-            withMeasure(),
             withGrouping(),
+            withMeasure(),
         )
     }
 

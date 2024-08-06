@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
@@ -44,7 +44,7 @@ class WaterfallPlotOptionsBuilder(
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
-    private val data = DataUtil.standardiseData(data)
+    private val data = standardiseData(data)
 
     fun build(): PlotOptions {
         val layerData = getLayerData()
@@ -110,7 +110,7 @@ class WaterfallPlotOptionsBuilder(
     private fun getLayerData(): LayerData {
         val dataGroups = mutableListOf<LayerData>()
         var initialX = 0
-        WaterfallUtil.groupBy(data, group)
+        DataUtil.groupBy(data, group)
             .forEach { groupData ->
                 val boxLayerData = boxLayerGroupData(groupData, initialX)
                 val connectorData = WaterfallUtil.calculateConnectorStat(boxLayerData, 1.0 - width)
@@ -119,9 +119,9 @@ class WaterfallPlotOptionsBuilder(
                 dataGroups.add(LayerData(boxLayerData, connectorData, labelData))
             }
         return LayerData(
-            box = dataGroups.map(LayerData::box).let(WaterfallUtil::concat),
-            connector = dataGroups.map(LayerData::connector).let(WaterfallUtil::concat),
-            label = dataGroups.map(LayerData::label).let(WaterfallUtil::concat)
+            box = dataGroups.map(LayerData::box).let { DataUtil.concat(it, WaterfallUtil.emptyBoxStat()) },
+            connector = dataGroups.map(LayerData::connector).let { DataUtil.concat(it, WaterfallUtil.emptyBoxStat()) },
+            label = dataGroups.map(LayerData::label).let { DataUtil.concat(it, WaterfallUtil.emptyBoxStat()) },
         )
     }
 
@@ -131,7 +131,7 @@ class WaterfallPlotOptionsBuilder(
         var measureInitialX = initialX
         var measureInitialY = BASE
         // Need to calculate total for each measure group separately because of sorting and thresholding
-        return WaterfallUtil.groupBy(WaterfallUtil.prepareData(groupData, measure, calcTotal), WaterfallBox.MEASURE_GROUP)
+        return DataUtil.groupBy(WaterfallUtil.prepareData(groupData, measure, calcTotal), WaterfallBox.MEASURE_GROUP)
             .map { measureGroupData ->
                 val statData = WaterfallUtil.calculateBoxStat(
                     measureGroupData,
@@ -151,7 +151,7 @@ class WaterfallPlotOptionsBuilder(
                 statData
             }
             .let { datasets ->
-                WaterfallUtil.concat(datasets)
+                DataUtil.concat(datasets, WaterfallUtil.emptyBoxStat())
             }
     }
 
