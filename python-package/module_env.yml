@@ -13,6 +13,7 @@ dependencies:
   - geopandas>=0.12.2
   - shapely>=2.0.0
   - pytest>=8.1.1
+  - jax >=0.3.25
   - pip
   - pip:
       - build #For Python wheel build.
