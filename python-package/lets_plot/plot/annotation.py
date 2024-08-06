@@ -171,7 +171,7 @@ class layer_labels(FeatureSpec):
         A '^' symbol can be escaped with a backslash, a brace character
         in the literal text - by doubling:
 
-        - 'x\^2' -> "x^2"
+        - 'x\\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
         Examples
