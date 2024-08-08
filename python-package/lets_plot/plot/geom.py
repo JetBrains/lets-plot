@@ -934,6 +934,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..density.. : normalised number of points so that plot area is 1.
     - ..binwidth.. : width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
