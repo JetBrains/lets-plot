@@ -204,7 +204,7 @@ def layer_key(label, group=None, *, index=None, **kwargs):
     to further customize the display of this group (e.g. change its name).
     In particular, items in the 'manual' group will be displayed without a title unless you change it manually.
 
-    |
+    ----
 
     If you set the same group and label for a legend element in different layers, they will merge into one complex legend element.
 
