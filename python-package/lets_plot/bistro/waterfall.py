@@ -24,7 +24,7 @@ def waterfall_plot(data, x, y, *,
     data : dict or Pandas or Polars `DataFrame`
         The data to be displayed.
     x : str
-        Name of a variable. All values should be distinct.
+        Name of a variable.
     y : str
         Name of a numeric variable.
     measure : str
