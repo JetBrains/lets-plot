@@ -112,8 +112,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - angle : rotation angle of the point shape, in degrees.
     - size : size of the point.
@@ -292,7 +292,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
@@ -459,7 +459,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
@@ -611,8 +611,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color for the confidence interval around the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
@@ -776,8 +776,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
@@ -942,8 +942,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1099,8 +1099,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, 
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
 
     Examples
@@ -1248,8 +1248,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1398,8 +1398,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
@@ -1536,7 +1536,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
 
     Examples
     --------
@@ -1638,7 +1638,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
     - ymax or xmax: upper bound for vertical or horizontal error bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
@@ -1782,8 +1782,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin or xmin: lower bound for vertical or horizontal bar, respectively.
     - ymax or xmax: upper bound for vertical or horizontal bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
@@ -1918,8 +1918,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - ymin or xmin: lower bound for vertical or horizontal interval, respectively.
     - ymax or xmax: upper bound for vertical or horizontal interval, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - shape : shape of the mid-point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
@@ -2043,7 +2043,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - ymin or xmin: lower bound for vertical or horizontal line range, respectively.
     - ymax or xmax: upper bound for vertical or horizontal line range, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -2167,7 +2167,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -2313,7 +2313,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
 
     Examples
     --------
@@ -2461,8 +2461,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -2647,8 +2647,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `geom_map()` understands the following aesthetics:
 
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -2802,7 +2802,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - slope : line slope.
     - intercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -2912,8 +2912,8 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymin : y-axis value.
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -3025,7 +3025,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -3145,7 +3145,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -3305,8 +3305,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ymin : lower whisker.
     - ymax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
@@ -3529,8 +3529,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'ydensity' stat to compute weighted density.
@@ -3744,8 +3744,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None,
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
 
     Examples
@@ -3928,8 +3928,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - y : y-axis coordinates.
     - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'densityridges' stat to compute weighted density.
@@ -4070,8 +4070,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ymin or xmin: y-axis or x-axis coordinates of the lower bound for horizontal or vertical ribbon, respectively.
     - ymax or xmax: y-axis or x-axis coordinates of the upper bound for horizontal or vertical ribbon, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -4194,8 +4194,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -4354,8 +4354,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density' stat to compute weighted density.
@@ -4554,7 +4554,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density2d' stat to compute weighted density.
@@ -4778,7 +4778,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - weight : used by 'density2df' stat to compute weighted density.
 
     ----
@@ -4994,8 +4994,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -5136,8 +5136,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -5257,8 +5257,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -5373,7 +5373,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
@@ -5489,7 +5489,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
@@ -5592,7 +5592,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -5707,7 +5707,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -5831,8 +5831,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymin : y-axis value.
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -6001,7 +6001,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the segment start coordinate (usually equal to the size of the point object from which the segment starts to avoid overlapping with it).
@@ -6163,7 +6163,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the start coordinate (usually equal to the size of the point object from which the curve starts to avoid overlapping with it).
@@ -6299,7 +6299,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
     - angle : slope's angle in radians.
     - radius : segment length.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
@@ -6469,7 +6469,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : font size.
     - label : text to add to plot.
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
@@ -6706,7 +6706,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill: background color of the label.
     - size : font size.
     - label : text to add to plot.
@@ -6943,7 +6943,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - slice : values associated to pie sectors.
     - explode : values to explode slices away from their center point, detaching it from the main pie. Accept values between 0 and 1.
     - size : pie diameter.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
     - stroke : width of inner and outer arcs of pie sector.
@@ -7160,8 +7160,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -7299,8 +7299,8 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.

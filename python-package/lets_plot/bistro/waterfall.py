@@ -39,9 +39,11 @@ def waterfall_plot(data, x, y, *,
         Grouping variable. Each group calculates its own statistics.
     color : str
         Color of the box boundary lines.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
         Use 'flow_type' to color lines by the direction of the flow.
     fill : str
         Fill color of the boxes.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
         Use 'flow_type' to color boxes by the direction of the flow.
     size : float, default=0.0
         Line width of the box boundary lines.
