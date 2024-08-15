@@ -2931,30 +2931,26 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 16-19
+        :emphasize-lines: 16-17
 
+        import numpy as np
+        import pandas as pd
         from lets_plot import *
         LetsPlot.setup_html()
-        n = 11
-        w = 5
-        color = "orange"
-        xdata = {
-            "xmin": list(range(0, w * n, w)),
-            "xmax": list(range(1, w * n + 1, w)),
-        }
-        ydata = {
-            "ymin": [0, 10],
-            "ymax": [10, 15],
-            "color": [color, "white"],
-        }
+        groups = ["A", "B", "C"]
+        n, m = 15, len(groups)
+        np.random.seed(42)
+        points_df = pd.DataFrame({
+            'x': np.random.normal(size=m*n),
+            'y': np.concatenate([np.random.normal(loc=loc, size=n)
+                                 for loc in np.random.uniform(-1, 1, size=m)]),
+            'g': np.random.choice(groups, size=m*n),
+        })
+        vertical_bands_df = points_df.groupby('g')['y'].agg(['min', 'max']).reset_index()
         ggplot() + \\
-            geom_band(aes(xmin="xmin", xmax="xmax"), data=xdata, \\
-                      size=0, fill=color, tooltips='none') + \\
-            geom_band(aes(ymin="ymin", ymax="ymax", fill="color"), data=ydata, \\
-                      size=0, tooltips='none') + \\
-            scale_fill_identity() + \\
-            coord_polar(xlim=[0, w * n], ylim=[0, 25]) + \\
-            theme_void()
+            geom_band(aes(ymin='min', ymax='max', paint_a='g'), data=vertical_bands_df, \\
+                      fill_by='paint_a', alpha=.2, size=0) + \\
+            geom_point(aes('x', 'y', paint_a='g'), data=points_df, color_by='paint_a')
 
     """
     return _geom('band',
