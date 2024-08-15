@@ -204,7 +204,9 @@ class corr_plot:
             If True, then absolute value of correlation is mapped to text size.
             If False - the text size is constant. Default - contextual.
         color : str
-            Set text color. Default - contextual.
+            Set text color.
+            For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+            Default - contextual.
 
         Returns
         -------
