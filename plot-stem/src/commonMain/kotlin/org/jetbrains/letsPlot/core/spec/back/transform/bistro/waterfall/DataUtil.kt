@@ -5,29 +5,42 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+
 internal object DataUtil {
-    fun groupBy(
-        data: Map<String, List<*>>,
-        group: String?
-    ): List<Map<String, List<*>>> {
-        return if (group != null && group in data.keys) {
-            val groupValues = data.getValue(group)
-            val result = mutableListOf<Map<String, List<*>>>()
-            for (groupValue in groupValues.distinct()) {
-                val indices = groupValues.withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> v == groupValue }.unzip().first
-                result.add(data.entries.associate { (k, v) -> k to v.slice(indices) })
-            }
-            result
-        } else {
-            listOf(data)
+    fun addRow(df: DataFrame, getValue: (DataFrame.Variable) -> Any?): DataFrame {
+        val builder = DataFrame.Builder()
+        df.variables().map { variable ->
+            builder.put(variable, df[variable] + listOf(getValue(variable)))
+        }
+        return builder.build()
+    }
+
+    fun addColumn(df: DataFrame, variable: DataFrame.Variable, values: List<Any?>): DataFrame {
+        val builder = DataFrame.Builder()
+        df.variables().map { variable ->
+            builder.put(variable, df[variable])
+        }
+        builder.put(variable, values)
+        return builder.build()
+    }
+
+    fun groupBy(df: DataFrame, group: String?): List<DataFrame> {
+        val groupVar = group?.let { DataFrameUtil.findVariableOrNull(df, it) } ?: return listOf(df)
+        val groupValues = df.distinctValues(groupVar)
+        return groupValues.map { groupValue ->
+            val indices = df[groupVar].withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> v == groupValue }.unzip().first
+            df.slice(indices)
         }
     }
 
-    fun concat(datasets: List<Map<String, List<*>>>, emptyDataset: Map<String, List<*>>): Map<String, List<*>> {
-        val keys = datasets.firstOrNull { data -> data.keys.any() }?.keys ?: return emptyDataset
-        return keys.associateWith { key ->
-            datasets.map { data -> data[key] ?: emptyList<Any?>() }
-                .fold(emptyList<Any?>()) { result, values -> result + values }
+    fun concat(dataframes: List<DataFrame>, emptyDataframe: DataFrame): DataFrame {
+        if (dataframes.isEmpty()) return emptyDataframe
+        val builder = DataFrame.Builder()
+        dataframes.first().variables().map { variable ->
+            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
         }
+        return builder.build()
     }
 }

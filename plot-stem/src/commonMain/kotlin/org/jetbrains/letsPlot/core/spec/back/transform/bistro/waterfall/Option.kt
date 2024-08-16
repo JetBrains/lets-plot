@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+
 object Option {
     object Waterfall {
         const val NAME = "waterfall"
@@ -40,36 +42,36 @@ object Option {
     }
 
     object WaterfallBox {
-        const val MEASURE_GROUP = "..measure_group.."
-        const val DEF_MEASURE = "..measure.."
+        const val MEASURE_GROUP_VAR_NAME = "..measure_group.."
+        const val DEF_MEASURE_VAR_NAME = "..measure.."
 
         object Var {
-            const val X = "..x.."
-            const val XLAB = "..xlabel.."
-            const val YMIN = "..ymin.."
-            const val YMAX = "..ymax.."
-            const val MEASURE = "..measure.."
-            const val FLOW_TYPE = "..flow_type.."
-            const val INITIAL = "..initial.."
-            const val VALUE = "..value.."
-            const val DIFFERENCE = "..dy.."
+            val X = DataFrame.Variable("..x..")
+            val XLAB = DataFrame.Variable("..xlabel..")
+            val YMIN = DataFrame.Variable("..ymin..")
+            val YMAX = DataFrame.Variable("..ymax..")
+            val MEASURE = DataFrame.Variable("..measure..")
+            val FLOW_TYPE = DataFrame.Variable("..flow_type..")
+            val INITIAL = DataFrame.Variable("..initial..")
+            val VALUE = DataFrame.Variable("..value..")
+            val DIFFERENCE = DataFrame.Variable("..dy..")
         }
     }
 
     object WaterfallConnector {
         object Var {
-            const val X = "..x.."
-            const val Y = "..y.."
-            const val RADIUS = "..radius.."
+            val X = DataFrame.Variable("..x..")
+            val Y = DataFrame.Variable("..y..")
+            val RADIUS = DataFrame.Variable("..radius..")
         }
     }
 
     object WaterfallLabel {
         object Var {
-            const val X = "..x.."
-            const val Y = "..y.."
-            const val LABEL = "..label.."
-            const val FLOW_TYPE = "..flow_type.."
+            val X = DataFrame.Variable("..x..")
+            val Y = DataFrame.Variable("..y..")
+            val LABEL = DataFrame.Variable("..label..")
+            val FLOW_TYPE = DataFrame.Variable("..flow_type..")
         }
     }
 }

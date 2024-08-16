@@ -9,8 +9,9 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox.DEF_MEASURE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox.DEF_MEASURE_VAR_NAME
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Measure
@@ -18,28 +19,27 @@ import kotlin.math.*
 
 internal object WaterfallUtil {
     fun prepareData(
-        originalData: Map<String, List<*>>,
+        originalDf: DataFrame,
         measure: String?,
         calcTotal: Boolean
-    ): Map<String, List<*>> {
+    ): DataFrame {
         // standardData always contains 'measure' column, even if it's not in the original data
         val standardData = if (measure == null) {
-            val datasetSize = originalData.values.firstOrNull()?.size ?: 0
-            val measures = List(datasetSize) { Measure.RELATIVE.value }.let { measures ->
+            val measures = List(originalDf.rowCount()) { Measure.RELATIVE.value }.let { measures ->
                 if (calcTotal) measures + listOf(Measure.TOTAL.value) else measures
             }
-            originalData.toList().associate { (columnName, columnValues) ->
-                columnName to if (calcTotal) {
-                    columnValues + listOf(null)
-                } else {
-                    columnValues
-                }
-            } + mapOf(DEF_MEASURE to measures)
+            if (calcTotal) {
+                DataUtil.addRow(originalDf) { null }
+            } else {
+                originalDf
+            }.let { df ->
+                DataUtil.addColumn(df, DataFrame.Variable(DEF_MEASURE_VAR_NAME), measures)
+            }
         } else {
-            originalData
+            originalDf
         }
         // Form column with measure groups (in each group there is only one 'total' measure value)
-        val measures = extractMeasures(standardData, measure ?: DEF_MEASURE)
+        val measures = extractMeasures(standardData, measure ?: DEF_MEASURE_VAR_NAME)
         val measureGroup = mutableListOf<Int>()
         var group = 0
         for (measureValue in measures) {
@@ -49,22 +49,22 @@ internal object WaterfallUtil {
             }
         }
         // As a result: original data + columns 'measure' and 'measure_group'
-        return standardData + mapOf(WaterfallBox.MEASURE_GROUP to measureGroup)
+        return DataUtil.addColumn(standardData, DataFrame.Variable(WaterfallBox.MEASURE_GROUP_VAR_NAME), measureGroup)
     }
 
     fun markSkipBoxes(data: Map<String, List<*>>, key: String, filter: (Any?) -> Boolean): Map<String, List<*>> {
         val indices = data.getValue(key).withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
         return data.entries.associate { (k, v) ->
             k to when (k) {
-                WaterfallBox.Var.YMIN,
-                WaterfallBox.Var.YMAX -> v.mapIndexed { i, y -> if (i in indices) y else null }
+                WaterfallBox.Var.YMIN.name,
+                WaterfallBox.Var.YMAX.name -> v.mapIndexed { i, y -> if (i in indices) y else null }
                 else -> v
             }
         }
     }
 
     fun calculateBoxStat(
-        data: Map<String, List<*>>,
+        df: DataFrame,
         x: String,
         y: String,
         measure: String,
@@ -75,9 +75,9 @@ internal object WaterfallUtil {
         initialY: Double,
         base: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>
-    ): Map<String, List<*>> {
-        val rawMeasures = extractMeasures(data, measure)
-        val (xs, ys, measures) = extractSeries(data, x, y, rawMeasures)
+    ): DataFrame {
+        val rawMeasures = extractMeasures(df, measure)
+        val (xs, ys, measures) = extractSeries(df, x, y, rawMeasures)
             .let { sortSeries(it, sortedValue) }
             .let { filterSeries(it, threshold, maxValues) }
         if (xs.isEmpty()) {
@@ -113,7 +113,7 @@ internal object WaterfallUtil {
         val calcTotal = rawMeasures.lastOrNull() == Measure.TOTAL.value
         val defaultTotalTitle = flowTypeTitles[FlowType.TOTAL]?.title
         val calculateLast: (Any?) -> List<Any?> = { if (calcTotal && ys.isNotEmpty()) listOf(it) else emptyList() }
-        val xsLast = calculateLast(extractTotalTitle(data, x, calcTotal, defaultTotalTitle))
+        val xsLast = calculateLast(extractTotalTitle(df, x, calcTotal, defaultTotalTitle))
         val ysLast = calculateLast(values.last() - (base + initialY))
         val measuresLast = calculateLast(Measure.TOTAL.value)
         val initialsLast = calculateLast(base + initialY)
@@ -122,38 +122,38 @@ internal object WaterfallUtil {
         val yMaxsLast = calculateLast(max(values.last(), base))
         val flowTypesLast = calculateLast(defaultTotalTitle)
 
-        return mapOf(
-            WaterfallBox.Var.X to (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList(),
-            WaterfallBox.Var.XLAB to xs + xsLast,
-            WaterfallBox.Var.YMIN to yMins + yMinsLast,
-            WaterfallBox.Var.YMAX to yMaxs + yMaxsLast,
-            WaterfallBox.Var.MEASURE to measures + measuresLast,
-            WaterfallBox.Var.FLOW_TYPE to flowTypes + flowTypesLast,
-            WaterfallBox.Var.INITIAL to initials + initialsLast,
-            WaterfallBox.Var.VALUE to values + valuesLast,
-            WaterfallBox.Var.DIFFERENCE to ys + ysLast,
-        )
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallBox.Var.X, (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList())
+        builder.put(WaterfallBox.Var.XLAB, xs + xsLast)
+        builder.put(WaterfallBox.Var.YMIN, yMins + yMinsLast)
+        builder.put(WaterfallBox.Var.YMAX, yMaxs + yMaxsLast)
+        builder.put(WaterfallBox.Var.MEASURE, measures + measuresLast)
+        builder.put(WaterfallBox.Var.FLOW_TYPE, flowTypes + flowTypesLast)
+        builder.put(WaterfallBox.Var.INITIAL, initials + initialsLast)
+        builder.put(WaterfallBox.Var.VALUE, values + valuesLast)
+        builder.put(WaterfallBox.Var.DIFFERENCE, ys + ysLast)
+        return builder.build()
     }
 
-    fun emptyBoxStat(): Map<String, List<*>> {
-        return mapOf(
-            WaterfallBox.Var.X to emptyList(),
-            WaterfallBox.Var.XLAB to emptyList(),
-            WaterfallBox.Var.YMIN to emptyList<Double>(),
-            WaterfallBox.Var.YMAX to emptyList<Double>(),
-            WaterfallBox.Var.MEASURE to emptyList<String>(),
-            WaterfallBox.Var.FLOW_TYPE to emptyList<String>(),
-            WaterfallBox.Var.INITIAL to emptyList<Double>(),
-            WaterfallBox.Var.VALUE to emptyList<Double>(),
-            WaterfallBox.Var.DIFFERENCE to emptyList<Double>(),
-        )
+    fun emptyBoxStat(): DataFrame {
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallBox.Var.X, emptyList<Any>())
+        builder.put(WaterfallBox.Var.XLAB, emptyList<Any>())
+        builder.put(WaterfallBox.Var.YMIN, emptyList<Double>())
+        builder.put(WaterfallBox.Var.YMAX, emptyList<Double>())
+        builder.put(WaterfallBox.Var.MEASURE, emptyList<String>())
+        builder.put(WaterfallBox.Var.FLOW_TYPE, emptyList<String>())
+        builder.put(WaterfallBox.Var.INITIAL, emptyList<Double>())
+        builder.put(WaterfallBox.Var.VALUE, emptyList<Double>())
+        builder.put(WaterfallBox.Var.DIFFERENCE, emptyList<Double>())
+        return builder.build()
     }
 
     fun calculateConnectorStat(
-        boxData: Map<String, List<*>>,
+        boxData: DataFrame,
         radius: Double
-    ): Map<String, List<*>> {
-        val radii = boxData.getValue(WaterfallBox.Var.MEASURE).let { measures ->
+    ): DataFrame {
+        val radii = boxData[WaterfallBox.Var.MEASURE].let { measures ->
             if (measures.isEmpty()) {
                 emptyList()
             } else {
@@ -165,33 +165,36 @@ internal object WaterfallUtil {
                 } + listOf(0.0)
             }
         }
-        return mapOf(
-            WaterfallConnector.Var.X to boxData.getValue(WaterfallBox.Var.X),
-            WaterfallConnector.Var.Y to boxData.getValue(WaterfallBox.Var.VALUE),
-            WaterfallConnector.Var.RADIUS to radii
-        )
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallConnector.Var.X, boxData[WaterfallBox.Var.X])
+        builder.put(WaterfallConnector.Var.Y, boxData[WaterfallBox.Var.VALUE])
+        builder.put(WaterfallConnector.Var.RADIUS, radii)
+        return builder.build()
+    }
+
+    fun emptyConnectorStat(): DataFrame {
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallConnector.Var.X, emptyList<Any>())
+        builder.put(WaterfallConnector.Var.Y, emptyList<Double>())
+        builder.put(WaterfallConnector.Var.RADIUS, emptyList<String>())
+        return builder.build()
     }
 
     fun calculateLabelStat(
-        boxData: Map<String, List<*>>,
+        boxData: DataFrame,
         totalTitle: String?
-    ): Map<String, List<*>> {
+    ): DataFrame {
         @Suppress("UNCHECKED_CAST")
-        val yMin = boxData.getValue(WaterfallBox.Var.YMIN) as List<Double>
+        val yMin = boxData[WaterfallBox.Var.YMIN] as List<Double>
         if (yMin.isEmpty()) {
-            return mapOf(
-                WaterfallLabel.Var.X to emptyList(),
-                WaterfallLabel.Var.Y to emptyList<Double>(),
-                WaterfallLabel.Var.LABEL to emptyList(),
-                WaterfallLabel.Var.FLOW_TYPE to emptyList<String>()
-            )
+            return emptyLabelStat()
         }
         @Suppress("UNCHECKED_CAST")
-        val yMax = boxData.getValue(WaterfallBox.Var.YMAX) as List<Double>
+        val yMax = boxData[WaterfallBox.Var.YMAX] as List<Double>
         val ys = (yMin zip yMax).map { (min, max) -> (min + max) / 2 }
-        val dys = boxData.getValue(WaterfallBox.Var.DIFFERENCE)
-        val values = boxData.getValue(WaterfallBox.Var.VALUE)
-        val flowType = boxData.getValue(WaterfallBox.Var.FLOW_TYPE)
+        val dys = boxData[WaterfallBox.Var.DIFFERENCE]
+        val values = boxData[WaterfallBox.Var.VALUE]
+        val flowType = boxData[WaterfallBox.Var.FLOW_TYPE]
         val labels = flowType.indices.map { i ->
             if (totalTitle != null && flowType[i] == totalTitle) {
                 values[i]
@@ -199,23 +202,31 @@ internal object WaterfallUtil {
                 dys[i]
             }
         }
-        return mapOf(
-            WaterfallLabel.Var.X to boxData.getValue(WaterfallBox.Var.X),
-            WaterfallLabel.Var.Y to ys,
-            WaterfallLabel.Var.LABEL to labels,
-            WaterfallLabel.Var.FLOW_TYPE to boxData.getValue(WaterfallBox.Var.FLOW_TYPE)
-        )
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallLabel.Var.X, boxData[WaterfallBox.Var.X])
+        builder.put(WaterfallLabel.Var.Y, ys)
+        builder.put(WaterfallLabel.Var.LABEL, labels)
+        builder.put(WaterfallLabel.Var.FLOW_TYPE, boxData[WaterfallBox.Var.FLOW_TYPE])
+        return builder.build()
+    }
+
+    fun emptyLabelStat(): DataFrame {
+        val builder = DataFrame.Builder()
+        builder.put(WaterfallLabel.Var.X, emptyList<Any>())
+        builder.put(WaterfallLabel.Var.Y, emptyList<Double>())
+        builder.put(WaterfallLabel.Var.LABEL, emptyList<String>())
+        builder.put(WaterfallLabel.Var.FLOW_TYPE, emptyList<String>())
+        return builder.build()
     }
 
     private fun extractTotalTitle(
-        data: Map<String, List<*>>,
+        df: DataFrame,
         x: String,
         calcTotal: Boolean,
         defaultTitle: String?
     ): String? {
         return when (calcTotal) {
             true -> {
-                val df = DataFrameUtil.fromMap(data)
                 val xVar = DataFrameUtil.findVariableOrFail(df, x)
                 return df[xVar].map { it?.toString() }.last() ?: defaultTitle
             }
@@ -224,22 +235,19 @@ internal object WaterfallUtil {
     }
 
     private fun extractMeasures(
-        data: Map<String, List<*>>,
+        df: DataFrame,
         measure: String
     ): List<String?> {
-        val df = DataFrameUtil.fromMap(data)
         val measureVar = DataFrameUtil.findVariableOrFail(df, measure)
         return df[measureVar].map { it?.toString() }
     }
 
     private fun extractSeries(
-        data: Map<String, List<*>>,
+        df: DataFrame,
         x: String,
         y: String,
         measures: List<String?>
     ): Triple<List<Any>, List<Double>, List<String>> {
-        val df = DataFrameUtil.fromMap(data)
-
         val xVar = DataFrameUtil.findVariableOrFail(df, x)
         val yVar = DataFrameUtil.findVariableOrFail(df, y)
 

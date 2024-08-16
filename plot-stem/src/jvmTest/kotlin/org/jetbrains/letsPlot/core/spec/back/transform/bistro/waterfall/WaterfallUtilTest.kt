@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType.FlowTypeData
 import org.junit.Test
@@ -13,12 +15,13 @@ import kotlin.test.assertEquals
 class WaterfallUtilTest {
     @Test
     fun simple() {
+        val df = DataFrame.Builder()
+            .put(DataFrameUtil.createVariable("X"), listOf("A", "B", "T"))
+            .put(DataFrameUtil.createVariable("Y"), listOf(2.0, -1.0, null))
+            .put(DataFrameUtil.createVariable("M"), listOf("relative", "relative", "total"))
+            .build()
         val boxStat = WaterfallUtil.calculateBoxStat(
-            data = mapOf(
-                "X" to listOf("A", "B", "T"),
-                "Y" to listOf(2.0, -1.0, null),
-                "M" to listOf("relative", "relative", "total")
-            ),
+            df = df,
             x = "X",
             y = "Y",
             measure = "M",
@@ -46,7 +49,7 @@ class WaterfallUtilTest {
                 "..value.." to listOf(2.0, 1.0, 1.0),
                 "..dy.." to listOf(2.0, -1.0, 1.0),
             ),
-            actual = boxStat
+            actual = DataFrameUtil.toMap(boxStat)
         )
     }
 }
