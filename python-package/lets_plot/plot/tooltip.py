@@ -250,7 +250,7 @@ class layer_tooltips(FeatureSpec):
         A '^' symbol can be escaped with a backslash, a brace character
         in the literal text - by doubling:
 
-        - 'x\^2' -> "x^2"
+        - 'x\\\\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
         The specified 'line' for side tooltip will move it to the general multi-line tooltip.
@@ -282,7 +282,7 @@ class layer_tooltips(FeatureSpec):
                            tooltips=layer_tooltips().format('x', '.3f')\\
                                                     .line('x = @x')\\
                                                     .format('9 - x^2', '.3f')\\
-                                                    .line('9 - x\^2 = @{9 - x^2}'))
+                                                    .line('9 - x\\^2 = @{9 - x^2}'))
 
         |
 

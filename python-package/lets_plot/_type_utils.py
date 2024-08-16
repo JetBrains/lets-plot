@@ -29,6 +29,11 @@ try:
 except ImportError:
     shapely = None
 
+try:
+    import jax.numpy as jnp
+except ImportError:
+    jnp = None
+
 
 # Parameter 'value' can also be pandas.DataFrame
 def standardize_dict(value: Dict) -> Dict:
@@ -52,15 +57,15 @@ def is_dict_or_dataframe(v):
 
 
 def is_int(v):
-    return isinstance(v, int) or (numpy and isinstance(v, numpy.integer))
+    return isinstance(v, int) or (numpy and isinstance(v, numpy.integer)) or (jnp and isinstance(v, jnp.integer))
 
 
 def is_float(v):
-    return isinstance(v, float) or (numpy and isinstance(v, numpy.floating))
+    return isinstance(v, float) or (numpy and isinstance(v, numpy.floating)) or (jnp and isinstance(v, jnp.floating))
 
 
 def is_ndarray(data) -> bool:
-    return numpy and isinstance(data, numpy.ndarray)
+    return (numpy and isinstance(data, numpy.ndarray)) or (jnp and isinstance(data, jnp.ndarray))
 
 
 def is_number(v):
@@ -90,7 +95,7 @@ def _standardize_value(v):
         return [_standardize_value(elem) for elem in v]
     if isinstance(v, tuple):
         return tuple(_standardize_value(elem) for elem in v)
-    if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)):
+    if (numpy and isinstance(v, numpy.ndarray)) or (pandas and isinstance(v, pandas.Series)) or (jnp and isinstance(v, jnp.ndarray)):
         return _standardize_value(v.tolist())
     if isinstance(v, datetime):
         if pandas and v is pandas.NaT:
