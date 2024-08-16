@@ -122,31 +122,31 @@ internal object WaterfallUtil {
         val yMaxsLast = calculateLast(max(values.last(), base))
         val flowTypesLast = calculateLast(defaultTotalTitle)
 
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallBox.Var.X, (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList())
-        builder.put(WaterfallBox.Var.XLAB, xs + xsLast)
-        builder.put(WaterfallBox.Var.YMIN, yMins + yMinsLast)
-        builder.put(WaterfallBox.Var.YMAX, yMaxs + yMaxsLast)
-        builder.put(WaterfallBox.Var.MEASURE, measures + measuresLast)
-        builder.put(WaterfallBox.Var.FLOW_TYPE, flowTypes + flowTypesLast)
-        builder.put(WaterfallBox.Var.INITIAL, initials + initialsLast)
-        builder.put(WaterfallBox.Var.VALUE, values + valuesLast)
-        builder.put(WaterfallBox.Var.DIFFERENCE, ys + ysLast)
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallBox.Var.X, (xs + xsLast).indices.map { (initialX + it).toDouble() }.toList())
+            .put(WaterfallBox.Var.XLAB, xs + xsLast)
+            .put(WaterfallBox.Var.YMIN, yMins + yMinsLast)
+            .put(WaterfallBox.Var.YMAX, yMaxs + yMaxsLast)
+            .put(WaterfallBox.Var.MEASURE, measures + measuresLast)
+            .put(WaterfallBox.Var.FLOW_TYPE, flowTypes + flowTypesLast)
+            .put(WaterfallBox.Var.INITIAL, initials + initialsLast)
+            .put(WaterfallBox.Var.VALUE, values + valuesLast)
+            .put(WaterfallBox.Var.DIFFERENCE, ys + ysLast)
+            .build()
     }
 
     fun emptyBoxStat(): DataFrame {
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallBox.Var.X, emptyList<Any>())
-        builder.put(WaterfallBox.Var.XLAB, emptyList<Any>())
-        builder.put(WaterfallBox.Var.YMIN, emptyList<Double>())
-        builder.put(WaterfallBox.Var.YMAX, emptyList<Double>())
-        builder.put(WaterfallBox.Var.MEASURE, emptyList<String>())
-        builder.put(WaterfallBox.Var.FLOW_TYPE, emptyList<String>())
-        builder.put(WaterfallBox.Var.INITIAL, emptyList<Double>())
-        builder.put(WaterfallBox.Var.VALUE, emptyList<Double>())
-        builder.put(WaterfallBox.Var.DIFFERENCE, emptyList<Double>())
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallBox.Var.X, emptyList<Any>())
+            .put(WaterfallBox.Var.XLAB, emptyList<Any>())
+            .put(WaterfallBox.Var.YMIN, emptyList<Double>())
+            .put(WaterfallBox.Var.YMAX, emptyList<Double>())
+            .put(WaterfallBox.Var.MEASURE, emptyList<String>())
+            .put(WaterfallBox.Var.FLOW_TYPE, emptyList<String>())
+            .put(WaterfallBox.Var.INITIAL, emptyList<Double>())
+            .put(WaterfallBox.Var.VALUE, emptyList<Double>())
+            .put(WaterfallBox.Var.DIFFERENCE, emptyList<Double>())
+            .build()
     }
 
     fun calculateConnectorStat(
@@ -165,19 +165,19 @@ internal object WaterfallUtil {
                 } + listOf(0.0)
             }
         }
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallConnector.Var.X, boxData[WaterfallBox.Var.X])
-        builder.put(WaterfallConnector.Var.Y, boxData[WaterfallBox.Var.VALUE])
-        builder.put(WaterfallConnector.Var.RADIUS, radii)
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallConnector.Var.X, boxData[WaterfallBox.Var.X])
+            .put(WaterfallConnector.Var.Y, boxData[WaterfallBox.Var.VALUE])
+            .put(WaterfallConnector.Var.RADIUS, radii)
+            .build()
     }
 
     fun emptyConnectorStat(): DataFrame {
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallConnector.Var.X, emptyList<Any>())
-        builder.put(WaterfallConnector.Var.Y, emptyList<Double>())
-        builder.put(WaterfallConnector.Var.RADIUS, emptyList<String>())
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallConnector.Var.X, emptyList<Any>())
+            .put(WaterfallConnector.Var.Y, emptyList<Double>())
+            .put(WaterfallConnector.Var.RADIUS, emptyList<String>())
+            .build()
     }
 
     fun calculateLabelStat(
@@ -202,21 +202,21 @@ internal object WaterfallUtil {
                 dys[i]
             }
         }
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallLabel.Var.X, boxData[WaterfallBox.Var.X])
-        builder.put(WaterfallLabel.Var.Y, ys)
-        builder.put(WaterfallLabel.Var.LABEL, labels)
-        builder.put(WaterfallLabel.Var.FLOW_TYPE, boxData[WaterfallBox.Var.FLOW_TYPE])
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallLabel.Var.X, boxData[WaterfallBox.Var.X])
+            .put(WaterfallLabel.Var.Y, ys)
+            .put(WaterfallLabel.Var.LABEL, labels)
+            .put(WaterfallLabel.Var.FLOW_TYPE, boxData[WaterfallBox.Var.FLOW_TYPE])
+            .build()
     }
 
     fun emptyLabelStat(): DataFrame {
-        val builder = DataFrame.Builder()
-        builder.put(WaterfallLabel.Var.X, emptyList<Any>())
-        builder.put(WaterfallLabel.Var.Y, emptyList<Double>())
-        builder.put(WaterfallLabel.Var.LABEL, emptyList<String>())
-        builder.put(WaterfallLabel.Var.FLOW_TYPE, emptyList<String>())
-        return builder.build()
+        return DataFrame.Builder()
+            .put(WaterfallLabel.Var.X, emptyList<Any>())
+            .put(WaterfallLabel.Var.Y, emptyList<Double>())
+            .put(WaterfallLabel.Var.LABEL, emptyList<String>())
+            .put(WaterfallLabel.Var.FLOW_TYPE, emptyList<String>())
+            .build()
     }
 
     private fun extractTotalTitle(
