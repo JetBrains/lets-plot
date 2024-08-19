@@ -83,12 +83,10 @@ internal object WaterfallUtil {
         val measureVar = DataFrameUtil.findVariableOrFail(rawDf, measure)
 
         val df = filterFinite(rawDf, xVar, yVar, measureVar)
-            .let { sortData(it, yVar, sortedValue) }
+            .let { sortData(it, yVar, measureVar, sortedValue) }
             .let { filterData(it, xVar, yVar, measureVar, threshold, maxValues, newRowValues) }
 
         val measures = df[measureVar].map { it!!.toString() } // 'measure' is not null after filterFinite()
-
-        val calcTotal = measures.lastOrNull() == Measure.TOTAL.value
 
         val rawYs = df.getNumeric(yVar)
 
@@ -119,7 +117,7 @@ internal object WaterfallUtil {
 
         fun <T> replaceLast(values: List<T>, value: T): List<T> {
             return if (measures.isNotEmpty()) {
-                if (calcTotal) {
+                if (calcTotal(df, measureVar)) {
                     values.dropLast(1) + listOf(value)
                 } else {
                     values
@@ -129,7 +127,7 @@ internal object WaterfallUtil {
             }
         }
 
-        val totalTitle = extractTotalTitle(rawDf, x, calcTotal, defaultTotalTitle)
+        val totalTitle = extractTotalTitle(rawDf, x, calcTotal(df, measureVar), defaultTotalTitle)
         val xs = replaceLast(df[xVar].map { it.toString() }, totalTitle)
         val ys = replaceLast(rawYs, values.last() - (base + initialY))
         val labels = flowTypes.indices.map { i ->
@@ -230,7 +228,7 @@ internal object WaterfallUtil {
         val xIndices = getIndices(df[xVar]) { it != null }
         val yIndices = getIndices(df.getNumeric(yVar)) { SeriesUtil.isFinite(it) }
         val measureIndices = getIndices(df[measureVar]) { it != null }
-        val tail = if (df[measureVar].lastOrNull() == Measure.TOTAL.value) {
+        val tail = if (calcTotal(df, measureVar)) {
             setOf(df.rowCount() - 1)
         } else {
             emptySet()
@@ -238,14 +236,20 @@ internal object WaterfallUtil {
         return df.slice(xIndices.intersect(yIndices).intersect(measureIndices).union(tail))
     }
 
-    private fun sortData(df: DataFrame, yVar: DataFrame.Variable, sortedValue: Boolean): DataFrame {
-        if (!sortedValue) return df
-        val indices = df.getNumeric(yVar)
+    private fun sortData(df: DataFrame, yVar: DataFrame.Variable, measureVar: DataFrame.Variable, sortedValue: Boolean): DataFrame {
+        if (!sortedValue || df.rowCount() == 0) return df
+        val ys = if (calcTotal(df, measureVar)) {
+            df.getNumeric(yVar).dropLast(1)
+        } else {
+            df.getNumeric(yVar)
+        }
+        val indices = ys
             .withIndex()
             .map { (i, v) -> Pair(i, v) }
             .sortedByDescending { (_, y) -> y?.absoluteValue ?: 0.0 }
             .unzip()
             .first
+            .let { if (calcTotal(df, measureVar)) it + listOf(df.rowCount() - 1) else it }
         return df.slice(indices)
     }
 
@@ -258,27 +262,31 @@ internal object WaterfallUtil {
         maxValues: Int?,
         newRowValues: (DataFrame.Variable) -> Any?
     ): DataFrame {
-        val calcTotal = df[measureVar].lastOrNull() == Measure.TOTAL.value
-        val indexedYs = df.getNumeric(yVar)
+        val ys = if (calcTotal(df, measureVar)) {
+            df.getNumeric(yVar).dropLast(1)
+        } else {
+            df.getNumeric(yVar)
+        }
+        val indexedYs = ys
             .withIndex()
             .map { (i, v) -> Pair(i, v) }
         val indices = when {
             threshold != null -> {
-                indexedYs.filter { (_, y) -> y == null || y.absoluteValue > threshold }.unzip().first
+                indexedYs.filter { (_, y) -> y != null && y.absoluteValue > threshold }.unzip().first
             }
             maxValues != null && maxValues > 0 -> {
-                val subListSize = if (calcTotal) maxValues + 1 else maxValues
                 indexedYs
                     .sortedByDescending { (_, y) -> y?.absoluteValue ?: Double.MAX_VALUE }
                     .map(Pair<Int, Double?>::first)
-                    .subList(0, subListSize)
+                    .subList(0, maxValues)
                     .sorted()
             }
             else -> indexedYs.indices
         }
+        val withTotalIndices = if (calcTotal(df, measureVar)) indices + listOf(df.rowCount() - 1) else indices
         val otherValue = indexedYs.filter { (i, _) -> i !in indices }.map { it.second }.filterNotNull().sum()
         return if (otherValue.absoluteValue > 0.0) {
-            val filteredDf = df.slice(indices)
+            val filteredDf = df.slice(withTotalIndices)
             val otherRowValues = { variable: DataFrame.Variable ->
                 when (variable) {
                     xVar -> OTHER_NAME
@@ -287,10 +295,14 @@ internal object WaterfallUtil {
                     else -> newRowValues(variable)
                 }
             }
-            val position = if (calcTotal) filteredDf.rowCount() - 1 else null
-            return DataUtil.addRow(filteredDf, otherRowValues, position)
+            val position = if (calcTotal(df, measureVar)) filteredDf.rowCount() - 1 else null
+            DataUtil.addRow(filteredDf, otherRowValues, position)
         } else {
-            df.slice(indices)
+            df.slice(withTotalIndices)
         }
+    }
+
+    private fun calcTotal(df: DataFrame, measureVar: DataFrame.Variable): Boolean {
+        return df[measureVar].map { it.toString() }.lastOrNull() == Measure.TOTAL.value
     }
 }
