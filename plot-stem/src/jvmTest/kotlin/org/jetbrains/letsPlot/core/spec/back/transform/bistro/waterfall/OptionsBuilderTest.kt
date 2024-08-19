@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL_FORMAT
 import org.junit.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class OptionsBuilderTest {
@@ -48,40 +47,44 @@ class OptionsBuilderTest {
             connectorOptions = DEF_CONNECTOR,
             labelOptions = DEF_LABEL,
             labelFormat = DEF_LABEL_FORMAT,
-            group = "G"
+            group = null
         ).build()
         val relativeBoxOptions = plotOptions.layerOptions!!.first { it.geom == GeomKind.CROSS_BAR }
         assertNotNull(relativeBoxOptions)
-        assertEquals(
-            expected = mapOf(
-                "..x.." to listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0),
-                "..xlabel.." to listOf("A", "B", "T1", "A", "B", "T2"),
-                "..ymin.." to listOf(0.0, 1.0, null, 1.0, 2.0, null),
-                "..ymax.." to listOf(2.0, 2.0, null, 3.0, 3.0, null),
-                "..measure.." to listOf("relative", "relative", "total", "relative", "relative", "total"),
-                "..flow_type.." to listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"),
-                "..initial.." to listOf(0.0, 2.0, 0.0, 1.0, 3.0, 1.0),
-                "..value.." to listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0),
-                "..dy.." to listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0),
-            ),
-            actual = relativeBoxOptions.data
-        )
+        relativeBoxOptions.data!!.let {
+            assertThat(it["..x.."]).isEqualTo(listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            assertThat(it["..xlabel.."]).isEqualTo(listOf("A", "B", "T1", "A", "B", "T2"))
+            assertThat(it["..ymin.."]).isEqualTo(listOf(0.0, 1.0, null, 1.0, 2.0, null))
+            assertThat(it["..ymiddle.."]).isEqualTo(listOf(1.0, 1.5, null, 2.0, 2.5, null))
+            assertThat(it["..ymax.."]).isEqualTo(listOf(2.0, 2.0, null, 3.0, 3.0, null))
+            assertThat(it["..measure.."]).isEqualTo(listOf("relative", "relative", "total", "relative", "relative", "total"))
+            assertThat(it["..flow_type.."]).isEqualTo(listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"))
+            assertThat(it["..initial.."]).isEqualTo(listOf(0.0, 2.0, 0.0, 1.0, 3.0, 0.0))
+            assertThat(it["..value.."]).isEqualTo(listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0))
+            assertThat(it["..dy.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
+            assertThat(it["..label.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 2.0))
+            (listOf(0.1, 0.1, 0.1, 0.1, 0.1, 0.0) zip it["..radius.."]!!).forEach { (expected, actual) ->
+                assertThat(actual as Double).isEqualTo(expected, Offset.offset(1e-16))
+            }
+        }
         val absoluteBoxOptions = plotOptions.layerOptions!!.last { it.geom == GeomKind.CROSS_BAR }
         assertNotNull(absoluteBoxOptions)
-        assertEquals(
-            expected = mapOf(
-                "..x.." to listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0),
-                "..xlabel.." to listOf("A", "B", "T1", "A", "B", "T2"),
-                "..ymin.." to listOf(null, null, 0.0, null, null, 0.0),
-                "..ymax.." to listOf(null, null, 1.0, null, null, 2.0),
-                "..measure.." to listOf("relative", "relative", "total", "relative", "relative", "total"),
-                "..flow_type.." to listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"),
-                "..initial.." to listOf(0.0, 2.0, 0.0, 1.0, 3.0, 1.0),
-                "..value.." to listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0),
-                "..dy.." to listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0),
-            ),
-            actual = absoluteBoxOptions.data
-        )
+        absoluteBoxOptions.data!!.let {
+            assertThat(it["..x.."]).isEqualTo(listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
+            assertThat(it["..xlabel.."]).isEqualTo(listOf("A", "B", "T1", "A", "B", "T2"))
+            assertThat(it["..ymin.."]).isEqualTo(listOf(null, null, 0.0, null, null, 0.0))
+            assertThat(it["..ymiddle.."]).isEqualTo(listOf(null, null, 0.5, null, null, 1.0))
+            assertThat(it["..ymax.."]).isEqualTo(listOf(null, null, 1.0, null, null, 2.0))
+            assertThat(it["..measure.."]).isEqualTo(listOf("relative", "relative", "total", "relative", "relative", "total"))
+            assertThat(it["..flow_type.."]).isEqualTo(listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"))
+            assertThat(it["..initial.."]).isEqualTo(listOf(0.0, 2.0, 0.0, 1.0, 3.0, 0.0))
+            assertThat(it["..value.."]).isEqualTo(listOf(2.0, 1.0, 1.0, 3.0, 2.0, 2.0))
+            assertThat(it["..dy.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
+            assertThat(it["..label.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 2.0))
+            (listOf(0.1, 0.1, 0.1, 0.1, 0.1, 0.0) zip it["..radius.."]!!).forEach { (expected, actual) ->
+                assertThat(actual as Double).isEqualTo(expected, Offset.offset(1e-16))
+            }
+        }
     }
 
     @Test
@@ -123,30 +126,31 @@ class OptionsBuilderTest {
             assertThat(it["..x.."]).isEqualTo(listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
             assertThat(it["..xlabel.."]).isEqualTo(listOf("A", "B", "T1", "A", "B", "T2"))
             assertThat(it["..ymin.."]).isEqualTo(listOf(0.0, 1.0, null, 0.0, 1.0, null))
+            assertThat(it["..ymiddle.."]).isEqualTo(listOf(1.0, 1.5, null, 1.0, 1.5, null))
             assertThat(it["..ymax.."]).isEqualTo(listOf(2.0, 2.0, null, 2.0, 2.0, null))
             assertThat(it["..measure.."]).isEqualTo(listOf("relative", "relative", "total", "relative", "relative", "total"))
             assertThat(it["..flow_type.."]).isEqualTo(listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"))
             assertThat(it["..initial.."]).isEqualTo(listOf(0.0, 2.0, 0.0, 0.0, 2.0, 0.0))
             assertThat(it["..value.."]).isEqualTo(listOf(2.0, 1.0, 1.0, 2.0, 1.0, 1.0))
             assertThat(it["..dy.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
+            assertThat(it["..label.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
+            (listOf(0.1, 0.1, 0.0, 0.1, 0.1, 0.0) zip it["..radius.."]!!).forEach { (expected, actual) ->
+                assertThat(actual as Double).isEqualTo(expected, Offset.offset(1e-16))
+            }
         }
         val absoluteBoxOptions = plotOptions.layerOptions!!.last { it.geom == GeomKind.CROSS_BAR }
         absoluteBoxOptions.data!!.let {
             assertThat(it["..x.."]).isEqualTo(listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
             assertThat(it["..xlabel.."]).isEqualTo(listOf("A", "B", "T1", "A", "B", "T2"))
             assertThat(it["..ymin.."]).isEqualTo(listOf(null, null, 0.0, null, null, 0.0))
+            assertThat(it["..ymiddle.."]).isEqualTo(listOf(null, null, 0.5, null, null, 0.5))
             assertThat(it["..ymax.."]).isEqualTo(listOf(null, null, 1.0, null, null, 1.0))
             assertThat(it["..measure.."]).isEqualTo(listOf("relative", "relative", "total", "relative", "relative", "total"))
             assertThat(it["..flow_type.."]).isEqualTo(listOf("Increase", "Decrease", "Total", "Increase", "Decrease", "Total"))
             assertThat(it["..initial.."]).isEqualTo(listOf(0.0, 2.0, 0.0, 0.0, 2.0, 0.0))
             assertThat(it["..value.."]).isEqualTo(listOf(2.0, 1.0, 1.0, 2.0, 1.0, 1.0))
             assertThat(it["..dy.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
-        }
-
-        val connectorOptions = plotOptions.layerOptions!!.first { it.geom == GeomKind.SPOKE }
-        connectorOptions.data!!.let {
-            assertThat(it["..x.."]).isEqualTo(listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0))
-            assertThat(it["..y.."]).isEqualTo(listOf(2.0, 1.0, 1.0, 2.0, 1.0, 1.0))
+            assertThat(it["..label.."]).isEqualTo(listOf(2.0, -1.0, 1.0, 2.0, -1.0, 1.0))
             (listOf(0.1, 0.1, 0.0, 0.1, 0.1, 0.0) zip it["..radius.."]!!).forEach { (expected, actual) ->
                 assertThat(actual as Double).isEqualTo(expected, Offset.offset(1e-16))
             }

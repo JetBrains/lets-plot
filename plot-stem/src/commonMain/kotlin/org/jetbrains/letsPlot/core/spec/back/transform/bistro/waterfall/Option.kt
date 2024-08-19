@@ -39,39 +39,25 @@ object Option {
             const val COLOR_FLOW_TYPE = "flow_type" // for params: color, fill, label#color
             const val TOOLTIP_DETAILED = "detailed" // for params: relative_tooltips, absolute_tooltips
         }
-    }
-
-    object WaterfallBox {
-        const val MEASURE_GROUP_VAR_NAME = "..measure_group.."
-        const val DEF_MEASURE_VAR_NAME = "..measure.."
 
         object Var {
-            val X = DataFrame.Variable("..x..")
-            val XLAB = DataFrame.Variable("..xlabel..")
-            val YMIN = DataFrame.Variable("..ymin..")
-            val YMAX = DataFrame.Variable("..ymax..")
-            val MEASURE = DataFrame.Variable("..measure..")
-            val FLOW_TYPE = DataFrame.Variable("..flow_type..")
-            val INITIAL = DataFrame.Variable("..initial..")
-            val VALUE = DataFrame.Variable("..value..")
-            val DIFFERENCE = DataFrame.Variable("..dy..")
-        }
-    }
+            val MEASURE_GROUP = DataFrame.Variable("..measure_group..")
+            val DEF_MEASURE = DataFrame.Variable("..measure..")
 
-    object WaterfallConnector {
-        object Var {
-            val X = DataFrame.Variable("..x..")
-            val Y = DataFrame.Variable("..y..")
-            val RADIUS = DataFrame.Variable("..radius..")
-        }
-    }
-
-    object WaterfallLabel {
-        object Var {
-            val X = DataFrame.Variable("..x..")
-            val Y = DataFrame.Variable("..y..")
-            val LABEL = DataFrame.Variable("..label..")
-            val FLOW_TYPE = DataFrame.Variable("..flow_type..")
+            object Stat {
+                val X = DataFrame.Variable("..x..")
+                val XLAB = DataFrame.Variable("..xlabel..")
+                val YMIN = DataFrame.Variable("..ymin..")
+                val YMIDDLE = DataFrame.Variable("..ymiddle..")
+                val YMAX = DataFrame.Variable("..ymax..")
+                val MEASURE = DataFrame.Variable("..measure..")
+                val FLOW_TYPE = DataFrame.Variable("..flow_type..")
+                val INITIAL = DataFrame.Variable("..initial..")
+                val VALUE = DataFrame.Variable("..value..")
+                val DIFFERENCE = DataFrame.Variable("..dy..")
+                val RADIUS = DataFrame.Variable("..radius..")
+                val LABEL = DataFrame.Variable("..label..")
+            }
         }
     }
 }

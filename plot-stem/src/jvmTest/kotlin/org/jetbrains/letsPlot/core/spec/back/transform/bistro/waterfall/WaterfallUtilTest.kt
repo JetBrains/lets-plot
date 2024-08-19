@@ -20,8 +20,8 @@ class WaterfallUtilTest {
             .put(DataFrameUtil.createVariable("Y"), listOf(2.0, -1.0, null))
             .put(DataFrameUtil.createVariable("M"), listOf("relative", "relative", "total"))
             .build()
-        val boxStat = WaterfallUtil.calculateBoxStat(
-            df = df,
+        val boxStat = WaterfallUtil.calculateStat(
+            rawDf = df,
             x = "X",
             y = "Y",
             measure = "M",
@@ -35,19 +35,25 @@ class WaterfallUtilTest {
                 FlowType.INCREASE to FlowTypeData("Increase", "green"),
                 FlowType.DECREASE to FlowTypeData("Decrease", "red"),
                 FlowType.TOTAL to FlowTypeData("Total", "blue"),
-            )
+            ),
+            newRowValues = { null }
         )
         assertEquals(
             expected = mapOf(
+                "X" to listOf("A", "B", "T"),
+                "Y" to listOf(2.0, -1.0, null),
+                "M" to listOf("relative", "relative", "total"),
                 "..x.." to listOf(0.0, 1.0, 2.0),
                 "..xlabel.." to listOf("A", "B", "T"),
                 "..ymin.." to listOf(0.0, 1.0, 0.0),
+                "..ymiddle.." to listOf(1.0, 1.5, 0.5),
                 "..ymax.." to listOf(2.0, 2.0, 1.0),
                 "..measure.." to listOf("relative", "relative", "total"),
                 "..flow_type.." to listOf("Increase", "Decrease", "Total"),
                 "..initial.." to listOf(0.0, 2.0, 0.0),
                 "..value.." to listOf(2.0, 1.0, 1.0),
                 "..dy.." to listOf(2.0, -1.0, 1.0),
+                "..label.." to listOf(2.0, -1.0, 1.0),
             ),
             actual = DataFrameUtil.toMap(boxStat)
         )
