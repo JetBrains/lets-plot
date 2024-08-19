@@ -6,6 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.stat.BinStat.Companion.DEF_BIN_COUNT
 import kotlin.test.*
 
 class BinStatUtilTest {
@@ -112,5 +115,49 @@ class BinStatUtilTest {
         assertContentEquals(listOf(-1.0, 1.0), statData[Stats.Y_MIN])
         assertContentEquals(listOf(1.0, 3.0), statData[Stats.Y_MAX])
         assertContentEquals(listOf(2.0, 3.0), statData[Stats.COUNT])
+    }
+
+    @Test
+    fun checkComputeHistogramStatSeries() {
+        val valuesX = listOf(-0.5, 0.0, 0.0, 1.5)
+        val data = DataFrame.Builder()
+            .putNumeric(TransformVar.X, valuesX)
+            .build()
+        val statData = BinStatUtil.computeHistogramStatSeries(
+            data,
+            DoubleSpan(valuesX.min(), valuesX.max()),
+            valuesX,
+            BinStat.XPosKind.CENTER,
+            0.0,
+            BinStatUtil.BinOptions(DEF_BIN_COUNT, 0.5)
+        )
+        assertContentEquals(listOf(-0.5, 0.0, 0.5, 1.0, 1.5, 2.0), statData.x)
+        assertContentEquals(listOf(1.0, 2.0, 0.0, 0.0, 1.0, 0.0), statData.count)
+        assertContentEquals(listOf(0.5, 1.0, 0.0, 0.0, 0.5, 0.0), statData.density)
+    }
+
+    @Test
+    fun checkHistogramDensityArea() {
+        val checks = listOf(
+            listOf(0.0),
+            listOf(0.0, 1.0, 1.0),
+            listOf(-10.0, 0.0, 1.0, 1.0, 3.0),
+            listOf(0.0, 0.05, 0.051, 0.1),
+        )
+
+        for (valuesX in checks) {
+            val binOptions = BinStatUtil.BinOptions(DEF_BIN_COUNT, null)
+            val rangeX = DoubleSpan(valuesX.min(), valuesX.max())
+            val xPosKind = BinStat.XPosKind.NONE
+            val xPos = 0.0
+            val (_, binWidth, _) = BinStatUtil.getBinningParameters(rangeX, xPosKind, xPos, binOptions)
+            val data = DataFrame.Builder()
+                .putNumeric(TransformVar.X, valuesX)
+                .build()
+            val statData = BinStatUtil.computeHistogramStatSeries(data, rangeX, valuesX, xPosKind, xPos, binOptions)
+            val widthFactor = if (binWidth > 0) binWidth else 1.0
+            val area = widthFactor * statData.density.sum()
+            assertEquals(1.0, area, 1e-14)
+        }
     }
 }

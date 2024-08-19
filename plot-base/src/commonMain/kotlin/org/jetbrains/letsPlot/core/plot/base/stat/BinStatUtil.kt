@@ -74,9 +74,8 @@ object BinStatUtil {
         val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
 
         // density plot area should be == 1
-        val normalBinWidth = rangeX.length / binCount
-        val densityNormalizingFactor = if (normalBinWidth > 0)
-            1.0 / normalBinWidth
+        val densityNormalizingFactor = if (binWidth > 0)
+            1.0 / binWidth
         else
             1.0
 
