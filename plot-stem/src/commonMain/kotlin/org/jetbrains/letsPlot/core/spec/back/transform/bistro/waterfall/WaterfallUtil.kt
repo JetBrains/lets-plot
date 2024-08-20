@@ -20,7 +20,7 @@ internal object WaterfallUtil {
         originalDf: DataFrame,
         measure: String?,
         calcTotal: Boolean,
-        newRowValues: (DataFrame.Variable) -> Any?
+        totalRowValues: (DataFrame.Variable) -> Any?
     ): DataFrame {
         // standardData always contains 'measure' column, even if it's not in the original data
         val standardData = if (measure == null) {
@@ -28,7 +28,7 @@ internal object WaterfallUtil {
                 if (calcTotal) measures + listOf(Measure.TOTAL.value) else measures
             }
             if (calcTotal) {
-                DataUtil.addRow(originalDf, newRowValues)
+                DataUtil.addRow(originalDf, totalRowValues)
             } else {
                 originalDf
             }.let { df ->
@@ -51,18 +51,6 @@ internal object WaterfallUtil {
         return DataUtil.setColumn(standardData, Waterfall.Var.MEASURE_GROUP, measureGroup)
     }
 
-    fun markSkipBoxes(data: Map<String, List<*>>, key: String, filter: (Any?) -> Boolean): Map<String, List<*>> {
-        val indices = data.getValue(key).withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
-        return data.entries.associate { (k, v) ->
-            k to when (k) {
-                Waterfall.Var.Stat.YMIN.name,
-                Waterfall.Var.Stat.YMAX.name,
-                Waterfall.Var.Stat.YMIDDLE.name -> v.mapIndexed { i, y -> if (i in indices) y else null }
-                else -> v
-            }
-        }
-    }
-
     fun calculateStat(
         rawDf: DataFrame,
         x: String,
@@ -75,7 +63,7 @@ internal object WaterfallUtil {
         initialY: Double,
         base: Double,
         flowTypeTitles: Map<FlowType, FlowType.FlowTypeData>,
-        newRowValues: (DataFrame.Variable) -> Any?
+        otherRowValues: (DataFrame.Variable) -> Any?
     ): DataFrame {
         val defaultTotalTitle = flowTypeTitles[FlowType.TOTAL]?.title
         val xVar = DataFrameUtil.findVariableOrFail(rawDf, x)
@@ -84,7 +72,7 @@ internal object WaterfallUtil {
 
         val df = filterFinite(rawDf, xVar, yVar, measureVar)
             .let { sortData(it, yVar, measureVar, sortedValue) }
-            .let { filterData(it, xVar, yVar, measureVar, threshold, maxValues, newRowValues) }
+            .let { filterData(it, xVar, yVar, measureVar, threshold, maxValues, otherRowValues) }
 
         val measures = df[measureVar].map { it!!.toString() } // 'measure' is not null after filterFinite()
 

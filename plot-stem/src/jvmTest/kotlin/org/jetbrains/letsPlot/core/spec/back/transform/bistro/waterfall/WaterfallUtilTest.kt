@@ -20,7 +20,7 @@ class WaterfallUtilTest {
             .put(DataFrameUtil.createVariable("Y"), listOf(2.0, -1.0, null))
             .put(DataFrameUtil.createVariable("M"), listOf("relative", "relative", "total"))
             .build()
-        val boxStat = WaterfallUtil.calculateStat(
+        val statDf = WaterfallUtil.calculateStat(
             rawDf = df,
             x = "X",
             y = "Y",
@@ -36,7 +36,7 @@ class WaterfallUtilTest {
                 FlowType.DECREASE to FlowTypeData("Decrease", "red"),
                 FlowType.TOTAL to FlowTypeData("Total", "blue"),
             ),
-            newRowValues = { null }
+            otherRowValues = { null }
         )
         assertEquals(
             expected = mapOf(
@@ -55,7 +55,7 @@ class WaterfallUtilTest {
                 "..dy.." to listOf(2.0, -1.0, 1.0),
                 "..label.." to listOf(2.0, -1.0, 1.0),
             ),
-            actual = DataFrameUtil.toMap(boxStat)
+            actual = DataFrameUtil.toMap(statDf)
         )
     }
 }

@@ -49,20 +49,13 @@ class WaterfallPlotOptionsBuilder(
     fun build(): PlotOptions {
         val statDf = getStatData()
         val flowTypeData = getFlowTypeDataForLegend(statDf)
-        val relativeBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(DataFrameUtil.toMap(statDf), Waterfall.Var.Stat.MEASURE.name) { it == Measure.RELATIVE.value },
-            relativeTooltipsOptions
-        )
-        val absoluteBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(DataFrameUtil.toMap(statDf), Waterfall.Var.Stat.MEASURE.name) { it != Measure.RELATIVE.value },
-            absoluteTooltipsOptions
-        )
+        val (absoluteStatDf, relativeStatDf) = splitStatDfToAbsoluteAndRelative(statDf)
         return plot {
             layerOptions = if (hLineOnTop) {
                 listOfNotNull(
                     connectorOptions(statDf),
-                    relativeBoxOptions,
-                    absoluteBoxOptions,
+                    boxOptions(relativeStatDf, relativeTooltipsOptions),
+                    boxOptions(absoluteStatDf, absoluteTooltipsOptions),
                     labelOptions(statDf),
                     hLineOptions()
                 )
@@ -70,8 +63,8 @@ class WaterfallPlotOptionsBuilder(
                 listOfNotNull(
                     hLineOptions(),
                     connectorOptions(statDf),
-                    relativeBoxOptions,
-                    absoluteBoxOptions,
+                    boxOptions(relativeStatDf, relativeTooltipsOptions),
+                    boxOptions(absoluteStatDf, absoluteTooltipsOptions),
                     labelOptions(statDf)
                 )
             }
@@ -112,7 +105,9 @@ class WaterfallPlotOptionsBuilder(
         var initialX = 0
         DataUtil.groupBy(DataFrameUtil.fromMap(data), group)
             .forEach { (groupValue, groupData) ->
-                val statDf = WaterfallUtil.appendRadius(getGroupData(groupData, groupValue, initialX), 1.0 - width)
+                val statDf = getGroupData(groupData, groupValue, initialX).let { df ->
+                    WaterfallUtil.appendRadius(df, 1.0 - width)
+                }
                 initialX += statDf[Waterfall.Var.Stat.X].size
                 dataGroups.add(statDf)
             }
@@ -131,7 +126,7 @@ class WaterfallPlotOptionsBuilder(
                 else -> null
             }
         }
-        val df = WaterfallUtil.prepareData(groupData, measure, calcTotal, newRowValues)
+        val df = WaterfallUtil.prepareData(groupData, measure, calcTotal, totalRowValues = newRowValues)
         // Need to calculate total for each measure group separately because of sorting and thresholding
         return DataUtil.groupBy(df, Waterfall.Var.MEASURE_GROUP.name)
             .map { (_, measureGroupData) ->
@@ -147,7 +142,7 @@ class WaterfallPlotOptionsBuilder(
                     initialY = measureInitialY,
                     base = BASE,
                     flowTypeTitles = FlowType.list(totalTitle),
-                    newRowValues = newRowValues
+                    otherRowValues = newRowValues
                 )
                 measureInitialX += statData[Waterfall.Var.Stat.X].size
                 measureInitialY = statData[Waterfall.Var.Stat.VALUE].lastOrNull() as? Double ?: BASE
@@ -156,6 +151,23 @@ class WaterfallPlotOptionsBuilder(
             .let { datasets ->
                 DataUtil.concat(datasets, WaterfallUtil.emptyStat())
             }
+    }
+
+    private fun splitStatDfToAbsoluteAndRelative(statDf: DataFrame): Pair<DataFrame, DataFrame> {
+        val replace: (DataFrame.Variable) -> (Any?) -> Any? = { variable ->
+            { value ->
+                when (variable) {
+                    Waterfall.Var.Stat.YMIN,
+                    Waterfall.Var.Stat.YMAX,
+                    Waterfall.Var.Stat.YMIDDLE -> null
+                    else -> value
+                }
+            }
+        }
+        return Pair(
+            DataUtil.replace(statDf, Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, replace),
+            DataUtil.replace(statDf, Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, replace)
+        )
     }
 
     private fun getFlowTypeDataForLegend(statData: DataFrame): List<FlowType.FlowTypeData> {
@@ -174,10 +186,10 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun boxOptions(statDf: Map<String, List<Any?>>, tooltipsOptions: TooltipsOptions?): LayerOptions {
+    private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions?): LayerOptions {
         return LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
-            it.data = statDf
+            it.data = DataFrameUtil.toMap(statDf)
             it.mappings = boxMappings()
             it.color = color.takeUnless { color == COLOR_FLOW_TYPE }
             it.fill = fill.takeUnless { fill == COLOR_FLOW_TYPE }

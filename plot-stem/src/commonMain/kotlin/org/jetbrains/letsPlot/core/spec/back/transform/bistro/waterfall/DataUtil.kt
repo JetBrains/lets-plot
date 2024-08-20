@@ -51,4 +51,22 @@ internal object DataUtil {
         }
         return builder.build()
     }
+
+    fun replace(
+        df: DataFrame,
+        key: DataFrame.Variable,
+        filter: (Any?) -> Boolean,
+        replace: (DataFrame.Variable) -> (Any?) -> Any?
+    ): DataFrame {
+        val indices = df[key].withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
+        val builder = DataFrame.Builder()
+        df.variables().forEach { variable ->
+            df[variable].withIndex().map { (i, v) ->
+                if (i in indices) replace(variable)(v) else v
+            }.also { values ->
+                builder.put(variable, values)
+            }
+        }
+        return builder.build()
+    }
 }
