@@ -74,7 +74,7 @@ Also read:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
    
-- #### Customizing Legends Appearence
+- #### Customizing Legends Appearance
   The `override_aes` parameter in the `guide_legend()` function.
      
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_override_aes.ipynb).
