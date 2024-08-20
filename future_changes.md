@@ -2,6 +2,10 @@
 
 ### Added
 
+- New variables computed by `'bin'` statistic: `'..sumprop..'`, `'..sumpct..'` [[#1155](https://github.com/JetBrains/lets-plot/issues/1155)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-24f/new_stat_bin_vars.ipynb).
+
 ### Changed
  
 ### Fixed

@@ -134,10 +134,14 @@ class BinStatUtilTest {
         assertContentEquals(listOf(-0.5, 0.0, 0.5, 1.0, 1.5, 2.0), statData.x)
         assertContentEquals(listOf(1.0, 2.0, 0.0, 0.0, 1.0, 0.0), statData.count)
         assertContentEquals(listOf(0.5, 1.0, 0.0, 0.0, 0.5, 0.0), statData.density)
+        assertContentEquals(listOf(0.25, 0.5, 0.0, 0.0, 0.25, 0.0), statData.sumProp)
+        assertContentEquals(listOf(25.0, 50.0, 0.0, 0.0, 25.0, 0.0), statData.sumPct)
     }
 
     @Test
-    fun checkHistogramDensityArea() {
+    fun checkHistogramNormalizedVariables() {
+        val tolerance = 1e-13
+
         val checks = listOf(
             listOf(0.0),
             listOf(0.0, 1.0, 1.0),
@@ -157,7 +161,11 @@ class BinStatUtilTest {
             val statData = BinStatUtil.computeHistogramStatSeries(data, rangeX, valuesX, xPosKind, xPos, binOptions)
             val widthFactor = if (binWidth > 0) binWidth else 1.0
             val area = widthFactor * statData.density.sum()
-            assertEquals(1.0, area, 1e-14)
+            assertEquals(1.0, area, tolerance)
+            val sumPropTotal = statData.sumProp.sum()
+            assertEquals(1.0, sumPropTotal, tolerance)
+            val sumPctTotal = statData.sumPct.sum()
+            assertEquals(100.0, sumPctTotal, tolerance)
         }
     }
 }

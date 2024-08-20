@@ -47,6 +47,8 @@ open class BinStat(
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
+        val statSumProp = ArrayList<Double>()
+        val statSumPct = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
@@ -61,6 +63,8 @@ open class BinStat(
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)
+            statSumProp.addAll(binsData.sumProp)
+            statSumPct.addAll(binsData.sumPct)
         }
 
         if (threshold != null) {
@@ -72,6 +76,8 @@ open class BinStat(
             dropList.forEach {
                 statCount[it] = Double.NaN
                 statDensity[it] = Double.NaN
+                statSumProp[it] = Double.NaN
+                statSumPct[it] = Double.NaN
             }
 
             // resolution hack - need at least two consecutive X values, or width of the bin will be incorrect
@@ -87,6 +93,8 @@ open class BinStat(
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.COUNT, statCount)
             .putNumeric(Stats.DENSITY, statDensity)
+            .putNumeric(Stats.SUMPROP, statSumProp)
+            .putNumeric(Stats.SUMPCT, statSumPct)
             .build()
     }
 
