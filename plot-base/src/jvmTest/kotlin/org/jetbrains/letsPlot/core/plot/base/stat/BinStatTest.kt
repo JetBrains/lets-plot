@@ -24,7 +24,7 @@ class BinStatTest {
             null
         )
         val statDf = stat.apply(df, SimpleStatContext(df))
-        DataFrameAssert.assertHasVars(statDf, listOf(Stats.X, Stats.COUNT, Stats.DENSITY), binCount)
+        DataFrameAssert.assertHasVars(statDf, listOf(Stats.X, Stats.COUNT, Stats.DENSITY, Stats.SUMPROP, Stats.SUMPCT), binCount)
         return statDf
     }
 
@@ -53,6 +53,12 @@ class BinStatTest {
 
         // expecting density = [1 / width]
         assertThat(statDf.getNumeric(Stats.DENSITY), Matchers.contains(1.0 / binWidth))
+
+        // expecting sumprop = [1]
+        assertThat(statDf.getNumeric(Stats.SUMPROP), Matchers.contains(1.0))
+
+        // expecting sumpct = [100]
+        assertThat(statDf.getNumeric(Stats.SUMPCT), Matchers.contains(100.0))
     }
 
     @Test
@@ -72,6 +78,14 @@ class BinStatTest {
         // expecting density sum is equal to 1 / width
         val area = binWidth * statDf.getNumeric(Stats.DENSITY).filterNotNull().sum()
         assertThat(area, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumprop sum is equal to 1
+        val sumPropTotal = statDf.getNumeric(Stats.SUMPROP).filterNotNull().sum()
+        assertThat(sumPropTotal, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumpct sum is equal to 100
+        val sumPctTotal = statDf.getNumeric(Stats.SUMPCT).filterNotNull().sum()
+        assertThat(sumPctTotal, Matchers.closeTo(100.0, 1e-12))
     }
 
     @Test
@@ -91,5 +105,13 @@ class BinStatTest {
         // expecting density sum is equal to 1 / width
         val area = binWidth * statDf.getNumeric(Stats.DENSITY).filterNotNull().sum()
         assertThat(area, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumprop sum is equal to 1
+        val sumPropTotal = statDf.getNumeric(Stats.SUMPROP).filterNotNull().sum()
+        assertThat(sumPropTotal, Matchers.closeTo(1.0, 1e-12))
+
+        // expecting sumpct sum is equal to 100
+        val sumPctTotal = statDf.getNumeric(Stats.SUMPCT).filterNotNull().sum()
+        assertThat(sumPctTotal, Matchers.closeTo(100.0, 1e-12))
     }
 }
