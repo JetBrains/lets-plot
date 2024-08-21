@@ -25,7 +25,7 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.4.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.4.1" // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
