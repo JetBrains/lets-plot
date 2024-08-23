@@ -65,15 +65,20 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     Output format is inferred from the filename extension.
 
     For PNG and PDF formats:
-    1. If `w, h, unit`, and `dpi` are all specified:
-        - `scale` is ignored.
-        - The plot's pixel size (default or set by `ggsize()`) is converted to the specified units using the given dpi.
-        - If the aspect ratio of `w` and `h` differs from the plot's pixel aspect ratio:
-          * The plot maintains its original (pixel) aspect ratio.
-          * It's fitted within the specified w x h area.
-          * Any extra space is left empty.
-    2. If w, h are not specified:
-       - The 'scale' parameter is used to determine the output size.
+
+    1. If `w`, `h`, `unit`, and `dpi` are all specified:
+
+       - `scale` is ignored.
+       - The plot's pixel size (default or set by `ggsize()`) is converted to the specified units using the given dpi.
+       - If the aspect ratio of `w` and `h` differs from the plot's pixel aspect ratio:
+
+         * The plot maintains its original (pixel) aspect ratio.
+         * It's fitted within the specified `w` x `h` area.
+         * Any extra space is left empty.
+
+    2. If `w`, `h` are not specified:
+
+       - The `scale` parameter is used to determine the output size.
 
     Examples
     --------
