@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.1] - 2024-08-21
+
+### Added
+
+- New variables computed by `'bin'` statistic: `'..sumprop..'`, `'..sumpct..'` [[#1155](https://github.com/JetBrains/lets-plot/issues/1155)].
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-24f/new_stat_bin_vars.ipynb).
+
+### Fixed
+- "cmapmpl" color scale doesn't show the entire range of colors in continuous cmap. [[#1149](https://github.com/JetBrains/lets-plot/issues/1149)].
+- `geom_histogram`: wrong plot area when `y='..density..'` [[#1157](https://github.com/JetBrains/lets-plot/issues/1157)].
+
 ## [4.4.0] - 2024-08-02
 
 ### Added

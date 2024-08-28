@@ -901,7 +901,7 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
 
     if any(it is not None for it in [w, h, unit, dpi]):
         if w is None or h is None or unit is None or dpi is None:
-            raise ValueError("w, h, unit and dpi must be specified")
+            raise ValueError("w, h, unit, and dpi must all be specified")
 
         w, h = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
         export_function(bytestring=svg, write_to=path, dpi=dpi, output_width=w, output_height=h)

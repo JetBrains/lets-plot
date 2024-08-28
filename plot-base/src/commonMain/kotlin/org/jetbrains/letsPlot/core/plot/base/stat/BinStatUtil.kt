@@ -70,13 +70,12 @@ object BinStatUtil {
         xPosKind: BinStat.XPosKind,
         xPos: Double,
         binOptions: BinOptions
-    ): BinsData {
+    ): HistBinsData {
         val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
 
         // density plot area should be == 1
-        val normalBinWidth = rangeX.length / binCount
-        val densityNormalizingFactor = if (normalBinWidth > 0)
-            1.0 / normalBinWidth
+        val densityNormalizingFactor = if (binWidth > 0)
+            1.0 / binWidth
         else
             1.0
 
@@ -193,7 +192,7 @@ object BinStatUtil {
         binWidth: Double,
         weightAtIndex: (Int) -> Double,
         densityNormalizingFactor: Double
-    ): BinsData {
+    ): HistBinsData {
 
         var totalCount = 0.0
         val countByBinIndex = HashMap<Int, MutableDouble>()
@@ -221,6 +220,7 @@ object BinStatUtil {
         val x = ArrayList<Double>()
         val counts = ArrayList<Double>()
         val densities = ArrayList<Double>()
+        val sumProps = ArrayList<Double>()
 
         val x0 = startX + binWidth / 2
         for (i in 0 until binCount) {
@@ -233,12 +233,14 @@ object BinStatUtil {
             }
 
             counts.add(count)
-            val density = count / totalCount * densityNormalizingFactor
+            val sumProp = count / totalCount
+            sumProps.add(sumProp)
+            val density = sumProp * densityNormalizingFactor
             densities.add(density)
         }
 
 //        return BinsData(x, counts, densities, dataIndicesByBinIndex)
-        return BinsData(x, counts, densities, List(x.size) { binWidth })
+        return HistBinsData(x, counts, densities, sumProps, sumProps.map { it * 100 }, List(x.size) { binWidth })
     }
 
     private fun computeDotdensityBins(
@@ -293,10 +295,19 @@ object BinStatUtil {
 
     data class CountAndWidth(val count: Int, val width: Double)
 
-    class BinsData(
-        internal val x: List<Double>,
-        internal val count: List<Double>,
-        internal val density: List<Double>,
-        internal val binWidth: List<Double>
+    open class BinsData(
+        internal open val x: List<Double>,
+        internal open val count: List<Double>,
+        internal open val density: List<Double>,
+        internal open val binWidth: List<Double>
     )
+
+    class HistBinsData(
+        internal override val x: List<Double>,
+        internal override val count: List<Double>,
+        internal override val density: List<Double>,
+        internal val sumProp: List<Double>,
+        internal val sumPct: List<Double>,
+        internal override val binWidth: List<Double>
+    ) : BinsData(x, count, density, binWidth)
 }
