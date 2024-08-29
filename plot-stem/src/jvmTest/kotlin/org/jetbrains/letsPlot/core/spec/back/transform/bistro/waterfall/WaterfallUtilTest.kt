@@ -24,7 +24,7 @@ class WaterfallUtilTest {
             .put(DataFrameUtil.createVariable("M"), measures)
             .build()
         val statDf = WaterfallUtil.calculateStat(
-            rawDf = df,
+            originalDf = df,
             x = "X",
             y = "Y",
             measure = "M",
