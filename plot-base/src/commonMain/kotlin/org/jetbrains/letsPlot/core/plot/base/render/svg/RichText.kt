@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
+import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
@@ -29,16 +30,13 @@ object RichText {
     }
 
     private fun extractTerms(text: String): List<Term> {
-        val powerTerms = Power.toPowerTerms(text)
-        // If there will be another formula terms (like fractionTerms),
-        // then join  all of them to the val formulaTerms,
-        // sort it by PositionedTerm::range.first and use it further instead of powerTerms
-        return if (powerTerms.isEmpty()) {
+        val specialTerms = Power.toPowerTerms(text) + Link.parse(text)
+        return if (specialTerms.isEmpty()) {
             listOf(Text(text))
         } else {
-            val textTerms = subtractRange(IntRange(0, text.length - 1), powerTerms.map { it.range })
+            val textTerms = subtractRange(IntRange(0, text.length - 1), specialTerms.map { it.range })
                 .map { position -> PositionedTerm(Text(text.substring(position)), position) }
-            (powerTerms + textTerms).sortedBy { it.range.first }.map(PositionedTerm::term)
+            (specialTerms + textTerms).sortedBy { it.range.first }.map(PositionedTerm::term)
         }
     }
 
@@ -60,6 +58,38 @@ object RichText {
 
         override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
             return widthCalculator(text, font)
+        }
+    }
+
+    private class Link(
+        private val text: String,
+        private val href: String
+    ) : Term {
+        override fun toTSpanElements(): List<SvgTSpanElement> {
+            return listOf(
+                SvgTSpanElement(text).apply {
+                    fillColor().set(Colors.forName("blue")) // TODO: do not hardcode color
+                    setAttribute("lp-href", href)
+                })
+        }
+
+        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+            return widthCalculator(text, font)
+        }
+
+        companion object {
+            private val aTagRegex = "<a\\s+[^>]*href=\"([^\"]*)\"[^>]*>([^<]*)<\\/a>".toRegex()
+
+            fun parse(text: String): List<PositionedTerm> {
+                val res = aTagRegex.findAll(text).map { tag ->
+                    val (href, label) = tag.destructured
+                    PositionedTerm(
+                        Link(label, href),
+                        tag.range
+                    )
+                }.toList()
+                return res
+            }
         }
     }
 
@@ -120,7 +150,6 @@ object RichText {
 
     private interface Term {
         fun toTSpanElements(): List<SvgTSpanElement>
-
         fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double
     }
 
