@@ -78,6 +78,7 @@ class Waterfall {
                 'total_title': 'result',
                 'sorted_value': true,
                 'max_values': 3,
+                'base': -100,
                 'hline': {
                   'color': 'magenta',
                   'size': 5

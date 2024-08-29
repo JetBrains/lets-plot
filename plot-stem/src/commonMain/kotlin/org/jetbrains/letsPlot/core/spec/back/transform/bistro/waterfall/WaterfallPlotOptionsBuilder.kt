@@ -38,6 +38,7 @@ class WaterfallPlotOptionsBuilder(
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?,
+    private val base: Double,
     private val hLineOptions: ElementLineOptions,
     private val hLineOnTop: Boolean,
     private val connectorOptions: ElementLineOptions,
@@ -119,7 +120,7 @@ class WaterfallPlotOptionsBuilder(
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
         var measureInitialX = initialX
-        var measureInitialY = BASE
+        var measureInitialY = base
         val groupVar = group?.let { DataFrameUtil.findVariableOrNull(groupData, it) }
         val newRowValues = { variable: DataFrame.Variable ->
             when (variable) {
@@ -141,12 +142,12 @@ class WaterfallPlotOptionsBuilder(
                     maxValues = maxValues,
                     initialX = measureInitialX,
                     initialY = measureInitialY,
-                    base = BASE,
+                    base = base,
                     flowTypeTitles = FlowType.list(totalTitle),
                     otherRowValues = newRowValues
                 )
                 measureInitialX += statData[Waterfall.Var.Stat.X].size
-                measureInitialY = statData[Waterfall.Var.Stat.VALUE].lastOrNull() as? Double ?: BASE
+                measureInitialY = statData[Waterfall.Var.Stat.VALUE].lastOrNull() as? Double ?: base
                 statData
             }
             .let { datasets ->
@@ -226,7 +227,7 @@ class WaterfallPlotOptionsBuilder(
         if (hLineOptions.blank) return null
         return LayerOptions().apply {
             geom = GeomKind.H_LINE
-            yintercept = BASE
+            yintercept = base
             color = hLineOptions.color
             size = hLineOptions.size
             linetype = hLineOptions.lineType
@@ -362,7 +363,6 @@ class WaterfallPlotOptionsBuilder(
     companion object {
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_NAME = "Flow type"
-        private const val BASE = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
@@ -376,6 +376,7 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_SHOW_LEGEND = false
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
+        const val DEF_BASE = 0.0
         val DEF_RELATIVE_TOOLTIPS = tooltips {
             lines = listOf(
                 "@${Waterfall.Var.Stat.DIFFERENCE}",

@@ -120,7 +120,7 @@ internal object WaterfallUtil {
 
         val totalTitle = extractTotalTitle(originalDf, x, calcTotal(df, measureVar), defaultTotalTitle)
         val xs = replaceLast(df[xVar].map { it.toString() }, totalTitle)
-        val ys = replaceLast(rawYs, values.last() - (base + initialY))
+        val ys = replaceLast(rawYs, values.last() - initialY)
         val labels = flowTypes.indices.map { i ->
             if (measures[i] != Measure.RELATIVE.value) {
                 values[i]

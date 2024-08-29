@@ -28,6 +28,7 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.TooltipsOptio
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.tooltips
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.TOOLTIP_DETAILED
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_BASE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
@@ -85,6 +86,7 @@ class WaterfallPlotSpecChange : SpecChange {
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
+            base = bistroSpec.getDouble(Waterfall.BASE) ?: DEF_BASE,
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: DEF_H_LINE_ON_TOP,
             connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, DEF_CONNECTOR),
