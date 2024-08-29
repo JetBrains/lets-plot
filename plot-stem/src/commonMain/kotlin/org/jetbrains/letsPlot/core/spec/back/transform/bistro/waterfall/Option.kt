@@ -45,18 +45,18 @@ object Option {
             val DEF_MEASURE = DataFrame.Variable("..measure..")
 
             object Stat {
-                val X = DataFrame.Variable("..x..")
-                val XLAB = DataFrame.Variable("..xlabel..")
-                val YMIN = DataFrame.Variable("..ymin..")
-                val YMIDDLE = DataFrame.Variable("..ymiddle..")
-                val YMAX = DataFrame.Variable("..ymax..")
-                val MEASURE = DataFrame.Variable("..measure..")
-                val FLOW_TYPE = DataFrame.Variable("..flow_type..")
-                val INITIAL = DataFrame.Variable("..initial..")
-                val VALUE = DataFrame.Variable("..value..")
-                val DIFFERENCE = DataFrame.Variable("..dy..")
-                val RADIUS = DataFrame.Variable("..radius..")
-                val LABEL = DataFrame.Variable("..label..")
+                val X = DataFrame.Variable("..x..") // x position
+                val XLAB = DataFrame.Variable("..xlabel..") // x label
+                val YMIN = DataFrame.Variable("..ymin..") // min(initial, value)
+                val YMIDDLE = DataFrame.Variable("..ymiddle..") // mean(ymin, ymax)
+                val YMAX = DataFrame.Variable("..ymax..") // max(initial, value)
+                val MEASURE = DataFrame.Variable("..measure..") // measure value: absolute/relative/total
+                val FLOW_TYPE = DataFrame.Variable("..flow_type..") // flow type: increase/decrease/total
+                val INITIAL = DataFrame.Variable("..initial..") // relative -> previous value || initial for whole group; absolute -> base
+                val VALUE = DataFrame.Variable("..value..") // absolute -> original y; relative -> cumsum; total -> previous value || initial for whole group
+                val DIFFERENCE = DataFrame.Variable("..dy..") // total -> difference between total cumsum and (base + initial for whole group); else -> original y
+                val RADIUS = DataFrame.Variable("..radius..") // (1 - box width) for all except last element in group; else -> 0
+                val LABEL = DataFrame.Variable("..label..") // total -> ..value.. (= cumsum); else -> original y
             }
         }
     }
