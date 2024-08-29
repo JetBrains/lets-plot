@@ -52,7 +52,7 @@ internal object WaterfallUtil {
     }
 
     fun calculateStat(
-        rawDf: DataFrame,
+        originalDf: DataFrame,
         x: String,
         y: String,
         measure: String,
@@ -66,17 +66,20 @@ internal object WaterfallUtil {
         otherRowValues: (DataFrame.Variable) -> Any?
     ): DataFrame {
         val defaultTotalTitle = flowTypeTitles[FlowType.TOTAL]?.title
-        val xVar = DataFrameUtil.findVariableOrFail(rawDf, x)
-        val yVar = DataFrameUtil.findVariableOrFail(rawDf, y)
-        val measureVar = DataFrameUtil.findVariableOrFail(rawDf, measure)
+        val xVar = DataFrameUtil.findVariableOrFail(originalDf, x)
+        val yVar = DataFrameUtil.findVariableOrFail(originalDf, y)
+        val measureVar = DataFrameUtil.findVariableOrFail(originalDf, measure)
 
-        val df = filterFinite(rawDf, xVar, yVar, measureVar)
+        val df = filterFinite(originalDf, xVar, yVar, measureVar)
             .let { sortData(it, yVar, measureVar, sortedValue) }
             .let { filterData(it, xVar, yVar, measureVar, threshold, maxValues, otherRowValues) }
 
         val measures = df[measureVar].map { it!!.toString() } // 'measure' is not null after filterFinite()
 
         val rawYs = df.getNumeric(yVar)
+        if (rawYs.isEmpty()) {
+            return emptyStat(originalDf)
+        }
 
         val initials = mutableListOf<Double>()
         val values = mutableListOf<Double>()
@@ -115,7 +118,7 @@ internal object WaterfallUtil {
             }
         }
 
-        val totalTitle = extractTotalTitle(rawDf, x, calcTotal(df, measureVar), defaultTotalTitle)
+        val totalTitle = extractTotalTitle(originalDf, x, calcTotal(df, measureVar), defaultTotalTitle)
         val xs = replaceLast(df[xVar].map { it.toString() }, totalTitle)
         val ys = replaceLast(rawYs, values.last() - (base + initialY))
         val labels = flowTypes.indices.map { i ->
@@ -145,8 +148,8 @@ internal object WaterfallUtil {
             .build()
     }
 
-    fun emptyStat(): DataFrame {
-        return DataFrame.Builder()
+    fun emptyStat(originalDf: DataFrame): DataFrame {
+        val emptyDfBuilder = DataFrame.Builder()
             .put(Waterfall.Var.Stat.X, emptyList<Double?>())
             .put(Waterfall.Var.Stat.XLAB, emptyList<String?>())
             .put(Waterfall.Var.Stat.YMIN, emptyList<Double>())
@@ -159,7 +162,10 @@ internal object WaterfallUtil {
             .put(Waterfall.Var.Stat.DIFFERENCE, emptyList<Double?>())
             .put(Waterfall.Var.Stat.RADIUS, emptyList<Double>())
             .put(Waterfall.Var.Stat.LABEL, emptyList<Double?>())
-            .build()
+        for (variable in originalDf.variables()) {
+            emptyDfBuilder.put(variable, emptyList<Any?>())
+        }
+        return emptyDfBuilder.build()
     }
 
     fun appendRadius(
@@ -262,7 +268,7 @@ internal object WaterfallUtil {
             threshold != null -> {
                 indexedYs.filter { (_, y) -> y != null && y.absoluteValue > threshold }.unzip().first
             }
-            maxValues != null && maxValues > 0 -> {
+            maxValues != null && 0 < maxValues && maxValues < indexedYs.size -> {
                 indexedYs
                     .sortedByDescending { (_, y) -> y?.absoluteValue ?: Double.MAX_VALUE }
                     .map(Pair<Int, Double?>::first)

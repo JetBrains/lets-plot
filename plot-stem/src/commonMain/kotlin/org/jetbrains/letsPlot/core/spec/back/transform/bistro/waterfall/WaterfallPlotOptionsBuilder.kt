@@ -103,7 +103,8 @@ class WaterfallPlotOptionsBuilder(
     private fun getStatData(): DataFrame {
         val dataGroups = mutableListOf<DataFrame>()
         var initialX = 0
-        DataUtil.groupBy(DataFrameUtil.fromMap(data), group)
+        val df = DataFrameUtil.fromMap(data)
+        DataUtil.groupBy(df, group)
             .forEach { (groupValue, groupData) ->
                 val statDf = getGroupData(groupData, groupValue, initialX).let { df ->
                     WaterfallUtil.appendRadius(df, 1.0 - width)
@@ -111,7 +112,7 @@ class WaterfallPlotOptionsBuilder(
                 initialX += statDf[Waterfall.Var.Stat.X].size
                 dataGroups.add(statDf)
             }
-        return DataUtil.concat(dataGroups, WaterfallUtil.emptyStat())
+        return DataUtil.concat(dataGroups, WaterfallUtil.emptyStat(df))
     }
 
     private fun getGroupData(groupData: DataFrame, groupValue: Any, initialX: Int): DataFrame {
@@ -149,7 +150,7 @@ class WaterfallPlotOptionsBuilder(
                 statData
             }
             .let { datasets ->
-                DataUtil.concat(datasets, WaterfallUtil.emptyStat())
+                DataUtil.concat(datasets, WaterfallUtil.emptyStat(df))
             }
     }
 
