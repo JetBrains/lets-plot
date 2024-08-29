@@ -18,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import org.jetbrains.letsPlot.core.plot.builder.guide.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
@@ -30,7 +31,8 @@ class LegendAssembler(
     private val legendTitle: String,
     private val guideOptionsMap: Map<GuideKey, GuideOptionsList>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-    private val theme: LegendTheme
+    private val legendTheme: LegendTheme,
+    private val panelTheme: PanelTheme
 ) {
 
     private val legendLayers = ArrayList<LegendLayer>()
@@ -115,11 +117,11 @@ class LegendAssembler(
             .mapNotNull(GuideOptionsList::getLegendOptions)
         val combinedLegendOptions = LegendOptions.combine(legendOptionsList)
 
-        val spec = createLegendSpec(legendTitle, legendBreaks, theme, combinedLegendOptions)
+        val spec = createLegendSpec(legendTitle, legendBreaks, legendTheme, combinedLegendOptions)
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
-                val c = LegendComponent(spec)
+                val c = LegendComponent(spec, panelTheme)
                 c.debug = DEBUG_DRAWING
                 return c
             }

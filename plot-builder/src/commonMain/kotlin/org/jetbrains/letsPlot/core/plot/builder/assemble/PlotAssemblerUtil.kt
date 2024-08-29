@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
@@ -26,7 +23,8 @@ internal object PlotAssemblerUtil {
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<GuideKey, GuideOptionsList>,
-        theme: LegendTheme
+        legendTheme: LegendTheme,
+        panelTheme: PanelTheme
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
@@ -58,7 +56,7 @@ internal object PlotAssemblerUtil {
                         scale,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                         colorBarOptions,
-                        theme
+                        legendTheme
                     )
 
                     val colorbarName = colorBarAssemblerByTitle[scale.name]?.let { existingAssembler ->
@@ -85,7 +83,8 @@ internal object PlotAssemblerUtil {
                         scaleName,
                         guideOptionsMap,
                         scaleMappersNP,
-                        theme
+                        legendTheme,
+                        panelTheme
                     )
                 }
 
@@ -122,7 +121,8 @@ internal object PlotAssemblerUtil {
                         legendTitle,
                         guideOptionsMap,
                         scaleMappersNP,
-                        theme
+                        legendTheme,
+                        panelTheme
                     )
                 }
                 val allOverrideAesValues = processOverrideAesValues(
