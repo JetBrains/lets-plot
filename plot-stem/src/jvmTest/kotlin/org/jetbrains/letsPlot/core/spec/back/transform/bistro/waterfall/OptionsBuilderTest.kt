@@ -454,7 +454,7 @@ class OptionsBuilderTest {
         val plotOptions = getPlotOptions(
             data = mapOf(
                 "X" to listOf("A", "B", "C", "D", "T1", "A", "T2"),
-                "Y" to listOf(-1.0, -3.0, 4.0, 2.0, null, 2.0, null),
+                "Y" to listOf(-1.0, -3.0, 3.0, 2.0, null, 2.0, null),
                 "M" to listOf("relative", "relative", "relative", "relative", "total", "relative", "total")
             ),
             x = "X",
@@ -465,20 +465,20 @@ class OptionsBuilderTest {
         val (relativeStatData, absoluteStatData) = getStatData(plotOptions)
         checkData(
             mapOf(
-                "X" to listOf("C", "B", "D", "A", "T1", "A", "T2"),
-                "Y" to listOf(4.0, -3.0, 2.0, -1.0, null, 2.0, null),
+                "X" to listOf("B", "C", "D", "A", "T1", "A", "T2"),
+                "Y" to listOf(-3.0, 3.0, 2.0, -1.0, null, 2.0, null),
                 "M" to listOf("relative", "relative", "relative", "relative", "total", "relative", "total"),
                 Waterfall.Var.Stat.X.name to listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0),
-                Waterfall.Var.Stat.XLAB.name to listOf("C", "B", "D", "A", "T1", "A", "T2"),
-                Waterfall.Var.Stat.YMIN.name to listOf(0.0, 1.0, 1.0, 2.0, 0.0, 2.0, 0.0),
-                Waterfall.Var.Stat.YMIDDLE.name to listOf(2.0, 2.5, 2.0, 2.5, 1.0, 3.0, 2.0),
-                Waterfall.Var.Stat.YMAX.name to listOf(4.0, 4.0, 3.0, 3.0, 2.0, 4.0, 4.0),
+                Waterfall.Var.Stat.XLAB.name to listOf("B", "C", "D", "A", "T1", "A", "T2"),
+                Waterfall.Var.Stat.YMIN.name to listOf(-3.0, -3.0, 0.0, 1.0, 0.0, 1.0, 0.0),
+                Waterfall.Var.Stat.YMIDDLE.name to listOf(-1.5, -1.5, 1.0, 1.5, 0.5, 2.0, 1.5),
+                Waterfall.Var.Stat.YMAX.name to listOf(0.0, 0.0, 2.0, 2.0, 1.0, 3.0, 3.0),
                 Waterfall.Var.Stat.MEASURE.name to listOf("relative", "relative", "relative", "relative", "total", "relative", "total"),
-                Waterfall.Var.Stat.FLOW_TYPE.name to listOf("Increase", "Decrease", "Increase", "Decrease", "Total", "Increase", "Total"),
-                Waterfall.Var.Stat.INITIAL.name to listOf(0.0, 4.0, 1.0, 3.0, 0.0, 2.0, 0.0),
-                Waterfall.Var.Stat.VALUE.name to listOf(4.0, 1.0, 3.0, 2.0, 2.0, 4.0, 4.0),
-                Waterfall.Var.Stat.DIFFERENCE.name to listOf(4.0, -3.0, 2.0, -1.0, 2.0, 2.0, 2.0),
-                Waterfall.Var.Stat.LABEL.name to listOf(4.0, -3.0, 2.0, -1.0, 2.0, 2.0, 4.0),
+                Waterfall.Var.Stat.FLOW_TYPE.name to listOf("Decrease", "Increase", "Increase", "Decrease", "Total", "Increase", "Total"),
+                Waterfall.Var.Stat.INITIAL.name to listOf(0.0, -3.0, 0.0, 2.0, 0.0, 1.0, 0.0),
+                Waterfall.Var.Stat.VALUE.name to listOf(-3.0, 0.0, 2.0, 1.0, 1.0, 3.0, 3.0),
+                Waterfall.Var.Stat.DIFFERENCE.name to listOf(-3.0, 3.0, 2.0, -1.0, 1.0, 2.0, 2.0),
+                Waterfall.Var.Stat.LABEL.name to listOf(-3.0, 3.0, 2.0, -1.0, 1.0, 2.0, 3.0),
                 Waterfall.Var.Stat.RADIUS.name to listOf(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.0)
             ),
             relativeStatData,
@@ -527,9 +527,9 @@ class OptionsBuilderTest {
     fun `check parameter maxValues`() {
         val plotOptions = getPlotOptions(
             data = mapOf(
-                "X" to listOf("A", "B", "C", "D", "T1", "A", "T2"),
-                "Y" to listOf(-1.0, -3.0, 4.0, 2.0, null, 2.0, null),
-                "M" to listOf("relative", "relative", "relative", "relative", "total", "relative", "total")
+                "X" to listOf("A", "B", "C", "D", "E", "T1", "A", "T2"),
+                "Y" to listOf(3.0, -1.0, -4.0, 3.0, 2.0, null, 2.0, null),
+                "M" to listOf("relative", "relative", "relative", "relative", "relative", "total", "relative", "total")
             ),
             x = "X",
             y = "Y",
@@ -539,20 +539,20 @@ class OptionsBuilderTest {
         val (relativeStatData, absoluteStatData) = getStatData(plotOptions)
         checkData(
             mapOf(
-                "X" to listOf("B", "C", "Other", "T1", "A", "T2"),
-                "Y" to listOf(-3.0, 4.0, 1.0, null, 2.0, null),
+                "X" to listOf("A", "C", "Other", "T1", "A", "T2"),
+                "Y" to listOf(3.0, -4.0, 4.0, null, 2.0, null),
                 "M" to listOf("relative", "relative", "relative", "total", "relative", "total"),
                 Waterfall.Var.Stat.X.name to listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0),
-                Waterfall.Var.Stat.XLAB.name to listOf("B", "C", "Other", "T1", "A", "T2"),
-                Waterfall.Var.Stat.YMIN.name to listOf(-3.0, -3.0, 1.0, 0.0, 2.0, 0.0),
-                Waterfall.Var.Stat.YMIDDLE.name to listOf(-1.5, -1.0, 1.5, 1.0, 3.0, 2.0),
-                Waterfall.Var.Stat.YMAX.name to listOf(0.0, 1.0, 2.0, 2.0, 4.0, 4.0),
+                Waterfall.Var.Stat.XLAB.name to listOf("A", "C", "Other", "T1", "A", "T2"),
+                Waterfall.Var.Stat.YMIN.name to listOf(0.0, -1.0, -1.0, 0.0, 3.0, 0.0),
+                Waterfall.Var.Stat.YMIDDLE.name to listOf(1.5, 1.0, 1.0, 1.5, 4.0, 2.5),
+                Waterfall.Var.Stat.YMAX.name to listOf(3.0, 3.0, 3.0, 3.0, 5.0, 5.0),
                 Waterfall.Var.Stat.MEASURE.name to listOf("relative", "relative", "relative", "total", "relative", "total"),
-                Waterfall.Var.Stat.FLOW_TYPE.name to listOf("Decrease", "Increase", "Increase", "Total", "Increase", "Total"),
-                Waterfall.Var.Stat.INITIAL.name to listOf(0.0, -3.0, 1.0, 0.0, 2.0, 0.0),
-                Waterfall.Var.Stat.VALUE.name to listOf(-3.0, 1.0, 2.0, 2.0, 4.0, 4.0),
-                Waterfall.Var.Stat.DIFFERENCE.name to listOf(-3.0, 4.0, 1.0, 2.0, 2.0, 2.0),
-                Waterfall.Var.Stat.LABEL.name to listOf(-3.0, 4.0, 1.0, 2.0, 2.0, 4.0),
+                Waterfall.Var.Stat.FLOW_TYPE.name to listOf("Increase", "Decrease", "Increase", "Total", "Increase", "Total"),
+                Waterfall.Var.Stat.INITIAL.name to listOf(0.0, 3.0, -1.0, 0.0, 3.0, 0.0),
+                Waterfall.Var.Stat.VALUE.name to listOf(3.0, -1.0, 3.0, 3.0, 5.0, 5.0),
+                Waterfall.Var.Stat.DIFFERENCE.name to listOf(3.0, -4.0, 4.0, 3.0, 2.0, 2.0),
+                Waterfall.Var.Stat.LABEL.name to listOf(3.0, -4.0, 4.0, 3.0, 2.0, 5.0),
                 Waterfall.Var.Stat.RADIUS.name to listOf(0.1, 0.1, 0.1, 0.1, 0.1, 0.0)
             ),
             relativeStatData,
