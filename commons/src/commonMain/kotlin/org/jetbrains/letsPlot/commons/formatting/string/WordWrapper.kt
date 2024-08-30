@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.formatting.string
 
 fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
-    if (lengthLimit < 0 || text.length <= lengthLimit || text.contains("\n")) {
+    if (lengthLimit < 0 || text.length <= lengthLimit) {
         return text
     }
 

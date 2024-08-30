@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
-object RichText {
+class RichText {
     fun toSvg(text: String): SvgTextElement {
         val richTextElement = SvgTextElement()
         extractTerms(text)

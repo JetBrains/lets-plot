@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
@@ -13,8 +14,11 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
-class MultilineLabel(val text: String) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = splitLines(text).map(RichText::toSvg)
+class MultilineLabel(
+    val text: String,
+    wrapWidth: Int? = null
+) : SvgComponent() {
+    private val myLines: List<SvgTextElement> = splitLines(wrap(text, wrapWidth ?: 0)).map { RichText().toSvg(it) }
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
