@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
+import org.jetbrains.letsPlot.commons.intern.sortedIndicesDescending
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -216,12 +218,9 @@ internal object WaterfallUtil {
         yVar: DataFrame.Variable,
         measureVar: DataFrame.Variable
     ): DataFrame {
-        fun <T> getIndices(values: List<T?>, filter: (T?) -> Boolean): Set<Int> {
-            return values.withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first.toSet()
-        }
-        val xIndices = getIndices(df[xVar]) { it != null }
-        val yIndices = getIndices(df.getNumeric(yVar)) { SeriesUtil.isFinite(it) }
-        val measureIndices = getIndices(df[measureVar]) { it != null }
+        val xIndices = df[xVar].indicesOf { it != null }.toSet()
+        val yIndices = df.getNumeric(yVar).indicesOf { SeriesUtil.isFinite(it) }.toSet()
+        val measureIndices = df[measureVar].indicesOf { it != null }.toSet()
         val tail = if (calcTotal(df, measureVar)) {
             setOf(df.rowCount() - 1)
         } else {
@@ -238,11 +237,7 @@ internal object WaterfallUtil {
             df.getNumeric(yVar)
         }
         val indices = ys
-            .withIndex()
-            .map { (i, v) -> Pair(i, v) }
-            .sortedByDescending { (_, y) -> y?.absoluteValue ?: 0.0 }
-            .unzip()
-            .first
+            .sortedIndicesDescending { (_, y) -> y?.absoluteValue ?: 0.0 }
             .let { if (calcTotal(df, measureVar)) it + listOf(df.rowCount() - 1) else it }
         return df.slice(indices)
     }
@@ -261,24 +256,20 @@ internal object WaterfallUtil {
         } else {
             df.getNumeric(yVar)
         }
-        val indexedYs = ys
-            .withIndex()
-            .map { (i, v) -> Pair(i, v) }
         val indices = when {
             threshold != null -> {
-                indexedYs.filter { (_, y) -> y != null && y.absoluteValue > threshold }.unzip().first
+                ys.indicesOf { it != null && it.absoluteValue > threshold }
             }
-            maxValues != null && 0 < maxValues && maxValues < indexedYs.size -> {
-                indexedYs
-                    .sortedByDescending { (_, y) -> y?.absoluteValue ?: Double.MAX_VALUE }
-                    .map(Pair<Int, Double?>::first)
+            maxValues != null && 0 < maxValues && maxValues < ys.size -> {
+                ys
+                    .sortedIndicesDescending { (_, y) -> y?.absoluteValue ?: Double.MAX_VALUE }
                     .subList(0, maxValues)
                     .sorted()
             }
-            else -> indexedYs.indices
+            else -> ys.indices
         }
         val withTotalIndices = if (calcTotal(df, measureVar)) indices + listOf(df.rowCount() - 1) else indices
-        val otherValue = indexedYs.filter { (i, _) -> i !in indices }.map { it.second }.filterNotNull().sum()
+        val otherValue = ys.withIndex().filter { it.index !in indices }.mapNotNull(IndexedValue<Double?>::value).sum()
         return if (otherValue.absoluteValue > 0.0) {
             val filteredDf = df.slice(withTotalIndices)
             val otherRowValues = { variable: DataFrame.Variable ->
