@@ -80,7 +80,7 @@ internal object WaterfallUtil {
 
         val rawYs = df.getNumeric(yVar)
         if (rawYs.isEmpty()) {
-            return emptyStat(originalDf)
+            return emptyStat(originalDf.variables())
         }
 
         val initials = mutableListOf<Double>()
@@ -150,7 +150,7 @@ internal object WaterfallUtil {
             .build()
     }
 
-    fun emptyStat(originalDf: DataFrame): DataFrame {
+    fun emptyStat(variables: Iterable<DataFrame.Variable>): DataFrame {
         val emptyDfBuilder = DataFrame.Builder()
             .put(Waterfall.Var.Stat.X, emptyList<Double?>())
             .put(Waterfall.Var.Stat.XLAB, emptyList<String?>())
@@ -164,7 +164,7 @@ internal object WaterfallUtil {
             .put(Waterfall.Var.Stat.DIFFERENCE, emptyList<Double?>())
             .put(Waterfall.Var.Stat.RADIUS, emptyList<Double>())
             .put(Waterfall.Var.Stat.LABEL, emptyList<Double?>())
-        for (variable in originalDf.variables()) {
+        variables.forEach { variable ->
             emptyDfBuilder.put(variable, emptyList<Any?>())
         }
         return emptyDfBuilder.build()

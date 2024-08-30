@@ -43,8 +43,8 @@ internal object DataUtil {
         }
     }
 
-    fun concat(dataframes: List<DataFrame>, emptyDataframe: DataFrame): DataFrame {
-        if (dataframes.isEmpty()) return emptyDataframe
+    fun concat(dataframes: List<DataFrame>): DataFrame {
+        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
         val builder = DataFrame.Builder()
         dataframes.first().variables().forEach { variable ->
             builder.put(variable, dataframes.map { df -> df[variable] }.flatten())

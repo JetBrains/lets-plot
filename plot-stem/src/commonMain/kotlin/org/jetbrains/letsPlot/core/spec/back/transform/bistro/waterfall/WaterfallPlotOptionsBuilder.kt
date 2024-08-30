@@ -113,7 +113,11 @@ class WaterfallPlotOptionsBuilder(
                 initialX += statDf[Waterfall.Var.Stat.X].size
                 dataGroups.add(statDf)
             }
-        return DataUtil.concat(dataGroups, WaterfallUtil.emptyStat(df))
+        return if (dataGroups.isEmpty()) {
+            WaterfallUtil.emptyStat(df.variables())
+        } else {
+            DataUtil.concat(dataGroups)
+        }
     }
 
     private fun getGroupData(groupData: DataFrame, groupValue: Any, initialX: Int): DataFrame {
@@ -151,7 +155,11 @@ class WaterfallPlotOptionsBuilder(
                 statData
             }
             .let { datasets ->
-                DataUtil.concat(datasets, WaterfallUtil.emptyStat(df))
+                if (datasets.isEmpty()) {
+                    WaterfallUtil.emptyStat(df.variables())
+                } else {
+                    DataUtil.concat(datasets)
+                }
             }
     }
 
