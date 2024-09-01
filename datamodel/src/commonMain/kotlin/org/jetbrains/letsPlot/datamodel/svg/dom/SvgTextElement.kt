@@ -85,6 +85,10 @@ class SvgTextElement() : SvgGraphicsElement(), SvgTransformable,
         children().add(tspan)
     }
 
+    fun addTSpan(text: List<SvgTSpanElement>) {
+        children().addAll(text)
+    }
+
     fun addTSpan(text: String) {
         children().add(SvgTSpanElement(text))
     }
