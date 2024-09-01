@@ -5,19 +5,28 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
-class RichText {
-    fun toSvg(text: String): SvgTextElement {
-        val richTextElement = SvgTextElement()
-        extractTerms(text)
-            .flatMap(Term::toTSpanElements)
-            .forEach(richTextElement::addTSpan)
-        return richTextElement
+object RichText {
+    fun toSvg(
+        text: String,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1
+    ): List<SvgTextElement> {
+        val lines = wrap(text, wrapLength, maxLinesCount)
+        return lines.split("\n")
+            .map { line ->
+                val richTextElement = SvgTextElement()
+                extractTerms(line.trim())
+                    .flatMap(Term::toTSpanElements)
+                    .forEach(richTextElement::addTSpan)
+                richTextElement
+            }
     }
 
     fun enrichWidthCalculator(widthCalculator: (String, Font) -> Double): (String, Font) -> Double {

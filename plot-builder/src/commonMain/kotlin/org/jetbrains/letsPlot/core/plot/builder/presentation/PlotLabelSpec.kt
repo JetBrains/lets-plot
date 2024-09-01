@@ -19,7 +19,7 @@ class PlotLabelSpec(
     }
 
     override fun width(labelText: String): Double {
-        return RichText().enrichWidthCalculator(::widthCalculator)(labelText, font)
+        return RichText.enrichWidthCalculator(::widthCalculator)(labelText, font)
     }
 
     override fun height(): Double {

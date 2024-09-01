@@ -5,8 +5,15 @@
 
 package org.jetbrains.letsPlot.commons.formatting.string
 
-fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
-    if (lengthLimit < 0 || text.length <= lengthLimit) {
+fun wrap(text: String, wrapLength: Int, countLimit: Int = -1): String {
+    return text
+        .split("\n")
+        .map { wrapLine(it, wrapLength, countLimit) }
+        .joinToString(separator = "\n") { it }
+}
+
+fun wrapLine(text: String, wrapLength: Int, maxLinesCount: Int = -1): String {
+    if (wrapLength <= 0 || text.length <= wrapLength) {
         return text
     }
 
@@ -15,15 +22,15 @@ fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
             val lines = mutableListOf(mutableListOf<String>())
             words.forEach { word ->
                 val freeSpace =
-                    lengthLimit - lines.last().let { line -> line.sumOf(String::length) + line.size }
-                        .coerceAtMost(lengthLimit)
+                    wrapLength - lines.last().let { line -> line.sumOf(String::length) + line.size }
+                        .coerceAtMost(wrapLength)
                 when {
                     freeSpace >= word.length -> lines.last().add(word)
-                    word.length <= lengthLimit -> lines.add(mutableListOf(word))
+                    word.length <= wrapLength -> lines.add(mutableListOf(word))
                     else -> {
                         lines.last().takeIf { freeSpace > 0 }?.add(word.take(freeSpace))
                         word.drop(freeSpace)
-                            .chunked(lengthLimit)
+                            .chunked(wrapLength)
                             .forEach {
                                 lines.add(mutableListOf<String>(it))
                             }
@@ -32,7 +39,7 @@ fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
             }
             lines
         }
-        .joinToString(separator = "\n", limit = countLimit) {
+        .joinToString(separator = "\n", limit = maxLinesCount) {
             it.joinToString(separator = " ")
         }
 }

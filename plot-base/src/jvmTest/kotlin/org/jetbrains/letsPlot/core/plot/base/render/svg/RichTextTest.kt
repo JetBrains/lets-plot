@@ -14,22 +14,28 @@ import kotlin.test.Test
 class RichTextTest {
     @Test
     fun simple() {
-        val richTextSvg = RichText().toSvg("Hello, world!")
-        assertThat(extractText(richTextSvg)).containsExactly("Hello, world!")
+        val richTextSvg = RichText.toSvg("Hello, world!")
+        assertThat(extractText(richTextSvg.single())).containsExactly("Hello, world!")
     }
 
     @Test
     fun link() {
-        val richTextSvg = RichText().toSvg("Hello, <a href=\"https://example.com\">world</a>!")
-        assertThat(extractText(richTextSvg)).containsExactly("Hello, ", "world", "!")
+        val richTextSvg = RichText.toSvg("Hello, <a href=\"https://example.com\">world</a>!")
+        assertThat(extractText(richTextSvg.single())).containsExactly("Hello, ", "world", "!")
     }
 
     @Test
     fun wrap() {
+        RichText
+            .toSvg("Hello, <a href=\"https://example.com\">world</a>!", wrapLength = 20)
+            .let {
+                assertThat(it).hasSize(1)
+                assertThat(extractText(it.single())).containsExactly("Hello, ", "world", "!")
+            }
     }
 
-    private fun extractText(svgText: SvgTextElement): List<String> {
-        return svgText.children().flatMap { item ->
+    private fun extractText(svgTextLine: SvgTextElement): List<String> {
+        return svgTextLine.children().flatMap { item ->
             when (item) {
                 is SvgTextNode -> listOf(item.textContent().get())
                 is SvgTSpanElement -> item.children().map { (it as SvgTextNode).textContent().get() }
