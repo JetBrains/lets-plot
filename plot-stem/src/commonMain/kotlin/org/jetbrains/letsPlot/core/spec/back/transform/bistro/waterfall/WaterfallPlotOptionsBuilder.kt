@@ -164,8 +164,8 @@ class WaterfallPlotOptionsBuilder(
     }
 
     private fun splitStatDfToAbsoluteAndRelative(statDf: DataFrame): Pair<DataFrame, DataFrame> {
-        val replace: (DataFrame.Variable) -> (Any?) -> Any? = { variable ->
-            { value ->
+        fun replaceYToNull(variable: DataFrame.Variable): (Any?) -> Any? {
+            return { value ->
                 when (variable) {
                     Waterfall.Var.Stat.YMIN,
                     Waterfall.Var.Stat.YMAX,
@@ -175,25 +175,18 @@ class WaterfallPlotOptionsBuilder(
             }
         }
         return Pair(
-            statDf.replace(Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, replace),
-            statDf.replace(Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, replace)
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, ::replaceYToNull),
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, ::replaceYToNull)
         )
     }
 
     private fun getFlowTypeDataForLegend(statData: DataFrame): List<FlowType.FlowTypeData> {
-        return statData[Waterfall.Var.Stat.MEASURE].let {
-            if (it.contains(Measure.TOTAL.value)) {
-                emptySet()
-            } else {
-                setOf(FlowType.TOTAL)
-            } + if (it.contains(Measure.ABSOLUTE.value)) {
-                emptySet()
-            } else {
-                setOf(FlowType.ABSOLUTE)
-            }
-        }.let {
-            FlowType.list(totalTitle, it).values.toList()
-        }
+        val measures = statData[Waterfall.Var.Stat.MEASURE]
+        val skipFlowTypes = setOfNotNull(
+            FlowType.TOTAL.takeUnless { measures.contains(Measure.TOTAL.value) },
+            FlowType.ABSOLUTE.takeUnless { measures.contains(Measure.ABSOLUTE.value) }
+        )
+        return FlowType.list(totalTitle, skipFlowTypes).values.toList()
     }
 
     private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions?): LayerOptions {

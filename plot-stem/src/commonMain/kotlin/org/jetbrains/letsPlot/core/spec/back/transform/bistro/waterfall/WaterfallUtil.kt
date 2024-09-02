@@ -128,11 +128,7 @@ internal object WaterfallUtil {
             }
         }
 
-        val builder = DataFrame.Builder()
-        df.variables().map { variable ->
-            builder.put(variable, df[variable])
-        }
-        return builder
+        return df.builder()
             .put(Waterfall.Var.Stat.X, xs.indices.map { (initialX + it).toDouble() }.toList())
             .put(Waterfall.Var.Stat.XLAB, xs)
             .put(Waterfall.Var.Stat.YMIN, (initials zip values).map { (initial, value) -> min(initial, value) })
@@ -287,4 +283,7 @@ internal object WaterfallUtil {
     private fun calcTotal(df: DataFrame, measureVar: DataFrame.Variable): Boolean {
         return df[measureVar].lastOrNull()?.toString() == Measure.TOTAL.value
     }
+
+    fun <T, R : Comparable<R>> Iterable<T>.sortedIndicesDescending(selector: (IndexedValue<T>) -> R?) =
+        withIndex().sortedWith(compareByDescending(selector)).map(IndexedValue<T>::index)
 }
