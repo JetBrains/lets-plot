@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
 import org.jetbrains.letsPlot.commons.intern.indicesOf
-import org.jetbrains.letsPlot.commons.intern.sortedIndicesDescending
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame

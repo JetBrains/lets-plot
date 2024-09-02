@@ -25,14 +25,10 @@ internal object DataUtil {
     }
 
     fun setColumn(df: DataFrame, variable: DataFrame.Variable, values: List<Any?>): DataFrame {
-        val builder = DataFrame.Builder()
-        df.variables().forEach { v ->
-            if (v.name != variable.name) {
-                builder.put(v, df[v])
-            }
+        return df.builder().let { builder ->
+            builder.put(DataFrameUtil.findVariableOrNull(df, variable.name) ?: variable, values)
+            builder.build()
         }
-        builder.put(variable, values)
-        return builder.build()
     }
 
     fun groupBy(df: DataFrame, group: String?): Map<Any, DataFrame> {
