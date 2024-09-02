@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
@@ -15,26 +17,65 @@ class RichTextTest {
     @Test
     fun simple() {
         val richTextSvg = RichText.toSvg("Hello, world!")
-        assertThat(extractText(richTextSvg.single())).containsExactly("Hello, world!")
+        assertThat(extractTextLine(richTextSvg.single())).containsExactly("Hello, world!")
     }
 
     @Test
     fun link() {
         val richTextSvg = RichText.toSvg("Hello, <a href=\"https://example.com\">world</a>!")
-        assertThat(extractText(richTextSvg.single())).containsExactly("Hello, ", "world", "!")
+        assertThat(extractTextLine(richTextSvg.single())).containsExactly("Hello, ", "world", "!")
     }
 
     @Test
-    fun wrap() {
+    fun consecutiveLinks() {
+        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\">A</a><a href=\"https://example.com\">B</a>")
+        assertThat(extractTextLine(richTextSvg.single())).containsExactly("A", "B")
+    }
+
+    @Test
+    fun emptyLink() {
+        val richTextSvg = RichText.toSvg("<a href=\"https://example.com\"></a>")
+        assertThat(extractTextLine(richTextSvg.single())).containsExactly("")
+    }
+
+    @Test
+    fun emptyText() {
+        val richTextSvg = RichText.toSvg("")
+        assertThat(extractTextLine(richTextSvg.single())).containsExactly("")
+    }
+
+    @Test
+    fun shouldFitInOneLineAsLinkNotCountedByWrapper() {
         RichText
             .toSvg("Hello, <a href=\"https://example.com\">world</a>!", wrapLength = 20)
             .let {
                 assertThat(it).hasSize(1)
-                assertThat(extractText(it.single())).containsExactly("Hello, ", "world", "!")
+                assertThat(extractTextLine(it.single())).containsExactly("Hello, ", "world", "!")
             }
     }
 
-    private fun extractText(svgTextLine: SvgTextElement): List<String> {
+    @Test
+    fun estimateWidth() {
+        val arial = Font(FontFamily("Arial", monospaced = false), 12)
+        val width = RichText.estimateWidth("Hello, world!", arial) { text, _ -> text.length * 5.5 }
+        assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
+    }
+
+    @Test
+    fun estimateWidthWithWrap() {
+        val arial = Font(FontFamily("Arial", monospaced = false), 12)
+        val width = RichText.estimateWidth("Hello, world!", arial, wrapLength = 6) { text, _ -> text.length * 5.5 }
+        assertThat(width).isEqualTo(5.5 * 6)
+    }
+
+    @Test
+    fun estimateWithLink() {
+        val arial = Font(FontFamily("Arial", monospaced = false), 12)
+        val width = RichText.estimateWidth("Hello, <a href=\"https://example.com\">world</a>!", arial) { text, _ -> text.length * 5.5 }
+        assertThat(width).isEqualTo(5.5 * "Hello, world!".length)
+    }
+
+    private fun extractTextLine(svgTextLine: SvgTextElement): List<String> {
         return svgTextLine.children().flatMap { item ->
             when (item) {
                 is SvgTextNode -> listOf(item.textContent().get())

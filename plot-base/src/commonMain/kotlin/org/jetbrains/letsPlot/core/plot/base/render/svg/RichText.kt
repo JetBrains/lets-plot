@@ -17,20 +17,58 @@ object RichText {
         wrapLength: Int = -1,
         maxLinesCount: Int = -1
     ): List<SvgTextElement> {
-        val lines = text.split("\n")
-            .map(::extractTerms)
-            .map { termsLine -> wrap(termsLine, wrapLength, maxLinesCount) }
+        val lines = parseText(text, wrapLength, maxLinesCount)
 
-        return lines.flatten()
+        return lines.map { termsLine ->
+            SvgTextElement().apply {
+                termsLine.flatMap(Term::svg).forEach(::addTSpan)
+            }
+        }
     }
 
-    private fun wrap(termsLine: List<Term>, wrapLength: Int = -1, maxLinesCount: Int = -1): List<SvgTextElement> {
-        if (wrapLength <= 0) {
-            val tSpanElements = termsLine.flatMap(Term::svg)
-            val svgText = SvgTextElement().apply {
-                 tSpanElements.forEach(::addTSpan)
+    fun estimateWidth(
+        text: String,
+        font: Font,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1,
+        widthEstimator: (String, Font) -> Double,
+    ): Double {
+        return parseText(text, wrapLength, maxLinesCount)
+            .maxOfOrNull { line -> line.sumOf { term -> term.estimateWidth(font, widthEstimator) } }
+            ?: 0.0
+    }
+
+    private fun wrap(lines: List<List<Term>>, wrapLength: Int, maxLinesCount: Int): List<List<Term>> {
+        val wrappedLines = lines.flatMap { termsLine -> wrapLine(termsLine, wrapLength, maxLinesCount) }
+        return when {
+            maxLinesCount < 0 -> wrappedLines
+            wrappedLines.size < maxLinesCount -> wrappedLines
+            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(mutableListOf(Text("...")))
+        }
+    }
+
+    private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
+        val lines = text.split("\n")
+            .map { line ->
+                val specialTerms = Power.toPowerTerms(line) + Link.parse(line)
+                if (specialTerms.isEmpty()) {
+                    listOf(Text(line))
+                } else {
+                    val textTerms = subtractRange(line.indices, specialTerms.map { (_, termLocation) -> termLocation })
+                        .map { textTermLocation -> Text(line.substring(textTermLocation)) to textTermLocation }
+                    (specialTerms + textTerms)
+                        .sortedBy { (_, termLocation) -> termLocation.first }
+                        .map { (term, _) -> term }
+                }
             }
-            return listOf(svgText)
+
+        val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
+        return wrappedLines
+    }
+
+    private fun wrapLine(termsLine: List<Term>, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
+        if (wrapLength <= 0) {
+            return listOf(termsLine)
         }
 
         val wrappedLines = mutableListOf(mutableListOf<Term>())
@@ -50,40 +88,7 @@ object RichText {
             }
         }
 
-        return when {
-            maxLinesCount < 0 -> wrappedLines
-            wrappedLines.size < maxLinesCount -> wrappedLines
-            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(mutableListOf(Text("...")))
-        }
-            .map { line -> line.flatMap(Term::svg) }
-            .map { tspanElements ->
-                SvgTextElement().apply {
-                    tspanElements.forEach(::addTSpan)
-                }
-            }
-    }
-
-
-    fun enrichWidthCalculator(widthCalculator: (String, Font) -> Double): (String, Font) -> Double {
-        fun enrichedWidthCalculator(text: String, font: Font): Double {
-            return extractTerms(text).sumOf { term ->
-                term.calculateWidth(widthCalculator, font)
-            }
-        }
-        return ::enrichedWidthCalculator
-    }
-
-    private fun extractTerms(text: String): List<Term> {
-        val specialTerms = Power.toPowerTerms(text) + Link.parse(text)
-        return if (specialTerms.isEmpty()) {
-            listOf(Text(text))
-        } else {
-            val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
-                .map { textTermLocation -> Text(text.substring(textTermLocation)) to textTermLocation }
-            (specialTerms + textTerms)
-                .sortedBy { (_, termLocation) -> termLocation.first }
-                .map { (term, _) -> term }
-        }
+        return wrappedLines
     }
 
     private fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
@@ -103,7 +108,7 @@ object RichText {
         override val visualCharCount: Int = text.length
         override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(text))
 
-        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
         }
     }
@@ -119,7 +124,7 @@ object RichText {
                 setAttribute("lp-href", href)
             })
 
-        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
         }
 
@@ -167,7 +172,7 @@ object RichText {
             svg = listOf(baseTSpan, indentTSpan, degreeTSpan, restoreBaselineTSpan)
         }
 
-        override fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double {
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             val baseWidth = widthCalculator(base, font)
             val degreeFontSize = (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt()
             val superscriptFont = Font(font.family, degreeFontSize, font.isBold, font.isItalic)
@@ -196,6 +201,6 @@ object RichText {
         val visualCharCount: Int // in chars, used for line wrapping
         val svg: List<SvgTSpanElement>
 
-        fun calculateWidth(widthCalculator: (String, Font) -> Double, font: Font): Double
+        fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
     }
 }
