@@ -26,8 +26,9 @@ object RichText {
 
     private fun wrap(termsLine: List<Term>, wrapLength: Int = -1, maxLinesCount: Int = -1): List<SvgTextElement> {
         if (wrapLength <= 0) {
+            val tSpanElements = termsLine.flatMap(Term::svg)
             val svgText = SvgTextElement().apply {
-                addTSpan(termsLine.flatMap(Term::svg))
+                 tSpanElements.forEach(::addTSpan)
             }
             return listOf(svgText)
         }
@@ -57,7 +58,7 @@ object RichText {
             .map { line -> line.flatMap(Term::svg) }
             .map { tspanElements ->
                 SvgTextElement().apply {
-                    addTSpan(tspanElements)
+                    tspanElements.forEach(::addTSpan)
                 }
             }
     }
@@ -77,10 +78,10 @@ object RichText {
         return if (specialTerms.isEmpty()) {
             listOf(Text(text))
         } else {
-            val textTerms = subtractRange(text.indices, specialTerms.map { (_, position) -> position })
-                .map { position -> Text(text.substring(position)) to position }
+            val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
+                .map { textTermLocation -> Text(text.substring(textTermLocation)) to textTermLocation }
             (specialTerms + textTerms)
-                .sortedBy { (_, position) -> position.first }
+                .sortedBy { (_, termLocation) -> termLocation.first }
                 .map { (term, _) -> term }
         }
     }
