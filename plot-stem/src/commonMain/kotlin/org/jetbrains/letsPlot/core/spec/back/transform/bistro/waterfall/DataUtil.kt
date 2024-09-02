@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 
@@ -38,8 +39,7 @@ internal object DataUtil {
         val groupVar = group?.let { DataFrameUtil.findVariableOrNull(df, it) } ?: return mapOf(0 to df)
         val groupValues = df.distinctValues(groupVar)
         return groupValues.associate { groupValue ->
-            val indices = df[groupVar].withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> v == groupValue }.unzip().first
-            groupValue to df.slice(indices)
+            groupValue to df.slice(df[groupVar].indicesOf { it == groupValue })
         }
     }
 
@@ -58,7 +58,7 @@ internal object DataUtil {
         filter: (Any?) -> Boolean,
         replace: (DataFrame.Variable) -> (Any?) -> Any?
     ): DataFrame {
-        val indices = df[key].withIndex().map { (i, v) -> Pair(i, v) }.filter { (_, v) -> filter(v) }.unzip().first
+        val indices = df[key].indicesOf { filter(it) }
         val builder = DataFrame.Builder()
         df.variables().forEach { variable ->
             df[variable].withIndex().map { (i, v) ->
