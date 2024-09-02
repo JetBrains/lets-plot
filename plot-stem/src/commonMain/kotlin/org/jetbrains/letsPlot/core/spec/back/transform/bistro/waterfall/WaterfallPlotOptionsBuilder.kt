@@ -105,10 +105,10 @@ class WaterfallPlotOptionsBuilder(
         val dataGroups = mutableListOf<DataFrame>()
         var initialX = 0
         val df = DataFrameUtil.fromMap(data)
-        DataUtil.groupBy(df, group)
+        df.groupBy(group)
             .forEach { (groupValue, groupData) ->
-                val statDf = getGroupData(groupData, groupValue, initialX).let { df ->
-                    WaterfallUtil.appendRadius(df, 1.0 - width)
+                val statDf = getGroupData(groupData, groupValue, initialX).let { groupStatDf ->
+                    WaterfallUtil.appendRadius(groupStatDf, 1.0 - width)
                 }
                 initialX += statDf[Waterfall.Var.Stat.X].size
                 dataGroups.add(statDf)
@@ -116,7 +116,7 @@ class WaterfallPlotOptionsBuilder(
         return if (dataGroups.isEmpty()) {
             WaterfallUtil.emptyStat(df.variables())
         } else {
-            DataUtil.concat(dataGroups)
+            concat(dataGroups)
         }
     }
 
@@ -134,7 +134,7 @@ class WaterfallPlotOptionsBuilder(
         }
         val df = WaterfallUtil.prepareData(groupData, measure, calcTotal, totalRowValues = newRowValues)
         // Need to calculate total for each measure group separately because of sorting and thresholding
-        return DataUtil.groupBy(df, Waterfall.Var.MEASURE_GROUP.name)
+        return df.groupBy(Waterfall.Var.MEASURE_GROUP.name)
             .map { (_, measureGroupData) ->
                 val statData = WaterfallUtil.calculateStat(
                     measureGroupData,
@@ -158,7 +158,7 @@ class WaterfallPlotOptionsBuilder(
                 if (datasets.isEmpty()) {
                     WaterfallUtil.emptyStat(df.variables())
                 } else {
-                    DataUtil.concat(datasets)
+                    concat(datasets)
                 }
             }
     }
@@ -175,8 +175,8 @@ class WaterfallPlotOptionsBuilder(
             }
         }
         return Pair(
-            DataUtil.replace(statDf, Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, replace),
-            DataUtil.replace(statDf, Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, replace)
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, replace),
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, replace)
         )
     }
 
@@ -292,6 +292,15 @@ class WaterfallPlotOptionsBuilder(
             mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
         return mappings
+    }
+
+    private fun concat(dataframes: List<DataFrame>): DataFrame {
+        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
+        val builder = DataFrame.Builder()
+        dataframes.first().variables().forEach { variable ->
+            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
+        }
+        return builder.build()
     }
 
     enum class Measure(val value: String) {

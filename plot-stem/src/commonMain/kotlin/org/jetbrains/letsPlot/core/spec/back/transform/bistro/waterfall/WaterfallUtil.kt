@@ -29,12 +29,10 @@ internal object WaterfallUtil {
                 if (calcTotal) measures + listOf(Measure.TOTAL.value) else measures
             }
             if (calcTotal) {
-                DataUtil.addRow(originalDf, totalRowValues)
+                originalDf.addRow(totalRowValues)
             } else {
                 originalDf
-            }.let { df ->
-                DataUtil.setColumn(df, DEF_MEASURE, measures)
-            }
+            }.setColumn(DEF_MEASURE, measures)
         } else {
             originalDf
         }
@@ -49,7 +47,7 @@ internal object WaterfallUtil {
             }
         }
         // As a result: original data + columns 'measure' and 'measure_group'
-        return DataUtil.setColumn(standardData, Waterfall.Var.MEASURE_GROUP, measureGroup)
+        return standardData.setColumn(Waterfall.Var.MEASURE_GROUP, measureGroup)
     }
 
     fun calculateStat(
@@ -185,7 +183,7 @@ internal object WaterfallUtil {
                 } + listOf(0.0)
             }
         }
-        return DataUtil.setColumn(df, Waterfall.Var.Stat.RADIUS, radii)
+        return df.setColumn(Waterfall.Var.Stat.RADIUS, radii)
     }
 
     private fun extractTotalTitle(
@@ -280,7 +278,7 @@ internal object WaterfallUtil {
                 }
             }
             val position = if (calcTotal(df, measureVar)) filteredDf.rowCount() - 1 else null
-            DataUtil.addRow(filteredDf, otherRowValues, position)
+            filteredDf.addRow(otherRowValues, position)
         } else {
             df.slice(withTotalIndices)
         }
