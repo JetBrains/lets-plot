@@ -107,8 +107,8 @@ class QQPlotOptionsBuilder(
             require(y != null)
                 { "Parameter y should be specified when parameter sample isn't." }
             hashMapOf(
-                Pair(QQ.X, x),
-                Pair(QQ.Y, y)
+                Pair(QQ.X, x!!),
+                Pair(QQ.Y, y!!)
             )
         }
         if (group != null) {
