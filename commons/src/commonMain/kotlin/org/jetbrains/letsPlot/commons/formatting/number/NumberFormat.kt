@@ -493,7 +493,7 @@ class NumberFormat(spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val GROUP_SIZE = 3
         private const val MIN_EXPONENT = 6 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
-        private const val DEF_PRECISION = 6 // Also triggers exponential notation, but for too large values.
+        private const val DEF_PRECISION = 6
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val NUMBER_REGEX =
