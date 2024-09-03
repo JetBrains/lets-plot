@@ -19,9 +19,9 @@ object RichText {
     ): List<SvgTextElement> {
         val lines = parseText(text, wrapLength, maxLinesCount)
 
-        return lines.map { termsLine ->
+        return lines.map { line ->
             SvgTextElement().apply {
-                termsLine.flatMap(Term::svg).forEach(::addTSpan)
+                line.flatMap(Term::svg).forEach(::addTSpan)
             }
         }
     }
@@ -39,23 +39,23 @@ object RichText {
     }
 
     private fun wrap(lines: List<List<Term>>, wrapLength: Int, maxLinesCount: Int): List<List<Term>> {
-        val wrappedLines = lines.flatMap { termsLine -> wrapLine(termsLine, wrapLength, maxLinesCount) }
+        val wrappedLines = lines.flatMap { line -> wrapLine(line, wrapLength) }
         return when {
             maxLinesCount < 0 -> wrappedLines
             wrappedLines.size < maxLinesCount -> wrappedLines
-            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(mutableListOf(Text("...")))
+            else -> wrappedLines.dropLast(wrappedLines.size - maxLinesCount) + mutableListOf(mutableListOf(TextTerm("...")))
         }
     }
 
     private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
         val lines = text.split("\n")
             .map { line ->
-                val specialTerms = Power.toPowerTerms(line) + Link.parse(line)
+                val specialTerms = PowerTerm.toPowerTerms(line) + LinkTerm.parse(line)
                 if (specialTerms.isEmpty()) {
-                    listOf(Text(line))
+                    listOf(TextTerm(line))
                 } else {
                     val textTerms = subtractRange(line.indices, specialTerms.map { (_, termLocation) -> termLocation })
-                        .map { textTermLocation -> Text(line.substring(textTermLocation)) to textTermLocation }
+                        .map { pos -> TextTerm(line.substring(pos)) to pos }
                     (specialTerms + textTerms)
                         .sortedBy { (_, termLocation) -> termLocation.first }
                         .map { (term, _) -> term }
@@ -66,24 +66,24 @@ object RichText {
         return wrappedLines
     }
 
-    private fun wrapLine(termsLine: List<Term>, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
+    private fun wrapLine(line: List<Term>, wrapLength: Int = -1): List<List<Term>> {
         if (wrapLength <= 0) {
-            return listOf(termsLine)
+            return listOf(line)
         }
 
         val wrappedLines = mutableListOf(mutableListOf<Term>())
-        termsLine.forEach { term ->
+        line.forEach { term ->
             val availableSpace = wrapLength - wrappedLines.last().sumOf(Term::visualCharCount)
             when {
                 term.visualCharCount <= availableSpace -> wrappedLines.last().add(term)
                 term.visualCharCount <= wrapLength -> wrappedLines.add(mutableListOf(term)) // no need to split
-                term !is Text -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
+                term !is TextTerm -> wrappedLines.add(mutableListOf(term)) // can't fit in one line, but can't split power or link
                 else -> { // split text
-                    wrappedLines.last().takeIf { availableSpace > 0 }?.add(Text(term.text.take(availableSpace)))
+                    wrappedLines.last().takeIf { availableSpace > 0 }?.add(TextTerm(term.text.take(availableSpace)))
                     wrappedLines += term.text
                         .drop(availableSpace)
                         .chunked(wrapLength)
-                        .map { mutableListOf(Text(it)) }
+                        .map { mutableListOf(TextTerm(it)) }
                 }
             }
         }
@@ -102,7 +102,7 @@ object RichText {
         return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
     }
 
-    private class Text(
+    private class TextTerm(
         val text: String,
     ) : Term {
         override val visualCharCount: Int = text.length
@@ -113,7 +113,7 @@ object RichText {
         }
     }
 
-    private class Link private constructor(
+    private class LinkTerm private constructor(
         private val text: String,
         private val href: String,
     ) : Term {
@@ -129,19 +129,19 @@ object RichText {
         }
 
         companion object {
-            private val aTagRegex = "<a\\s+[^>]*href=\"([^\"]*)\"[^>]*>([^<]*)<\\/a>".toRegex()
+            private val anchorTagRegex = "<a\\s+[^>]*href=\"(?<href>[^\"]*)\"[^>]*>(?<text>[^<]*)</a>".toRegex()
 
             fun parse(text: String): List<Pair<Term, IntRange>> {
-                val res = aTagRegex.findAll(text).map { tag ->
-                    val (href, label) = tag.destructured
-                    Link(label, href) to tag.range
-                }.toList()
-                return res
+                return anchorTagRegex.findAll(text)
+                    .map { match ->
+                        val (href, label) = match.destructured
+                        LinkTerm(label, href) to match.range
+                    }.toList()
             }
         }
     }
 
-    private class Power(
+    private class PowerTerm(
         private val base: String,
         private val degree: String,
     ) : Term {
@@ -191,7 +191,7 @@ object RichText {
             fun toPowerTerms(text: String): List<Pair<Term, IntRange>> {
                 return REGEX.findAll(text).map { match ->
                     val groups = match.groups as MatchNamedGroupCollection
-                    Power(groups["base"]!!.value, groups["degree"]!!.value) to match.range
+                    PowerTerm(groups["base"]!!.value, groups["degree"]!!.value) to match.range
                 }.toList()
             }
         }

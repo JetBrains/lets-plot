@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import kotlin.test.Test
 
-class RichTextTest {
+class RichTextTermTest {
     @Test
     fun simple() {
         val richTextSvg = RichText.toSvg("Hello, world!")
