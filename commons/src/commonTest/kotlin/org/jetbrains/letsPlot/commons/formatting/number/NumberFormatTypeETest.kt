@@ -50,5 +50,8 @@ class NumberFormatTypeETest {
     fun trim() {
         assertEquals("1.000000", NumberFormat("e&").apply(1.0))
         assertEquals("1", NumberFormat("~e&").apply(1.0))
+        assertEquals("10", NumberFormat("~e&").apply(10.0))
+        assertEquals("\\(10^{2}\\)", NumberFormat("~e&").apply(100.0))
+        assertEquals("\\(10^{-1}\\)", NumberFormat("~e&").apply(0.1))
     }
 }

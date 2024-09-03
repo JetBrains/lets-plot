@@ -215,8 +215,8 @@ class NumberFormat(spec: Spec) {
         return if (spec.richOutput) {
             when (exponent) {
                 0 -> ""
-                1 -> "·10"
-                else -> "·\\(10^{${exponent}}\\)"
+                1 -> MULT_SIGN + "10"
+                else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
             }
         } else {
             val expSign = if (exponent.sign >= 0) "+" else ""
@@ -333,22 +333,33 @@ class NumberFormat(spec: Spec) {
         val fractionalPart: String = "",
         val exponentialPart: String = ""
     ) {
+        val integerLength = if (omitUnit()) 0 else integerPart.length
         val fractionalLength = if (fractionalPart.isEmpty()) 0 else fractionalPart.length + FRACTION_DELIMITER.length
-
         val exponentialLength: Int
             get() {
                 val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
                 val matchGroups = match.groups as MatchNamedGroupCollection
-                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
+                return matchGroups["degree"]?.value?.length?.plus(2)?.let { d -> if (omitUnit()) d - 1 else d }
+                    ?: exponentialPart.length
             }
-        val fullLength = integerPart.length + fractionalLength + exponentialLength
+        val fullLength = integerLength + fractionalLength + exponentialLength
 
-        override fun toString() =
-            "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
+        override fun toString(): String {
+            val fractionDelimiter = FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""
+            val fullString = "$integerPart$fractionDelimiter$fractionalPart$exponentialPart"
+            return if (omitUnit()) {
+                fullString.replace("1$MULT_SIGN", "")
+            } else {
+                fullString
+            }
+        }
+
+        // Number of the form 1·10^n should be transformed to 10^n
+        private fun omitUnit(): Boolean = integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.startsWith(MULT_SIGN)
 
         companion object {
             @Suppress("RegExpRedundantEscape") // breaks tests
-            private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
+            private val POWER_REGEX = """^${MULT_SIGN}\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
         }
     }
 
@@ -491,6 +502,7 @@ class NumberFormat(spec: Spec) {
         private const val PERCENT = "%"
         private const val COMMA = ","
         private const val FRACTION_DELIMITER = "."
+        private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
         private const val MIN_EXPONENT = 6 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
         private const val DEF_PRECISION = 6
