@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+
 object Option {
     object Waterfall {
         const val NAME = "waterfall"
@@ -26,44 +28,37 @@ object Option {
         const val SORTED_VALUE = "sorted_value"
         const val THRESHOLD = "threshold"
         const val MAX_VALUES = "max_values"
+        const val BASE = "base"
         const val H_LINE = "hline"
         const val H_LINE_ON_TOP = "hline_ontop"
         const val CONNECTOR = "connector"
         const val LABEL = "label"
         const val LABEL_FORMAT = "label_format"
-    }
 
-    object WaterfallBox {
-        const val MEASURE_GROUP = "..measure_group.."
-        const val DEF_MEASURE = "..measure.."
-
-        object Var {
-            const val X = "..x.."
-            const val XLAB = "..xlabel.."
-            const val YMIN = "..ymin.."
-            const val YMAX = "..ymax.."
-            const val MEASURE = "..measure.."
-            const val FLOW_TYPE = "..flow_type.."
-            const val INITIAL = "..initial.."
-            const val VALUE = "..value.."
-            const val DIFFERENCE = "..dy.."
+        // Special values that parameters can take
+        object Keyword {
+            const val COLOR_FLOW_TYPE = "flow_type" // for params: color, fill, label#color
+            const val TOOLTIP_DETAILED = "detailed" // for params: relative_tooltips, absolute_tooltips
         }
-    }
 
-    object WaterfallConnector {
         object Var {
-            const val X = "..x.."
-            const val Y = "..y.."
-            const val RADIUS = "..radius.."
-        }
-    }
+            val MEASURE_GROUP = DataFrame.Variable("..measure_group..")
+            val DEF_MEASURE = DataFrame.Variable("..measure..")
 
-    object WaterfallLabel {
-        object Var {
-            const val X = "..x.."
-            const val Y = "..y.."
-            const val LABEL = "..label.."
-            const val FLOW_TYPE = "..flow_type.."
+            object Stat {
+                val X = DataFrame.Variable("..x..") // x position
+                val XLAB = DataFrame.Variable("..xlabel..") // x label
+                val YMIN = DataFrame.Variable("..ymin..") // min(initial, value)
+                val YMIDDLE = DataFrame.Variable("..ymiddle..") // mean(ymin, ymax)
+                val YMAX = DataFrame.Variable("..ymax..") // max(initial, value)
+                val MEASURE = DataFrame.Variable("..measure..") // measure value: absolute/relative/total
+                val FLOW_TYPE = DataFrame.Variable("..flow_type..") // flow type: increase/decrease/total
+                val INITIAL = DataFrame.Variable("..initial..") // relative -> previous value || initial for whole group; absolute -> base
+                val VALUE = DataFrame.Variable("..value..") // absolute -> original y; relative -> cumsum; total -> previous value || initial for whole group
+                val DIFFERENCE = DataFrame.Variable("..dy..") // total -> difference between total cumsum and initial for whole group; else -> original y
+                val RADIUS = DataFrame.Variable("..radius..") // (1 - box width) for all except last element in group; else -> 0
+                val LABEL = DataFrame.Variable("..label..") // total -> ..value.. (= cumsum); else -> original y
+            }
         }
     }
 }

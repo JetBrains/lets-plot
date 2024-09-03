@@ -15,8 +15,7 @@ class ThemeOptions : Options() {
     var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
     var axisTicksX: Element? by map(ThemeOption.AXIS_TICKS_X)
     var axisTicksY: Element? by map(ThemeOption.AXIS_TICKS_Y)
-
-    fun <T> setParameter(name: String, v: T) { properties[name] = v }
+    var axisTooltip: Element? by map(ThemeOption.AXIS_TOOLTIP)
 
     class Element : Options() {
         var blank: Boolean? by map(ThemeOption.Elem.BLANK)

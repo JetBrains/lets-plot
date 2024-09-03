@@ -12,6 +12,7 @@ def waterfall_plot(data, x, y, *,
                    width=None,
                    show_legend=None, relative_tooltips=None, absolute_tooltips=None,
                    sorted_value=None, threshold=None, max_values=None,
+                   base=None,
                    calc_total=None, total_title=None,
                    hline=None, hline_ontop=None,
                    connector=None,
@@ -77,6 +78,8 @@ def waterfall_plot(data, x, y, *,
         Groups all categories under a certain threshold value into "Other" category.
     max_values : int
         Groups all categories with the smallest changes, except the first `max_values`, into "Other" category.
+    base : float, default=0.0
+        Values with measure 'absolute' or 'total' are relative to this value.
     calc_total : bool, default=True
         Setting the `calc_total` to True will put the final cumulative sum into a new separate box.
         Taken into account only if the 'measure' column isn't provided.
@@ -235,6 +238,7 @@ def waterfall_plot(data, x, y, *,
         'sorted_value': sorted_value,
         'threshold': threshold,
         'max_values': max_values,
+        'base': base,
         'calc_total': calc_total,
         'total_title': total_title,
         'hline': hline,
