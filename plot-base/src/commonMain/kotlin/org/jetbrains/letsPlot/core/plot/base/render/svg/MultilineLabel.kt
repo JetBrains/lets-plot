@@ -13,8 +13,11 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
-class MultilineLabel(val text: String) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = splitLines(text).map(RichText::toSvg)
+class MultilineLabel(
+    val text: String,
+    wrapWidth: Int = -1
+) : SvgComponent() {
+    private val myLines: List<SvgTextElement> = RichText.toSvg(text, wrapWidth)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null

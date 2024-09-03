@@ -6,16 +6,16 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallBox.DEF_MEASURE
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallConnector
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.WaterfallLabel
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 
 class WaterfallPlotOptionsBuilder(
@@ -38,49 +38,45 @@ class WaterfallPlotOptionsBuilder(
     private val sortedValue: Boolean,
     private val threshold: Double?,
     private val maxValues: Int?,
+    private val base: Double,
     private val hLineOptions: ElementLineOptions,
     private val hLineOnTop: Boolean,
     private val connectorOptions: ElementLineOptions,
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
-    private val data = DataUtil.standardiseData(data)
+    private val data = standardiseData(data)
 
     fun build(): PlotOptions {
-        val layerData = getLayerData()
-        val flowTypeData = getFlowTypeDataForLegend(layerData.box)
-        val relativeBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it == Measure.RELATIVE.value },
-            relativeTooltipsOptions
-        )
-        val absoluteBoxOptions = boxOptions(
-            WaterfallUtil.markSkipBoxes(layerData.box, WaterfallBox.Var.MEASURE) { it != Measure.RELATIVE.value },
-            absoluteTooltipsOptions
-        )
+        val statDf = getStatData()
+        val flowTypeData = getFlowTypeDataForLegend(statDf)
+        val (absoluteStatDf, relativeStatDf) = splitStatDfToAbsoluteAndRelative(statDf)
         return plot {
             layerOptions = if (hLineOnTop) {
                 listOfNotNull(
-                    connectorOptions(layerData.connector),
-                    relativeBoxOptions,
-                    absoluteBoxOptions,
-                    labelOptions(layerData.label),
+                    connectorOptions(statDf),
+                    boxOptions(relativeStatDf, relativeTooltipsOptions),
+                    boxOptions(absoluteStatDf, absoluteTooltipsOptions),
+                    labelOptions(statDf),
                     hLineOptions()
                 )
             } else {
                 listOfNotNull(
                     hLineOptions(),
-                    connectorOptions(layerData.connector),
-                    relativeBoxOptions,
-                    absoluteBoxOptions,
-                    labelOptions(layerData.label)
+                    connectorOptions(statDf),
+                    boxOptions(relativeStatDf, relativeTooltipsOptions),
+                    boxOptions(absoluteStatDf, absoluteTooltipsOptions),
+                    labelOptions(statDf)
                 )
             }
             scaleOptions = listOf(
                 scale {
                     aes = Aes.X
                     name = x
-                    breaks = layerData.box.getValue(WaterfallBox.Var.X) as List<Double>
-                    labels = layerData.box.getValue(WaterfallBox.Var.XLAB) as List<String>
+                    @Suppress("UNCHECKED_CAST")
+                    breaks = statDf[Waterfall.Var.Stat.X] as List<Any>
+                    @Suppress("UNCHECKED_CAST")
+                    labels = statDf[Waterfall.Var.Stat.XLAB] as List<String>
                 },
                 scale {
                     aes = Aes.Y
@@ -100,82 +96,106 @@ class WaterfallPlotOptionsBuilder(
                 }
             )
             themeOptions = theme {
-                setParameter(ThemeOption.AXIS_TOOLTIP, "blank")
+                axisTooltip = ThemeOptions.Element.BLANK
             }
         }
     }
 
-    private fun getLayerData(): LayerData {
-        val dataGroups = mutableListOf<LayerData>()
+    private fun getStatData(): DataFrame {
+        val dataGroups = mutableListOf<DataFrame>()
         var initialX = 0
-        WaterfallUtil.groupBy(data, group)
-            .forEach { groupData ->
-                val boxLayerData = boxLayerGroupData(groupData, initialX)
-                val connectorData = WaterfallUtil.calculateConnectorStat(boxLayerData, 1.0 - width)
-                val labelData = WaterfallUtil.calculateLabelStat(boxLayerData, FlowType.list(totalTitle)[FlowType.TOTAL]?.title)
-                initialX += boxLayerData[WaterfallBox.Var.X]?.size ?: 0
-                dataGroups.add(LayerData(boxLayerData, connectorData, labelData))
+        val df = DataFrameUtil.fromMap(data)
+        df.groupBy(group)
+            .forEach { (groupValue, groupData) ->
+                val statDf = getGroupData(groupData, groupValue, initialX).let { groupStatDf ->
+                    WaterfallUtil.appendRadius(groupStatDf, 1.0 - width)
+                }
+                initialX += statDf[Waterfall.Var.Stat.X].size
+                dataGroups.add(statDf)
             }
-        return LayerData(
-            box = dataGroups.map(LayerData::box).let(WaterfallUtil::concat),
-            connector = dataGroups.map(LayerData::connector).let(WaterfallUtil::concat),
-            label = dataGroups.map(LayerData::label).let(WaterfallUtil::concat)
-        )
+        return if (dataGroups.isEmpty()) {
+            WaterfallUtil.emptyStat(df.variables())
+        } else {
+            concat(dataGroups)
+        }
     }
 
-    private fun boxLayerGroupData(groupData: Map<String, List<Any?>>, initialX: Int): Map<String, List<Any?>> {
+    private fun getGroupData(groupData: DataFrame, groupValue: Any, initialX: Int): DataFrame {
         val xVar = x ?: error("Parameter x should be specified")
         val yVar = y ?: error("Parameter y should be specified")
         var measureInitialX = initialX
-        var measureInitialY = BASE
+        var measureInitialY = base
+        val groupVar = group?.let { DataFrameUtil.findVariableOrNull(groupData, it) }
+        val newRowValues = { variable: DataFrame.Variable ->
+            when (variable) {
+                groupVar -> groupValue
+                else -> null
+            }
+        }
+        val df = WaterfallUtil.prepareData(groupData, measure, calcTotal, totalRowValues = newRowValues)
         // Need to calculate total for each measure group separately because of sorting and thresholding
-        return WaterfallUtil.groupBy(WaterfallUtil.prepareData(groupData, measure, calcTotal), WaterfallBox.MEASURE_GROUP)
-            .map { measureGroupData ->
-                val statData = WaterfallUtil.calculateBoxStat(
+        return df.groupBy(Waterfall.Var.MEASURE_GROUP.name)
+            .map { (_, measureGroupData) ->
+                val statData = WaterfallUtil.calculateStat(
                     measureGroupData,
                     x = xVar,
                     y = yVar,
-                    measure = measure ?: DEF_MEASURE,
+                    measure = measure ?: DEF_MEASURE.name,
                     sortedValue = sortedValue,
                     threshold = threshold,
                     maxValues = maxValues,
                     initialX = measureInitialX,
                     initialY = measureInitialY,
-                    base = BASE,
-                    flowTypeTitles = FlowType.list(totalTitle)
+                    base = base,
+                    flowTypeTitles = FlowType.list(totalTitle),
+                    otherRowValues = newRowValues
                 )
-                measureInitialX += statData[WaterfallBox.Var.X]?.size ?: initialX
-                measureInitialY = statData[WaterfallBox.Var.VALUE]?.lastOrNull() as? Double ?: BASE
+                measureInitialX += statData[Waterfall.Var.Stat.X].size
+                measureInitialY = statData[Waterfall.Var.Stat.VALUE].lastOrNull() as? Double ?: base
                 statData
             }
             .let { datasets ->
-                WaterfallUtil.concat(datasets)
+                if (datasets.isEmpty()) {
+                    WaterfallUtil.emptyStat(df.variables())
+                } else {
+                    concat(datasets)
+                }
             }
     }
 
-    private fun getFlowTypeDataForLegend(boxData: Map<String, List<Any?>>): List<FlowType.FlowTypeData> {
-        return boxData.getValue(WaterfallBox.Var.MEASURE).let {
-            if (it.contains(Measure.TOTAL.value)) {
-                emptySet()
-            } else {
-                setOf(FlowType.TOTAL)
-            } + if (it.contains(Measure.ABSOLUTE.value)) {
-                emptySet()
-            } else {
-                setOf(FlowType.ABSOLUTE)
+    private fun splitStatDfToAbsoluteAndRelative(statDf: DataFrame): Pair<DataFrame, DataFrame> {
+        fun replaceYToNull(variable: DataFrame.Variable): (Any?) -> Any? {
+            return { value ->
+                when (variable) {
+                    Waterfall.Var.Stat.YMIN,
+                    Waterfall.Var.Stat.YMAX,
+                    Waterfall.Var.Stat.YMIDDLE -> null
+                    else -> value
+                }
             }
-        }.let {
-            FlowType.list(totalTitle, it).values.toList()
         }
+        return Pair(
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it == Measure.RELATIVE.value }, ::replaceYToNull),
+            statDf.replace(Waterfall.Var.Stat.MEASURE, { it != Measure.RELATIVE.value }, ::replaceYToNull)
+        )
     }
 
-    private fun boxOptions(boxData: Map<String, List<Any?>>, tooltipsOptions: TooltipsOptions?): LayerOptions {
+    private fun getFlowTypeDataForLegend(statData: DataFrame): List<FlowType.FlowTypeData> {
+        val measures = statData[Waterfall.Var.Stat.MEASURE]
+        val skipFlowTypes = setOfNotNull(
+            FlowType.TOTAL.takeUnless { measures.contains(Measure.TOTAL.value) },
+            FlowType.ABSOLUTE.takeUnless { measures.contains(Measure.ABSOLUTE.value) }
+        )
+        return FlowType.list(totalTitle, skipFlowTypes).values.toList()
+    }
+
+    private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions?): LayerOptions {
         return LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
-            it.data = boxData
+            it.data = DataFrameUtil.toMap(statDf)
             it.mappings = boxMappings()
-            it.color = color.takeUnless { color == FLOW_TYPE_COLOR_KEYWORD }
-            it.fill = fill.takeUnless { fill == FLOW_TYPE_COLOR_KEYWORD }
+            it.color = color.takeUnless { color == COLOR_FLOW_TYPE }
+            it.fill = fill.takeUnless { fill == COLOR_FLOW_TYPE }
             it.size = size
             it.alpha = alpha
             it.linetype = LineTypeOptionConverter().apply(lineType)
@@ -191,15 +211,15 @@ class WaterfallPlotOptionsBuilder(
 
     private fun boxMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
-            Aes.X to WaterfallBox.Var.X,
-            Aes.YMIN to WaterfallBox.Var.YMIN,
-            Aes.YMAX to WaterfallBox.Var.YMAX
+            Aes.X to Waterfall.Var.Stat.X.name,
+            Aes.YMIN to Waterfall.Var.Stat.YMIN.name,
+            Aes.YMAX to Waterfall.Var.Stat.YMAX.name
         )
-        if (color == FLOW_TYPE_COLOR_KEYWORD) {
-            mappings[Aes.COLOR] = WaterfallBox.Var.FLOW_TYPE
+        if (color == COLOR_FLOW_TYPE) {
+            mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
-        if (fill == FLOW_TYPE_COLOR_KEYWORD) {
-            mappings[Aes.FILL] = WaterfallBox.Var.FLOW_TYPE
+        if (fill == COLOR_FLOW_TYPE) {
+            mappings[Aes.FILL] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
         return mappings
     }
@@ -208,7 +228,7 @@ class WaterfallPlotOptionsBuilder(
         if (hLineOptions.blank) return null
         return LayerOptions().apply {
             geom = GeomKind.H_LINE
-            yintercept = BASE
+            yintercept = base
             color = hLineOptions.color
             size = hLineOptions.size
             linetype = hLineOptions.lineType
@@ -216,15 +236,15 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun connectorOptions(connectorData: Map<String, List<Any?>>): LayerOptions? {
+    private fun connectorOptions(df: DataFrame): LayerOptions? {
         if (connectorOptions.blank) return null
         return LayerOptions().also {
             it.geom = GeomKind.SPOKE
-            it.data = connectorData
+            it.data = DataFrameUtil.toMap(df)
             it.mappings = mapOf(
-                Aes.X to WaterfallConnector.Var.X,
-                Aes.Y to WaterfallConnector.Var.Y,
-                Aes.RADIUS to WaterfallConnector.Var.RADIUS
+                Aes.X to Waterfall.Var.Stat.X.name,
+                Aes.Y to Waterfall.Var.Stat.VALUE.name,
+                Aes.RADIUS to Waterfall.Var.Stat.RADIUS.name
             )
             it.angle = 0.0
             it.position = position {
@@ -237,13 +257,13 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun labelOptions(labelData: Map<String, List<Any?>>): LayerOptions? {
+    private fun labelOptions(labelData: DataFrame): LayerOptions? {
         if (labelOptions.blank) return null
         return LayerOptions().also {
             it.geom = GeomKind.TEXT
-            it.data = labelData
+            it.data = DataFrameUtil.toMap(labelData)
             it.mappings = labelMappings()
-            it.color = labelOptions.color.takeUnless { labelOptions.color == FLOW_TYPE_COLOR_KEYWORD }
+            it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
             it.family = labelOptions.family
             it.fontface = labelOptions.face
             it.size = labelOptions.size
@@ -257,20 +277,35 @@ class WaterfallPlotOptionsBuilder(
 
     private fun labelMappings(): Map<Aes<*>, String> {
         val mappings = mutableMapOf<Aes<*>, String>(
-            Aes.X to WaterfallLabel.Var.X,
-            Aes.Y to WaterfallLabel.Var.Y,
-            Aes.LABEL to WaterfallLabel.Var.LABEL,
+            Aes.X to Waterfall.Var.Stat.X.name,
+            Aes.Y to Waterfall.Var.Stat.YMIDDLE.name,
+            Aes.LABEL to Waterfall.Var.Stat.LABEL.name,
         )
-        if (labelOptions.color == FLOW_TYPE_COLOR_KEYWORD) {
-            mappings[Aes.COLOR] = WaterfallLabel.Var.FLOW_TYPE
+        if (labelOptions.color == COLOR_FLOW_TYPE) {
+            mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
         return mappings
+    }
+
+    private fun concat(dataframes: List<DataFrame>): DataFrame {
+        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
+        val builder = DataFrame.Builder()
+        dataframes.first().variables().forEach { variable ->
+            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
+        }
+        return builder.build()
     }
 
     enum class Measure(val value: String) {
         RELATIVE("relative"),
         ABSOLUTE("absolute"),
-        TOTAL("total")
+        TOTAL("total");
+
+        companion object {
+            fun byValue(value: String): Measure {
+                return entries.first { it.value == value }
+            }
+        }
     }
 
     enum class FlowType(val title: String, val color: String) {
@@ -335,14 +370,9 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    data class LayerData(val box: Map<String, List<Any?>>, val connector: Map<String, List<Any?>>, val label: Map<String, List<Any?>>)
-
     companion object {
-        const val FLOW_TYPE_COLOR_KEYWORD = "flow_type"
-        const val TOOLTIP_DETAILED_KEYWORD = "detailed"
         const val OTHER_NAME = "Other"
         const val FLOW_TYPE_NAME = "Flow type"
-        private const val BASE = 0.0
         private const val INITIAL_TOOLTIP_NAME = "Initial"
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
@@ -356,32 +386,33 @@ class WaterfallPlotOptionsBuilder(
         const val DEF_SHOW_LEGEND = false
         const val DEF_CALC_TOTAL = true
         const val DEF_SORTED_VALUE = false
+        const val DEF_BASE = 0.0
         val DEF_RELATIVE_TOOLTIPS = tooltips {
             lines = listOf(
-                "@${WaterfallBox.Var.DIFFERENCE}",
+                "@${Waterfall.Var.Stat.DIFFERENCE}",
             )
             formats = listOf(
                 TooltipsOptions.format {
-                    field = WaterfallBox.Var.DIFFERENCE
+                    field = Waterfall.Var.Stat.DIFFERENCE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             )
         }
         val DETAILED_RELATIVE_TOOLTIPS = tooltips {
-            title = "@${WaterfallBox.Var.XLAB}"
+            title = "@${Waterfall.Var.Stat.XLAB}"
             disableSplitting = true
             lines = listOf(
-                "$INITIAL_TOOLTIP_NAME|@${WaterfallBox.Var.INITIAL}",
-                "$DIFFERENCE_TOOLTIP_NAME|@${WaterfallBox.Var.DIFFERENCE}",
-                "$CUMULATIVE_SUM_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
+                "$INITIAL_TOOLTIP_NAME|@${Waterfall.Var.Stat.INITIAL}",
+                "$DIFFERENCE_TOOLTIP_NAME|@${Waterfall.Var.Stat.DIFFERENCE}",
+                "$CUMULATIVE_SUM_TOOLTIP_NAME|@${Waterfall.Var.Stat.VALUE}",
             )
             formats = listOf(
-                WaterfallBox.Var.INITIAL,
-                WaterfallBox.Var.DIFFERENCE,
-                WaterfallBox.Var.VALUE,
+                Waterfall.Var.Stat.INITIAL,
+                Waterfall.Var.Stat.DIFFERENCE,
+                Waterfall.Var.Stat.VALUE,
             ).map { f ->
                 TooltipsOptions.format {
-                    field = f
+                    field = f.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             }
@@ -389,24 +420,24 @@ class WaterfallPlotOptionsBuilder(
         val DEF_ABSOLUTE_TOOLTIPS = tooltips {
             disableSplitting = true
             lines = listOf(
-                "@${WaterfallBox.Var.VALUE}",
+                "@${Waterfall.Var.Stat.VALUE}",
             )
             formats = listOf(
                 TooltipsOptions.format {
-                    field = WaterfallBox.Var.VALUE
+                    field = Waterfall.Var.Stat.VALUE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             )
         }
         val DETAILED_ABSOLUTE_TOOLTIPS = tooltips {
-            title = "@${WaterfallBox.Var.XLAB}"
+            title = "@${Waterfall.Var.Stat.XLAB}"
             disableSplitting = true
             lines = listOf(
-                "$VALUE_TOOLTIP_NAME|@${WaterfallBox.Var.VALUE}",
+                "$VALUE_TOOLTIP_NAME|@${Waterfall.Var.Stat.VALUE}",
             )
             formats = listOf(
                 TooltipsOptions.format {
-                    field = WaterfallBox.Var.VALUE
+                    field = Waterfall.Var.Stat.VALUE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
             )

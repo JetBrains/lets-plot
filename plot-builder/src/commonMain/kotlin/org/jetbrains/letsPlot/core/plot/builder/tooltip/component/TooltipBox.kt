@@ -442,7 +442,7 @@ class TooltipBox : SvgComponent() {
         }
 
         private fun initTitleComponent(titleLine: String): MultilineLabel {
-            val titleComponent = MultilineLabel(wrap(titleLine, maxLength = null))
+            val titleComponent = MultilineLabel(titleLine)
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
@@ -493,8 +493,8 @@ class TooltipBox : SvgComponent() {
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
                 .map { line ->
                     Pair(
-                        line.label?.let { MultilineLabel(wrap(it, maxLength = null)) },
-                        MultilineLabel(wrap(line.value, maxLength = VALUE_LINE_MAX_LENGTH))
+                        line.label?.let(::MultilineLabel),
+                        MultilineLabel(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
                     )
                 }
             // for labels
@@ -715,41 +715,6 @@ class TooltipBox : SvgComponent() {
                 myRect.d().set(pathData)
                 myRect.strokeColor().set(color)
             }
-        }
-
-        private fun wrap(value: String, maxLength: Int?) =
-            MultilineLabel.splitLines(value).flatMap { line ->
-                if (maxLength != null) {
-                    line.chunkedBy(delimiter = " ", maxLength)
-                } else {
-                    listOf(line)
-                }
-            }.joinToString("\n")
-
-        private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
-            return split(delimiter)
-                .chunkedBy(maxLength + delimiter.length) { length + delimiter.length }
-                .map { it.joinToString(delimiter) }
-        }
-
-        private fun List<String>.chunkedBy(maxSize: Int, size: String.() -> Int): List<List<String>> {
-            val result = mutableListOf<List<String>>()
-            var subList = mutableListOf<String>()
-            var subListSize = 0
-            forEach { item ->
-                val itemSize = item.size()
-                if (subListSize + itemSize > maxSize && subList.isNotEmpty()) {
-                    result.add(subList)
-                    subList = mutableListOf()
-                    subListSize = 0
-                }
-                subList.add(item)
-                subListSize += itemSize
-            }
-            if (subList.isNotEmpty()) {
-                result += subList
-            }
-            return result
         }
 
         private val TRIANGLE_POINTS: List<DoubleVector> = run {

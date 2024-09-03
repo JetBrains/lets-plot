@@ -12,6 +12,7 @@ class Waterfall {
         return listOf(
             basic(),
             checkParameters(),
+            withGrouping(),
             withMeasure(),
         )
     }
@@ -77,6 +78,7 @@ class Waterfall {
                 'total_title': 'result',
                 'sorted_value': true,
                 'max_values': 3,
+                'base': -100,
                 'hline': {
                   'color': 'magenta',
                   'size': 5
@@ -94,6 +96,36 @@ class Waterfall {
                   'angle': 45
                 },
                 'label_format': 'd'
+              }
+            }
+        """.trimIndent()
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withGrouping(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'cat': ['A', 'B', 'C', 'A', 'B', 'C'],
+                'val': [2, 3, -1, 1, -2, 4],
+                'g': ['one', 'one', 'one', 'two', 'two', 'two']
+              },
+              'ggtitle': {
+                'text': 'With grouping'
+              },
+              'bistro': {
+                'name': 'waterfall',
+                'x': 'cat',
+                'y': 'val',
+                'group': 'g'
+              },
+              'facet': {
+                'name': 'wrap',
+                'facets': 'g',
+                'scales': 'free_x'
               }
             }
         """.trimIndent()

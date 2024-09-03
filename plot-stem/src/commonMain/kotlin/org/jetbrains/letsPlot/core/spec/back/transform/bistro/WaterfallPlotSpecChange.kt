@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.FLOW_TYPE_COLOR_KEYWORD
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.TOOLTIP_DETAILED_KEYWORD
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_COLOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SIZE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
@@ -28,6 +26,9 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.TooltipsOptions
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.tooltips
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.TOOLTIP_DETAILED
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_BASE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
@@ -62,7 +63,7 @@ class WaterfallPlotSpecChange : SpecChange {
             measure = bistroSpec.getString(Waterfall.MEASURE),
             group = bistroSpec.getString(Waterfall.GROUP),
             color = bistroSpec.getString(Waterfall.COLOR) ?: DEF_COLOR,
-            fill = bistroSpec.getString(Waterfall.FILL) ?: FLOW_TYPE_COLOR_KEYWORD,
+            fill = bistroSpec.getString(Waterfall.FILL) ?: COLOR_FLOW_TYPE,
             size = bistroSpec.getDouble(Waterfall.SIZE) ?: DEF_SIZE,
             alpha = bistroSpec.getDouble(Waterfall.ALPHA),
             lineType = bistroSpec.read(Waterfall.LINE_TYPE),
@@ -85,6 +86,7 @@ class WaterfallPlotSpecChange : SpecChange {
             sortedValue = bistroSpec.getBool(Waterfall.SORTED_VALUE) ?: DEF_SORTED_VALUE,
             threshold = bistroSpec.getDouble(Waterfall.THRESHOLD),
             maxValues = bistroSpec.getInt(Waterfall.MAX_VALUES),
+            base = bistroSpec.getDouble(Waterfall.BASE) ?: DEF_BASE,
             hLineOptions = readElementLineOptions(bistroSpec, Waterfall.H_LINE, DEF_H_LINE),
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: DEF_H_LINE_ON_TOP,
             connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, DEF_CONNECTOR),
@@ -103,7 +105,7 @@ class WaterfallPlotSpecChange : SpecChange {
     ): TooltipsOptions? {
         when (bistroSpec.getString(optionName)) {
             Option.Layer.NONE -> return null
-            TOOLTIP_DETAILED_KEYWORD -> return detailedTooltips
+            TOOLTIP_DETAILED -> return detailedTooltips
         }
         return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
             tooltips {
@@ -111,7 +113,9 @@ class WaterfallPlotSpecChange : SpecChange {
                 minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
                 title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
                 disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+                @Suppress("UNCHECKED_CAST")
                 lines = tooltipsOptions.getList(Option.LinesSpec.LINES) as? List<String>?
+                @Suppress("UNCHECKED_CAST")
                 formats = (tooltipsOptions.getList(Option.LinesSpec.FORMATS) as? List<Map<String, String>>?)?.map { formatOptions ->
                     TooltipsOptions.format {
                         field = formatOptions[Option.LinesSpec.Format.FIELD]
