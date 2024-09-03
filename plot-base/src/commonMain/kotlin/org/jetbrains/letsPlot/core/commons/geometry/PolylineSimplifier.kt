@@ -11,30 +11,35 @@ class PolylineSimplifier private constructor(
     private val myPoints: List<List<DoubleVector>>,
     strategy: RankingStrategy
 ) {
-    private val myWeights: List<WeightedPoint> = myPoints.mapIndexed { ringIndex, sub ->
-        val weights = strategy.getWeights(sub)
+    private val myWeights: List<WeightedPoint> = myPoints.mapIndexed { ringIndex, subPath ->
+        val weights = strategy.computeWeights(subPath)
         weights.mapIndexed() { pointIndex, weight -> WeightedPoint(ringIndex, pointIndex, weight) }
     }.flatten()
 
     private var myWeightLimit = Double.NaN
     private var myCountLimit = -1
 
-    val points: List<DoubleVector> by lazy { myPoints.slice(indices) }
+    val points: List<List<DoubleVector>> by lazy {
+        indices.zip(myPoints)
+            .map { (indices, points) -> points.slice(indices) }
+    }
 
-    val indices: List<Int>
+    val indices: List<List<Int>>
         get() {
-            val sorted = myWeights.withIndex()
-                .filter { (_, weight) -> weight.isFinite() }
-                .sortedByDescending { (_, weight) -> weight }
-
             val filtered = when (isWeightLimitSet) {
-                true -> sorted.filter { (_, weight) -> weight > myWeightLimit }
-                false -> sorted.take(myCountLimit)
+                true -> myWeights.filter { (_, weight) -> weight > myWeightLimit }
+                false -> myWeights.sortedByDescending(WeightedPoint::weight).take(myCountLimit)
             }
 
             return filtered
-                .map { (index, _) -> index }
-                .sorted()
+                .groupBy(WeightedPoint::subPathIndex)
+                .entries
+                .sortedBy { (subPathIndex, _) -> subPathIndex }
+                .map { (_, weightedPoints) ->
+                    weightedPoints
+                        .map { it.pointIndex }
+                        .sorted()
+                }
         }
 
     private val isWeightLimitSet: Boolean
@@ -61,7 +66,7 @@ class PolylineSimplifier private constructor(
     }
 
     interface RankingStrategy {
-        fun getWeights(points: List<DoubleVector>): List<Double>
+        fun computeWeights(points: List<DoubleVector>): List<Double>
     }
 
     companion object {
@@ -69,26 +74,26 @@ class PolylineSimplifier private constructor(
 
         fun visvalingamWhyatt(points: List<DoubleVector>): PolylineSimplifier {
             return PolylineSimplifier(
-                points,
+                listOf(points),
                 VisvalingamWhyattSimplification()
             )
         }
 
         fun douglasPeucker(points: List<DoubleVector>): PolylineSimplifier {
             return PolylineSimplifier(
-                points,
+                listOf(points),
                 DouglasPeuckerSimplification()
             )
         }
 
         fun douglasPeucker(points: List<DoubleVector>, threshold: Double): List<DoubleVector> {
-            return douglasPeucker(points).setWeightLimit(threshold).points
+            return douglasPeucker(points).setWeightLimit(threshold).points.first()
         }
 
     }
 
     private data class WeightedPoint(
-        val ringIndex: Int,
+        val subPathIndex: Int,
         val pointIndex: Int,
         val weight: Double
     )

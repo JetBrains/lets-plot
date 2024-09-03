@@ -60,7 +60,7 @@ internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSi
                     "n=" + sampleSize + ")"
 
         override fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int> {
-            return PolylineSimplifier.visvalingamWhyatt(points).setCountLimit(limit).indices
+            return PolylineSimplifier.visvalingamWhyatt(points).setCountLimit(limit).indices.single()
         }
 
         companion object {
@@ -75,7 +75,7 @@ internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSi
                     "n=" + sampleSize + ")"
 
         override fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int> {
-            return PolylineSimplifier.douglasPeucker(points).setCountLimit(limit).indices
+            return PolylineSimplifier.douglasPeucker(points).setCountLimit(limit).indices.single()
         }
 
         companion object {

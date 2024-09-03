@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.commons.geometry
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.test.Test
 
 class DouglasPeuckerSimplificationTest {
@@ -14,7 +13,7 @@ class DouglasPeuckerSimplificationTest {
     @Test
     fun simplificationByCountShouldNotBreakRing() {
 
-        val indices = PolylineSimplifier.douglasPeucker(TestUtil.SIMPLE_DATA).setCountLimit(4).indices
+        val indices = PolylineSimplifier.douglasPeucker(TestUtil.SIMPLE_DATA).setCountLimit(4).indices.single()
 
         assertThat(indices).has(
             TestUtil.ValidRingCondition(
@@ -26,7 +25,7 @@ class DouglasPeuckerSimplificationTest {
     @Test
     fun simplificationByAreaShouldNotBreakRing() {
 
-        val indices = PolylineSimplifier.douglasPeucker(TestUtil.MEDIUM_DATA).setWeightLimit(0.001).indices
+        val indices = PolylineSimplifier.douglasPeucker(TestUtil.MEDIUM_DATA).setWeightLimit(0.001).indices.single()
 
         assertThat(indices).has(
             TestUtil.ValidRingCondition(
@@ -38,7 +37,7 @@ class DouglasPeuckerSimplificationTest {
     @Test
     fun tooManyPoints() {
 
-        val indices = PolylineSimplifier.douglasPeucker(TestUtil.COMPLEX_DATA).setCountLimit(13).indices
+        val indices = PolylineSimplifier.douglasPeucker(TestUtil.COMPLEX_DATA).setCountLimit(13).indices.single()
         assertThat(indices)
                 .has(TestUtil.ValidRingCondition(TestUtil.COMPLEX_DATA))
                 .containsExactly(0, 10, 25, 34, 44, 50, 58, 69, 82, 95, 106, 113, 122)

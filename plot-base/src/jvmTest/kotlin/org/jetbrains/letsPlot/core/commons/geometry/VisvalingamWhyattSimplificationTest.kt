@@ -15,7 +15,7 @@ class VisvalingamWhyattSimplificationTest {
 
     @Test
     fun simplificationByCountShouldNotBreakRing() {
-        val indices = PolylineSimplifier.visvalingamWhyatt(SIMPLE_DATA).setCountLimit(4).indices
+        val indices = PolylineSimplifier.visvalingamWhyatt(SIMPLE_DATA).setCountLimit(4).indices.single()
 
         assertThat(indices).has(
             TestUtil.ValidRingCondition(
@@ -26,7 +26,7 @@ class VisvalingamWhyattSimplificationTest {
 
     @Test
     fun simplificationByAreaShouldNotBreakRing() {
-        val indices = PolylineSimplifier.visvalingamWhyatt(MEDIUM_DATA).setWeightLimit(0.001).indices
+        val indices = PolylineSimplifier.visvalingamWhyatt(MEDIUM_DATA).setWeightLimit(0.001).indices.single()
         assertThat(indices).has(
             TestUtil.ValidRingCondition(
                 MEDIUM_DATA
@@ -37,7 +37,7 @@ class VisvalingamWhyattSimplificationTest {
 
     @Test
     fun tooManyPoints() {
-        val indices = PolylineSimplifier.visvalingamWhyatt(COMPLEX_DATA).setCountLimit(13).indices
+        val indices = PolylineSimplifier.visvalingamWhyatt(COMPLEX_DATA).setCountLimit(13).indices.single()
         assertThat(indices)
             .has(TestUtil.ValidRingCondition(COMPLEX_DATA))
             .containsExactly(0, 17, 28, 36, 45, 53, 65, 74, 86, 93, 102, 110, 122)

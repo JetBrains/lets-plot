@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.core.commons.geometry
 
-import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.RankingStrategy
 
 internal class DouglasPeuckerSimplification : RankingStrategy {
@@ -57,7 +57,7 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
         return weights
     }
 
-    override fun getWeights(points: List<DoubleVector>): List<Double> {
+    override fun computeWeights(points: List<DoubleVector>): List<Double> {
         return calculateWeights(points)
     }
 }

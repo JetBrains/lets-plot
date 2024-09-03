@@ -21,7 +21,7 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
     private val isEmpty: Boolean
         get() = myTriangles!!.isEmpty()
 
-    override fun getWeights(points: List<DoubleVector>): List<Double> {
+    override fun computeWeights(points: List<DoubleVector>): List<Double> {
         myTriangles = ArrayList(points.size - 2)
         initTriangles(points)
         val weights = MutableList(points.size) { INITIAL_AREA }
