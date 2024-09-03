@@ -24,6 +24,10 @@ class LayerOptions : Options() {
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
     var position: PositionOptions? by map(Layer.POS)
 
+    // hidden
+    var marginal: Boolean? by map(Layer.MARGINAL)
+    var marginSide: String? by map(Layer.Marginal.SIDE)
+
     // geom_text
     var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)
     var naText: String? by map(Geom.Text.NA_TEXT)

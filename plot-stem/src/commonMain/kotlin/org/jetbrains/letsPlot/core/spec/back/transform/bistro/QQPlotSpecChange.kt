@@ -31,6 +31,7 @@ class QQPlotSpecChange : SpecChange {
     private fun buildQQPlotSpec(plotSpec: MutableMap<String, Any>): Map<String, Any> {
         val bistroSpec = plotSpec.getMap(Option.Plot.BISTRO) ?: error("'bistro' not found in PlotSpec")
         val qqPlotOptionsBuilder = QQPlotOptionsBuilder(
+            data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             sample = bistroSpec.getString(QQ.SAMPLE),
             x = bistroSpec.getString(QQ.X),
             y = bistroSpec.getString(QQ.Y),
