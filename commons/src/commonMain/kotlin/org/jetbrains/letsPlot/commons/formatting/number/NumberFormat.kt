@@ -22,7 +22,7 @@ class NumberFormat(spec: Spec) {
         val zero: Boolean = false,
         val width: Int = -1,
         val comma: Boolean = false,
-        val precision: Int = 6,
+        val precision: Int = DEF_PRECISION,
         val type: String = "",
         val trim: Boolean = false,
         val richOutput: Boolean = false
@@ -158,9 +158,7 @@ class NumberFormat(spec: Spec) {
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= 6) {
-                // 6 is a magic number that triggers exponential notation (too long to be formatted as a simple number)
-                // Same as in JS (see toPrecision) and D3.format
+            } else if (numberInfo.fractionLeadingZeros >= MIN_EXPONENT) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
@@ -477,7 +475,7 @@ class NumberFormat(spec: Spec) {
                 zero = matchResult.groups[5] != null,
                 width = (matchResult.groups[6]?.value ?: "-1").toInt(),
                 comma = matchResult.groups[7] != null,
-                precision = (matchResult.groups[8]?.value ?: "6").toInt(),
+                precision = (matchResult.groups[8]?.value ?: DEF_PRECISION.toString()).toInt(),
                 trim = matchResult.groups[9] != null,
                 type = matchResult.groups[10]?.value ?: "",
                 richOutput = matchResult.groups[11] != null
@@ -494,6 +492,8 @@ class NumberFormat(spec: Spec) {
         private const val COMMA = ","
         private const val FRACTION_DELIMITER = "."
         private const val GROUP_SIZE = 3
+        private const val MIN_EXPONENT = 6 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        private const val DEF_PRECISION = 6 // Also triggers exponential notation, but for too large values.
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val NUMBER_REGEX =
