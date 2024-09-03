@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.DoubleVectorComponentsList
 import kotlin.math.min
 import kotlin.math.roundToInt
 

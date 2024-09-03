@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.sampling
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.*
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexDpSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexVwSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonDpSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonVwSampling
 
 object Samplings {
     const val RANDOM = RandomSampling.ALIAS
@@ -17,8 +17,8 @@ object Samplings {
     const val RANDOM_GROUP = GroupRandomSampling.ALIAS
     const val SYSTEMATIC_GROUP = GroupSystematicSampling.ALIAS
     const val RANDOM_STRATIFIED = RandomStratifiedSampling.ALIAS
-    const val VERTEX_VW = VertexVwSampling.ALIAS
-    const val VERTEX_DP = VertexDpSampling.ALIAS
+    const val VERTEX_VW = PolygonVwSampling.ALIAS
+    const val VERTEX_DP = PolygonDpSampling.ALIAS
 
     val NONE: PointSampling =
         NoneSampling()
@@ -32,11 +32,11 @@ object Samplings {
     }
 
     fun vertexDp(sampleSize: Int): Sampling {
-        return VertexDpSampling(sampleSize)
+        return PolygonDpSampling(sampleSize)
     }
 
     fun vertexVw(sampleSize: Int): Sampling {
-        return VertexVwSampling(sampleSize)
+        return PolygonVwSampling(sampleSize)
     }
 
     fun systematic(sampleSize: Int): Sampling {

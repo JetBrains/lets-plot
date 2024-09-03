@@ -13,12 +13,12 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.rectToGeometry
 import org.jetbrains.letsPlot.core.plot.builder.data.RingAssertion.Companion.assertThatRing
 import org.jetbrains.letsPlot.core.plot.builder.data.createCircle
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonDpSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonVwSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.splitRings
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexDpSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexVwSampling
 import kotlin.test.Test
 
-class VertexSamplingTest {
+class PolygonSamplingTest {
 
     private fun toDF(points: List<DoubleVector>): DataFrame {
         val builder = Builder()
@@ -26,6 +26,26 @@ class VertexSamplingTest {
             .put(TransformVar.X, points.map { p -> p.x })
             .put(TransformVar.Y, points.map { p -> p.y })
             .build()
+    }
+
+    @Test
+    fun issue1168_dp() {
+        val df = Builder()
+            .put(TransformVar.X, listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0))
+            .put(TransformVar.Y, listOf(0.0, 0.0, 0.0, 0.0, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+            .build()
+
+        PolygonDpSampling(5).apply(df)
+    }
+
+    @Test
+    fun issue1168_vw() {
+        val df = Builder()
+            .put(TransformVar.X, listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0))
+            .put(TransformVar.Y, listOf(0.0, 0.0, 0.0, 0.0, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+            .build()
+
+        PolygonVwSampling(5).apply(df)
     }
 
     @Test
@@ -41,7 +61,7 @@ class VertexSamplingTest {
             )
         )
 
-        val p = splitRings(VertexDpSampling(4).apply(df))
+        val p = splitRings(PolygonDpSampling(4).apply(df))
 
         assertThat(p[0]).hasSize(4)
     }
@@ -50,7 +70,7 @@ class VertexSamplingTest {
     fun forRing_whenLimitIs3_ShouldReturnEmptyList() {
         val df = toDF(createCircle(50000, 10.0))
 
-        val simplifiedRings = splitRings(VertexDpSampling(3).apply(df))
+        val simplifiedRings = splitRings(PolygonDpSampling(3).apply(df))
         assertThat(simplifiedRings).isEmpty()
     }
 
@@ -64,7 +84,7 @@ class VertexSamplingTest {
             )
         )
 
-        val simplifiedRings = splitRings(VertexDpSampling(2).apply(df))
+        val simplifiedRings = splitRings(PolygonDpSampling(2).apply(df))
         assertThat(simplifiedRings).hasSize(1)
         assertThat(simplifiedRings[0])
             .containsExactly(
@@ -77,7 +97,7 @@ class VertexSamplingTest {
     fun dpSimplification() {
         val polygon = ArrayList(createCircle(16, 100.0))
         val df = toDF(polygon)
-        val simplifiedRings = splitRings(VertexDpSampling(8).apply(df))
+        val simplifiedRings = splitRings(PolygonDpSampling(8).apply(df))
         assertThat(simplifiedRings).hasSize(1)
         assertThatRing(simplifiedRings[0]).hasSize(8)
     }
@@ -86,7 +106,7 @@ class VertexSamplingTest {
     fun vwSimplification() {
         val polygon = ArrayList(createCircle(16, 100.0))
         val df = toDF(polygon)
-        val simplifiedRings = splitRings(VertexVwSampling(8).apply(df))
+        val simplifiedRings = splitRings(PolygonVwSampling(8).apply(df))
         assertThat(simplifiedRings).hasSize(1)
         assertThatRing(simplifiedRings[0]).hasSize(8)
     }
@@ -99,7 +119,7 @@ class VertexSamplingTest {
         polygon.addAll(createCircle(10000, 70.0))
         val df = toDF(polygon)
 
-        val simplifiedRings = splitRings(VertexVwSampling(500).apply(df))
+        val simplifiedRings = splitRings(PolygonVwSampling(500).apply(df))
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(101).isClosed
         assertThatRing(simplifiedRings[1]).hasSize(135).isClosed
@@ -119,7 +139,7 @@ class VertexSamplingTest {
         polygon.addAll(rectToGeometry(0.0, 0.0, 200.0, 200.0))
         val df = toDF(polygon)
 
-        val simplifiedRings = splitRings(VertexDpSampling(10000).apply(df))
+        val simplifiedRings = splitRings(PolygonDpSampling(10000).apply(df))
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).hasArea(314.159)
         assertThatRing(simplifiedRings[1]).hasArea(40000.0)
@@ -132,7 +152,7 @@ class VertexSamplingTest {
         polygon.addAll(createCircle(10000, 50.0))
         polygon.addAll(createCircle(10000, 70.0))
 
-        val simplifiedRings = splitRings(VertexDpSampling(100).apply(toDF(polygon)))
+        val simplifiedRings = splitRings(PolygonDpSampling(100).apply(toDF(polygon)))
 
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(57)
@@ -160,7 +180,7 @@ class VertexSamplingTest {
         )
         polygon.addAll(createCircle(30, 150.0))
 
-        val simplifiedRings = splitRings(VertexDpSampling(30).apply(toDF(polygon)))
+        val simplifiedRings = splitRings(PolygonDpSampling(30).apply(toDF(polygon)))
 
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).isClosed.hasSize(19)

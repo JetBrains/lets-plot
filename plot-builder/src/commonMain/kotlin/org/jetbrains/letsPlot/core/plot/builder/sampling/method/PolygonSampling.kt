@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.get
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.getRingLimit
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.splitRings
 
-internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSize),
+internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSize),
     PointSampling {
 
     private fun simplify(points: List<DoubleVector>, limit: Int): List<Int> {
@@ -53,7 +53,7 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
         return population.selectIndices(indices)
     }
 
-    internal class VertexVwSampling(sampleSize: Int) : VertexSampling(sampleSize) {
+    internal class PolygonVwSampling(sampleSize: Int) : PolygonSampling(sampleSize) {
 
         override val expressionText: String
             get() = "sampling_" + ALIAS + "(" +
@@ -68,7 +68,7 @@ internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSiz
         }
     }
 
-    internal class VertexDpSampling(sampleSize: Int) : VertexSampling(sampleSize) {
+    internal class PolygonDpSampling(sampleSize: Int) : PolygonSampling(sampleSize) {
 
         override val expressionText: String
             get() = "sampling_" + ALIAS + "(" +

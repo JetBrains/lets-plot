@@ -7,40 +7,38 @@ package org.jetbrains.letsPlot.core.commons.geometry
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
-class PolylineSimplifier private constructor(private val myPoints: List<DoubleVector>, strategy: RankingStrategy) {
-    private val myWeights: List<Double>
+class PolylineSimplifier private constructor(
+    private val myPoints: List<List<DoubleVector>>,
+    strategy: RankingStrategy
+) {
+    private val myWeights: List<WeightedPoint> = myPoints.mapIndexed { ringIndex, sub ->
+        val weights = strategy.getWeights(sub)
+        weights.mapIndexed() { pointIndex, weight -> WeightedPoint(ringIndex, pointIndex, weight) }
+    }.flatten()
+
     private var myWeightLimit = Double.NaN
     private var myCountLimit = -1
 
-    val points: List<DoubleVector>
-        get() =
-            indices.map { myPoints[it] }
+    val points: List<DoubleVector> by lazy { myPoints.slice(indices) }
 
     val indices: List<Int>
         get() {
-            val sorted = (0 until myPoints.size)
-                    .map { i -> Pair(i, myWeights[i]) }
-                    .filter { p -> !getWeight(p).isNaN() }
-                    .sortedWith(compareBy<Pair<Int, Double>> { this.getWeight(it) }.reversed())
+            val sorted = myWeights.withIndex()
+                .filter { (_, weight) -> weight.isFinite() }
+                .sortedByDescending { (_, weight) -> weight }
 
-            val filtered: Collection<Pair<Int, Double>>
-            if (isWeightLimitSet) {
-                filtered = sorted.filter { p -> getWeight(p) > myWeightLimit }
-            } else {
-                filtered = sorted.take(myCountLimit)
+            val filtered = when (isWeightLimitSet) {
+                true -> sorted.filter { (_, weight) -> weight > myWeightLimit }
+                false -> sorted.take(myCountLimit)
             }
 
             return filtered
-                    .map { this.getIndex(it) }
-                    .sorted()
+                .map { (index, _) -> index }
+                .sorted()
         }
 
     private val isWeightLimitSet: Boolean
         get() = !myWeightLimit.isNaN()
-
-    init {
-        myWeights = strategy.getWeights(myPoints)
-    }
 
     fun setWeightLimit(weightLimit: Double): PolylineSimplifier {
         myWeightLimit = weightLimit
@@ -88,4 +86,10 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
         }
 
     }
+
+    private data class WeightedPoint(
+        val ringIndex: Int,
+        val pointIndex: Int,
+        val weight: Double
+    )
 }
