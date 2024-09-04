@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.sampling.method
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.builder.data.GroupUtil.indicesByGroup
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPath
 
 internal abstract class PathSampling(
@@ -23,16 +24,17 @@ internal abstract class PathSampling(
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         require(isApplicable(population))
 
-        // indices may not be sequential because of nulls marking sub-paths
-        val sourcePaths = readPath(population, multipath = true)
+        val points = readPath(population, multipath = false).single()
 
-        APPLY GROUP HERE
+        val paths = indicesByGroup(population.rowCount(), groupMapper)
+            .entries
+            .map { (_, indices) -> points.slice(indices) }
 
-        val paths = sourcePaths.map { subPath -> subPath.map { (_, p) -> p } } // leave only coordinates
-        val simplificationIndex = simplifyInternal(paths, sampleSize)
+        val coords = paths.map { path -> path.map(IndexedValue<DoubleVector>::value) }
+        val simplificationIndex = simplifyInternal(coords, sampleSize)
 
         // restore data frame indices from the simplified path indices
-        val dataIndices = sourcePaths.zip(simplificationIndex)
+        val dataIndices = paths.zip(simplificationIndex)
             .flatMap { (subPath, subIndices) -> subPath.slice(subIndices) }
             .map(IndexedValue<DoubleVector>::index)
 
