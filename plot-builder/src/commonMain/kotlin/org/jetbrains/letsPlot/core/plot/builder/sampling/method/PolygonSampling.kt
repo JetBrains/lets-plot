@@ -6,51 +6,33 @@
 package org.jetbrains.letsPlot.core.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
-import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.sampling.PointSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.getRingIndex
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.getRingLimit
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.splitRings
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPolygon
 
-internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSize),
-    PointSampling {
+internal abstract class PolygonSampling(
+    sampleSize: Int
+) : SamplingBase(sampleSize), PointSampling {
 
-    private fun simplify(points: List<DoubleVector>, limit: Int): List<Int> {
-        return if (limit == 0) {
-            emptyList()
-        } else {
-            simplifyInternal(points, limit)
-        }
-    }
-
-    internal abstract fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int>
+    internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
 
     override fun apply(population: DataFrame): DataFrame {
         require(isApplicable(population))
 
-        val rings = splitRings(population)
-        val limits = if (rings.size == 1 && !rings[0].isClosed())
-            listOf(sampleSize)
-        else
-            calculateRingLimits(rings, sampleSize)
+        // TODO: check how groups work
 
-        val indices = ArrayList<Int>()
-        val ringBase = MutableInteger(0)
+        val sourceRings = readPolygon(population)
 
-        (0 until limits.size)
-            .map { Pair(it, limits[it]) }
-            .forEach { p ->
-                simplify(rings[getRingIndex(p)], getRingLimit(p))
-                    .forEach { index -> indices.add(ringBase.get() + index) }
-                ringBase.getAndAdd(rings[getRingIndex(p)].size)
-            }
+        val rings = sourceRings.map { ring -> ring.map { (_, p) -> p } } // leave only coordinates
+        val simplificationIndex = simplifyInternal(rings, sampleSize)
 
-        return population.selectIndices(indices)
+        // restore data frame indices from the simplified path indices
+        val dataIndices = sourceRings.zip(simplificationIndex)
+            .flatMap { (ring, subIndices) -> ring.slice(subIndices) }
+            .map(IndexedValue<DoubleVector>::index)
+
+        return population.selectIndices(dataIndices)
     }
 
     internal class PolygonVwSampling(sampleSize: Int) : PolygonSampling(sampleSize) {
@@ -59,12 +41,12 @@ internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSi
             get() = "sampling_" + ALIAS + "(" +
                     "n=" + sampleSize + ")"
 
-        override fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int> {
-            return PolylineSimplifier.visvalingamWhyatt(points).setCountLimit(limit).indices.single()
+        override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
+            return PolylineSimplifier.visvalingamWhyattMultipath(points).setCountLimit(limit).indices
         }
 
         companion object {
-            const val ALIAS = "vertex_vw"
+            const val ALIAS = "polygon_vw"
         }
     }
 
@@ -74,33 +56,12 @@ internal abstract class PolygonSampling(sampleSize: Int) : SamplingBase(sampleSi
             get() = "sampling_" + ALIAS + "(" +
                     "n=" + sampleSize + ")"
 
-        override fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int> {
-            return PolylineSimplifier.douglasPeucker(points).setCountLimit(limit).indices.single()
+        override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
+            return PolylineSimplifier.douglasPeuckerMultipath(points).setCountLimit(limit).indices
         }
 
         companion object {
-            const val ALIAS = "vertex_dp"
-        }
-    }
-
-    internal class DoubleVectorComponentsList(private val myXValues: List<Any>, private val myYValues: List<Any>) :
-        AbstractList<DoubleVector>() {
-        override val size: Int
-            get() = myXValues.size
-
-        override fun get(index: Int): DoubleVector {
-            return createPoint(
-                myXValues[index],
-                myYValues[index]
-            )
-        }
-    }
-
-    companion object {
-        private fun createPoint(x: Any, y: Any): DoubleVector {
-            require(!(x is String || y is String)) { "String coords are not supported yet" }
-            require(SeriesUtil.allFinite(x as Double, y as Double)) { "Invalid coord" }
-            return DoubleVector(x, y)
+            const val ALIAS = "polygon_dp"
         }
     }
 }

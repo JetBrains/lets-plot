@@ -6,60 +6,61 @@
 package org.jetbrains.letsPlot.core.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.readPath
-import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.sampling.PointSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.getRingIndex
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.getRingLimit
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPath
 
-internal abstract class PathSampling(sampleSize: Int) : SamplingBase(sampleSize),
-    PointSampling {
-    private fun simplify(points: List<DoubleVector>, limit: Int): List<Int> {
-        return if (limit == 0) {
-            emptyList()
-        } else {
-            simplifyInternal(points, limit)
-        }
-    }
+internal abstract class PathSampling(
+    sampleSize: Int
+) : SamplingBase(sampleSize), PointSampling {
 
-    internal abstract fun simplifyInternal(points: List<DoubleVector>, limit: Int): List<Int>
+    internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
 
     override fun apply(population: DataFrame): DataFrame {
         require(isApplicable(population))
 
-        val xVar = SamplingUtil.xVar(population)
-        val yVar = SamplingUtil.yVar(population)
-        val points = population[xVar].asSequence()
-            .zip(population[yVar].asSequence())
-            .map { (x, y) ->
-                @Suppress("NAME_SHADOWING")
-                val x = x as? Double ?: return@map null
-                @Suppress("NAME_SHADOWING")
-                val y = y as? Double ?: return@map null
+        // indices may not be sequential because of nulls marking sub-paths
+        val sourcePaths = readPath(population, multipath = true)
 
-                DoubleVector(x, y)
-            }.toList()
+        val paths = sourcePaths.map { subPath -> subPath.map { (_, p) -> p } } // leave only coordinates
+        val simplificationIndex = simplifyInternal(paths, sampleSize)
 
-        val rings = readPath(points)
-        val limits = if (rings.size == 1 && !rings[0].isClosed())
-            listOf(sampleSize)
-        else
-            calculateRingLimits(rings, sampleSize)
+        // restore data frame indices from the simplified path indices
+        val dataIndices = sourcePaths.zip(simplificationIndex)
+            .flatMap { (subPath, subIndices) -> subPath.slice(subIndices) }
+            .map(IndexedValue<DoubleVector>::index)
 
-        val indices = ArrayList<Int>()
-        val ringBase = MutableInteger(0)
+        return population.selectIndices(dataIndices)
+    }
 
-        (0 until limits.size)
-            .map { Pair(it, limits[it]) }
-            .forEach { p ->
-                simplify(rings[getRingIndex(p)], getRingLimit(p))
-                    .forEach { index -> indices.add(ringBase.get() + index) }
-                ringBase.getAndAdd(rings[getRingIndex(p)].size)
-            }
+    internal class PathVwSampling(sampleSize: Int) : PathSampling(sampleSize) {
 
-        return population.selectIndices(indices)
+        override val expressionText: String
+            get() = "sampling_" + ALIAS + "(" +
+                    "n=" + sampleSize + ")"
+
+        override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
+            return PolylineSimplifier.visvalingamWhyattMultipath(points).setCountLimit(limit).indices
+        }
+
+        companion object {
+            const val ALIAS = "path_vw"
+        }
+    }
+
+    internal class PathDpSampling(sampleSize: Int) : PathSampling(sampleSize) {
+
+        override val expressionText: String
+            get() = "sampling_" + ALIAS + "(" +
+                    "n=" + sampleSize + ")"
+
+        override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
+            return PolylineSimplifier.douglasPeuckerMultipath(points).setCountLimit(limit).indices
+        }
+
+        companion object {
+            const val ALIAS = "path_dp"
+        }
     }
 }

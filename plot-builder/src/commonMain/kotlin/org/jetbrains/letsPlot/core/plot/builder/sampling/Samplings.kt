@@ -17,8 +17,10 @@ object Samplings {
     const val RANDOM_GROUP = GroupRandomSampling.ALIAS
     const val SYSTEMATIC_GROUP = GroupSystematicSampling.ALIAS
     const val RANDOM_STRATIFIED = RandomStratifiedSampling.ALIAS
-    const val VERTEX_VW = PolygonVwSampling.ALIAS
-    const val VERTEX_DP = PolygonDpSampling.ALIAS
+    const val POLYGON_VW = PolygonVwSampling.ALIAS
+    const val POLYGON_DP = PolygonDpSampling.ALIAS
+    const val PATH_DP = PathSampling.PathDpSampling.ALIAS
+    const val PATH_VW = PathSampling.PathVwSampling.ALIAS
 
     val NONE: PointSampling =
         NoneSampling()
@@ -31,12 +33,20 @@ object Samplings {
         return PickSampling(sampleSize)
     }
 
-    fun vertexDp(sampleSize: Int): Sampling {
+    fun polygonDp(sampleSize: Int): Sampling {
         return PolygonDpSampling(sampleSize)
     }
 
-    fun vertexVw(sampleSize: Int): Sampling {
+    fun polygonVw(sampleSize: Int): Sampling {
         return PolygonVwSampling(sampleSize)
+    }
+
+    fun pathDp(sampleSize: Int): Sampling {
+        return PathSampling.PathDpSampling(sampleSize)
+    }
+
+    fun pathVw(sampleSize: Int): Sampling {
+        return PathSampling.PathVwSampling(sampleSize)
     }
 
     fun systematic(sampleSize: Int): Sampling {

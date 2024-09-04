@@ -7,14 +7,16 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.PATH_DP
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.PATH_VW
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.PICK
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.POLYGON_DP
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.POLYGON_VW
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.RANDOM
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.RANDOM_GROUP
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.RANDOM_STRATIFIED
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.SYSTEMATIC
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.SYSTEMATIC_GROUP
-import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.VERTEX_DP
-import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.VERTEX_VW
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Sampling.MIN_SUB_SAMPLE
 import org.jetbrains.letsPlot.core.spec.Option.Sampling.N
@@ -36,8 +38,10 @@ internal object SamplingProto {
                 opts.getLong(SEED),
                 opts.getInteger(MIN_SUB_SAMPLE)
             )
-            VERTEX_VW -> Samplings.vertexVw(opts.getInteger(N)!!)
-            VERTEX_DP -> Samplings.vertexDp(opts.getInteger(N)!!)
+            POLYGON_VW -> Samplings.polygonVw(opts.getInteger(N)!!)
+            POLYGON_DP -> Samplings.polygonDp(opts.getInteger(N)!!)
+            PATH_DP -> Samplings.pathDp(opts.getInteger(N)!!)
+            PATH_VW -> Samplings.pathVw(opts.getInteger(N)!!)
 
             else -> throw IllegalArgumentException("Unknown sampling method: '$name'")
         }

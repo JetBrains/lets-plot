@@ -5,10 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble.geom
 
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.pathDp
+import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.polygonDp
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.random
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.systematic
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.systematicGroup
-import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.vertexDp
 
 /*
  None:
@@ -24,7 +25,8 @@ object DefaultSampling {
     // basis
     val POINT = random(100_000, SEED)   // optimized
     val LINE = systematic(50_000)
-    val PATH = vertexDp(50_000)  // ToDo: vertex sampling has issues.
+    val PATH = pathDp(50_000)  // ToDo: vertex sampling has issues.
+    val POLYGON = polygonDp(50_000)  // ToDo: vertex sampling has issues.
     val SEGMENT = random(10_000, SEED)
     val SPOKE = random(10_000, SEED)
 
@@ -58,9 +60,8 @@ object DefaultSampling {
     val H_LINE = SEGMENT
     val V_LINE = SEGMENT
 
-    // paths
-    val POLYGON = PATH
-    val MAP = PATH
+    // polygons
+    val MAP = POLYGON
 
     // bars
     val ERROR_BAR = BAR

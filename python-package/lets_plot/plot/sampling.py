@@ -11,7 +11,12 @@ __all__ = ['sampling_random',
            'sampling_group_random',
            'sampling_group_systematic',
            'sampling_vertex_vw',
-           'sampling_vertex_dp']
+           'sampling_vertex_dp',
+           'sampling_polygon_dp',
+           'sampling_polygon_vw',
+           'sampling_path_dp',
+           'sampling_path_vw'
+           ]
 
 
 def sampling_random(n, seed=None):
@@ -322,6 +327,22 @@ def sampling_vertex_dp(n):
 
     """
     return _sampling('vertex_dp', n=n)
+
+
+def sampling_polygon_dp(n):
+    return _sampling('polygon_dp', n=n)
+
+
+def sampling_polygon_vw(n):
+    return _sampling('polygon_vw', n=n)
+
+
+def sampling_path_dp(n):
+    return _sampling('path_dp', n=n)
+
+
+def sampling_path_vw(n):
+    return _sampling('path_vw', n=n)
 
 
 def _sampling(name, **kwargs):

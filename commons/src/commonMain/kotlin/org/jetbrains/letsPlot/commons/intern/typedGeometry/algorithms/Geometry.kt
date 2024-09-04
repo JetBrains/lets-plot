@@ -19,27 +19,6 @@ fun <T> reduce(points: List<T>, dropDistance: Double, distance: (T, T) -> Double
     }
 }
 
-fun <T> readPath(points: Iterable<T?>, splitOnNull: Boolean = false): List<List<T>> {
-    return when (splitOnNull) {
-        true -> {
-            val result = mutableListOf<List<T>>()
-            val subPath = mutableListOf<T>()
-            points.forEach { p ->
-                when {
-                    p != null -> subPath += p
-                    else -> result += subPath.toList().also { subPath.clear() }
-                }
-            }
-
-            if (subPath.isNotEmpty()) {
-                result.add(subPath)
-            }
-            result
-        }
-        false -> listOf(points.filterNotNull().toList())
-    }
-}
-
 inline fun <reified T> splitRings(points: List<T>): List<List<T>> = splitRings(points) { o1, o2 -> o1 == o2 }
 
 fun <T> splitRings(points: List<T>, eq: (T, T) -> Boolean): List<List<T>> {

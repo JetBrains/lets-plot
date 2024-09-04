@@ -16,7 +16,7 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
     private fun calculateWeights(points: List<DoubleVector>): List<Double> {
         val stack = Stack<Pair<Int, Int>>()
 
-        val weights = MutableList(points.size) { Double.NaN }
+        val weights = MutableList(points.size) { 0.0 }
         weights[0] = Double.MAX_VALUE
         weights[points.size - 1] = Double.MAX_VALUE
         stack.push(Pair(0, points.size - 1))
