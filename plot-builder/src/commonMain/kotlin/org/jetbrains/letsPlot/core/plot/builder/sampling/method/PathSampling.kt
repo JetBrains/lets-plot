@@ -8,20 +8,25 @@ package org.jetbrains.letsPlot.core.plot.builder.sampling.method
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.builder.sampling.PointSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPath
 
 internal abstract class PathSampling(
     sampleSize: Int
-) : SamplingBase(sampleSize), PointSampling {
+) : GroupSamplingBase(sampleSize) {
 
     internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
 
-    override fun apply(population: DataFrame): DataFrame {
+    override fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int, groupCount: Int): Boolean {
+        return population.rowCount() >= sampleSize
+    }
+
+    override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         require(isApplicable(population))
 
         // indices may not be sequential because of nulls marking sub-paths
         val sourcePaths = readPath(population, multipath = true)
+
+        APPLY GROUP HERE
 
         val paths = sourcePaths.map { subPath -> subPath.map { (_, p) -> p } } // leave only coordinates
         val simplificationIndex = simplifyInternal(paths, sampleSize)
