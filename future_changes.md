@@ -1,7 +1,8 @@
 ## [4.4.2] - 2024-mm-dd
 
 ### Added
-
+                 
+- `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
 - `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)]:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
