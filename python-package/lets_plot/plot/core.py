@@ -12,7 +12,7 @@ __all__ = ['aes', 'layer']
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
 
-def aes(x=None, y=None, **other):
+def aes(x=None, y=None, **kwargs):
     """
     Define aesthetic mappings.
 
@@ -69,7 +69,7 @@ def aes(x=None, y=None, **other):
 
     """
 
-    return FeatureSpec('mapping', name=None, x=x, y=y, **other)
+    return FeatureSpec('mapping', name=None, x=x, y=y, **kwargs)
 
 
 def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs):
@@ -397,8 +397,14 @@ class PlotSpec(FeatureSpec):
                 return plot
 
             if other.kind == 'guides':
-                existing_guides_options = plot.props().get('guides', {})
-                plot.props()['guides'] = _merge_dicts_recursively(existing_guides_options, other.as_dict())
+                existing_options = plot.props().get('guides', {})
+                plot.props()['guides'] = _merge_dicts_recursively(existing_options, other.as_dict())
+                return plot
+
+            if other.kind == 'mapping':  # +aes(..)
+                existing_spec = plot.props().get('mapping', aes())
+                merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
+                plot.props()['mapping'] = aes(**merged_mapping)
                 return plot
 
             # add feature to properties
