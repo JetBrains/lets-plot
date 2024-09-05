@@ -14,6 +14,10 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
     private val myEpsilon = Double.MIN_VALUE
 
     private fun calculateWeights(points: List<DoubleVector>): List<Double> {
+        if (points.size < 3) {
+            return MutableList(points.size) { Double.MAX_VALUE }
+        }
+
         val stack = Stack<Pair<Int, Int>>()
 
         val weights = MutableList(points.size) { 0.0 }

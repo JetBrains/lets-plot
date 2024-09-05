@@ -24,7 +24,6 @@ internal abstract class PathSampling(
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         require(isApplicable(population))
 
-        //val points = readPath(population, multipath = false).single()
         val points = readPoints(population)
 
         val groupedPaths = indicesByGroup(population.rowCount(), groupMapper).values

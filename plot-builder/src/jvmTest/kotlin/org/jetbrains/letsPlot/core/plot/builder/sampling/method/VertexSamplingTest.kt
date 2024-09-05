@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.builder.data.createCircle
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonDpSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonVwSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPolygon
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 class VertexSamplingTest {
@@ -59,6 +58,20 @@ class VertexSamplingTest {
     }
 
     @Test
+    fun shouldNotFailWithAllNulls() {
+        val df = Builder()
+            .put(TransformVar.X, listOf(null, null, null, null, null, null, null))
+            .put(TransformVar.Y, listOf(null, null, null, null, null, null, null))
+            .build()
+
+        singleGroupPolygonDpSampling(5, df)
+        singleGroupPolygonVwSampling(5, df)
+        singleGroupPathDpSampling(5, df)
+        singleGroupPathVwSampling(5, df)
+    }
+
+
+    @Test
     fun minimumPointsCount() {
 
         val df = toDF(
@@ -74,35 +87,6 @@ class VertexSamplingTest {
         val p = readPolygon(singleGroupPolygonDpSampling(4, df))
 
         assertThat(p[0]).hasSize(4)
-    }
-
-    @Ignore("semantic was changed. revisit assertion")
-    @Test
-    fun forRing_whenLimitIs3_ShouldReturnEmptyList() {
-        val df = toDF(createCircle(50000, 10.0))
-
-        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(3, df))
-        assertThat(simplifiedRings).isEmpty()
-    }
-
-    @Ignore("semantic was changed. revisit assertion")
-    @Test
-    fun forLine_whenLimitIs3_ShouldReturnEmptyList() {
-        val df = toDF(
-            listOf(
-                DoubleVector(0.0, 0.0),
-                DoubleVector(5.0, 5.0),
-                DoubleVector(10.0, 10.0)
-            )
-        )
-
-        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(2, df))
-        assertThat(simplifiedRings).hasSize(1)
-        assertThat(simplifiedRings[0])
-            .containsExactly(
-                IndexedValue(0, DoubleVector(0.0, 0.0)),
-                IndexedValue(1, DoubleVector(10.0, 10.0)),
-            )
     }
 
     @Test
@@ -123,7 +107,6 @@ class VertexSamplingTest {
         assertThatRing(simplifiedRings[0]).hasSize(8)
     }
 
-    @Ignore("semantic was changed. revisit assertion")
     @Test
     fun ringsPointsDistributionCase1() {
         val polygon = ArrayList<DoubleVector>()
@@ -135,8 +118,8 @@ class VertexSamplingTest {
         val simplifiedRings = readPolygon(singleGroupPolygonVwSampling(500, df))
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(101).isClosed
-        assertThatRing(simplifiedRings[1]).hasSize(135).isClosed
-        assertThatRing(simplifiedRings[2]).hasSize(264).isClosed
+        assertThatRing(simplifiedRings[1]).hasSize(175).isClosed
+        assertThatRing(simplifiedRings[2]).hasSize(224).isClosed
 
         assertThat(
             getPointsCount(
@@ -158,7 +141,6 @@ class VertexSamplingTest {
         assertThatRing(simplifiedRings[1]).hasArea(40000.0)
     }
 
-    @Ignore("semantic was changed. revisit assertion")
     @Test
     fun ringsPointsDistributionCase3() {
         val polygon = ArrayList<DoubleVector>()
@@ -169,9 +151,9 @@ class VertexSamplingTest {
         val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(100, toDF(polygon)))
 
         assertThat(simplifiedRings).hasSize(3)
-        assertThatRing(simplifiedRings[0]).hasSize(57)
-        assertThatRing(simplifiedRings[1]).hasSize(15)
-        assertThatRing(simplifiedRings[2]).hasSize(28)
+        assertThatRing(simplifiedRings[0]).hasSize(34)
+        assertThatRing(simplifiedRings[1]).hasSize(33)
+        assertThatRing(simplifiedRings[2]).hasSize(33)
 
         assertThat(
             getPointsCount(
@@ -180,7 +162,6 @@ class VertexSamplingTest {
         ).isEqualTo(100)
     }
 
-    @Ignore("semantic was changed. revisit assertion")
     @Test
     fun filteredOutRingInBetween_ShouldNotBreakRings() {
         val polygon = ArrayList<DoubleVector>()
@@ -197,9 +178,10 @@ class VertexSamplingTest {
 
         val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(30, toDF(polygon)))
 
-        assertThat(simplifiedRings).hasSize(2)
-        assertThatRing(simplifiedRings[0]).isClosed.hasSize(19)
-        assertThatRing(simplifiedRings[1]).isClosed.hasSize(11)
+        assertThat(simplifiedRings).hasSize(3)
+        assertThatRing(simplifiedRings[0]).isClosed.hasSize(15)
+        assertThatRing(simplifiedRings[1]).isClosed.hasSize(2)
+        assertThatRing(simplifiedRings[2]).isClosed.hasSize(13)
     }
 
     companion object {
