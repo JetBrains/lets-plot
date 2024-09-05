@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupUtil.indicesByGroup
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPath
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPoints
 
 internal abstract class PathSampling(
     sampleSize: Int
@@ -24,15 +24,19 @@ internal abstract class PathSampling(
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         require(isApplicable(population))
 
-        val points = readPath(population, multipath = false).single()
+        //val points = readPath(population, multipath = false).single()
+        val points = readPoints(population)
 
-        val groupedPaths = indicesByGroup(population.rowCount(), groupMapper)
-            .entries
-            .map { (_, indices) -> points.slice(indices) }
+        val groupedPaths = indicesByGroup(population.rowCount(), groupMapper).values
+            .map { indices -> points.slice(indices) }
+            .map { groupPoints ->
+                @Suppress("UNCHECKED_CAST")
+                groupPoints.filter { (_, p) -> p != null } as List<IndexedValue<DoubleVector>>
+            }
 
         val simplificationIndex = groupedPaths
             .map { path -> path.map { (_, p) -> p } } // leave only coordinates
-            .let { simplifyInternal(it, sampleSize) }
+            .let { paths -> simplifyInternal(paths, sampleSize) }
 
         // restore data frame indices from the simplified path indices
         val dataIndices = groupedPaths.zip(simplificationIndex)

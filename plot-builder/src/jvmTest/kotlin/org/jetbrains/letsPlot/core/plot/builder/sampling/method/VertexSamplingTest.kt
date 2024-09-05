@@ -19,13 +19,21 @@ import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.rea
 import kotlin.test.Ignore
 import kotlin.test.Test
 
-class PolygonSamplingTest {
+class VertexSamplingTest {
 
-    private fun singleGroupDpSampling(n: Int, df: DataFrame): DataFrame {
+    private fun singleGroupPathDpSampling(n: Int, df: DataFrame): DataFrame {
+        return PathSampling.PathDpSampling(n).apply(df) { _ -> 0 }
+    }
+
+    private fun singleGroupPathVwSampling(n: Int, df: DataFrame): DataFrame {
+        return PathSampling.PathVwSampling(n).apply(df) { _ -> 0 }
+    }
+
+    private fun singleGroupPolygonDpSampling(n: Int, df: DataFrame): DataFrame {
         return PolygonDpSampling(n).apply(df) { _ -> 0 }
     }
 
-    private fun singleGroupVwSampling(n: Int, df: DataFrame): DataFrame {
+    private fun singleGroupPolygonVwSampling(n: Int, df: DataFrame): DataFrame {
         return PolygonVwSampling(n).apply(df) { _ -> 0 }
     }
 
@@ -38,23 +46,16 @@ class PolygonSamplingTest {
     }
 
     @Test
-    fun issue1168_dp() {
+    fun issue1168() {
         val df = Builder()
             .put(TransformVar.X, listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0))
             .put(TransformVar.Y, listOf(0.0, 0.0, 0.0, 0.0, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
             .build()
 
-        singleGroupDpSampling(5, df)
-    }
-
-    @Test
-    fun issue1168_vw() {
-        val df = Builder()
-            .put(TransformVar.X, listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0))
-            .put(TransformVar.Y, listOf(0.0, 0.0, 0.0, 0.0, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
-            .build()
-
-        singleGroupVwSampling(5, df)
+        singleGroupPolygonDpSampling(5, df)
+        singleGroupPolygonVwSampling(5, df)
+        singleGroupPathDpSampling(5, df)
+        singleGroupPathVwSampling(5, df)
     }
 
     @Test
@@ -70,7 +71,7 @@ class PolygonSamplingTest {
             )
         )
 
-        val p = readPolygon(singleGroupDpSampling(4, df))
+        val p = readPolygon(singleGroupPolygonDpSampling(4, df))
 
         assertThat(p[0]).hasSize(4)
     }
@@ -80,7 +81,7 @@ class PolygonSamplingTest {
     fun forRing_whenLimitIs3_ShouldReturnEmptyList() {
         val df = toDF(createCircle(50000, 10.0))
 
-        val simplifiedRings = readPolygon(singleGroupDpSampling(3, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(3, df))
         assertThat(simplifiedRings).isEmpty()
     }
 
@@ -95,7 +96,7 @@ class PolygonSamplingTest {
             )
         )
 
-        val simplifiedRings = readPolygon(singleGroupDpSampling(2, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(2, df))
         assertThat(simplifiedRings).hasSize(1)
         assertThat(simplifiedRings[0])
             .containsExactly(
@@ -108,7 +109,7 @@ class PolygonSamplingTest {
     fun dpSimplification() {
         val polygon = ArrayList(createCircle(16, 100.0))
         val df = toDF(polygon)
-        val simplifiedRings = readPolygon(singleGroupDpSampling(8, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(8, df))
         assertThat(simplifiedRings).hasSize(1)
         assertThatRing(simplifiedRings[0]).hasSize(8)
     }
@@ -117,7 +118,7 @@ class PolygonSamplingTest {
     fun vwSimplification() {
         val polygon = ArrayList(createCircle(16, 100.0))
         val df = toDF(polygon)
-        val simplifiedRings = readPolygon(singleGroupVwSampling(8, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonVwSampling(8, df))
         assertThat(simplifiedRings).hasSize(1)
         assertThatRing(simplifiedRings[0]).hasSize(8)
     }
@@ -131,7 +132,7 @@ class PolygonSamplingTest {
         polygon.addAll(createCircle(10000, 70.0))
         val df = toDF(polygon)
 
-        val simplifiedRings = readPolygon(singleGroupVwSampling(500, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonVwSampling(500, df))
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(101).isClosed
         assertThatRing(simplifiedRings[1]).hasSize(135).isClosed
@@ -151,7 +152,7 @@ class PolygonSamplingTest {
         polygon.addAll(rectToGeometry(0.0, 0.0, 200.0, 200.0))
         val df = toDF(polygon)
 
-        val simplifiedRings = readPolygon(singleGroupDpSampling(10000, df))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(10000, df))
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).hasArea(314.159)
         assertThatRing(simplifiedRings[1]).hasArea(40000.0)
@@ -165,7 +166,7 @@ class PolygonSamplingTest {
         polygon.addAll(createCircle(10000, 50.0))
         polygon.addAll(createCircle(10000, 70.0))
 
-        val simplifiedRings = readPolygon(singleGroupDpSampling(100, toDF(polygon)))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(100, toDF(polygon)))
 
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(57)
@@ -194,7 +195,7 @@ class PolygonSamplingTest {
         )
         polygon.addAll(createCircle(30, 150.0))
 
-        val simplifiedRings = readPolygon(singleGroupDpSampling(30, toDF(polygon)))
+        val simplifiedRings = readPolygon(singleGroupPolygonDpSampling(30, toDF(polygon)))
 
         assertThat(simplifiedRings).hasSize(2)
         assertThatRing(simplifiedRings[0]).isClosed.hasSize(19)

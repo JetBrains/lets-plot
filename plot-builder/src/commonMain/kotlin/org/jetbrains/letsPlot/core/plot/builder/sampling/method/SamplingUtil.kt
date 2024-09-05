@@ -58,53 +58,11 @@ internal object SamplingUtil {
             }.toList()
     }
 
-    //* Read path from points.
-    // If multipath is true, the path is split on null values
-    // If multipath is false, the path is considered as a single path, ignoring null values
-    fun readPath(population: DataFrame, multipath: Boolean = false): List<List<IndexedValue<DoubleVector>>> {
-        val points = readPoints(population)
-
-        return when (multipath) {
-            true -> {
-                val result = mutableListOf<List<IndexedValue<DoubleVector>>>()
-                val subPath = mutableListOf<IndexedValue<DoubleVector>>()
-                points.forEach { (i, p) ->
-                    when {
-                        p != null -> subPath += IndexedValue(i, p)
-                        else -> result += subPath.toList().also { subPath.clear() }
-                    }
-                }
-
-                if (subPath.isNotEmpty()) {
-                    result.add(subPath)
-                }
-                result
-            }
-
-            false -> {
-                @Suppress("UNCHECKED_CAST")
-                listOf(points.filter { it.value != null }.toList() as List<IndexedValue<DoubleVector>>)
-            }
-        }
-    }
-
     fun readPolygon(population: DataFrame): List<List<IndexedValue<DoubleVector>>> {
         @Suppress("UNCHECKED_CAST")
         val points = readPoints(population)
             .filter { it.value != null } as List<IndexedValue<DoubleVector>> // to mark rings usually use equal values, not nulls
 
         return splitRings(points) { p1, p2 -> p1.value == p2.value }
-    }
-
-    fun getRingIndex(pair: Pair<Int, *>): Int {
-        return pair.first
-    }
-
-    private fun getRingArea(pair: Pair<*, Double>): Double {
-        return pair.second
-    }
-
-    fun getRingLimit(pair: Pair<*, Int>): Int {
-        return pair.second
     }
 }

@@ -50,7 +50,7 @@ internal abstract class PolygonSampling(
         // Process all rings at once to check weights across all groups for better simplification
         val flattenSimplificationIndex = groupedRings.values.flatten()
                 .map { ring -> ring.map { (_, p) -> p } } // leave only coordinates
-                .let { simplifyInternal(it, sampleSize) }
+                .let { rings -> simplifyInternal(rings, sampleSize) }
 
         val groupedSimplificationIndex = flattenedRingsIndex.associateBy(
             keySelector = { (group, _) -> group },
