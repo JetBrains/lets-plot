@@ -44,7 +44,7 @@ internal object SamplingUtil {
         throw IllegalStateException("Can't apply sampling: couldn't deduce the (Y) variable.")
     }
 
-    private fun readPoints(population: DataFrame): List<IndexedValue<DoubleVector?>> {
+    internal fun readPoints(population: DataFrame): List<IndexedValue<DoubleVector?>> {
         val xVar = xVar(population)
         val yVar = yVar(population)
         return population[xVar].asSequence()

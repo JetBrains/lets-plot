@@ -18,7 +18,7 @@ internal abstract class PathSampling(
     internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
 
     override fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int, groupCount: Int): Boolean {
-        return population.rowCount() >= sampleSize
+        return population.rowCount() > sampleSize
     }
 
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
@@ -26,17 +26,18 @@ internal abstract class PathSampling(
 
         val points = readPath(population, multipath = false).single()
 
-        val paths = indicesByGroup(population.rowCount(), groupMapper)
+        val groupedPaths = indicesByGroup(population.rowCount(), groupMapper)
             .entries
             .map { (_, indices) -> points.slice(indices) }
 
-        val coords = paths.map { path -> path.map(IndexedValue<DoubleVector>::value) }
-        val simplificationIndex = simplifyInternal(coords, sampleSize)
+        val simplificationIndex = groupedPaths
+            .map { path -> path.map { (_, p) -> p } } // leave only coordinates
+            .let { simplifyInternal(it, sampleSize) }
 
         // restore data frame indices from the simplified path indices
-        val dataIndices = paths.zip(simplificationIndex)
-            .flatMap { (subPath, subIndices) -> subPath.slice(subIndices) }
-            .map(IndexedValue<DoubleVector>::index)
+        val dataIndices = groupedPaths.zip(simplificationIndex)
+            .flatMap { (path, indices) -> path.slice(indices) }
+            .map { it.index }
 
         return population.selectIndices(dataIndices)
     }
