@@ -27,6 +27,7 @@ class LayerOptions : Options() {
     // hidden
     var marginal: Boolean? by map(Layer.MARGINAL)
     var marginSide: String? by map(Layer.Marginal.SIDE)
+    var marginSize: Double? by map(Layer.Marginal.SIZE)
 
     // geom_text
     var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)

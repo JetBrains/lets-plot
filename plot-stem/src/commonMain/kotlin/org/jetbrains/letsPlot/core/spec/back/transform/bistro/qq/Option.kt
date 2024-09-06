@@ -16,6 +16,7 @@ object Option {
         const val QUANTILES = "quantiles"
         const val GROUP = "group"
         const val SHOW_LEGEND = "show_legend"
+        const val MARGINAL = "marginal"
         const val POINT_COLOR = "color"
         const val POINT_FILL = "fill"
         const val POINT_ALPHA = "alpha"

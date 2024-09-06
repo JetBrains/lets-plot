@@ -14,6 +14,10 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.QQStat
 import org.jetbrains.letsPlot.core.plot.base.stat.QQStatUtil
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_BOTTOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_LEFT
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_RIGHT
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_TOP
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData // TODO: Move to the common place
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
@@ -35,6 +39,7 @@ class QQPlotOptionsBuilder(
     private val quantiles: List<*>? = null,
     private val group: String? = null,
     private val showLegend: Boolean? = null,
+    private val marginal: String = DEF_MARGINAL,
     private val color: String? = null,
     private val fill: String? = null,
     private val alpha: Double? = DEF_POINT_ALPHA,
@@ -147,23 +152,47 @@ class QQPlotOptionsBuilder(
     }
 
     private fun getMarginalLayers(): List<LayerOptions> {
-        val sides = listOf("l", "r", "t", "b") // TODO: Take from the parameter, use Enum
-        return sides.map { side ->
-            val mappings = getMarginalMappings(sample, x, y, group, side)
-            LayerOptions().apply {
-                geom = GeomKind.DENSITY // TODO: Take from the parameter
-                this.data = statData
-                setParameter(Option.PlotBase.MAPPING, mappings)
-                setParameter(Option.Layer.ORIENTATION, if (side == "l" || side == "r") "y" else "x")
-                marginal = true
-                marginSide = side
-                color = this@QQPlotOptionsBuilder.color
-                alpha = MARGINAL_ALPHA
+        if (marginal == Option.Layer.NONE) {
+            return emptyList()
+        }
+        return marginal.split(",").map { layerDescription ->
+            val params = layerDescription.trim().split(":")
+            require(params.size >= 2) { "Invalid format of the marginal parameter" }
+            val geomKind = getMarginGeom(params[0].trim())
+            val sides = MarginSide.parseSides(params[1].trim())
+            val size = params.getOrNull(2)?.trim()?.toDouble()
+            sides.map { side ->
+                getMarginalLayer(geomKind, side, size)
             }
+        }.flatten()
+    }
+
+    private fun getMarginGeom(geom: String): GeomKind {
+        return when (geom) {
+            "dens", "density" -> GeomKind.DENSITY
+            "hist", "histogram" -> GeomKind.HISTOGRAM
+            "box", "boxplot" -> GeomKind.BOX_PLOT
+            else -> throw IllegalArgumentException("Unknown geom $geom")
         }
     }
 
-    // TODO: Reuse the code from the QQStat
+    private fun getMarginalLayer(geomKind: GeomKind, side: MarginSide, size: Double?): LayerOptions {
+        val mappings = getMarginalMappings(sample, x, y, group, side)
+        val orientation = if ((geomKind == GeomKind.BOX_PLOT).xor(MarginSide.isVerticallyOriented(side))) "y" else "x"
+        return LayerOptions().apply {
+            geom = geomKind
+            this.data = statData
+            setParameter(Option.PlotBase.MAPPING, mappings)
+            setParameter(Option.Layer.ORIENTATION, orientation)
+            marginal = true
+            marginSide = side.value
+            marginSize = size
+            color = this@QQPlotOptionsBuilder.color
+            fill = this@QQPlotOptionsBuilder.fill
+            alpha = this@QQPlotOptionsBuilder.alpha ?: DEF_MARGINAL_ALPHA
+        }
+    }
+
     private fun getStatData(
         data: Map<String, List<Any?>>,
         distribution: String?,
@@ -211,9 +240,9 @@ class QQPlotOptionsBuilder(
         x: String?,
         y: String?,
         group: String?,
-        side: String
+        side: MarginSide
     ): HashMap<String, String> {
-        val mappings: HashMap<String, String> = if (side in listOf("l", "r")) {
+        val mappings: HashMap<String, String> = if (MarginSide.isVerticallyOriented(side)) {
             hashMapOf(
                 Pair(QQ.Y, sample ?: y!!)
             )
@@ -235,14 +264,33 @@ class QQPlotOptionsBuilder(
     private fun <T, R : Comparable<R>> Iterable<T>.sortedIndices(selector: (IndexedValue<T>) -> R?) =
         withIndex().sortedWith(compareBy(selector)).map(IndexedValue<T>::index)
 
+    enum class MarginSide(val value: String) {
+        LEFT(SIDE_LEFT),
+        RIGHT(SIDE_RIGHT),
+        TOP(SIDE_TOP),
+        BOTTOM(SIDE_BOTTOM);
+
+        companion object {
+            fun parseSides(sides: String): Set<MarginSide> {
+                return sides.map { side ->
+                    MarginSide.entries.first { it.value == side.toString() }
+                }.toSet()
+            }
+
+            fun isVerticallyOriented(side: MarginSide): Boolean {
+                return side in listOf(LEFT, RIGHT)
+            }
+        }
+    }
+
     companion object {
         const val DEF_DISTRIBUTION: String = "norm"
         const val DEF_POINT_ALPHA: Double = 0.5
         const val DEF_POINT_SIZE: Double = 3.0
         val DEF_LINE_COLOR: String = Color.RED.toHexColor()
         const val DEF_LINE_SIZE: Double = 0.75
-
-        const val MARGINAL_ALPHA = 0.25
+        const val DEF_MARGINAL: String = "dens:tr"
+        const val DEF_MARGINAL_ALPHA = 0.25
 
         val THEORETICAL_VAR = DataFrame.Variable("..theoretical_bistro..")
     }

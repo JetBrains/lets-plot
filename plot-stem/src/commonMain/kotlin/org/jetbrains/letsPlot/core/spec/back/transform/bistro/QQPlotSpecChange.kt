@@ -40,6 +40,7 @@ class QQPlotSpecChange : SpecChange {
             quantiles = bistroSpec.getList(QQ.QUANTILES),
             group = bistroSpec.getString(QQ.GROUP),
             showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND),
+            marginal = bistroSpec.getString(QQ.MARGINAL) ?: QQPlotOptionsBuilder.DEF_MARGINAL,
             color = bistroSpec.getString(QQ.POINT_COLOR),
             fill = bistroSpec.getString(QQ.POINT_FILL),
             alpha = bistroSpec.getDouble(QQ.POINT_ALPHA) ?: QQPlotOptionsBuilder.DEF_POINT_ALPHA,
