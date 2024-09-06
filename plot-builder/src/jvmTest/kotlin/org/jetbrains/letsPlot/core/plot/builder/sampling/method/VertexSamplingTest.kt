@@ -118,8 +118,8 @@ class VertexSamplingTest {
         val simplifiedRings = readPolygon(singleGroupPolygonVwSampling(500, df))
         assertThat(simplifiedRings).hasSize(3)
         assertThatRing(simplifiedRings[0]).hasSize(101).isClosed
-        assertThatRing(simplifiedRings[1]).hasSize(175).isClosed
-        assertThatRing(simplifiedRings[2]).hasSize(224).isClosed
+        assertThatRing(simplifiedRings[1]).hasSize(171).isClosed
+        assertThatRing(simplifiedRings[2]).hasSize(228).isClosed
 
         assertThat(
             getPointsCount(

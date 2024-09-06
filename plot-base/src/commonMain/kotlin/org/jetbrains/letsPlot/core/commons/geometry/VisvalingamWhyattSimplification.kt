@@ -77,6 +77,8 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
 
         var i = 1
         val n = triangles.size - 1
+        triangles.first().next = triangles[1]
+        triangles.last().prev = triangles[triangles.lastIndex - 1]
         while (i < n) {
             triangles[i].next = triangles[i + 1]
             triangles[i].prev = triangles[i - 1]
@@ -117,7 +119,7 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
 
     private fun update(triangle: Triangle) {
         myTriangles!!.remove(triangle)
-        myTriangles!!.add(triangle)
+        add(triangle)
     }
 
     private class Triangle internal constructor(val currentVertex: Int, private val myPoints: List<DoubleVector>) {
@@ -137,21 +139,30 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
         internal fun takeNextFrom(triangle: Triangle) {
             next = triangle.next
             nextVertex = triangle.nextVertex
-            area = calculateArea()
+            area = calculateArea().takeIf { it > triangle.area } ?: triangle.area.also { println("haha") }
         }
 
         internal fun takePrevFrom(triangle: Triangle) {
             prev = triangle.prev
             prevVertex = triangle.prevVertex
-            area = calculateArea()
+            area = calculateArea().takeIf { it > triangle.area } ?: triangle.area.also { println("haha") }
         }
 
         private fun calculateArea(): Double {
-            val a = myPoints[prevVertex]
-            val b = myPoints[currentVertex]
-            val c = myPoints[nextVertex]
+            val (x1, y1) = myPoints[prevVertex]
+            val (x2, y2) = myPoints[currentVertex]
+            val (x3, y3) = myPoints[nextVertex]
 
-            return abs(((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y)) / 2.0)
+            return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0)
+        }
+
+        override fun toString(): String {
+            return "Triangle{" +
+                    "prevVertex=" + prevVertex +
+                    ", currentVertex=" + currentVertex +
+                    ", nextVertex=" + nextVertex +
+                    ", area=" + area +
+                    '}'
         }
     }
 
