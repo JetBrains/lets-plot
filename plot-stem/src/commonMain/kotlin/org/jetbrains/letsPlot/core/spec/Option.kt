@@ -172,8 +172,10 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val INHERIT_AES = "inherit_aes"
         const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
+
         const val TOOLTIP_TITLE = "title"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
