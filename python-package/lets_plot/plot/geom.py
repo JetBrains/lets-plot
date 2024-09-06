@@ -27,7 +27,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
            'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
-           'geom_count']
+           'geom_count',
+           'geom_blank']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
@@ -7346,6 +7347,136 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+               tooltips=None,
+               map=None, map_join=None, use_crs=None,
+               size_unit=None,
+               color_by=None, fill_by=None,
+               **other_args):
+    """
+    Draw nothing, but can be a useful way of ensuring common scales between different plots (see `expand_limits()`).
+    Also, can help to avoid the "No layers in plot" error when buildling plots using automated tools.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate),
+        'sum' (counts the number of points at each location - might help to workaround overplotting).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    # tooltips : `layer_tooltips`
+    #     Result of the call to the `layer_tooltips()` function.
+    #     Specify appearance, style and content.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+    size_unit : {'x', 'y'}
+        Relate the size of the point to the length of the unit step along one of the axes.
+        If None, no fitting is performed.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The point geometry is used to create scatterplots.
+    The scatterplot is useful for displaying the relationship between
+    two continuous variables, although it can also be used with one continuous
+    and one categorical variable, or two categorical variables.
+
+    `geom_blank()` 'understands' any aesthetic mappings of `geom_point()`, but the most useful are those related to the chart guides (i.e., axes and legends):
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color.
+    ----
+
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+
+    ----
+
+    The conventions for the values of `map_join` parameter are as follows:
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    """
+    return _geom('blank',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips='none',
+                 map=map, map_join=map_join, use_crs=use_crs,
+                 size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

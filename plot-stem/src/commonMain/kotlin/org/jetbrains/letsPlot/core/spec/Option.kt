@@ -919,6 +919,7 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
+        const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -972,6 +973,8 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
+            map[BLANK] = GeomKind.BLANK
+
             GEOM_KIND_MAP = map
         }
 
