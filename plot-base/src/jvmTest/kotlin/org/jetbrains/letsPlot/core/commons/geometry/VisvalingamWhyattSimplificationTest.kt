@@ -13,9 +13,8 @@ import org.jetbrains.letsPlot.core.commons.geometry.TestUtil.SIMPLE_DATA
 import kotlin.test.Test
 
 class VisvalingamWhyattSimplificationTest {
-
     @Test
-    fun d3simple() {
+    fun simpleLine() {
         val points = listOf(
             DoubleVector(12, 21),
             DoubleVector(155, 66),
@@ -27,6 +26,7 @@ class VisvalingamWhyattSimplificationTest {
 
         val simplifier = PolylineSimplifier.visvalingamWhyattMultipath(listOf(points))
 
+        assertThat(simplifier.setCountLimit(6).indices.single()).containsExactly(0, 1, 2, 3, 4, 5)
         assertThat(simplifier.setCountLimit(5).indices.single()).containsExactly(0, 1, 2, 3, 5)
         assertThat(simplifier.setCountLimit(4).indices.single()).containsExactly(0, 1, 3, 5)
         assertThat(simplifier.setCountLimit(3).indices.single()).containsExactly(0, 1, 5)
@@ -34,8 +34,9 @@ class VisvalingamWhyattSimplificationTest {
     }
 
     @Test
-    fun test3() {
-        val g1 = listOf(
+    fun geomContourSimplification() {
+        // See sampling_methods.ipynb, Vertex Sampling section, geom_contour() example
+        val g4 = listOf(
             DoubleVector(34.2013544322706, 0.0),
             DoubleVector(34.092393206755254, 0.09239320675525314),
             DoubleVector(34.0, 0.17073763262000177),
@@ -230,7 +231,7 @@ class VisvalingamWhyattSimplificationTest {
             DoubleVector(0.0, 29.17981615139983)
         )
 
-        val g2 = listOf(
+        val g12 = listOf(
             DoubleVector(12.100353824603486, 48.10035382460349),
             DoubleVector(12.211216809495339, 48.0),
             DoubleVector(12.590518063163529, 47.59051806316353),
@@ -306,9 +307,35 @@ class VisvalingamWhyattSimplificationTest {
             DoubleVector(12.100353824603486, 48.10035382460349),
         )
 
-        val simplifier = PolylineSimplifier.visvalingamWhyattMultipath(listOf(g1))
-        val ind = simplifier.setCountLimit(14).indices
-        val pts = simplifier.setCountLimit(14).points
+        val simplifier = PolylineSimplifier.visvalingamWhyattMultipath(listOf(g4, g12))
+        simplifier.setCountLimit(20).points
+            .let { (s4, s12) ->
+                assertThat(s4).containsExactly(
+                    DoubleVector(34.2013544322706, 0.0),
+                    DoubleVector(28.0, 5.35601322364421),
+                    DoubleVector(24.0, 7.680637364327313),
+                    DoubleVector(22.0, 7.541894855901996),
+                    DoubleVector(15.640052185581094, 4.0),
+                    DoubleVector(12.0, 2.581848855954589),
+                    DoubleVector(7.0, 2.962608018722804),
+                    DoubleVector(2.9725351471899972, 6.0),
+                    DoubleVector(1.0663038684744108, 10.0),
+                    DoubleVector(1.354174226706248, 14.0),
+                    DoubleVector(3.413752240002105, 20.0),
+                    DoubleVector(3.387410761596062, 24.0),
+                    DoubleVector(0.0, 29.17981615139983),
+                )
+
+                assertThat(s12).containsExactly(
+                    DoubleVector(12.100353824603486, 48.10035382460349),
+                    DoubleVector(13.826284778642556, 44.0),
+                    DoubleVector(11.0, 41.13953783788376),
+                    DoubleVector(7.63269197304265, 42.0),
+                    DoubleVector(6.7581521368676025, 46.0),
+                    DoubleVector(9.0, 48.706426181491096),
+                    DoubleVector(12.100353824603486, 48.10035382460349),
+                )
+            }
         assertThat(true).isTrue()
     }
 

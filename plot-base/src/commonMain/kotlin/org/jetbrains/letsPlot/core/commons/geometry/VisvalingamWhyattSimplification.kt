@@ -12,117 +12,54 @@ import kotlin.math.abs
 
 // Reference: https://bost.ocks.org/mike/simplify/
 internal class VisvalingamWhyattSimplification : RankingStrategy {
-    private val myVerticesToRemove = ArrayList<Int>()
-    private var myTriangles: MutableList<Triangle>? = null
-
-    private val isSimplificationDone: Boolean
-        get() = isEmpty
-
-    private val isEmpty: Boolean
-        get() = myTriangles!!.isEmpty()
 
     override fun computeWeights(points: List<DoubleVector>): List<Double> {
         if (points.size < 3) {
             return MutableList(points.size) { INITIAL_AREA }
         }
 
-        myTriangles = ArrayList(points.size - 2)
-        initTriangles(points)
+        val sortedTriangles = initTriangles(points)
         val weights = MutableList(points.size) { INITIAL_AREA }
         var lastRemovedVertexArea = 0.0
-        while (!isSimplificationDone) {
-            val triangle = takeTriangle()
+        while (!sortedTriangles.isEmpty()) {
+            val triangle = sortedTriangles.poll()
 
-            lastRemovedVertexArea = if (triangle.area > lastRemovedVertexArea)
-                triangle.area
-            else
-                lastRemovedVertexArea
+            lastRemovedVertexArea = maxOf(triangle.area, lastRemovedVertexArea)
 
             weights[triangle.currentVertex] = lastRemovedVertexArea
 
-            val next = triangle.next
-            if (next != null) {
-                next.takePrevFrom(triangle)
-                update(next)
+            triangle.next?.let {
+                it.takePrevFrom(triangle)
+                sortedTriangles.reposition(it)
             }
 
-            val prev = triangle.prev
-            if (prev != null) {
-                prev.takeNextFrom(triangle)
-                update(prev)
+            triangle.prev?.let {
+                it.takeNextFrom(triangle)
+                sortedTriangles.reposition(it)
             }
-
-            myVerticesToRemove.add(triangle.currentVertex)
         }
 
         return weights
     }
 
-    private fun initTriangles(points: List<DoubleVector>) {
-        val triangles = ArrayList<Triangle>(points.size - 2)
-
-        run {
-            var i = 1
-            val n = points.size - 1
-            while (i < n) {
-                triangles.add(
-                    Triangle(
-                        i,
-                        points
-                    )
-                )
-                ++i
-            }
+    private fun initTriangles(points: List<DoubleVector>): SortedList<Triangle> {
+        val triangles = (1..<points.lastIndex).map { i -> Triangle(i, points) }
+        triangles.windowed(3).map { (prev, current, next) ->
+            prev.next = current
+            current.prev = prev
+            current.next = next
+            next.prev = current
         }
 
-        var i = 1
-        val n = triangles.size - 1
-        triangles.first().next = triangles[1]
-        triangles.last().prev = triangles[triangles.lastIndex - 1]
-        while (i < n) {
-            triangles[i].next = triangles[i + 1]
-            triangles[i].prev = triangles[i - 1]
-            i++
+        return SortedList(compareBy(Triangle::area)).apply {
+            triangles.forEach(::add)
         }
-
-        triangles.forEach { this.add(it) }
     }
 
-    private fun takeTriangle(): Triangle {
-        val minimalTriangle = poll()
-        myVerticesToRemove.add(minimalTriangle.currentVertex)
-        return minimalTriangle
-    }
-
-    private fun add(triangle: Triangle) {
-        val index = getIndex(triangle)
-        myTriangles!!.add(index, triangle)
-    }
-
-    private fun getIndex(triangle: Triangle): Int {
-        var index = myTriangles!!.binarySearch(triangle, compareBy { it.area })
-        if (index < 0) {
-            index = index.inv()
-        }
-        return index
-    }
-
-    private fun peek(): Triangle {
-        return myTriangles!![0]
-    }
-
-    private fun poll(): Triangle {
-        val triangle = peek()
-        myTriangles!!.remove(triangle)
-        return triangle
-    }
-
-    private fun update(triangle: Triangle) {
-        myTriangles!!.remove(triangle)
-        add(triangle)
-    }
-
-    private class Triangle internal constructor(val currentVertex: Int, private val myPoints: List<DoubleVector>) {
+    private class Triangle(
+        val currentVertex: Int,
+        private val points: List<DoubleVector>
+    ) {
         var area: Double = 0.toDouble()
             private set
         private var prevVertex: Int = 0
@@ -136,24 +73,25 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
             area = calculateArea()
         }
 
-        internal fun takeNextFrom(triangle: Triangle) {
+        fun takeNextFrom(triangle: Triangle) {
             next = triangle.next
             nextVertex = triangle.nextVertex
-            area = calculateArea().takeIf { it > triangle.area } ?: triangle.area.also { println("haha") }
+            area = calculateArea(min = triangle.area)
         }
 
-        internal fun takePrevFrom(triangle: Triangle) {
+        fun takePrevFrom(triangle: Triangle) {
             prev = triangle.prev
             prevVertex = triangle.prevVertex
-            area = calculateArea().takeIf { it > triangle.area } ?: triangle.area.also { println("haha") }
+            area = calculateArea(min = triangle.area)
         }
 
-        private fun calculateArea(): Double {
-            val (x1, y1) = myPoints[prevVertex]
-            val (x2, y2) = myPoints[currentVertex]
-            val (x3, y3) = myPoints[nextVertex]
+        private fun calculateArea(min: Double = 0.0): Double {
+            val (x1, y1) = points[prevVertex]
+            val (x2, y2) = points[currentVertex]
+            val (x3, y3) = points[nextVertex]
 
-            return abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0)
+            val area = abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0)
+            return area.takeIf { it > min } ?: (min + Double.MIN_VALUE)
         }
 
         override fun toString(): String {
@@ -166,8 +104,51 @@ internal class VisvalingamWhyattSimplification : RankingStrategy {
         }
     }
 
+    class SortedList<T>(
+        private val comparator: Comparator<T>
+    ) {
+        fun isEmpty(): Boolean {
+            return elements.isEmpty()
+        }
+
+        internal fun peek(): T {
+            return elements[0]
+        }
+
+        internal fun poll(): T {
+            val el = peek()
+            elements.remove(el)
+            return el
+        }
+
+        private fun getIndex(el: T): Int {
+            var index = elements.binarySearch(el, comparator)
+            if (index < 0) {
+                index = index.inv()
+            }
+            return index
+        }
+
+        fun add(el: T) {
+            val index = getIndex(el)
+            elements.add(index, el)
+        }
+
+        fun remove(el: T) {
+            elements.remove(el)
+        }
+
+        fun reposition(el: T) {
+            remove(el)
+            add(el)
+        }
+
+        private val elements = mutableListOf<T>()
+    }
+
+
     companion object {
 
-        private val INITIAL_AREA = Double.MAX_VALUE
+        private const val INITIAL_AREA = Double.MAX_VALUE
     }
 }
