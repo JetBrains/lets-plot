@@ -82,12 +82,12 @@ def xlab(label):
 
 def ylab(label):
     """
-    Add label to the y axis.
+    Add label to the y-axis.
 
     Parameters
     ----------
     label : str
-        The text for the y axis label.
+        The text for the y-axis label.
 
     Returns
     -------

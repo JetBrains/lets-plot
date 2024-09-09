@@ -3,6 +3,10 @@
 ### Added
                  
 - `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
+- `expand_limits()` [[#820](https://github.com/JetBrains/lets-plot/issues/820)].
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/expand_limits.ipynb).
+
 - `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)]:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
