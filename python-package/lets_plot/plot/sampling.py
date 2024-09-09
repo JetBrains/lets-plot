@@ -11,8 +11,7 @@ __all__ = ['sampling_random',
            'sampling_group_random',
            'sampling_group_systematic',
            'sampling_vertex_vw',
-           'sampling_vertex_dp',
-           ]
+           'sampling_vertex_dp']
 
 
 def sampling_random(n, seed=None):
@@ -242,8 +241,10 @@ def sampling_vertex_vw(n, polygon=None):
     n : int
         Number of items to return.
 
-    polygon : bool, default=True
-        If True, the input data is considered as a polygon rings. If False, the input data is considered as a polyline.
+    polygon : bool, default=None
+        If True, the input data is considered as a polygon rings.
+        If False, the input data is considered as a polyline.
+        None for auto-detection.
 
     Returns
     -------
@@ -291,8 +292,10 @@ def sampling_vertex_dp(n, polygon=None):
     n : int
         Number of items to return.
 
-    polygon : bool, default=True
-        If True, the input data is considered as a polygon rings. If False, the input data is considered as a polyline.
+    polygon : bool, default=None
+        If True, the input data is considered as a polygon rings.
+        If False, the input data is considered as a polyline.
+        None for auto-detection.
 
     Returns
     -------
@@ -329,22 +332,6 @@ def sampling_vertex_dp(n, polygon=None):
 
     """
     return _sampling('vertex_dp', n=n, polygon=polygon)
-
-
-def sampling_polygon_dp(n):
-    return _sampling('polygon_dp', n=n)
-
-
-def sampling_polygon_vw(n):
-    return _sampling('polygon_vw', n=n)
-
-
-def sampling_path_dp(n):
-    return _sampling('path_dp', n=n)
-
-
-def sampling_path_vw(n):
-    return _sampling('path_vw', n=n)
 
 
 def _sampling(name, **kwargs):

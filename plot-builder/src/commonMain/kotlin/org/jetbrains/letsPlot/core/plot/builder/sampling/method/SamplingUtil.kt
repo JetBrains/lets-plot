@@ -51,8 +51,8 @@ internal object SamplingUtil {
             .zip(population[yVar].asSequence())
             .mapIndexed { i, (x, y) ->
                 when {
-                    x as? Double == null -> IndexedValue(i, null)
-                    y as? Double == null -> IndexedValue(i, null)
+                    x as? Double == null || !x.isFinite() -> IndexedValue(i, null)
+                    y as? Double == null || !y.isFinite() -> IndexedValue(i, null)
                     else -> IndexedValue(i, DoubleVector(x, y))
                 }
             }.toList()

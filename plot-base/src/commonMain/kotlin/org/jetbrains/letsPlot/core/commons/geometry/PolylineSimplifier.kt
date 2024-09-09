@@ -102,7 +102,7 @@ class PolylineSimplifier private constructor(
 
     }
 
-    data class WeightedPoint(
+    internal data class WeightedPoint(
         val subPathIndex: Int,
         val pointIndex: Int,
         val weight: Double

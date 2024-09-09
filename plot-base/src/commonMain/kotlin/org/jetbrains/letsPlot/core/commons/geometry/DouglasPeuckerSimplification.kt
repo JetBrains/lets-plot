@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.RankingSt
 internal class DouglasPeuckerSimplification : RankingStrategy {
     private val myEpsilon = Double.MIN_VALUE
 
-    private fun calculateWeights(points: List<DoubleVector>): List<Double> {
+    override fun computeWeights(points: List<DoubleVector>): List<Double> {
         if (points.size < 3) {
             return MutableList(points.size) { Double.MAX_VALUE }
         }
@@ -59,9 +59,5 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
         }
 
         return weights
-    }
-
-    override fun computeWeights(points: List<DoubleVector>): List<Double> {
-        return calculateWeights(points)
     }
 }
