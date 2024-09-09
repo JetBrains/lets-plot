@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,11 +13,10 @@ import org.jetbrains.letsPlot.core.plot.builder.data.GroupUtil.indicesByGroup
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.distinctGroups
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPoints
 
-internal abstract class PolygonSampling(
-    sampleSize: Int
+internal abstract class VertexSampling(
+    sampleSize: Int,
+    protected val polygon: Boolean
 ) : GroupSamplingBase(sampleSize) {
-
-    internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
 
     override fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int, groupCount: Int): Boolean {
         return population.rowCount() > sampleSize
@@ -26,6 +25,13 @@ internal abstract class PolygonSampling(
     override fun apply(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         require(isApplicable(population))
 
+        return when (polygon) {
+            true -> resamplePolygon(population, groupMapper)
+            false -> resamplePath(population, groupMapper)
+        }
+    }
+
+    internal fun resamplePolygon(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
         val points = readPoints(population)
 
         val groups = distinctGroups(groupMapper, population.rowCount())
@@ -49,8 +55,8 @@ internal abstract class PolygonSampling(
 
         // Process all rings at once to check weights across all groups for better simplification
         val flattenSimplificationIndex = groupedRings.values.flatten()
-                .map { ring -> ring.map { (_, p) -> p } } // leave only coordinates
-                .let { rings -> simplifyInternal(rings, sampleSize) }
+            .map { ring -> ring.map { (_, p) -> p } } // leave only coordinates
+            .let { rings -> simplifyInternal(rings, sampleSize) }
 
         val groupedSimplificationIndex = flattenedRingsIndex.associateBy(
             keySelector = { (group, _) -> group },
@@ -72,33 +78,53 @@ internal abstract class PolygonSampling(
         return population.selectIndices(dataIndices)
     }
 
-    internal class PolygonVwSampling(sampleSize: Int) : PolygonSampling(sampleSize) {
+    private fun resamplePath(population: DataFrame, groupMapper: (Int) -> Int): DataFrame {
+        val points = readPoints(population)
 
+        val groupedPaths = indicesByGroup(population.rowCount(), groupMapper).values
+            .map { indices -> points.slice(indices) }
+            .map { groupPoints ->
+                @Suppress("UNCHECKED_CAST")
+                groupPoints.filter { (_, p) -> p != null } as List<IndexedValue<DoubleVector>>
+            }
+
+        val simplificationIndex = groupedPaths
+            .map { path -> path.map { (_, p) -> p } } // leave only coordinates
+            .let { paths -> simplifyInternal(paths, sampleSize) }
+
+        // restore data frame indices from the simplified path indices
+        val dataIndices = groupedPaths.zip(simplificationIndex)
+            .flatMap { (path, indices) -> path.slice(indices) }
+            .map { it.index }
+
+        return population.selectIndices(dataIndices)
+    }
+
+    internal abstract fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>>
+
+    internal class VertexVwSampling(sampleSize: Int, polygon: Boolean) : VertexSampling(sampleSize, polygon) {
         override val expressionText: String
-            get() = "sampling_" + ALIAS + "(" +
-                    "n=" + sampleSize + ")"
+            get() = "sampling_$ALIAS(n=$sampleSize, polygon=$polygon)"
 
         override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
             return PolylineSimplifier.visvalingamWhyattMultipath(points).setCountLimit(limit).indices
         }
 
         companion object {
-            const val ALIAS = "polygon_vw"
+            const val ALIAS = "vertex_vw"
         }
     }
 
-    internal class PolygonDpSampling(sampleSize: Int) : PolygonSampling(sampleSize) {
-
+    internal class VertexDpSampling(sampleSize: Int, polygon: Boolean) : VertexSampling(sampleSize, polygon) {
         override val expressionText: String
-            get() = "sampling_" + ALIAS + "(" +
-                    "n=" + sampleSize + ")"
+            get() = "sampling_$ALIAS(n=$sampleSize, polygon=$polygon)"
 
         override fun simplifyInternal(points: List<List<DoubleVector>>, limit: Int): List<List<Int>> {
             return PolylineSimplifier.douglasPeuckerMultipath(points).setCountLimit(limit).indices
         }
 
         companion object {
-            const val ALIAS = "polygon_dp"
+            const val ALIAS = "vertex_dp"
         }
     }
 }

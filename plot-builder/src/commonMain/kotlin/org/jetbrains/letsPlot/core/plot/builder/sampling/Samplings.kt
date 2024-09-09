@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.sampling
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.*
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonDpSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonVwSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexDpSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexVwSampling
 
 object Samplings {
     const val RANDOM = RandomSampling.ALIAS
@@ -17,10 +17,8 @@ object Samplings {
     const val RANDOM_GROUP = GroupRandomSampling.ALIAS
     const val SYSTEMATIC_GROUP = GroupSystematicSampling.ALIAS
     const val RANDOM_STRATIFIED = RandomStratifiedSampling.ALIAS
-    const val POLYGON_VW = PolygonVwSampling.ALIAS
-    const val POLYGON_DP = PolygonDpSampling.ALIAS
-    const val PATH_DP = PathSampling.PathDpSampling.ALIAS
-    const val PATH_VW = PathSampling.PathVwSampling.ALIAS
+    const val VERTEX_VW = VertexVwSampling.ALIAS
+    const val VERTEX_DP = VertexDpSampling.ALIAS
 
     val NONE: PointSampling =
         NoneSampling()
@@ -33,20 +31,12 @@ object Samplings {
         return PickSampling(sampleSize)
     }
 
-    fun polygonDp(sampleSize: Int): Sampling {
-        return PolygonDpSampling(sampleSize)
+    fun vertexDp(sampleSize: Int, polygon: Boolean): Sampling {
+        return VertexDpSampling(sampleSize, polygon)
     }
 
-    fun polygonVw(sampleSize: Int): Sampling {
-        return PolygonVwSampling(sampleSize)
-    }
-
-    fun pathDp(sampleSize: Int): Sampling {
-        return PathSampling.PathDpSampling(sampleSize)
-    }
-
-    fun pathVw(sampleSize: Int): Sampling {
-        return PathSampling.PathVwSampling(sampleSize)
+    fun vertexVw(sampleSize: Int, polygon: Boolean): Sampling {
+        return VertexVwSampling(sampleSize, polygon)
     }
 
     fun systematic(sampleSize: Int): Sampling {

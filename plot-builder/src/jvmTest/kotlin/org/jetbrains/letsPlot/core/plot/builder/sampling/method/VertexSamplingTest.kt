@@ -13,9 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.builder.data.RingAssertion.Companion.assertThatRing
 import org.jetbrains.letsPlot.core.plot.builder.data.createCircle
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonDpSampling
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.PolygonSampling.PolygonVwSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPolygon
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexDpSampling
+import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexVwSampling
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.groupBy
 import kotlin.test.Test
 
@@ -23,7 +23,7 @@ class VertexSamplingTest {
 
     @Test
     fun geomContourVW() {
-        val simplifiedDf = simplifyGeomContour { PathSampling.PathVwSampling(20) }
+        val simplifiedDf = simplifyGeomContour { VertexVwSampling(20, polygon = false) }
         simplifiedDf[0]!!.let { s4 ->
             assertThat(s4[TransformVar.X])
                 .containsExactly( 34.2013544322706, 28.0, 24.0, 22.0, 15.640052185581094, 12.0, 7.0, 2.9725351471899972,
@@ -47,7 +47,7 @@ class VertexSamplingTest {
 
     @Test
     fun geomContourDP() {
-        val simplifiedDf = simplifyGeomContour { PathSampling.PathDpSampling(20) }
+        val simplifiedDf = simplifyGeomContour { VertexDpSampling(20, polygon = false) }
         simplifiedDf[0]!!.let { s4 ->
             assertThat(s4[TransformVar.X])
                 .containsExactly(34.2013544322706, 27.0, 24.0, 22.0, 11.0, 7.0, 4.0, 1.7019594701656282,
@@ -435,19 +435,19 @@ class VertexSamplingTest {
     }
 
     private fun singleGroupPathDpSampling(n: Int, df: DataFrame): DataFrame {
-        return PathSampling.PathDpSampling(n).apply(df) { _ -> 0 }
+        return VertexDpSampling(n, polygon = false).apply(df) { _ -> 0 }
     }
 
     private fun singleGroupPathVwSampling(n: Int, df: DataFrame): DataFrame {
-        return PathSampling.PathVwSampling(n).apply(df) { _ -> 0 }
+        return VertexVwSampling(n, polygon = false).apply(df) { _ -> 0 }
     }
 
     private fun singleGroupPolygonDpSampling(n: Int, df: DataFrame): DataFrame {
-        return PolygonDpSampling(n).apply(df) { _ -> 0 }
+        return VertexDpSampling(n, polygon = true).apply(df) { _ -> 0 }
     }
 
     private fun singleGroupPolygonVwSampling(n: Int, df: DataFrame): DataFrame {
-        return PolygonVwSampling(n).apply(df) { _ -> 0 }
+        return VertexVwSampling(n, polygon = true).apply(df) { _ -> 0 }
     }
 
     private fun toDF(vararg points: List<DoubleVector>): DataFrame {

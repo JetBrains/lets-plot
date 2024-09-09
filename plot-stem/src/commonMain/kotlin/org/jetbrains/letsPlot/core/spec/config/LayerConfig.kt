@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
+import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MANUAL_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
@@ -40,7 +41,6 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
-import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class LayerConfig(
@@ -114,7 +114,7 @@ class LayerConfig(
 
     private val _samplings: List<Sampling> = when (clientSide) {
         true -> emptyList()
-        else -> initSampling(this, geomProto.preferredSampling())
+        else -> initSampling(this, geomProto.geomKind, geomProto.preferredSampling())
     }
 
     val samplings: List<Sampling>
@@ -447,9 +447,9 @@ class LayerConfig(
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
         }
 
-        private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-            return if (opts.has(Option.Layer.SAMPLING)) {
-                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+        private fun initSampling(opts: OptionsAccessor, geomKind: GeomKind, defaultSampling: Sampling): List<Sampling> {
+            return if (opts.has(Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Layer.SAMPLING), geomKind)
             } else {
                 listOf(defaultSampling)
             }
