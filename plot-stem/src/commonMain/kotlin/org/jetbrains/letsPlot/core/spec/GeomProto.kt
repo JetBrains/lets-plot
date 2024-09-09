@@ -25,7 +25,11 @@ import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: LayerConfig, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
+    fun geomProvider(
+        layerConfig: LayerConfig,
+        aopConversion: AesOptionConversion,
+        superscriptExponent: Boolean
+    ): GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
     }
 
@@ -99,7 +103,8 @@ class GeomProto(val geomKind: GeomKind) {
             LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
             RASTER,
-            IMAGE -> Samplings.NONE
+            IMAGE,
+            BLANK-> Samplings.NONE
         }
     }
 
@@ -171,7 +176,7 @@ class GeomProto(val geomKind: GeomKind) {
         private val COMMON = commonDefaults()
 
         init {
-            for (geomKind in values()) {
+            for (geomKind in GeomKind.entries) {
                 DEFAULTS[geomKind] = COMMON
             }
 

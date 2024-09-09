@@ -385,5 +385,13 @@ class GeomProvider internal constructor(
                 supplier
             )
         }
+
+        fun blank(): GeomProvider {
+            return GeomProvider(
+                GeomKind.BLANK,
+                BlankGeom.HANDLES_GROUPS
+            ) { BlankGeom() }
+        }
+
     }
 }

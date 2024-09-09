@@ -391,6 +391,7 @@ def geom_imshow(image_data, cmap=None, *,
         xmax=ext_x1,
         ymax=ext_y1,
         show_legend=show_legend,
+        inherit_aes=False,
         color_by=color_by if (show_legend and greyscale) else None,
     )
 

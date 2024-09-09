@@ -1,15 +1,20 @@
 ## [4.4.2] - 2024-mm-dd
 
 ### Added
-
+                 
+- `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
 - `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)]:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
+
+- `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
+       
 
 ### Changed
  
 ### Fixed
 - Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
+- Support layering `aes()` multiple times [[#822](https://github.com/JetBrains/lets-plot/issues/822)].
 - waterfall_plot: faceting doesn't work without a measure mapping [[#1152](https://github.com/JetBrains/lets-plot/issues/1152)].
 - waterfall_plot: tooltips doesn't work with column names from original dataset [[#1153](https://github.com/JetBrains/lets-plot/issues/1153)].
 - Legend icon background is not transparent when `legend_background` is set to "blank" in `theme` [[#1167](https://github.com/JetBrains/lets-plot/issues/1167)].
