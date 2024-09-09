@@ -7,40 +7,43 @@ package org.jetbrains.letsPlot.core.commons.geometry
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
-class PolylineSimplifier private constructor(private val myPoints: List<DoubleVector>, strategy: RankingStrategy) {
-    private val myWeights: List<Double>
+class PolylineSimplifier private constructor(
+    private val geometry: List<List<DoubleVector>>,
+    strategy: RankingStrategy
+) {
+    private val myWeights: List<WeightedPoint> = geometry.mapIndexed { subPathIndex, subPath ->
+        val weights = strategy.computeWeights(subPath)
+        weights.mapIndexed() { pointIndex, weight -> WeightedPoint(subPathIndex, pointIndex, weight) }
+    }.flatten()
+
     private var myWeightLimit = Double.NaN
     private var myCountLimit = -1
 
-    val points: List<DoubleVector>
-        get() =
-            indices.map { myPoints[it] }
+    val points: List<List<DoubleVector>> by lazy {
+        indices.zip(geometry)
+            .map { (indices, points) -> points.slice(indices) }
+    }
 
-    val indices: List<Int>
+    val indices: List<List<Int>>
         get() {
-            val sorted = (0 until myPoints.size)
-                    .map { i -> Pair(i, myWeights[i]) }
-                    .filter { p -> !getWeight(p).isNaN() }
-                    .sortedWith(compareBy<Pair<Int, Double>> { this.getWeight(it) }.reversed())
-
-            val filtered: Collection<Pair<Int, Double>>
-            if (isWeightLimitSet) {
-                filtered = sorted.filter { p -> getWeight(p) > myWeightLimit }
-            } else {
-                filtered = sorted.take(myCountLimit)
+            val filtered = when (isWeightLimitSet) {
+                true -> myWeights.filter { it.weight > myWeightLimit }
+                false -> myWeights.sortedByDescending(WeightedPoint::weight).take(myCountLimit)
             }
 
             return filtered
-                    .map { this.getIndex(it) }
-                    .sorted()
+                .groupBy(WeightedPoint::subPathIndex)
+                .entries
+                .sortedBy { (subPathIndex, _) -> subPathIndex }
+                .map { (_, weightedPoints) ->
+                    weightedPoints
+                        .map(WeightedPoint::pointIndex)
+                        .sorted()
+                }
         }
 
     private val isWeightLimitSet: Boolean
         get() = !myWeightLimit.isNaN()
-
-    init {
-        myWeights = strategy.getWeights(myPoints)
-    }
 
     fun setWeightLimit(weightLimit: Double): PolylineSimplifier {
         myWeightLimit = weightLimit
@@ -54,22 +57,21 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
         return this
     }
 
-    private fun getWeight(p: Pair<Int, Double>): Double {
-        return p.second
-    }
-
-    private fun getIndex(p: Pair<Int, Double>): Int {
-        return p.first
-    }
-
     interface RankingStrategy {
-        fun getWeights(points: List<DoubleVector>): List<Double>
+        fun computeWeights(points: List<DoubleVector>): List<Double>
     }
 
     companion object {
         const val DOUGLAS_PEUCKER_PIXEL_THRESHOLD = 0.25
 
         fun visvalingamWhyatt(points: List<DoubleVector>): PolylineSimplifier {
+            return PolylineSimplifier(
+                listOf(points),
+                VisvalingamWhyattSimplification()
+            )
+        }
+
+        fun visvalingamWhyattMultipath(points: List<List<DoubleVector>>): PolylineSimplifier {
             return PolylineSimplifier(
                 points,
                 VisvalingamWhyattSimplification()
@@ -78,14 +80,31 @@ class PolylineSimplifier private constructor(private val myPoints: List<DoubleVe
 
         fun douglasPeucker(points: List<DoubleVector>): PolylineSimplifier {
             return PolylineSimplifier(
+                listOf(points),
+                DouglasPeuckerSimplification()
+            )
+        }
+
+        fun douglasPeuckerMultipath(points: List<List<DoubleVector>>): PolylineSimplifier {
+            return PolylineSimplifier(
                 points,
                 DouglasPeuckerSimplification()
             )
         }
 
         fun douglasPeucker(points: List<DoubleVector>, threshold: Double): List<DoubleVector> {
-            return douglasPeucker(points).setWeightLimit(threshold).points
+            return douglasPeucker(points).setWeightLimit(threshold).points.single()
+        }
+
+        fun douglasPeuckerMultipath(points: List<List<DoubleVector>>, threshold: Double): List<List<DoubleVector>> {
+            return douglasPeuckerMultipath(points).setWeightLimit(threshold).points
         }
 
     }
+
+    internal data class WeightedPoint(
+        val subPathIndex: Int,
+        val pointIndex: Int,
+        val weight: Double
+    )
 }

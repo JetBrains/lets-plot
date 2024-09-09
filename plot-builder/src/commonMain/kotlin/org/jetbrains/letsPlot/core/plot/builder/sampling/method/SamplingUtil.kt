@@ -6,16 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.calculateArea
-import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
-import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
-import kotlin.math.min
-import kotlin.math.roundToInt
 
 internal object SamplingUtil {
 
@@ -49,78 +44,25 @@ internal object SamplingUtil {
         throw IllegalStateException("Can't apply sampling: couldn't deduce the (Y) variable.")
     }
 
-    fun splitRings(population: DataFrame): List<List<DoubleVector>> {
-        val rings = ArrayList<List<DoubleVector>>()
-        var lastPoint: DoubleVector? = null
-        var start = -1
-
-        @Suppress("UNCHECKED_CAST")
-        val xValues = population[xVar(population)] as List<Any>
-
-        @Suppress("UNCHECKED_CAST")
-        val yValues = population[yVar(population)] as List<Any>
-        val points = DoubleVectorComponentsList(xValues, yValues)
-        for (i in points.indices) {
-            val point = points[i]
-            if (start < 0) {
-                start = i
-                lastPoint = point
-            } else if (lastPoint == point) {
-                rings.add(points.subList(start, i + 1))
-                start = -1
-                lastPoint = null
-            }
-        }
-        if (start >= 0) {
-            // not closed
-            rings.add(points.subList(start, points.size))
-        }
-        return rings
-    }
-
-    fun calculateRingLimits(rings: List<List<DoubleVector>>, totalPointsLimit: Int): List<Int> {
-        val totalArea = rings.map { calculateArea(it) }.sum()
-
-        val areaProceed = MutableDouble(0.0)
-        val pointsProceed = MutableInteger(0)
-
-        return rings.indices
-            .asSequence()
-            .map { Pair(it, calculateArea(rings[it])) }
-            .sortedWith(compareBy<Pair<*, Double>> {
-                getRingArea(
-                    it
-                )
-            }.reversed())
-            .map { p ->
-                var limit = min(
-                    (p.second / (totalArea - areaProceed.get()) * (totalPointsLimit - pointsProceed.get())).roundToInt(),
-                    rings[getRingIndex(p)].size
-                )
-
-                if (limit >= 4) {
-                    areaProceed.getAndAdd(getRingArea(p))
-                    pointsProceed.getAndAdd(limit)
-                } else {
-                    limit = 0
+    internal fun readPoints(population: DataFrame): List<IndexedValue<DoubleVector?>> {
+        val xVar = xVar(population)
+        val yVar = yVar(population)
+        return population[xVar].asSequence()
+            .zip(population[yVar].asSequence())
+            .mapIndexed { i, (x, y) ->
+                when {
+                    x as? Double == null || !x.isFinite() -> IndexedValue(i, null)
+                    y as? Double == null || !y.isFinite() -> IndexedValue(i, null)
+                    else -> IndexedValue(i, DoubleVector(x, y))
                 }
-
-                Pair(getRingIndex(p), limit)
-            }
-            .sortedWith(compareBy { getRingIndex(it) })
-            .map { getRingLimit(it) }
-            .toList()
+            }.toList()
     }
 
-    fun getRingIndex(pair: Pair<Int, *>): Int {
-        return pair.first
-    }
+    fun readPolygon(population: DataFrame): List<List<IndexedValue<DoubleVector>>> {
+        @Suppress("UNCHECKED_CAST")
+        val points = readPoints(population)
+            .filter { it.value != null } as List<IndexedValue<DoubleVector>> // to mark rings usually use equal values, not nulls
 
-    private fun getRingArea(pair: Pair<*, Double>): Double {
-        return pair.second
-    }
-
-    fun getRingLimit(pair: Pair<*, Int>): Int {
-        return pair.second
+        return splitRings(points) { p1, p2 -> p1.value == p2.value }
     }
 }

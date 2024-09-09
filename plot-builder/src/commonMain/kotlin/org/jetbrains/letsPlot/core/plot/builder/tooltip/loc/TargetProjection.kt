@@ -106,7 +106,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
 
                 if (ring.size > POINTS_COUNT_TO_SKIP_SIMPLIFICATION) {
                     val tolerance = min(area * AREA_TOLERANCE_RATIO, MAX_TOLERANCE)
-                    simplifiedRing = PolylineSimplifier.visvalingamWhyatt(ring).setWeightLimit(tolerance).points
+                    simplifiedRing = PolylineSimplifier.visvalingamWhyatt(ring).setWeightLimit(tolerance).points.single()
 
                     if (isLogEnabled) {
                         log(

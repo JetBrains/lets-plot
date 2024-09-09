@@ -116,7 +116,7 @@ class LayerConfig constructor(
 
     private val _samplings: List<Sampling> = when (clientSide) {
         true -> emptyList()
-        else -> initSampling(this, geomProto.preferredSampling())
+        else -> initSampling(this, geomProto.geomKind, geomProto.preferredSampling())
     }
 
     val samplings: List<Sampling>
@@ -454,9 +454,9 @@ class LayerConfig constructor(
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
         }
 
-        private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-            return if (opts.has(Option.Layer.SAMPLING)) {
-                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+        private fun initSampling(opts: OptionsAccessor, geomKind: GeomKind, defaultSampling: Sampling): List<Sampling> {
+            return if (opts.has(Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Layer.SAMPLING), geomKind)
             } else {
                 listOf(defaultSampling)
             }

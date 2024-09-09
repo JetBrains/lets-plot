@@ -729,6 +729,7 @@ object Option {
         const val N = "n"
         const val SEED = "seed"
         const val MIN_SUB_SAMPLE = "min_subsample"
+        const val POLYGON = "polygon"
     }
 
     object Theme {

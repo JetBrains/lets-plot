@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.PICK
@@ -18,11 +19,12 @@ import org.jetbrains.letsPlot.core.plot.builder.sampling.Samplings.VERTEX_VW
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Sampling.MIN_SUB_SAMPLE
 import org.jetbrains.letsPlot.core.spec.Option.Sampling.N
+import org.jetbrains.letsPlot.core.spec.Option.Sampling.POLYGON
 import org.jetbrains.letsPlot.core.spec.Option.Sampling.SEED
 
 internal object SamplingProto {
 
-    fun createSampling(name: String, options: Map<String, Any>): Sampling {
+    fun createSampling(name: String, geomKind: GeomKind, options: Map<String, Any>): Sampling {
         val opts = OptionsAccessor.over(options)
         return when (name) {
             Option.Sampling.NONE -> Samplings.NONE
@@ -36,10 +38,14 @@ internal object SamplingProto {
                 opts.getLong(SEED),
                 opts.getInteger(MIN_SUB_SAMPLE)
             )
-            VERTEX_VW -> Samplings.vertexVw(opts.getInteger(N)!!)
-            VERTEX_DP -> Samplings.vertexDp(opts.getInteger(N)!!)
+            VERTEX_VW -> Samplings.vertexVw(opts.getInteger(N)!!, opts.getBoolean(POLYGON, isPolygon(geomKind)))
+            VERTEX_DP -> Samplings.vertexDp(opts.getInteger(N)!!, opts.getBoolean(POLYGON, isPolygon(geomKind)))
 
             else -> throw IllegalArgumentException("Unknown sampling method: '$name'")
         }
+    }
+
+    private fun isPolygon(geomKind: GeomKind): Boolean {
+        return geomKind in listOf(GeomKind.POLYGON, GeomKind.MAP, GeomKind.CONTOURF, GeomKind.DENSITY2DF)
     }
 }
