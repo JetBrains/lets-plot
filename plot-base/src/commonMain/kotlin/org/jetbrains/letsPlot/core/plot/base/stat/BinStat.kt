@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
  * @param binWidth Used to compute binCount such that bins covers the range of the data
  * @param xPosKind Specifies a way in which bin x-position is interpreted (center, boundary)
  * @param xPos Bin x-position.
+ * @param threshold Threshold for bin trimming
  *
  * Computed values:
  *
@@ -29,7 +30,8 @@ open class BinStat(
     binCount: Int,
     binWidth: Double?,
     private val xPosKind: XPosKind,
-    private val xPos: Double
+    private val xPos: Double,
+    private val threshold: Double?,
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
@@ -45,6 +47,8 @@ open class BinStat(
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
+        val statSumProp = ArrayList<Double>()
+        val statSumPct = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
@@ -59,12 +63,38 @@ open class BinStat(
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)
+            statSumProp.addAll(binsData.sumProp)
+            statSumPct.addAll(binsData.sumPct)
+        }
+
+        if (threshold != null) {
+            val leftDropPart = statCount.withIndex().takeWhile { it.value <= threshold }.map { it.index }
+            val rightDropPart = statCount.withIndex().reversed().takeWhile { it.value <= threshold }.map { it.index }
+
+            val dropList = leftDropPart + rightDropPart
+
+            dropList.forEach {
+                statCount[it] = Double.NaN
+                statDensity[it] = Double.NaN
+                statSumProp[it] = Double.NaN
+                statSumPct[it] = Double.NaN
+            }
+
+            // resolution hack - need at least two consecutive X values, or width of the bin will be incorrect
+            when {
+                statX.size - dropList.size > 1 -> dropList // already have at least two consecutive X values
+                leftDropPart.isNotEmpty() -> leftDropPart.dropLast(1) + rightDropPart
+                rightDropPart.isNotEmpty() -> leftDropPart + rightDropPart.dropLast(1) // dropLast b/c reversed
+                else -> emptyList()
+            }.forEach { statX[it] = Double.NaN }
         }
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.COUNT, statCount)
             .putNumeric(Stats.DENSITY, statDensity)
+            .putNumeric(Stats.SUMPROP, statSumProp)
+            .putNumeric(Stats.SUMPCT, statSumPct)
             .build()
     }
 

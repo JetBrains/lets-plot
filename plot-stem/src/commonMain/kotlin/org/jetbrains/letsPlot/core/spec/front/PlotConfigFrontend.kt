@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.front
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
@@ -26,13 +27,13 @@ class PlotConfigFrontend private constructor(
     isClientSide = true
 ) {
 
-    internal val guideOptionsMap: Map<Aes<*>, GuideOptionsList>
+    internal val guideOptionsMap: Map<GuideKey, GuideOptionsList>
 
     internal val xAxisPosition: AxisPosition
     internal val yAxisPosition: AxisPosition
 
     init {
-        guideOptionsMap = createGuideOptions(this.scaleConfigs, getMap(GUIDES))
+        guideOptionsMap = createGuideOptions(this.scaleConfigs, getMap(GUIDES), aopConversion)
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition

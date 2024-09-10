@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReference
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
@@ -23,14 +24,8 @@ internal class MarginalFrameOfReference(
     private val coord: CoordinateSystem,
     private val plotBackground: Color,
     private val isDebugDrawing: Boolean
-) : FrameOfReference {
-    override fun zoom(scale: DoubleVector) {
-        error("Not supported by MarginalFrameOfReference")
-    }
-
-    override fun pan(from: DoubleVector, to: DoubleVector): DoubleVector? {
-        error("Not supported by MarginalFrameOfReference")
-    }
+) : FrameOfReference() {
+    override val transientState: ComponentTransientState = DummyTransientState()
 
     override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
         error("Not supported by MarginalFrameOfReference")
@@ -50,10 +45,10 @@ internal class MarginalFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val layerComponent = SquareFrameOfReference.buildGeom(
+        val layerComponent = FrameOfReferenceBase.buildGeom(
             plotContext,
             layer,
-            xyAesBounds = adjustedDomain,
+            xyAesBounds = adjustedDomain,     // Never flip axis
             coord,
             flippedAxis = false,
             targetCollector,

@@ -23,7 +23,7 @@ internal class DiscreteScale : AbstractScale<Any> {
     constructor(
         name: String,
         discreteTransform: DiscreteTransform,
-    ) : super(name, breaks = null) {
+    ) : super(name) {
         this.discreteTransform = discreteTransform
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
@@ -45,33 +45,45 @@ internal class DiscreteScale : AbstractScale<Any> {
         return true
     }
 
-    protected override fun getBreaksIntern(): List<Any> {
-        return if (hasDefinedBreaks()) {
+    override fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks {
+        // Discrete scale ignores 'providedScaleBreaks'
+
+        // Breaks
+        val breaksEffective = if (providedBreaks != null) {
             // Intersect, preserve the order in the 'domain'.
-            val breaksSet = super.getBreaksIntern().toSet()
+            val breaksSet = providedBreaks.toSet()
             discreteTransform.effectiveDomain.filter { it in breaksSet }
         } else {
             discreteTransform.effectiveDomain
         }
-    }
 
-    protected override fun getLabelsIntern(): List<String> {
-        val labels = super.getLabelsIntern()
-        return if (!transform.hasDomainLimits() || labels.isEmpty()) {
-            labels
-        } else if (!hasDefinedBreaks()) {
-            labels
-        } else {
-            // Associate 'defined labels' with 'defined breaks', then re-order according to the domain order.
-            val breaks = super.getBreaksIntern()  // Defined breaks!
-            val breakLabels = List(breaks.size) { i -> if (i < labels.size) labels[i] else "" }
+        // Labels
+        val labels = providedLabels?.let { it ->
+            if (!transform.hasDomainLimits()) {
+                val breaksFull = providedBreaks ?: discreteTransform.initialDomain
+                alignLablesAndBreaks(breaksFull, it)
+            } else if (providedBreaks == null) {
+                alignLablesAndBreaks(breaksEffective, it)
+            } else {
+                // Limits + provived breaks - allign labels with the limits
+                // Associate 'defined labels' with 'defined breaks', then re-order according to the domain order.
+                val labelsAligned = alignLablesAndBreaks(providedBreaks, it)
 
-            // Filter and preserve the order.
-            val labelByBreak = breaks.zip(breakLabels).toMap()
-            discreteTransform.effectiveDomain
-                .filter { labelByBreak.containsKey(it) }
-                .map { labelByBreak.getValue(it) }
+                // Filter and preserve the order in "limits".
+                val labelByBreak = providedBreaks.zip(labelsAligned).toMap()
+                discreteTransform.effectiveDomain
+                    .filter { labelByBreak.containsKey(it) }
+                    .map { labelByBreak.getValue(it) }
+            }
         }
+
+        return ScaleBreaks.Fixed.withTransform(
+            breaksEffective,
+            transform = transform,
+            formatter = providedFormatter ?: ScaleBreaks.IDENTITY_FORMATTER,
+            alternativeLabels = labels,
+            labelLengthLimit = if (shortenLabels) labelLengthLimit else null
+        )
     }
 
     override fun with(): Scale.Builder {

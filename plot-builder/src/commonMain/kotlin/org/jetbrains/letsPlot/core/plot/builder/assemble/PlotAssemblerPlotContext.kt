@@ -36,7 +36,6 @@ internal class PlotAssemblerPlotContext constructor(
         }
     }
 
-
     private companion object {
         fun checkPositionalAes(aes: Aes<*>) {
             // expect only X,Y or not positional

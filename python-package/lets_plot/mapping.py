@@ -1,6 +1,8 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
+__all__ = ['as_discrete']
+
 
 class MappingMeta:
     def __init__(self, variable, annotation, levels, **parameters):
@@ -18,7 +20,7 @@ class MappingMeta:
 
 def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     """
-    The function is used to annotate a numeric data series as categorical data with the possibility of its ordering for the purposes of given visualization.
+    The function converts a column to a discrete scale and allows you to specify the order of its values.
 
     Parameters
     ----------
@@ -52,11 +54,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
@@ -72,11 +73,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 12
+        :emphasize-lines: 11
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
@@ -91,11 +91,10 @@ def as_discrete(variable, label=None, order_by=None, order=None, levels=None):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13-14
+        :emphasize-lines: 12-13
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)

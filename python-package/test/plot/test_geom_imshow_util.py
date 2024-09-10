@@ -17,7 +17,8 @@ def _image_spec(href, bbox, data_min=None, data_max=None, start=0., end=1.0, col
         geom='image',
         href=href,
         mapping={},
-        show_legend=True
+        show_legend=True,
+        inherit_aes=False,
     )
     layer_spec.update(bbox)
 

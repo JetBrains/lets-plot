@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
-import org.jetbrains.letsPlot.core.plot.builder.frame.SquareFrameOfReference
+import org.jetbrains.letsPlot.core.plot.builder.frame.FrameOfReferenceBase
 
 object DemoAndTest {
     fun buildGeom(
@@ -21,7 +21,7 @@ object DemoAndTest {
         flippedAxis: Boolean,
         targetCollector: GeomTargetCollector
     ): SvgComponent {
-        return SquareFrameOfReference.buildGeom(
+        return FrameOfReferenceBase.buildGeom(
             plotContext = TestingPlotContext.create(layer),
             layer = layer,
             xyAesBounds = xyAesBounds,

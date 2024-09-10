@@ -42,7 +42,7 @@ class DomMouseEventMapper(
     private val regs = CompositeRegistration()
     private val mouseEventPeer = MouseEventPeer()
 
-    private var state: MouseState = MouseOverState()
+    private var state: MouseState = MouseOutsideState()
         set(value) {
             if (ENABLE_DEBUG_LOG) {
                 println(
@@ -99,15 +99,27 @@ class DomMouseEventMapper(
         val modifiers = DomEventUtil.getModifiers(domMouseEvent)
 
         val mouseEvent = when (domMouseEvent) {
-            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, domMouseEvent.deltaY)
+            is WheelEvent -> MouseWheelEvent(x, y, button, modifiers, toScrollAmount(domMouseEvent))
             else -> MouseEvent(x, y, button, modifiers)
         }
 
+        if (ENABLE_DEBUG_LOG) {
+            println("DomMouseEventMapper(${this.hashCode().toString(36)}): dispatching $eventSpec at ($x, $y)")
+        }
         mouseEventPeer.dispatch(eventSpec, mouseEvent)
 
         if (mouseEvent.preventDefault) {
             domMouseEvent.preventDefault()
         }
+    }
+
+    private fun toScrollAmount(domMouseEvent: WheelEvent): Double {
+        // Simple heuristic to determine scroll source.
+        // 120 is a default value for a single wheel tick.
+        // With touchpad scrolling, the deltaY is varying from 1 to 430.
+        // Normalize it to the range [-1, 1] using 120 as a reference.
+        // Note that the scroll speed can be set to 1 line per tick, then the deltaY will be ~40.
+        return domMouseEvent.deltaY / 120
     }
 
     private fun inEventArea(e: DomMouseEvent): Boolean {
@@ -128,7 +140,8 @@ class DomMouseEventMapper(
 
     private abstract inner class MouseState {
         fun onMouseEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
-            log("${type.name} at (${e.x}, ${e.y})")
+            val (x, y) = toEventTargetOffsetCoord(e)
+            log("${type.name} at ($x, $y)")
             handleEvent(type, e)
         }
 
@@ -149,40 +162,45 @@ class DomMouseEventMapper(
             if (e.buttons > 0) return
 
             when (type) {
-                DomEventType.MOUSE_ENTER, DomEventType.MOUSE_MOVE -> {
-                        dispatch(MouseEventSpec.MOUSE_ENTERED, e)
-                        state = MouseOverState()
+                DomEventType.MOUSE_ENTER -> {
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                    state = MouseHoverState()
                 }
-                // Ignore buttons/leave events
+                DomEventType.MOUSE_WHEEL, DomEventType.MOUSE_MOVE -> {
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+
+                    state = MouseHoverState()
+                    state.handleEvent(type, e) // allow to invoke preventDefault to prevent scrolling or selection
+                }
+                // Ignore leave events
+                // Ignore button events - browser sends MOUSE_ENTER before MOUSE_DOWN
             }
         }
     }
 
-    private inner class MouseOverState : MouseState() {
+    private inner class MouseHoverState : MouseState() {
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             if (!inEventArea(e)) {
                 dispatch(MouseEventSpec.MOUSE_LEFT, e)
                 state = MouseOutsideState()
-            }
-
-            if (type == DomEventType.MOUSE_DOWN) {
-                dispatch(MouseEventSpec.MOUSE_PRESSED, e)
-                state = MousePressedState(pressEvent = e)
                 return
             }
 
             when (type) {
-                DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                DomEventType.MOUSE_DOWN -> {
+                    dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    state = MousePressedState(pressEvent = e)
+                }
 
                 DomEventType.MOUSE_LEAVE -> {
                     dispatch(MouseEventSpec.MOUSE_LEFT, e)
                     state = MouseOutsideState()
                 }
 
-                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e) // wish can handle in ButtonDownState
+                DomEventType.MOUSE_MOVE -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
                 DomEventType.MOUSE_WHEEL -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e as DomWheelEvent)
                 DomEventType.MOUSE_ENTER -> {} // should be handled by OutsideState
-                DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
+                DomEventType.MOUSE_UP, DomEventType.CLICK, DomEventType.DOUBLE_CLICK -> {} // clicks handled by MouseClickState. Ignore clicks here to prevent ghost clicks on drag end.
             }
         }
     }
@@ -194,12 +212,10 @@ class DomMouseEventMapper(
 
         override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
             when (type) {
-                DomEventType.MOUSE_UP -> dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-
-                // It's safe to set HoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
-                DomEventType.CLICK -> {
-                    dispatch(MouseEventSpec.MOUSE_CLICKED, e)
-                    state = MouseOverState()
+                // After MOUSE_UP may be CLICK or CLICK+DOUBLE_CLICK event.
+                DomEventType.MOUSE_UP -> {
+                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                    state = MouseClickState()
                 }
 
                 DomEventType.MOUSE_MOVE -> {
@@ -208,6 +224,40 @@ class DomMouseEventMapper(
                         dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
                         state = MouseDragState()
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * State when the mouse button is released. It can be a click or click + double click.
+     * We can't guess which event it will be, so we keep the state as MouseClickState until move events.
+     */
+    private inner class MouseClickState : MouseState() {
+        override fun handleEvent(type: DomEventType<out DomMouseEvent>, e: DomMouseEvent) {
+            if (!inEventArea(e)) {
+                dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                state = MouseOutsideState()
+                return
+            }
+
+            when (type) {
+                DomEventType.CLICK -> dispatch(MouseEventSpec.MOUSE_CLICKED, e)
+                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
+
+                DomEventType.MOUSE_MOVE -> {
+                    dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                    state = MouseHoverState()
+                }
+
+                DomEventType.MOUSE_DOWN -> {
+                    dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    state = MousePressedState(pressEvent = e)
+                }
+
+                DomEventType.MOUSE_LEAVE -> {
+                    dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                    state = MouseOutsideState()
                 }
             }
         }
@@ -225,7 +275,7 @@ class DomMouseEventMapper(
 
         private fun onDocumentMouseUp(e: DomMouseEvent) {
             dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-            state = MouseOverState()
+            state = MouseHoverState()
             myDocumentMouseEventsRegistration.dispose()
         }
 

@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
 import org.jetbrains.letsPlot.core.spec.config.ArrowSpecConfig
-import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 internal object GeomProviderFactory {
@@ -24,6 +24,7 @@ internal object GeomProviderFactory {
 
     // Simple provides
     init {
+        PROVIDER[GeomKind.BLANK] = GeomProvider.blank()
         PROVIDER[GeomKind.LINE] = GeomProvider.line()
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
@@ -52,7 +53,7 @@ internal object GeomProviderFactory {
 
     fun createGeomProvider(
         geomKind: GeomKind,
-        layerConfig: OptionsAccessor,
+        layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
         superscriptExponent: Boolean
     ): GeomProvider {
@@ -135,6 +136,10 @@ internal object GeomProviderFactory {
                     geom.fattenMidPoint = layerConfig.getDouble(Option.Geom.PointRange.FATTEN)!!
                 }
                 geom
+            }
+
+            GeomKind.BAND -> GeomProvider.band { ctx ->
+                BandGeom(isVertical(ctx, geomKind.name))
             }
 
             GeomKind.BOX_PLOT -> GeomProvider.boxplot { ctx ->
@@ -400,12 +405,19 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom, superscriptExponent: Boolean) {
-        opts.getString(Option.Geom.Text.LABEL_FORMAT)
-            ?.let { geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format }
-        opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
-        geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
-        geom.checkOverlap = opts.getBoolean(Option.Geom.Text.CHECK_OVERLAP)
+    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, superscriptExponent: Boolean) {
+        layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
+            geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format
+        }
+        layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
+            geom.naValue = it
+        }
+        layerConfig.getString(Option.Geom.Text.SIZE_UNIT)?.let {
+            geom.sizeUnit = it.lowercase()
+        }
+        layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
+            geom.checkOverlap = it
+        }
     }
 
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {

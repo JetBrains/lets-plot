@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksGen
 
 object ScaleProviderHelper {
     fun <T> createDefault(aes: Aes<T>): ScaleProvider {

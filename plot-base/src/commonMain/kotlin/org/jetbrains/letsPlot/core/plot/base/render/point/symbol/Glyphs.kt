@@ -20,12 +20,12 @@ object Glyphs {
         return DiamondGlyph(location, width)
     }
 
-    fun triangleUp(location: DoubleVector, width: Double, stroke: Double): Glyph {
-        return TriangleGlyph(location, width, stroke, true)
+    fun triangleUp(location: DoubleVector, width: Double, stroke: Double, pinnedToCentroid: Boolean): Glyph {
+        return TriangleGlyph(location, width, stroke, pointingUp = true, pinnedToCentroid = pinnedToCentroid)
     }
 
-    fun triangleDown(location: DoubleVector, width: Double, stroke: Double): Glyph {
-        return TriangleGlyph(location, width, stroke, false)
+    fun triangleDown(location: DoubleVector, width: Double, stroke: Double, pinnedToCentroid: Boolean): Glyph {
+        return TriangleGlyph(location, width, stroke, pointingUp = false, pinnedToCentroid = pinnedToCentroid)
     }
 
     fun stickPlus(location: DoubleVector, width: Double): Glyph {

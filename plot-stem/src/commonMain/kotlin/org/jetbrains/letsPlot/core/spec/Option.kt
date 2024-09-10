@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 
 object Option {
 
@@ -22,6 +23,7 @@ object Option {
             const val SUBPLOTS = "subplots"
             const val GG_BUNCH = "ggbunch"
             const val ERROR_GEN = "error_gen" // for internal use: testing etc.
+            const val GG_TOOLBAR = "ggtoolbar"
         }
 
         object PubSub {
@@ -69,8 +71,17 @@ object Option {
 
             // Values of the "TYPE" property
             object DateTime {
+                const val DATE_TIME = Types.DATE_TIME // TODO: remove. replaced Types.DATE_TIME
+                const val TIME_ZONE = "time_zone" // TODO: remove or move to Types
+            }
+
+            object Types {
                 const val DATE_TIME = "datetime"
-                const val TIME_ZONE = "time_zone"
+                const val INTEGER = "int"
+                const val FLOATING = "float"
+                const val STRING = "str"
+                const val BOOLEAN = "bool"
+                const val UNKNOWN = "unknown"
             }
         }
     }
@@ -161,7 +172,11 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val INHERIT_AES = "inherit_aes"
+        const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
+
+        const val TOOLTIP_TITLE = "title"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
         const val DISABLE_SPLITTING = "disable_splitting"
@@ -191,6 +206,14 @@ object Option {
         object CRS {
             const val PROVIDED = "provided"
         }
+
+        object LayerKey {
+            const val LABEL = "label"
+            const val GROUP = "group"
+            const val INDEX = "index"
+        }
+
+        const val DEFAULT_LEGEND_GROUP_NAME = "manual"
     }
 
     object LinesSpec {
@@ -394,6 +417,7 @@ object Option {
         }
 
         object Bin {
+            const val THRESHOLD = "threshold"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
             const val METHOD = "method"
@@ -488,6 +512,8 @@ object Option {
     }
 
     object Pos {
+        const val NAME = "name"
+
         object Dodge {
             const val WIDTH = "width"
         }
@@ -682,6 +708,7 @@ object Option {
             const val ROW_COUNT = "nrow"
             const val COL_COUNT = "ncol"
             const val BY_ROW = "byrow"
+            const val OVERRIDE_AES = "override_aes"
         }
 
         object ColorBar {
@@ -864,6 +891,7 @@ object Option {
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
+        private const val BAND = "band"
         const val BOX_PLOT = "boxplot"
         private const val AREA_RIDGES = "area_ridges"
         private const val VIOLIN = "violin"
@@ -894,6 +922,7 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
+        const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -917,6 +946,7 @@ object Option {
             map[AB_LINE] = GeomKind.AB_LINE
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
+            map[BAND] = GeomKind.BAND
             map[BOX_PLOT] = GeomKind.BOX_PLOT
             map[AREA_RIDGES] = GeomKind.AREA_RIDGES
             map[VIOLIN] = GeomKind.VIOLIN
@@ -946,6 +976,8 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
+            map[BLANK] = GeomKind.BLANK
+
             GEOM_KIND_MAP = map
         }
 
@@ -1026,8 +1058,8 @@ object Option {
     }
 
     object SpecOverride {
-        // Tools can temporary override default or provided limits.
-        const val COORD_XLIM_TRANSFORMED = "coord_xlim_transformed"  // array of two nullable numbers
-        const val COORD_YLIM_TRANSFORMED = "coord_ylim_transformed"
+        // Tools can temporarily override default or provided limits.
+        const val COORD_XLIM_TRANSFORMED = FigureModelOptions.COORD_XLIM_TRANSFORMED  // array of two nullable numbers
+        const val COORD_YLIM_TRANSFORMED = FigureModelOptions.COORD_YLIM_TRANSFORMED
     }
 }

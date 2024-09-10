@@ -5,7 +5,7 @@
 """Correlation matrix implementation module"""
 from typing import Any
 
-from lets_plot.plot.util import is_data_frame
+from lets_plot.plot.util import is_pandas_data_frame
 
 try:
     import numpy
@@ -23,7 +23,7 @@ __all__ = ['corr_plot']
 
 
 def _is_corr_matrix(data: Any):
-    if is_data_frame(data):
+    if is_pandas_data_frame(data):
         if data.shape[0] != data.shape[1]:
             return False
 
@@ -204,7 +204,9 @@ class corr_plot:
             If True, then absolute value of correlation is mapped to text size.
             If False - the text size is constant. Default - contextual.
         color : str
-            Set text color. Default - contextual.
+            Set text color.
+            For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+            Default - contextual.
 
         Returns
         -------
@@ -418,7 +420,7 @@ class corr_plot:
         if _is_corr_matrix(data):
             coefficients = True
         else:
-            if is_data_frame(data):
+            if is_pandas_data_frame(data):
                 data = data.corr(numeric_only=True)
                 coefficients = True
             else:

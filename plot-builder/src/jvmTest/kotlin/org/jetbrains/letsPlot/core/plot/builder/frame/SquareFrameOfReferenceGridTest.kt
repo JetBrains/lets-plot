@@ -151,10 +151,9 @@ class SquareFrameOfReferenceGridTest {
 
         val unusedRect = DoubleRectangle.LTRB(0, 0, 0, 0)
 
-        val scaleBreaks = ScaleBreaks(
-            domainValues = breaks,
-            transformedValues = breaks.map { it.toDouble() },
-            labels = breaks.map { it.toString() },
+        val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(
+            domainValues = breaks.map { it.toDouble() },
+            formatter = { v -> (v as Number).toInt().toString() },
         )
 
         val squareFrameOfReference = SquareFrameOfReference(
@@ -207,8 +206,14 @@ class SquareFrameOfReferenceGridTest {
         )
 
         val container = GroupComponent()
-        squareFrameOfReference.drawBeforeGeomLayer(container)
-        squareFrameOfReference.drawAfterGeomLayer(container)
+        squareFrameOfReference.repaintFrame()
+
+        val axisAndGrid = (squareFrameOfReference.bottomGroup.rootGroup.children()
+            .map { it } + squareFrameOfReference.topGroup.rootGroup.children().map { it })
+            .map { it.removeFromParent(); it }
+
+
+        container.rootGroup.children().addAll(axisAndGrid)
         return container.rootGroup
     }
 

@@ -17,12 +17,12 @@ try:
 except ImportError:
     pl = None
 
-from ..plot.plot import ggplot
+from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 from ..plot.core import DummySpec, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
+from ..plot.plot import ggplot
 from ..plot.theme_ import *
-from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 __all__ = ['residual_plot']
 
@@ -114,7 +114,7 @@ def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
     elif isinstance(data, pd.DataFrame):
         df = data.copy()
     elif pl is not None and isinstance(data, pl.DataFrame):
-        df = pd.DataFrame(data.to_dict(False))
+        df = pd.DataFrame(data.to_dict(as_series=False))
     else:
         raise Exception("Unsupported type of data: {0}".format(data))
     df = df[(df[x].notna()) & df[y].notna()]
@@ -178,6 +178,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Applicable simultaneously for 'tile' geom and 'histogram' marginal.
     color : str
         Color of the geometry.
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     size : float
         Size of the geometry.
     alpha : float
@@ -207,6 +208,11 @@ def residual_plot(data=None, x=None, y=None, *,
     -------
     `PlotSpec`
         Plot object specification.
+
+    Notes
+    -----
+    When using 'lm' and 'loess' methods,
+    this function requires the `statsmodels` and `scipy` libraries to be installed.
 
     Examples
     --------

@@ -41,11 +41,10 @@ def ggmarginal(sides: str, *, size=None, layer: Union[LayerSpec, FeatureSpecArra
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 24
+        :emphasize-lines: 23
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         LetsPlot.set_theme(theme_light())
 

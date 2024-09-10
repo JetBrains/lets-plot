@@ -52,35 +52,30 @@ abstract class CoordProviderBase(
         return with(xLim, newYLim, flipped)
     }
 
-    /**
-     * Reshape and flip the domain if necessary.
-     */
-    final override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+    final override fun adjustDomain(dataDomain: DoubleRectangle): DoubleRectangle {
         val xSpan = DoubleSpan(
-            xLim.first ?: domain.left,
-            xLim.second ?: domain.right
+            xLim.first ?: dataDomain.left,
+            xLim.second ?: dataDomain.right
         )
 
         val ySpan = DoubleSpan(
-            yLim.first ?: domain.top,
-            yLim.second ?: domain.bottom
+            yLim.first ?: dataDomain.top,
+            yLim.second ?: dataDomain.bottom
         )
 
         return adjustXYDomains(xSpan, ySpan)
     }
 
-    protected open fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
-        val domain = DoubleRectangle(xRange, yRange)
-        val validDomain = domain.let {
-            projection.validDomain().intersect(it)
-        }
+    protected open fun adjustXYDomains(xDomain: DoubleSpan, yDomain: DoubleSpan): DoubleRectangle {
+        val dataDomain = DoubleRectangle(xDomain, yDomain)
+        val validDomain = projection.validDomain().intersect(dataDomain)
 
         return if (validDomain != null && validDomain.height > 0.0 && validDomain.width > 0.0) {
-            if (flipped) validDomain.flip() else validDomain
+            validDomain
         } else {
             throw IllegalArgumentException(
                 """Can't create a valid domain.
-                |  data bbox: $domain
+                |  data bbox: $dataDomain
                 |  x-lim: $xLim
                 |  y-lim: $yLim
             """.trimMargin()

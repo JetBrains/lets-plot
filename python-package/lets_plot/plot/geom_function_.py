@@ -75,7 +75,9 @@ def _get_mapping(mapping):
     return aes(**{**x_mapping_dict, **mapping_dict, **y_mapping_dict})
 
 
-def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=None, show_legend=None, tooltips=None,
+def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
+                  tooltips=None,
                   fun=None, xlim=None, n=None,
                   color_by=None,
                   **other_args):
@@ -104,6 +106,11 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -132,8 +139,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -195,6 +202,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
                  stat=fun_stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=None,
                  tooltips=tooltips,
                  color_by=color_by,

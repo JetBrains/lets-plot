@@ -43,33 +43,37 @@ class PolarCoordProvider(
         return PolarCoordProvider(xLim, yLim, flipped, start, clockwise, transformBkgr, isHScaleContinuous = b)
     }
 
-    override fun adjustXYDomains(xRange: DoubleSpan, yRange: DoubleSpan): DoubleRectangle {
-        val domain = DoubleRectangle(xRange, yRange)
+    override fun adjustXYDomains(xDomain: DoubleSpan, yDomain: DoubleSpan): DoubleRectangle {
+        val dataDomain = DoubleRectangle(xDomain, yDomain)
 
-        val realDomain = domain.flipIf(flipped)
+        // Data space -> View space
+        val hvDomain = dataDomain.flipIf(flipped)
 
         // Domain of a data without any adjustments (i.e. no expand).
         // For theta, leave the lower end as it is to avoid a hole in the centre and to maintain the correct start angle.
         // Extend the upper end of the radius by 0.15 to allow space for labels and axis line.
 
-        val adjustedXRange = realDomain.xRange().let {
+        val adjustedHDomain = hvDomain.xRange().let { hDomain ->
             // For discrete scale add extra segment by increasing domain by 1
             // so that the last point won't overlap with the first one
             // in contrast to the continuous scale where the last point
             // has the same coordinate as the first one
             // i.e. ['a', 'b', 'c']  instead of [360/0, 180]
             val upperExpand = if (isHScaleContinuous) 0.0 else 1.0
-            DoubleSpan.withLowerEnd(it.lowerEnd, it.length + upperExpand)
+            DoubleSpan.withLowerEnd(hDomain.lowerEnd, hDomain.length + upperExpand)
         }
 
-        val adjustedYRange = realDomain.yRange().let {
-            DoubleSpan.withLowerEnd(it.lowerEnd, it.length * (1 + R_EXPAND + R_PADDING))
+        val adjustedVDomain = hvDomain.yRange().let { vDomain ->
+            DoubleSpan.withLowerEnd(vDomain.lowerEnd, vDomain.length * (1 + R_EXPAND + R_PADDING))
         }
 
         return DoubleRectangle(
-            adjustedXRange, //theta
-            adjustedYRange // r
+            adjustedHDomain, //theta
+            adjustedVDomain // r
         )
+            // View space -> Data space
+            // adjustXYDomains() must return bounds in "data space".
+            .flipIf(flipped)
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
@@ -91,6 +95,7 @@ class PolarCoordProvider(
             override val nonlinear: Boolean = true
 
             override fun project(v: DoubleVector): DoubleVector {
+                // FixMe: polar hack: a `Projection` must not do "flip"
                 val normV = v.flipIf(flipped).add(normOffset)
 
                 val theta = thetaScaleMapper(normV.x) ?: error("Unexpected: theta is null")
@@ -117,7 +122,10 @@ class PolarCoordProvider(
         )
     }
 
-    override fun createCoordinateSystem(adjustedDomain: DoubleRectangle, clientSize: DoubleVector): PolarCoordinateSystem {
+    override fun createCoordinateSystem(
+        adjustedDomain: DoubleRectangle,
+        clientSize: DoubleVector
+    ): PolarCoordinateSystem {
         val sign = if (clockwise) -1.0 else 1.0
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return PolarCoordinateSystem(Coords.create(coordMapper), start, sign, transformBkgr)
@@ -147,5 +155,6 @@ class PolarCoordinateSystem internal constructor(
 
     override fun unitSize(p: DoubleVector): DoubleVector = coordinateSystem.unitSize(p)
 
-    override fun flip(): CoordinateSystem = PolarCoordinateSystem(coordinateSystem.flip(), startAngle, direction, transformBkgr)
+    override fun flip(): CoordinateSystem =
+        PolarCoordinateSystem(coordinateSystem.flip(), startAngle, direction, transformBkgr)
 }

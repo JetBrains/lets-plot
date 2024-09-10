@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
@@ -99,6 +101,18 @@ internal object PlotGeomTilesUtil {
         }
     }
 
+    private fun createDefaultFormatters(layerConfig: LayerConfig): Map<Any, (Any) -> String> {
+        val dataFormatters = layerConfig.dtypes.mapValues { (_, dtype) -> dtype.formatter }
+        val statFormatters = Stats.VARS.mapValues { DataType.FLOATING.formatter }
+        val varFormatters = dataFormatters + statFormatters
+
+        val aesFormatters = layerConfig.varBindings
+            .associate { it.aes to (varFormatters[it.variable.name] ?: DataType.STRING.formatter) }
+
+        return varFormatters + aesFormatters
+
+    }
+
     fun createLayerBuilder(
         layerConfig: LayerConfig,
         fontFamilyRegistry: FontFamilyRegistry,
@@ -149,7 +163,9 @@ internal object PlotGeomTilesUtil {
             layerBuilder.addBinding(binding)
         }
 
-        layerBuilder.disableLegend(layerConfig.isLegendDisabled)
+        layerBuilder
+            .disableLegend(layerConfig.isLegendDisabled)
+            .customLegendOptions(layerConfig.customLegendOptions)
 
         geomInteraction?.let {
             layerBuilder
@@ -161,6 +177,10 @@ internal object PlotGeomTilesUtil {
             layerConfig.annotations,
             theme.annotations().textStyle(),
             theme.annotations().useCustomColor()
+        )
+
+        layerBuilder.defaultFormatters(
+            createDefaultFormatters(layerConfig)
         )
 
         return layerBuilder

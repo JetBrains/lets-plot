@@ -10,5 +10,5 @@ class MouseWheelEvent(
     y: Int,
     button: Button,
     modifiers: KeyModifiers,
-    val scrollAmount: Double,
+    val scrollAmount: Double, // Normalized scroll amount. +-1.0 for regular wheel. Touchpad can produce any values.
 ) : MouseEvent(x, y, button, modifiers)

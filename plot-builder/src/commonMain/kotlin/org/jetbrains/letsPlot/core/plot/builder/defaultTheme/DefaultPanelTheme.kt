@@ -57,9 +57,9 @@ internal class DefaultPanelTheme(
 
     override fun borderLineType() = getLineType(getElemValue(borderKey))
 
-    override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
+    override fun verticalGrid(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
 
-    override fun gridY(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
+    override fun horizontalGrid(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
 
     override fun inset() = getPadding(getElemValue(insetKey))
 }

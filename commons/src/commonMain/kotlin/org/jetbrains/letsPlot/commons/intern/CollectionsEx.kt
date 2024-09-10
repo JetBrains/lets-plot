@@ -35,3 +35,6 @@ fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {
     result += chunk
     return result
 }
+
+fun <T> Iterable<out T>.indicesOf(predicate: (T) -> Boolean) =
+    mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }

@@ -11,12 +11,12 @@ import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
@@ -32,8 +32,8 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationProviderUtil
+import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.PointDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
@@ -49,6 +49,7 @@ class GeomLayerBuilder(
     private val fontFamilyRegistry: FontFamilyRegistry,
 ) {
 
+    private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private var mySuperscriptExponent: Boolean = false
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
@@ -61,6 +62,7 @@ class GeomLayerBuilder(
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
+    private var myCustomLegendOptions: CustomLegendOptions? = null
     private var isYOrientation: Boolean = false
 
     private var isMarginal: Boolean = false
@@ -119,6 +121,10 @@ class GeomLayerBuilder(
         return this
     }
 
+    fun customLegendOptions(customLegendOptions: CustomLegendOptions?): GeomLayerBuilder {
+        myCustomLegendOptions = customLegendOptions
+        return this
+    }
 
     fun yOrientation(v: Boolean): GeomLayerBuilder {
         isYOrientation = v
@@ -166,6 +172,12 @@ class GeomLayerBuilder(
         mySuperscriptExponent = superscriptExponent
         return this
     }
+
+    fun defaultFormatters(defaultFormatters: Map<Any, (Any) -> String>): GeomLayerBuilder {
+        myDefaultFormatters = defaultFormatters
+        return this
+    }
+
 
     fun build(
         data: DataFrame,
@@ -242,6 +254,7 @@ class GeomLayerBuilder(
             myLocatorLookupSpec,
             myContextualMappingProvider,
             myIsLegendDisabled,
+            myCustomLegendOptions,
             isYOrientation = isYOrientation,
             isMarginal = isMarginal,
             marginalSide = marginalSide,
@@ -249,7 +262,8 @@ class GeomLayerBuilder(
             fontFamilyRegistry = fontFamilyRegistry,
             colorByAes = colorByAes,
             fillByAes = fillByAes,
-            annotationProvider = myAnnotationProvider
+            annotationProvider = myAnnotationProvider,
+            defaultFormatters = myDefaultFormatters,
         )
     }
 
@@ -271,6 +285,7 @@ class GeomLayerBuilder(
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,
         override val isLegendDisabled: Boolean,
+        override val customLegendOptions: CustomLegendOptions?,
         override val isYOrientation: Boolean,
         override val isMarginal: Boolean,
         override val marginalSide: MarginSide,
@@ -278,7 +293,8 @@ class GeomLayerBuilder(
         override val fontFamilyRegistry: FontFamilyRegistry,
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
-        private val annotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)?
+        private val annotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)?,
+        override val defaultFormatters: Map<Any, (Any) -> String>
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(

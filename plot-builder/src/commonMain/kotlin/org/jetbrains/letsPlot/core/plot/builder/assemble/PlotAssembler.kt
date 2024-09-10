@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -37,7 +36,7 @@ class PlotAssembler constructor(
     title: String? = null,
     subtitle: String? = null,
     caption: String? = null,
-    guideOptionsMap: Map<Aes<*>, GuideOptionsList> = HashMap(),
+    guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -66,7 +65,8 @@ class PlotAssembler constructor(
                 geomTiles,
                 geomTiles.mappersNP,
                 guideOptionsMap,
-                theme.legend()
+                theme.legend(),
+                theme.panel()
             )
 
             else -> emptyList()
@@ -225,22 +225,24 @@ class PlotAssembler constructor(
 
             // Create frame of reference provider for each tile.
             return domainsXYByTile.mapIndexed { tileIndex, (xDomain, yDomain) ->
-                if (coordProvider.isPolar) {
-                    val adjustedDomain = coordProvider
-                        .adjustDomain(DoubleRectangle(xDomain, yDomain))
+                val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
 
+                if (coordProvider.isPolar) {
+                    // FixMe: polar hack:
+                    //   Need to coerce "data domain" because "flip" is not exactly what it seems.
+                    //   When `theta = Y` --> flip=true
+                    val adjustedDomainForPolar = adjustedDomain.flipIf(flipAxis)
                     PolarFrameOfReferenceProvider(
                         plotContext,
                         hScaleProtoByTile[tileIndex],
                         vScaleProtoByTile[tileIndex],
-                        adjustedDomain,
+                        adjustedDomainForPolar,
                         flipAxis,
                         theme,
                         marginsLayout,
                         domainByMarginByTile[tileIndex]
                     )
                 } else {
-                    val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
                         plotContext,
                         hScaleProtoByTile[tileIndex],

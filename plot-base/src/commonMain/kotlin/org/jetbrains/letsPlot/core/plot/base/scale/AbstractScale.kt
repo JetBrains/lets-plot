@@ -9,34 +9,41 @@ import org.jetbrains.letsPlot.core.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT> : Scale {
 
-    private val definedBreaks: List<DomainT>?
-    private val definedLabels: List<String>?
-    private val labelLengthLimit: Int
+    final override val name: String
+
+    protected val providedBreaks: List<DomainT>?
+    protected val providedLabels: List<String>?
+    protected val providedScaleBreaks: ScaleBreaks?
+    protected val providedFormatter: ((Any) -> String)?
+    protected val labelLengthLimit: Int
     protected val superscriptExponent: Boolean
 
-    final override val name: String
+    private var createdScaleBreaks: ScaleBreaks? = null
+    private var createdScaleBreaksShortened: Boolean = false
 
     final override var multiplicativeExpand = 0.0
         protected set
     final override var additiveExpand = 0.0
         protected set
-    final override val labelFormatter: ((Any) -> String)?
 
-    protected constructor(name: String, breaks: List<DomainT>? = null) {
+    protected constructor(name: String) {
         this.name = name
-        this.definedBreaks = breaks
+        providedBreaks = null
+        providedLabels = null
+        providedScaleBreaks = null
         labelLengthLimit = 0
-        definedLabels = null
-        labelFormatter = null
+        providedFormatter = null
         superscriptExponent = false
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
         name = b.myName
-        definedBreaks = b.myBreaks
-        definedLabels = b.myLabels
+        providedBreaks = b.providedBreaks
+        providedLabels = b.providedLabels
+        providedScaleBreaks = b.providedScaleBreaks
+        providedFormatter = b.providedFormatter
+
         labelLengthLimit = b.myLabelLengthLimit
-        labelFormatter = b.myLabelFormatter
         superscriptExponent = b.mySuperscriptExponent
 
         multiplicativeExpand = b.myMultiplicativeExpand
@@ -44,83 +51,48 @@ internal abstract class AbstractScale<DomainT> : Scale {
     }
 
     override fun hasBreaks(): Boolean {
-        return definedBreaks != null
+        return providedBreaks != null || providedScaleBreaks != null
     }
 
-    protected fun hasDefinedBreaks() = definedBreaks != null
-
-    protected open fun getBreaksIntern(): List<DomainT> {
-        check(definedBreaks != null) { "No breaks defined for scale $name" }
-        return definedBreaks
+    final override fun getScaleBreaks(): ScaleBreaks {
+        return getScaleBreaksIntern(shortenLabels = false)
     }
 
-    protected open fun getLabelsIntern(): List<String> {
-        check(definedLabels != null) { "No labels defined for scale $name" }
-        return definedLabels
+    final override fun getShortenedScaleBreaks(): ScaleBreaks {
+        return getScaleBreaksIntern(shortenLabels = true)
     }
 
-    override fun getScaleBreaks(): ScaleBreaks {
-        return createScaleBreaks(shortenLabels = false)
-    }
-
-    override fun getShortenedScaleBreaks(): ScaleBreaks {
-        return createScaleBreaks(shortenLabels = true)
-    }
-
-    private fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks {
-        if (!hasBreaks()) {
-            return ScaleBreaks.EMPTY
-        }
-
-        val breakValuesIntern = getBreaksIntern()
-        val labels = getLabels(breakValuesIntern).map { if (shortenLabels) shorten(it) else it }
-        val transformCore = transform.unwrap() // make sure 'original' transform is used.
-        val transformed = ScaleUtil.applyTransform(breakValuesIntern, transformCore)
-
-        // drop NULLs which can occure after transform.
-        val keepIndices: Set<Int> = transformed
-            .mapIndexed { i, v -> if (v == null) null else i }
-            .filterNotNull()
-            .toSet()
-
-        @Suppress("UNCHECKED_CAST")
-        return ScaleBreaks(
-            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices } as List<Any>,
-            transformedValues = transformed.filterNotNull(),
-            labels = labels.filterIndexed { i, _ -> i in keepIndices }
-        )
-    }
-
-    private fun shorten(str: String): String {
-        return if (labelLengthLimit > 0 && str.length > labelLengthLimit) {
-            str.take(labelLengthLimit) + "..."
+    private fun getScaleBreaksIntern(shortenLabels: Boolean): ScaleBreaks {
+        return if (createdScaleBreaks != null && createdScaleBreaksShortened == shortenLabels) {
+            createdScaleBreaks!!
         } else {
-            str
+            createdScaleBreaks = createScaleBreaks(shortenLabels)
+            createdScaleBreaksShortened = shortenLabels
+            createdScaleBreaks!!
         }
     }
 
-    private fun getLabels(breaks: List<DomainT>): List<String> {
-        if (definedLabels != null) {
-            val labels = getLabelsIntern()
+    protected abstract fun createScaleBreaks(shortenLabels: Boolean): ScaleBreaks
+
+
+    companion object {
+        fun alignLablesAndBreaks(breaks: List<Any>, labels: List<String>): List<String> {
             return when {
                 labels.isEmpty() -> List(breaks.size) { "" }
                 breaks.size <= labels.size -> labels.subList(0, breaks.size)
                 else -> labels + List(breaks.size - labels.size) { "" }
             }
         }
-
-        // generate labels
-        val formatter: (Any) -> String = labelFormatter ?: { v: Any -> v.toString() }
-        return breaks.map { formatter(it as Any) }
     }
 
     protected abstract class AbstractBuilder<DomainT>(scale: AbstractScale<DomainT>) : Scale.Builder {
         internal var myName: String = scale.name
 
-        internal var myBreaks: List<DomainT>? = scale.definedBreaks
-        internal var myLabels: List<String>? = scale.definedLabels
+        internal var providedBreaks: List<DomainT>? = scale.providedBreaks
+        internal var providedLabels: List<String>? = scale.providedLabels
+        internal var providedScaleBreaks: ScaleBreaks? = scale.providedScaleBreaks
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
-        internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
+        internal var providedFormatter: ((Any) -> String)? = scale.providedFormatter
         internal var mySuperscriptExponent: Boolean = scale.superscriptExponent
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -132,7 +104,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         }
 
         override fun breaks(l: List<Any>): Scale.Builder {
-            myBreaks = l.map {
+            providedBreaks = l.map {
                 @Suppress("UNCHECKED_CAST")
                 it as DomainT
             }
@@ -140,7 +112,12 @@ internal abstract class AbstractScale<DomainT> : Scale {
         }
 
         override fun labels(l: List<String>): Scale.Builder {
-            myLabels = l
+            providedLabels = l
+            return this
+        }
+
+        override fun scaleBreaks(v: ScaleBreaks): Scale.Builder {
+            providedScaleBreaks = v
             return this
         }
 
@@ -150,7 +127,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         }
 
         override fun labelFormatter(v: (Any) -> String): Scale.Builder {
-            myLabelFormatter = v
+            providedFormatter = v
             return this
         }
 

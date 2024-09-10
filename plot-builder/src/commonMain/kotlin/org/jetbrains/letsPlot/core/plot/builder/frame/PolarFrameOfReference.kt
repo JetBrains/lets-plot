@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -29,31 +30,32 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
-/**
- * ToDo: do not extend SquareFrameOfReference. Both should extend a common base.
- */
 internal class PolarFrameOfReference(
     plotContext: PlotContext,
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
-    private val adjustedDomain: DoubleRectangle,
-    private val coord: PolarCoordinateSystem,
-    private val layoutInfo: TileLayoutInfo,
-    private val marginsLayout: GeomMarginsLayout,
-    private val theme: Theme,
-    private val flipAxis: Boolean
-) : SquareFrameOfReference(
-    hScaleBreaks,
-    vScaleBreaks,
+    adjustedDomain: DoubleRectangle,
+    coord: PolarCoordinateSystem,
+    layoutInfo: TileLayoutInfo,
+    marginsLayout: GeomMarginsLayout,
+    theme: Theme,
+    flipAxis: Boolean,
+) : FrameOfReferenceBase(
+    plotContext,
     adjustedDomain,
-    coord,
     layoutInfo,
     marginsLayout,
     theme,
     flipAxis,
-    plotContext
 ) {
+
+    protected override val coord: PolarCoordinateSystem = coord
+
+    // ToDo: implement polar transient state
+    override val transientState = DummyTransientState()
+
     override fun doDrawVAxis(parent: SvgComponent) {
+        @Suppress("DuplicatedCode")
         listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
             val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
@@ -78,6 +80,7 @@ internal class PolarFrameOfReference(
     }
 
     override fun doDrawHAxis(parent: SvgComponent) {
+        @Suppress("DuplicatedCode")
         listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
             val (labelAdjustments, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
@@ -101,17 +104,17 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawVGrid(vGridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+    override fun doDrawHGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
+        (layoutInfo.axisInfos.left ?: layoutInfo.axisInfos.right)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, vScaleBreaks)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = true,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = vGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin
@@ -120,17 +123,17 @@ internal class PolarFrameOfReference(
         }
     }
 
-    override fun doDrawHGrid(hGridTheme: PanelGridTheme, parent: SvgComponent) {
-        listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+    override fun doDrawVGrid(gridTheme: PanelGridTheme, parent: SvgComponent) {
+        (layoutInfo.axisInfos.top ?: layoutInfo.axisInfos.bottom)?.let { axisInfo ->
             val (_, breaksData) = prepareAxisData(axisInfo, hScaleBreaks)
 
             val gridComponent = GridComponent(
                 majorGrid = breaksData.majorGrid,
                 minorGrid = breaksData.minorGrid,
-                orientation = axisInfo.orientation,
+                isHorizontal = false,
                 isOrthogonal = false,
                 geomContentBounds = layoutInfo.geomContentBounds,
-                gridTheme = hGridTheme,
+                gridTheme = gridTheme,
                 panelTheme = theme.panel(),
             )
             val gridOrigin = layoutInfo.geomContentBounds.origin

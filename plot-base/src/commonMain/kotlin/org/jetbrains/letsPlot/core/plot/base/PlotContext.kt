@@ -16,3 +16,12 @@ interface PlotContext {
 
     fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String
 }
+
+object NullPlotContext : PlotContext {
+    override val superscriptExponent: Boolean = false
+
+    override fun hasScale(aes: Aes<*>): Boolean = false
+    override fun getScale(aes: Aes<*>): Scale = error("No scale for aesthetic $aes")
+    override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan = error("No domain for aesthetic $aes")
+    override fun getTooltipFormatter(aes: Aes<*>): (Any?) -> String = Any?::toString
+}

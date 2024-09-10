@@ -50,7 +50,7 @@ open class LegendDemo : SimpleDemoBase() {
         }
 
         val spec = LegendAssembler.createLegendSpec("Simple legend", legendBreaks, theme.legend())
-        val legendComponent = LegendComponent(spec)
+        val legendComponent = LegendComponent(spec, theme.panel())
         legendComponent.debug = DEBUG_DRAWING
 
         val groupComponent = GroupComponent()
@@ -64,7 +64,7 @@ open class LegendDemo : SimpleDemoBase() {
         val mapper = ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
 
         val breakValues = List(3) { i -> (i + 1).toDouble() }
-        val scaleBreaks = ScaleBreaks(breakValues, breakValues, breakValues.map { "$it" })
+        val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(breakValues)
         val spec = ColorBarAssembler.createColorBarSpec(
             "Color Bar", domain, scaleBreaks,
             mapper,

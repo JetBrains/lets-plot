@@ -16,7 +16,7 @@ interface GeomContext {
     val targetCollector: GeomTargetCollector
     val annotation: Annotation?
     val backgroundColor: Color
-    val plotContext: PlotContext? // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
+    val plotContext: PlotContext // ToDo: it's used to apply the same formatting to annotations as for tooltips, need refactoring
 
     fun getResolution(aes: Aes<Double>): Double
 
@@ -37,4 +37,12 @@ interface GeomContext {
         isBold: Boolean,
         isItalic: Boolean
     ): DoubleVector
+
+    // Simple formatter, based on the bound variable type (e.g. int -> "d", float -> "g", datetime -> "%d.%m.%y %H:%M:%S")
+    // If type is not known, returns Any::toString
+    fun getDefaultFormatter(aes: Aes<*>): (Any) -> String
+
+    // Simple formatter, based on the variable type (e.g. int -> "d", float -> "g", datetime -> "%d.%m.%y %H:%M:%S")
+    // If type is not known, returns Any::toString
+    fun getDefaultFormatter(varName: String): (Any) -> String
 }

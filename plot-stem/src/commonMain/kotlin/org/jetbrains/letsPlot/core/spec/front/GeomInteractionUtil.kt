@@ -106,7 +106,7 @@ object GeomInteractionUtil {
                 axisAesFromFunctionTypeAfterOrientation,
                 hiddenAesList
             )
-            sideTooltipAes = createSideTooltipAesList(layerConfig.geomProto.geomKind).afterOrientation(yOrientation)
+            sideTooltipAes = createSideTooltipAesList(layerConfig).afterOrientation(yOrientation)
             tooltipSpecification = layerConfig.tooltips
         } else {
             tooltipAes = emptyList()
@@ -211,7 +211,6 @@ object GeomInteractionUtil {
                 axisTooltipVisibilityFromConfig = true
             )
             GeomKind.RIBBON,
-            GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.ERROR_BAR -> {
@@ -238,6 +237,7 @@ object GeomInteractionUtil {
 
             GeomKind.PIE,
             GeomKind.BOX_PLOT,
+            GeomKind.CROSS_BAR,
             GeomKind.Y_DOT_PLOT,
             GeomKind.BIN_2D,
             GeomKind.TILE -> return GeomTooltipSetup.bivariateFunction(
@@ -275,6 +275,7 @@ object GeomInteractionUtil {
 
             GeomKind.H_LINE,
             GeomKind.V_LINE,
+            GeomKind.BAND,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
             GeomKind.POLYGON,
@@ -289,6 +290,10 @@ object GeomInteractionUtil {
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
         return when (layerConfig.geomProto.geomKind) {
+            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) { // Y/X is a part of the tooltip, do not duplicate it on the axis
+                true -> listOf(Aes.Y)
+                false -> listOf(Aes.X)
+            }
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.AREA -> listOf(Aes.QUANTILE)
@@ -395,13 +400,17 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createSideTooltipAesList(geomKind: GeomKind): List<Aes<*>> {
-        return when (geomKind) {
-            GeomKind.RIBBON,
-            GeomKind.CROSS_BAR,
+    private fun createSideTooltipAesList(layerConfig: LayerConfig): List<Aes<*>> {
+        return when (layerConfig.geomProto.geomKind) {
+            GeomKind.CROSS_BAR -> when (isVerticalGeom(layerConfig)) {
+                true -> listOf(Aes.YMAX, Aes.Y, Aes.YMIN) // Y/X is a median - show it as a part of the tooltip
+                false -> listOf(Aes.XMAX, Aes.X, Aes.XMIN)
+            }
+
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
+            GeomKind.ERROR_BAR,
+            GeomKind.BAND -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN) // TODO: use isVerticalGeom
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
@@ -458,5 +467,22 @@ object GeomInteractionUtil {
         }
         val factors = scaleMap.safeGet(aes)?.getScaleBreaks()?.domainValues ?: return false
         return factors.size >= MIN_FACTORS_TO_SHOW_TOOLTIPS
+    }
+
+    private fun isVerticalGeom(layerConfig: LayerConfig): Boolean {
+        if (layerConfig.geomProto.geomKind !in listOf(
+                GeomKind.ERROR_BAR,
+                GeomKind.LINE_RANGE,
+                GeomKind.RIBBON,
+                GeomKind.CROSS_BAR,
+                GeomKind.POINT_RANGE,
+                GeomKind.BAND
+            )
+        ) {
+            return false
+        }
+
+        val mappedAes = layerConfig.varBindings.map { it.aes }
+        return mappedAes.containsAll(listOf(Aes.YMAX, Aes.YMIN))
     }
 }

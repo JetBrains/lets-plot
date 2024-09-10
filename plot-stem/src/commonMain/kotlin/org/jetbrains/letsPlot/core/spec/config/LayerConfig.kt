@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.annotation.AnnotationSpecification
+import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
@@ -21,8 +22,12 @@ import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
+import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
+import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.INHERIT_AES
+import org.jetbrains.letsPlot.core.spec.Option.Layer.MANUAL_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal
@@ -39,7 +44,7 @@ import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMa
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
-class LayerConfig(
+class LayerConfig constructor(
     layerOptions: Map<String, Any>,
     plotData: DataFrame,
     plotMappings: Map<String, String>,
@@ -54,6 +59,7 @@ class LayerConfig(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
+    val dtypes = DataMetaUtil.getDataTypes(plotDataMeta) + DataMetaUtil.getDataTypes(getMap(DATA_META))
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
 
@@ -76,6 +82,36 @@ class LayerConfig(
         get() = when (hasOwn(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
+        }
+    val customLegendOptions: CustomLegendOptions?
+        get() {
+            val option = get(MANUAL_KEY) ?: return null
+
+            val legendOptions = when (option) {
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    option as Map<String, Any>
+                }
+
+                is String -> mapOf(Layer.LayerKey.LABEL to option)
+                else -> throw IllegalArgumentException("$MANUAL_KEY expected a string or option map, but was '$option'")
+            }.let(::OptionsAccessor)
+
+            val label = legendOptions.getString(Layer.LayerKey.LABEL) ?: return null
+            val aesValues = LayerConfigUtil.initConstants(
+                legendOptions,
+                consumedAesSet = Aes.values().toSet(),
+                aopConversion
+            )
+            val groupName = legendOptions.getString(Layer.LayerKey.GROUP).let { name ->
+                if (name == null || name == DEFAULT_LEGEND_GROUP_NAME) "" else name
+            }
+            return CustomLegendOptions(
+                label = label,
+                group = groupName,
+                index = legendOptions.getInteger(Layer.LayerKey.INDEX),
+                aesValues = aesValues
+            )
         }
 
     private val _samplings: List<Sampling> = when (clientSide) {
@@ -137,6 +173,11 @@ class LayerConfig(
     init {
         ownData = ConfigUtil.createDataFrame(get(DATA))
 
+        @Suppress("NAME_SHADOWING")
+        val plotMappings = when (getBoolean(INHERIT_AES, true)) {
+            true -> plotMappings
+            else -> emptyMap()
+        }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
@@ -157,29 +198,29 @@ class LayerConfig(
 
             false ->
                 if (!clientSide
-                && isOrientationApplicable()
-                && !DataConfigUtil.isAesDiscrete(
-                    Aes.X,
-                    plotData,
-                    ownData,
-                    plotMappings,
-                    layerMappings,
-                    combinedDiscreteMappings
-                )
-                && DataConfigUtil.isAesDiscrete(
-                    Aes.Y,
-                    plotData,
-                    ownData,
-                    plotMappings,
-                    layerMappings,
-                    combinedDiscreteMappings
-                )
-            ) {
-                setOrientationY()
-                true
-            } else {
-                false
-            }
+                    && isOrientationApplicable()
+                    && !DataConfigUtil.isAesDiscrete(
+                        Aes.X,
+                        plotData,
+                        ownData,
+                        plotMappings,
+                        layerMappings,
+                        combinedDiscreteMappings
+                    )
+                    && DataConfigUtil.isAesDiscrete(
+                        Aes.Y,
+                        plotData,
+                        ownData,
+                        plotMappings,
+                        layerMappings,
+                        combinedDiscreteMappings
+                    )
+                ) {
+                    setOrientationY()
+                    true
+                } else {
+                    false
+                }
         }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {

@@ -28,7 +28,15 @@ class WordWrapperTest {
                         + "consectetur adipiscing elit.", 7, 7
             )
         )
-            .isEqualTo("Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.")
+            .isEqualTo("""|Lorem
+                          |ipsum
+                          |dolor
+                          |sit
+                          |amet,
+                          |consect
+                          |etur ad
+                          |ipiscin
+                          |g elit.""".trimMargin())
     }
 
     @Test

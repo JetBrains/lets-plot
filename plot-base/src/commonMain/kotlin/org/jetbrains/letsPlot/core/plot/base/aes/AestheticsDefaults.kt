@@ -143,6 +143,7 @@ class AestheticsDefaults private constructor(
 
                 GeomKind.LOLLIPOP -> lollipop(geomTheme)
 
+                GeomKind.BLANK,
                 GeomKind.PATH,
                 GeomKind.LINE,
                 GeomKind.SMOOTH,
@@ -156,6 +157,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.AB_LINE,
                 GeomKind.H_LINE,
                 GeomKind.V_LINE,
+                GeomKind.BAND,
                 GeomKind.AREA_RIDGES,
                 GeomKind.VIOLIN,
                 GeomKind.RIBBON,

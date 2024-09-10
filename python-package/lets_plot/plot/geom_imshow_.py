@@ -10,7 +10,7 @@ from .geom import _geom
 from .scale import scale_gradientn
 from .scale import scale_grey
 from .util import as_boolean
-from .util import is_ndarray
+from .._type_utils import is_ndarray
 
 try:
     import png
@@ -391,6 +391,7 @@ def geom_imshow(image_data, cmap=None, *,
         xmax=ext_x1,
         ymax=ext_y1,
         show_legend=show_legend,
+        inherit_aes=False,
         color_by=color_by if (show_legend and greyscale) else None,
     )
 

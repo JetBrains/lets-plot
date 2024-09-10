@@ -18,6 +18,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
+           'geom_band',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
@@ -26,10 +27,13 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_freqpoly', 'geom_step', 'geom_rect',
            'geom_segment', 'geom_curve', 'geom_spoke',
            'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop',
-           'geom_count']
+           'geom_count',
+           'geom_blank']
 
 
-def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                map=None, map_join=None, use_crs=None,
                size_unit=None,
                color_by=None, fill_by=None,
@@ -60,6 +64,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -107,20 +116,20 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - angle : rotation angle of the point shape, in degrees.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -199,6 +208,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -207,7 +218,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               flat=None, geodesic=None,
               color_by=None,
@@ -237,6 +250,11 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -282,15 +300,15 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `LineString` and `MultiLineString`.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows.
 
@@ -377,6 +395,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -385,7 +405,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               color_by=None,
               **other_args):
     """
@@ -415,6 +437,11 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -444,8 +471,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -488,13 +515,17 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
+                tooltips=None,
                 orientation=None,
                 method=None,
                 n=None,
@@ -531,6 +562,11 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -591,9 +627,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color for the confidence interval around the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
     Examples
@@ -657,6 +693,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -672,7 +710,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
              tooltips=None, labels=None,
              orientation=None,
              color_by=None, fill_by=None,
@@ -703,6 +742,11 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -752,8 +796,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
@@ -814,6 +858,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  labels=labels,
@@ -822,7 +868,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None, sampling=None, threshold=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -857,9 +904,17 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
+    threshold : float, default=None
+        If a bin's `..count..` is less than the threshold, the bin will be removed.
+        Dropping empty bins is particularly useful for faceted plots with free scales.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -902,6 +957,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
+    - ..density.. : normalised number of points so that plot area is 1.
+    - ..sumprop.. : normalised number of points so that sum of y-values is 1.
+    - ..sumpct.. : normalised number of points so that sum of y-values is 100.
     - ..binwidth.. : width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
@@ -909,8 +967,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -965,7 +1023,10 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
+                 threshold=threshold,
                  tooltips=tooltips,
                  labels=labels,
                  orientation=orientation,
@@ -977,7 +1038,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None, tooltips=None,
                  binwidth=None,
                  bins=None,
                  method=None,
@@ -1004,6 +1066,11 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1061,8 +1128,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
 
     Examples
@@ -1119,6 +1186,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  binwidth=binwidth,
@@ -1134,14 +1203,21 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  **other_args)
 
 
-def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                bins=None,
                binwidth=None,
                drop=None,
                color_by=None, fill_by=None,
                **other_args):
     """
-    Divides the plane into a grid and color the bins by the count of cases in them.
+    Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
+    and map the count to the fill color of the cell (tile).
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -1160,6 +1236,11 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1190,8 +1271,6 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
-    `geom_bin2d()` applies rectangular grid to the plane then counts observation
-    in each cell of the grid (bin). Uses `geom_tile()` to display counts as a tile fill-color.
 
     Computed variables:
 
@@ -1202,8 +1281,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1287,6 +1366,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins,
@@ -1296,7 +1377,9 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               color_by=None, fill_by=None,
               **other_args):
     """
@@ -1319,6 +1402,11 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1347,12 +1435,12 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
-    - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1427,13 +1515,17 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, fill_by=None,
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
+                fill_by=None,
                 **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1457,6 +1549,11 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1480,7 +1577,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
 
     Examples
     --------
@@ -1514,12 +1611,16 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  fill_by=fill_by,
                  **other_args)
 
 
-def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
+                  sampling=None, tooltips=None,
                   color_by=None,
                   **other_args):
     """
@@ -1547,6 +1648,11 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1577,10 +1683,10 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
     - ymax or xmax: upper bound for vertical or horizontal error bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1645,13 +1751,16 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   fatten=None,
                   color_by=None, fill_by=None,
                   **other_args):
@@ -1680,6 +1789,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1716,11 +1830,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin or xmin: lower bound for vertical or horizontal bar, respectively.
     - ymax or xmax: upper bound for vertical or horizontal bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1774,6 +1888,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
@@ -1781,8 +1897,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
-                    tooltips=None,
+def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                    manual_key=None, sampling=None, tooltips=None,
                     fatten=None,
                     color_by=None, fill_by=None,
                     **other_args):
@@ -1811,6 +1927,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1847,11 +1968,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - ymin or xmin: lower bound for vertical or horizontal interval, respectively.
     - ymax or xmax: upper bound for vertical or horizontal interval, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : size of mid-point.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-    - shape : shape of the mid-point, an integer from 0 to 25.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - shape : shape of the mid-point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : line width.
 
@@ -1902,6 +2023,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
@@ -1909,7 +2032,9 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None,
+                   sampling=None, tooltips=None,
                    color_by=None,
                    **other_args):
     """
@@ -1937,6 +2062,11 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -1967,9 +2097,9 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - ymin or xmin: lower bound for vertical or horizontal line range, respectively.
     - ymax or xmax: upper bound for vertical or horizontal line range, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2018,13 +2148,17 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
                  **other_args)
 
 
-def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
                  bins=None,
                  binwidth=None,
                  color_by=None,
@@ -2049,6 +2183,11 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2086,9 +2225,9 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2156,6 +2295,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins, binwidth=binwidth,
@@ -2163,7 +2304,9 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
+                  sampling=None, tooltips=None,
                   bins=None,
                   binwidth=None,
                   color_by=None, fill_by=None,
@@ -2188,6 +2331,11 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2227,7 +2375,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
 
     Examples
     --------
@@ -2296,6 +2444,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins,
@@ -2304,7 +2454,9 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
                  map=None, map_join=None, use_crs=None,
                  color_by=None, fill_by=None,
                  **other_args):
@@ -2328,6 +2480,11 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2370,18 +2527,18 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -2474,6 +2631,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -2481,7 +2640,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None, tooltips=None,
              map=None, map_join=None, use_crs=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -2510,6 +2670,11 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2551,18 +2716,18 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `geom_map()` understands the following aesthetics:
 
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows.
 
@@ -2641,6 +2806,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -2648,7 +2815,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 slope=None,
                 intercept=None,
                 color_by=None,
@@ -2673,6 +2841,11 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2702,9 +2875,9 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - slope : line slope.
     - intercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2750,6 +2923,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  slope=slope,
                  intercept=intercept,
@@ -2757,7 +2932,120 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              sampling=None, tooltips=None,
+              color_by=None, fill_by=None,
+              **other_args):
+    """
+    Add a straight vertical or horizontal band to the plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_band()` understands the following aesthetics mappings:
+
+    - xmin : x-axis value.
+    - xmax : x-axis value.
+    - ymin : y-axis value.
+    - ymax : y-axis value.
+    - alpha : transparency level of a layer. Accept values between 0 and 1.
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - size : lines width.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_band(xmin=-1, xmax=1)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 16-17
+
+        import numpy as np
+        import pandas as pd
+        from lets_plot import *
+        LetsPlot.setup_html()
+        groups = ["A", "B", "C"]
+        n, m = 15, len(groups)
+        np.random.seed(42)
+        points_df = pd.DataFrame({
+            'x': np.random.normal(size=m*n),
+            'y': np.concatenate([np.random.normal(loc=loc, size=n)
+                                 for loc in np.random.uniform(-1, 1, size=m)]),
+            'g': np.random.choice(groups, size=m*n),
+        })
+        vertical_bands_df = points_df.groupby('g')['y'].agg(['min', 'max']).reset_index()
+        ggplot() + \\
+            geom_band(aes(ymin='min', ymax='max', paint_a='g'), data=vertical_bands_df, \\
+                      fill_by='paint_a', alpha=.2, size=0) + \\
+            geom_point(aes('x', 'y', paint_a='g'), data=points_df, color_by='paint_a')
+
+    """
+    return _geom('band',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 color_by=color_by,
+                 fill_by=fill_by,
+                 **other_args)
+
+
+def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                yintercept=None,
                color_by=None,
                **other_args):
@@ -2781,6 +3069,11 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2808,9 +3101,9 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2865,6 +3158,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  yintercept=yintercept,
@@ -2872,7 +3167,9 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                xintercept=None,
                color_by=None,
                **other_args):
@@ -2896,6 +3193,11 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2923,9 +3225,9 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2980,6 +3282,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  xintercept=xintercept,
@@ -2987,7 +3291,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, tooltips=None,
                  orientation=None,
                  fatten=None,
                  outlier_alpha=None, outlier_color=None, outlier_fill=None,
@@ -3018,6 +3323,11 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -3079,10 +3389,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ymin : lower whisker.
     - ymax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
 
     Examples
@@ -3169,6 +3479,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           stat=stat,
                           position=position,
                           show_legend=show_legend,
+                          inherit_aes=inherit_aes,
+                          manual_key=manual_key,
                           sampling=None,
                           tooltips=tooltips,
                           orientation=orientation,
@@ -3189,6 +3501,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                stat='boxplot_outlier',
                                position=position,
                                show_legend=False,
+                               inherit_aes=inherit_aes,
                                sampling=None,
                                orientation=orientation,
                                alpha=outlier_alpha,
@@ -3201,7 +3514,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     return boxplot_layer
 
 
-def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
+                tooltips=None,
                 orientation=None,
                 show_half=None,
                 quantiles=None, quantile_lines=None,
@@ -3228,6 +3543,11 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3298,10 +3618,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'ydensity' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -3405,18 +3725,23 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
                  show_half=show_half,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
-                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
+                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
+                 fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None,
+                  tooltips=None,
                   orientation=None,
                   binwidth=None,
                   bins=None,
@@ -3445,6 +3770,11 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3509,8 +3839,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
 
     Examples
@@ -3578,6 +3908,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -3594,7 +3926,9 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                  **other_args)
 
 
-def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                     manual_key=None,
+                     sampling=None, tooltips=None,
                      trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      color_by=None, fill_by=None,
@@ -3621,6 +3955,11 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3688,10 +4027,10 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - y : y-axis coordinates.
     - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -3754,6 +4093,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  trim=trim,
@@ -3771,7 +4112,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  **other_args)
 
 
-def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
+                tooltips=None,
                 color_by=None, fill_by=None,
                 **other_args):
     """
@@ -3794,6 +4137,11 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3825,10 +4173,10 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ymin or xmin: y-axis or x-axis coordinates of the lower bound for horizontal or vertical ribbon, respectively.
     - ymax or xmax: y-axis or x-axis coordinates of the upper bound for horizontal or vertical ribbon, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3876,13 +4224,16 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None, tooltips=None,
               flat=None, color_by=None, fill_by=None,
               **other_args):
     """
@@ -3911,6 +4262,11 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -3944,10 +4300,10 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3997,6 +4353,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  flat=flat,
@@ -4004,7 +4362,9 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
                  orientation=None,
                  trim=None,
                  kernel=None,
@@ -4041,6 +4401,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4099,10 +4464,10 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -4204,6 +4569,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -4213,7 +4580,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None, sampling=None, tooltips=None,
                    kernel=None,
                    adjust=None,
                    bw=None,
@@ -4224,6 +4592,10 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    **other_args):
     """
     Display density function contour.
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4242,6 +4614,11 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4279,7 +4656,6 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
 
     Notes
     -----
-    `geom_density2d()` draws density function.
 
     Computed variables:
 
@@ -4291,12 +4667,12 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density2d' stat to compute weighted density.
 
-    |
+    ----
 
     'density2d' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
@@ -4420,6 +4796,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
@@ -4427,7 +4805,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                    manual_key=None, sampling=None,
                     tooltips=None,
                     kernel=None,
                     adjust=None,
@@ -4439,6 +4818,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     **other_args):
     """
     Fill density function contour.
+
+    By default, this geom uses `coord_fixed()`.
+    However, this may not be the best choice when the values on the X/Y axis have significantly different magnitudes.
+    In such cases, try using `coord_cartesian()`.
 
     Parameters
     ----------
@@ -4457,6 +4840,11 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4496,7 +4884,6 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     Notes
     -----
-    `geom_density2df()` fills density contours.
 
     Computed variables:
 
@@ -4507,10 +4894,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - weight : used by 'density2df' stat to compute weighted density.
 
-    |
+    ----
 
     'density2df' statistical transformation combined with parameter value `contour=False`
     could be used to draw heatmaps (see the example below).
@@ -4637,6 +5024,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  kernel=kernel,
@@ -4648,7 +5037,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
+                tooltips=None,
                 width=None, height=None,
                 color_by=None, fill_by=None,
                 seed=None,
@@ -4678,6 +5069,11 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4718,9 +5114,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
@@ -4768,6 +5164,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  width=width, height=height,
@@ -4776,7 +5174,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+            manual_key=None, sampling=None,
+            tooltips=None,
             distribution=None,
             dparams=None,
             color_by=None, fill_by=None,
@@ -4807,6 +5207,11 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4855,9 +5260,9 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
@@ -4897,6 +5302,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  distribution=distribution,
@@ -4905,7 +5312,9 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  **other_args)
 
 
-def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
+             tooltips=None,
              color_by=None, fill_by=None,
              **other_args):
     """
@@ -4934,6 +5343,11 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -4971,9 +5385,9 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
 
@@ -4999,13 +5413,17 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
                  distribution=None,
                  dparams=None,
                  quantiles=None,
@@ -5037,6 +5455,11 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5082,8 +5505,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -5123,6 +5546,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  distribution=distribution,
@@ -5132,7 +5557,9 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
+                  sampling=None, tooltips=None,
                   quantiles=None,
                   color_by=None,
                   **other_args):
@@ -5162,6 +5589,11 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5193,8 +5625,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -5219,6 +5651,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  quantiles=quantiles,
@@ -5226,7 +5660,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   color_by=None,
                   **other_args):
@@ -5256,6 +5691,11 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5291,9 +5731,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -5334,6 +5774,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -5341,7 +5783,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               direction=None,
               color_by=None,
               **other_args):
@@ -5370,6 +5814,11 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5401,9 +5850,9 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -5446,6 +5895,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  direction=direction,
@@ -5453,7 +5904,9 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               color_by=None, fill_by=None,
               **other_args):
@@ -5477,6 +5930,11 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5520,18 +5978,18 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymin : y-axis value.
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `limits()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -5612,6 +6070,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -5619,7 +6079,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
+                 tooltips=None,
                  arrow=None, flat=None, geodesic=None, spacer=None, color_by=None, **other_args):
     """
     Draw a straight line segment between two points.
@@ -5646,6 +6108,11 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5685,9 +6152,9 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the segment start coordinate (usually equal to the size of the point object from which the segment starts to avoid overlapping with it).
     - size_end : offset from the segment end coordinate (usually equal to the size of the point object from which the segment ends to avoid overlapping with it).
     - stroke_start : offset from the segment start coordinate (usually equal to the stroke of the point object from which the segment starts to avoid overlapping with it).
@@ -5758,6 +6225,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -5768,7 +6237,9 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                arrow=None,
                curvature=None, angle=None, ncp=None,
                spacer=None,
@@ -5798,6 +6269,11 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5842,9 +6318,9 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the start coordinate (usually equal to the size of the point object from which the curve starts to avoid overlapping with it).
     - size_end : offset from the end coordinate (usually equal to the size of the point object from which the curve ends to avoid overlapping with it).
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
@@ -5911,6 +6387,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -5920,7 +6398,9 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                arrow=None, pivot=None,
                color_by=None, **other_args):
     """
@@ -5941,6 +6421,11 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -5973,9 +6458,9 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
     - angle : slope's angle in radians.
     - radius : segment length.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -6040,6 +6525,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
                  stat=None,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
@@ -6048,7 +6535,9 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, samp
                  **other_args)
 
 
-def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
+              tooltips=None,
               map=None, map_join=None, use_crs=None,
               label_format=None,
               na_text=None,
@@ -6082,6 +6571,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6141,23 +6635,23 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : font size.
     - label : text to add to plot.
-    - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
-    - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
+    - family : font family. For more info see https://lets-plot.org/python/pages/aesthetics.html#text.
+    - fontface : font style and weight. For more info see https://lets-plot.org/python/pages/aesthetics.html#text.
     - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6260,6 +6754,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -6272,7 +6768,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                map=None, map_join=None, use_crs=None,
                label_format=None,
                na_text=None,
@@ -6308,6 +6806,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6377,24 +6880,24 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill: background color of the label.
     - size : font size.
     - label : text to add to plot.
-    - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
-    - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
+    - family : font family. For more info see https://lets-plot.org/python/pages/aesthetics.html#text.
+    - fontface : font style and weight. For more info see https://lets-plot.org/python/pages/aesthetics.html#text.
     - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
     - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6498,6 +7001,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
@@ -6514,7 +7019,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
+             tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
              hole=None,
              stroke_side=None,
@@ -6544,6 +7051,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6610,19 +7122,19 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - slice : values associated to pie sectors.
     - explode : values to explode slices away from their center point, detaching it from the main pie. Accept values between 0 and 1.
     - size : pie diameter.
-    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
+    - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
     - stroke : width of inner and outer arcs of pie sector.
     - color : color of inner and outer arcs of pie sector.
 
-    |
+    ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
     The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
-    |
+    ----
 
     The conventions for the values of `map_join` parameter are as follows:
 
@@ -6645,8 +7157,6 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
-
-    |
 
     Examples
     --------
@@ -6687,10 +7197,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-9
+        :emphasize-lines: 4-8
 
         from lets_plot import *
-        from lets_plot.mapping import *
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
@@ -6703,10 +7212,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-7
+        :emphasize-lines: 4-6
 
         from lets_plot import *
-        from lets_plot.mapping import *
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
@@ -6742,6 +7250,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  labels=labels,
@@ -6755,7 +7265,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   dir=None, fatten=None, slope=None, intercept=None,
                   color_by=None, fill_by=None,
@@ -6785,6 +7296,11 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6826,15 +7342,15 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : stick width.
-    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
-    |
+    ----
 
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
     So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
@@ -6895,6 +7411,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -6903,7 +7421,9 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
+               tooltips=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -6926,6 +7446,11 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -6960,22 +7485,20 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red"); role name ("pen", "paper" or "brush").
-    - shape : shape of the point, an integer from 0 to 25.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color. Is applied only to the points of shapes having inner area. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-
 
     Examples
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -6988,11 +7511,10 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -7009,8 +7531,136 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
+
+
+def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=False,
+               manual_key=None,
+               sampling=None,
+               map=None, map_join=None, use_crs=None,
+               color_by=None, fill_by=None,
+               **other_args):
+    """
+    Draw nothing, but can be a useful way of ensuring common scales between different plots (see `expand_limits()`).
+    Also, can help to avoid the "No layers in plot" error when buildling plots using automated tools.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or Pandas or Polars `DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate),
+        'sum' (counts the number of points at each location - might help to workaround overplotting).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment.
+        Either a position adjustment name: 'dodge', 'dodgev', 'jitter', 'nudge', 'jitterdodge', 'fill',
+        'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    inherit_aes : bool, default=False
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
+    manual_key : str or `layer_key`
+        The key to show in the manual legend.
+        Specify text for the legend label or advanced settings using the `layer_key()` function.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The point geometry is used to create scatterplots.
+    The scatterplot is useful for displaying the relationship between
+    two continuous variables, although it can also be used with one continuous
+    and one categorical variable, or two categorical variables.
+
+    `geom_blank()` 'understands' any aesthetic mappings of `geom_point()`, but the most useful are those related to the chart guides (i.e., axes and legends):
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+    - fill : fill color.
+    ----
+
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
+
+    ----
+
+    The conventions for the values of `map_join` parameter are as follows:
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    """
+    return _geom('blank',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 inherit_aes=inherit_aes,
+                 manual_key=manual_key,
+                 sampling=sampling,
+                 tooltips='none',
+                 map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -7021,6 +7671,8 @@ def _geom(name, *,
           stat=None,
           position=None,
           show_legend=None,
+          inherit_aes=None,
+          manual_key=None,
           sampling=None,
           tooltips=None,
           **kwargs):
@@ -7028,17 +7680,17 @@ def _geom(name, *,
         if not (isinstance(mapping, FeatureSpec) and mapping.kind == 'mapping'):
             raise ValueError("Unexpected value for argument 'mapping'. Hint: try to use function aes()")
 
-    data, mapping, data_meta = as_annotated_data(data, mapping)
-
     if is_geocoder(data):
         data = data.get_geocodes()
+
+    data = key_int2str(data)
+
+    data, mapping, data_meta = as_annotated_data(data, mapping)
 
     # GDF in a map parameter has higher priority for defining a geo_data_meta
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
-
-    data = key_int2str(data)
 
     return LayerSpec(geom=name,
                      stat=stat,
@@ -7046,6 +7698,8 @@ def _geom(name, *,
                      mapping=mapping,
                      position=position,
                      show_legend=show_legend,
+                     inherit_aes=inherit_aes,
+                     manual_key=manual_key,
                      sampling=sampling,
                      tooltips=tooltips,
                      **data_meta,

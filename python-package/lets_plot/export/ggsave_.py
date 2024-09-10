@@ -34,7 +34,7 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
         to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library), PDF.
     path : str
         Path to a directory to save image files in.
-        By default it is ${user.dir}/lets-plot-images.
+        By default, it is ${user.dir}/lets-plot-images.
     iframe : bool, default=True
         Whether to wrap HTML page into a iFrame.
         Only applicable when exporting to HTML.
@@ -59,6 +59,26 @@ def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path:
     -------
     str
         Absolute pathname of created file.
+
+    Notes
+    -----
+    Output format is inferred from the filename extension.
+
+    For PNG and PDF formats:
+
+    1. If `w`, `h`, `unit`, and `dpi` are all specified:
+
+       - `scale` is ignored.
+       - The plot's pixel size (default or set by `ggsize()`) is converted to the specified units using the given dpi.
+       - If the aspect ratio of `w` and `h` differs from the plot's pixel aspect ratio:
+
+         * The plot maintains its original (pixel) aspect ratio.
+         * It's fitted within the specified `w` x `h` area.
+         * Any extra space is left empty.
+
+    2. If `w`, `h` are not specified:
+
+       - The `scale` parameter is used to determine the output size.
 
     Examples
     --------

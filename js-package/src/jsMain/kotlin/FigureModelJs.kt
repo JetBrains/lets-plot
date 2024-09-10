@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
-import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
+import sizing.SizingPolicy
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
@@ -50,8 +50,8 @@ class FigureModelJs internal constructor(
             monolithicParameters.width,
             monolithicParameters.height,
             monolithicParameters.parentElement,
-            monolithicParameters.eventTarget,
-            monolithicParameters.options
+            monolithicParameters.sizingPolicy,
+            monolithicParameters.messageHandler,
         )
 
         if (newFigureModel == null) return  // something went wrong.
@@ -66,7 +66,7 @@ class FigureModelJs internal constructor(
         }
     }
 
-    fun activateInteraction(origin: String, interactionSpecListJs: dynamic) {
+    fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {
         val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
         require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
         @Suppress("UNCHECKED_CAST")
@@ -91,6 +91,6 @@ internal class MonolithicParameters(
     val width: Double,
     val height: Double,
     val parentElement: HTMLElement,
-    val eventTarget: Element,
-    val options: Map<String, Any>
+    val sizingPolicy: SizingPolicy,
+    val messageHandler: MessageHandler,
 )

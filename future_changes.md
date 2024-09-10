@@ -1,23 +1,21 @@
-## [4.3.4] - 2024-mm-dd
+## [4.4.2] - 2024-mm-dd
 
 ### Added
-- Legend title in guide_legend() and guide_colorbar().
+                 
+- `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
+- `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)]:
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_title.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
 
-- `plot_title_position` and `plot_caption_position` parameters in `theme()`.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/theme_plot_title_position.ipynb).
-
-
+- `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
+       
 
 ### Changed
-- [**breaking change**] guide_legend()/guide_colorbar() require keyword arguments for 'nrow'/'barwidth' other parameters except 'title'.
-- The triangular point shape is now anchored to the data point via the centroid.
  
 ### Fixed
-- `linetype` = 0 ('blank') should make lines invisible [[#712](https://github.com/JetBrains/lets-plot/issues/712)].
-- `geom_density2d`: support weight aesthetic [[#791](https://github.com/JetBrains/lets-plot/issues/791)].
-- Int DataFrame column names are being converted to float string representation [[#901](https://github.com/JetBrains/lets-plot/issues/901)].
-- Discrete axis labels unnecessary rotate 90 degrees when applying coord system limits.
-- Axis title via `labs()` breaks the date-time scale [[#1113](https://github.com/JetBrains/lets-plot/issues/1113)].
+- Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
+- waterfall_plot: faceting doesn't work without a measure mapping [[#1152](https://github.com/JetBrains/lets-plot/issues/1152)].
+- waterfall_plot: tooltips doesn't work with column names from original dataset [[#1153](https://github.com/JetBrains/lets-plot/issues/1153)].
+- Legend icon background is not transparent when `legend_background` is set to "blank" in `theme` [[#1167](https://github.com/JetBrains/lets-plot/issues/1167)].
+- Legend icon background should inherit the fill color of the plot panel (i.e. grey when `theme_grey` is used).
+- Support layering `aes()` multiple times [[#822](https://github.com/JetBrains/lets-plot/issues/822)].

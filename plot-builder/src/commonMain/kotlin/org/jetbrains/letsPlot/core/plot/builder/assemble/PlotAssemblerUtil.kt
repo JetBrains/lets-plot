@@ -5,15 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.*
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
@@ -22,35 +18,19 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.*
 
 internal object PlotAssemblerUtil {
 
-    private fun updateAesRangeMap(
-        aes: Aes<*>,
-        range: DoubleSpan?,
-        rangeByAes: MutableMap<Aes<*>, DoubleSpan>
-    ) {
-        @Suppress("NAME_SHADOWING")
-        var range = range
-        if (range != null) {
-            val wasRange = rangeByAes[aes]
-            if (wasRange != null) {
-                range = wasRange.union(range)
-            }
-            rangeByAes[aes] = range
-        }
-    }
-
     fun createLegends(
         ctx: PlotContext,
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptionsList>,
-        theme: LegendTheme
+        guideOptionsMap: Map<GuideKey, GuideOptionsList>,
+        legendTheme: LegendTheme,
+        panelTheme: PanelTheme
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-//        for (layerInfo in geomTiles.coreLayerInfos()) {
-        for (layerInfo in geomTiles.layerInfos()) {
+        for ((layerIndex, layerInfo) in geomTiles.layerInfos().withIndex()) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in layerInfo.renderedAes()) {
                 if (layerInfo.hasConstant(aes)) {
@@ -62,9 +42,8 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(layerInfo, guideOptionsMap)
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
-                val scaleName = scale.name
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[aes]
+                val colorBarOptions: ColorBarOptions? = guideOptionsMap[GuideKey.fromAes(aes)]
                     ?.getColorBarOptions()
                     ?.also { checkFitsColorBar(aes, scale) }
 
@@ -72,54 +51,94 @@ internal object PlotAssemblerUtil {
                     // Colorbar
                     @Suppress("UNCHECKED_CAST")
                     val colorBarAssembler = createColorBarAssembler(
-                        scaleName,
+                        scale.name,
                         ctx.overallTransformedDomain(aes),
                         scale,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                         colorBarOptions,
-                        theme
+                        legendTheme
                     )
 
-                    val colorbarName = colorBarAssemblerByTitle[scaleName]?.let { existingAssembler ->
+                    val colorbarName = colorBarAssemblerByTitle[scale.name]?.let { existingAssembler ->
                         if (colorBarAssembler.equalScalesAndOptions(existingAssembler)) {
-                            scaleName
+                            scale.name
                         } else {
                             // Don't just replace an existing colorbar (see LP-760: ggmarginal(): broken coloring)
                             // Add under another key
-                            "$scaleName (${aes.name})"
+                            "${scale.name} (${aes.name})"
                         }
-                    } ?: scaleName
+                    } ?: scale.name
 
                     colorBarAssemblerByTitle[colorbarName] = colorBarAssembler.withTitle(colorbarName)
 
                 } else {
                     // Legend
-                    aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
+                    aesListByScaleName.getOrPut(scale.name) { ArrayList() }.add(aes)
                 }
             }
 
-            for (scaleName in aesListByScaleName.keys) {
+            for ((scaleName, aesListForScaleName) in aesListByScaleName) {
                 val legendAssembler = legendAssemblerByTitle.getOrPut(scaleName) {
                     LegendAssembler(
                         scaleName,
                         guideOptionsMap,
                         scaleMappersNP,
-                        theme
+                        legendTheme,
+                        panelTheme
                     )
                 }
 
-                val aesListForScaleName = aesListByScaleName.getValue(scaleName)
-                val legendKeyFactory = layerInfo.legendKeyElementFactory
-                val aestheticsDefaults = layerInfo.aestheticsDefaults
+                val guideKeysForScaleName = aesListForScaleName.map(GuideKey.Companion::fromAes)
+                val allOverrideAesValues = guideOptionsMap
+                    .filterKeys { it in guideKeysForScaleName }
+                    .values
+                    .mapNotNull { it.getLegendOptions()?.overrideAesValues }
+                    .flatMap { it.entries }
+                    .associate { it.key to it.value }
+
                 legendAssembler.addLayer(
-                    legendKeyFactory,
-                    aesListForScaleName,
-                    layerConstantByAes,
-                    aestheticsDefaults,
-                    layerInfo.colorByAes,
-                    layerInfo.fillByAes,
-                    layerInfo.isMarginal,
-                    ctx,
+                    keyFactory = layerInfo.legendKeyElementFactory,
+                    aesList = aesListForScaleName,
+                    overrideAesValues = allOverrideAesValues,
+                    constantByAes = layerConstantByAes,
+                    aestheticsDefaults = layerInfo.aestheticsDefaults,
+                    colorByAes = layerInfo.colorByAes,
+                    fillByAes = layerInfo.fillByAes,
+                    isMarginal = layerInfo.isMarginal,
+                    ctx = ctx
+                )
+            }
+
+            // custom legend
+            layerInfo.customLegendOptions?.let { legendOptions ->
+                val guideKey = GuideKey.fromName(legendOptions.group)
+                if (guideOptionsMap[guideKey]?.hasNone() == true) return@let
+
+                val legendTitle = guideOptionsMap[guideKey]?.getTitle() ?: legendOptions.group
+
+                val customLegendAssembler = legendAssemblerByTitle.getOrPut(legendTitle) {
+                    LegendAssembler(
+                        legendTitle,
+                        guideOptionsMap,
+                        scaleMappersNP,
+                        legendTheme,
+                        panelTheme
+                    )
+                }
+                val allOverrideAesValues = processOverrideAesValues(
+                    guideOptionsMap[guideKey]?.getLegendOptions()?.overrideAesValues,
+                    legendOptions.index ?: layerIndex
+                )
+
+                customLegendAssembler.addCustomLayer(
+                    customLegendOptions = legendOptions,
+                    keyFactory = layerInfo.legendKeyElementFactory,
+                    overrideAesValues = allOverrideAesValues,
+                    constantByAes = layerConstantByAes,
+                    aestheticsDefaults = layerInfo.aestheticsDefaults,
+                    colorByAes = layerInfo.colorByAes,
+                    fillByAes = layerInfo.fillByAes,
+                    isMarginal = layerInfo.isMarginal
                 )
             }
         }
@@ -139,6 +158,21 @@ internal object PlotAssemblerUtil {
             }
         }
         return legendBoxInfos
+    }
+
+    private fun processOverrideAesValues(overrideAesValues: Map<Aes<*>, Any>?, index: Int): Map<Aes<*>, Any> {
+        if (overrideAesValues == null) {
+            return emptyMap()
+        }
+
+        return overrideAesValues.mapNotNull { (key, value) ->
+            val processedValue = if (value is List<*>) {
+                if (index in value.indices) value[index] else value.lastOrNull()
+            } else {
+                value
+            }
+            if (processedValue != null) key to processedValue else null
+        }.toMap()
     }
 
     fun createPlotLayout(

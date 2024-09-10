@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.LinearBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.NonlinearBreaksGen
 
 object Transforms {
     val IDENTITY: ContinuousTransform = IdentityTransform()
@@ -26,16 +28,16 @@ object Transforms {
 
     fun createBreaksGeneratorForTransformedDomain(
         transform: ContinuousTransform,
-        labelFormatter: ((Any) -> String)? = null,
+        providedFormatter: ((Any) -> String)? = null,
         superscriptExponent: Boolean
     ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
-            IDENTITY -> LinearBreaksGen(labelFormatter, superscriptExponent)
-            REVERSE -> LinearBreaksGen(labelFormatter, superscriptExponent)
-            SQRT -> NonlinearBreaksGen(SQRT, labelFormatter, superscriptExponent)
-            LOG10 -> NonlinearBreaksGen(LOG10, labelFormatter, superscriptExponent)
-            LOG2 -> NonlinearBreaksGen(LOG2, labelFormatter, superscriptExponent)
-            SYMLOG -> NonlinearBreaksGen(SYMLOG, labelFormatter, superscriptExponent)
+            IDENTITY -> LinearBreaksGen(providedFormatter, superscriptExponent)
+            REVERSE -> LinearBreaksGen(providedFormatter, superscriptExponent)
+            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, superscriptExponent)
+            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, superscriptExponent)
+            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, superscriptExponent)
+            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, superscriptExponent)
             else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
         }
 
@@ -68,11 +70,6 @@ object Transforms {
         private val transform: ContinuousTransform,
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
-        override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-            val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
-            return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
-        }
-
         override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
@@ -80,13 +77,8 @@ object Transforms {
 
         override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
-            val scaleBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
-            val originalBreaks = scaleBreaks.domainValues
-            val transformedBreaks = transform.apply(originalBreaks).map {
-                it as Double // Should not contain NULLs
-            }
-
-            return ScaleBreaks(originalBreaks, transformedBreaks, scaleBreaks.labels)
+            val breaksNoTransform = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
+            return breaksNoTransform.withTransform(transform)
         }
     }
 }

@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 abstract class BreaksHelperBase(
     start: Double,
     end: Double,
-    targetCount: Int
+    targetCount: Int,
 ) {
     abstract val breaks: List<Double>
 

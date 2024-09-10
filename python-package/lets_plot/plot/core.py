@@ -12,7 +12,7 @@ __all__ = ['aes', 'layer']
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
 
-def aes(x=None, y=None, **other):
+def aes(x=None, y=None, **kwargs):
     """
     Define aesthetic mappings.
 
@@ -69,7 +69,7 @@ def aes(x=None, y=None, **other):
 
     """
 
-    return FeatureSpec('mapping', name=None, x=x, y=y, **other)
+    return FeatureSpec('mapping', name=None, x=x, y=y, **kwargs)
 
 
 def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs):
@@ -162,7 +162,7 @@ class FeatureSpec():
 
     Do not use this class explicitly.
 
-    Instead you should construct its objects with functions `ggplot()`, `geom_point()`,
+    Instead, you should construct its objects with functions `ggplot()`, `geom_point()`,
     `position_dodge()`, `scale_x_continuous()` etc.
     """
 
@@ -175,26 +175,6 @@ class FeatureSpec():
         self.__props.update(**kwargs)
 
     def props(self):
-        """
-        Return the dictionary of all properties of the object in their initial form.
-
-        Returns
-        -------
-        dict
-            Dictionary of properties.
-
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 4
-
-            from lets_plot import *
-            LetsPlot.setup_html()
-            p = ggplot({'x': [0], 'y': [0]}) + geom_point(aes('x', 'y'))
-            p.props()
-
-        """
         return self.__props
 
     def as_dict(self):
@@ -228,16 +208,16 @@ class FeatureSpec():
             # nothing
             return self
 
-        """
-            self + plot -> fail
-            self + other_feature -> [self,other_feature]
-        """
-        if isinstance(other, PlotSpec):
-            # pass and fail
+        if self.kind in ["plot", "subplots"]:
+            # pass and fail: don't allow to add plot to a feature list.
             pass
-        if isinstance(other, FeatureSpec):
-            arr = FeatureSpecArray(self, other)
-            return arr
+        elif isinstance(other, FeatureSpec):
+            if other.kind in ["plot", "subplots"]:
+                # pass and fail: don't allow to add plot to a feature list.
+                pass
+            else:
+                arr = FeatureSpecArray(self, other)
+                return arr
 
         raise TypeError('unsupported operand type(s) for +: {} and {}'
                         .format(self.__class__, other.__class__))
@@ -417,8 +397,14 @@ class PlotSpec(FeatureSpec):
                 return plot
 
             if other.kind == 'guides':
-                existing_guides_options = plot.props().get('guides', {})
-                plot.props()['guides'] = _merge_dicts_recursively(existing_guides_options, other.as_dict())
+                existing_options = plot.props().get('guides', {})
+                plot.props()['guides'] = _merge_dicts_recursively(existing_options, other.as_dict())
+                return plot
+
+            if other.kind == 'mapping':  # +aes(..)
+                existing_spec = plot.props().get('mapping', aes())
+                merged_mapping = {**existing_spec.as_dict(), **other.as_dict()}
+                plot.props()['mapping'] = aes(**merged_mapping)
                 return plot
 
             # add feature to properties
@@ -921,7 +907,7 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
 
     if any(it is not None for it in [w, h, unit, dpi]):
         if w is None or h is None or unit is None or dpi is None:
-            raise ValueError("w, h, unit and dpi must be specified")
+            raise ValueError("w, h, unit, and dpi must all be specified")
 
         w, h = _to_inches(w, unit) * dpi, _to_inches(h, unit) * dpi
         export_function(bytestring=svg, write_to=path, dpi=dpi, output_width=w, output_height=h)

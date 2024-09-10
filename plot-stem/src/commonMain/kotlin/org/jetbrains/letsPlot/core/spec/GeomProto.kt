@@ -19,12 +19,17 @@ import org.jetbrains.letsPlot.core.spec.Option.Geom
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Pos
+import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor, aopConversion: AesOptionConversion, superscriptExponent: Boolean): GeomProvider {
+    fun geomProvider(
+        layerConfig: LayerConfig,
+        aopConversion: AesOptionConversion,
+        superscriptExponent: Boolean
+    ): GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
     }
 
@@ -72,6 +77,7 @@ class GeomProto(val geomKind: GeomKind) {
             AB_LINE -> DefaultSampling.AB_LINE
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
+            BAND -> DefaultSampling.RECT
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
             AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN
@@ -97,7 +103,8 @@ class GeomProto(val geomKind: GeomKind) {
             LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
             RASTER,
-            IMAGE -> Samplings.NONE
+            IMAGE,
+            BLANK-> Samplings.NONE
         }
     }
 
@@ -169,7 +176,7 @@ class GeomProto(val geomKind: GeomKind) {
         private val COMMON = commonDefaults()
 
         init {
-            for (geomKind in values()) {
+            for (geomKind in GeomKind.entries) {
                 DEFAULTS[geomKind] = COMMON
             }
 

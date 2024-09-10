@@ -17,10 +17,10 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
-class GridComponent(
+class GridComponent constructor(
     private val majorGrid: List<List<DoubleVector>>,
     private val minorGrid: List<List<DoubleVector>>,
-    private val orientation: Orientation,
+    private val isHorizontal: Boolean,
     private val isOrthogonal: Boolean,
     geomContentBounds: DoubleRectangle,
     private val gridTheme: PanelGridTheme,
@@ -28,7 +28,7 @@ class GridComponent(
 ) : SvgComponent() {
     private val container = SvgGElement()
     private val start = 0.0
-    private val end: Double = if (orientation.isHorizontal) geomContentBounds.height else geomContentBounds.width
+    private val end: Double = if (isHorizontal) geomContentBounds.width else geomContentBounds.height
     private val gridArea = geomContentBounds
         .subtract(geomContentBounds.origin)
         .let { gridArea ->
@@ -38,9 +38,9 @@ class GridComponent(
             }
 
             // reduce grid area by 3px to avoid grid lines to be drawn on the edge (for aesthetic reasons)
-            val noGridMargin = when (orientation.isHorizontal) {
-                true -> Thickness(right = 3.0, left = 3.0)
-                false -> Thickness(top = 3.0, bottom = 3.0)
+            val noGridMargin = when (isHorizontal) {
+                true -> Thickness(top = 3.0, bottom = 3.0)
+                false -> Thickness(right = 3.0, left = 3.0)
             }
 
             return@let noGridMargin.shrinkRect(gridArea)
@@ -78,9 +78,9 @@ class GridComponent(
             if (isOrthogonal) {
                 grid
                     .map { (p) ->
-                        when (orientation.isHorizontal) {
-                            true -> listOf(DoubleVector(p.x, start), DoubleVector(p.x, end))
-                            false -> listOf(DoubleVector(start, p.y), DoubleVector(end, p.y))
+                        when (isHorizontal) {
+                            true -> listOf(DoubleVector(start, p.y), DoubleVector(end, p.y))
+                            false -> listOf(DoubleVector(p.x, start), DoubleVector(p.x, end))
                         }
                     }
                     .filter { line -> line.any { p -> p in gridArea } }

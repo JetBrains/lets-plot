@@ -14,15 +14,14 @@ internal class AdaptableAxisBreaksProvider(
     private val breaksGenerator: BreaksGenerator
 ) : AxisBreaksProvider {
 
-    override val isFixedBreaks: Boolean
-        get() = false
+    override val isFixedBreaks: Boolean = false
 
     override val fixedBreaks: ScaleBreaks
         get() = throw IllegalStateException("Not a fixed breaks provider")
 
     override fun getBreaks(targetCount: Int): ScaleBreaks {
-        @Suppress("UnnecessaryVariable")
         val scaleBreaks = breaksGenerator.generateBreaks(domainAfterTransform, targetCount)
+        check(!scaleBreaks.fixed) { "Unexpected 'fixed' scale breaks." }
         return scaleBreaks
     }
 }

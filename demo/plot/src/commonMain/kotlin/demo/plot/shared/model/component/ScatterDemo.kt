@@ -28,6 +28,7 @@ import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
@@ -112,7 +113,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme
@@ -139,7 +140,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme
@@ -306,7 +307,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme
@@ -333,7 +334,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme
@@ -442,7 +443,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleX.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme
@@ -469,7 +470,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(
                     scaleY.getScaleBreaks(),
                     coord,
-                    domain = DoubleRectangle.hvRange(domainX, domainY),
+                    dataDomain = DoubleRectangle.hvRange(domainX, domainY),
                     flipAxis = false,
                     orientation,
                     axisTheme

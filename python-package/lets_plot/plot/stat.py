@@ -9,7 +9,8 @@ __all__ = ['stat_summary', 'stat_summary_bin', 'stat_ecdf', 'stat_sum']
 
 
 def stat_summary(mapping=None, *, data=None, geom=None,
-                 position=None, show_legend=None, sampling=None, tooltips=None,
+                 position=None, show_legend=None, inherit_aes=None,
+                 sampling=None, tooltips=None,
                  orientation=None,
                  fun=None, fun_min=None, fun_max=None,
                  quantiles=None,
@@ -35,6 +36,8 @@ def stat_summary(mapping=None, *, data=None, geom=None,
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -138,6 +141,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
                  stat='summary',
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -148,7 +152,8 @@ def stat_summary(mapping=None, *, data=None, geom=None,
 
 
 def stat_summary_bin(mapping=None, *, data=None, geom=None,
-                     position=None, show_legend=None, sampling=None, tooltips=None,
+                     position=None, show_legend=None, inherit_aes=None,
+                     sampling=None, tooltips=None,
                      orientation=None,
                      fun=None, fun_min=None, fun_max=None,
                      quantiles=None,
@@ -177,6 +182,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -290,6 +297,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
                  stat='summarybin',
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -302,7 +310,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
 
 
 def stat_ecdf(mapping=None, *, data=None, geom=None,
-              position=None, show_legend=None, sampling=None, tooltips=None,
+              position=None, show_legend=None, inherit_aes=None,
+              sampling=None, tooltips=None,
               orientation=None,
               n=None, pad=None,
               color_by=None,
@@ -327,6 +336,8 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -426,6 +437,7 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  stat='ecdf',
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
@@ -435,7 +447,8 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  **other_args)
 
 
-def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=None, inherit_aes=None,
+             sampling=None, tooltips=None,
              color_by=None, fill_by=None,
              **other_args):
     """
@@ -458,6 +471,8 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -498,11 +513,10 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -515,11 +529,10 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
         n = 50
         np.random.seed(42)
@@ -536,6 +549,7 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
                  stat='sum',
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
