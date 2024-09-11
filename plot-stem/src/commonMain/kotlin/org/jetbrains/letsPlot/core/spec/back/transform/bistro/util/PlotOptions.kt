@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 class PlotOptions : Options(
     mutableMapOf(Meta.KIND to Meta.Kind.PLOT)
 ) {
-    var data: Map<String, List<Any>>? by map(PlotBase.DATA)
+    var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
     var mappings: Map<String, String>? by map(PlotBase.MAPPING)
     var layerOptions: List<LayerOptions>? by map(Plot.LAYERS)
     var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Figure.BLANK
 import org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 
 
 object SpecTransformBackendUtil {
@@ -38,10 +39,15 @@ object SpecTransformBackendUtil {
             }
             // <-- Testing
 
-            when (PlotConfig.figSpecKind(plotSpecRaw)) {
-                FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
-                FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)
-                FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)
+            if (VegaConfig.isVegaLiteSpec(plotSpecRaw)) {
+                VegaConfig.transform(plotSpecRaw)
+            } else {
+                when (PlotConfig.figSpecKind(plotSpecRaw)) {
+                    FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
+                    FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)
+                    FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)
+                    else -> throw IllegalArgumentException("Unsupported figure kind")
+                }
             }
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
