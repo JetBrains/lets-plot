@@ -6612,7 +6612,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Relate the size of the text to the length of the unit step along one of the axes.
         If None, no fitting is performed.
     check_overlap : bool, default=False
-        If True, text that overlaps previous text in the same layer will not be plotted.
+        If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6855,7 +6855,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Relate the size of the text label to the length of the unit step along one of the axes.
         If None, no fitting is performed.
     check_overlap : bool, default=False
-        If True, label that overlaps previous label in the same layer will not be plotted.
+        If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
