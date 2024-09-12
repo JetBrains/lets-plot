@@ -16,6 +16,7 @@ internal object Option {
     object Encodings {
         const val ENCODING = "encoding"
         const val FIELD = "field"
+        const val VALUE = "value"
         const val TYPE = "type"
 
         object Channels {
