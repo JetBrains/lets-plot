@@ -7539,7 +7539,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                **other_args):
     """
     Draw nothing, but can be a useful way of ensuring common scales between different plots (see `expand_limits()`).
-    Also, can help to avoid the "No layers in plot" error when buildling plots using automated tools.
+    Also, can help to avoid the "No layers in plot" error when building plots using automated tools.
 
     Parameters
     ----------

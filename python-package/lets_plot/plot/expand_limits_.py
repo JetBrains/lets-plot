@@ -26,23 +26,53 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
 
     Examples
     --------
+        .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-3, 0, 1],
+            'y': [2, 3, -1],
+        }
+
+        # Include the value -10 along the x-axis
+        ggplot(data, aes('x', 'y')) + geom_point() + \
+            expand_limits(x=-10)
+
+    |
+
+        .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-3, 0, 1],
+            'y': [2, 3, -1],
+        }
+
+        # Expand Limits Along the y-axis
+        ggplot(data, aes('x', 'y')) + geom_point() + \
+            expand_limits(y=range(-10, 10))
 
     """
     params = locals()
 
     def standardize(value):
-        if value is None:
-            return [None]
-        elif isinstance(value, (list, tuple, range)):
+        if isinstance(value, (list, tuple, range)):
             return list(value)
         else:
             return [value]
 
     standardized = {k: standardize(v) for k, v in params.items()}
 
-    max_length = max(len(v) for v in standardized.values())
-    raw_data = {k: v + [None] * (max_length - len(v)) for k, v in standardized.items()}
+    # Drop all undefined but keep x and y even if undefined.
+    cleaned = {k: v for k, v in standardized.items() if k in ['x', 'y'] or not all(e is None for e in v)}
 
-    # remove all undefined but keep x and y even if undefined.
-    filtered_data = {k: v for k, v in raw_data.items() if k in ['x', 'y'] or not all(e is None for e in v)}
-    return geom_blank(mapping=aes(**filtered_data))
+    max_length = max(len(v) for v in cleaned.values())
+    data = {k: v + [None] * (max_length - len(v)) for k, v in cleaned.items()}
+
+    return geom_blank(mapping=aes(**data))
