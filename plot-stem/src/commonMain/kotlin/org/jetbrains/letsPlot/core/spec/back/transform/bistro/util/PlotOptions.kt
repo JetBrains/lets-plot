@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
 
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
@@ -14,7 +15,7 @@ class PlotOptions : Options(
     mutableMapOf(Meta.KIND to Meta.Kind.PLOT)
 ) {
     var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
-    var mappings: Map<String, String>? by map(PlotBase.MAPPING)
+    var mappings: Map<Aes<*>, String>? by map(PlotBase.MAPPING)
     var layerOptions: List<LayerOptions>? by map(Plot.LAYERS)
     var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)
     var title: String? by map(Plot.TITLE)

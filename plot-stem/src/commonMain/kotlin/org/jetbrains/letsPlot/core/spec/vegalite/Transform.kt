@@ -8,45 +8,87 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.layer
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.plot
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.LayerOptions
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil.toSpec
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
+import org.jetbrains.letsPlot.core.spec.getDouble
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Marks
 
 internal object Transform {
     fun transform(spec: MutableMap<String, Any>): MutableMap<String, Any> {
-        return when (VegaConfig.getPlotKind(spec)) {
-            VegaPlotKind.SINGLE_LAYER -> fromSingleLayerSpec(spec)
-            VegaPlotKind.MULTI_LAYER -> error("Not implemented - multi-layer plot")
+        val plotOptions = PlotOptions()
+
+        when (VegaConfig.getPlotKind(spec)) {
+            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(spec, plotOptions)
+            VegaPlotKind.MULTI_LAYER -> {
+                spec.getMap(Option.DATA)?.let { plotOptions.data = transformData(it) }
+                spec.getMap(Encodings.ENCODING)?.let { processPlotEncoding(it, plotOptions) }
+                spec.getMaps(Option.LAYER)!!.forEach { layerSpec -> processLayerSpec(layerSpec, plotOptions) }
+            }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
+
+        return toSpec(plotOptions)
     }
 
-    private fun fromSingleLayerSpec(spec: MutableMap<String, Any>): MutableMap<String, Any> {
-        val lpSpec = plot {
-            data = spec.getMap(Option.DATA)?.let(::transformData)
+    private fun processLayerSpec(layerSpec: Map<*, *>, plotOptions: PlotOptions) {
+        val layer = LayerOptions()
+        runCatching {
+            layer.data = layerSpec.getMap(Option.DATA)?.let(::transformData)
+            configMark(layerSpec[Option.MARK]!!, layer)
+            layerSpec.getMap(Encodings.ENCODING)?.let {
+                processLayerEncoding(it, layer)
+            }
 
-            layerOptions = listOf(
-                layer {
-                    geom = spec.getString(Option.MARK)?.let(::transformGeomKind)
-                    mappings = spec.getMap(Encodings.ENCODING)?.let(::transformMappings)
+            plotOptions.layerOptions = (plotOptions.layerOptions ?: emptyList()) + layer
+        }.onFailure { e -> println("Failed to process layer spec: $layerSpec\n$e") }
+    }
 
-                }
-            )
+    private fun processPlotEncoding(
+        encodingSpec: Map<*, *>,
+        options: PlotOptions
+    ) {
+        val mappings: Map<Aes<*>, String> = encodingSpec
+            .mapValues { (_, encoding) -> (encoding as Map<*, *>).getString(Encodings.FIELD) }
+            .filterNotNullValues()
+            .mapKeys { (channel, _) -> channelToAes(channel) }
+        options.mappings = mappings
+    }
+
+    private fun processLayerEncoding(
+        encodingSpec: Map<*, *>,
+        options: LayerOptions
+    ) {
+        val mappings: Map<Aes<*>, String> = encodingSpec
+            .mapValues { (_, encoding) -> (encoding as Map<*, *>).getString(Encodings.FIELD) }
+            .filterNotNullValues()
+            .mapKeys { (channel, _) -> channelToAes(channel) }
+        options.mappings = mappings
+    }
+
+    private fun configMark(
+        spec: Any,
+        options: LayerOptions
+    ) {
+        val spec = when (spec) {
+            is String -> mapOf(Option.Mark.TYPE to spec)
+            is Map<*, *> -> spec
+            else -> error("Unsupported mark spec: $spec")
         }
 
-        return OptionsUtil.toSpec(lpSpec)
+        val mark = spec.getString(Option.Mark.TYPE) ?: error("Mark type is not specified")
+        options.geom = transformGeomKind(mark)
+        options.width = spec.getDouble(Option.Mark.WIDTH, Option.Mark.Width.BAND)
     }
 
     private fun transformGeomKind(markerType: String): GeomKind {
         return when (markerType) {
-            Marks.POINT -> GeomKind.POINT
-            Marks.LINE -> GeomKind.LINE
-            Marks.BAR -> GeomKind.BAR
+            Option.Mark.Types.POINT -> GeomKind.POINT
+            Option.Mark.Types.LINE -> GeomKind.LINE
+            Option.Mark.Types.BAR -> GeomKind.BAR
             else -> error("Unsupported mark type: $markerType")
         }
     }
@@ -58,18 +100,19 @@ internal object Transform {
         return data
     }
 
-    private fun transformMappings(encoding: Map<*, *>): Map<Aes<*>, String> {
-        return encoding
-            .mapValues { (_, encoding) -> (encoding as Map<*, *>).getString(Encodings.FIELD) }
-            .filterNotNullValues()
-            .mapKeys { (channel, _) -> channelToAes(channel) }
-    }
+    private fun transformConstants(markerType: String, encoding: Map<*, Map<*, *>>): Map<Aes<*>, Any?> {
+        val values = encoding.filter { (_, encoding) -> Encodings.VALUE in encoding }
+        return values.mapValues { (channel, encoding) ->
+            when (markerType) {
+                // Customize constant values for different mark types
+                Option.Mark.Types.BAR -> when (channel) {
+                    Encodings.Channels.SIZE -> encoding.getDouble(Encodings.VALUE)
+                    else -> encoding[Encodings.VALUE]
+                }
 
-    private fun transformConstants(encoding: Map<*, *>): Map<Aes<*>, Any?> {
-        return encoding
-            .mapValues { (_, encoding) -> (encoding as Map<*, *>)[Encodings.VALUE] }
-            .filterNotNullValues()
-            .mapKeys { (channel, _) -> channelToAes(channel) }
+                else -> encoding[Encodings.VALUE]
+            }
+        }.mapKeys { (channel, _) -> channelToAes(channel) }
     }
 
     private fun channelToAes(channel: Any?) = when (channel) {

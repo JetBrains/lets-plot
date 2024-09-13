@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
@@ -39,7 +40,7 @@ class SimpleTest {
                 |  }
                 |}
         """.trimMargin()
-        ).filterNotNullValues() as MutableMap<String, Any>
+        ).filterNotNullValues().asMutable()
 
         SpecTransformBackendUtil.processTransform(vegaSpec).let { spec ->
             assertThat(spec[Meta.KIND])

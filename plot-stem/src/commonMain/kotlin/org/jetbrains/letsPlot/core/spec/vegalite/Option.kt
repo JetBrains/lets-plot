@@ -48,9 +48,18 @@ internal object Option {
         }
     }
 
-    object Marks {
-        const val BAR = "bar"
-        const val LINE = "line"
-        const val POINT = "point"
+    object Mark {
+        const val TYPE = "type"
+        const val WIDTH = "width"
+        object Width {
+            const val BAND = "band"
+        }
+
+        object Types {
+            const val BAR = "bar"
+            const val LINE = "line"
+            const val POINT = "point"
+        }
     }
+
 }
