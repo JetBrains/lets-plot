@@ -37,11 +37,9 @@ internal object Transform {
     private fun processLayerSpec(layerSpec: Map<*, *>, plotOptions: PlotOptions) {
         val layer = LayerOptions()
         runCatching {
-            layer.data = layerSpec.getMap(Option.DATA)?.let(::transformData)
-            configMark(layerSpec[Option.MARK]!!, layer)
-            layerSpec.getMap(Encodings.ENCODING)?.let {
-                processLayerEncoding(it, layer)
-            }
+            layerSpec.getMap(Option.DATA)?.let { layer.data = transformData(it) }
+            layerSpec[Option.MARK]?.let { processMark(it, layer) }
+            layerSpec.getMap(Encodings.ENCODING)?.let { processLayerEncoding(it, layer) }
 
             plotOptions.layerOptions = (plotOptions.layerOptions ?: emptyList()) + layer
         }.onFailure { e -> println("Failed to process layer spec: $layerSpec\n$e") }
@@ -69,7 +67,7 @@ internal object Transform {
         options.mappings = mappings
     }
 
-    private fun configMark(
+    private fun processMark(
         spec: Any,
         options: LayerOptions
     ) {

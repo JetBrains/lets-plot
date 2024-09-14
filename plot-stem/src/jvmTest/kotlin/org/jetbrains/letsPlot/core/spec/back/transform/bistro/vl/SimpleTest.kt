@@ -46,13 +46,13 @@ class SimpleTest {
             assertThat(spec[Meta.KIND])
                 .isEqualTo(Meta.Kind.PLOT)
 
-            spec.getMap(PlotBase.DATA)!!.let { data ->
-                assertThat(data["a"]).isEqualTo(listOf("C", "C", "C", "D", "D", "D", "E", "E", "E"))
-                assertThat(data["b"]).isEqualTo(listOf(2.0, 7.0, 4.0, 1.0, 2.0, 6.0, 8.0, 4.0, 7.0))
-            }
-
             spec.getMaps(Plot.LAYERS)!!.first().let {
                 assertThat(it[Layer.GEOM]).isEqualTo(GeomKind.POINT.name.lowercase())
+                assertThat(it.getMap(PlotBase.DATA)).isEqualTo(mapOf(
+                    "a" to listOf("C", "C", "C", "D", "D", "D", "E", "E", "E"),
+                    "b" to listOf(2.0, 7.0, 4.0, 1.0, 2.0, 6.0, 8.0, 4.0, 7.0))
+                )
+
                 assertThat(it.getMap(PlotBase.MAPPING)).isEqualTo(
                     mapOf(
                         "x" to "a",
