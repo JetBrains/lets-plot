@@ -7,11 +7,15 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal object Option {
     const val DATA = "data"
-    const val VALUES = "values"
     const val LAYER = "layer"
     const val MARK = "mark"
     const val FACET = "facet"
     const val REPEAT = "repeat"
+
+    object Data {
+        const val VALUES = "values"
+        const val URL = "url"
+    }
 
     object Encodings {
         const val ENCODING = "encoding"
@@ -59,6 +63,8 @@ internal object Option {
             const val BAR = "bar"
             const val LINE = "line"
             const val POINT = "point"
+            const val AREA = "area"
+            const val BOXPLOT = "boxplot"
         }
     }
 
