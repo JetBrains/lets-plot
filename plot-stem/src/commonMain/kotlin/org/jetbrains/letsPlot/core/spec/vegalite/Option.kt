@@ -68,9 +68,13 @@ internal object Option {
         object Types {
             const val BAR = "bar"
             const val LINE = "line"
+            const val TRAIL = "trail"
             const val POINT = "point"
             const val AREA = "area"
             const val BOXPLOT = "boxplot"
+            const val TEXT = "text"
+            const val RECT = "rect"
+            const val RULE = "rule"
         }
     }
 

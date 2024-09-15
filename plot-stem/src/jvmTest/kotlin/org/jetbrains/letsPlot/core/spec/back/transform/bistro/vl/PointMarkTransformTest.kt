@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.core.spec.getString
 import org.junit.Test
 import java.util.Map.entry
 
-class MarkPointSpecTest {
+class PointMarkTransformTest {
 
     @Test
     fun typeAsString() {

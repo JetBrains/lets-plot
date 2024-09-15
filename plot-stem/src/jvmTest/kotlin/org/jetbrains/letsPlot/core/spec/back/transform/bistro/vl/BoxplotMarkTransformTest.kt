@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.spec.typed
 import java.util.Map.entry
 import kotlin.test.Test
 
-class MarkBoxplotSpecTest {
+class BoxplotMarkTransformTest {
     @Test
     fun simple() {
         val vegaSpec = parseJson(

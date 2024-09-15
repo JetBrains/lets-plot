@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
-import kotlin.collections.get
 
 internal object Util {
     internal fun readMark(spec: Any): Pair<String, Map<*, *>> {
@@ -30,6 +29,7 @@ internal object Util {
             val url = data.getString(Option.Data.URL) ?: error("URL is not specified")
             val json = when (url) {
                 "data/penguins.json" -> Penguins.json
+                "data/cars.json" -> Cars.json
                 else -> error("Unsupported URL: $url")
             }
             mapOf(Option.Data.VALUES to JsonParser(json).parseJson())

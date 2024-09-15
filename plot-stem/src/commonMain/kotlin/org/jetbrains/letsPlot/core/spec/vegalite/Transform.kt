@@ -34,10 +34,13 @@ internal object Transform {
         val (mark, _) = readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
         when (mark) {
             Option.Mark.Types.BAR -> BarMarkTransform.process(layerSpec, plotOptions)
-            Option.Mark.Types.LINE -> LineMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.LINE, Option.Mark.Types.TRAIL -> LineMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.POINT -> PointMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.AREA -> AreaMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.BOXPLOT -> BoxplotMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.TEXT -> TextMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.RECT -> RectMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.RULE -> RuleMarkTransform.process(layerSpec, plotOptions)
             else -> error("Unsupported mark type: $mark")
         }
     }

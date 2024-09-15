@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.spec.typed
 import org.junit.Test
 import java.util.Map.entry
 
-class MarkBarSpecTest {
+class BarMarkTransformTest {
 
     @Test
     fun typeAsString() {
