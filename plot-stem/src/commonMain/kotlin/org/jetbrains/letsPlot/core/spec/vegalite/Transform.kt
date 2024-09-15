@@ -37,7 +37,7 @@ internal object Transform {
             Option.Mark.Types.LINE -> LineMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.POINT -> PointMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.AREA -> AreaMarkTransform.process(layerSpec, plotOptions)
-            Option.Mark.Types.BOXPLOT -> PointMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.BOXPLOT -> BoxplotMarkTransform.process(layerSpec, plotOptions)
             else -> error("Unsupported mark type: $mark")
         }
     }
