@@ -28,16 +28,10 @@ internal class PointMarkTransform private constructor(
     }
 
     private fun process() {
-        layer.geom = GeomKind.POINT
-        layer.data = dataVegaSpec?.let(Util::transformData)
-
-        processEncoding()
-
-        plotOptions.layerOptions = (plotOptions.layerOptions ?: emptyList()) + layer
+        plotOptions.appendLayer {
+            geom = GeomKind.POINT
+            data = dataVegaSpec?.let(Util::transformData)
+            mappings = encodingVegaSpec?.let(Util::transformMappings)
+        }
     }
-
-    private fun processEncoding() {
-        layer.mappings = encodingVegaSpec?.let(Util::transformMappings)
-    }
-
 }

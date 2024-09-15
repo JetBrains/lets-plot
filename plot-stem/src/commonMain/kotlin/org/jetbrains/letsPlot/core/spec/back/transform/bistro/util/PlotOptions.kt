@@ -28,6 +28,11 @@ class PlotOptions : Options(
         var height: Int? by map(Plot.HEIGHT)
     }
 
+    fun appendLayer(block: LayerOptions.() -> Unit) {
+        val layer = LayerOptions().apply(block)
+        layerOptions = (layerOptions ?: emptyList()) + layer
+    }
+
     companion object {
         fun size(block: Size.() -> Unit) = Size().apply(block)
     }

@@ -39,16 +39,19 @@ object SpecTransformBackendUtil {
             }
             // <-- Testing
 
-            if (VegaConfig.isVegaLiteSpec(plotSpecRaw)) {
+            val spec = if (VegaConfig.isVegaLiteSpec(plotSpecRaw)) {
                 VegaConfig.transform(plotSpecRaw)
             } else {
-                when (PlotConfig.figSpecKind(plotSpecRaw)) {
-                    FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
-                    FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)
-                    FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)
-                    else -> throw IllegalArgumentException("Unsupported figure kind")
-                }
+                plotSpecRaw
             }
+
+            when (PlotConfig.figSpecKind(spec)) {
+                FigKind.PLOT_SPEC -> processTransformIntern(spec)
+                FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(spec)
+                FigKind.GG_BUNCH_SPEC -> processTransformInBunch(spec)
+                else -> throw IllegalArgumentException("Unsupported figure kind")
+            }
+
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
             if (failureInfo.isInternalError) {

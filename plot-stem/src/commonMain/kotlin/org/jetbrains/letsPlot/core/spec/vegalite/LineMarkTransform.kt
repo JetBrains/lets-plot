@@ -28,15 +28,10 @@ class LineMarkTransform private constructor(
         }
 
         private fun process() {
-            layer.geom = GeomKind.LINE
-            layer.data = dataVegaSpec?.let(Util::transformData)
-
-            processEncoding()
-
-            plotOptions.layerOptions = (plotOptions.layerOptions ?: emptyList()) + layer
-        }
-
-        private fun processEncoding() {
-            layer.data = dataVegaSpec?.let(Util::transformData)
+            plotOptions.appendLayer {
+                geom = GeomKind.LINE
+                data = dataVegaSpec?.let(Util::transformData)
+                mappings = encodingVegaSpec?.let(Util::transformMappings)
+            }
         }
 }

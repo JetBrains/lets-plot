@@ -22,6 +22,12 @@ internal object Option {
         const val FIELD = "field"
         const val VALUE = "value"
         const val TYPE = "type"
+        const val BIN = "bin"
+        const val AGGREGATE = "aggregate"
+
+        object Aggregate {
+            const val COUNT = "count"
+        }
 
         object Channels {
             const val X = "x"
