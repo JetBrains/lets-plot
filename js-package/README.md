@@ -6,14 +6,14 @@
 > If you want run them from this folder, remove `js-package:` from the task name.
 
 
- - `./gradlew js-package:jsBrowserProductionWebpack` - builds minified JS package `lets-plot.min.js` for embedding;
- - `./gradlew js-package:jsBrowserDevelopmentWebpack` - builds full-size JS package `lets-plot.js` for develop purpose;
+ - `$ ./gradlew js-package:jsBrowserProductionWebpack` - builds minified JS package `lets-plot.min.js` for embedding;
+ - `$ ./gradlew js-package:jsBrowserDevelopmentWebpack` - builds full-size JS package `lets-plot.js` for develop purpose;
 
 > **Note**: For more details about debugging JS demos check [JS debugging.md](../devdocs/misc/JS_debugging.md).
 
 After build artifacts can be found inside `build` directory: `js-package/build/distributions`.
 
-- `./gradlew js-package:copyForPublish` - copies minified JS package for release.
+- `$ ./gradlew js-package:copyForPublish` - copies minified JS package for release.
                                    
 Release artifacts are located inside `distr` directory: `js-package/distr`.
 

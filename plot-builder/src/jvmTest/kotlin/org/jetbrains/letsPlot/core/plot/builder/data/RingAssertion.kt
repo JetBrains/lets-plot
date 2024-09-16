@@ -35,8 +35,8 @@ class RingAssertion internal constructor(ring: List<DoubleVector>) :
 
     companion object {
 
-        fun assertThatRing(ring: List<DoubleVector>): RingAssertion {
-            return RingAssertion(ring)
+        fun assertThatRing(ring: List<IndexedValue<DoubleVector>>): RingAssertion {
+            return RingAssertion(ring.map(IndexedValue<DoubleVector>::value))
         }
     }
 }
