@@ -46,35 +46,32 @@ open class TextGeom : GeomBase() {
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
 
-        for (p in aesthetics.dataPoints()) {
-            val x = p.x()
-            val y = p.y()
-            val text = toString(p.label(), ctx)
+        for (dp in aesthetics.dataPoints()) {
+            val x = dp.x()
+            val y = dp.y()
+            val text = toString(dp.label(), ctx)
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
                 val point = DoubleVector(x!!, y!!)
-                val loc = helper.toClient(point, p) ?: continue
+                val loc = helper.toClient(point, dp) ?: continue
 
                 // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
-                val sizeUnitRatio = when (sizeUnit) {
-                    null -> 1.0
-                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
-                }
+                val sizeUnitRatio = sizeUnit?.let { getSizeUnitRatio(point, coord, sizeUnit!!) } ?: 1.0
 
-                if (checkOverlap && hasOverlaps(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
+                if (checkOverlap && hasOverlaps(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
                     continue
                 }
 
-                val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
-                root.add(g)
+                val tc = buildTextComponent(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
+                root.add(tc)
 
                 // The geom_text tooltip is similar to the geom_tile:
                 // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
                 targetCollector.addPoint(
-                    p.index(),
+                    dp.index(),
                     loc,
-                    sizeUnitRatio * AesScaling.textSize(p) / 2,
+                    sizeUnitRatio * AesScaling.textSize(dp) / 2,
                     GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
+                        markerColors = colorsByDataPoint(dp)
                     ),
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
@@ -97,7 +94,7 @@ open class TextGeom : GeomBase() {
         val rectangle = objectRectangle(location, textSize, TextUtil.fontSize(p, sizeUnitRatio), hAnchor, vAnchor)
             .rotate(toRadians(TextUtil.angle(p)), location)
 
-        if (myRestrictions.any { areIntersect(rectangle, it) }) {
+        if (myRestrictions.any { arePolygonsIntersected(rectangle, it) }) {
             return true
         }
         myRestrictions.add(rectangle)
@@ -182,30 +179,24 @@ open class TextGeom : GeomBase() {
             return listOf(lt, lb, rb, rt)
         }
 
-        private fun areIntersect(pg1: List<DoubleVector>, pg2: List<DoubleVector>): Boolean {
+        private fun arePolygonsIntersected(pg1: List<DoubleVector>, pg2: List<DoubleVector>): Boolean {
             fun projectPolygon(axis: DoubleVector, polygon: List<DoubleVector>): Pair<Double, Double> {
                 val dots = polygon.map { it.dotProduct(axis) }
-                return Pair(dots.min(), dots.max())
+                return dots.min() to dots.max()
             }
 
-            val edges = mutableListOf<DoubleVector>()
-            for (polygon in listOf(pg1, pg2)) {
-                for (i in polygon.indices) {
-                    val edge = polygon[i].subtract(
-                        polygon[(i + 1) % polygon.size]
-                    )
-                    edges.add(edge.orthogonal().normalize())
+            val edges = listOf(pg1, pg2).flatMap { polygon ->
+                polygon.indices.map { i ->
+                    polygon[i].subtract(polygon[(i + 1) % polygon.size])
+                        .orthogonal().normalize()
                 }
             }
 
-            for (axis in edges) {
+            return edges.none { axis ->
                 val (min1, max1) = projectPolygon(axis, pg1)
                 val (min2, max2) = projectPolygon(axis, pg2)
-                if (max1 < min2 || max2 < min1) {
-                    return false
-                }
+                max1 < min2 || max2 < min1
             }
-            return true
         }
     }
 }
