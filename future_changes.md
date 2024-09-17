@@ -7,6 +7,10 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
 
+- `marginal` parameter in `qq_plot()`:
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
+
 ### Changed
  
 ### Fixed
