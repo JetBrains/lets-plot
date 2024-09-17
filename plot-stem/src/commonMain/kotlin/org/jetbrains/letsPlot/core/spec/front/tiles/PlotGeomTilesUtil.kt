@@ -28,25 +28,36 @@ internal object PlotGeomTilesUtil {
         commonScales: Map<Aes<*>, Scale>,
     ): Map<Aes<*>, Scale> {
 
-        val layerRenamedScales = namePositionalScalesAfterStatVariables(
-            layerConfig.varBindings,
-            layerConfig.isYOrientation,
-            commonScales
-        )
-
-        val layerScales = commonScales + layerRenamedScales
-        return when (layerConfig.isMarginal) {
+        val layerCommonScales = when (layerConfig.isMarginal) {
             true -> MarginalLayerUtil.toMarginalScaleMap(
-                layerScales,
+                commonScales,
                 layerConfig.marginalSide,
                 flipOrientation = false    // Positional aes are already flipped in the "common scale map".
             )
 
-            false -> layerScales
+            false -> commonScales
         }
+
+        val layerAddedScales = createScalesForPositionalStatVariables(
+            layerConfig.varBindings,
+            layerConfig.isYOrientation,
+            commonScales
+        ).let { scaleByAes ->
+            when (layerConfig.isMarginal) {
+                true -> MarginalLayerUtil.toMarginalScaleMap(
+                    scaleByAes,
+                    layerConfig.marginalSide,
+                    flipOrientation = layerConfig.isYOrientation
+                )
+
+                false -> scaleByAes
+            }
+        }
+
+        return layerCommonScales + layerAddedScales
     }
 
-    private fun namePositionalScalesAfterStatVariables(
+    private fun createScalesForPositionalStatVariables(
         layerVarBindings: List<VarBinding>,
         isYOrientation: Boolean,
         commonScaleMap: Map<Aes<*>, Scale>,
