@@ -49,11 +49,12 @@ open class TextGeom : GeomBase() {
         for (dp in aesthetics.dataPoints()) {
             val text = toString(dp.label(), ctx)
             if (text.isEmpty()) continue
-            val point = dp.finiteOrNull(Aes.X, Aes.Y)?.let { DoubleVector(it) } ?: continue
+            val (x, y) = dp.finiteOrNull(Aes.X, Aes.Y) ?: continue
+            val point = DoubleVector(x, y)
             val loc = helper.toClient(point, dp) ?: continue
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(dp, coord, sizeUnit, BASELINE_TEXT_WIDTH)
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, BASELINE_TEXT_WIDTH)
 
             if (checkOverlap && hasOverlaps(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
                 continue

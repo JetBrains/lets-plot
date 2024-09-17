@@ -78,16 +78,13 @@ object AesScaling {
     }
 
     fun sizeUnitRatio(
-        p: DataPointAesthetics,
+        p: DoubleVector,
         coord: CoordinateSystem,
         axis: String?,
         baseUnitSize: Double
     ): Double {
         if (axis.isNullOrBlank()) return 1.0
-
-        val unitSquareSize = p.finiteOrNull(Aes.X, Aes.Y)
-            ?.let { coord.unitSize(DoubleVector(it)) }
-            ?: return 1.0
+        val unitSquareSize = coord.unitSize(p)
 
         val unitSize = when (axis.lowercase()) {
             "x" -> unitSquareSize.x
