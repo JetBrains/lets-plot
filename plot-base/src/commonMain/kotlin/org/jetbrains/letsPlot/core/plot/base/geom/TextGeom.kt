@@ -5,10 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
@@ -49,8 +47,7 @@ open class TextGeom : GeomBase() {
         for (dp in aesthetics.dataPoints()) {
             val text = toString(dp.label(), ctx)
             if (text.isEmpty()) continue
-            val (x, y) = dp.finiteOrNull(Aes.X, Aes.Y) ?: continue
-            val point = DoubleVector(x, y)
+            val point = dp.doubleVectorOrNull(Aes.X, Aes.Y) ?: continue
             val loc = helper.toClient(point, dp) ?: continue
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
