@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
@@ -116,7 +116,7 @@ class WaterfallPlotOptionsBuilder(
         return if (dataGroups.isEmpty()) {
             WaterfallUtil.emptyStat(df.variables())
         } else {
-            concat(dataGroups)
+            DataFrameUtil.concat(dataGroups)
         }
     }
 
@@ -158,7 +158,7 @@ class WaterfallPlotOptionsBuilder(
                 if (datasets.isEmpty()) {
                     WaterfallUtil.emptyStat(df.variables())
                 } else {
-                    concat(datasets)
+                    DataFrameUtil.concat(datasets)
                 }
             }
     }
@@ -285,15 +285,6 @@ class WaterfallPlotOptionsBuilder(
             mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
         return mappings
-    }
-
-    private fun concat(dataframes: List<DataFrame>): DataFrame {
-        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
-        val builder = DataFrame.Builder()
-        dataframes.first().variables().forEach { variable ->
-            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
-        }
-        return builder.build()
     }
 
     enum class Measure(val value: String) {

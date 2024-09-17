@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq
 
 import org.jetbrains.letsPlot.commons.intern.indicesOf
+import org.jetbrains.letsPlot.commons.intern.sortedIndices
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -18,16 +19,11 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_BOTTOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_LEFT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_RIGHT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_TOP
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData // TODO: Move to the common place
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.LayerOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.plot
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.scale
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.groupBy // TODO: Move to the common place
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.setColumn // TODO: Move to the common place
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 
 class QQPlotOptionsBuilder(
     data: Map<*, *>,
@@ -220,19 +216,9 @@ class QQPlotOptionsBuilder(
                 sortedDf.setColumn(THEORETICAL_VAR, t.map(quantileFunction))
             }
         }.let { dataframes ->
-            concat(dataframes)
+           DataFrameUtil.concat(dataframes)
         }
         return DataFrameUtil.toMap(statDf)
-    }
-
-    // TODO: Move to the common place
-    private fun concat(dataframes: List<DataFrame>): DataFrame {
-        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
-        val builder = DataFrame.Builder()
-        dataframes.first().variables().forEach { variable ->
-            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
-        }
-        return builder.build()
     }
 
     private fun getMarginalMappings(
@@ -259,10 +245,6 @@ class QQPlotOptionsBuilder(
 
         return mappings
     }
-
-    // TODO: Move to the common place
-    private fun <T, R : Comparable<R>> Iterable<T>.sortedIndices(selector: (IndexedValue<T>) -> R?) =
-        withIndex().sortedWith(compareBy(selector)).map(IndexedValue<T>::index)
 
     enum class MarginSide(val value: String) {
         LEFT(SIDE_LEFT),
