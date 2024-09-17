@@ -31,12 +31,12 @@ object Samplings {
         return PickSampling(sampleSize)
     }
 
-    fun vertexDp(sampleSize: Int): Sampling {
-        return VertexDpSampling(sampleSize)
+    fun vertexDp(sampleSize: Int, polygon: Boolean): Sampling {
+        return VertexDpSampling(sampleSize, polygon)
     }
 
-    fun vertexVw(sampleSize: Int): Sampling {
-        return VertexVwSampling(sampleSize)
+    fun vertexVw(sampleSize: Int, polygon: Boolean): Sampling {
+        return VertexVwSampling(sampleSize, polygon)
     }
 
     fun systematic(sampleSize: Int): Sampling {

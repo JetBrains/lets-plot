@@ -149,17 +149,20 @@ internal object PlotConfigUtil {
     }
 
     internal fun defaultScaleName(aes: Aes<*>, variablesByMappedAes: Map<Aes<*>, List<DataFrame.Variable>>): String {
-        return if (variablesByMappedAes.containsKey(aes)) {
-            val variables = variablesByMappedAes.getValue(aes)
-            val labels = variables.map(DataFrame.Variable::label).distinct()
-            if (labels.size > 1 && (aes == Aes.X || aes == Aes.Y)) {
-                // Don't show multiple labels on X,Y axis.
-                aes.name
-            } else {
-                labels.joinToString()
-            }
-        } else {
+        val variables = variablesByMappedAes[aes] ?: emptyList()
+        val labels = variables.map(DataFrame.Variable::label)
+            .distinct()
+            // Give preference to more descriptive labels.
+            // This also prevents overriding axis/legend title by the `expand_limits()` function.
+            .filter { it != aes.name }
+
+        return if (labels.isEmpty()) {
             aes.name
+        } else if (labels.size > 1 && (aes == Aes.X || aes == Aes.Y)) {
+            // Don't show multiple labels on X,Y axis.
+            aes.name
+        } else {
+            labels.joinToString()
         }
     }
 

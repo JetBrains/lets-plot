@@ -31,7 +31,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_blank']
 
 
-def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                map=None, map_join=None, use_crs=None,
                size_unit=None,
@@ -63,6 +64,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -205,6 +208,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -214,7 +218,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               map=None, map_join=None, use_crs=None,
               flat=None, geodesic=None,
@@ -245,6 +250,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -388,6 +395,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -397,7 +405,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               color_by=None,
               **other_args):
@@ -428,6 +437,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -504,6 +515,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -511,7 +523,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 tooltips=None,
                 orientation=None,
                 method=None,
@@ -549,6 +562,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -678,6 +693,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -694,7 +710,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
              tooltips=None, labels=None,
              orientation=None,
              color_by=None, fill_by=None,
@@ -725,6 +742,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -839,6 +858,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -848,8 +868,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None, threshold=None,
+def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None, sampling=None, threshold=None,
                    tooltips=None, labels=None,
                    orientation=None,
                    bins=None,
@@ -884,6 +904,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1001,6 +1023,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  threshold=threshold,
@@ -1015,7 +1038,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None, tooltips=None,
                  binwidth=None,
                  bins=None,
                  method=None,
@@ -1042,6 +1066,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, 
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1160,6 +1186,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, 
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1176,7 +1203,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, 
                  **other_args)
 
 
-def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                bins=None,
                binwidth=None,
@@ -1208,6 +1236,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1336,6 +1366,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1346,7 +1377,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               color_by=None, fill_by=None,
               **other_args):
@@ -1370,6 +1402,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1481,6 +1515,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1488,7 +1523,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 fill_by=None,
                 **other_args):
     """
@@ -1513,6 +1549,8 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1573,13 +1611,15 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  fill_by=fill_by,
                  **other_args)
 
 
-def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
                   sampling=None, tooltips=None,
                   color_by=None,
                   **other_args):
@@ -1608,6 +1648,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1709,6 +1751,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1716,8 +1759,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                  sampling=None, tooltips=None,
+def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   fatten=None,
                   color_by=None, fill_by=None,
                   **other_args):
@@ -1746,6 +1789,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1843,6 +1888,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1851,9 +1897,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                    sampling=None,
-                    tooltips=None,
+def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                    manual_key=None, sampling=None, tooltips=None,
                     fatten=None,
                     color_by=None, fill_by=None,
                     **other_args):
@@ -1882,6 +1927,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -1976,6 +2023,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -1984,7 +2032,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None,
                    sampling=None, tooltips=None,
                    color_by=None,
                    **other_args):
@@ -2013,6 +2062,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2097,6 +2148,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -2104,7 +2156,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
                  tooltips=None,
                  bins=None,
                  binwidth=None,
@@ -2130,6 +2183,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2240,6 +2295,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -2248,7 +2304,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
                   sampling=None, tooltips=None,
                   bins=None,
                   binwidth=None,
@@ -2274,6 +2331,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2385,6 +2444,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -2394,7 +2454,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
                  tooltips=None,
                  map=None, map_join=None, use_crs=None,
                  color_by=None, fill_by=None,
@@ -2419,6 +2480,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2568,6 +2631,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -2576,8 +2640,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
-             tooltips=None,
+def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None, tooltips=None,
              map=None, map_join=None, use_crs=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -2606,6 +2670,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2740,6 +2806,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -2748,7 +2815,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 slope=None,
                 intercept=None,
                 color_by=None,
@@ -2773,6 +2841,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -2853,6 +2923,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  slope=slope,
@@ -2861,8 +2932,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
-              tooltips=None,
+def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              sampling=None, tooltips=None,
               color_by=None, fill_by=None,
               **other_args):
     """
@@ -2885,6 +2956,8 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
@@ -2962,6 +3035,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
@@ -2969,7 +3043,8 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                yintercept=None,
                color_by=None,
@@ -2994,6 +3069,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3081,6 +3158,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -3089,7 +3167,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                xintercept=None,
                color_by=None,
@@ -3114,6 +3193,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3201,6 +3282,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -3209,7 +3291,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, tooltips=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, tooltips=None,
                  orientation=None,
                  fatten=None,
                  outlier_alpha=None, outlier_color=None, outlier_fill=None,
@@ -3240,6 +3323,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3394,7 +3479,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           stat=stat,
                           position=position,
                           show_legend=show_legend,
-                 manual_key=manual_key,
+                          inherit_aes=inherit_aes,
+                          manual_key=manual_key,
                           sampling=None,
                           tooltips=tooltips,
                           orientation=orientation,
@@ -3415,6 +3501,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                stat='boxplot_outlier',
                                position=position,
                                show_legend=False,
+                               inherit_aes=inherit_aes,
                                sampling=None,
                                orientation=orientation,
                                alpha=outlier_alpha,
@@ -3427,7 +3514,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     return boxplot_layer
 
 
-def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 tooltips=None,
                 orientation=None,
                 show_half=None,
@@ -3455,6 +3543,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3635,6 +3725,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -3642,12 +3733,15 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_half=show_half,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
-                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
+                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
+                 fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None,
+                  tooltips=None,
                   orientation=None,
                   binwidth=None,
                   bins=None,
@@ -3676,6 +3770,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None,
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3812,6 +3908,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None,
                  stat=None,
                  position=None,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -3829,7 +3926,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, manual_key=None,
                  **other_args)
 
 
-def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                     manual_key=None,
                      sampling=None, tooltips=None,
                      trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
@@ -3857,6 +3955,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -3993,6 +4093,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4011,7 +4112,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  **other_args)
 
 
-def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 tooltips=None,
                 color_by=None, fill_by=None,
                 **other_args):
@@ -4035,6 +4137,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -4120,6 +4224,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4127,8 +4232,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
-              tooltips=None,
+def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None, tooltips=None,
               flat=None, color_by=None, fill_by=None,
               **other_args):
     """
@@ -4157,6 +4262,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -4246,6 +4353,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4254,7 +4362,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
                  tooltips=None,
                  orientation=None,
                  trim=None,
@@ -4292,6 +4401,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -4458,6 +4569,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4468,8 +4580,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                   sampling=None, tooltips=None,
+def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                   manual_key=None, sampling=None, tooltips=None,
                    kernel=None,
                    adjust=None,
                    bw=None,
@@ -4502,6 +4614,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -4682,6 +4796,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4690,8 +4805,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                    sampling=None,
+def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                    manual_key=None, sampling=None,
                     tooltips=None,
                     kernel=None,
                     adjust=None,
@@ -4725,6 +4840,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -4907,6 +5024,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -4919,7 +5037,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  **other_args)
 
 
-def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                manual_key=None, sampling=None,
                 tooltips=None,
                 width=None, height=None,
                 color_by=None, fill_by=None,
@@ -4950,6 +5069,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5043,6 +5164,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5052,7 +5174,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+            manual_key=None, sampling=None,
             tooltips=None,
             distribution=None,
             dparams=None,
@@ -5084,6 +5207,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5177,6 +5302,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5186,7 +5312,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  **other_args)
 
 
-def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
              tooltips=None,
              color_by=None, fill_by=None,
              **other_args):
@@ -5216,6 +5343,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5284,6 +5413,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5291,7 +5421,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
                  tooltips=None,
                  distribution=None,
                  dparams=None,
@@ -5324,6 +5455,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5413,6 +5546,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5423,7 +5557,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
+def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
                   sampling=None, tooltips=None,
                   quantiles=None,
                   color_by=None,
@@ -5454,6 +5589,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5514,6 +5651,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5522,8 +5660,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                  sampling=None, tooltips=None,
+def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   color_by=None,
                   **other_args):
@@ -5553,6 +5691,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5634,6 +5774,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5642,7 +5783,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               direction=None,
               color_by=None,
@@ -5672,6 +5814,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5751,6 +5895,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5759,7 +5904,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               map=None, map_join=None, use_crs=None,
               color_by=None, fill_by=None,
@@ -5784,6 +5930,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -5922,6 +6070,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -5930,7 +6079,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                 manual_key=None, sampling=None,
                  tooltips=None,
                  arrow=None, flat=None, geodesic=None, spacer=None, color_by=None, **other_args):
     """
@@ -5958,6 +6108,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -6073,6 +6225,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -6084,7 +6237,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  **other_args)
 
 
-def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                arrow=None,
                curvature=None, angle=None, ncp=None,
@@ -6115,6 +6269,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -6231,6 +6387,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -6241,7 +6398,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                arrow=None, pivot=None,
                color_by=None, **other_args):
@@ -6263,6 +6421,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -6365,6 +6525,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
                  stat=None,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -6374,7 +6535,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, manu
                  **other_args)
 
 
-def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+              manual_key=None, sampling=None,
               tooltips=None,
               map=None, map_join=None, use_crs=None,
               label_format=None,
@@ -6408,6 +6570,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -6587,6 +6751,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -6599,7 +6764,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  **other_args)
 
 
-def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                map=None, map_join=None, use_crs=None,
                label_format=None,
@@ -6635,6 +6801,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -6826,6 +6994,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -6842,7 +7011,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+             manual_key=None, sampling=None,
              tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
              hole=None,
@@ -6873,6 +7043,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -7070,6 +7242,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -7084,8 +7257,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  **other_args)
 
 
-def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None,
-                  sampling=None, tooltips=None,
+def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   dir=None, fatten=None, slope=None, intercept=None,
                   color_by=None, fill_by=None,
@@ -7115,6 +7288,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -7228,6 +7403,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -7237,7 +7413,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
+def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+               manual_key=None, sampling=None,
                tooltips=None,
                color_by=None, fill_by=None,
                **other_args):
@@ -7261,6 +7438,8 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -7344,6 +7523,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -7351,15 +7531,15 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend=None, manual_key=None, sampling=None,
-               tooltips=None,
+def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=False,
+               manual_key=None,
+               sampling=None,
                map=None, map_join=None, use_crs=None,
-               size_unit=None,
                color_by=None, fill_by=None,
                **other_args):
     """
     Draw nothing, but can be a useful way of ensuring common scales between different plots (see `expand_limits()`).
-    Also, can help to avoid the "No layers in plot" error when buildling plots using automated tools.
+    Also, can help to avoid the "No layers in plot" error when building plots using automated tools.
 
     Parameters
     ----------
@@ -7384,15 +7564,14 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=False
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    # tooltips : `layer_tooltips`
-    #     Result of the call to the `layer_tooltips()` function.
-    #     Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -7404,9 +7583,6 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame's` original CRS.
-    size_unit : {'x', 'y'}
-        Relate the size of the point to the length of the unit step along one of the axes.
-        If None, no fitting is performed.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -7472,11 +7648,11 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                  stat=stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=sampling,
                  tooltips='none',
                  map=map, map_join=map_join, use_crs=use_crs,
-                 size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
@@ -7487,6 +7663,7 @@ def _geom(name, *,
           stat=None,
           position=None,
           show_legend=None,
+          inherit_aes=None,
           manual_key=None,
           sampling=None,
           tooltips=None,
@@ -7513,6 +7690,7 @@ def _geom(name, *,
                      mapping=mapping,
                      position=position,
                      show_legend=show_legend,
+                     inherit_aes=inherit_aes,
                      manual_key=manual_key,
                      sampling=sampling,
                      tooltips=tooltips,
