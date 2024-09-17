@@ -75,6 +75,9 @@ internal object Option {
             const val TEXT = "text"
             const val RECT = "rect"
             const val RULE = "rule"
+            const val CIRCLE = "circle"
+            const val SQUARE = "square"
+            const val ERROR_BAR = "errorbar"
         }
     }
 

@@ -40,33 +40,31 @@ internal object Util {
     }
 
 
-    fun transformMappings(encodingVegaSpec: Map<*, *>): Map<Aes<*>, String> {
-        val mappings: Map<Aes<*>, String> = encodingVegaSpec
+    fun transformMappings(encodingVegaSpec: Map<*, *>, customChannelMapping: Map<String, Aes<*>> = emptyMap()): Map<Aes<*>, String> {
+        val channelToAesMapping = mapOf(
+            Encodings.Channels.X to Aes.X,
+            Encodings.Channels.Y to Aes.Y,
+            Encodings.Channels.COLOR to Aes.COLOR,
+            Encodings.Channels.FILL to Aes.FILL,
+            Encodings.Channels.OPACITY to Aes.ALPHA,
+            Encodings.Channels.STROKE to Aes.STROKE,
+            Encodings.Channels.SIZE to Aes.SIZE,
+            Encodings.Channels.ANGLE to Aes.ANGLE,
+            Encodings.Channels.SHAPE to Aes.SHAPE,
+            Encodings.Channels.TEXT to Aes.LABEL
+        ) + customChannelMapping
+
+        val channelsEncoding = encodingVegaSpec
             .mapValues { (_, encoding) -> (encoding as Map<*, *>).getString(Encodings.FIELD) }
             .filterNotNullValues()
-            .mapKeys { (channel, _) -> channelToAes(channel) }
+
+        val unsupportedChannels = channelsEncoding.keys - channelToAesMapping.keys
+        if (unsupportedChannels.isNotEmpty()) {
+            println("Warning: unsupported channels: $unsupportedChannels")
+        }
+
+        val mappings: Map<Aes<*>, String> = (channelsEncoding - unsupportedChannels)
+            .mapKeys { (channel, _) -> channelToAesMapping[channel]!! }
         return mappings
     }
-
-    fun channelToAes(channel: Any?) = when (channel) {
-        Encodings.Channels.X -> Aes.X
-        Encodings.Channels.Y -> Aes.Y
-        Encodings.Channels.X2 -> Aes.XEND
-        Encodings.Channels.Y2 -> Aes.YEND
-        Encodings.Channels.COLOR -> Aes.COLOR
-        Encodings.Channels.FILL -> Aes.FILL
-        Encodings.Channels.OPACITY -> Aes.ALPHA
-        Encodings.Channels.FILL_OPACITY -> error("Unsupported encoding channel: FILL_OPACITY")
-        Encodings.Channels.STROKE -> Aes.STROKE
-        Encodings.Channels.STROKE_OPACITY -> error("Unsupported encoding channel: STROKE_OPACITY")
-        Encodings.Channels.STROKE_WIDTH -> Aes.STROKE
-        Encodings.Channels.STROKE_DASH -> error("Unsupported encoding channel: STROKE_DASH")
-        Encodings.Channels.SIZE -> Aes.SIZE
-        Encodings.Channels.ANGLE -> Aes.ANGLE
-        Encodings.Channels.SHAPE -> Aes.SHAPE
-        Encodings.Channels.TEXT -> Aes.LABEL
-        else -> error("Unsupported encoding channel: $channel")
-    }
-
-
 }
