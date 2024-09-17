@@ -155,14 +155,6 @@ open class TextGeom : GeomBase() {
         // and values between -1.0 and 1.0.
         private const val BASELINE_TEXT_WIDTH = 6.0
 
-        private fun DoubleRectangle.rotate(angle: Double, around: DoubleVector): List<DoubleVector> {
-            val lt = origin.rotateAround(around, angle)
-            val lb = DoubleVector(left, bottom).rotateAround(around, angle)
-            val rt = DoubleVector(right, top).rotateAround(around, angle)
-            val rb = DoubleVector(right, bottom).rotateAround(around, angle)
-            return listOf(lt, lb, rb, rt)
-        }
-
         private fun arePolygonsIntersected(pg1: List<DoubleVector>, pg2: List<DoubleVector>): Boolean {
             fun projectPolygon(axis: DoubleVector, polygon: List<DoubleVector>): Pair<Double, Double> {
                 val dots = polygon.map { it.dotProduct(axis) }
