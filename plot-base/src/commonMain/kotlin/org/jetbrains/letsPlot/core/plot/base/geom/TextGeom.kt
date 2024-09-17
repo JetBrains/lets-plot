@@ -47,35 +47,32 @@ open class TextGeom : GeomBase() {
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
 
         for (dp in aesthetics.dataPoints()) {
-            val x = dp.x()
-            val y = dp.y()
             val text = toString(dp.label(), ctx)
-            if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
-                val point = DoubleVector(x!!, y!!)
-                val loc = helper.toClient(point, dp) ?: continue
+            if (text.isEmpty()) continue
+            val point = dp.finiteOrNull(Aes.X, Aes.Y)?.let { DoubleVector(it) } ?: continue
+            val loc = helper.toClient(point, dp) ?: continue
 
-                // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
-                val sizeUnitRatio = sizeUnit?.let { getSizeUnitRatio(point, coord, sizeUnit!!) } ?: 1.0
+            // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(dp, coord, sizeUnit, BASELINE_TEXT_WIDTH)
 
-                if (checkOverlap && hasOverlaps(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
-                    continue
-                }
-
-                val tc = buildTextComponent(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
-                root.add(tc)
-
-                // The geom_text tooltip is similar to the geom_tile:
-                // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
-                targetCollector.addPoint(
-                    dp.index(),
-                    loc,
-                    sizeUnitRatio * AesScaling.textSize(dp) / 2,
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(dp)
-                    ),
-                    TipLayoutHint.Kind.CURSOR_TOOLTIP
-                )
+            if (checkOverlap && hasOverlaps(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)) {
+                continue
             }
+
+            val tc = buildTextComponent(dp, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
+            root.add(tc)
+
+            // The geom_text tooltip is similar to the geom_tile:
+            // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
+            targetCollector.addPoint(
+                dp.index(),
+                loc,
+                sizeUnitRatio * AesScaling.textSize(dp) / 2,
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(dp)
+                ),
+                TipLayoutHint.Kind.CURSOR_TOOLTIP
+            )
         }
     }
 
@@ -156,20 +153,6 @@ open class TextGeom : GeomBase() {
         // Current implementation works for label_format ='.2f'
         // and values between -1.0 and 1.0.
         private const val BASELINE_TEXT_WIDTH = 6.0
-
-        private fun getSizeUnitRatio(
-            p: DoubleVector,
-            coord: CoordinateSystem,
-            axis: String
-        ): Double {
-            val unitSquareSize = coord.unitSize(p)
-            val unitSize = when (axis.lowercase()) {
-                "x" -> unitSquareSize.x
-                "y" -> unitSquareSize.y
-                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
-            }
-            return unitSize / BASELINE_TEXT_WIDTH
-        }
 
         private fun DoubleRectangle.rotate(angle: Double, around: DoubleVector): List<DoubleVector> {
             val lt = origin.rotateAround(around, angle)

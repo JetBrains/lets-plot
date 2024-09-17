@@ -5,6 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.aes
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 
 object AesScaling {
@@ -72,5 +75,26 @@ object AesScaling {
     fun targetEndSize(p: DataPointAesthetics): Double {
         // px -> aes Units
         return targetSize(p, false)
+    }
+
+    fun sizeUnitRatio(
+        p: DataPointAesthetics,
+        coord: CoordinateSystem,
+        axis: String?,
+        baseUnitSize: Double
+    ): Double {
+        if (axis.isNullOrBlank()) return 1.0
+
+        val unitSquareSize = p.finiteOrNull(Aes.X, Aes.Y)
+            ?.let { coord.unitSize(DoubleVector(it)) }
+            ?: return 1.0
+
+        val unitSize = when (axis.lowercase()) {
+            "x" -> unitSquareSize.x
+            "y" -> unitSquareSize.y
+            else -> error("Size unit value must be either 'x' or 'y', but was '$axis'.")
+        }
+
+        return unitSize / baseUnitSize
     }
 }

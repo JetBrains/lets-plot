@@ -9,6 +9,7 @@ import kotlin.math.*
 
 class DoubleVector(val x: Double, val y: Double) {
     constructor(x: Number, y: Number) : this(x.toDouble(), y.toDouble())
+    constructor(pair: Pair<Number, Number>) : this(pair.first, pair.second)
 
     operator fun component1(): Double = x
     operator fun component2(): Double = y
