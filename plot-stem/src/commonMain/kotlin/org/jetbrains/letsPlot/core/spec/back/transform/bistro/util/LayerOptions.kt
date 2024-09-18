@@ -82,7 +82,9 @@ class LayerOptions : Options() {
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
 
-    fun <T> setParameter(name: String, v: T) { properties[name] = v }
+    fun <T> setOption(option: LayerOption<T>, v: T) { properties[option.name] = v }
 }
+
+class LayerOption<T>(val name: String)
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)
