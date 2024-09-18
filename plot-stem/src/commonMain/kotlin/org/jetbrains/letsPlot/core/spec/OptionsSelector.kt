@@ -125,6 +125,29 @@ fun Map<*, *>.getList(path: List<String>, item: String): List<*>? {
     return getMap(path)?.get(item) as? List<*>
 }
 
+fun Map<*, *>.getNumList(vararg query: String): List<Number>? {
+    return getNumList(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getNumList(path: List<String>, item: String): List<Number>? {
+    val list = getList(path, item).also { list ->
+        list?.forEachIndexed { index, o ->
+            require(o is Number) { "The option '$item' requires a list of numbers but element [$index] is: $o" }
+        }
+    }
+    @Suppress("UNCHECKED_CAST")
+    return list as List<Number>?
+}
+
+fun Map<*, *>.getDoubleList(vararg query: String): List<Double>? {
+    return getDoubleList(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getDoubleList(path: List<String>, item: String): List<Double>? {
+    val list = getNumList(path, item)
+    return list?.map { it.toDouble() }
+}
+
 fun Map<*, *>.getMaps(vararg query: String): List<Map<*, *>>? {
     return getList(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
 }

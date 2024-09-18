@@ -30,8 +30,8 @@ class QQPlotOptionsBuilder(
     private val x: String? = null,
     private val y: String? = null,
     private val distribution: String? = DEF_DISTRIBUTION,
-    private val distributionParameters: List<*>? = null,
-    private val quantiles: List<*>? = null,
+    private val distributionParameters: List<Double>? = null,
+    private val quantiles: List<Double>? = null,
     private val group: String? = null,
     private val showLegend: Boolean? = null,
     private val marginal: String = DEF_MARGINAL,
@@ -55,9 +55,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
                     it.data = statData
                     it.mappings = mappings
-                    it.setParameter(QQ.DISTRIBUTION, distribution)
-                    it.setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
-                    it.setParameter(QQ.QUANTILES, quantiles)
+                    it.setParameter<String?>(QQ.DISTRIBUTION, distribution)
+                    it.setParameter<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
+                    it.setParameter<List<Double>?>(QQ.QUANTILES, quantiles)
                     it.showLegend = showLegend
                     it.color = color
                     it.fill = fill
@@ -69,9 +69,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
                     it.data = statData
                     it.mappings = mappings
-                    it.setParameter(QQ.DISTRIBUTION, distribution)
-                    it.setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
-                    it.setParameter(QQ.QUANTILES, quantiles)
+                    it.setParameter<String?>(QQ.DISTRIBUTION, distribution)
+                    it.setParameter<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
+                    it.setParameter<List<Double>?>(QQ.QUANTILES, quantiles)
                     it.showLegend = showLegend
                     it.color = lineColor ?:
                         if (group == null) DEF_LINE_COLOR else null
@@ -190,7 +190,7 @@ class QQPlotOptionsBuilder(
     private fun getStatData(
         data: Map<String, List<Any?>>,
         distribution: String?,
-        distributionParameters: List<*>?
+        distributionParameters: List<Double>?
     ): Map<String, List<Any?>> {
         if (sample == null) {
             return data
@@ -209,7 +209,7 @@ class QQPlotOptionsBuilder(
                 val t = (1..statSample.size).map { (it - 0.5) / statSample.size }
                 val quantileFunction = QQStatUtil.getQuantileFunction(
                     QQStat.Distribution.safeValueOf(distribution ?: DEF_DISTRIBUTION),
-                    distributionParameters as? List<Double> ?: emptyList()
+                    distributionParameters ?: emptyList()
                 )
                 sortedDf.setColumn(THEORETICAL_VAR, t.map(quantileFunction))
             }
