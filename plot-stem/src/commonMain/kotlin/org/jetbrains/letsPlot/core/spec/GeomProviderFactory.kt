@@ -415,6 +415,9 @@ internal object GeomProviderFactory {
         layerConfig.getString(Option.Geom.Text.SIZE_UNIT)?.let {
             geom.sizeUnit = it.lowercase()
         }
+        layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
+            geom.checkOverlap = it
+        }
     }
 
     private fun isVertical(ctx: GeomProvider.Context, geomName: String): Boolean {

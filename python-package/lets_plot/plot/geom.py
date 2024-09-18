@@ -6543,6 +6543,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               na_text=None,
               nudge_x=None, nudge_y=None,
               size_unit=None,
+              check_overlap=None,
               color_by=None,
               **other_args):
     """
@@ -6610,6 +6611,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     size_unit : {'x', 'y'}
         Relate the size of the text to the length of the unit step along one of the axes.
         If None, no fitting is performed.
+    check_overlap : bool, default=False
+        If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -6760,6 +6763,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
                  size_unit=size_unit,
+                 check_overlap=check_overlap,
                  color_by=color_by,
                  **other_args)
 
@@ -6774,6 +6778,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                label_padding=None, label_r=None, label_size=None,
                alpha_stroke=None,
                size_unit=None,
+               check_overlap=None,
                color_by=None, fill_by=None,
                **other_args):
     """
@@ -6849,6 +6854,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     size_unit : {'x', 'y'}
         Relate the size of the text label to the length of the unit step along one of the axes.
         If None, no fitting is performed.
+    check_overlap : bool, default=False
+        If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -7007,6 +7014,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_size=label_size,
                  alpha_stroke=alpha_stroke,
                  size_unit=size_unit,
+                 check_overlap=check_overlap,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
