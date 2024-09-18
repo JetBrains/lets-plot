@@ -27,7 +27,7 @@ open class TextGeom : GeomBase() {
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
-    open val paddingFactor: Double = 0.0
+    open var paddingFactor: Double = 0.0
 
     private val myRestrictions = mutableListOf<List<DoubleVector>>()
 

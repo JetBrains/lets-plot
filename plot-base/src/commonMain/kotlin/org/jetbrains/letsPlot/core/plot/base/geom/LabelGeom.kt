@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class LabelGeom : TextGeom() {
 
-    override val paddingFactor: Double = 0.25    //  Amount of padding around label
+    override var paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
     var borderWidth: Double = 1.0       //  Size of label border
     var alphaStroke: Boolean = false    //  Apply alpha to text and border
