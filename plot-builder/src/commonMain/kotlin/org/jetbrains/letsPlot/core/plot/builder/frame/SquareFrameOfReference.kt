@@ -298,10 +298,9 @@ internal class SquareFrameOfReference(
         override var dataBounds: DoubleRectangle = dataBounds
             private set
 
-        override fun transformView(scale: DoubleVector, offset: DoubleVector) {
+        override fun syncDataBounds() {
             val transientBounds = calculateTransientBounds(viewBounds, scale, offset)
             this.dataBounds = toDataBounds(transientBounds.subtract(viewBounds.origin))
-            super.transformView(scale, offset)
         }
 
         override fun repaint() {

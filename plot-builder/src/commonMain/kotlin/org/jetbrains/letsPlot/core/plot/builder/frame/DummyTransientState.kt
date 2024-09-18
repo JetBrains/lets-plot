@@ -14,6 +14,10 @@ internal class DummyTransientState : ComponentTransientState(DoubleRectangle(Dou
     override val dataBounds: DoubleRectangle
         get() = UNSUPPORTED("Not yet implemented")
 
+    override fun syncDataBounds() {
+        UNSUPPORTED("Not yet implemented")
+    }
+
     override fun repaint() {
         UNSUPPORTED("Not yet implemented")
     }

@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 abstract class ComponentTransientState(
     val viewBounds: DoubleRectangle
@@ -15,8 +14,6 @@ abstract class ComponentTransientState(
     var scale: DoubleVector = DoubleVector(1.0, 1.0)
         private set
     var offset: DoubleVector = DoubleVector.ZERO
-        private set
-    var transform = SvgTransformBuilder().build()
         private set
 
     abstract val dataBounds: DoubleRectangle
@@ -40,17 +37,16 @@ abstract class ComponentTransientState(
 
     fun reset() = transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
 
-    open fun transformView(scale: DoubleVector, offset: DoubleVector) {
+    fun transformView(scale: DoubleVector, offset: DoubleVector) {
         this.scale = scale
         this.offset = offset
 
-        this.transform = SvgTransformBuilder()
-            .scale(scale.x, scale.y)
-            .translate(offset)
-            .build()
+        syncDataBounds()
 
         repaint()
     }
+
+    protected abstract fun syncDataBounds()
 
     internal abstract fun repaint()
 }
