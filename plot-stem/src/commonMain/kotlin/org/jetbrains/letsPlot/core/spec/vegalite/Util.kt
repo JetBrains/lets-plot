@@ -39,6 +39,10 @@ internal object Util {
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
 
+    fun iHorizontal(encodingVegaSpec: Map<*, *>): Boolean {
+        return Encodings.Channels.Y2 !in encodingVegaSpec
+                && listOf(Encodings.Channels.X, Encodings.Channels.X2, Encodings.Channels.Y).all(encodingVegaSpec::containsKey)
+    }
 
     fun transformMappings(encodingVegaSpec: Map<*, *>, customChannelMapping: Map<String, Aes<*>> = emptyMap()): Map<Aes<*>, String> {
         val channelToAesMapping = mapOf(

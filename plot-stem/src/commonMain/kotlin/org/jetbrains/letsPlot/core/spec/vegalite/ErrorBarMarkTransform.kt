@@ -30,14 +30,23 @@ class ErrorBarMarkTransform private constructor(
         plotOptions.appendLayer {
             geom = GeomKind.ERROR_BAR
             data = dataVegaSpec?.let(Util::transformData)
+
             mappings = encodingVegaSpec
                 ?.let {
-                    Util.transformMappings(
-                        it, mapOf(
+                    val customChannelMappings = when (Util.iHorizontal(it)) {
+                        true -> mapOf(
+                            Encodings.Channels.X to Aes.XMIN,
                             Encodings.Channels.X2 to Aes.XMAX,
                             Encodings.Channels.Y2 to Aes.YMAX
                         )
-                    )
+                        false -> mapOf(
+                            Encodings.Channels.Y to Aes.YMIN,
+                            Encodings.Channels.Y2 to Aes.YMAX,
+                            Encodings.Channels.X2 to Aes.XMAX
+                        )
+                    }
+
+                    Util.transformMappings(it, customChannelMappings)
                 }
         }
     }

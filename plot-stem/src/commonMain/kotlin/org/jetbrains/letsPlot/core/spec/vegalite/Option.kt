@@ -48,6 +48,7 @@ internal object Option {
             const val SHAPE = "shape"
             const val TEXT = "text"
 
+            const val ERROR_X = "errorX"
         }
 
         object Type {
