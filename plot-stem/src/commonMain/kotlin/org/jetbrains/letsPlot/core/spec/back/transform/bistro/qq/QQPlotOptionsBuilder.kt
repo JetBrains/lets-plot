@@ -51,32 +51,32 @@ class QQPlotOptionsBuilder(
         val scaleNames = getScaleNames(sample, x, y, distribution)
         return plot {
             layerOptions = listOf(
-                LayerOptions().apply {
-                    geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
-                    data = statData
-                    setParameter(Option.PlotBase.MAPPING, mappings)
-                    setParameter(QQ.DISTRIBUTION, distribution)
-                    setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
-                    setParameter(QQ.QUANTILES, quantiles)
-                    showLegend = this@QQPlotOptionsBuilder.showLegend
-                    color = this@QQPlotOptionsBuilder.color
-                    fill = this@QQPlotOptionsBuilder.fill
-                    alpha = this@QQPlotOptionsBuilder.alpha
-                    size = this@QQPlotOptionsBuilder.size
-                    shape = ShapeOptionConverter().apply(this@QQPlotOptionsBuilder.shape)
+                LayerOptions().also {
+                    it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
+                    it.data = statData
+                    it.mappings = mappings
+                    it.setParameter(QQ.DISTRIBUTION, distribution)
+                    it.setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
+                    it.setParameter(QQ.QUANTILES, quantiles)
+                    it.showLegend = showLegend
+                    it.color = color
+                    it.fill = fill
+                    it.alpha = alpha
+                    it.size = this@QQPlotOptionsBuilder.size
+                    it.shape = ShapeOptionConverter().apply(shape)
                 },
-                LayerOptions().apply {
-                    geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
-                    data = statData
-                    setParameter(Option.PlotBase.MAPPING, mappings)
-                    setParameter(QQ.DISTRIBUTION, distribution)
-                    setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
-                    setParameter(QQ.QUANTILES, quantiles)
-                    showLegend = this@QQPlotOptionsBuilder.showLegend
-                    color = this@QQPlotOptionsBuilder.lineColor ?:
-                        if (this@QQPlotOptionsBuilder.group == null) DEF_LINE_COLOR else null
-                    size = this@QQPlotOptionsBuilder.lineSize
-                    linetype = LineTypeOptionConverter().apply(this@QQPlotOptionsBuilder.lineType)
+                LayerOptions().also {
+                    it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
+                    it.data = statData
+                    it.mappings = mappings
+                    it.setParameter(QQ.DISTRIBUTION, distribution)
+                    it.setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
+                    it.setParameter(QQ.QUANTILES, quantiles)
+                    it.showLegend = showLegend
+                    it.color = lineColor ?:
+                        if (group == null) DEF_LINE_COLOR else null
+                    it.size = lineSize
+                    it.linetype = LineTypeOptionConverter().apply(lineType)
                 }
             ) + getMarginalLayers()
             scaleOptions = listOf(
@@ -105,14 +105,14 @@ class QQPlotOptionsBuilder(
         x: String?,
         y: String?,
         group: String?
-    ): HashMap<String, String> {
-        val mappings: HashMap<String, String> = if (sample != null) {
+    ): HashMap<Aes<*>, String> {
+        val mappings: HashMap<Aes<*>, String> = if (sample != null) {
             require(x == null)
                 { "Parameter x shouldn't be specified when parameter sample is." }
             require(y == null)
                 { "Parameter y shouldn't be specified when parameter sample is." }
             hashMapOf(
-                Pair(QQ.SAMPLE, sample)
+                Pair(Aes.SAMPLE, sample)
             )
         } else {
             require(x != null)
@@ -120,14 +120,13 @@ class QQPlotOptionsBuilder(
             require(y != null)
                 { "Parameter y should be specified when parameter sample isn't." }
             hashMapOf(
-                Pair(QQ.X, x!!),
-                Pair(QQ.Y, y!!)
+                Pair(Aes.X, x!!),
+                Pair(Aes.Y, y!!)
             )
         }
         if (group != null) {
-            mappings[QQ.GROUP] = group
-            mappings[QQ.POINT_COLOR] = group
-            mappings[QQ.POINT_FILL] = group
+            mappings[Aes.COLOR] = group
+            mappings[Aes.FILL] = group
         }
 
         return mappings
@@ -174,17 +173,17 @@ class QQPlotOptionsBuilder(
     private fun getMarginalLayer(geomKind: GeomKind, side: MarginSide, size: Double?): LayerOptions {
         val mappings = getMarginalMappings(sample, x, y, group, side)
         val orientation = if ((geomKind == GeomKind.BOX_PLOT).xor(MarginSide.isVerticallyOriented(side))) "y" else "x"
-        return LayerOptions().apply {
-            geom = geomKind
-            this.data = statData
-            setParameter(Option.PlotBase.MAPPING, mappings)
-            setParameter(Option.Layer.ORIENTATION, orientation)
-            marginal = true
-            marginSide = side.value
-            marginSize = size
-            color = this@QQPlotOptionsBuilder.color
-            fill = this@QQPlotOptionsBuilder.fill
-            alpha = this@QQPlotOptionsBuilder.alpha ?: DEF_MARGINAL_ALPHA
+        return LayerOptions().also {
+            it.geom = geomKind
+            it.data = statData
+            it.mappings = mappings
+            it.orientation = orientation
+            it.marginal = true
+            it.marginSide = side.value
+            it.marginSize = size
+            it.color = color
+            it.fill = fill
+            it.alpha = alpha ?: DEF_MARGINAL_ALPHA
         }
     }
 
@@ -226,20 +225,19 @@ class QQPlotOptionsBuilder(
         y: String?,
         group: String?,
         side: MarginSide
-    ): HashMap<String, String> {
-        val mappings: HashMap<String, String> = if (MarginSide.isVerticallyOriented(side)) {
+    ): HashMap<Aes<*>, String> {
+        val mappings: HashMap<Aes<*>, String> = if (MarginSide.isVerticallyOriented(side)) {
             hashMapOf(
-                Pair(QQ.Y, sample ?: y!!)
+                Pair(Aes.Y, sample ?: y!!)
             )
         } else {
             hashMapOf(
-                Pair(QQ.X, if (sample != null) THEORETICAL_VAR.name else x!!)
+                Pair(Aes.X, if (sample != null) THEORETICAL_VAR.name else x!!)
             )
         }
         if (group != null) {
-            mappings[QQ.GROUP] = group
-            mappings[QQ.POINT_COLOR] = group
-            mappings[QQ.POINT_FILL] = group
+            mappings[Aes.COLOR] = group
+            mappings[Aes.FILL] = group
         }
 
         return mappings

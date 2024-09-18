@@ -23,6 +23,7 @@ class LayerOptions : Options() {
     var stat: String? by map(Layer.STAT)
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
     var position: PositionOptions? by map(Layer.POS)
+    var orientation: String? by map(Layer.ORIENTATION)
 
     // hidden
     var marginal: Boolean? by map(Layer.MARGINAL)
