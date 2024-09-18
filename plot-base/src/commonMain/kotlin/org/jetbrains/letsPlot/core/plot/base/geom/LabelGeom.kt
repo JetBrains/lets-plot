@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class LabelGeom : TextGeom() {
 
-    var paddingFactor: Double = 0.25    //  Amount of padding around label
+    override val paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
     var borderWidth: Double = 1.0       //  Size of label border
     var alphaStroke: Boolean = false    //  Apply alpha to text and border
@@ -34,15 +34,8 @@ class LabelGeom : TextGeom() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): SvgGElement {
-        // text size estimation
-        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-
-        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-
         // Background rectangle
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val rectangle = objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
+        val rectangle = TextUtil.rectangleForText(p, location, text, sizeUnitRatio, paddingFactor, ctx, boundsCenter)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -55,6 +48,8 @@ class LabelGeom : TextGeom() {
         val label = MultilineLabel(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = alphaStroke)
 
+        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val padding = fontSize * paddingFactor
         val xPosition = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x + padding
@@ -77,17 +72,6 @@ class LabelGeom : TextGeom() {
         SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
 
         return g
-    }
-
-    override fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor
-    ): DoubleRectangle {
-        val padding = fontSize * paddingFactor
-        return TextUtil.rectangleForText(location, textSize, padding, hAnchor, vAnchor)
     }
 
     companion object {

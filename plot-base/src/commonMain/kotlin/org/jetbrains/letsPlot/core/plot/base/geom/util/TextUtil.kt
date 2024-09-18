@@ -213,7 +213,7 @@ object TextUtil {
         return DoubleVector(estimated.x, textHeight)
     }
 
-    fun rectangleForText(
+    private fun rectangleForText(
         location: DoubleVector,
         textSize: DoubleVector,
         padding: Double,
@@ -234,5 +234,22 @@ object TextUtil {
             Text.VerticalAnchor.CENTER -> location.y - height / 2
         }
         return DoubleRectangle(originX, originY, width, height)
+    }
+
+    fun rectangleForText(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        sizeUnitRatio: Double,
+        paddingFactor: Double,
+        ctx: GeomContext,
+        boundsCenter: DoubleVector?
+    ): DoubleRectangle {
+        val textSize = measure(text, p, ctx, sizeUnitRatio)
+        val hAnchor = hAnchor(p, location, boundsCenter)
+        val vAnchor = vAnchor(p, location, boundsCenter)
+        val padding = paddingFactor * fontSize(p, sizeUnitRatio)
+
+        return rectangleForText(location, textSize, padding, hAnchor, vAnchor)
     }
 }

@@ -27,6 +27,7 @@ open class TextGeom : GeomBase() {
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
+    open val paddingFactor: Double = 0.0
 
     private val myRestrictions = mutableListOf<List<DoubleVector>>()
 
@@ -83,13 +84,9 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext,
         boundsCenter: DoubleVector?
     ): Boolean {
-        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
-        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
-        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
-        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val angle = toRadians(TextUtil.angle(p))
 
-        val rectangle = objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
+        val rectangle = TextUtil.rectangleForText(p, location, text, sizeUnitRatio, paddingFactor, ctx, boundsCenter)
             .rotate(angle, location)
 
         if (myRestrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
@@ -131,14 +128,6 @@ open class TextGeom : GeomBase() {
         SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
         return g
     }
-
-    open fun objectRectangle(
-        location: DoubleVector,
-        textSize: DoubleVector,
-        fontSize: Double,
-        hAnchor: Text.HorizontalAnchor,
-        vAnchor: Text.VerticalAnchor,
-    ) = TextUtil.rectangleForText(location, textSize, padding = 0.0, hAnchor, vAnchor)
 
     private fun toString(label: Any?, geomContext: GeomContext): String {
         if (label == null) return naValue
