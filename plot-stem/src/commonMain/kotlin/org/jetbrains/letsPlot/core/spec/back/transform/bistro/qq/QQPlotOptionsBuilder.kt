@@ -254,9 +254,7 @@ class QQPlotOptionsBuilder(
 
         companion object {
             fun parseSides(sides: String): Set<MarginSide> {
-                return sides.map { side ->
-                    MarginSide.entries.first { it.value == side.toString() }
-                }.toSet()
+                return MarginSide.entries.filter { it.value in sides }.toSet()
             }
 
             fun isVerticallyOriented(side: MarginSide): Boolean {
