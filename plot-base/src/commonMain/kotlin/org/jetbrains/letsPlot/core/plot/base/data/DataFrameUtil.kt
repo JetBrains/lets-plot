@@ -151,11 +151,27 @@ object DataFrameUtil {
         return b.build()
     }
 
-    fun concat(dataframes: List<DataFrame>): DataFrame {
+    fun concat(dataframes: List<DataFrame>, outer: Boolean = true): DataFrame {
         require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
+        val variables = dataframes
+            .map { it.variables().toSet() }
+            .reduce { acc, set ->
+                if (outer) {
+                    acc.union(set)
+                } else {
+                    acc.intersect(set)
+                }
+            }
         val builder = DataFrame.Builder()
-        dataframes.first().variables().forEach { variable ->
-            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
+        variables.forEach { variable ->
+            val values = dataframes.map { df ->
+                if (df.has(variable)) {
+                    df[variable]
+                } else {
+                    List(df.rowCount()) { null }
+                }
+            }.flatten()
+            builder.put(variable, values)
         }
         return builder.build()
     }
