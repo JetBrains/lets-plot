@@ -44,6 +44,7 @@ internal object Transform {
             Option.Mark.Types.CIRCLE -> CircleMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.SQUARE -> SquareMarkTransform.process(layerSpec, plotOptions)
             Option.Mark.Types.ERROR_BAR -> ErrorBarMarkTransform.process(layerSpec, plotOptions)
+            Option.Mark.Types.ERROR_BAND -> ErrorBandMarkTransform.process(layerSpec, plotOptions)
             else -> error("Unsupported mark type: $mark")
         }
     }

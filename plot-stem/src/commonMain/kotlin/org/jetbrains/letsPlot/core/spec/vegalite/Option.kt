@@ -79,6 +79,7 @@ internal object Option {
             const val CIRCLE = "circle"
             const val SQUARE = "square"
             const val ERROR_BAR = "errorbar"
+            const val ERROR_BAND = "errorband"
         }
     }
 

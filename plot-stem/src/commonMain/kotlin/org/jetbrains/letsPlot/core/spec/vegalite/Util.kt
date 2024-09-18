@@ -64,7 +64,7 @@ internal object Util {
 
         val unsupportedChannels = channelsEncoding.keys - channelToAesMapping.keys
         if (unsupportedChannels.isNotEmpty()) {
-            println("Warning: unsupported channels: $unsupportedChannels")
+            error("Error: unsupported channels: $unsupportedChannels")
         }
 
         val mappings: Map<Aes<*>, String> = (channelsEncoding - unsupportedChannels)

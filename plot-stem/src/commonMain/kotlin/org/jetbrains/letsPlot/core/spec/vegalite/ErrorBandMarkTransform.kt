@@ -11,24 +11,26 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
 
-internal class RectMarkTransform private constructor(
+class ErrorBandMarkTransform private constructor(
     val vegaSpec: Map<*, *>,
     val plotOptions: PlotOptions
 ) {
-    private val markVegaSpec = Util.readMark(vegaSpec[Option.MARK]!!).second // can't get into BarMarkTransform without MARK
+    private val markVegaSpec =
+        Util.readMark(vegaSpec[Option.MARK]!!).second // can't get into BarMarkTransform without MARK
     private val encodingVegaSpec = vegaSpec.getMap(Encodings.ENCODING)
     private val dataVegaSpec = vegaSpec.getMap(Option.DATA)
 
     companion object {
         fun process(spec: Map<*, *>, plotOptions: PlotOptions) {
-            RectMarkTransform(spec, plotOptions).process()
+            ErrorBandMarkTransform(spec, plotOptions).process()
         }
     }
 
     private fun process() {
         plotOptions.appendLayer {
-            geom = GeomKind.RASTER
+            geom = GeomKind.RIBBON
             data = dataVegaSpec?.let(Util::transformData)
+
             mappings = encodingVegaSpec
                 ?.let {
                     val customChannelMappings = when (Util.iHorizontal(it)) {
@@ -46,7 +48,6 @@ internal class RectMarkTransform private constructor(
 
                     Util.transformMappings(it, customChannelMappings)
                 }
-
         }
     }
 }
