@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 
 import org.jetbrains.letsPlot.commons.intern.indicesOf
-import org.jetbrains.letsPlot.commons.intern.sortedIndicesDescending
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -286,4 +285,7 @@ internal object WaterfallUtil {
     private fun calcTotal(df: DataFrame, measureVar: DataFrame.Variable): Boolean {
         return df[measureVar].lastOrNull()?.toString() == Measure.TOTAL.value
     }
+
+    private fun <T, R : Comparable<R>> Iterable<T>.sortedIndicesDescending(selector: (IndexedValue<T>) -> R?) =
+        withIndex().sortedWith(compareByDescending(selector)).map(IndexedValue<T>::index)
 }

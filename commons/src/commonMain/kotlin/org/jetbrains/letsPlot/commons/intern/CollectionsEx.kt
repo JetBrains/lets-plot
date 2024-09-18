@@ -38,9 +38,3 @@ fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {
 
 fun <T> Iterable<out T>.indicesOf(predicate: (T) -> Boolean) =
     mapIndexedNotNull{ i, elem -> i.takeIf{ predicate(elem) } }
-
-fun <T, R : Comparable<R>> Iterable<T>.sortedIndices(selector: (IndexedValue<T>) -> R?) =
-    withIndex().sortedWith(compareBy(selector)).map(IndexedValue<T>::index)
-
-fun <T, R : Comparable<R>> Iterable<T>.sortedIndicesDescending(selector: (IndexedValue<T>) -> R?) =
-    withIndex().sortedWith(compareByDescending(selector)).map(IndexedValue<T>::index)

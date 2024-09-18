@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq
 
 import org.jetbrains.letsPlot.commons.intern.indicesOf
-import org.jetbrains.letsPlot.commons.intern.sortedIndices
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -245,6 +244,9 @@ class QQPlotOptionsBuilder(
 
         return mappings
     }
+
+    private fun <T, R : Comparable<R>> Iterable<T>.sortedIndices(selector: (IndexedValue<T>) -> R?) =
+        withIndex().sortedWith(compareBy(selector)).map(IndexedValue<T>::index)
 
     enum class MarginSide(val value: String) {
         LEFT(SIDE_LEFT),
