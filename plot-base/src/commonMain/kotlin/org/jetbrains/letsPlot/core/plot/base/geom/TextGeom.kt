@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
@@ -89,7 +90,7 @@ open class TextGeom : GeomBase() {
         val rectangle = objectRectangle(location, textSize, TextUtil.fontSize(p, sizeUnitRatio), hAnchor, vAnchor)
             .rotate(toRadians(TextUtil.angle(p)), location)
 
-        if (myRestrictions.any { arePolygonsIntersected(rectangle, it) }) {
+        if (myRestrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
             return true
         }
         myRestrictions.add(rectangle)
@@ -151,26 +152,6 @@ open class TextGeom : GeomBase() {
         // Current implementation works for label_format ='.2f'
         // and values between -1.0 and 1.0.
         private const val BASELINE_TEXT_WIDTH = 6.0
-
-        private fun arePolygonsIntersected(pg1: List<DoubleVector>, pg2: List<DoubleVector>): Boolean {
-            fun projectPolygon(axis: DoubleVector, polygon: List<DoubleVector>): Pair<Double, Double> {
-                val dots = polygon.map { it.dotProduct(axis) }
-                return dots.min() to dots.max()
-            }
-
-            val edges = listOf(pg1, pg2).flatMap { polygon ->
-                polygon.indices.map { i ->
-                    polygon[i].subtract(polygon[(i + 1) % polygon.size])
-                        .orthogonal().normalize()
-                }
-            }
-
-            return edges.none { axis ->
-                val (min1, max1) = projectPolygon(axis, pg1)
-                val (min2, max2) = projectPolygon(axis, pg2)
-                max1 < min2 || max2 < min1
-            }
-        }
     }
 }
 
