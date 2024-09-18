@@ -48,7 +48,7 @@ open class TextGeom : GeomBase() {
         for (dp in aesthetics.dataPoints()) {
             val text = toString(dp.label(), ctx)
             if (text.isEmpty()) continue
-            val point = dp.doubleVectorOrNull(Aes.X, Aes.Y) ?: continue
+            val point = dp.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val loc = helper.toClient(point, dp) ?: continue
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
@@ -86,9 +86,11 @@ open class TextGeom : GeomBase() {
         val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+        val angle = toRadians(TextUtil.angle(p))
 
-        val rectangle = objectRectangle(location, textSize, TextUtil.fontSize(p, sizeUnitRatio), hAnchor, vAnchor)
-            .rotate(toRadians(TextUtil.angle(p)), location)
+        val rectangle = objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
+            .rotate(angle, location)
 
         if (myRestrictions.any { GeometryUtils.arePolygonsIntersected(rectangle, it) }) {
             return true

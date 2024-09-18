@@ -110,7 +110,7 @@ object TextUtil {
     fun fontFamily(p: DataPointAesthetics): String {
         var family = p.family()
         if (FONT_FAMILY_MAP.containsKey(family)) {   // otherwise - use value as provided by user
-            family = FONT_FAMILY_MAP.get(family)!!
+            family = FONT_FAMILY_MAP[family]!!
         }
         return family
     }

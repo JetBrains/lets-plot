@@ -40,7 +40,7 @@ open class PointGeom : GeomBase() {
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
             if (p.finiteOrNull(Aes.SIZE) == null) continue
-            val point = p.doubleVectorOrNull(Aes.X, Aes.Y) ?: continue
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
             val location = helper.toClient(point, p) ?: continue
             val shape = p.shape()!!
 

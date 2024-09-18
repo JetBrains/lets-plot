@@ -251,7 +251,7 @@ abstract class DataPointAesthetics {
         return Triple(v0, v1, v2)
     }
 
-    fun doubleVectorOrNull(aes0: Aes<Double>, aes1: Aes<Double>): DoubleVector? {
+    fun finiteVectorOrNull(aes0: Aes<Double>, aes1: Aes<Double>): DoubleVector? {
         val (x, y) = finiteOrNull(aes0, aes1) ?: return null
         return DoubleVector(x, y)
     }
