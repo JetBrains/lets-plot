@@ -25,7 +25,9 @@ class NumberFormat(spec: Spec) {
         val precision: Int = DEF_PRECISION,
         val type: String = "",
         val trim: Boolean = false,
-        val richOutput: Boolean = false
+        val richOutput: Boolean = false,
+        val minExp: Int = DEF_MIN_EXP,
+        val maxExp: Int? = null
     )
 
     fun apply(num: Number): String {
@@ -158,12 +160,13 @@ class NumberFormat(spec: Spec) {
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= MIN_EXPONENT) {
+            } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
-            if (numberInfo.integerLength > precision) {
+            val maxExp = spec.maxExp ?: precision
+            if (numberInfo.integerLength > maxExp) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
@@ -486,10 +489,12 @@ class NumberFormat(spec: Spec) {
                 zero = matchResult.groups[5] != null,
                 width = (matchResult.groups[6]?.value ?: "-1").toInt(),
                 comma = matchResult.groups[7] != null,
-                precision = (matchResult.groups[8]?.value ?: DEF_PRECISION.toString()).toInt(),
+                precision = matchResult.groups[8]?.value?.toInt() ?: DEF_PRECISION,
                 trim = matchResult.groups[9] != null,
                 type = matchResult.groups[10]?.value ?: "",
-                richOutput = matchResult.groups[11] != null
+                richOutput = matchResult.groups[11] != null,
+                minExp = matchResult.groups[13]?.value?.toInt() ?: DEF_MIN_EXP,
+                maxExp = matchResult.groups[14]?.value?.toInt(),
             )
 
             return normalizeSpec(formatSpec)
@@ -504,12 +509,12 @@ class NumberFormat(spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
-        private const val MIN_EXPONENT = 6 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
         private const val DEF_PRECISION = 6
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?$""".toRegex()
+            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?(\{(-?\d+)?,(-?\d+)?\})?$""".toRegex()
 
 
         internal fun normalizeSpec(spec: Spec): Spec {
