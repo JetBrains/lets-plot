@@ -44,10 +44,6 @@ class QQPlotOptionsBuilder(
     private val lineSize: Double? = DEF_LINE_SIZE,
     private val lineType: Any? = null
 ) {
-    private val distributionOption = LayerOption<String?>(QQ.DISTRIBUTION)
-    private val distributionParametersOption = LayerOption<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS)
-    private val quantilesOption = LayerOption<List<Double>?>(QQ.QUANTILES)
-
     private val statData = getStatData(standardiseData(data), distribution, distributionParameters)
 
     fun build(): PlotOptions {
@@ -59,9 +55,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
                     it.data = statData
                     it.mappings = mappings
-                    it.setOption(distributionOption, distribution)
-                    it.setOption(distributionParametersOption, distributionParameters)
-                    it.setOption(quantilesOption, quantiles)
+                    it.properties[DISTRIBUTION_PROP] = distribution
+                    it.properties[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
+                    it.properties[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = color
                     it.fill = fill
@@ -73,9 +69,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
                     it.data = statData
                     it.mappings = mappings
-                    it.setOption(distributionOption, distribution)
-                    it.setOption(distributionParametersOption, distributionParameters)
-                    it.setOption(quantilesOption, quantiles)
+                    it.properties[DISTRIBUTION_PROP] = distribution
+                    it.properties[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
+                    it.properties[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = lineColor ?:
                         if (group == null) DEF_LINE_COLOR else null
@@ -275,6 +271,10 @@ class QQPlotOptionsBuilder(
         const val DEF_LINE_SIZE: Double = 0.75
         const val DEF_MARGINAL: String = "dens:tr"
         const val DEF_MARGINAL_ALPHA = 0.25
+
+        private val DISTRIBUTION_PROP = PropSpec<String?>(QQ.DISTRIBUTION)
+        private val DISTRIBUTION_PARAMETERS_PROP = PropSpec<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS)
+        private val QUANTILES_PROP = PropSpec<List<Double>?>(QQ.QUANTILES)
 
         val THEORETICAL_VAR = DataFrame.Variable("..theoretical_bistro..")
     }

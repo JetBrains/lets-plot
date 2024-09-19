@@ -45,8 +45,6 @@ class WaterfallPlotOptionsBuilder(
     private val labelOptions: ElementTextOptions,
     private val labelFormat: String
 ) {
-    private val tooltipsStringOption = LayerOption<String?>(Option.Layer.TOOLTIPS)
-
     private val data = standardiseData(data)
 
     fun build(): PlotOptions {
@@ -206,7 +204,7 @@ class WaterfallPlotOptionsBuilder(
             if (tooltipsOptions != null) {
                 it.tooltipsOptions = tooltipsOptions
             } else {
-                it.setOption(tooltipsStringOption, Option.Layer.NONE)
+                it.properties[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
             }
         }
     }
@@ -234,7 +232,7 @@ class WaterfallPlotOptionsBuilder(
             color = hLineOptions.color
             size = hLineOptions.size
             linetype = hLineOptions.lineType
-            setOption(tooltipsStringOption, Option.Layer.NONE)
+            properties[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
         }
     }
 
@@ -445,5 +443,7 @@ class WaterfallPlotOptionsBuilder(
             color = "white"
         )
         const val DEF_LABEL_FORMAT = ".2~f"
+
+        private val TOOLTIPS_STRING_PROP = PropSpec<String?>(Option.Layer.TOOLTIPS)
     }
 }
