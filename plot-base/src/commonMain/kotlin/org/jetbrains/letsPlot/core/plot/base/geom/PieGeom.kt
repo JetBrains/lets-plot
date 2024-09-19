@@ -62,10 +62,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
             .groupBy { p -> DoubleVector(p.x()!!, p.y()!!) }
             .forEach { (point, dataPoints) ->
-                val sizeUnitRatio = when (sizeUnit) {
-                    null -> 1.0
-                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
-                }
+                val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.PIE_UNIT_SIZE)
+
                 val toLocation = { p: DataPointAesthetics -> geomHelper.toClient(point, p) }
                 val pieSectors = computeSectors(dataPoints, toLocation, sizeUnitRatio)
 
@@ -340,20 +338,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        private fun getSizeUnitRatio(
-            p: DoubleVector,
-            coord: CoordinateSystem,
-            axis: String
-        ): Double {
-            val unitSquareSize = coord.unitSize(p)
-            val unitSize = when (axis.lowercase()) {
-                "x" -> unitSquareSize.x
-                "y" -> unitSquareSize.y
-                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
-            }
-            return unitSize / AesScaling.PIE_UNIT_SIZE
-        }
     }
 
     private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {

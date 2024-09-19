@@ -24,7 +24,9 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
+import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
+import org.jetbrains.letsPlot.core.spec.Option.Layer.INHERIT_AES
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MANUAL_KEY
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MARGINAL
@@ -40,10 +42,9 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
-import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 
-class LayerConfig(
+class LayerConfig constructor(
     layerOptions: Map<String, Any>,
     plotData: DataFrame,
     plotMappings: Map<String, String>,
@@ -91,6 +92,7 @@ class LayerConfig(
                     @Suppress("UNCHECKED_CAST")
                     option as Map<String, Any>
                 }
+
                 is String -> mapOf(Layer.LayerKey.LABEL to option)
                 else -> throw IllegalArgumentException("$MANUAL_KEY expected a string or option map, but was '$option'")
             }.let(::OptionsAccessor)
@@ -114,7 +116,7 @@ class LayerConfig(
 
     private val _samplings: List<Sampling> = when (clientSide) {
         true -> emptyList()
-        else -> initSampling(this, geomProto.preferredSampling())
+        else -> initSampling(this, geomProto.geomKind, geomProto.preferredSampling())
     }
 
     val samplings: List<Sampling>
@@ -171,6 +173,11 @@ class LayerConfig(
     init {
         ownData = ConfigUtil.createDataFrame(get(DATA))
 
+        @Suppress("NAME_SHADOWING")
+        val plotMappings = when (getBoolean(INHERIT_AES, true)) {
+            true -> plotMappings
+            else -> emptyMap()
+        }
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
@@ -191,29 +198,29 @@ class LayerConfig(
 
             false ->
                 if (!clientSide
-                && isOrientationApplicable()
-                && !DataConfigUtil.isAesDiscrete(
-                    Aes.X,
-                    plotData,
-                    ownData,
-                    plotMappings,
-                    layerMappings,
-                    combinedDiscreteMappings
-                )
-                && DataConfigUtil.isAesDiscrete(
-                    Aes.Y,
-                    plotData,
-                    ownData,
-                    plotMappings,
-                    layerMappings,
-                    combinedDiscreteMappings
-                )
-            ) {
-                setOrientationY()
-                true
-            } else {
-                false
-            }
+                    && isOrientationApplicable()
+                    && !DataConfigUtil.isAesDiscrete(
+                        Aes.X,
+                        plotData,
+                        ownData,
+                        plotMappings,
+                        layerMappings,
+                        combinedDiscreteMappings
+                    )
+                    && DataConfigUtil.isAesDiscrete(
+                        Aes.Y,
+                        plotData,
+                        ownData,
+                        plotMappings,
+                        layerMappings,
+                        combinedDiscreteMappings
+                    )
+                ) {
+                    setOrientationY()
+                    true
+                } else {
+                    false
+                }
         }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
@@ -447,9 +454,9 @@ class LayerConfig(
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
         }
 
-        private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-            return if (opts.has(Option.Layer.SAMPLING)) {
-                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+        private fun initSampling(opts: OptionsAccessor, geomKind: GeomKind, defaultSampling: Sampling): List<Sampling> {
+            return if (opts.has(Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Layer.SAMPLING), geomKind)
             } else {
                 listOf(defaultSampling)
             }

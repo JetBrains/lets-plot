@@ -5,6 +5,7 @@
 from .annotation import *
 from .coord import *
 from .core import *
+from .expand_limits_ import *
 from .facet import *
 from .font_features import *
 from .geom import *
@@ -56,5 +57,6 @@ __all__ = (coord.__all__ +
            marginal_layer.__all__ +
            font_features.__all__ +
            gggrid_.__all__ +
-           ggtb_.__all__
+           ggtb_.__all__ +
+           expand_limits_.__all__
            )

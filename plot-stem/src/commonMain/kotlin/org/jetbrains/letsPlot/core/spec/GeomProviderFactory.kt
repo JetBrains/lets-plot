@@ -24,6 +24,7 @@ internal object GeomProviderFactory {
 
     // Simple provides
     init {
+        PROVIDER[GeomKind.BLANK] = GeomProvider.blank()
         PROVIDER[GeomKind.LINE] = GeomProvider.line()
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
@@ -413,6 +414,9 @@ internal object GeomProviderFactory {
         }
         layerConfig.getString(Option.Geom.Text.SIZE_UNIT)?.let {
             geom.sizeUnit = it.lowercase()
+        }
+        layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
+            geom.checkOverlap = it
         }
     }
 

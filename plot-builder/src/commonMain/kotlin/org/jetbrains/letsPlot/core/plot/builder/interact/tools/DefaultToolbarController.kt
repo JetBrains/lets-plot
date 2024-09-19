@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
@@ -58,7 +58,7 @@ class DefaultToolbarController(
                 }
             }
 
-            INTERACTION_COMPLETED -> {
+            SELECTION_CHANGED -> {
                 event[EVENT_RESULT_DATA_BOUNDS]?.let { bounds ->
                     @Suppress("UNCHECKED_CAST")
                     bounds as List<Double?>

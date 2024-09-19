@@ -172,8 +172,10 @@ object Option {
         const val POS = "position"
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
+        const val INHERIT_AES = "inherit_aes"
         const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
+
         const val TOOLTIP_TITLE = "title"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
@@ -336,6 +338,7 @@ object Option {
             const val SIZE_UNIT = "size_unit"
             const val NUDGE_X = "nudge_x"
             const val NUDGE_Y = "nudge_y"
+            const val CHECK_OVERLAP = "check_overlap"
         }
 
         object Label {
@@ -727,6 +730,7 @@ object Option {
         const val N = "n"
         const val SEED = "seed"
         const val MIN_SUB_SAMPLE = "min_subsample"
+        const val POLYGON = "polygon"
     }
 
     object Theme {
@@ -919,6 +923,7 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
+        const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -972,6 +977,8 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
+            map[BLANK] = GeomKind.BLANK
+
             GEOM_KIND_MAP = map
         }
 

@@ -24,7 +24,8 @@ object DefaultSampling {
     // basis
     val POINT = random(100_000, SEED)   // optimized
     val LINE = systematic(50_000)
-    val PATH = vertexDp(50_000)  // ToDo: vertex sampling has issues.
+    val PATH = vertexDp(50_000, polygon = false)
+    val POLYGON = vertexDp(50_000, polygon = true)
     val SEGMENT = random(10_000, SEED)
     val SPOKE = random(10_000, SEED)
 
@@ -58,9 +59,8 @@ object DefaultSampling {
     val H_LINE = SEGMENT
     val V_LINE = SEGMENT
 
-    // paths
-    val POLYGON = PATH
-    val MAP = PATH
+    // polygons
+    val MAP = POLYGON
 
     // bars
     val ERROR_BAR = BAR

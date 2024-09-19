@@ -5,18 +5,22 @@
 
 package org.jetbrains.letsPlot.core.commons.geometry
 
-import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
 import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.RankingStrategy
 
 internal class DouglasPeuckerSimplification : RankingStrategy {
     private val myEpsilon = Double.MIN_VALUE
 
-    private fun calculateWeights(points: List<DoubleVector>): List<Double> {
+    override fun computeWeights(points: List<DoubleVector>): List<Double> {
+        if (points.size < 3) {
+            return MutableList(points.size) { Double.MAX_VALUE }
+        }
+
         val stack = Stack<Pair<Int, Int>>()
 
-        val weights = MutableList(points.size) { Double.NaN }
+        val weights = MutableList(points.size) { 0.0 }
         weights[0] = Double.MAX_VALUE
         weights[points.size - 1] = Double.MAX_VALUE
         stack.push(Pair(0, points.size - 1))
@@ -55,9 +59,5 @@ internal class DouglasPeuckerSimplification : RankingStrategy {
         }
 
         return weights
-    }
-
-    override fun getWeights(points: List<DoubleVector>): List<Double> {
-        return calculateWeights(points)
     }
 }

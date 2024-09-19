@@ -232,7 +232,7 @@ def sampling_group_random(n, seed=None):
     return _sampling('group_random', n=n, seed=seed)
 
 
-def sampling_vertex_vw(n):
+def sampling_vertex_vw(n, polygon=None):
     """
     Simplify a polyline using the Visvalingam-Whyatt algorithm.
 
@@ -240,6 +240,11 @@ def sampling_vertex_vw(n):
     ----------
     n : int
         Number of items to return.
+
+    polygon : bool, default=None
+        If True, the input data is considered as a polygon rings.
+        If False, the input data is considered as a polyline.
+        None for auto-detection.
 
     Returns
     -------
@@ -275,10 +280,10 @@ def sampling_vertex_vw(n):
             geom_contour(sampling=sampling_vertex_vw(150))
 
     """
-    return _sampling('vertex_vw', n=n)
+    return _sampling('vertex_vw', n=n, polygon=polygon)
 
 
-def sampling_vertex_dp(n):
+def sampling_vertex_dp(n, polygon=None):
     """
     Simplify a polyline using the Douglas-Peucker algorithm.
 
@@ -286,6 +291,11 @@ def sampling_vertex_dp(n):
     ----------
     n : int
         Number of items to return.
+
+    polygon : bool, default=None
+        If True, the input data is considered as a polygon rings.
+        If False, the input data is considered as a polyline.
+        None for auto-detection.
 
     Returns
     -------
@@ -321,7 +331,7 @@ def sampling_vertex_dp(n):
             geom_contour(sampling=sampling_vertex_dp(100))
 
     """
-    return _sampling('vertex_dp', n=n)
+    return _sampling('vertex_dp', n=n, polygon=polygon)
 
 
 def _sampling(name, **kwargs):

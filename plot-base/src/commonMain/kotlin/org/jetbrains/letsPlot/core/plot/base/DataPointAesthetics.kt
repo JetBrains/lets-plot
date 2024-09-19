@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
@@ -248,6 +249,11 @@ abstract class DataPointAesthetics {
         val v1 = finiteOrNull(aes1) ?: return null
         val v2 = finiteOrNull(aes2) ?: return null
         return Triple(v0, v1, v2)
+    }
+
+    fun finiteVectorOrNull(aes0: Aes<Double>, aes1: Aes<Double>): DoubleVector? {
+        val (x, y) = finiteOrNull(aes0, aes1) ?: return null
+        return DoubleVector(x, y)
     }
 
     private fun <T> getNotNull(aes: Aes<T>): T {

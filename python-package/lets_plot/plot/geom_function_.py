@@ -75,7 +75,8 @@ def _get_mapping(mapping):
     return aes(**{**x_mapping_dict, **mapping_dict, **y_mapping_dict})
 
 
-def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=None, show_legend=None, manual_key=None,
+def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=None, show_legend=None, inherit_aes=None,
+                  manual_key=None,
                   tooltips=None,
                   fun=None, xlim=None, n=None,
                   color_by=None,
@@ -105,6 +106,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
         'stack' or 'identity', or the result of calling a position adjustment function (e.g., `position_dodge()` etc.).
     show_legend : bool, default=True
         False - do not show legend for this layer.
+    inherit_aes : bool, default=True
+        False - do not combine the layer aesthetic mappings with the plot shared mappings.
     manual_key : str or `layer_key`
         The key to show in the manual legend.
         Specify text for the legend label or advanced settings using the `layer_key()` function.
@@ -199,6 +202,7 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
                  stat=fun_stat,
                  position=position,
                  show_legend=show_legend,
+                 inherit_aes=inherit_aes,
                  manual_key=manual_key,
                  sampling=None,
                  tooltips=tooltips,

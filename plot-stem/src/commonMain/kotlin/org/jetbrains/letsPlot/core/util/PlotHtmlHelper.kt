@@ -34,6 +34,8 @@ object PlotHtmlHelper {
         return if (dev) {
             // We don't publish "dev" version, it must be served on localhost:
             // $ cd lets-plot
+            // - Build "dev" JS package (see js-package/README.md)
+            // - Activate env containing Python.
             // $ python -m http.server 8080
             "http://127.0.0.1:8080/js-package/build/dist/js/developmentExecutable/js-package.js"
         } else {

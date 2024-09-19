@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
@@ -14,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 
 open class PointGeom : GeomBase() {
@@ -41,55 +39,30 @@ open class PointGeom : GeomBase() {
 
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
-            val x = p.x()
-            val y = p.y()
-            val size = p.size()
+            if (p.finiteOrNull(Aes.SIZE) == null) continue
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
+            val location = helper.toClient(point, p) ?: continue
+            val shape = p.shape()!!
 
-            if (SeriesUtil.allFinite(x, y, size)) {
-                val point = DoubleVector(x!!, y!!)
-                val location = helper.toClient(point, p)
-                if (location == null) continue
+            // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
+            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
+            // but Shape.size() can't be used because it takes DataPointAesthetics as param
+            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
 
-                val shape = p.shape()!!
-
-                // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
-                val sizeUnitRatio = when (sizeUnit) {
-                    null -> 1.0
-                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
-                }
-
-                targetCollector.addPoint(
-                    i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
-                    GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
-                    )
+            targetCollector.addPoint(
+                i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
+                GeomTargetCollector.TooltipParams(
+                    markerColors = colorsByDataPoint(p)
                 )
-                val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
-                o.appendTo(slimGroup)
-            }
+            )
+            val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
+            o.appendTo(slimGroup)
         }
         root.add(wrap(slimGroup))
     }
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        private fun getSizeUnitRatio(
-            p: DoubleVector,
-            coord: CoordinateSystem,
-            axis: String
-        ): Double {
-            val unitSquareSize = coord.unitSize(p)
-            val unitSize = when (axis.lowercase()) {
-                "x" -> unitSquareSize.x
-                "y" -> unitSquareSize.y
-                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
-            }
-
-            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
-            // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            return unitSize / AesScaling.POINT_UNIT_SIZE
-        }
     }
 }
 
