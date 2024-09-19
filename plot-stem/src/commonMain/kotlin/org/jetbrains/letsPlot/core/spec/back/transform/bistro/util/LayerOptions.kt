@@ -81,12 +81,12 @@ class LayerOptions : Options() {
     var radius: Double? by map(Aes.RADIUS)
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
+
+    operator fun <T> set(prop: PropSpec<T>, value: T) {
+        properties[prop.name] = value
+    }
 }
 
 class PropSpec<T>(val name: String)
-
-operator fun <T> MutableMap<String, Any?>.set(prop: PropSpec<T>, value: T) {
-    this[prop.name] = value
-}
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)

@@ -55,9 +55,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
                     it.data = statData
                     it.mappings = mappings
-                    it.properties[DISTRIBUTION_PROP] = distribution
-                    it.properties[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
-                    it.properties[QUANTILES_PROP] = quantiles
+                    it[DISTRIBUTION_PROP] = distribution
+                    it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
+                    it[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = color
                     it.fill = fill
@@ -69,9 +69,9 @@ class QQPlotOptionsBuilder(
                     it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
                     it.data = statData
                     it.mappings = mappings
-                    it.properties[DISTRIBUTION_PROP] = distribution
-                    it.properties[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
-                    it.properties[QUANTILES_PROP] = quantiles
+                    it[DISTRIBUTION_PROP] = distribution
+                    it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
+                    it[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = lineColor ?:
                         if (group == null) DEF_LINE_COLOR else null

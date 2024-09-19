@@ -204,7 +204,7 @@ class WaterfallPlotOptionsBuilder(
             if (tooltipsOptions != null) {
                 it.tooltipsOptions = tooltipsOptions
             } else {
-                it.properties[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
+                it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
             }
         }
     }
@@ -226,13 +226,13 @@ class WaterfallPlotOptionsBuilder(
 
     private fun hLineOptions(): LayerOptions? {
         if (hLineOptions.blank) return null
-        return LayerOptions().apply {
-            geom = GeomKind.H_LINE
-            yintercept = base
-            color = hLineOptions.color
-            size = hLineOptions.size
-            linetype = hLineOptions.lineType
-            properties[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
+        return LayerOptions().also {
+            it.geom = GeomKind.H_LINE
+            it.yintercept = base
+            it.color = hLineOptions.color
+            it.size = hLineOptions.size
+            it.linetype = hLineOptions.lineType
+            it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
         }
     }
 
