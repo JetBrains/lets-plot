@@ -15,7 +15,8 @@ internal class RectMarkTransform private constructor(
     val vegaSpec: Map<*, *>,
     val plotOptions: PlotOptions
 ) {
-    private val markVegaSpec = Util.readMark(vegaSpec[Option.MARK]!!).second // can't get into BarMarkTransform without MARK
+    private val markVegaSpec =
+        Util.readMark(vegaSpec[Option.MARK]!!).second // can't get into BarMarkTransform without MARK
     private val encodingVegaSpec = vegaSpec.getMap(Encodings.ENCODING)
     private val dataVegaSpec = vegaSpec.getMap(Option.DATA)
 
@@ -27,22 +28,16 @@ internal class RectMarkTransform private constructor(
 
     private fun process() {
         plotOptions.appendLayer {
-            geom = GeomKind.RASTER
+            geom = GeomKind.RECT
             data = dataVegaSpec?.let(Util::transformData)
             mappings = encodingVegaSpec
                 ?.let {
-                    val customChannelMappings = when (Util.iHorizontal(it)) {
-                        true -> mapOf(
-                            Encodings.Channels.X to Aes.XMIN,
-                            Encodings.Channels.X2 to Aes.XMAX,
-                            Encodings.Channels.Y2 to Aes.YMAX
-                        )
-                        false -> mapOf(
-                            Encodings.Channels.Y to Aes.YMIN,
-                            Encodings.Channels.Y2 to Aes.YMAX,
-                            Encodings.Channels.X2 to Aes.XMAX
-                        )
-                    }
+                    val customChannelMappings = mapOf(
+                        Encodings.Channels.X to Aes.XMIN,
+                        Encodings.Channels.Y to Aes.YMIN,
+                        Encodings.Channels.X2 to Aes.XMAX,
+                        Encodings.Channels.Y2 to Aes.YMAX
+                    )
 
                     Util.transformMappings(it, customChannelMappings)
                 }
