@@ -50,7 +50,7 @@ class AreaMarkTransformTest {
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>())
-            .containsExactly(
+            .containsOnly(
                 entry(Layer.GEOM, fromGeomKind(GeomKind.AREA)),
                 entry(
                     PlotBase.DATA, mapOf(

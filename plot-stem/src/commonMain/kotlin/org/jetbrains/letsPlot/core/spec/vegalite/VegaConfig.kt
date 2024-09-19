@@ -18,7 +18,7 @@ object VegaConfig {
     }
 
     fun transform(map: MutableMap<String, Any>): MutableMap<String, Any> {
-        return Transform.transform(map)
+        return Converter.convert(map)
     }
 
     internal fun getPlotKind(opts: Map<String, Any>): VegaPlotKind {

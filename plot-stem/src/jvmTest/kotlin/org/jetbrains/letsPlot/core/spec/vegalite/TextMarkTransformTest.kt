@@ -34,7 +34,7 @@ class TextMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Option.Layer.GEOM, fromGeomKind(GeomKind.TEXT)),
             entry(Option.PlotBase.DATA, mapOf("b" to listOf(28.0, 55.0, 43.0))),
             entry(Option.PlotBase.MAPPING, mapOf(

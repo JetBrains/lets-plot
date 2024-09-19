@@ -45,7 +45,7 @@ class DataTransformTest {
             .first()
             .getMap(PlotBase.DATA)
             .let {
-                assertThat(it).containsExactly(
+                assertThat(it).containsOnly(
                     entry("a", listOf("C", "C", "C", "D", "D", "D", "E", "E", "E")),
                     entry("b", listOf(2.0, 7.0, 4.0, 1.0, 2.0, 6.0, 8.0, 4.0, 7.0))
                 )

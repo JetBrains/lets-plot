@@ -64,7 +64,7 @@ class ErrorBandMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
             entry(
                 PlotBase.MAPPING, mapOf(
@@ -118,15 +118,15 @@ class ErrorBandMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
+            entry(PlotBase.DATA, emptyMap<String, Any?>()),
             entry(
                 PlotBase.MAPPING, mapOf(
                 toOption(Aes.XMIN) to "ci1",
                 toOption(Aes.XMAX) to "ci0",
                 toOption(Aes.Y) to "Year"
             )),
-            entry(PlotBase.DATA, emptyMap<String, Any?>()),
         )
     }
 

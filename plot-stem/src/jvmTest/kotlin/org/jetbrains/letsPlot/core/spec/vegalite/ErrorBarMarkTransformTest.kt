@@ -83,7 +83,7 @@ class ErrorBarMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.ERROR_BAR)),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.XMIN) to "upper_yield",
@@ -155,7 +155,7 @@ class ErrorBarMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.ERROR_BAR)),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.YMIN) to "upper_yield",

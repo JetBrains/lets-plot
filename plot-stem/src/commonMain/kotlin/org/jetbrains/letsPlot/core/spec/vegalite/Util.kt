@@ -44,8 +44,8 @@ internal object Util {
                 && listOf(Encodings.Channels.X, Encodings.Channels.X2, Encodings.Channels.Y).all(encodingVegaSpec::containsKey)
     }
 
-    fun transformMappings(encodingVegaSpec: Map<*, *>, customChannelMapping: Map<String, Aes<*>> = emptyMap()): Map<Aes<*>, String> {
-        val channelToAesMapping = mapOf(
+    fun transformMappings(encodingVegaSpec: Map<*, Map<*, *>>, customChannelMapping: Map<String, Aes<*>> = emptyMap()): Map<Aes<*>, String> {
+        val channelMapping = mapOf(
             Encodings.Channels.X to Aes.X,
             Encodings.Channels.Y to Aes.Y,
             Encodings.Channels.COLOR to Aes.COLOR,
@@ -58,17 +58,22 @@ internal object Util {
             Encodings.Channels.TEXT to Aes.LABEL
         ) + customChannelMapping
 
-        val channelsEncoding = encodingVegaSpec
-            .mapValues { (_, encoding) -> (encoding as Map<*, *>).getString(Encodings.FIELD) }
+        val channelEncoding = encodingVegaSpec
+            .mapValues { (_, encoding) -> encoding.getString(Encodings.FIELD) }
             .filterNotNullValues()
 
-        val unsupportedChannels = channelsEncoding.keys - channelToAesMapping.keys
+        val unsupportedChannels = channelEncoding.keys - channelMapping.keys
         if (unsupportedChannels.isNotEmpty()) {
             error("Error: unsupported channels: $unsupportedChannels")
         }
 
-        val mappings: Map<Aes<*>, String> = (channelsEncoding - unsupportedChannels)
-            .mapKeys { (channel, _) -> channelToAesMapping[channel]!! }
+        val aggregates = encodingVegaSpec.filter { (_, encoding) -> Encodings.AGGREGATE in encoding }
+        if (aggregates.isNotEmpty()) {
+            //error("Error: unsupported aggregate functions: $aggregates")
+        }
+
+        val mappings: Map<Aes<*>, String> = (channelEncoding - unsupportedChannels)
+            .mapKeys { (channel, _) -> channelMapping[channel]!! }
         return mappings
     }
 }

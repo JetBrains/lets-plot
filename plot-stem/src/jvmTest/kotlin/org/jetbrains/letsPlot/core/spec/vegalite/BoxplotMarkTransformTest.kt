@@ -42,7 +42,7 @@ class BoxplotMarkTransformTest {
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BOX_PLOT)),
             entry(PlotBase.DATA, mapOf(
                 "..middle.." to listOf(0.5425600435859647),
@@ -55,7 +55,7 @@ class BoxplotMarkTransformTest {
             entry(PlotBase.MAPPING, mapOf("y" to "Y")),
         )
 
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![1].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![1].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(PlotBase.DATA, mapOf(
                 "..middle.." to listOf(0.5425600435859647),

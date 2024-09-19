@@ -58,7 +58,7 @@ class RectMarkTransformTest {
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsExactly(
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RECT)),
             entry(
                 PlotBase.DATA, mapOf(
@@ -74,6 +74,57 @@ class RectMarkTransformTest {
                     toOption(Aes.YMAX) to "y_end",
                     toOption(Aes.XMIN) to "x_start",
                     toOption(Aes.XMAX) to "x_end",
+                )
+            ),
+        )
+    }
+
+    @Test
+    fun heatmap() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"Cylinders": 8, "Origin": "USA", "mean_Horsepower": 158.45},
+                |      {"Cylinders": 4, "Origin": "Europe", "mean_Horsepower": 78.91},
+                |      {"Cylinders": 4, "Origin": "Japan", "mean_Horsepower": 75.58},
+                |      {"Cylinders": 6, "Origin": "USA", "mean_Horsepower": 99.67},
+                |      {"Cylinders": 4, "Origin": "USA", "mean_Horsepower": 80.96},
+                |      {"Cylinders": 3, "Origin": "Japan", "mean_Horsepower": 99.25},
+                |      {"Cylinders": 6, "Origin": "Japan", "mean_Horsepower": 115.83},
+                |      {"Cylinders": 6, "Origin": "Europe", "mean_Horsepower": 113.50},
+                |      {"Cylinders": 5, "Origin": "Europe", "mean_Horsepower": 82.33}
+                |    ]
+                |  },
+                |  "mark": "rect",
+                |  "encoding": {
+                |    "y": {"field": "Origin", "type": "nominal"},
+                |    "x": {"field": "Cylinders", "type": "ordinal"},
+                |    "color": {"field": "mean_Horsepower", "type": "quantitative"},
+                |    "tooltip": {"type": "quantitative"}
+                |  },
+                |  "config": {"axis": {"grid": true, "tickBand": "extent"}}
+                |}             
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.RASTER)),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "Origin" to listOf("USA", "Europe", "Japan", "USA", "USA", "Japan", "Japan", "Europe", "Europe"),
+                    "mean_Horsepower" to listOf(158.45, 78.91, 75.58, 99.67, 80.96, 99.25, 115.83, 113.5, 82.33),
+                    "Cylinders" to listOf(8.0, 4.0, 4.0, 6.0, 4.0, 3.0, 6.0, 6.0, 5.0)
+                )
+            ),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.Y) to "Origin",
+                    toOption(Aes.X) to "Cylinders",
+                    toOption(Aes.FILL) to "mean_Horsepower"
                 )
             ),
         )

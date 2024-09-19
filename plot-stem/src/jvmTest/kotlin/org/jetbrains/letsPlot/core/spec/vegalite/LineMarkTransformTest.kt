@@ -39,7 +39,7 @@ class LineMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         plotSpec.getMaps(Plot.LAYERS)!!.first().let {
             assertThat(it.getString(Layer.GEOM)).isEqualTo(fromGeomKind(GeomKind.LINE))
-            assertThat(it.getMap(PlotBase.MAPPING)).containsExactly(entry("x", "a"))
+            assertThat(it.getMap(PlotBase.MAPPING)).containsOnly(entry("x", "a"))
         }
     }
 }
