@@ -16,7 +16,7 @@
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/check_overlap.ipynb).
        
 - `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
-       
+- Support for 3-character hex color codes     
 
 ### Changed
  
