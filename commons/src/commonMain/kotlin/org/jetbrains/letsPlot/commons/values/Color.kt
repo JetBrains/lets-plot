@@ -17,10 +17,10 @@ class Color @JvmOverloads constructor(
 ) {
     init {
         require(
-            0 <= red && red <= 255 &&
-                    0 <= green && green <= 255 &&
-                    0 <= blue && blue <= 255 &&
-                    0 <= alpha && alpha <= 255
+            red in 0..255 &&
+            green in 0..255 &&
+            blue in 0..255 &&
+            alpha in 0..255
         ) { "Color components out of range: $this" }
     }
 
@@ -29,23 +29,13 @@ class Color @JvmOverloads constructor(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
-        if (other !is Color) {
-            return false
-        }
+        if (this === other) return true
 
-        if (red != other.red) {
-            return false
-        }
-        if (green != other.green) {
-            return false
-        }
-        if (blue != other.blue) {
-            return false
-        }
-        return alpha == other.alpha
+        return other is Color &&
+                red == other.red &&
+                green == other.green &&
+                blue == other.blue &&
+                alpha == other.alpha
     }
 
     fun toCssColor(): String {
@@ -155,13 +145,16 @@ class Color @JvmOverloads constructor(
         fun parseHex(hexColor: String): Color {
             @Suppress("NAME_SHADOWING")
             var hexColor = hexColor
-            if (!hexColor.startsWith("#")) {
-                throw IllegalArgumentException("Not a HEX value: $hexColor")
+
+            require(hexColor.startsWith("#") && (hexColor.length == 4 || hexColor.length == 7)) {
+                "Not a valid HEX value: $hexColor"
             }
+
             hexColor = hexColor.substring(1)
-            if (hexColor.length != 6) {
-                throw IllegalArgumentException("Not a HEX value: $hexColor")
+            if (hexColor.length == 3) {
+                hexColor = hexColor.map { "$it$it" }.joinToString("")
             }
+
             val r = hexColor.substring(0, 2).toInt(16)
             val g = hexColor.substring(2, 4).toInt(16)
             val b = hexColor.substring(4, 6).toInt(16)

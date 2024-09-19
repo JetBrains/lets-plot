@@ -9,7 +9,7 @@ object ToolEventSpec {
     // Event name
     const val INTERACTION_ACTIVATED = "interaction_activated"
     const val INTERACTION_DEACTIVATED = "interaction_deactivated"
-    const val INTERACTION_COMPLETED = "interaction_completed"
+    const val SELECTION_CHANGED = "selection_changed"
 
     // properties
     const val EVENT_NAME = "name"

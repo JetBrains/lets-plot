@@ -31,6 +31,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
 internal class PlotTile(
     private val coreLayers: List<GeomLayer>,
@@ -236,7 +237,16 @@ internal class PlotTile(
         override val dataBounds: DoubleRectangle
             get() = coreTransientState.dataBounds
 
+        override fun syncDataBounds() {
+            // nothing is needed to sync
+        }
+
         override fun repaint() {
+            val transform = SvgTransformBuilder()
+                .scale(scale.x, scale.y)
+                .translate(offset)
+                .build()
+
             geomInteractionGroup.rootGroup.transform().set(transform)
             coreTransientState.transformView(scale, offset)
         }

@@ -338,6 +338,7 @@ object Option {
             const val SIZE_UNIT = "size_unit"
             const val NUDGE_X = "nudge_x"
             const val NUDGE_Y = "nudge_y"
+            const val CHECK_OVERLAP = "check_overlap"
         }
 
         object Label {

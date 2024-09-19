@@ -59,6 +59,7 @@ object Colors {
      *     - rgba(r, g, b, a)
      *     - color(r, g, b, a)
      *     - #rrggbb
+     *     - #rgb
      *     - white, green etc.
      */
     fun parseColor(c: String): Color {
@@ -66,7 +67,7 @@ object Colors {
             c.indexOf('(') > 0 -> Color.parseRGB(c)
             c.startsWith("#") -> Color.parseHex(c)
             isColorName(c) -> forName(c)
-            else -> throw IllegalArgumentException("Error persing color value: $c")
+            else -> throw IllegalArgumentException("Error parsing color value: $c")
         }
     }
 

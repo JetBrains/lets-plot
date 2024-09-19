@@ -174,6 +174,14 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         )
     }
 
+    fun rotate(angle: Double, around: DoubleVector): List<DoubleVector> {
+        val lt = origin.rotateAround(around, angle)
+        val lb = DoubleVector(left, bottom).rotateAround(around, angle)
+        val rt = DoubleVector(right, top).rotateAround(around, angle)
+        val rb = DoubleVector(right, bottom).rotateAround(around, angle)
+        return listOf(lt, lb, rb, rt)
+    }
+
     override fun hashCode(): Int {
         return origin.hashCode() * 31 + dimension.hashCode()
     }

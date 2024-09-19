@@ -42,8 +42,7 @@ class LabelGeom : TextGeom() {
 
         // Background rectangle
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
-        val padding = fontSize * paddingFactor
-        val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
+        val rectangle = objectRectangle(location, textSize, fontSize, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -56,6 +55,7 @@ class LabelGeom : TextGeom() {
         val label = MultilineLabel(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = alphaStroke)
 
+        val padding = fontSize * paddingFactor
         val xPosition = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x + padding
             Text.HorizontalAnchor.RIGHT -> location.x - padding
@@ -79,27 +79,15 @@ class LabelGeom : TextGeom() {
         return g
     }
 
-    private fun rectangleForText(
+    override fun objectRectangle(
         location: DoubleVector,
         textSize: DoubleVector,
-        padding: Double,
+        fontSize: Double,
         hAnchor: Text.HorizontalAnchor,
         vAnchor: Text.VerticalAnchor
     ): DoubleRectangle {
-        val width = textSize.x + padding * 2
-        val height = textSize.y + padding * 2
-
-        val originX = when (hAnchor) {
-            Text.HorizontalAnchor.LEFT -> location.x
-            Text.HorizontalAnchor.RIGHT -> location.x - width
-            Text.HorizontalAnchor.MIDDLE -> location.x - width / 2
-        }
-        val originY = when (vAnchor) {
-            Text.VerticalAnchor.TOP -> location.y
-            Text.VerticalAnchor.BOTTOM -> location.y - height
-            Text.VerticalAnchor.CENTER -> location.y - height / 2
-        }
-        return DoubleRectangle(originX, originY, width, height)
+        val padding = fontSize * paddingFactor
+        return TextUtil.rectangleForText(location, textSize, padding, hAnchor, vAnchor)
     }
 
     companion object {

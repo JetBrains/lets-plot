@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_COMPLETED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
@@ -111,7 +111,7 @@ internal class PlotToolEventDispatcher(
     ) {
         toolEventCallback.invoke(
             mapOf(
-                EVENT_NAME to INTERACTION_COMPLETED,
+                EVENT_NAME to SELECTION_CHANGED,
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName,
                 EVENT_RESULT_DATA_BOUNDS to listOf(
