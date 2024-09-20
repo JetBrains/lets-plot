@@ -39,7 +39,8 @@ internal class RuleMarkConverter private constructor(
             && Channels.Y !in encodingVegaSpec.keys
             && Channels.Y2 !in encodingVegaSpec.keys)
 
-    private fun isHLine(): Boolean = (Channels.X !in encodingVegaSpec.keys
+    private fun isHLine(): Boolean = (
+            Channels.X !in encodingVegaSpec.keys
             && Channels.X2 !in encodingVegaSpec.keys
             && Channels.Y in encodingVegaSpec.keys
             && Channels.Y2 !in encodingVegaSpec.keys)
