@@ -33,7 +33,7 @@ class NumberFormatTypeETest {
 
     @Test
     fun canOutputScientificExponentNotation() {
-        val f = NumberFormat("e&")
+        val f = NumberFormat("e&1")
         assertEquals("0.000000", f.apply(0))
         assertEquals("1.500000", f.apply(1.5e0))
         assertEquals("1.500000·10", f.apply(1.5e1))
@@ -47,11 +47,11 @@ class NumberFormatTypeETest {
     }
 
     @Test
-    fun trim() {
-        assertEquals("1.000000", NumberFormat("e&").apply(1.0))
-        assertEquals("1", NumberFormat("~e&").apply(1.0))
-        assertEquals("10", NumberFormat("~e&").apply(10.0))
-        assertEquals("\\(10^{2}\\)", NumberFormat("~e&").apply(100.0))
-        assertEquals("\\(10^{-1}\\)", NumberFormat("~e&").apply(0.1))
+    fun compactFormatOfScientificNotation() {
+        assertEquals("1.000000", NumberFormat("e&1").apply(1.0))
+        assertEquals("1", NumberFormat("~e&1").apply(1.0))
+        assertEquals("10", NumberFormat("~e&1").apply(10.0))
+        assertEquals("\\(10^{2}\\)", NumberFormat("~e&1").apply(100.0))
+        assertEquals("\\(10^{-1}\\)", NumberFormat("~e&1").apply(0.1))
     }
 }

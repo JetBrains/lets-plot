@@ -79,7 +79,10 @@ class StringFormat private constructor(
 
                 // override richOutput if superscriptExponent is set
                 val spec = if (superscriptExponent != null) {
-                    formatSpec.copy(richOutput = superscriptExponent)
+                    when (superscriptExponent) {
+                        true -> formatSpec.copy(richOutput = 1) // TODO: Make it Int
+                        false -> formatSpec.copy(richOutput = 0)
+                    }
                 } else {
                     formatSpec
                 }

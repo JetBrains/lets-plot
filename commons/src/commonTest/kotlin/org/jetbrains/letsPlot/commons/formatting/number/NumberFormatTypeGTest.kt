@@ -16,14 +16,14 @@ class NumberFormatTypeGTest {
         // Not yet enough digits to use exponential notation
         assertEquals("0.000001", format("g").apply(1.0e-6))
         assertEquals("123456", format("g").apply(123456))
-        assertEquals("0.1", format("g{-2,3}").apply(0.1))
-        assertEquals("123", format("g{-2,3}").apply(123))
+        assertEquals("0.1", format("g{-2,3}").apply(0.1)) // TODO: Move it to NumberFormatTypeETest#compactFormatOfScientificNotation()
+        assertEquals("123", format("g{-2,3}").apply(123)) // TODO
 
         // Enough digits to use exponential notation
         assertEquals("1e-7", format("g").apply(1.0e-7))
         assertEquals("1.23457e+6", format("g").apply(1234567))
-        assertEquals("1e-2", format("g{-2,3}").apply(0.01))
-        assertEquals("1.234e+3", format("g{-2,3}").apply(1234))
+        assertEquals("1e-2", format("g{-2,3}").apply(0.01)) // TODO
+        assertEquals("1.234e+3", format("g{-2,3}").apply(1234)) // TODO
 
         // Rounding
         assertEquals("1.23457e+8", format("g").apply(123456789))
