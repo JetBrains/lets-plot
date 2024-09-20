@@ -33,7 +33,7 @@ class WheelZoomFeedback(
                 }
 
                 val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
-                val dataBounds = target.applyViewport(viewport)
+                val dataBounds = target.applyViewport(viewport, ctx)
                 onCompleted(dataBounds)
             }
         )

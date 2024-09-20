@@ -57,7 +57,6 @@ internal class PlotToolEventDispatcher(
                 completeInteraction(origin, interactionName, dataBounds)
             }
 
-        // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
                 onCompleted = { dataBounds ->

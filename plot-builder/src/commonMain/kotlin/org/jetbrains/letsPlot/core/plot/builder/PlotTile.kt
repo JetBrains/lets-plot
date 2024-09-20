@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
+import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -237,18 +238,18 @@ internal class PlotTile(
         override val dataBounds: DoubleRectangle
             get() = coreTransientState.dataBounds
 
-        override fun syncDataBounds() {
+        override fun syncDataBounds(ctx: InteractionContext) {
             // nothing is needed to sync
         }
 
-        override fun repaint() {
+        override fun repaint(ctx: InteractionContext) {
             val transform = SvgTransformBuilder()
                 .scale(scale.x, scale.y)
                 .translate(offset)
                 .build()
 
             geomInteractionGroup.rootGroup.transform().set(transform)
-            coreTransientState.transformView(scale, offset)
+            coreTransientState.transformView(scale, offset, ctx)
         }
     }
 }

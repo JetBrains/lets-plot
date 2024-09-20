@@ -15,6 +15,8 @@ import org.jetbrains.letsPlot.core.interact.*
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragInteractionContext
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelInteractionContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
@@ -76,18 +78,18 @@ internal class PlotInteractor(
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
         val disposable: Disposable = when (toolFeedback) {
             is DragFeedback -> toolFeedback.start(
-                DragInteractionContext(
+                MouseDragInteractionContext(
                     decorationLayer,
                     eventsManager,
-                    tiles
+                    tiles,
                 )
             )
 
             is WheelZoomFeedback -> toolFeedback.start(
-                DragInteractionContext(
+                MouseWheelInteractionContext(
                     decorationLayer,
                     eventsManager,
-                    tiles
+                    tiles,
                 )
             )
 
@@ -102,26 +104,5 @@ internal class PlotInteractor(
 
     override fun dispose() {
         reg.dispose()
-    }
-
-    private class DragInteractionContext(
-        override val decorationsLayer: SvgNode,
-        override val eventsManager: EventsManager,
-        val tiles: List<Pair<DoubleRectangle, PlotTile>>
-    ) : InteractionContext {
-
-        override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
-            val target = tiles.find { (geomBounds, _) -> plotCoord in geomBounds } ?: return null
-            val (geomBounds, tile) = target
-            return object : InteractionTarget {
-                override val geomBounds: DoubleRectangle = geomBounds
-
-                override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
-                    val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
-                    tile.transientState.applyDelta(scale, translate)
-                    return tile.transientState.dataBounds
-                }
-            }
-        }
     }
 }

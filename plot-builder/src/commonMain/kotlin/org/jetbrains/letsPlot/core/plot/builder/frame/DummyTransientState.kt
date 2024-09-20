@@ -8,17 +8,18 @@ package org.jetbrains.letsPlot.core.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.plot.builder.ComponentTransientState
 
 internal class DummyTransientState : ComponentTransientState(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) {
     override val dataBounds: DoubleRectangle
         get() = UNSUPPORTED("Not yet implemented")
 
-    override fun syncDataBounds() {
+    override fun syncDataBounds(ctx: InteractionContext) {
         UNSUPPORTED("Not yet implemented")
     }
 
-    override fun repaint() {
+    override fun repaint(ctx: InteractionContext) {
         UNSUPPORTED("Not yet implemented")
     }
 }

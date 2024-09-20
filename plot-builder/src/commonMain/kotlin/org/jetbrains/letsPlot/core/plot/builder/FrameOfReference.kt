@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -15,8 +14,6 @@ abstract class FrameOfReference {
 
     val bottomGroup = GroupComponent()
     val topGroup = GroupComponent()
-
-    abstract fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle
 
     /**
      * Repaints axis and grid but not geoms.
