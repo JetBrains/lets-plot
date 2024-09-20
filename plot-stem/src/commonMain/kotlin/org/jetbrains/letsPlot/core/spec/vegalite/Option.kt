@@ -80,6 +80,7 @@ internal object Option {
             const val SQUARE = "square"
             const val ERROR_BAR = "errorbar"
             const val ERROR_BAND = "errorband"
+            const val TICK = "tick"
         }
     }
 

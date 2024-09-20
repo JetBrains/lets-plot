@@ -46,6 +46,7 @@ internal object Converter {
             Option.Mark.Types.SQUARE -> SquareMarkConverter.process(layerSpec, plotOptions)
             Option.Mark.Types.ERROR_BAR -> ErrorBarMarkConverter.process(layerSpec, plotOptions)
             Option.Mark.Types.ERROR_BAND -> ErrorBandMarkConverter.process(layerSpec, plotOptions)
+            Option.Mark.Types.TICK -> TickMarkConverter.process(layerSpec, plotOptions)
             else -> error("Unsupported mark type: $mark")
         }
     }
