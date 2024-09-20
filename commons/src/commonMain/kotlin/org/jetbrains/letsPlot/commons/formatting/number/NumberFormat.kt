@@ -20,7 +20,7 @@ class NumberFormat(spec: Spec) {
         val sign: String = "-",
         val symbol: String = "",
         val zero: Boolean = false,
-        val width: Int = -1,
+        val width: Int = DEF_WIDTH,
         val comma: Boolean = false,
         val precision: Int = DEF_PRECISION,
         val type: String = "",
@@ -482,19 +482,19 @@ class NumberFormat(spec: Spec) {
             val matchResult =
                 NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
             val formatSpec = Spec(
-                fill = matchResult.groups[1]?.value ?: " ",
-                align = matchResult.groups[2]?.value ?: ">",
-                sign = matchResult.groups[3]?.value ?: "-",
-                symbol = matchResult.groups[4]?.value ?: "",
-                zero = matchResult.groups[5] != null,
-                width = (matchResult.groups[6]?.value ?: "-1").toInt(),
-                comma = matchResult.groups[7] != null,
-                precision = matchResult.groups[8]?.value?.toInt() ?: DEF_PRECISION,
-                trim = matchResult.groups[9] != null,
-                type = matchResult.groups[10]?.value ?: "",
-                richOutput = matchResult.groups[11] != null,
-                minExp = matchResult.groups[13]?.value?.toInt() ?: DEF_MIN_EXP,
-                maxExp = matchResult.groups[14]?.value?.toInt(),
+                fill = matchResult.groups["fill"]?.value ?: " ",
+                align = matchResult.groups["align"]?.value ?: ">",
+                sign = matchResult.groups["sign"]?.value ?: "-",
+                symbol = matchResult.groups["symbol"]?.value ?: "",
+                zero = matchResult.groups["zero"] != null,
+                width = matchResult.groups["width"]?.value?.toInt() ?: DEF_WIDTH,
+                comma = matchResult.groups["comma"] != null,
+                precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION,
+                trim = matchResult.groups["trim"] != null,
+                type = matchResult.groups["type"]?.value ?: "",
+                richOutput = matchResult.groups["rich"] != null,
+                minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
+                maxExp = matchResult.groups["maxexp"]?.value?.toInt(),
             )
 
             return normalizeSpec(formatSpec)
@@ -509,12 +509,13 @@ class NumberFormat(spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
-        private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
-        private const val DEF_PRECISION = 6
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?(\{(-?\d+)?,(-?\d+)?\})?$""".toRegex()
+            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?<rich>&)?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
+        private const val DEF_WIDTH = -1
+        private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        private const val DEF_PRECISION = 6
 
 
         internal fun normalizeSpec(spec: Spec): Spec {
