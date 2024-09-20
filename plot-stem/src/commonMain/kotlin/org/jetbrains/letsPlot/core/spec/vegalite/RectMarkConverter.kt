@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
 
 internal class RectMarkConverter private constructor(
     vegaSpec: Map<*, *>,
@@ -25,23 +25,20 @@ internal class RectMarkConverter private constructor(
         plotOptions.appendLayer {
             data = Util.transformData(dataVegaSpec)
 
-            if (Encodings.Channels.X2 in encodingVegaSpec
-                || Encodings.Channels.Y2 in encodingVegaSpec
+            if (Channels.X2 in encodingVegaSpec
+                || Channels.Y2 in encodingVegaSpec
             ) {
                 geom = GeomKind.RECT
                 mappings = Util.transformMappings(
-                    encodingVegaSpec, customChannelMapping = mapOf(
-                        Encodings.Channels.X to Aes.XMIN,
-                        Encodings.Channels.Y to Aes.YMIN,
-                        Encodings.Channels.X2 to Aes.XMAX,
-                        Encodings.Channels.Y2 to Aes.YMAX
-                    )
+                    encodingVegaSpec,
+                        Channels.X to Aes.XMIN,
+                        Channels.Y to Aes.YMIN,
+                        Channels.X2 to Aes.XMAX,
+                        Channels.Y2 to Aes.YMAX,
                 )
             } else {
                 geom = GeomKind.RASTER
-                mappings = Util.transformMappings(encodingVegaSpec, customChannelMapping = mapOf(
-                    Encodings.Channels.COLOR to Aes.FILL
-                ))
+                mappings = Util.transformMappings(encodingVegaSpec, Channels.COLOR to Aes.FILL)
             }
         }
     }

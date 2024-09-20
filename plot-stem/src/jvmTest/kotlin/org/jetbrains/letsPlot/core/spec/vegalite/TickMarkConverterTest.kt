@@ -65,7 +65,6 @@ class TickMarkConverterTest {
             entry(toOption(Aes.SIZE), 0.1),
             entry(toOption(Aes.WIDTH), 0.6),
             entry(PlotBase.MAPPING, mapOf(
-                    toOption(Aes.X) to "val",
                     toOption(Aes.XMIN) to "val",
                     toOption(Aes.XMAX) to "val",
                     toOption(Aes.Y) to "cat"

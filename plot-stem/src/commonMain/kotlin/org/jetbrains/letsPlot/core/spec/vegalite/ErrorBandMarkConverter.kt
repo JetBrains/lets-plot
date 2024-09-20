@@ -26,11 +26,22 @@ internal class ErrorBandMarkConverter private constructor(
             geom = GeomKind.RIBBON
             data = Util.transformData(dataVegaSpec)
 
-            val customChannelMapping = when (Util.iHorizontal(encodingVegaSpec)) {
-                true -> mapOf(Channels.X to Aes.XMIN, Channels.X2 to Aes.XMAX, Channels.Y2 to Aes.YMAX)
-                false -> mapOf(Channels.Y to Aes.YMIN, Channels.Y2 to Aes.YMAX, Channels.X2 to Aes.XMAX)
+            mappings = when (Util.iHorizontal(encodingVegaSpec)) {
+                true -> Util.transformMappings(
+                    encodingVegaSpec,
+                    Channels.X to Aes.XMIN,
+                    Channels.X2 to Aes.XMAX,
+                    Channels.Y2 to Aes.YMAX
+                )
+
+                false -> Util.transformMappings(
+                    encodingVegaSpec,
+                    Channels.Y to Aes.YMIN,
+                    Channels.Y2 to Aes.YMAX,
+                    Channels.X2 to Aes.XMAX
+                )
             }
-            mappings = Util.transformMappings(encodingVegaSpec, customChannelMapping)
+
         }
     }
 }

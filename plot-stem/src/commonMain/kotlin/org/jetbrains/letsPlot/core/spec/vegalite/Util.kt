@@ -41,30 +41,55 @@ internal object Util {
 
     fun iHorizontal(encodingVegaSpec: Map<*, *>): Boolean {
         return Encodings.Channels.Y2 !in encodingVegaSpec
-                && listOf(Encodings.Channels.X, Encodings.Channels.X2, Encodings.Channels.Y).all(encodingVegaSpec::containsKey)
+                && listOf(
+            Encodings.Channels.X,
+            Encodings.Channels.X2,
+            Encodings.Channels.Y
+        ).all(encodingVegaSpec::containsKey)
     }
 
-    fun transformMappings(encodingVegaSpec: Map<*, Map<*, *>>, customChannelMapping: Map<String, Aes<*>> = emptyMap()): Map<Aes<*>, String> {
-        val channelMapping = mapOf(
-            Encodings.Channels.X to Aes.X,
-            Encodings.Channels.Y to Aes.Y,
-            Encodings.Channels.COLOR to Aes.COLOR,
-            Encodings.Channels.FILL to Aes.FILL,
-            Encodings.Channels.OPACITY to Aes.ALPHA,
-            Encodings.Channels.STROKE to Aes.STROKE,
-            Encodings.Channels.SIZE to Aes.SIZE,
-            Encodings.Channels.ANGLE to Aes.ANGLE,
-            Encodings.Channels.SHAPE to Aes.SHAPE,
-            Encodings.Channels.TEXT to Aes.LABEL
-        ) + customChannelMapping
+    fun transformMappings(
+        encodingVegaSpec: Map<*, Map<*, *>>,
+        vararg channelMappingOverriding: Pair<String, Aes<*>>
+    ): Map<Aes<*>, String> {
 
-        val channelEncoding = encodingVegaSpec
+        val defaultChannelToAesConverter = mutableMapOf<String, MutableList<Aes<*>>>(
+            Encodings.Channels.X to mutableListOf(Aes.X),
+            Encodings.Channels.Y to mutableListOf(Aes.Y),
+            Encodings.Channels.COLOR to mutableListOf(Aes.COLOR),
+            Encodings.Channels.FILL to mutableListOf(Aes.FILL),
+            Encodings.Channels.OPACITY to mutableListOf(Aes.ALPHA),
+            Encodings.Channels.STROKE to mutableListOf(Aes.STROKE),
+            Encodings.Channels.SIZE to mutableListOf(Aes.SIZE),
+            Encodings.Channels.ANGLE to mutableListOf(Aes.ANGLE),
+            Encodings.Channels.SHAPE to mutableListOf(Aes.SHAPE),
+            Encodings.Channels.TEXT to mutableListOf(Aes.LABEL)
+        )
+
+        val overriding = channelMappingOverriding.fold(mutableMapOf<String, MutableList<Aes<*>>>()) { acc, (channel, aes) ->
+            acc.getOrPut(channel, ::mutableListOf) += aes
+            acc
+        }
+
+        //defaultChannelToAesConverter.keys.removeAll { it in overriding }
+
+        //overriding.values.flatten().forEach { defaultChannelToAesConverter.values.forEach { l -> l.remove(it) } }
+
+        val channelToAesConverter = defaultChannelToAesConverter + overriding
+
+        val channelToField = encodingVegaSpec
             .mapValues { (_, encoding) -> encoding.getString(Encodings.FIELD) }
             .filterNotNullValues()
 
-        val unsupportedChannels = channelEncoding.keys - channelMapping.keys
-        if (unsupportedChannels.isNotEmpty()) {
-            error("Error: unsupported channels: $unsupportedChannels")
+        val convertableAesthetics = channelToAesConverter.values.flatten()
+        val aestheticsToChannelConverter =
+            convertableAesthetics.associateWith { aes -> channelToAesConverter.filterValues { aes in it }.keys.last() }
+        val encodedAesthetics =
+            aestheticsToChannelConverter.mapValues { (aes, channel) -> channelToField[channel] }.filterNotNullValues()
+
+        // validation
+        if ((channelToField.keys - channelToAesConverter.keys).isNotEmpty()) {
+            error("Error: unsupported channels: ${channelToField.keys - channelToAesConverter.keys}")
         }
 
         val aggregates = encodingVegaSpec.filter { (_, encoding) -> Encodings.AGGREGATE in encoding }
@@ -72,8 +97,6 @@ internal object Util {
             //error("Error: unsupported aggregate functions: $aggregates")
         }
 
-        val mappings: Map<Aes<*>, String> = (channelEncoding - unsupportedChannels)
-            .mapKeys { (channel, _) -> channelMapping[channel]!! }
-        return mappings
+        return encodedAesthetics
     }
 }

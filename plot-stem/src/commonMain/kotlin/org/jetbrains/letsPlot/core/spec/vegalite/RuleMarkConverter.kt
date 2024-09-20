@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
-import org.jetbrains.letsPlot.core.spec.getString
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
 
 internal class RuleMarkConverter private constructor(
@@ -34,19 +32,23 @@ internal class RuleMarkConverter private constructor(
                 else -> error("Rule mark can be used only for vertical or horizontal lines or segments.\nEncoding: $encodingVegaSpec")
             }
 
-            val extraMappings = when {
-                isHSegment() -> mapOf(Aes.YEND to encodingVegaSpec.getString(Channels.Y, Encodings.FIELD)!!)
-                isVSegment() -> mapOf(Aes.XEND to encodingVegaSpec.getString(Channels.X, Encodings.FIELD)!!)
-                else -> emptyMap()
-            }
-
             mappings = when {
-                isVLine() -> Util.transformMappings(encodingVegaSpec, mapOf(Channels.X to Aes.XINTERCEPT))
-                isHLine() -> Util.transformMappings(encodingVegaSpec, mapOf(Channels.Y to Aes.YINTERCEPT))
-                isHSegment() -> Util.transformMappings(encodingVegaSpec, mapOf(Channels.X2 to Aes.XEND))
-                isVSegment() -> Util.transformMappings(encodingVegaSpec, mapOf(Channels.Y2 to Aes.YEND))
+                isVLine() -> Util.transformMappings(encodingVegaSpec, Channels.X to Aes.XINTERCEPT)
+                isHLine() -> Util.transformMappings(encodingVegaSpec, Channels.Y to Aes.YINTERCEPT)
+                isHSegment() -> Util.transformMappings(
+                    encodingVegaSpec,
+                    Channels.Y to Aes.Y,
+                    Channels.Y to Aes.YEND,
+                    Channels.X2 to Aes.XEND
+                )
+                isVSegment() -> Util.transformMappings(
+                    encodingVegaSpec,
+                    Channels.X to Aes.X,
+                    Channels.X to Aes.XEND,
+                    Channels.Y2 to Aes.YEND
+                )
                 else -> error("Rule mark can be used only for vertical or horizontal lines or segments")
-            } + extraMappings
+            }
         }
     }
 
