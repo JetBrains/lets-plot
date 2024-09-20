@@ -55,7 +55,7 @@ class RuleMarkTransformTest {
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.YINTERCEPT) to "mean_price",
-                    "color" to "symbol",
+                    toOption(Aes.COLOR) to "symbol",
                 )
             ),
             entry(
@@ -99,7 +99,7 @@ class RuleMarkTransformTest {
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.XINTERCEPT) to "mean_price",
-                    "color" to "symbol",
+                    toOption(Aes.COLOR) to "symbol",
                 )
             ),
             entry(
