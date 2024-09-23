@@ -11,13 +11,15 @@ import org.jetbrains.letsPlot.core.interact.EventsManager
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.PlotTile
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
-internal abstract class PlotTilesInteractionContext (
+internal class PlotTilesInteractionContext(
     override val decorationsLayer: SvgNode,
     override val eventsManager: EventsManager,
     val tiles: List<Pair<DoubleRectangle, PlotTile>>,
+    val dataSelectionStrategy: DataSelectionStrategy
 ) : InteractionContext {
 
     override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
@@ -32,5 +34,9 @@ internal abstract class PlotTilesInteractionContext (
                 return tile.transientState.dataBounds
             }
         }
+    }
+
+    override fun clientRectToDataBounds(clientRect: DoubleRectangle, coord: CoordinateSystem): DoubleRectangle {
+        return dataSelectionStrategy.clientRectToDataBounds(clientRect, coord)
     }
 }

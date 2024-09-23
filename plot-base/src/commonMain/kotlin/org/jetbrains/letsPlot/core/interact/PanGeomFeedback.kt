@@ -12,7 +12,7 @@ import kotlin.math.abs
 
 class PanGeomFeedback(
     private val onCompleted: ((DoubleRectangle) -> Unit) = { _ -> println("PanGeomFeedback complete.") },
-) : DragFeedback {
+) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
 

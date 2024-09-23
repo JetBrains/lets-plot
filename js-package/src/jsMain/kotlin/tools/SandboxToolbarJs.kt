@@ -86,7 +86,7 @@ class SandboxToolbarJs() {
         button.textContent = "Reset"
         button.style.margin = "0 5px"
         button.addEventListener("click", {
-            controller.reset()
+            controller.resetFigure(deactiveTools = true)
         })
         return button
     }

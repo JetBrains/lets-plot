@@ -9,8 +9,9 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTIO
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
 
@@ -39,11 +40,12 @@ class DefaultToolbarController(
         }
     }
 
-    fun reset() {
-        tools.filter { it.tool.active }.forEach {
-            figure.deactivateTool(it.tool)
+    fun resetFigure(deactiveTools: Boolean) {
+        if (deactiveTools) {
+            tools.filter { it.tool.active }.forEach {
+                figure.deactivateTool(it.tool)
+            }
         }
-
         figure.updateView()
     }
 
@@ -74,6 +76,10 @@ class DefaultToolbarController(
                     }
                     figure.updateView(specOverride)
                 }
+            }
+
+            ROLLBACK_ALL_CHANGES -> {
+                resetFigure(deactiveTools = false)
             }
 
             else -> {}

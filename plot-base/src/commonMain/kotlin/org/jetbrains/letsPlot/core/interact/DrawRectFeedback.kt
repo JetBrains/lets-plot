@@ -19,7 +19,7 @@ import kotlin.math.abs
 class DrawRectFeedback(
     private val centerStart: Boolean,
     private val onCompleted: ((DoubleRectangle) -> Unit)
-) : DragFeedback {
+) : ToolFeedback {
 
     private var selector: Selector = UnknownSelector()
 

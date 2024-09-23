@@ -6,21 +6,9 @@
 package org.jetbrains.letsPlot.core.plot.builder.interact.context
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.core.interact.EventsManager
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.builder.PlotTile
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
-internal class MouseDragInteractionContext constructor(
-    decorationsLayer: SvgNode,
-    eventsManager: EventsManager,
-    tiles: List<Pair<DoubleRectangle, PlotTile>>,
-) : PlotTilesInteractionContext(
-    decorationsLayer,
-    eventsManager,
-    tiles
-) {
-
+internal class MouseDragSelectionStrategy : DataSelectionStrategy {
 
     override fun clientRectToDataBounds(clientRect: DoubleRectangle, coord: CoordinateSystem): DoubleRectangle {
         val domainPoint0Estimate = coord.fromClient(clientRect.origin)

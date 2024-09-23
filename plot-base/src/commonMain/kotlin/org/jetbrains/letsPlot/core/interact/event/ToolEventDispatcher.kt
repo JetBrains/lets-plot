@@ -15,4 +15,8 @@ interface ToolEventDispatcher {
      * @return List of deactivates interaction specs by "origin"
      */
     fun deactivateAllSilently(): Map<String, List<Map<String, Any>>>
+
+    companion object {
+        const val ORIGIN_FIGURE_IMPLICIT = "org.jetbrains.letsPlot.interact.FigureImplicit"
+    }
 }

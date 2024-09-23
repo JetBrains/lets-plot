@@ -15,8 +15,10 @@ import org.jetbrains.letsPlot.core.interact.*
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragInteractionContext
-import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelInteractionContext
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.NoneSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.PlotTilesInteractionContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
@@ -76,25 +78,23 @@ internal class PlotInteractor(
     }
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
-        val disposable: Disposable = when (toolFeedback) {
-            is DragFeedback -> toolFeedback.start(
-                MouseDragInteractionContext(
-                    decorationLayer,
-                    eventsManager,
-                    tiles,
-                )
-            )
+        var dataSelectionStrategy = when (toolFeedback) {
+            is PanGeomFeedback,
+            is DrawRectFeedback -> MouseDragSelectionStrategy()
 
-            is WheelZoomFeedback -> toolFeedback.start(
-                MouseWheelInteractionContext(
-                    decorationLayer,
-                    eventsManager,
-                    tiles,
-                )
-            )
-
-            else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
+            is WheelZoomFeedback -> MouseWheelSelectionStrategy()
+            is RollbackAllChangesFeedback -> NoneSelectionStrategy()
+            else -> throw IllegalArgumentException("Unexpected feedback object: ${toolFeedback::class.simpleName}")
         }
+
+        val disposable: Disposable = toolFeedback.start(
+            PlotTilesInteractionContext(
+                decorationLayer,
+                eventsManager,
+                tiles,
+                dataSelectionStrategy
+            )
+        )
         return Registration.from(disposable)
     }
 

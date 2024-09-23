@@ -65,7 +65,7 @@ internal class SandboxToolbar(
     private fun resetButton(): JButton {
         val button = JButton("Reset")
         button.addActionListener {
-            controller.reset()
+            controller.resetFigure(deactiveTools = true)
         }
         return button
     }

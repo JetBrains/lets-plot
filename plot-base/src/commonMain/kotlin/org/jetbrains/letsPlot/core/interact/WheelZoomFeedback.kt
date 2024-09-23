@@ -12,7 +12,7 @@ import kotlin.math.abs
 class WheelZoomFeedback(
     private val onCompleted: (DoubleRectangle) -> Unit
 ) : ToolFeedback {
-    fun start(ctx: InteractionContext): Disposable {
+    override fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx)
 
         interaction.loop(

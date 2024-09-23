@@ -10,6 +10,7 @@ object ToolEventSpec {
     const val INTERACTION_ACTIVATED = "interaction_activated"
     const val INTERACTION_DEACTIVATED = "interaction_deactivated"
     const val SELECTION_CHANGED = "selection_changed"
+    const val ROLLBACK_ALL_CHANGES = "rollback_all_changes"
 
     // properties
     const val EVENT_NAME = "name"

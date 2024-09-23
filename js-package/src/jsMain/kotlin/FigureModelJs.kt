@@ -6,6 +6,7 @@
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
@@ -27,6 +28,13 @@ class FigureModelJs internal constructor(
     fun onToolEvent(callback: (dynamic) -> Unit) {
         toolEventCallback = callback
         toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+
+        // Make snsure that 'implicit' interaction activated.
+        deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
+        activateInteractions(
+            origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
+            interactionSpecListJs = dynamicFromAnyQ(FigureImplicitInteractionSpecs.LIST)
+        )
     }
 
     fun updateView(specOverrideJs: dynamic = null) {
