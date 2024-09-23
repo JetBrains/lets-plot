@@ -128,7 +128,8 @@ class QQ {
                 "   'bistro': {" +
                 "               'name': 'qqplot'," +
                 "               'x': 'sepal width (cm)'," +
-                "               'y': 'sepal length (cm)'" +
+                "               'y': 'sepal length (cm)'," +
+                "               'marginal': 'hist:blb:.03,box:tr:.025'" +
                 "             }" +
                 "}"
 

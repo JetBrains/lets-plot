@@ -15,12 +15,12 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.comp
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsToDataframe
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.matrixXYSeries
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Method.correlationPearson
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.FULL
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.LOWER
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.ThemeOptions.Element
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.coord

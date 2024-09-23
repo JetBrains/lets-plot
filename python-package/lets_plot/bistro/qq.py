@@ -10,6 +10,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
             distribution=None, dparams=None, quantiles=None,
             group=None,
             show_legend=None,
+            marginal=None,
             color=None, fill=None, alpha=None, size=None, shape=None,
             line_color=None, line_size=None, linetype=None) -> PlotSpec:
     """
@@ -49,6 +50,20 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         If it is specified and color-parameters isn't then different groups will has different colors.
     show_legend : bool, default=True
         False - do not show legend.
+    marginal : str, default='dens:tr'
+        Description of marginal layers packed to string value.
+        Different marginals are separated by the ',' char.
+        Parameters of a marginal are separated by the ':' char.
+        First parameter of a marginal is a geometry name.
+        Possible values: 'dens'/'density', 'hist'/'histogram', 'box'/'boxplot'.
+        Second parameter is a string specifying which sides of the plot the marginal layer will appear on.
+        Possible values: 't' (top), 'b' (bottom), 'l' (left), 'r' (right).
+        Third parameter (optional) is size of marginal.
+        To suppress marginals use `marginal='none'`.
+        Examples:
+        "hist:tr:0.3",
+        "dens:tr,hist:bl",
+        "box : tr : .05, dens : bl".
     color : str
         Color of a points.
         For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
@@ -174,6 +189,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         'quantiles': quantiles,
         'group': group,
         'show_legend': show_legend,
+        'marginal': marginal,
         'color': color,
         'fill': fill,
         'alpha': alpha,

@@ -3,11 +3,19 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
+package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
 
 import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import kotlin.also
+import kotlin.collections.associate
+import kotlin.collections.forEach
+import kotlin.collections.map
+import kotlin.collections.toMutableList
+import kotlin.collections.withIndex
+import kotlin.let
+import kotlin.to
 
 fun DataFrame.addRow(getValue: (DataFrame.Variable) -> Any?, position: Int? = null): DataFrame {
     val builder = DataFrame.Builder()

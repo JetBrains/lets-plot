@@ -3,6 +3,7 @@
 ### Added
                  
 - `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
+
 - `expand_limits()` [[#820](https://github.com/JetBrains/lets-plot/issues/820)].
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/expand_limits.ipynb).
@@ -15,7 +16,12 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/check_overlap.ipynb).
        
+- `marginal` parameter in `qq_plot()`:
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
+
 - `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
+
 - Support for 3-character hex color codes     
 
 ### Changed

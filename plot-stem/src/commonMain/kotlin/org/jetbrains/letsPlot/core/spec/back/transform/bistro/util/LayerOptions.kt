@@ -23,6 +23,12 @@ class LayerOptions : Options() {
     var stat: String? by map(Layer.STAT)
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
     var position: PositionOptions? by map(Layer.POS)
+    var orientation: String? by map(Layer.ORIENTATION)
+
+    // hidden
+    var marginal: Boolean? by map(Layer.MARGINAL)
+    var marginSide: String? by map(Layer.Marginal.SIDE)
+    var marginSize: Double? by map(Layer.Marginal.SIZE)
 
     // geom_text
     var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)
@@ -76,7 +82,11 @@ class LayerOptions : Options() {
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
 
-    fun <T> setParameter(name: String, v: T) { properties[name] = v }
+    operator fun <T> set(prop: PropSpec<T>, value: T) {
+        properties[prop.name] = value
+    }
 }
+
+class PropSpec<T>(val name: String)
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)
