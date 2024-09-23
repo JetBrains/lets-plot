@@ -995,6 +995,10 @@ object Option {
                 ?: throw IllegalArgumentException("Unknown geom: '${geomKind.name.lowercase()}'")
         }
 
+        fun fromStatKind(statKind: StatKind): String {
+            return statKind.name.lowercase()
+        }
+
         fun values(): Set<String> {
             return GEOM_KIND_MAP.keys
         }

@@ -179,3 +179,8 @@ fun List<*>.asMaps(): List<Map<*, *>> {
     return this as List<Map<*, *>>
 }
 
+@Suppress("UNCHECKED_CAST")
+fun Map<*, *>.asMapOfMaps(): Map<*, Map<*, *>> {
+    return this as Map<*, Map<*, *>>
+}
+

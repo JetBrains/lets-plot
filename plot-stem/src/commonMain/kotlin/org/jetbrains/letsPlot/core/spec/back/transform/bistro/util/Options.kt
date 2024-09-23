@@ -15,6 +15,7 @@ abstract class Options(
 ) {
     inline operator fun <reified T> get(aes: Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
     operator fun <T> set(aes: Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
+    fun setAes(aes: Aes<*>, v: Any?) { properties[Option.Mapping.toOption(aes)] = v }
 }
 
 inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
