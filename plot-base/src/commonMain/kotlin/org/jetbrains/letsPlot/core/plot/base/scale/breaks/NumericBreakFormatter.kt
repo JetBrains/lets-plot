@@ -66,7 +66,7 @@ internal class NumericBreakFormatter(
             delimiter = ","
         }
 
-        val richOutput = if (type == "e" && superscriptExponent) "&" else ""
+        val richOutput = if (type == "e" && superscriptExponent) "&1" else ""
         val trim = if (type == "e" && superscriptExponent) "~" else ""
 
         formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput")

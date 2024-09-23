@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -47,11 +48,165 @@ class NumberFormatTypeETest {
     }
 
     @Test
-    fun compactFormatOfScientificNotation() {
+    fun trim() {
         assertEquals("1.000000", NumberFormat("e&1").apply(1.0))
         assertEquals("1", NumberFormat("~e&1").apply(1.0))
         assertEquals("10", NumberFormat("~e&1").apply(10.0))
         assertEquals("\\(10^{2}\\)", NumberFormat("~e&1").apply(100.0))
         assertEquals("\\(10^{-1}\\)", NumberFormat("~e&1").apply(0.1))
+    }
+
+    @Test
+    fun compactFormatOfScientificNotation() {
+        fun format(exponentFormat: ExponentFormat, limits: Pair<Int, Int>? = null): NumberFormat {
+            val limitsStr = limits?.let { "{${it.first},${it.second}}" } ?: ""
+            return NumberFormat("&${exponentFormat.value}$limitsStr")
+        }
+
+        //
+        // Default limits
+        //
+
+        // 10^n
+
+        assertEquals("1e-7", format(ExponentFormat.E).apply(0.0000001))
+        assertEquals("\\(10^{-7}\\)", format(ExponentFormat.POW).apply(0.0000001))
+        assertEquals("1·\\(10^{-7}\\)", format(ExponentFormat.POW_FULL).apply(0.0000001))
+
+        assertEquals("0.000001", format(ExponentFormat.E).apply(0.000001))
+        assertEquals("0.000001", format(ExponentFormat.POW).apply(0.000001))
+        assertEquals("0.000001", format(ExponentFormat.POW_FULL).apply(0.000001))
+
+        assertEquals("0.1", format(ExponentFormat.E).apply(0.1))
+        assertEquals("0.1", format(ExponentFormat.POW).apply(0.1))
+        assertEquals("0.1", format(ExponentFormat.POW_FULL).apply(0.1))
+
+        assertEquals("1", format(ExponentFormat.E).apply(1))
+        assertEquals("1", format(ExponentFormat.POW).apply(1))
+        assertEquals("1", format(ExponentFormat.POW_FULL).apply(1))
+
+        assertEquals("10", format(ExponentFormat.E).apply(10))
+        assertEquals("10", format(ExponentFormat.POW).apply(10))
+        assertEquals("10", format(ExponentFormat.POW_FULL).apply(10))
+
+        assertEquals("100000", format(ExponentFormat.E).apply(100000))
+        assertEquals("100000", format(ExponentFormat.POW).apply(100000))
+        assertEquals("100000", format(ExponentFormat.POW_FULL).apply(100000))
+
+        assertEquals("1e+6", format(ExponentFormat.E).apply(1000000))
+        assertEquals("\\(10^{6}\\)", format(ExponentFormat.POW).apply(1000000))
+        assertEquals("1·\\(10^{6}\\)", format(ExponentFormat.POW_FULL).apply(1000000))
+
+        // 2*10^n
+
+        assertEquals("2e-7", format(ExponentFormat.E).apply(0.0000002))
+        assertEquals("2·\\(10^{-7}\\)", format(ExponentFormat.POW).apply(0.0000002))
+        assertEquals("2·\\(10^{-7}\\)", format(ExponentFormat.POW_FULL).apply(0.0000002))
+
+        assertEquals("0.000002", format(ExponentFormat.E).apply(0.000002))
+        assertEquals("0.000002", format(ExponentFormat.POW).apply(0.000002))
+        assertEquals("0.000002", format(ExponentFormat.POW_FULL).apply(0.000002))
+
+        assertEquals("200000", format(ExponentFormat.E).apply(200000))
+        assertEquals("200000", format(ExponentFormat.POW).apply(200000))
+        assertEquals("200000", format(ExponentFormat.POW_FULL).apply(200000))
+
+        assertEquals("2e+6", format(ExponentFormat.E).apply(2000000))
+        assertEquals("2·\\(10^{6}\\)", format(ExponentFormat.POW).apply(2000000))
+        assertEquals("2·\\(10^{6}\\)", format(ExponentFormat.POW_FULL).apply(2000000))
+
+        // Negative numbers
+
+        assertEquals("-1e+6", format(ExponentFormat.E).apply(-1000000))
+        assertEquals("-\\(10^{6}\\)", format(ExponentFormat.POW).apply(-1000000))
+        assertEquals("-1·\\(10^{6}\\)", format(ExponentFormat.POW_FULL).apply(-1000000))
+
+        assertEquals("-1e-7", format(ExponentFormat.E).apply(-0.0000001))
+        assertEquals("-\\(10^{-7}\\)", format(ExponentFormat.POW).apply(-0.0000001))
+        assertEquals("-1·\\(10^{-7}\\)", format(ExponentFormat.POW_FULL).apply(-0.0000001))
+
+        assertEquals("-2e+6", format(ExponentFormat.E).apply(-2000000))
+        assertEquals("-2·\\(10^{6}\\)", format(ExponentFormat.POW).apply(-2000000))
+        assertEquals("-2·\\(10^{6}\\)", format(ExponentFormat.POW_FULL).apply(-2000000))
+
+        assertEquals("-2e-7", format(ExponentFormat.E).apply(-0.0000002))
+        assertEquals("-2·\\(10^{-7}\\)", format(ExponentFormat.POW).apply(-0.0000002))
+        assertEquals("-2·\\(10^{-7}\\)", format(ExponentFormat.POW_FULL).apply(-0.0000002))
+
+        //
+        // Limits: (-2, 3)
+        //
+
+        // 10^n
+
+        assertEquals("1e-2", format(ExponentFormat.E, -2 to 3).apply(0.01))
+        assertEquals("\\(10^{-2}\\)", format(ExponentFormat.POW, -2 to 3).apply(0.01))
+        assertEquals("1·\\(10^{-2}\\)", format(ExponentFormat.POW_FULL, -2 to 3).apply(0.01))
+
+        assertEquals("0.1", format(ExponentFormat.E, -2 to 3).apply(0.1))
+        assertEquals("0.1", format(ExponentFormat.POW, -2 to 3).apply(0.1))
+        assertEquals("0.1", format(ExponentFormat.POW_FULL, -2 to 3).apply(0.1))
+
+        assertEquals("1", format(ExponentFormat.E, -2 to 3).apply(1))
+        assertEquals("1", format(ExponentFormat.POW, -2 to 3).apply(1))
+        assertEquals("1", format(ExponentFormat.POW_FULL, -2 to 3).apply(1))
+
+        assertEquals("10", format(ExponentFormat.E, -2 to 3).apply(10))
+        assertEquals("10", format(ExponentFormat.POW, -2 to 3).apply(10))
+        assertEquals("10", format(ExponentFormat.POW_FULL, -2 to 3).apply(10))
+
+        assertEquals("100", format(ExponentFormat.E, -2 to 3).apply(100))
+        assertEquals("100", format(ExponentFormat.POW, -2 to 3).apply(100))
+        assertEquals("100", format(ExponentFormat.POW_FULL, -2 to 3).apply(100))
+
+        assertEquals("1e+3", format(ExponentFormat.E, -2 to 3).apply(1000))
+        assertEquals("\\(10^{3}\\)", format(ExponentFormat.POW, -2 to 3).apply(1000))
+        assertEquals("1·\\(10^{3}\\)", format(ExponentFormat.POW_FULL, -2 to 3).apply(1000))
+
+        // 2*10^n
+
+        assertEquals("2e-2", format(ExponentFormat.E, -2 to 3).apply(0.02))
+        assertEquals("2·\\(10^{-2}\\)", format(ExponentFormat.POW, -2 to 3).apply(0.02))
+        assertEquals("2·\\(10^{-2}\\)", format(ExponentFormat.POW_FULL, -2 to 3).apply(0.02))
+
+        assertEquals("0.2", format(ExponentFormat.E, -2 to 3).apply(0.2))
+        assertEquals("0.2", format(ExponentFormat.POW, -2 to 3).apply(0.2))
+        assertEquals("0.2", format(ExponentFormat.POW_FULL, -2 to 3).apply(0.2))
+
+        assertEquals("200", format(ExponentFormat.E, -2 to 3).apply(200))
+        assertEquals("200", format(ExponentFormat.POW, -2 to 3).apply(200))
+        assertEquals("200", format(ExponentFormat.POW_FULL, -2 to 3).apply(200))
+
+        assertEquals("2e+3", format(ExponentFormat.E, -2 to 3).apply(2000))
+        assertEquals("2·\\(10^{3}\\)", format(ExponentFormat.POW, -2 to 3).apply(2000))
+        assertEquals("2·\\(10^{3}\\)", format(ExponentFormat.POW_FULL, -2 to 3).apply(2000))
+
+        //
+        // Limits: (0, 0)
+        //
+
+        assertEquals("1e-1", format(ExponentFormat.E, 0 to 0).apply(0.1))
+        assertEquals("\\(10^{-1}\\)", format(ExponentFormat.POW, 0 to 0).apply(0.1))
+        assertEquals("1·\\(10^{-1}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(0.1))
+
+        assertEquals("1e+0", format(ExponentFormat.E, 0 to 0).apply(1))
+        assertEquals("\\(10^{0}\\)", format(ExponentFormat.POW, 0 to 0).apply(1))
+        assertEquals("1·\\(10^{0}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(1))
+
+        assertEquals("1e+1", format(ExponentFormat.E, 0 to 0).apply(10))
+        assertEquals("\\(10^{1}\\)", format(ExponentFormat.POW, 0 to 0).apply(10))
+        assertEquals("1·\\(10^{1}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(10))
+
+        assertEquals("2e-1", format(ExponentFormat.E, 0 to 0).apply(0.2))
+        assertEquals("2·\\(10^{-1}\\)", format(ExponentFormat.POW, 0 to 0).apply(0.2))
+        assertEquals("2·\\(10^{-1}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(0.2))
+
+        assertEquals("2e+0", format(ExponentFormat.E, 0 to 0).apply(2))
+        assertEquals("2·\\(10^{0}\\)", format(ExponentFormat.POW, 0 to 0).apply(2))
+        assertEquals("2·\\(10^{0}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(2))
+
+        assertEquals("2e+1", format(ExponentFormat.E, 0 to 0).apply(20))
+        assertEquals("2·\\(10^{1}\\)", format(ExponentFormat.POW, 0 to 0).apply(20))
+        assertEquals("2·\\(10^{1}\\)", format(ExponentFormat.POW_FULL, 0 to 0).apply(20))
     }
 }

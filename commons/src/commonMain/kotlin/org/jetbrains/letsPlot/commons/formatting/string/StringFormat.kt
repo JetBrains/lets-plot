@@ -79,9 +79,9 @@ class StringFormat private constructor(
 
                 // override richOutput if superscriptExponent is set
                 val spec = if (superscriptExponent != null) {
-                    when (superscriptExponent) {
-                        true -> formatSpec.copy(richOutput = 1) // TODO: Make it Int
-                        false -> formatSpec.copy(richOutput = 0)
+                    when (superscriptExponent) { // TODO: Make it NumberFormat.ExponentFormat
+                        true -> formatSpec.copy(exponentFormat = NumberFormat.ExponentFormat.POW)
+                        false -> formatSpec.copy(exponentFormat = NumberFormat.ExponentFormat.E)
                     }
                 } else {
                     formatSpec
@@ -102,7 +102,7 @@ class StringFormat private constructor(
                     require(value is Number) {
                         error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
                     }
-                    value.toLong()
+                    (value as Number).toLong()
                         .let(::Instant)
                         .let(TimeZone.UTC::toDateTime)
                         .let(dateTimeFormatter::apply)
