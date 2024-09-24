@@ -7,7 +7,7 @@
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/expand_limits.ipynb).
 
-- `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)]:
+- `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)].
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
 
@@ -19,7 +19,11 @@
 - Support for 3-character hex color codes     
 
 ### Changed
- 
+
+- Compact format of scientific notation; new value for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/scientific_notation_table.ipynb).
+
 ### Fixed
 - Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
 - Support layering `aes()` multiple times [[#822](https://github.com/JetBrains/lets-plot/issues/822)].
