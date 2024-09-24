@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 object ThemeOption {
+    const val NAME = "name"
+
     // System
     const val EXPONENT_FORMAT = "exponent_format"
 

@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.stat.QQStat
 import org.jetbrains.letsPlot.core.plot.base.stat.QQStatUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_BOTTOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_LEFT
@@ -97,6 +98,9 @@ class QQPlotOptionsBuilder(
                     isDiscrete = true
                 },
             )
+            themeOptions = theme {
+                name = ThemeOption.Name.R_LIGHT
+            }
         }
     }
 

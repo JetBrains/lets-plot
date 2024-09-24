@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 
 
 class ThemeOptions : Options() {
+    var name: String? by map(ThemeOption.NAME)
     var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
     var axisLine: Element? by map(ThemeOption.AXIS_LINE)
     var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
