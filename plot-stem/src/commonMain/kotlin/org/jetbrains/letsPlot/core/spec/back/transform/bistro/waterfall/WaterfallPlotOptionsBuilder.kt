@@ -11,12 +11,22 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
+import org.jetbrains.letsPlot.core.spec.plotson.Options.PropSpec
+import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
+import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions
+import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
+import org.jetbrains.letsPlot.core.spec.plotson.plot
+import org.jetbrains.letsPlot.core.spec.plotson.position
+import org.jetbrains.letsPlot.core.spec.plotson.scale
+import org.jetbrains.letsPlot.core.spec.plotson.theme
+import org.jetbrains.letsPlot.core.spec.plotson.tooltips
 
 class WaterfallPlotOptionsBuilder(
     data: Map<*, *>,
@@ -383,7 +393,7 @@ class WaterfallPlotOptionsBuilder(
                 "@${Waterfall.Var.Stat.DIFFERENCE}",
             )
             formats = listOf(
-                TooltipsOptions.format {
+                TooltipsOptions.Companion.format {
                     field = Waterfall.Var.Stat.DIFFERENCE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
@@ -402,7 +412,7 @@ class WaterfallPlotOptionsBuilder(
                 Waterfall.Var.Stat.DIFFERENCE,
                 Waterfall.Var.Stat.VALUE,
             ).map { f ->
-                TooltipsOptions.format {
+                TooltipsOptions.Companion.format {
                     field = f.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
@@ -414,7 +424,7 @@ class WaterfallPlotOptionsBuilder(
                 "@${Waterfall.Var.Stat.VALUE}",
             )
             formats = listOf(
-                TooltipsOptions.format {
+                TooltipsOptions.Companion.format {
                     field = Waterfall.Var.Stat.VALUE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }
@@ -427,7 +437,7 @@ class WaterfallPlotOptionsBuilder(
                 "$VALUE_TOOLTIP_NAME|@${Waterfall.Var.Stat.VALUE}",
             )
             formats = listOf(
-                TooltipsOptions.format {
+                TooltipsOptions.Companion.format {
                     field = Waterfall.Var.Stat.VALUE.name
                     format = TOOLTIPS_VALUE_FORMAT
                 }

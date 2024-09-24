@@ -161,12 +161,18 @@ fun Map<*, *>.asMutable(): MutableMap<String, Any> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <K, V> Map<*, *>.typed(): Map<K, V> {
+fun <K, V> Map<*, *>.typed(strict: Boolean = false): Map<K, V> {
+    if (strict) {
+        onEach { (k, v) -> k as K; v as V }
+    }
     return this as Map<K, V>
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> List<*>.typed(): List<T> {
+inline fun <reified T> List<*>.typed(strict: Boolean = false): List<T> {
+    if (strict) {
+        onEach { it as T }
+    }
     return this as List<T>
 }
 

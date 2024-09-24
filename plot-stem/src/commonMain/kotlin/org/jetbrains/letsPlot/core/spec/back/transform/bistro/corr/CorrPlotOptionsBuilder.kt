@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind
-import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_BREWER
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.computeCorrelations
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsToDataframe
@@ -21,9 +21,17 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.L
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.ThemeOptions.Element
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.coord
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
+import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
+import org.jetbrains.letsPlot.core.spec.plotson.SamplingOptions
+import org.jetbrains.letsPlot.core.spec.plotson.ScaleOptions
+import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.Element
+import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
+import org.jetbrains.letsPlot.core.spec.plotson.coord
+import org.jetbrains.letsPlot.core.spec.plotson.plot
+import org.jetbrains.letsPlot.core.spec.plotson.scale
+import org.jetbrains.letsPlot.core.spec.plotson.theme
+import org.jetbrains.letsPlot.core.spec.plotson.tooltips
 import kotlin.math.max
 import kotlin.math.min
 
@@ -368,10 +376,10 @@ class CorrPlotOptionsBuilder private constructor(
             labelFormat = VALUE_FORMAT
             showLegend = this@CorrPlotOptionsBuilder.showLegend
             tooltipsOptions = tooltips {
-                lines = listOf(TooltipsOptions.variable(CorrVar.CORR))
+                lines = listOf(TooltipsOptions.Companion.variable(CorrVar.CORR))
                 formats = listOf(
-                    TooltipsOptions.format {
-                        field = TooltipsOptions.variable(CorrVar.CORR)
+                    TooltipsOptions.Companion.format {
+                        field = TooltipsOptions.Companion.variable(CorrVar.CORR)
                         format = VALUE_FORMAT
                     }
                 )
@@ -468,7 +476,7 @@ class CorrPlotOptionsBuilder private constructor(
             val width = geomWidth + labelWidthX + legendWidth
             val height = geomWidth + titleHeight + labelHeightY
 
-            return PlotOptions.size {
+            return PlotOptions.Companion.size {
                 this.width = width
                 this.height = height
             }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
+package org.jetbrains.letsPlot.core.spec.plotson
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -81,12 +81,6 @@ class LayerOptions : Options() {
     var radius: Double? by map(Aes.RADIUS)
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
-
-    operator fun <T> set(prop: PropSpec<T>, value: T) {
-        properties[prop.name] = value
-    }
 }
-
-class PropSpec<T>(val name: String)
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)
