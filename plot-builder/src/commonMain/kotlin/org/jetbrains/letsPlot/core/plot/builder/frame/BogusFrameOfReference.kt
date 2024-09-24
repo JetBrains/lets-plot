@@ -15,10 +15,6 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 internal class BogusFrameOfReference : FrameOfReference() {
     override val transientState: ComponentTransientState = DummyTransientState()
 
-    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-        throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
-    }
-
     override fun drawBeforeGeomLayer(parent: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")
     }

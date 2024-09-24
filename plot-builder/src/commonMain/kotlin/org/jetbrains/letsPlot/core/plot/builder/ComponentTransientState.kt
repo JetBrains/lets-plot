@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.interact.InteractionContext
 
 abstract class ComponentTransientState(
     val viewBounds: DoubleRectangle
@@ -18,11 +19,11 @@ abstract class ComponentTransientState(
 
     abstract val dataBounds: DoubleRectangle
 
-    fun scale(scale: DoubleVector) = transformView(scale, this.offset)
-
-    fun translate(offset: DoubleVector) = transformView(this.scale, offset)
-
-    fun applyDelta(scaleDelta: DoubleVector, offsetDelta: DoubleVector) {
+    fun applyDelta(
+        scaleDelta: DoubleVector,
+        offsetDelta: DoubleVector,
+        ctx: InteractionContext
+    ) {
         val offset = DoubleVector(
             offset.x + offsetDelta.x / scale.x,
             offset.y + offsetDelta.y / scale.y
@@ -32,21 +33,23 @@ abstract class ComponentTransientState(
             scale.y * scaleDelta.y
         )
 
-        transformView(scale, offset)
+        transformView(scale, offset, ctx)
     }
 
-    fun reset() = transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
+    fun reset() {
+        // TODO
+//        transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
+    }
 
-    fun transformView(scale: DoubleVector, offset: DoubleVector) {
+    fun transformView(scale: DoubleVector, offset: DoubleVector, ctx: InteractionContext) {
         this.scale = scale
         this.offset = offset
 
-        syncDataBounds()
-
-        repaint()
+        syncDataBounds(ctx)
+        repaint(ctx)
     }
 
-    protected abstract fun syncDataBounds()
+    protected abstract fun syncDataBounds(ctx: InteractionContext)
 
-    internal abstract fun repaint()
+    internal abstract fun repaint(ctx: InteractionContext)
 }

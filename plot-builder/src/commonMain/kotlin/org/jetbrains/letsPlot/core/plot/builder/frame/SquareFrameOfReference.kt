@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -298,12 +299,15 @@ internal class SquareFrameOfReference(
         override var dataBounds: DoubleRectangle = dataBounds
             private set
 
-        override fun syncDataBounds() {
+        override fun syncDataBounds(ctx: InteractionContext) {
             val transientBounds = calculateTransientBounds(viewBounds, scale, offset)
-            this.dataBounds = toDataBounds(transientBounds.subtract(viewBounds.origin))
+            this.dataBounds = ctx.clientRectToDataBounds(
+                clientRect = transientBounds.subtract(viewBounds.origin),
+                coord
+            )
         }
 
-        override fun repaint() {
+        override fun repaint(ctx: InteractionContext) {
             validateHorizontalBreaks()
             validateVerticalBreaks()
 

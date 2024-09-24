@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.awt.plot.component
 import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -43,6 +44,13 @@ internal class PlotPanelFigureModel(
 
     override fun onToolEvent(callback: (Map<String, Any>) -> Unit) {
         toolEventCallback = callback
+
+        // Make snsure that 'implicit' interaction activated.
+        deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
+        activateInteractions(
+            origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
+            interactionSpecList = FigureImplicitInteractionSpecs.LIST
+        )
     }
 
     override fun activateInteractions(origin: String, interactionSpecList: List<Map<String, Any>>) {

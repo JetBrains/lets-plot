@@ -12,15 +12,18 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.RollbackAllChangesFeedback
 import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
-import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
@@ -51,18 +54,17 @@ internal class PlotToolEventDispatcher(
         deactivateOverlappingInteractions(origin, interactionSpec)
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
-        val completeInteractionDebounced =
+        val fireSelectionChangedDebounced =
             debounce<DoubleRectangle>(DEBOUNCE_DELAY_MS, CoroutineScope(Dispatchers.Default)) { dataBounds ->
                 println("Debounced interaction: $interactionName, dataBounds: $dataBounds")
-                completeInteraction(origin, interactionName, dataBounds)
+                fireSelectionChanged(origin, interactionName, dataBounds)
             }
 
-        // ToDo: sent "completed" event in "onCompleted"
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
                 onCompleted = { dataBounds ->
                     println("Pan tool: apply $dataBounds")
-                    completeInteraction(origin, interactionName, dataBounds)
+                    fireSelectionChanged(origin, interactionName, dataBounds)
                 }
             )
 
@@ -70,14 +72,25 @@ internal class PlotToolEventDispatcher(
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
                 DrawRectFeedback(centerStart) { dataBounds ->
                     println("client: data $dataBounds")
-                    completeInteraction(origin, interactionName, dataBounds)
+                    fireSelectionChanged(origin, interactionName, dataBounds)
                 }
             }
 
-
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
                 onCompleted = { dataBounds ->
-                    completeInteractionDebounced(dataBounds)
+                    fireSelectionChangedDebounced(dataBounds)
+                }
+            )
+
+            ToolInteractionSpec.ROLLBACK_ALL_CHANGES -> RollbackAllChangesFeedback(
+                onAction = {
+                    toolEventCallback.invoke(
+                        mapOf(
+                            EVENT_NAME to ROLLBACK_ALL_CHANGES,
+                            EVENT_INTERACTION_ORIGIN to origin,
+                            EVENT_INTERACTION_NAME to interactionName,
+                        )
+                    )
                 }
             )
 
@@ -104,7 +117,7 @@ internal class PlotToolEventDispatcher(
         )
     }
 
-    private fun completeInteraction(
+    private fun fireSelectionChanged(
         origin: String,
         interactionName: String,
         dataBounds: DoubleRectangle
@@ -150,9 +163,16 @@ internal class PlotToolEventDispatcher(
         originBeingActivated: String,
         interactionSpecBeingActivated: Map<String, Any>
     ) {
+        // Special case
+        if (originBeingActivated == ORIGIN_FIGURE_IMPLICIT) {
+            // 'implicit' interactions are always compatible
+            return
+        }
+
         // For now just deactivate all active interactions
         ArrayList(interactionsByOrigin.keys)
-            .filter { origin -> origin != originBeingActivated }
+            .filterNot { origin -> origin == originBeingActivated }
+            .filterNot { origin -> origin == ORIGIN_FIGURE_IMPLICIT } // 'implicit' interactions are always compatible
             .forEach { origin -> deactivateInteractions(origin) }
     }
 

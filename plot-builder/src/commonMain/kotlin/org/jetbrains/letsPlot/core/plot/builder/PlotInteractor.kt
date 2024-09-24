@@ -15,6 +15,10 @@ import org.jetbrains.letsPlot.core.interact.*
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.NoneSelectionStrategy
+import org.jetbrains.letsPlot.core.plot.builder.interact.context.PlotTilesInteractionContext
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
@@ -74,25 +78,23 @@ internal class PlotInteractor(
     }
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
-        val disposable: Disposable = when (toolFeedback) {
-            is DragFeedback -> toolFeedback.start(
-                DragInteractionContext(
-                    decorationLayer,
-                    eventsManager,
-                    tiles
-                )
-            )
+        var dataSelectionStrategy = when (toolFeedback) {
+            is PanGeomFeedback,
+            is DrawRectFeedback -> MouseDragSelectionStrategy()
 
-            is WheelZoomFeedback -> toolFeedback.start(
-                DragInteractionContext(
-                    decorationLayer,
-                    eventsManager,
-                    tiles
-                )
-            )
-
-            else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
+            is WheelZoomFeedback -> MouseWheelSelectionStrategy()
+            is RollbackAllChangesFeedback -> NoneSelectionStrategy()
+            else -> throw IllegalArgumentException("Unexpected feedback object: ${toolFeedback::class.simpleName}")
         }
+
+        val disposable: Disposable = toolFeedback.start(
+            PlotTilesInteractionContext(
+                decorationLayer,
+                eventsManager,
+                tiles,
+                dataSelectionStrategy
+            )
+        )
         return Registration.from(disposable)
     }
 
@@ -102,26 +104,5 @@ internal class PlotInteractor(
 
     override fun dispose() {
         reg.dispose()
-    }
-
-    private class DragInteractionContext(
-        override val decorationsLayer: SvgNode,
-        override val eventsManager: EventsManager,
-        val tiles: List<Pair<DoubleRectangle, PlotTile>>
-    ) : InteractionContext {
-
-        override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
-            val target = tiles.find { (geomBounds, _) -> plotCoord in geomBounds } ?: return null
-            val (geomBounds, tile) = target
-            return object : InteractionTarget {
-                override val geomBounds: DoubleRectangle = geomBounds
-
-                override fun applyViewport(screenViewport: DoubleRectangle): DoubleRectangle {
-                    val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
-                    tile.transientState.applyDelta(scale, translate)
-                    return tile.transientState.dataBounds
-                }
-            }
-        }
     }
 }

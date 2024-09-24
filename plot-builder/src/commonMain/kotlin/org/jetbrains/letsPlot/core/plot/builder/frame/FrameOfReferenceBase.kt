@@ -55,15 +55,6 @@ internal abstract class FrameOfReferenceBase(
         drawPanelAndAxis(parent, beforeGeomLayer = false)
     }
 
-    override fun toDataBounds(clientRect: DoubleRectangle): DoubleRectangle {
-        val domainPoint0 = coord.fromClient(clientRect.origin)
-            ?: error("Can't translate client ${clientRect.origin} to data domain.")
-        val clientBottomRight = clientRect.origin.add(clientRect.dimension)
-        val domainPoint1 = coord.fromClient(clientBottomRight)
-            ?: error("Can't translate client $clientBottomRight to data domain.")
-        return DoubleRectangle.span(domainPoint0, domainPoint1)
-    }
-
     protected fun buildGeom(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         return buildGeom(
             plotContext,

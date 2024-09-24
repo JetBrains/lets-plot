@@ -29,6 +29,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.ColorOptionConverter
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 
 abstract class PlotConfig(
     opts: Map<String, Any>,
@@ -193,6 +194,9 @@ abstract class PlotConfig(
         }
 
         private fun assertFigSpec(opts: Map<String, Any>) {
+            if (VegaConfig.isVegaLiteSpec(opts))
+                return // prevent figSpecKind() invocation - vega lite not handled in it and will cause an exception
+
             // Will throw an IllegalArgumentException is something is wrong.
             figSpecKind(opts)
         }

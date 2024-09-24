@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.data.createCircle
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.SamplingUtil.readPolygon
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexDpSampling
 import org.jetbrains.letsPlot.core.plot.builder.sampling.method.VertexSampling.VertexVwSampling
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.groupBy
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.groupBy
 import kotlin.test.Test
 
 class VertexSamplingTest {

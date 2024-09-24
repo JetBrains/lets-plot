@@ -1,14 +1,22 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr
+package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
 
 import org.jetbrains.letsPlot.commons.values.Color
+import kotlin.collections.any
+import kotlin.collections.asList
+import kotlin.collections.map
+import kotlin.collections.set
+import kotlin.collections.toList
+import kotlin.isFinite
+import kotlin.sequences.asIterable
+import kotlin.toList
+import kotlin.toString
 
 object DataUtil {
-
     fun standardiseData(rawData: Map<*, *>): Map<String, List<Any?>> {
         val standardisedData = LinkedHashMap<String, List<Any?>>()
         for ((rawKey, rawValue) in rawData) {
@@ -18,7 +26,7 @@ object DataUtil {
         return standardisedData
     }
 
-    fun toList(key: String, rawValue: Any): List<Any?> {
+    private fun toList(key: String, rawValue: Any): List<Any?> {
         return when (rawValue) {
             is List<*> -> standardizeList(rawValue)
             is Iterable<*> -> standardizeIterable(rawValue).toList()
@@ -42,12 +50,6 @@ object DataUtil {
     }
 
     private fun standardizeIterable(series: Iterable<*>): Iterable<*> {
-        fun noTimeZoneError(time: Any): Nothing {
-            throw IllegalArgumentException(
-                "Can't convert ${time::class.simpleName} to the number of milliseconds from the epoch of 1970-01-01T00:00:00Z."
-            )
-        }
-
         fun toDouble(n: Number): Double? {
             return when (n) {
                 is Float -> if (n.isFinite()) n.toDouble() else null
@@ -55,6 +57,7 @@ object DataUtil {
                 else -> n.toDouble()
             }
         }
+
         return if (needToStandardizeValues(series)) {
             series.map {
                 when (it) {
@@ -73,9 +76,10 @@ object DataUtil {
 
     private fun needToStandardizeValues(series: Iterable<*>): Boolean {
         return series.any {
-            it != null &&
-                    (!(it is String || it is Double) ||
-                            it is Double && !it.isFinite())
+            it != null && (
+                !(it is String || it is Double) ||
+                it is Double && !it.isFinite()
+            )
         }
     }
 }

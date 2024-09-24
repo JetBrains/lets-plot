@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.core.interact
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 interface InteractionContext {
@@ -13,4 +15,6 @@ interface InteractionContext {
     val eventsManager: EventsManager
 
     fun findTarget(plotCoord: DoubleVector): InteractionTarget?
+
+    fun clientRectToDataBounds(clientRect: DoubleRectangle, coord: CoordinateSystem): DoubleRectangle
 }

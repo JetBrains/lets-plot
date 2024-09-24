@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.addRow
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.setColumn
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
@@ -284,6 +286,6 @@ internal object WaterfallUtil {
         return df[measureVar].lastOrNull()?.toString() == Measure.TOTAL.value
     }
 
-    fun <T, R : Comparable<R>> Iterable<T>.sortedIndicesDescending(selector: (IndexedValue<T>) -> R?) =
+    private fun <T, R : Comparable<R>> Iterable<T>.sortedIndicesDescending(selector: (IndexedValue<T>) -> R?) =
         withIndex().sortedWith(compareByDescending(selector)).map(IndexedValue<T>::index)
 }

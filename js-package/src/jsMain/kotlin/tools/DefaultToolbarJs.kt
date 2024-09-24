@@ -166,7 +166,7 @@ class DefaultToolbarJs() {
         updateButtonState(button, selected = false)
 
         button.addEventListener("click", {
-            controller.reset()
+            controller.resetFigure(deactiveTools = true)
         })
         return button
     }

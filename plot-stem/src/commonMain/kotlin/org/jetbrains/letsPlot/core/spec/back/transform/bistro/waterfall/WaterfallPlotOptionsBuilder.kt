@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.DataUtil.standardiseData
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
@@ -116,7 +116,7 @@ class WaterfallPlotOptionsBuilder(
         return if (dataGroups.isEmpty()) {
             WaterfallUtil.emptyStat(df.variables())
         } else {
-            concat(dataGroups)
+            DataFrameUtil.concat(dataGroups)
         }
     }
 
@@ -158,7 +158,7 @@ class WaterfallPlotOptionsBuilder(
                 if (datasets.isEmpty()) {
                     WaterfallUtil.emptyStat(df.variables())
                 } else {
-                    concat(datasets)
+                    DataFrameUtil.concat(datasets)
                 }
             }
     }
@@ -204,7 +204,7 @@ class WaterfallPlotOptionsBuilder(
             if (tooltipsOptions != null) {
                 it.tooltipsOptions = tooltipsOptions
             } else {
-                it.setParameter(Option.Layer.TOOLTIPS, Option.Layer.NONE)
+                it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
             }
         }
     }
@@ -226,13 +226,13 @@ class WaterfallPlotOptionsBuilder(
 
     private fun hLineOptions(): LayerOptions? {
         if (hLineOptions.blank) return null
-        return LayerOptions().apply {
-            geom = GeomKind.H_LINE
-            yintercept = base
-            color = hLineOptions.color
-            size = hLineOptions.size
-            linetype = hLineOptions.lineType
-            setParameter(Option.Layer.TOOLTIPS, Option.Layer.NONE)
+        return LayerOptions().also {
+            it.geom = GeomKind.H_LINE
+            it.yintercept = base
+            it.color = hLineOptions.color
+            it.size = hLineOptions.size
+            it.linetype = hLineOptions.lineType
+            it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
         }
     }
 
@@ -285,15 +285,6 @@ class WaterfallPlotOptionsBuilder(
             mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
         }
         return mappings
-    }
-
-    private fun concat(dataframes: List<DataFrame>): DataFrame {
-        require(dataframes.isNotEmpty()) { "Dataframes list should not be empty" }
-        val builder = DataFrame.Builder()
-        dataframes.first().variables().forEach { variable ->
-            builder.put(variable, dataframes.map { df -> df[variable] }.flatten())
-        }
-        return builder.build()
     }
 
     enum class Measure(val value: String) {
@@ -452,5 +443,7 @@ class WaterfallPlotOptionsBuilder(
             color = "white"
         )
         const val DEF_LABEL_FORMAT = ".2~f"
+
+        private val TOOLTIPS_STRING_PROP = PropSpec<String?>(Option.Layer.TOOLTIPS)
     }
 }

@@ -31,14 +31,16 @@ class QQPlotSpecChange : SpecChange {
     private fun buildQQPlotSpec(plotSpec: MutableMap<String, Any>): Map<String, Any> {
         val bistroSpec = plotSpec.getMap(Option.Plot.BISTRO) ?: error("'bistro' not found in PlotSpec")
         val qqPlotOptionsBuilder = QQPlotOptionsBuilder(
+            data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
             sample = bistroSpec.getString(QQ.SAMPLE),
             x = bistroSpec.getString(QQ.X),
             y = bistroSpec.getString(QQ.Y),
             distribution = bistroSpec.getString(QQ.DISTRIBUTION) ?: QQPlotOptionsBuilder.DEF_DISTRIBUTION,
-            distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS),
-            quantiles = bistroSpec.getList(QQ.QUANTILES),
+            distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS)?.typed<Double>(),
+            quantiles = bistroSpec.getList(QQ.QUANTILES)?.typed<Double>(),
             group = bistroSpec.getString(QQ.GROUP),
             showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND),
+            marginal = bistroSpec.getString(QQ.MARGINAL) ?: QQPlotOptionsBuilder.DEF_MARGINAL,
             color = bistroSpec.getString(QQ.POINT_COLOR),
             fill = bistroSpec.getString(QQ.POINT_FILL),
             alpha = bistroSpec.getDouble(QQ.POINT_ALPHA) ?: QQPlotOptionsBuilder.DEF_POINT_ALPHA,

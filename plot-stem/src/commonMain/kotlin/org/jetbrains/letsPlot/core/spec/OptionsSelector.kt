@@ -165,6 +165,11 @@ fun <K, V> Map<*, *>.typed(): Map<K, V> {
     return this as Map<K, V>
 }
 
+@Suppress("UNCHECKED_CAST")
+fun <T> List<*>.typed(): List<T> {
+    return this as List<T>
+}
+
 fun <T> List<T>.asMutable(): MutableList<T> {
     return this as MutableList<T>
 }
@@ -172,5 +177,10 @@ fun <T> List<T>.asMutable(): MutableList<T> {
 @Suppress("UNCHECKED_CAST")
 fun List<*>.asMaps(): List<Map<*, *>> {
     return this as List<Map<*, *>>
+}
+
+@Suppress("UNCHECKED_CAST")
+fun Map<*, *>.asMapOfMaps(): Map<*, Map<*, *>> {
+    return this as Map<*, Map<*, *>>
 }
 

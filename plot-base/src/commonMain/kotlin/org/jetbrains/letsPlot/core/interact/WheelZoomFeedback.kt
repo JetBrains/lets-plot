@@ -12,7 +12,7 @@ import kotlin.math.abs
 class WheelZoomFeedback(
     private val onCompleted: (DoubleRectangle) -> Unit
 ) : ToolFeedback {
-    fun start(ctx: InteractionContext): Disposable {
+    override fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx)
 
         interaction.loop(
@@ -33,7 +33,7 @@ class WheelZoomFeedback(
                 }
 
                 val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
-                val dataBounds = target.applyViewport(viewport)
+                val dataBounds = target.applyViewport(viewport, ctx)
                 onCompleted(dataBounds)
             }
         )

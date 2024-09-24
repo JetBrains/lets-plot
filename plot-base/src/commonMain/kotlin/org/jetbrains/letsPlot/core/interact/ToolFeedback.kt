@@ -5,5 +5,8 @@
 
 package org.jetbrains.letsPlot.core.interact
 
+import org.jetbrains.letsPlot.commons.registration.Disposable
+
 interface ToolFeedback {
+    fun start(ctx: InteractionContext): Disposable
 }

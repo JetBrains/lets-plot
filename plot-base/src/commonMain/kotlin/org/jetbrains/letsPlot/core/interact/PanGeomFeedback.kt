@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import kotlin.math.abs
 
 class PanGeomFeedback(
-    private val onCompleted:((DoubleRectangle) -> Unit) = { _ -> println("PanGeomFeedback complete.") },
-) : DragFeedback {
+    private val onCompleted: ((DoubleRectangle) -> Unit) = { _ -> println("PanGeomFeedback complete.") },
+) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
 
@@ -34,10 +34,12 @@ class PanGeomFeedback(
                                     panningMode = PanningMode.VERTICAL
                                     DoubleVector(0.0, drag.y)
                                 }
+
                                 abs(drag.y) < 7 -> {
                                     panningMode = PanningMode.HORIZONTAL
                                     DoubleVector(drag.x, 0.0)
                                 }
+
                                 else -> {
                                     panningMode = PanningMode.FREE
                                     drag
@@ -49,7 +51,7 @@ class PanGeomFeedback(
                     }
                 }?.let { delta ->
                     val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = delta)
-                    target.applyViewport(viewport)
+                    target.applyViewport(viewport, ctx)
                 }
             },
             onCompleted = {
@@ -57,7 +59,7 @@ class PanGeomFeedback(
                 val (target, _, _, dragDelta) = it
 
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
-                val dataBounds = target.applyViewport(viewport)
+                val dataBounds = target.applyViewport(viewport, ctx)
 
                 it.reset()
                 panningMode = null
