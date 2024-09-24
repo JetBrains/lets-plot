@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
@@ -50,7 +51,7 @@ class GeomLayerBuilder(
 ) {
 
     private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
-    private var mySuperscriptExponent: Boolean = false
+    private var myExponentFormat: ExponentFormat = ExponentFormat.E
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
     private var myGroupingVarName: String? = null
@@ -168,8 +169,8 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun superscriptExponent(superscriptExponent: Boolean): GeomLayerBuilder {
-        mySuperscriptExponent = superscriptExponent
+    fun exponentFormat(exponentFormat: ExponentFormat): GeomLayerBuilder {
+        myExponentFormat = exponentFormat
         return this
     }
 

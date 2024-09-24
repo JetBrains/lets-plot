@@ -5,10 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 interface PlotContext {
-    val superscriptExponent: Boolean
+    val exponentFormat: ExponentFormat
 
     fun hasScale(aes: Aes<*>): Boolean
     fun getScale(aes: Aes<*>): Scale
@@ -18,7 +19,7 @@ interface PlotContext {
 }
 
 object NullPlotContext : PlotContext {
-    override val superscriptExponent: Boolean = false
+    override val exponentFormat: ExponentFormat = ExponentFormat.E
 
     override fun hasScale(aes: Aes<*>): Boolean = false
     override fun getScale(aes: Aes<*>): Scale = error("No scale for aesthetic $aes")

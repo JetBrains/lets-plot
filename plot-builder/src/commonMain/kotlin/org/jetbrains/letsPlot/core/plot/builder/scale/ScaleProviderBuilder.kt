@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
@@ -19,7 +20,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
-    private var mySuperscriptExponent: Boolean = false
+    private var myExponentFormat: ExponentFormat = ExponentFormat.E
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<Any?>? = null
@@ -109,8 +110,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun superscriptExponent(v: Boolean): ScaleProviderBuilder<T> {
-        mySuperscriptExponent = v
+    fun exponentFormat(v: ExponentFormat): ScaleProviderBuilder<T> {
+        myExponentFormat = v
         return this
     }
 
@@ -146,7 +147,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
-        private val mySuperscriptExponent: Boolean = b.mySuperscriptExponent
+        private val myExponentFormat: ExponentFormat = b.myExponentFormat
         private val myAes: Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
@@ -225,7 +226,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
         private fun completeScale(scale: Scale): Scale {
             val with = scale.with()
-                .superscriptExponent(mySuperscriptExponent)
+                .exponentFormat(myExponentFormat)
 
             if (breaks != null) {
                 with.breaks(breaks)
@@ -237,7 +238,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labelLengthLimit(myLabelLengthLimit)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, superscriptExponent = mySuperscriptExponent)::format)
+                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, exponentFormat = myExponentFormat)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)

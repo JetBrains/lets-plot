@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -28,9 +29,9 @@ class GeomProto(val geomKind: GeomKind) {
     fun geomProvider(
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        superscriptExponent: Boolean
+        exponentFormat: ExponentFormat
     ): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, exponentFormat)
     }
 
     fun defaultOptions(): Map<String, Any> {

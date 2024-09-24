@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
@@ -14,7 +15,7 @@ internal class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
-    superscriptExponent: Boolean
+    exponentFormat: ExponentFormat
 ) {
     private var formatter: NumberFormat
 
@@ -61,13 +62,13 @@ internal class NumericBreakFormatter(
 
         if (scientificNotation) {
             // generate 'engineering notation', in which the exponent is a multiple of three
-            type = if (domain10Power > 0 && allowMetricPrefix && !superscriptExponent) "s" else "e"
+            type = if (domain10Power > 0 && allowMetricPrefix && exponentFormat == ExponentFormat.E) "s" else "e"
         } else {
             delimiter = ","
         }
 
-        val richOutput = if (type == "e" && superscriptExponent) "&1" else ""
-        val trim = if (type == "e" && superscriptExponent) "~" else ""
+        val richOutput = if (type == "e" && exponentFormat != ExponentFormat.E) "&${exponentFormat.value}" else ""
+        val trim = if (type == "e" && exponentFormat != ExponentFormat.E) "~" else ""
 
         formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput")
     }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -50,6 +50,7 @@ class ThemeConfig constructor(
                 return when (value.toString().lowercase()) {
                     "e" -> ExponentFormat.E
                     "pow" -> ExponentFormat.POW
+                    "pow_full" -> ExponentFormat.POW_FULL
                     else -> throw IllegalArgumentException(
                         "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow."
                     )

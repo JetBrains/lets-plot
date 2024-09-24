@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
@@ -30,12 +31,12 @@ internal object TooltipFormatting {
         }
     }
 
-    fun createFormatter(variable: DataFrame.Variable, superscriptExponent: Boolean): (Any) -> String {
+    fun createFormatter(variable: DataFrame.Variable, exponentFormat: ExponentFormat): (Any) -> String {
         return when (variable) {
             Stats.PROP,
-            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, superscriptExponent = superscriptExponent)::format
+            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, exponentFormat = exponentFormat)::format
             Stats.PROPPCT,
-            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, superscriptExponent = superscriptExponent)::format
+            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, exponentFormat = exponentFormat)::format
             else -> { value -> value.toString() }
         }
     }

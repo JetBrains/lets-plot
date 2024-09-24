@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*

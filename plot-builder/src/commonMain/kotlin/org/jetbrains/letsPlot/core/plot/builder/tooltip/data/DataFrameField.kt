@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip.data
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -22,12 +23,12 @@ class DataFrameField(
     private lateinit var myVariable: DataFrame.Variable
     private var myFormatter: ((Any) -> String)? = null
 
-    private fun initFormatter(superscriptExponent: Boolean): (Any) -> String {
+    private fun initFormatter(exponentFormat: ExponentFormat): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable, superscriptExponent)
-            else -> StringFormat.forOneArg(format, formatFor = name, superscriptExponent = superscriptExponent)::format
+            null -> TooltipFormatting.createFormatter(myVariable, exponentFormat)
+            else -> StringFormat.forOneArg(format, formatFor = name, exponentFormat = exponentFormat)::format
         }
         return myFormatter!!
     }
@@ -44,7 +45,7 @@ class DataFrameField(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myFormatter ?: initFormatter(ctx.superscriptExponent)
+        val formatter = myFormatter ?: initFormatter(ctx.exponentFormat)
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,

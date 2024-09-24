@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
@@ -26,7 +27,7 @@ object TestingPlotContext {
     ): PlotContext {
         return PlotAssemblerPlotContext(
             geomTiles = TestingPlotGeomTiles(layers, scaleMap),
-            superscriptExponent = false
+            exponentFormat = ExponentFormat.E
         )
     }
 }
