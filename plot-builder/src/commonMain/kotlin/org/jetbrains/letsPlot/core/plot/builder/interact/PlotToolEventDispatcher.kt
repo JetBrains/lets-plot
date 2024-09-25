@@ -68,8 +68,9 @@ internal class PlotToolEventDispatcher(
                     println("Pan tool: apply $dataBounds, mode: $panningMode")
                     val dataBoundsLTRB = when (panningMode) {
                         PanningMode.FREE -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
-                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
+//                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
+//                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
+                        else -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
                     }
                     fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
