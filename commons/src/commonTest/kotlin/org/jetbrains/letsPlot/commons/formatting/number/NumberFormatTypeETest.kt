@@ -60,7 +60,7 @@ class NumberFormatTypeETest {
     fun compactFormatOfScientificNotation() {
         fun format(exponentFormat: ExponentFormat, limits: Pair<Int, Int>? = null): NumberFormat {
             val limitsStr = limits?.let { "{${it.first},${it.second}}" } ?: ""
-            return NumberFormat("&${exponentFormat.value}$limitsStr")
+            return NumberFormat("&${exponentFormat.index}$limitsStr")
         }
 
         //

@@ -478,14 +478,14 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    enum class ExponentFormat(val value: Int) {
+    enum class ExponentFormat(val index: Int) {
         E(0),
         POW(1),
         POW_FULL(2);
 
         companion object {
-            fun fromInt(value: Int): ExponentFormat {
-                return entries.first { it.value == value }
+            fun fromInt(index: Int): ExponentFormat {
+                return entries.first { it.index == index }
             }
         }
     }
