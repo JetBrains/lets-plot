@@ -21,7 +21,7 @@ object OptionsUtil {
     private fun toSpec(prop: Any?): Any? {
         return when (prop) {
             null -> null
-            is Options -> prop.toSpec()
+            is Options -> toSpec(prop.toSpec())
             is List<*> -> prop.map(this::toSpec)
             is Map<*, *> -> toSpec(prop)
             else -> standardise(prop)
