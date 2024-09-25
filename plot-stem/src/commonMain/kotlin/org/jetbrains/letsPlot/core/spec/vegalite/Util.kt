@@ -9,6 +9,9 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonParser
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.spec.plotson.DataMetaOptions
+import org.jetbrains.letsPlot.core.spec.plotson.MappingAnnotationOptions
+import org.jetbrains.letsPlot.core.spec.plotson.SeriesAnnotationOptions
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
 
@@ -76,5 +79,18 @@ internal object Util {
                 aesthetics.map { aes -> aes to field }
             }.toMap()
 
+    }
+
+    fun transformDataMeta(
+        encodingVegaSpec: Map<*, Map<*, *>>,
+    ): DataMetaOptions {
+        encodingVegaSpec.entries.forEach { (channel, encoding) ->
+            val type = encoding.getString(Encodings.TYPE) ?: return@forEach
+            val field = encoding.getString(Encodings.FIELD) ?: return@forEach
+            val seriesAnnotationOptions = SeriesAnnotationOptions()
+            val mappingAnnotationOptions = MappingAnnotationOptions()
+        }
+
+        return DataMetaOptions()
     }
 }

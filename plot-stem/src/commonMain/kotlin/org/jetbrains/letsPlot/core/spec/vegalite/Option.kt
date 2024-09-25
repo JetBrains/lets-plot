@@ -51,7 +51,7 @@ internal object Option {
             const val ERROR_X = "errorX"
         }
 
-        object Type {
+        object Types {
             const val QUANTITATIVE = "quantitative"
             const val ORDINAL = "ordinal"
             const val NOMINAL = "nominal"
