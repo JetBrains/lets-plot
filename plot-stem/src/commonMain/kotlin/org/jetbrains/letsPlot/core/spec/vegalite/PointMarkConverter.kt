@@ -23,6 +23,7 @@ internal class PointMarkConverter private constructor(
             geom = GeomKind.POINT
             data = Util.transformData(dataVegaSpec)
             mappings = Util.transformMappings(encodingVegaSpec)
+            dataMeta = Util.transformDataMeta(encodingVegaSpec)
         }
     }
 }

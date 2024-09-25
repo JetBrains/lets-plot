@@ -25,9 +25,7 @@ internal class RectMarkConverter private constructor(
         plotOptions.appendLayer {
             data = Util.transformData(dataVegaSpec)
 
-            if (Channels.X2 in encodingVegaSpec
-                || Channels.Y2 in encodingVegaSpec
-            ) {
+            if (listOf(Channels.X2, Channels.Y2).any { it in encodingVegaSpec }) {
                 geom = GeomKind.RECT
                 mappings = Util.transformMappings(
                     encodingVegaSpec,

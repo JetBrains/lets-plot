@@ -53,16 +53,16 @@ internal class RuleMarkConverter private constructor(
     }
 
     private fun isVLine(): Boolean =
-        Channels.X in encodingVegaSpec.keys
+        Channels.X in encodingVegaSpec
                 && listOf(Channels.X2, Channels.Y, Channels.Y2).none(encodingVegaSpec::contains)
 
     private fun isHLine(): Boolean =
-        Channels.Y in encodingVegaSpec.keys &&
+        Channels.Y in encodingVegaSpec &&
                 listOf(Channels.X, Channels.X2, Channels.Y2).none(encodingVegaSpec::contains)
 
     private fun isVSegment(): Boolean =
         listOf(Channels.X, Channels.Y, Channels.Y2).all(encodingVegaSpec::contains)
-                && Channels.X2 !in encodingVegaSpec.keys
+                && Channels.X2 !in encodingVegaSpec
 
     private fun isHSegment(): Boolean =
         listOf(Channels.X, Channels.X2, Channels.Y).all(encodingVegaSpec::contains)
