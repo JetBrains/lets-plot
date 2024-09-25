@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.QQPlotOptionsBuilder
-import org.jetbrains.letsPlot.core.spec.plotson.OptionsUtil
+import org.jetbrains.letsPlot.core.spec.plotson.toJson
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
@@ -51,7 +51,7 @@ class QQPlotSpecChange : SpecChange {
             lineType = bistroSpec.read(QQ.LINE_TYPE)
         )
         val qqPlotOptions = qqPlotOptionsBuilder.build()
-        return OptionsUtil.toSpec(qqPlotOptions)
+        return qqPlotOptions.toJson()
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {

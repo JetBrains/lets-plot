@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrPlotOptionsBuilder
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr
-import org.jetbrains.letsPlot.core.spec.plotson.OptionsUtil
+import org.jetbrains.letsPlot.core.spec.plotson.toJson
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
@@ -95,7 +95,7 @@ class CorrPlotSpecChange : SpecChange {
         }
 
         val corrPlotOptions = corrPlotOptionsBuilder.build()
-        return OptionsUtil.toSpec(corrPlotOptions)
+        return corrPlotOptions.toJson()
     }
 
     override fun isApplicable(spec: Map<String, Any>): Boolean {

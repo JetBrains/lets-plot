@@ -27,8 +27,8 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DETAILED_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
-import org.jetbrains.letsPlot.core.spec.plotson.OptionsUtil
 import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
+import org.jetbrains.letsPlot.core.spec.plotson.toJson
 import org.jetbrains.letsPlot.core.spec.plotson.tooltips
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
@@ -94,7 +94,7 @@ class WaterfallPlotSpecChange : SpecChange {
             labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT) ?: DEF_LABEL_FORMAT
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
-        return OptionsUtil.toSpec(waterfallPlotOptions)
+        return waterfallPlotOptions.toJson()
     }
 
     private fun readBoxTooltipsOptions(
