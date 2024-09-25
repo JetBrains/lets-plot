@@ -56,7 +56,7 @@ class PlotAssembler constructor(
     init {
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
-            theme.exponentFormat
+            theme.exponentFormat.value
         )
 
         val legendBoxInfos: List<LegendBoxInfo> = when {

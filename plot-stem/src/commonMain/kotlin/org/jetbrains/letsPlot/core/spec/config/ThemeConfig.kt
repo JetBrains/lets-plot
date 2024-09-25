@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme

@@ -100,12 +100,12 @@ abstract class PlotConfig(
             scaleConfigs,
             excludeStatVariables,
             zeroPositionalExpands,
-            theme.exponentFormat
+            theme.exponentFormat.value
         )
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat)
+            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat.value)
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)
