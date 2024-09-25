@@ -19,6 +19,7 @@ abstract class Options(
         properties[prop.name] = value
     }
 
+    // for short-form specs, e.g., "tooltip": "none" or "sampling": "random"
     fun toSpec(): Any? = toSpecDelegate(this)
 }
 

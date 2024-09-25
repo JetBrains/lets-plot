@@ -53,23 +53,16 @@ class WaterfallPlotOptionsBuilder(
         val flowTypeData = getFlowTypeDataForLegend(statDf)
         val (absoluteStatDf, relativeStatDf) = splitStatDfToAbsoluteAndRelative(statDf)
         return plot {
-            layerOptions = if (hLineOnTop) {
+            layerOptions =
                 listOfNotNull(
+                    if (hLineOnTop) null else hLineOptions(),
                     connectorOptions(statDf),
                     boxOptions(relativeStatDf, relativeTooltipsOptions),
                     boxOptions(absoluteStatDf, absoluteTooltipsOptions),
                     labelOptions(statDf),
-                    hLineOptions()
+                    if (hLineOnTop) hLineOptions() else null
                 )
-            } else {
-                listOfNotNull(
-                    hLineOptions(),
-                    connectorOptions(statDf),
-                    boxOptions(relativeStatDf, relativeTooltipsOptions),
-                    boxOptions(absoluteStatDf, absoluteTooltipsOptions),
-                    labelOptions(statDf)
-                )
-            }
+
             scaleOptions = listOf(
                 scale {
                     aes = Aes.X
