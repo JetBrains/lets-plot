@@ -51,6 +51,8 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is PointShape -> v.code
         is NamedLineType -> v.code
         is LineType -> null
+        is MappingAnnotationOptions.AnnotationType -> v.value
+        is MappingAnnotationOptions.OrderType -> v.value
         else -> v.also {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // analyzer fails to see first check: null -> null
             println("WARNING: standardising unknown type: '${v!!::class.simpleName}'")

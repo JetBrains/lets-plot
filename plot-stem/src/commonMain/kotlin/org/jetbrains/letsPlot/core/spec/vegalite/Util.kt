@@ -51,7 +51,17 @@ internal object Util {
         encodingVegaSpec: Map<*, Map<*, *>>,
         vararg channelMappingOverriding: Pair<String, Aes<*>>
     ): Map<Aes<*>, String> {
+        return encodingVegaSpec
+            .flatMap { (channel, encoding) ->
+                val aesthetics = channelToAes(channel.toString(), *channelMappingOverriding)
+                val field = encoding.getString(Encodings.FIELD) ?: return@flatMap emptyList()
 
+                aesthetics.map { aes -> aes to field }
+            }.toMap()
+
+    }
+
+    private fun channelToAes(channel: String, vararg channelMappingOverriding: Pair<String, Aes<*>>): List<Aes<*>> {
         val defaultChannelToAes = mapOf<String, List<Aes<*>>>(
             Channels.X to listOf(Aes.X),
             Channels.Y to listOf(Aes.Y),
@@ -70,27 +80,43 @@ internal object Util {
             .mapValues { (_, channelToAes) -> channelToAes.map { (_, aes) -> aes } }
 
         val channelToAesConverter = defaultChannelToAes + overriding
-
-        return encodingVegaSpec
-            .flatMap { (channel, encoding) ->
-                val aesthetics = channelToAesConverter[channel.toString()] ?: return@flatMap emptyList()
-                val field = encoding.getString(Encodings.FIELD) ?: return@flatMap emptyList()
-
-                aesthetics.map { aes -> aes to field }
-            }.toMap()
-
+        return channelToAesConverter[channel] ?: emptyList()
     }
 
     fun transformDataMeta(
         encodingVegaSpec: Map<*, Map<*, *>>,
+        vararg channelMappingOverriding: Pair<String, Aes<*>>
     ): DataMetaOptions {
+        val dataMeta = DataMetaOptions()
+
         encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            val type = encoding.getString(Encodings.TYPE) ?: return@forEach
+            val encodingType = encoding.getString(Encodings.TYPE)
             val field = encoding.getString(Encodings.FIELD) ?: return@forEach
-            val seriesAnnotationOptions = SeriesAnnotationOptions()
-            val mappingAnnotationOptions = MappingAnnotationOptions()
+
+            when (encodingType) {
+                Encodings.Types.QUANTITATIVE -> {} // lp already treats it as continuous by default
+                Encodings.Types.TEMPORAL -> {
+                    dataMeta.appendSeriesAnnotation {
+                        type = SeriesAnnotationOptions.Types.DATE_TIME
+                        column = field
+                    }
+                }
+
+                Encodings.Types.NOMINAL, Encodings.Types.ORDINAL, null -> {
+                    channelToAes(channel.toString(), *channelMappingOverriding).forEach {
+                        dataMeta.appendMappingAnnotation {
+                            aes = it
+                            annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
+                            parameters {
+                                label = field
+                                order = MappingAnnotationOptions.OrderType.ASCENDING
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        return DataMetaOptions()
+        return dataMeta
     }
 }
