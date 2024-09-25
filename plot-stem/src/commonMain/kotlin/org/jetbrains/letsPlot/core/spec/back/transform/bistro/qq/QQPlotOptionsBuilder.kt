@@ -29,6 +29,7 @@ import org.jetbrains.letsPlot.core.spec.plotson.Options.PropSpec
 import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.plotson.plot
 import org.jetbrains.letsPlot.core.spec.plotson.scale
+import org.jetbrains.letsPlot.core.spec.plotson.theme
 
 class QQPlotOptionsBuilder(
     data: Map<*, *>,
