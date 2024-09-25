@@ -21,17 +21,8 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.L
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
-import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
-import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
-import org.jetbrains.letsPlot.core.spec.plotson.SamplingOptions
-import org.jetbrains.letsPlot.core.spec.plotson.ScaleOptions
+import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.Element
-import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
-import org.jetbrains.letsPlot.core.spec.plotson.coord
-import org.jetbrains.letsPlot.core.spec.plotson.plot
-import org.jetbrains.letsPlot.core.spec.plotson.scale
-import org.jetbrains.letsPlot.core.spec.plotson.theme
-import org.jetbrains.letsPlot.core.spec.plotson.tooltips
 import kotlin.math.max
 import kotlin.math.min
 
@@ -376,10 +367,10 @@ class CorrPlotOptionsBuilder private constructor(
             labelFormat = VALUE_FORMAT
             showLegend = this@CorrPlotOptionsBuilder.showLegend
             tooltipsOptions = tooltips {
-                lines = listOf(TooltipsOptions.Companion.variable(CorrVar.CORR))
+                lines = listOf(TooltipsOptions.variable(CorrVar.CORR))
                 formats = listOf(
-                    TooltipsOptions.Companion.format {
-                        field = TooltipsOptions.Companion.variable(CorrVar.CORR)
+                    TooltipsOptions.format {
+                        field = TooltipsOptions.variable(CorrVar.CORR)
                         format = VALUE_FORMAT
                     }
                 )
@@ -476,7 +467,7 @@ class CorrPlotOptionsBuilder private constructor(
             val width = geomWidth + labelWidthX + legendWidth
             val height = geomWidth + titleHeight + labelHeightY
 
-            return PlotOptions.Companion.size {
+            return PlotOptions.size {
                 this.width = width
                 this.height = height
             }

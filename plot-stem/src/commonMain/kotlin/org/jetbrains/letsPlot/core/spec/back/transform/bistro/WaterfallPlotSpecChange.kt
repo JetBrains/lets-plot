@@ -102,9 +102,9 @@ class WaterfallPlotSpecChange : SpecChange {
         optionName: String,
         defaultTooltips: TooltipsOptions,
         detailedTooltips: TooltipsOptions
-    ): TooltipsOptions? {
+    ): TooltipsOptions {
         when (bistroSpec.getString(optionName)) {
-            Option.Layer.NONE -> return null
+            Option.Layer.NONE -> return TooltipsOptions.NONE
             TOOLTIP_DETAILED -> return detailedTooltips
         }
         return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->

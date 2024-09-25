@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_ABSOLUTE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
@@ -16,10 +17,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.ElementLineOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.ElementTextOptions
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.FlowType
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Measure
 import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
 import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.plotson.TooltipsOptions
@@ -802,8 +799,8 @@ class OptionsBuilderTest {
         y: String,
         measure: String? = null,
         group: String? = null,
-        relativeTooltipsOptions: TooltipsOptions? = DEF_RELATIVE_TOOLTIPS,
-        absoluteTooltipsOptions: TooltipsOptions? = DEF_ABSOLUTE_TOOLTIPS,
+        relativeTooltipsOptions: TooltipsOptions = DEF_RELATIVE_TOOLTIPS,
+        absoluteTooltipsOptions: TooltipsOptions = DEF_ABSOLUTE_TOOLTIPS,
         calcTotal: Boolean = true,
         totalTitle: String? = null,
         sortedValue: Boolean = false,

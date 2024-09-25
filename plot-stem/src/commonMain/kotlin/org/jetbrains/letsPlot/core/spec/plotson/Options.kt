@@ -6,21 +6,20 @@
 package org.jetbrains.letsPlot.core.spec.plotson
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class Options(
-    val properties: MutableMap<String, Any?> = mutableMapOf()
+    val properties: MutableMap<String, Any?> = mutableMapOf(),
+    private val toSpecDelegate: (Options) -> Any? = Options::properties
 ) {
-    inline operator fun <reified T> get(aes: Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
-    operator fun <T> set(aes: Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
-
     class PropSpec<T>(val name: String)
 
     operator fun <T> set(prop: PropSpec<T>, value: T) {
         properties[prop.name] = value
     }
+
+    fun toSpec(): Any? = toSpecDelegate(this)
 }
 
 inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
