@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.Name
 
 fun PlotOptions.toJson(): MutableMap<String, Any> {
     return toJson(properties)
@@ -52,7 +51,7 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is PointShape -> v.code
         is NamedLineType -> v.code
         is LineType -> null
-        is Name -> v.value
+        is ThemeOptions.Name -> v.value
         else -> v.also {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // analyzer fails to see first check: null -> null
             println("WARNING: standardising unknown type: '${v!!::class.simpleName}'")
