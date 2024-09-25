@@ -10,13 +10,14 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.groupBy
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.replace
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Keyword.COLOR_FLOW_TYPE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
+import org.jetbrains.letsPlot.core.spec.plotson.*
 
 class WaterfallPlotOptionsBuilder(
     data: Map<*, *>,
@@ -31,8 +32,8 @@ class WaterfallPlotOptionsBuilder(
     private val lineType: Any?,
     private val width: Double,
     private val showLegend: Boolean?,
-    private val relativeTooltipsOptions: TooltipsOptions?,
-    private val absoluteTooltipsOptions: TooltipsOptions?,
+    private val relativeTooltipsOptions: TooltipsOptions,
+    private val absoluteTooltipsOptions: TooltipsOptions,
     private val calcTotal: Boolean,
     private val totalTitle: String?,
     private val sortedValue: Boolean,
@@ -189,7 +190,7 @@ class WaterfallPlotOptionsBuilder(
         return FlowType.list(totalTitle, skipFlowTypes).values.toList()
     }
 
-    private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions?): LayerOptions {
+    private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions): LayerOptions {
         return LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
             it.data = DataFrameUtil.toMap(statDf)
@@ -201,11 +202,7 @@ class WaterfallPlotOptionsBuilder(
             it.linetype = LineTypeOptionConverter().apply(lineType)
             it.width = width
             it.showLegend = showLegend
-            if (tooltipsOptions != null) {
-                it.tooltipsOptions = tooltipsOptions
-            } else {
-                it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
-            }
+            it.tooltipsOptions = tooltipsOptions
         }
     }
 
@@ -232,7 +229,7 @@ class WaterfallPlotOptionsBuilder(
             it.color = hLineOptions.color
             it.size = hLineOptions.size
             it.linetype = hLineOptions.lineType
-            it[TOOLTIPS_STRING_PROP] = Option.Layer.NONE
+            it.tooltipsOptions = TooltipsOptions.NONE
         }
     }
 
@@ -443,7 +440,5 @@ class WaterfallPlotOptionsBuilder(
             color = "white"
         )
         const val DEF_LABEL_FORMAT = ".2~f"
-
-        private val TOOLTIPS_STRING_PROP = PropSpec<String?>(Option.Layer.TOOLTIPS)
     }
 }

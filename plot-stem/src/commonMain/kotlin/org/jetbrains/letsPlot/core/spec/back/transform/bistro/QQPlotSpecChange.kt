@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.core.spec.back.transform.bistro
 
 import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.QQPlotOptionsBuilder
+import org.jetbrains.letsPlot.core.spec.plotson.OptionsUtil
 import org.jetbrains.letsPlot.core.spec.transform.SpecChange
 import org.jetbrains.letsPlot.core.spec.transform.SpecChangeContext
 import org.jetbrains.letsPlot.core.spec.transform.SpecSelector
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.QQPlotOptionsBuilder
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil
 
 class QQPlotSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {

@@ -19,11 +19,16 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_BOTTOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_LEFT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_RIGHT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Marginal.SIDE_TOP
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
+import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.qq.Option.QQ
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
+import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
+import org.jetbrains.letsPlot.core.spec.plotson.Options.PropSpec
+import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
+import org.jetbrains.letsPlot.core.spec.plotson.plot
+import org.jetbrains.letsPlot.core.spec.plotson.scale
 
 class QQPlotOptionsBuilder(
     data: Map<*, *>,
@@ -74,8 +79,7 @@ class QQPlotOptionsBuilder(
                     it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
                     it[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
-                    it.color = lineColor ?:
-                        if (group == null) DEF_LINE_COLOR else null
+                    it.color = lineColor ?: if (group == null) DEF_LINE_COLOR else null
                     it.size = lineSize
                     it.linetype = LineTypeOptionConverter().apply(lineType)
                 }

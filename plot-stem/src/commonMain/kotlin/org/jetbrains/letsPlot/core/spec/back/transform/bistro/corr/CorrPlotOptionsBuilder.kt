@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind
-import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
 import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_BREWER
+import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.COLOR_GRADIENT2
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.computeCorrelations
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.CorrUtil.correlationsToDataframe
@@ -21,9 +21,8 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.L
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.Option.Corr.Layer.Type.UPPER
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.corr.OptionsConfigurator.getKeepMatrixDiag
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.ThemeOptions.Element
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.coord
+import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.Element
 import kotlin.math.max
 import kotlin.math.min
 

@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.spec.asMapOfMaps
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.OptionsUtil.toSpec
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.plotson.OptionsUtil.toSpec
+import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformData

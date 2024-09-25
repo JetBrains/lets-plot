@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.PlotOptions
+import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
 
 internal class ErrorBarMarkConverter private constructor(
