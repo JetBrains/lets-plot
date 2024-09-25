@@ -1,13 +1,17 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
+package org.jetbrains.letsPlot.core.spec.plotson
 
 import org.jetbrains.letsPlot.core.spec.Option
 
-class TooltipsOptions : Options() {
+class TooltipsOptions private constructor(
+    toSpecDelegate: (Options) -> Any,
+) : Options(toSpecDelegate = toSpecDelegate) {
+    constructor() : this(Options::properties)
+
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
     var minWidth: Double? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
     var title: String? by map(Option.Layer.TOOLTIP_TITLE)
@@ -23,6 +27,8 @@ class TooltipsOptions : Options() {
     companion object {
         fun format(block: Format.() -> Unit) = Format().apply(block)
         fun variable(name: String) = "@$name"
+
+        val NONE = TooltipsOptions { "none" }
     }
 }
 

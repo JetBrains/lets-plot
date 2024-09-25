@@ -1,21 +1,26 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.spec.back.transform.bistro.util
+package org.jetbrains.letsPlot.core.spec.plotson
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.Option
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class Options(
-    val properties: MutableMap<String, Any?> = mutableMapOf()
+    val properties: MutableMap<String, Any?> = mutableMapOf(),
+    private val toSpecDelegate: (Options) -> Any? = Options::properties
 ) {
-    inline operator fun <reified T> get(aes: Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
-    operator fun <T> set(aes: Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
-    fun setAes(aes: Aes<*>, v: Any?) { properties[Option.Mapping.toOption(aes)] = v }
+    class PropSpec<T>(val name: String)
+
+    operator fun <T> set(prop: PropSpec<T>, value: T) {
+        properties[prop.name] = value
+    }
+
+    // for short-form specs, e.g., "tooltip": "none" or "sampling": "random"
+    fun toSpec(): Any? = toSpecDelegate(this)
 }
 
 inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
