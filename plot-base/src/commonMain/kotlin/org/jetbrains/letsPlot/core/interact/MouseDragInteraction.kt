@@ -31,22 +31,19 @@ internal class MouseDragInteraction(
 
     // Coordinate relative to the entire plot.
     // Need to be translated to "geom" coordinate.
-    var dragFrom: DoubleVector = DoubleVector.ZERO
-        private set
+    private var dragFrom: DoubleVector = DoubleVector.ZERO
         get():DoubleVector {
             require(started) { "Mouse drag target wasn't acquired." }
             return field
         }
-    var dragTo: DoubleVector = DoubleVector.ZERO
-        private set
+    private var dragTo: DoubleVector = DoubleVector.ZERO
         get():DoubleVector {
             require(started) { "Mouse drag target wasn't acquired." }
             return field
         }
 
     // Relative to the previous event.
-    var dragDelta: DoubleVector = DoubleVector.ZERO
-        private set
+    private var dragDelta: DoubleVector = DoubleVector.ZERO
         get():DoubleVector {
             require(started) { "Mouse drag target wasn't acquired." }
             return field

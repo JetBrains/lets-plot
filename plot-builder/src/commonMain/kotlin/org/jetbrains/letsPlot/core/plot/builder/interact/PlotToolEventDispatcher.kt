@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.PanGeomFeedback.PanningMode
 import org.jetbrains.letsPlot.core.interact.RollbackAllChangesFeedback
 import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
@@ -57,14 +58,20 @@ internal class PlotToolEventDispatcher(
         val fireSelectionChangedDebounced =
             debounce<DoubleRectangle>(DEBOUNCE_DELAY_MS, CoroutineScope(Dispatchers.Default)) { dataBounds ->
                 println("Debounced interaction: $interactionName, dataBounds: $dataBounds")
-                fireSelectionChanged(origin, interactionName, dataBounds)
+                val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
             }
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = { dataBounds ->
-                    println("Pan tool: apply $dataBounds")
-                    fireSelectionChanged(origin, interactionName, dataBounds)
+                onCompleted = { dataBounds, panningMode ->
+                    println("Pan tool: apply $dataBounds, mode: $panningMode")
+                    val dataBoundsLTRB = when (panningMode) {
+                        PanningMode.FREE -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
+                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
+                    }
+                    fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
             )
 
@@ -72,7 +79,8 @@ internal class PlotToolEventDispatcher(
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
                 DrawRectFeedback(centerStart) { dataBounds ->
                     println("client: data $dataBounds")
-                    fireSelectionChanged(origin, interactionName, dataBounds)
+                    val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                    fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
             }
 
@@ -120,17 +128,14 @@ internal class PlotToolEventDispatcher(
     private fun fireSelectionChanged(
         origin: String,
         interactionName: String,
-        dataBounds: DoubleRectangle
+        dataBoundsLTRB: List<Double?>
     ) {
         toolEventCallback.invoke(
             mapOf(
                 EVENT_NAME to SELECTION_CHANGED,
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName,
-                EVENT_RESULT_DATA_BOUNDS to listOf(
-                    dataBounds.left, dataBounds.top,
-                    dataBounds.right, dataBounds.bottom
-                )
+                EVENT_RESULT_DATA_BOUNDS to dataBoundsLTRB
             )
         )
     }

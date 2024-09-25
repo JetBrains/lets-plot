@@ -65,14 +65,8 @@ class DefaultToolbarController(
                     @Suppress("UNCHECKED_CAST")
                     bounds as List<Double?>
                     val specOverride = HashMap<String, Any>().also { map ->
-                        val xlim = listOf(bounds[0], bounds[2])
-                        if (xlim.filterNotNull().isNotEmpty()) {
-                            map[COORD_XLIM_TRANSFORMED] = xlim
-                        }
-                        val ylim = listOf(bounds[1], bounds[3])
-                        if (ylim.filterNotNull().isNotEmpty()) {
-                            map[COORD_YLIM_TRANSFORMED] = ylim
-                        }
+                        map[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
+                        map[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
                     }
                     figure.updateView(specOverride)
                 }

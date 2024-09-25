@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import kotlin.math.abs
 
 class PanGeomFeedback(
-    private val onCompleted: ((DoubleRectangle) -> Unit) = { _ -> println("PanGeomFeedback complete.") },
+    private val onCompleted: ((DoubleRectangle, PanningMode) -> Unit) = { _, _ -> println("PanGeomFeedback complete.") },
 ) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
@@ -62,9 +62,11 @@ class PanGeomFeedback(
                 val dataBounds = target.applyViewport(viewport, ctx)
 
                 it.reset()
-                panningMode = null
 
-                onCompleted(dataBounds)
+                panningMode?.let { pm ->
+                    panningMode = null
+                    onCompleted(dataBounds, pm)
+                }
             },
             onAborted = {
                 println("PanGeomFeedback abort.")
@@ -81,7 +83,7 @@ class PanGeomFeedback(
         }
     }
 
-    private enum class PanningMode {
+    enum class PanningMode {
         HORIZONTAL,
         VERTICAL,
         FREE
