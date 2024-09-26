@@ -15,6 +15,9 @@ internal class DummyTransientState : ComponentTransientState(DoubleRectangle(Dou
     override val dataBounds: DoubleRectangle
         get() = UNSUPPORTED("Not yet implemented")
 
+    override val isCoordFlip: Boolean
+        get() = UNSUPPORTED("Not yet implemented")
+
     override fun syncDataBounds(ctx: InteractionContext) {
         UNSUPPORTED("Not yet implemented")
     }

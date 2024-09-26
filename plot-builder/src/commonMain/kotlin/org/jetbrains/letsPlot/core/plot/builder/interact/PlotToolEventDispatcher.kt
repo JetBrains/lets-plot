@@ -64,13 +64,21 @@ internal class PlotToolEventDispatcher(
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = { dataBounds, panningMode ->
-                    println("Pan tool: apply $dataBounds, mode: $panningMode")
+                onCompleted = { dataBounds, flipped, panningMode ->
+                    println("Pan tool: apply $dataBounds, flipped: $flipped, mode: $panningMode")
+                    // flip panning mode maybe
+                    @Suppress("NAME_SHADOWING")
+                    val panningMode = if (!flipped) {
+                        panningMode
+                    } else when (panningMode) {
+                        PanningMode.FREE -> panningMode
+                        PanningMode.HORIZONTAL -> PanningMode.VERTICAL
+                        PanningMode.VERTICAL -> PanningMode.HORIZONTAL
+                    }
                     val dataBoundsLTRB = when (panningMode) {
                         PanningMode.FREE -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-//                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
-//                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
-                        else -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
+                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
                     }
                     fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
