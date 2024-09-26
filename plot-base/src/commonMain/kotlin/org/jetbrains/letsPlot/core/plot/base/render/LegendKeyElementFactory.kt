@@ -6,9 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.base.render
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement
@@ -19,4 +23,20 @@ interface LegendKeyElementFactory {
         return DoubleVector(size, size)
     }
 
+    companion object {
+        fun createBackgroundRectForKey(
+            size: DoubleVector,
+            color: Color,
+            fill: Color,
+            strokeWidth: Double,
+            lineType: LineType,
+        ): SvgRectElement {
+            val rect = SvgRectElement(0.0, 0.0, size.x, size.y)
+            rect.fillColor().set(fill)
+            rect.strokeColor().set(color)
+            rect.strokeWidth().set(strokeWidth)
+            StrokeDashArraySupport.apply(rect, strokeWidth, lineType)
+            return rect
+        }
+    }
 }

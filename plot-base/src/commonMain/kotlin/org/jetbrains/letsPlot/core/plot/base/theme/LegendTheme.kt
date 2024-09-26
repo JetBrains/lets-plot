@@ -15,6 +15,12 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface LegendTheme {
     fun keySize(): DoubleVector
+    // background underneath legend keys
+    fun showKeyRect(): Boolean
+    fun keyRectFill(): Color
+    fun keyRectColor(): Color
+    fun keyRectStrokeWidth(): Double
+    fun keyLineType(): LineType
 
     /**
      * extra space added around legend (px, no support for ggplot 'units')

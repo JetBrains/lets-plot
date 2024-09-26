@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class LegendBreak(val label: String) {
@@ -35,8 +36,19 @@ class LegendBreak(val label: String) {
         )
     }
 
-    fun createKeyElement(size: DoubleVector): SvgGElement {
+    fun createKeyElement(size: DoubleVector, theme: LegendTheme): SvgGElement {
         val g = SvgGElement()
+
+        if (theme.showKeyRect()) {
+            val rectElement = LegendKeyElementFactory.createBackgroundRectForKey(
+                size,
+                color = theme.keyRectColor(),
+                fill = theme.keyRectFill(),
+                strokeWidth = theme.keyRectStrokeWidth(),
+                lineType = theme.keyLineType()
+            )
+            g.children().add(rectElement)
+        }
 
         for (layer in myLayers) {
             val keyElement = layer.keyElementFactory.createKeyElement(layer.dataPoint, size)
@@ -52,6 +64,7 @@ class LegendBreak(val label: String) {
     )
 
     companion object {
+        // for demo
         fun simple(
             label: String,
             dataPoint: DataPointAesthetics,

@@ -92,6 +92,7 @@ object ThemeOption {
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"
 
+    const val LEGEND_KEY_RECT = "legend_key"
     const val LEGEND_KEY_SIZE = "legend_key_size"
     const val LEGEND_KEY_WIDTH = "legend_key_width"
     const val LEGEND_KEY_HEIGHT = "legend_key_height"
@@ -194,6 +195,7 @@ object ThemeOption {
         val elemWithColorAndSize = listOf(
             PLOT_BKGR_RECT,
             LEGEND_BKGR_RECT,
+            LEGEND_KEY_RECT,
             AXIS_TICKS_X,
             AXIS_TICKS_Y,
             AXIS_LINE_X,

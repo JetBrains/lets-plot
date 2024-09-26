@@ -42,6 +42,7 @@ def theme(*,
           legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
+          legend_key=None,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           # ToDo: other legend options...
 
@@ -175,9 +176,16 @@ def theme(*,
         For string parameter the only possible value is 'center'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
-    legend_key_size : todo
-    legend_key_width :  todo
-    legend_key_height :  todo
+    legend_key : str or dict
+        Background underneath legend keys.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify legend key background parameters, inherited from `rect`.
+    legend_key_size : float
+        Size of legend keys.
+    legend_key_width : float
+        Key background width, inherited from `legend_key_size`.
+    legend_key_height : float
+        Key background height, inherited from `legend_key_size`.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.

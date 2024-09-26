@@ -90,7 +90,7 @@ class LegendComponent(
 
         // key
         val innerSize = DoubleVector(size.x - 2, size.y - 2)
-        val keyElement = legendBreak.createKeyElement(innerSize)
+        val keyElement = legendBreak.createKeyElement(innerSize, spec.theme)
         val keyElementTransform = buildTransform(DoubleVector(1.0, 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 

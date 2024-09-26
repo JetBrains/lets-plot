@@ -830,6 +830,7 @@ object Option {
         const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
         const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
 
+        const val LEGEND_KEY_RECT = ThemeOption.LEGEND_KEY_RECT
         const val LEGEND_KEY_SIZE = ThemeOption.LEGEND_KEY_SIZE
         const val LEGEND_KEY_WIDTH = ThemeOption.LEGEND_KEY_WIDTH
         const val LEGEND_KEY_HEIGHT = ThemeOption.LEGEND_KEY_HEIGHT

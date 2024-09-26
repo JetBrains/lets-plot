@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_HEIGHT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_WIDTH
@@ -33,6 +34,9 @@ internal class DefaultLegendTheme(
     fontFamilyRegistry: FontFamilyRegistry
 ) : ThemeValuesAccess(options, fontFamilyRegistry), LegendTheme {
 
+    // background underneath legend keys
+    internal val keyRectKey = listOf(LEGEND_KEY_RECT, RECT)
+
     internal val backgroundKey = listOf(LEGEND_BKGR_RECT, RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
     internal val textKey = listOf(LEGEND_TEXT, TEXT)
@@ -42,6 +46,16 @@ internal class DefaultLegendTheme(
         val height = getNumber(listOf(LEGEND_KEY_HEIGHT, LEGEND_KEY_SIZE))
         return DoubleVector(width, height)
     }
+
+    override fun showKeyRect() = !isElemBlank(keyRectKey)
+
+    override fun keyRectFill() = getColor(getElemValue(keyRectKey), Elem.FILL)
+
+    override fun keyRectColor() = getColor(getElemValue(keyRectKey), Elem.COLOR)
+
+    override fun keyRectStrokeWidth() = getNumber(getElemValue(keyRectKey), Elem.SIZE)
+
+    override fun keyLineType() = getLineType(getElemValue(keyRectKey))
 
     override fun margin(): Double {
         return 5.0
