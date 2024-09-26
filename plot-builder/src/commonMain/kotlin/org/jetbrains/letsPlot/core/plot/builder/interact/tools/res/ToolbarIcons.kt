@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools.res
 object ToolbarIcons {
     val PAN_TOOL = """
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-            <g stroke="#6C707E" stroke-width="1.4">
+            <g stroke="#6C707E">
                 <path d="M8,1 V15 M1,8 H15 M4,4 L12,12 M12,4 L4,12" />
             </g>    
         </svg>
@@ -34,7 +34,7 @@ object ToolbarIcons {
 
     val RESET = """
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-            <g stroke="#6C707E" stroke-width="1.4" fill="none">
+            <g stroke="#6C707E" fill="none">
                 <path d="M2,8 A6,6 0 1,0 2.8,5 M2.5,1 v4 h4"/>
             </g>
         </svg>
