@@ -92,12 +92,18 @@ def theme(*,
 
     Parameters
     ----------
-    exponent_format : {'e', 'pow', 'pow_full'}, default='e'
+    exponent_format : {'e', 'pow', 'pow_full'} or tuple, default='e'
         Format for numeric labels in scientific notation.
 
         - e for "e" notation (e.g. 1e+6);
         - pow_full for "power" notation (e.g. 1x10^6). This will enable superscript formatting for the exponent;
         - pow works as pow_full but will shorten powers of 10 (e.g. 10^6 instead of 1x10^6).
+
+        If parameter is a tuple, then it should be a three-element tuple:
+
+        - the first element is the format - 'e', 'pow', 'pow_full';
+        - the second element is minimum exponent value from which to use scientific notation (default is -7);
+        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see https://lets-plot.org/python/pages/formats.html).
 
         Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
     line : str or dict
