@@ -30,7 +30,7 @@ class GeomProto(val geomKind: GeomKind) {
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
         exponentFormat: ExponentFormat,
-        minExponent: Int,
+        minExponent: Int?,
         maxExponent: Int?
     ): GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, exponentFormat, minExponent, maxExponent)

@@ -31,7 +31,7 @@ object Transforms {
         transform: ContinuousTransform,
         providedFormatter: ((Any) -> String)? = null,
         exponentFormat: ExponentFormat,
-        minExponent: Int,
+        minExponent: Int?,
         maxExponent: Int?
     ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {

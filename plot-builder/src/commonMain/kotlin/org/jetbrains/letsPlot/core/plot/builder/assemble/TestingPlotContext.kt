@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -29,7 +28,7 @@ object TestingPlotContext {
         return PlotAssemblerPlotContext(
             geomTiles = TestingPlotGeomTiles(layers, scaleMap),
             exponentFormat = ExponentFormat.E,
-            minExponent = NumberFormat.DEF_MIN_EXP,
+            minExponent = null,
             maxExponent = null
         )
     }

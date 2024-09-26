@@ -23,7 +23,7 @@ class DataFrameField(
     private lateinit var myVariable: DataFrame.Variable
     private var myFormatter: ((Any) -> String)? = null
 
-    private fun initFormatter(exponentFormat: ExponentFormat, minExponent: Int, maxExponent: Int?): (Any) -> String {
+    private fun initFormatter(exponentFormat: ExponentFormat, minExponent: Int?, maxExponent: Int?): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {

@@ -26,7 +26,7 @@ class NumberFormat(spec: Spec) {
         val type: String = "",
         val trim: Boolean = false,
         val exponentFormat: ExponentFormat = DEF_RICH_OUTPUT,
-        val minExp: Int = DEF_MIN_EXP,
+        val minExp: Int? = null,
         val maxExp: Int? = null
     )
 
@@ -157,10 +157,11 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
+        val minExp = spec.minExp ?: DEF_MIN_EXP
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
+            } else if (numberInfo.fractionLeadingZeros >= -minExp - 1) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
@@ -217,9 +218,9 @@ class NumberFormat(spec: Spec) {
         }
         return if (spec.exponentFormat != ExponentFormat.E) {
             when {
-                exponent == 0 && spec.minExp < 0
+                exponent == 0 && (spec.minExp == null || spec.minExp < 0)
                               && (spec.maxExp == null || spec.maxExp > 0) -> ""
-                exponent == 1 && spec.minExp < 1
+                exponent == 1 && (spec.minExp == null || spec.minExp < 1)
                               && (spec.maxExp == null || spec.maxExp > 1) -> MULT_SIGN + "10"
                 else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
             }
@@ -508,14 +509,12 @@ class NumberFormat(spec: Spec) {
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
                 exponentFormat = matchResult.groups["expf"]?.value?.toInt()?.let { ExponentFormat.fromInt(it) } ?: DEF_RICH_OUTPUT,
-                minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
+                minExp = matchResult.groups["minexp"]?.value?.toInt(),
                 maxExp = matchResult.groups["maxexp"]?.value?.toInt(),
             )
 
             return normalizeSpec(formatSpec)
         }
-
-        const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
 
         internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
@@ -532,6 +531,7 @@ class NumberFormat(spec: Spec) {
             """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<expf>\d))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private val DEF_RICH_OUTPUT = ExponentFormat.E
+        private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
         private const val DEF_PRECISION = 6
 
 

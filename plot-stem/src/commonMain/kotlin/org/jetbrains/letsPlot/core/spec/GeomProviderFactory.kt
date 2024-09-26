@@ -57,7 +57,7 @@ internal object GeomProviderFactory {
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
         exponentFormat: ExponentFormat,
-        minExponent: Int,
+        minExponent: Int?,
         maxExponent: Int?
     ): GeomProvider {
         return when (geomKind) {
@@ -412,7 +412,7 @@ internal object GeomProviderFactory {
         layerConfig: LayerConfig,
         geom: TextGeom,
         exponentFormat: ExponentFormat,
-        minExponent: Int,
+        minExponent: Int?,
         maxExponent: Int?
     ) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {

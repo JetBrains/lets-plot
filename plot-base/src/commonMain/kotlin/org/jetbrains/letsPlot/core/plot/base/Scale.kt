@@ -51,7 +51,7 @@ interface Scale {
 
         fun exponentFormat(v: ExponentFormat): Builder
 
-        fun minExponent(v: Int): Builder
+        fun minExponent(v: Int?): Builder
 
         fun maxExponent(v: Int?): Builder
 

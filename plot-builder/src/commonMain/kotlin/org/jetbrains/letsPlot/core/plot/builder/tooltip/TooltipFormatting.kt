@@ -31,7 +31,7 @@ internal object TooltipFormatting {
         }
     }
 
-    fun createFormatter(variable: DataFrame.Variable, exponentFormat: ExponentFormat, minExponent: Int, maxExponent: Int?): (Any) -> String {
+    fun createFormatter(variable: DataFrame.Variable, exponentFormat: ExponentFormat, minExponent: Int?, maxExponent: Int?): (Any) -> String {
         return when (variable) {
             Stats.PROP,
             Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)::format

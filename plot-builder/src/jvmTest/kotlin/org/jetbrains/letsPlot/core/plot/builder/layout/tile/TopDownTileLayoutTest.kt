@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -139,7 +138,7 @@ class TopDownTileLayoutTest {
                     Transforms.IDENTITY,
                     providedFormatter = null,
                     exponentFormat = ExponentFormat.E,
-                    minExponent = NumberFormat.DEF_MIN_EXP,
+                    minExponent = null,
                     maxExponent = null
                 )
 

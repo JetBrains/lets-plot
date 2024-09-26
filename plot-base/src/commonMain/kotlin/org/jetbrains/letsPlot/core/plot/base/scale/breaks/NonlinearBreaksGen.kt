@@ -15,7 +15,7 @@ internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
     private val providedFormatter: ((Any) -> String)? = null,
     private val exponentFormat: ExponentFormat,
-    private val minExponent: Int,
+    private val minExponent: Int?,
     private val maxExponent: Int?
 ) : BreaksGenerator {
 

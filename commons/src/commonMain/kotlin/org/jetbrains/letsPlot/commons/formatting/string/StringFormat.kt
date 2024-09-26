@@ -145,7 +145,7 @@ class StringFormat private constructor(
             type: FormatType? = null,
             formatFor: String? = null,
             exponentFormat: ExponentFormat = ExponentFormat.POW,
-            minExponent: Int = NumberFormat.DEF_MIN_EXP,
+            minExponent: Int? = null,
             maxExponent: Int? = null
         ): StringFormat {
             return create(pattern, type, formatFor, expectedArgs = 1, exponentFormat, minExponent, maxExponent)
@@ -156,7 +156,7 @@ class StringFormat private constructor(
             argCount: Int,
             formatFor: String? = null,
             exponentFormat: ExponentFormat = ExponentFormat.POW,
-            minExponent: Int = NumberFormat.DEF_MIN_EXP,
+            minExponent: Int? = null,
             maxExponent: Int? = null
         ): StringFormat {
             return create(pattern, STRING_FORMAT, formatFor, argCount, exponentFormat, minExponent, maxExponent)

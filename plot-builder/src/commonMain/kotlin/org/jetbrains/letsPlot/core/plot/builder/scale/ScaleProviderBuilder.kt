@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -22,7 +21,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
     private var myExponentFormat: ExponentFormat = ExponentFormat.E
-    private var myMinExponent: Int = NumberFormat.DEF_MIN_EXP
+    private var myMinExponent: Int? = null
     private var myMaxExponent: Int? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -118,7 +117,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun minExponent(v: Int): ScaleProviderBuilder<T> {
+    fun minExponent(v: Int?): ScaleProviderBuilder<T> {
         myMinExponent = v
         return this
     }
@@ -161,7 +160,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
         private val myExponentFormat: ExponentFormat = b.myExponentFormat
-        private val myMinExponent: Int = b.myMinExponent
+        private val myMinExponent: Int? = b.myMinExponent
         private val myMaxExponent: Int? = b.myMaxExponent
         private val myAes: Aes<T> = b.aes
 

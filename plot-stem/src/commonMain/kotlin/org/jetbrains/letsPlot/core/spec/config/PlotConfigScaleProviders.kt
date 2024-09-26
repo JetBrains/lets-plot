@@ -21,7 +21,7 @@ internal object PlotConfigScaleProviders {
         excludeStatVariables: Boolean,
         zeroPositionalExpands: Boolean,
         exponentFormat: ExponentFormat,
-        minExponent: Int,
+        minExponent: Int?,
         maxExponent: Int?
     ): Map<Aes<*>, ScaleProvider> {
 

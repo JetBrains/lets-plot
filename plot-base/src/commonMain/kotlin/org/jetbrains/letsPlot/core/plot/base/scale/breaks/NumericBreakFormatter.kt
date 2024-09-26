@@ -16,7 +16,7 @@ internal class NumericBreakFormatter(
     step: Double,
     allowMetricPrefix: Boolean,
     exponentFormat: ExponentFormat,
-    minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    minExponent: Int? = null,
     maxExponent: Int? = null
 ) {
     private var formatter: NumberFormat

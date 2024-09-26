@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -23,7 +22,7 @@ internal class NonlinearBreaksHelper(
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
     exponentFormat: ExponentFormat,
-    minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    minExponent: Int? = null,
     maxExponent: Int? = null,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
@@ -92,7 +91,7 @@ internal class NonlinearBreaksHelper(
         private fun createFormatters(
             breakValues: List<Double>,
             exponentFormat: ExponentFormat,
-            minExponent: Int,
+            minExponent: Int?,
             maxExponent: Int?
         ): List<(Any) -> String> {
             if (breakValues.isEmpty()) return emptyList()
@@ -119,7 +118,7 @@ internal class NonlinearBreaksHelper(
             domainValue: Double,
             step: Double,
             exponentFormat: ExponentFormat,
-            minExponent: Int,
+            minExponent: Int?,
             maxExponent: Int?
         ): (Any) -> String {
             return NumericBreakFormatter(

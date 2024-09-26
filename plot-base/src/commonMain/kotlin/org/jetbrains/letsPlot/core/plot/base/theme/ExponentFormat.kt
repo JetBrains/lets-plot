@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 
 data class ExponentFormat(
     val format: Format,
-    val minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    val minExponent: Int? = null,
     val maxExponent: Int? = null
 ) {
     enum class Format(val value: NumberFormat.ExponentFormat) {

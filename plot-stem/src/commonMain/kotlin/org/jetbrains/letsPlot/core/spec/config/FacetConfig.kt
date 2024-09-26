@@ -28,7 +28,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 internal class FacetConfig(
     options: Map<String, Any>,
     private val exponentFormat: ExponentFormat,
-    private val minExponent: Int,
+    private val minExponent: Int?,
     private val maxExponent: Int?
 ) : OptionsAccessor(options) {
 

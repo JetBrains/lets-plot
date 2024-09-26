@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
@@ -19,7 +18,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val providedFormatter: ((Any) -> String)?
     protected val labelLengthLimit: Int
     protected val exponentFormat: ExponentFormat
-    protected val minExponent: Int
+    protected val minExponent: Int?
     protected val maxExponent: Int?
 
     private var createdScaleBreaks: ScaleBreaks? = null
@@ -38,7 +37,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         labelLengthLimit = 0
         providedFormatter = null
         exponentFormat = ExponentFormat.E
-        minExponent = NumberFormat.DEF_MIN_EXP
+        minExponent = null
         maxExponent = null
     }
 
@@ -102,7 +101,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var providedFormatter: ((Any) -> String)? = scale.providedFormatter
         internal var myExponentFormat: ExponentFormat = scale.exponentFormat
-        internal var myMinExponent: Int = scale.minExponent
+        internal var myMinExponent: Int? = scale.minExponent
         internal var myMaxExponent: Int? = scale.maxExponent
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -146,7 +145,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
             return this
         }
 
-        override fun minExponent(v: Int): Scale.Builder {
+        override fun minExponent(v: Int?): Scale.Builder {
             myMinExponent = v
             return this
         }
