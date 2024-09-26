@@ -25,7 +25,7 @@ class NumberFormat(spec: Spec) {
         val precision: Int = DEF_PRECISION,
         val type: String = "",
         val trim: Boolean = false,
-        val exponentFormat: ExponentFormat = DEF_RICH_OUTPUT,
+        val exponentFormat: ExponentFormat = DEF_EXPONENT_FORMAT,
         val minExp: Int? = null,
         val maxExp: Int? = null
     )
@@ -508,7 +508,7 @@ class NumberFormat(spec: Spec) {
                 precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION,
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
-                exponentFormat = matchResult.groups["expf"]?.value?.toInt()?.let { ExponentFormat.fromInt(it) } ?: DEF_RICH_OUTPUT,
+                exponentFormat = matchResult.groups["expf"]?.value?.toInt()?.let { ExponentFormat.fromInt(it) } ?: DEF_EXPONENT_FORMAT,
                 minExp = matchResult.groups["minexp"]?.value?.toInt(),
                 maxExp = matchResult.groups["maxexp"]?.value?.toInt(),
             )
@@ -530,7 +530,7 @@ class NumberFormat(spec: Spec) {
         private val NUMBER_REGEX =
             """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<expf>\d))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
-        private val DEF_RICH_OUTPUT = ExponentFormat.E
+        private val DEF_EXPONENT_FORMAT = ExponentFormat.E
         private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
         private const val DEF_PRECISION = 6
 
