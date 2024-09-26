@@ -21,8 +21,8 @@ internal class AreaMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.AREA
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+
+            initDataAndMappings()
         }
     }
 }

@@ -23,11 +23,15 @@ internal class TickMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.CROSS_BAR
-            data = Util.transformData(dataVegaSpec)
             size = 0.1 // thickness of the tick
             width = 0.6
 
-            mappings = Util.transformMappings(encodingVegaSpec, Channels.X to Aes.XMIN, Channels.X to Aes.XMAX)
+            initDataAndMappings(
+                customChannelMapping = listOf(
+                    Channels.X to Aes.XMIN,
+                    Channels.X to Aes.XMAX
+                )
+            )
         }
     }
 }

@@ -8,15 +8,13 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
-import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
-import org.jetbrains.letsPlot.core.spec.getMap
-import org.jetbrains.letsPlot.core.spec.getMaps
-import org.jetbrains.letsPlot.core.spec.typed
 import org.junit.Test
 import java.util.Map.entry
 
@@ -52,6 +50,7 @@ class AreaMarkTransformTest {
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>())
             .containsOnly(
                 entry(Layer.GEOM, fromGeomKind(GeomKind.AREA)),
+                entry(Option.Meta.DATA_META, empty()),
                 entry(
                     PlotBase.DATA, mapOf(
                         "u" to listOf(1.0, 2.0, 3.0, 4.0, 5.0, 6.0),

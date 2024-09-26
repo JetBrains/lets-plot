@@ -24,8 +24,8 @@ internal class SquareMarkConverter private constructor(
         plotOptions.appendLayer {
             geom = GeomKind.POINT
             shape = NamedShape.SOLID_SQUARE
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+
+            initDataAndMappings()
         }
     }
 }

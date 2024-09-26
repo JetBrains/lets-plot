@@ -7,10 +7,13 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromStatKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.StatKind
@@ -28,14 +31,17 @@ class BoxplotMarkTransformTest {
             """
             |{
             |  "data": { "values": [
-            |    { "Y": 1.5792128155073915 },
-            |    { "Y": 0.7674347291529088 },
-            |    { "Y": -0.4694743859349521 },
-            |    { "Y": 0.5425600435859647 },
-            |    { "Y": -0.46341769281246226 }
+            |    { "V": 1.5792128155073915, "S": 0 },
+            |    { "V": 0.7674347291529088, "S": 0 },
+            |    { "V": -0.4694743859349521, "S": 0 },
+            |    { "V": 0.5425600435859647, "S": 0 },
+            |    { "V": -0.46341769281246226, "S": 0 }
             |  ]},
             |  "mark": "boxplot",
-            |  "encoding": { "y": { "field": "Y" } }
+            |  "encoding": { 
+            |       "x": { "field": "S" },
+            |       "y": { "field": "V", "type": "quantitative" } 
+            |   }
             |}
         """.trimMargin()
         ).asMutable()
@@ -47,12 +53,24 @@ class BoxplotMarkTransformTest {
             entry(PlotBase.DATA, mapOf(
                 "..middle.." to listOf(0.5425600435859647),
                 "..upper.." to listOf(0.7674347291529088),
-                "..x.." to listOf(0.0),
                 "..ymax.." to listOf(1.5792128155073915),
                 "..lower.." to listOf(-0.46341769281246226),
-                "..ymin.." to listOf(-0.4694743859349521)
+                "..ymin.." to listOf(-0.4694743859349521),
+                "S" to listOf(0.0)
             )),
-            entry(PlotBase.MAPPING, mapOf("y" to "Y")),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "S",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    )
+                )
+            )),
+            entry(PlotBase.MAPPING, mapOf("x" to "S", "y" to "V")),
         )
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![1].typed<String, Any?>()).containsOnly(
@@ -60,13 +78,25 @@ class BoxplotMarkTransformTest {
             entry(PlotBase.DATA, mapOf(
                 "..middle.." to listOf(0.5425600435859647),
                 "..upper.." to listOf(0.7674347291529088),
-                "..x.." to listOf(0.0),
                 "..ymax.." to listOf(1.5792128155073915),
                 "..lower.." to listOf(-0.46341769281246226),
                 "..ymin.." to listOf(-0.4694743859349521),
-                "Y" to listOf(Double.NaN)
+                "V" to listOf(Double.NaN),
+                "S" to listOf(0.0),
             )),
-            entry(PlotBase.MAPPING, mapOf("y" to "Y")),
+            entry(PlotBase.MAPPING, mapOf("x" to "S", "y" to "V")),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "S",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    )
+                )
+            )),
             entry(Layer.STAT, fromStatKind(StatKind.BOXPLOT_OUTLIER)),
         )
     }

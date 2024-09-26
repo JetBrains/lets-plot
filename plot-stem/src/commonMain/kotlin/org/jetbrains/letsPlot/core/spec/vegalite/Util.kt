@@ -28,6 +28,7 @@ internal object Util {
     }
 
     fun transformData(data: Map<*, *>): Map<String, List<Any?>> {
+        @Suppress("NAME_SHADOWING")
         val data = if (Option.Data.URL in data) {
             val url = data.getString(Option.Data.URL) ?: error("URL is not specified")
             val json = when (url) {
@@ -49,70 +50,101 @@ internal object Util {
 
     fun transformMappings(
         encodingVegaSpec: Map<*, Map<*, *>>,
-        vararg channelMappingOverriding: Pair<String, Aes<*>>
+        customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Map<Aes<*>, String> {
         return encodingVegaSpec
             .flatMap { (channel, encoding) ->
-                val aesthetics = channelToAes(channel.toString(), *channelMappingOverriding)
+                val aesthetics = channelToAes(channel.toString(), customChannelMapping)
                 val field = encoding.getString(Encodings.FIELD) ?: return@flatMap emptyList()
 
                 aesthetics.map { aes -> aes to field }
             }.toMap()
-
     }
 
-    private fun channelToAes(channel: String, vararg channelMappingOverriding: Pair<String, Aes<*>>): List<Aes<*>> {
-        val defaultChannelToAes = mapOf<String, List<Aes<*>>>(
-            Channels.X to listOf(Aes.X),
-            Channels.Y to listOf(Aes.Y),
-            Channels.COLOR to listOf(Aes.COLOR),
-            Channels.FILL to listOf(Aes.FILL),
-            Channels.OPACITY to listOf(Aes.ALPHA),
-            Channels.STROKE to listOf(Aes.STROKE),
-            Channels.SIZE to listOf(Aes.SIZE),
-            Channels.ANGLE to listOf(Aes.ANGLE),
-            Channels.SHAPE to listOf(Aes.SHAPE),
-            Channels.TEXT to listOf(Aes.LABEL)
-        )
+    private fun channelToAes(
+        channel: String,
+        customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
+    ): List<Aes<*>> {
+        val defaultChannelMapping = listOf(
+            Channels.X to Aes.X,
+            Channels.Y to Aes.Y,
+            Channels.COLOR to Aes.COLOR,
+            Channels.FILL to Aes.FILL,
+            Channels.OPACITY to Aes.ALPHA,
+            Channels.STROKE to Aes.STROKE,
+            Channels.SIZE to Aes.SIZE,
+            Channels.ANGLE to Aes.ANGLE,
+            Channels.SHAPE to Aes.SHAPE,
+            Channels.TEXT to Aes.LABEL
+        ).groupBy { (ch, _) -> ch }
 
-        val overriding = channelMappingOverriding
-            .groupBy { (channel, _) -> channel }
-            .mapValues { (_, channelToAes) -> channelToAes.map { (_, aes) -> aes } }
+        @Suppress("NAME_SHADOWING")
+        val customChannelMapping = customChannelMapping.groupBy { (ch, _) -> ch }
 
-        val channelToAesConverter = defaultChannelToAes + overriding
-        return channelToAesConverter[channel] ?: emptyList()
+        val channelToAes = (defaultChannelMapping + customChannelMapping) // custom mappings override default ones
+            .mapValues { (_, mappings) -> mappings.map { (_, aes) -> aes } }
+
+        return channelToAes[channel] ?: emptyList()
     }
 
     fun transformDataMeta(
+        plotData: Map<String, List<Any?>>?,
+        layerData: Map<String, List<Any?>>?,
         encodingVegaSpec: Map<*, Map<*, *>>,
-        vararg channelMappingOverriding: Pair<String, Aes<*>>
+        customChannelMapping: List<Pair<String, Aes<*>>>
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            val encodingType = encoding.getString(Encodings.TYPE)
-            val field = encoding.getString(Encodings.FIELD) ?: return@forEach
+        encodingVegaSpec.entries.forEach { entry ->
+            val ch = entry.key as? String ?: return@forEach
+            val encoding = entry.value
 
-            when (encodingType) {
-                Encodings.Types.QUANTITATIVE -> {} // lp already treats it as continuous by default
+            if (ch == Channels.X2 || ch == Channels.Y2) {
+                // secondary channels in vega-lite don't affect axis type
+                // Yet need to check sorting and other options - they may affect series_meta or mapping_meta
+                return@forEach
+            }
+
+            val encField = encoding.getString(Encodings.FIELD) ?: return@forEach
+            val encType = encoding[Encodings.TYPE] ?: when {
+                Encodings.TIMEUNIT in encoding -> Encodings.Types.QUANTITATIVE
+                Encodings.BIN in encoding -> Encodings.Types.QUANTITATIVE
+                Encodings.AGGREGATE in encoding -> Encodings.Types.QUANTITATIVE
+                else -> Encodings.Types.NOMINAL
+            }
+
+            when (encType) {
+                Encodings.Types.QUANTITATIVE -> {
+                    // lp already treats data as continuous by default
+                }
+
                 Encodings.Types.TEMPORAL -> {
                     dataMeta.appendSeriesAnnotation {
                         type = SeriesAnnotationOptions.Types.DATE_TIME
-                        column = field
+                        column = encField
                     }
                 }
 
-                Encodings.Types.NOMINAL, Encodings.Types.ORDINAL, null -> {
-                    channelToAes(channel.toString(), *channelMappingOverriding).forEach {
-                        dataMeta.appendMappingAnnotation {
-                            aes = it
-                            annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
-                            parameters {
-                                label = field
-                                order = MappingAnnotationOptions.OrderType.ASCENDING
+                Encodings.Types.NOMINAL, Encodings.Types.ORDINAL -> {
+                    if(layerData?.get(encField)?.all { it is String } == true
+                        || plotData?.get(encField)?.all { it is String } == true
+                        ) {
+                        // lp treats strings as discrete by default
+                        // No need to add annotation
+                        return@forEach
+                    }
+
+                    channelToAes(ch, customChannelMapping)
+                        .forEach {
+                            dataMeta.appendMappingAnnotation {
+                                aes = it
+                                annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
+                                parameters {
+                                    label = encField
+                                    order = MappingAnnotationOptions.OrderType.ASCENDING
+                                }
                             }
                         }
-                    }
                 }
             }
         }

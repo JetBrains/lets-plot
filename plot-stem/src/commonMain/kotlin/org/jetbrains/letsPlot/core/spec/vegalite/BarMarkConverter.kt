@@ -23,15 +23,14 @@ internal class BarMarkConverter private constructor(
 
     private fun process() {
         plotOptions.appendLayer {
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
-
             if (encodingVegaSpec.values.any { Encodings.BIN in it }) {
                 geom = GeomKind.HISTOGRAM
             } else {
                 geom = GeomKind.BAR
                 width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
             }
+
+            initDataAndMappings()
         }
     }
 }

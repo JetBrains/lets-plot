@@ -22,8 +22,8 @@ internal class TextMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.TEXT
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+
+            initDataAndMappings()
         }
     }
 }

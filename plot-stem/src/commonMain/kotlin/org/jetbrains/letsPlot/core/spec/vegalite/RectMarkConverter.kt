@@ -23,20 +23,23 @@ internal class RectMarkConverter private constructor(
 
     private fun process() {
         plotOptions.appendLayer {
-            data = Util.transformData(dataVegaSpec)
-
             if (listOf(Channels.X2, Channels.Y2).any { it in encodingVegaSpec }) {
                 geom = GeomKind.RECT
-                mappings = Util.transformMappings(
-                    encodingVegaSpec,
+
+                initDataAndMappings(
+                    customChannelMapping = listOf(
                         Channels.X to Aes.XMIN,
                         Channels.Y to Aes.YMIN,
                         Channels.X2 to Aes.XMAX,
                         Channels.Y2 to Aes.YMAX,
+                    )
                 )
             } else {
                 geom = GeomKind.RASTER
-                mappings = Util.transformMappings(encodingVegaSpec, Channels.COLOR to Aes.FILL)
+
+                initDataAndMappings(
+                    customChannelMapping = listOf(Channels.COLOR to Aes.FILL)
+                )
             }
         }
     }
