@@ -71,7 +71,7 @@ internal class NumericBreakFormatter(
 
         val richOutput = if (type == "e" && exponentFormat != ExponentFormat.E) "&${exponentFormat.index}" else ""
         val trim = if (type == "e" && exponentFormat != ExponentFormat.E) "~" else ""
-        val limits = if (maxExponent != null) "{${minExponent},$maxExponent}" else ""
+        val limits = if (maxExponent != null) "{$minExponent,$maxExponent}" else ""
 
         formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput$limits")
     }

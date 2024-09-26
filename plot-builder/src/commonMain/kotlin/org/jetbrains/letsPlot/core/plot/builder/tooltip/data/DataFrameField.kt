@@ -28,7 +28,7 @@ class DataFrameField(
 
         myFormatter = when (format) {
             null -> TooltipFormatting.createFormatter(myVariable, exponentFormat, minExponent, maxExponent)
-            else -> StringFormat.forOneArg(format, formatFor = name, exponentFormat = exponentFormat)::format
+            else -> StringFormat.forOneArg(format, formatFor = name, exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)::format
         }
         return myFormatter!!
     }

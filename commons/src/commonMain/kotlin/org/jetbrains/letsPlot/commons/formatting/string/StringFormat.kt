@@ -89,15 +89,9 @@ class StringFormat private constructor(
                 // override exponentFormat if specified
                 val spec = formatSpec.let {
                     if (exponentFormat != null) {
-                        it.copy(exponentFormat = exponentFormat)
+                        it.copy(exponentFormat = exponentFormat, minExp = minExponent, maxExp = maxExponent)
                     } else {
-                        it
-                    }
-                }.let {
-                    if (minExponent != null) {
                         it.copy(minExp = minExponent, maxExp = maxExponent)
-                    } else {
-                        it.copy(maxExp = maxExponent)
                     }
                 }
                 val numberFormatter = NumberFormat(spec)
