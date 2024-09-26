@@ -29,9 +29,11 @@ class GeomProto(val geomKind: GeomKind) {
     fun geomProvider(
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        exponentFormat: ExponentFormat
+        exponentFormat: ExponentFormat,
+        minExponent: Int,
+        maxExponent: Int?
     ): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, exponentFormat)
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, exponentFormat, minExponent, maxExponent)
     }
 
     fun defaultOptions(): Map<String, Any> {

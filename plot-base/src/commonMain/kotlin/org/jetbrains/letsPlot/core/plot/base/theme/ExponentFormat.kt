@@ -7,10 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 
-enum class ExponentFormat(
-    val value: NumberFormat.ExponentFormat,
+data class ExponentFormat(
+    val format: Format,
+    val minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    val maxExponent: Int? = null
 ) {
-    E(NumberFormat.ExponentFormat.E),
-    POW(NumberFormat.ExponentFormat.POW),
-    POW_FULL(NumberFormat.ExponentFormat.POW_FULL)
+    enum class Format(val value: NumberFormat.ExponentFormat) {
+        E(NumberFormat.ExponentFormat.E),
+        POW(NumberFormat.ExponentFormat.POW),
+        POW_FULL(NumberFormat.ExponentFormat.POW_FULL)
+    }
 }

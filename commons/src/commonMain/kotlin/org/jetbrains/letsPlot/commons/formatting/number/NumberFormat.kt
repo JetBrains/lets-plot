@@ -515,6 +515,8 @@ class NumberFormat(spec: Spec) {
             return normalizeSpec(formatSpec)
         }
 
+        const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+
         internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
 
@@ -530,7 +532,6 @@ class NumberFormat(spec: Spec) {
             """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<expf>\d))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private val DEF_RICH_OUTPUT = ExponentFormat.E
-        private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
         private const val DEF_PRECISION = 6
 
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -22,6 +23,8 @@ internal class NonlinearBreaksHelper(
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
     exponentFormat: ExponentFormat,
+    minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    maxExponent: Int? = null,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
 ) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
@@ -57,12 +60,14 @@ internal class NonlinearBreaksHelper(
                 targetCount,
                 providedFormatter = DUMMY_FORMATTER,
                 exponentFormat,
+                minExponent,
+                maxExponent
             ).breaks
 
         // Transform back to data space.
         this.breaks = transform.applyInverse(transformedBreakValues).filterNotNull()
         this.formatter = providedFormatter ?: let {
-            val breakFormatters = createFormatters(this.breaks, exponentFormat)
+            val breakFormatters = createFormatters(this.breaks, exponentFormat, minExponent, maxExponent)
             MultiFormatter(this.breaks, breakFormatters)::apply
         }
     }
@@ -86,13 +91,15 @@ internal class NonlinearBreaksHelper(
 
         private fun createFormatters(
             breakValues: List<Double>,
-            exponentFormat: ExponentFormat
+            exponentFormat: ExponentFormat,
+            minExponent: Int,
+            maxExponent: Int?
         ): List<(Any) -> String> {
             if (breakValues.isEmpty()) return emptyList()
             if (breakValues.size == 1) {
                 val domainValue = breakValues[0]
                 val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step, exponentFormat))
+                return listOf(createFormatter(domainValue, step, exponentFormat, minExponent, maxExponent))
             }
 
             // format each tick with its own formatter
@@ -103,7 +110,7 @@ internal class NonlinearBreaksHelper(
                         else -> currValue - breakValues[i - 1]
                     }
                 )
-                createFormatter(currValue, step, exponentFormat)
+                createFormatter(currValue, step, exponentFormat, minExponent, maxExponent)
             }
             return formatters
         }
@@ -111,13 +118,17 @@ internal class NonlinearBreaksHelper(
         private fun createFormatter(
             domainValue: Double,
             step: Double,
-            exponentFormat: ExponentFormat
+            exponentFormat: ExponentFormat,
+            minExponent: Int,
+            maxExponent: Int?
         ): (Any) -> String {
             return NumericBreakFormatter(
                 domainValue,
                 step,
                 true,
-                exponentFormat = exponentFormat
+                exponentFormat = exponentFormat,
+                minExponent = minExponent,
+                maxExponent = maxExponent
             )::apply
         }
     }

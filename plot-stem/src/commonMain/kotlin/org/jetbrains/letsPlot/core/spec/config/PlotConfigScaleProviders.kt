@@ -21,6 +21,8 @@ internal object PlotConfigScaleProviders {
         excludeStatVariables: Boolean,
         zeroPositionalExpands: Boolean,
         exponentFormat: ExponentFormat,
+        minExponent: Int,
+        maxExponent: Int?
     ): Map<Aes<*>, ScaleProvider> {
 
         val scaleProviderBuilderByAes = HashMap<Aes<*>, ScaleProviderBuilder<*>>()
@@ -86,6 +88,8 @@ internal object PlotConfigScaleProviders {
         return scaleProviderBuilders.mapValues { (_, builder) ->
             builder
                 .exponentFormat(exponentFormat)
+                .minExponent(minExponent)
+                .maxExponent(maxExponent)
                 .build()
         }
     }

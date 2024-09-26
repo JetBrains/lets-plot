@@ -14,7 +14,9 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
-    override val exponentFormat: ExponentFormat
+    override val exponentFormat: ExponentFormat,
+    override val minExponent: Int,
+    override val maxExponent: Int?
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()

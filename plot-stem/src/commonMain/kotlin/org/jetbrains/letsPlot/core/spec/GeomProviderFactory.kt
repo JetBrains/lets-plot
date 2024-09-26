@@ -56,7 +56,9 @@ internal object GeomProviderFactory {
         geomKind: GeomKind,
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        exponentFormat: ExponentFormat
+        exponentFormat: ExponentFormat,
+        minExponent: Int,
+        maxExponent: Int?
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.AREA -> GeomProvider.area {
@@ -289,14 +291,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom, exponentFormat)
+                applyTextOptions(layerConfig, geom, exponentFormat, minExponent, maxExponent)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom, exponentFormat)
+                applyTextOptions(layerConfig, geom, exponentFormat, minExponent, maxExponent)
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
@@ -406,9 +408,15 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, exponentFormat: ExponentFormat) {
+    private fun applyTextOptions(
+        layerConfig: LayerConfig,
+        geom: TextGeom,
+        exponentFormat: ExponentFormat,
+        minExponent: Int,
+        maxExponent: Int?
+    ) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(it, exponentFormat = exponentFormat)::format
+            geom.formatter = StringFormat.forOneArg(it, exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it

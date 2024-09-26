@@ -198,6 +198,10 @@ class SquareFrameOfReferenceGridTest {
             plotContext = object : PlotContext {
                 override val exponentFormat: ExponentFormat
                     get() = error("unexpected call")
+                override val minExponent: Int
+                    get() = error("unexpected call")
+                override val maxExponent: Int?
+                    get() = error("unexpected call")
 
                 override fun hasScale(aes: Aes<*>): Boolean = error("unexpected call")
                 override fun getScale(aes: Aes<*>): Scale = error("unexpected call")

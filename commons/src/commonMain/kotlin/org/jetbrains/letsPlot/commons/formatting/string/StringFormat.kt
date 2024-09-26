@@ -16,7 +16,9 @@ import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 class StringFormat private constructor(
     private val pattern: String,
     private val formatType: FormatType,
-    exponentFormat: ExponentFormat?
+    exponentFormat: ExponentFormat?,
+    minExponent: Int?,
+    maxExponent: Int?
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
@@ -28,7 +30,7 @@ class StringFormat private constructor(
 
     init {
         myFormatters = when (formatType) {
-            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, exponentFormat))
+            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, exponentFormat, minExponent, maxExponent))
             STRING_FORMAT -> {
                 BRACES_REGEX.findAll(pattern)
                     .map { it.groupValues[TEXT_IN_BRACES] }
@@ -37,7 +39,7 @@ class StringFormat private constructor(
                         require(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
                             error("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
                         }
-                        initFormatter(pattern, formatType, exponentFormat)
+                        initFormatter(pattern, formatType, exponentFormat, minExponent, maxExponent)
                     }
                     .toList()
             }
@@ -70,7 +72,13 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(formatPattern: String, formatType: FormatType, exponentFormat: ExponentFormat?): ((Any) -> String) {
+    private fun initFormatter(
+        formatPattern: String,
+        formatType: FormatType,
+        exponentFormat: ExponentFormat?,
+        minExponent: Int?,
+        maxExponent: Int?
+    ): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
         }
@@ -79,7 +87,19 @@ class StringFormat private constructor(
                 val formatSpec = NumberFormat.parseSpec(formatPattern)
 
                 // override exponentFormat if specified
-                val spec = exponentFormat?.let { formatSpec.copy(exponentFormat = exponentFormat) } ?: formatSpec
+                val spec = formatSpec.let {
+                    if (exponentFormat != null) {
+                        it.copy(exponentFormat = exponentFormat)
+                    } else {
+                        it
+                    }
+                }.let {
+                    if (minExponent != null) {
+                        it.copy(minExp = minExponent, maxExp = maxExponent)
+                    } else {
+                        it.copy(maxExp = maxExponent)
+                    }
+                }
                 val numberFormatter = NumberFormat(spec)
                 return { value: Any ->
                     when (value) {
@@ -125,8 +145,10 @@ class StringFormat private constructor(
             type: FormatType? = null,
             formatFor: String? = null,
             exponentFormat: ExponentFormat = ExponentFormat.POW,
+            minExponent: Int = NumberFormat.DEF_MIN_EXP,
+            maxExponent: Int? = null
         ): StringFormat {
-            return create(pattern, type, formatFor, expectedArgs = 1, exponentFormat)
+            return create(pattern, type, formatFor, expectedArgs = 1, exponentFormat, minExponent, maxExponent)
         }
 
         fun forNArgs(
@@ -134,8 +156,10 @@ class StringFormat private constructor(
             argCount: Int,
             formatFor: String? = null,
             exponentFormat: ExponentFormat = ExponentFormat.POW,
+            minExponent: Int = NumberFormat.DEF_MIN_EXP,
+            maxExponent: Int? = null
         ): StringFormat {
-            return create(pattern, STRING_FORMAT, formatFor, argCount, exponentFormat)
+            return create(pattern, STRING_FORMAT, formatFor, argCount, exponentFormat, minExponent, maxExponent)
         }
 
         private fun detectFormatType(pattern: String): FormatType {
@@ -151,10 +175,18 @@ class StringFormat private constructor(
             type: FormatType? = null,
             formatFor: String? = null,
             expectedArgs: Int = -1,
-            exponentFormat: ExponentFormat? = null
+            exponentFormat: ExponentFormat? = null,
+            minExponent: Int? = null,
+            maxExponent: Int? = null
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(pattern, formatType, exponentFormat = exponentFormat).also {
+            return StringFormat(
+                pattern,
+                formatType,
+                exponentFormat = exponentFormat,
+                minExponent = minExponent,
+                maxExponent = maxExponent
+            ).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {
                         @Suppress("NAME_SHADOWING")

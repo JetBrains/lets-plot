@@ -15,7 +15,9 @@ internal class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
-    exponentFormat: ExponentFormat
+    exponentFormat: ExponentFormat,
+    minExponent: Int = NumberFormat.DEF_MIN_EXP,
+    maxExponent: Int? = null
 ) {
     private var formatter: NumberFormat
 
@@ -69,8 +71,9 @@ internal class NumericBreakFormatter(
 
         val richOutput = if (type == "e" && exponentFormat != ExponentFormat.E) "&${exponentFormat.index}" else ""
         val trim = if (type == "e" && exponentFormat != ExponentFormat.E) "~" else ""
+        val limits = if (maxExponent != null) "{${minExponent},$maxExponent}" else ""
 
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput")
+        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput$limits")
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)

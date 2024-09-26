@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
@@ -18,6 +19,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val providedFormatter: ((Any) -> String)?
     protected val labelLengthLimit: Int
     protected val exponentFormat: ExponentFormat
+    protected val minExponent: Int
+    protected val maxExponent: Int?
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
@@ -35,6 +38,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
         labelLengthLimit = 0
         providedFormatter = null
         exponentFormat = ExponentFormat.E
+        minExponent = NumberFormat.DEF_MIN_EXP
+        maxExponent = null
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
@@ -46,6 +51,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         labelLengthLimit = b.myLabelLengthLimit
         exponentFormat = b.myExponentFormat
+        minExponent = b.myMinExponent
+        maxExponent = b.myMaxExponent
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -95,6 +102,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var providedFormatter: ((Any) -> String)? = scale.providedFormatter
         internal var myExponentFormat: ExponentFormat = scale.exponentFormat
+        internal var myMinExponent: Int = scale.minExponent
+        internal var myMaxExponent: Int? = scale.maxExponent
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
@@ -134,6 +143,16 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         override fun exponentFormat(v: ExponentFormat): Scale.Builder {
             myExponentFormat = v
+            return this
+        }
+
+        override fun minExponent(v: Int): Scale.Builder {
+            myMinExponent = v
+            return this
+        }
+
+        override fun maxExponent(v: Int?): Scale.Builder {
+            myMaxExponent = v
             return this
         }
 

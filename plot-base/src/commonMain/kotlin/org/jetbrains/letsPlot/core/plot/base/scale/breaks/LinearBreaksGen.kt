@@ -13,6 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 internal class LinearBreaksGen(
     private val providedFormatter: ((Any) -> String)? = null,
     private val exponentFormat: ExponentFormat,
+    private val minExponent: Int,
+    private val maxExponent: Int?
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -21,7 +23,9 @@ internal class LinearBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter,
-            exponentFormat
+            exponentFormat,
+            minExponent,
+            maxExponent
         )
         return ScaleBreaks.ContinuousFlex.noTransform(
             domainValues = helper.breaks,
@@ -35,7 +39,9 @@ internal class LinearBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter = null,
-            exponentFormat
+            exponentFormat,
+            minExponent,
+            maxExponent
         )
         return helper.formatter
     }

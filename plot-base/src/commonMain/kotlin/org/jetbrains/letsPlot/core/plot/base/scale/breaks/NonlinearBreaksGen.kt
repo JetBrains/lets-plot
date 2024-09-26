@@ -15,6 +15,8 @@ internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
     private val providedFormatter: ((Any) -> String)? = null,
     private val exponentFormat: ExponentFormat,
+    private val minExponent: Int,
+    private val maxExponent: Int?
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -24,6 +26,8 @@ internal class NonlinearBreaksGen(
             targetCount,
             providedFormatter,
             exponentFormat,
+            minExponent,
+            maxExponent,
             transform,
             niceLogBreaks = true
         )
@@ -40,6 +44,8 @@ internal class NonlinearBreaksGen(
             targetCount,
             providedFormatter = null,
             exponentFormat,
+            minExponent,
+            maxExponent,
             transform,
             niceLogBreaks = false
         )

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
@@ -52,6 +53,8 @@ class GeomLayerBuilder(
 
     private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private var myExponentFormat: ExponentFormat = ExponentFormat.E
+    private var myMinExponent: Int = NumberFormat.DEF_MIN_EXP
+    private var myMaxExponent: Int? = null
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
     private var myGroupingVarName: String? = null
@@ -171,6 +174,16 @@ class GeomLayerBuilder(
 
     fun exponentFormat(exponentFormat: ExponentFormat): GeomLayerBuilder {
         myExponentFormat = exponentFormat
+        return this
+    }
+
+    fun minExponent(minExponent: Int): GeomLayerBuilder {
+        myMinExponent = minExponent
+        return this
+    }
+
+    fun maxExponent(maxExponent: Int?): GeomLayerBuilder {
+        myMaxExponent = maxExponent
         return this
     }
 

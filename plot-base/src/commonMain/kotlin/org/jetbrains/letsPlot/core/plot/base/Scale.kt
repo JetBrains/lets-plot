@@ -51,6 +51,10 @@ interface Scale {
 
         fun exponentFormat(v: ExponentFormat): Builder
 
+        fun minExponent(v: Int): Builder
+
+        fun maxExponent(v: Int?): Builder
+
         fun multiplicativeExpand(v: Double): Builder
 
         fun additiveExpand(v: Double): Builder

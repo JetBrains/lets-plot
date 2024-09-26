@@ -131,7 +131,13 @@ internal object PlotGeomTilesUtil {
         theme: Theme
     ): GeomLayerBuilder {
         val geomProvider =
-            layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.value)
+            layerConfig.geomProto.geomProvider(
+                layerConfig,
+                layerConfig.aopConversion,
+                exponentFormat = theme.exponentFormat.format.value,
+                minExponent = theme.exponentFormat.minExponent,
+                maxExponent = theme.exponentFormat.maxExponent
+            )
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -151,7 +157,10 @@ internal object PlotGeomTilesUtil {
         // geomTheme
         layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
 
-        layerBuilder.exponentFormat(theme.exponentFormat.value)
+        layerBuilder
+            .exponentFormat(theme.exponentFormat.format.value)
+            .minExponent(theme.exponentFormat.minExponent)
+            .maxExponent(theme.exponentFormat.maxExponent)
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

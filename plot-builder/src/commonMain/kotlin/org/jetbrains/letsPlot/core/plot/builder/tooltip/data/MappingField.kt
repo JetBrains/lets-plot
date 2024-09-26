@@ -29,7 +29,7 @@ class MappingField(
         require(myFormatter == null)
 
         val mappingFormatter = format?.let {
-            StringFormat.forOneArg(it, formatFor = aes.name, exponentFormat = ctx.exponentFormat)
+            StringFormat.forOneArg(it, formatFor = aes.name, exponentFormat = ctx.exponentFormat, minExponent = ctx.minExponent, maxExponent = ctx.maxExponent)
         }
 
 //        // in tooltip use primary aes formatter (e.g. X for X_MIN, X_MAX etc)

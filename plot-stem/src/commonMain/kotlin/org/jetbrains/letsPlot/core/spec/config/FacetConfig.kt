@@ -27,7 +27,9 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
     options: Map<String, Any>,
-    private val exponentFormat: ExponentFormat
+    private val exponentFormat: ExponentFormat,
+    private val minExponent: Int,
+    private val maxExponent: Int?
 ) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
@@ -157,7 +159,7 @@ internal class FacetConfig(
         return when (optionVal) {
             null -> DEF_FORMATTER
             else -> {
-                val fmt = StringFormat.forOneArg(optionVal.toString(), exponentFormat = exponentFormat)
+                val fmt = StringFormat.forOneArg(optionVal.toString(), exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)
                 return { value: Any -> fmt.format(value) }
             }
         }

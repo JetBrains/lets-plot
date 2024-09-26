@@ -30,15 +30,17 @@ object Transforms {
     fun createBreaksGeneratorForTransformedDomain(
         transform: ContinuousTransform,
         providedFormatter: ((Any) -> String)? = null,
-        exponentFormat: ExponentFormat
+        exponentFormat: ExponentFormat,
+        minExponent: Int,
+        maxExponent: Int?
     ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
-            IDENTITY -> LinearBreaksGen(providedFormatter, exponentFormat)
-            REVERSE -> LinearBreaksGen(providedFormatter, exponentFormat)
-            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, exponentFormat)
-            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, exponentFormat)
-            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, exponentFormat)
-            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, exponentFormat)
+            IDENTITY -> LinearBreaksGen(providedFormatter, exponentFormat, minExponent, maxExponent)
+            REVERSE -> LinearBreaksGen(providedFormatter, exponentFormat, minExponent, maxExponent)
+            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, exponentFormat, minExponent, maxExponent)
+            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, exponentFormat, minExponent, maxExponent)
+            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, exponentFormat, minExponent, maxExponent)
+            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, exponentFormat, minExponent, maxExponent)
             else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
         }
 

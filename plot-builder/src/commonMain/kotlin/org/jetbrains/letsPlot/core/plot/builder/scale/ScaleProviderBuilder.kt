@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -21,6 +22,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
     private var myExponentFormat: ExponentFormat = ExponentFormat.E
+    private var myMinExponent: Int = NumberFormat.DEF_MIN_EXP
+    private var myMaxExponent: Int? = null
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<Any?>? = null
@@ -115,6 +118,16 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
+    fun minExponent(v: Int): ScaleProviderBuilder<T> {
+        myMinExponent = v
+        return this
+    }
+
+    fun maxExponent(v: Int?): ScaleProviderBuilder<T> {
+        myMaxExponent = v
+        return this
+    }
+
     @Suppress("FunctionName")
     fun guide_NI(
         @Suppress("UNUSED_PARAMETER") v: Any
@@ -148,6 +161,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
         private val myExponentFormat: ExponentFormat = b.myExponentFormat
+        private val myMinExponent: Int = b.myMinExponent
+        private val myMaxExponent: Int? = b.myMaxExponent
         private val myAes: Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
@@ -227,6 +242,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private fun completeScale(scale: Scale): Scale {
             val with = scale.with()
                 .exponentFormat(myExponentFormat)
+                .minExponent(myMinExponent)
+                .maxExponent(myMaxExponent)
 
             if (breaks != null) {
                 with.breaks(breaks)
