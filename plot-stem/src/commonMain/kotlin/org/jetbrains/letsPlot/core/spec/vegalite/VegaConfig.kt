@@ -18,7 +18,7 @@ object VegaConfig {
     }
 
     fun transform(map: MutableMap<String, Any>): MutableMap<String, Any> {
-        return Converter.convert(map)
+        return VegaPlotConverter.convert(map)
     }
 
     internal fun getPlotKind(opts: Map<String, Any>): VegaPlotKind {
@@ -33,5 +33,4 @@ object VegaConfig {
             else -> throw IllegalArgumentException("VegaLite: Unsupported plot kind")
         }
     }
-
 }

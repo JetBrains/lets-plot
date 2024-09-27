@@ -27,17 +27,17 @@ internal object Util {
         return Pair(mark, options)
     }
 
-    fun transformData(data: Map<*, *>): Map<String, List<Any?>> {
+    fun transformData(vegaData: Map<*, *>): Map<String, List<Any?>> {
         @Suppress("NAME_SHADOWING")
-        val data = if (Option.Data.URL in data) {
-            val url = data.getString(Option.Data.URL) ?: error("URL is not specified")
+        val data = if (Option.Data.URL in vegaData) {
+            val url = vegaData.getString(Option.Data.URL) ?: error("URL is not specified")
             val json = when (url) {
                 "data/penguins.json" -> Penguins.json
                 "data/cars.json" -> Cars.json
                 else -> error("Unsupported URL: $url")
             }
             mapOf(Option.Data.VALUES to JsonParser(json).parseJson())
-        } else data
+        } else vegaData
         val rows = data.getMaps(Option.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
@@ -87,9 +87,10 @@ internal object Util {
         return channelToAes[channel] ?: emptyList()
     }
 
+    // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.
     fun transformDataMeta(
-        plotData: Map<String, List<Any?>>?,
-        layerData: Map<String, List<Any?>>?,
+        ownData: Map<String, List<Any?>>?,
+        commonData: Map<String, List<Any?>>?,
         encodingVegaSpec: Map<*, Map<*, *>>,
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): DataMetaOptions {
@@ -126,8 +127,8 @@ internal object Util {
                 }
 
                 Encodings.Types.NOMINAL, Encodings.Types.ORDINAL -> {
-                    if(layerData?.get(encField)?.all { it is String } == true
-                        || plotData?.get(encField)?.all { it is String } == true
+                    if(ownData?.get(encField)?.all { it is String } == true
+                        || commonData?.get(encField)?.all { it is String } == true
                         ) {
                         // lp treats strings as discrete by default
                         // No need to add annotation

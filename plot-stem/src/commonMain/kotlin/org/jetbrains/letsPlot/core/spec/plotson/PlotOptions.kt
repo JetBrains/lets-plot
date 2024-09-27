@@ -16,6 +16,7 @@ class PlotOptions : Options(
 ) {
     var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
     var mappings: Map<Aes<*>, String>? by map(PlotBase.MAPPING)
+    var dataMeta: DataMetaOptions? by map(Meta.DATA_META)
     var layerOptions: List<LayerOptions>? by map(Plot.LAYERS)
     var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)
     var title: String? by map(Plot.TITLE)

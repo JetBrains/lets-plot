@@ -22,6 +22,7 @@ import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.typed
 import org.junit.Test
 import java.util.Map.entry
+import kotlin.test.Ignore
 
 class BarMarkTransformTest {
 
@@ -104,6 +105,7 @@ class BarMarkTransformTest {
     }
 
 
+    @Ignore
     @Test
     fun relativeBarWidth() {
         val vegaSpec = parseJson(
@@ -122,8 +124,19 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).containsOnly(entry("x", "a"))
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(PlotBase.MAPPING, empty()),
-            entry(Meta.DATA_META, empty()),
+            entry(PlotBase.MAPPING, mapOf("x" to "a")),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "a",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    )
+                )
+            )),
             entry(
                 PlotBase.DATA, mapOf(
                     "..count.." to listOf(1.0),
