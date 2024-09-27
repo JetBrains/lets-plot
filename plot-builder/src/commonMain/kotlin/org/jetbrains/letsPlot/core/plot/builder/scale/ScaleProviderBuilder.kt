@@ -254,7 +254,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labelLengthLimit(myLabelLengthLimit)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, exponentFormat = myExponentFormat)::format)
+                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, exponentFormat = myExponentFormat, minExponent = myMinExponent, maxExponent = myMaxExponent)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
