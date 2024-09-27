@@ -22,6 +22,8 @@ interface LegendTheme {
     fun keyRectStrokeWidth(): Double
     fun keyLineType(): LineType
 
+    fun keySpacing(): DoubleVector
+
     /**
      * extra space added around legend (px, no support for ggplot 'units')
      */

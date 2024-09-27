@@ -25,6 +25,9 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_HEIGHT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING_X
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
@@ -56,6 +59,12 @@ internal class DefaultLegendTheme(
     override fun keyRectStrokeWidth() = getNumber(getElemValue(keyRectKey), Elem.SIZE)
 
     override fun keyLineType() = getLineType(getElemValue(keyRectKey))
+
+    override fun keySpacing(): DoubleVector {
+        val spacingX = getNumber(listOf(LEGEND_KEY_SPACING_X, LEGEND_KEY_SPACING))
+        val spacingY = getNumber(listOf(LEGEND_KEY_SPACING_Y, LEGEND_KEY_SPACING))
+        return DoubleVector(spacingX, spacingY)
+    }
 
     override fun margin(): Double {
         return 5.0

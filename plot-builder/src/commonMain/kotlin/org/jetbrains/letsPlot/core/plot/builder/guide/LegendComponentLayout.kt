@@ -74,7 +74,7 @@ abstract class LegendComponentLayout(
             val height = max(keySize.y, labelSize.y)
             val labelVOffset = keySize.y / 2
             val labelHOffset = keySize.x + horizontalGap / 2
-            val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, height)
+            val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, height).add(theme.keySpacing())
             breakBoxBounds = DoubleRectangle(
                 breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
                 breakBoxSize
