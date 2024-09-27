@@ -26,7 +26,7 @@ import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
 import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
 import org.jetbrains.letsPlot.core.spec.plotson.Options.PropSpec
 import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
-import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions
+import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.ThemeName
 import org.jetbrains.letsPlot.core.spec.plotson.plot
 import org.jetbrains.letsPlot.core.spec.plotson.scale
 import org.jetbrains.letsPlot.core.spec.plotson.theme
@@ -104,7 +104,7 @@ class QQPlotOptionsBuilder(
                 },
             )
             themeOptions = theme {
-                name = ThemeOptions.Name.LIGHT
+                name = ThemeName.LIGHT
             }
         }
     }

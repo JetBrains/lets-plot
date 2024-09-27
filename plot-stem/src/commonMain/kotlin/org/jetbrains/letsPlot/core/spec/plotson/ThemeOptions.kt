@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.spec.Option
 
 
 class ThemeOptions : Options() {
-    var name: Name? by map(Option.Meta.NAME)
+    var name: ThemeName? by map(Option.Meta.NAME)
     var axisTitle: Element? by map(ThemeOption.AXIS_TITLE)
     var axisLine: Element? by map(ThemeOption.AXIS_LINE)
     var panelGrid: Element? by map(ThemeOption.PANEL_GRID)
@@ -19,7 +19,7 @@ class ThemeOptions : Options() {
     var axisTicksY: Element? by map(ThemeOption.AXIS_TICKS_Y)
     var axisTooltip: Element? by map(ThemeOption.AXIS_TOOLTIP)
 
-    enum class Name(val value: String) {
+    enum class ThemeName(val value: String) {
         GREY(ThemeOption.Name.R_GREY),
         LIGHT(ThemeOption.Name.R_LIGHT),
         CLASSIC(ThemeOption.Name.R_CLASSIC),
