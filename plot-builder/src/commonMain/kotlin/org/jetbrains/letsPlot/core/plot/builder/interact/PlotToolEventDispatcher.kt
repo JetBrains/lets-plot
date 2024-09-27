@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.DrawRectFeedback.SelectionMode
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback.PanningMode
 import org.jetbrains.letsPlot.core.interact.RollbackAllChangesFeedback
@@ -66,7 +67,7 @@ internal class PlotToolEventDispatcher(
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
                 onCompleted = { dataBounds, flipped, panningMode ->
                     println("Pan tool: apply $dataBounds, flipped: $flipped, mode: $panningMode")
-                    // flip panning mode maybe
+                    // flip panning mode if coord flip
                     @Suppress("NAME_SHADOWING")
                     val panningMode = if (!flipped) {
                         panningMode
@@ -75,10 +76,12 @@ internal class PlotToolEventDispatcher(
                         PanningMode.HORIZONTAL -> PanningMode.VERTICAL
                         PanningMode.VERTICAL -> PanningMode.HORIZONTAL
                     }
-                    val dataBoundsLTRB = when (panningMode) {
-                        PanningMode.FREE -> listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                        PanningMode.HORIZONTAL -> listOf(dataBounds.left, null, dataBounds.right, null)
-                        PanningMode.VERTICAL -> listOf(null, dataBounds.top, null, dataBounds.bottom)
+                    val dataBoundsLTRB = dataBounds.run {
+                        when (panningMode) {
+                            PanningMode.FREE -> listOf(left, top, right, bottom)
+                            PanningMode.HORIZONTAL -> listOf(left, null, right, null)
+                            PanningMode.VERTICAL -> listOf(null, top, null, bottom)
+                        }
                     }
                     fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
@@ -86,9 +89,24 @@ internal class PlotToolEventDispatcher(
 
             ToolInteractionSpec.BOX_ZOOM -> {
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
-                DrawRectFeedback(centerStart) { dataBounds ->
-                    println("client: data $dataBounds")
-                    val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                DrawRectFeedback(centerStart) { dataBounds, flipped, selectionMode ->
+                    println("client: data $dataBounds, flipped: $flipped, selection mode: $selectionMode")
+                    // flip selection mode if coord flip
+                    @Suppress("NAME_SHADOWING")
+                    val selectionMode = if (!flipped) {
+                        selectionMode
+                    } else when (selectionMode) {
+                        SelectionMode.BOX -> selectionMode
+                        SelectionMode.HORIZONTAL_BAND -> SelectionMode.VERTICAL_BAND
+                        SelectionMode.VERTICAL_BAND -> SelectionMode.HORIZONTAL_BAND
+                    }
+                    val dataBoundsLTRB = dataBounds.run {
+                        when (selectionMode) {
+                            SelectionMode.BOX -> listOf(left, top, right, bottom)
+                            SelectionMode.VERTICAL_BAND -> listOf(left, null, right, null)
+                            SelectionMode.HORIZONTAL_BAND -> listOf(null, top, null, bottom)
+                        }
+                    }
                     fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
                 }
             }
