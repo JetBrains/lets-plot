@@ -834,6 +834,9 @@ object Option {
         const val LEGEND_KEY_SIZE = ThemeOption.LEGEND_KEY_SIZE
         const val LEGEND_KEY_WIDTH = ThemeOption.LEGEND_KEY_WIDTH
         const val LEGEND_KEY_HEIGHT = ThemeOption.LEGEND_KEY_HEIGHT
+        const val LEGEND_KEY_SPACING = ThemeOption.LEGEND_KEY_SPACING
+        const val LEGEND_KEY_SPACING_X = ThemeOption.LEGEND_KEY_SPACING_X
+        const val LEGEND_KEY_SPACING_Y = ThemeOption.LEGEND_KEY_SPACING_Y
 
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
