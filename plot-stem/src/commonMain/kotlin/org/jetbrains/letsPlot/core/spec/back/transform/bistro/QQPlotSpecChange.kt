@@ -25,6 +25,12 @@ class QQPlotSpecChange : SpecChange {
         val plotScales = spec.getList(Option.Plot.SCALES) ?: emptyList<Any>()
         spec[Option.Plot.SCALES] = (qqScales + plotScales).toMutableList()
 
+        // Merge theme
+        val qqTheme = qqPlotSpec.getMap(Option.Plot.THEME) ?: emptyMap()
+        val plotTheme = spec.getMap(Option.Plot.THEME) ?: emptyMap()
+        spec[Option.Plot.THEME] = (qqTheme + plotTheme).toMutableMap()
+
+        // Clean-up
         spec.remove("bistro")
     }
 
