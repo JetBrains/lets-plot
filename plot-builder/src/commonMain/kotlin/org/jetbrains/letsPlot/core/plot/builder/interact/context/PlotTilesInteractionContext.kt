@@ -28,10 +28,16 @@ internal class PlotTilesInteractionContext(
         return object : InteractionTarget {
             override val geomBounds: DoubleRectangle = geomBounds
 
-            override fun applyViewport(screenViewport: DoubleRectangle, ctx: InteractionContext): DoubleRectangle {
+            override fun applyViewport(
+                screenViewport: DoubleRectangle,
+                ctx: InteractionContext
+            ): Pair<DoubleRectangle, Boolean> {
                 val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
                 tile.transientState.applyDelta(scale, translate, this@PlotTilesInteractionContext)
-                return tile.transientState.dataBounds
+                return Pair(
+                    tile.transientState.dataBounds,
+                    tile.transientState.isCoordFlip,
+                )
             }
         }
     }

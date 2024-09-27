@@ -237,6 +237,8 @@ internal class PlotTile(
 
         override val dataBounds: DoubleRectangle
             get() = coreTransientState.dataBounds
+        override val isCoordFlip: Boolean
+            get() = coreTransientState.isCoordFlip
 
         override fun syncDataBounds(ctx: InteractionContext) {
             // nothing is needed to sync

@@ -8,8 +8,11 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
@@ -61,7 +64,7 @@ class TickMarkConverterTest {
                     "val" to listOf(1.0, 10.4, 10.8, 11.0, 100.0, 1.0, 20.4, 20.8, 21.0, 22.5, 23.0, 23.5, 24.0, 24.5, 40.0)
                 )
             ),
-            entry(Layer.GEOM, "crossbar"),
+            entry(Layer.GEOM, fromGeomKind(GeomKind.CROSS_BAR)),
             entry(toOption(Aes.SIZE), 0.1),
             entry(toOption(Aes.WIDTH), 0.6),
             entry(PlotBase.MAPPING, mapOf(
@@ -69,7 +72,19 @@ class TickMarkConverterTest {
                     toOption(Aes.XMAX) to "val",
                     toOption(Aes.Y) to "cat"
                 )
-            )
+            ),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "cat",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    ),
+                )
+            )),
         )
     }
 }

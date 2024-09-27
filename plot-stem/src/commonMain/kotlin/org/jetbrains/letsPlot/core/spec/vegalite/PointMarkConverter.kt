@@ -21,8 +21,8 @@ internal class PointMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.POINT
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+
+            initDataAndMappings()
         }
     }
 }

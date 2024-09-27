@@ -22,15 +22,13 @@ internal class BoxplotMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.BOX_PLOT
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+            initDataAndMappings()
         }
 
         plotOptions.appendLayer {
             geom = GeomKind.POINT
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
             stat = StatKind.BOXPLOT_OUTLIER.name.lowercase()
+            initDataAndMappings()
         }
     }
 }

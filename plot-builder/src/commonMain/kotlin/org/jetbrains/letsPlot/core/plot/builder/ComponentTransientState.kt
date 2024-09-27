@@ -18,6 +18,7 @@ abstract class ComponentTransientState(
         private set
 
     abstract val dataBounds: DoubleRectangle
+    abstract val isCoordFlip: Boolean
 
     fun applyDelta(
         scaleDelta: DoubleVector,

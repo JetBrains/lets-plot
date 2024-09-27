@@ -23,6 +23,7 @@ internal object Option {
         const val VALUE = "value"
         const val TYPE = "type"
         const val BIN = "bin"
+        const val TIMEUNIT = "timeUnit"
         const val AGGREGATE = "aggregate"
 
         object Aggregate {
@@ -51,7 +52,7 @@ internal object Option {
             const val ERROR_X = "errorX"
         }
 
-        object Type {
+        object Types {
             const val QUANTITATIVE = "quantitative"
             const val ORDINAL = "ordinal"
             const val NOMINAL = "nominal"

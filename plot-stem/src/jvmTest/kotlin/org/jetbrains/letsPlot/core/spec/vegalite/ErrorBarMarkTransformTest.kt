@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
@@ -90,7 +91,8 @@ class ErrorBarMarkTransformTest {
                 toOption(Aes.XMAX) to "lower_yield",
                 toOption(Aes.Y) to "variety"
             )),
-            entry(PlotBase.DATA, emptyMap<String, Any?>()),
+            entry(PlotBase.DATA, empty()),
+            entry(Option.Meta.DATA_META, empty()),
         )
     }
 
@@ -162,7 +164,8 @@ class ErrorBarMarkTransformTest {
                 toOption(Aes.YMAX) to "lower_yield",
                 toOption(Aes.X) to "variety"
             )),
-            entry(PlotBase.DATA, emptyMap<String, Any?>()),
+            entry(PlotBase.DATA, empty()),
+            entry(Option.Meta.DATA_META, empty()),
         )
     }
 
