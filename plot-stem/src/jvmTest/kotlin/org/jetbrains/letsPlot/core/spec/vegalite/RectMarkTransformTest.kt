@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
@@ -34,22 +35,12 @@ class RectMarkTransformTest {
                 |      {"x_start": 0, "x_end": 10, "y_start": 0, "y_end": 10}
                 |    ]
                 |  },
-                |  "mark": {
-                |    "type": "rect"
-                |  },
+                |  "mark": { "type": "rect" },
                 |  "encoding": {
-                |    "x": {
-                |      "field": "x_start"
-                |    },
-                |    "x2": {
-                |      "field": "x_end"
-                |    },
-                |    "y": {
-                |      "field": "y_start"
-                |    },
-                |    "y2": {
-                |      "field": "y_end"
-                |    }
+                |    "x": { "field": "x_start", "type": "quantitative" },
+                |    "x2": { "field": "x_end" },
+                |    "y": { "field": "y_start", "type": "quantitative" },
+                |    "y2": { "field": "y_end" }
                 |  }
                 |}
             """.trimMargin()
@@ -60,6 +51,7 @@ class RectMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RECT)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.DATA, mapOf(
                     "x_end" to listOf(10.0),
@@ -113,6 +105,7 @@ class RectMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RASTER)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.DATA, mapOf(
                     "Origin" to listOf("USA", "Europe", "Japan", "USA", "USA", "Japan", "Japan", "Europe", "Europe"),
@@ -127,6 +120,18 @@ class RectMarkTransformTest {
                     toOption(Aes.FILL) to "mean_Horsepower"
                 )
             ),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "Cylinders",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    ),
+                )
+            ))
         )
     }
 }

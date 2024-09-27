@@ -24,21 +24,13 @@ internal class ErrorBarMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.ERROR_BAR
-            data = Util.transformData(dataVegaSpec)
 
-            mappings = when (Util.iHorizontal(encodingVegaSpec)) {
-                true -> Util.transformMappings(encodingVegaSpec,
-                    Channels.X to Aes.XMIN,
-                    Channels.X2 to Aes.XMAX,
-                    Channels.Y2 to Aes.YMAX
-                )
-
-                false -> Util.transformMappings(encodingVegaSpec,
-                    Channels.Y to Aes.YMIN,
-                    Channels.Y2 to Aes.YMAX,
-                    Channels.X2 to Aes.XMAX
-                )
-            }
+            initDataAndMappings(
+                customChannelMapping = when (Util.iHorizontal(encodingVegaSpec)) {
+                    true -> listOf(Channels.X to Aes.XMIN, Channels.X2 to Aes.XMAX, Channels.Y2 to Aes.YMAX)
+                    false -> listOf(Channels.Y to Aes.YMIN, Channels.Y2 to Aes.YMAX, Channels.X2 to Aes.XMAX)
+                }
+            )
         }
     }
 }

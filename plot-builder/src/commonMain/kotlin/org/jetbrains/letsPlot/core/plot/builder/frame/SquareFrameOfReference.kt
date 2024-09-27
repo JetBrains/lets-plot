@@ -299,6 +299,10 @@ internal class SquareFrameOfReference(
         override var dataBounds: DoubleRectangle = dataBounds
             private set
 
+        override val isCoordFlip: Boolean
+            get() = flipAxis
+
+
         override fun syncDataBounds(ctx: InteractionContext) {
             val transientBounds = calculateTransientBounds(viewBounds, scale, offset)
             this.dataBounds = ctx.clientRectToDataBounds(

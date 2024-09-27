@@ -18,7 +18,7 @@ import kotlin.math.abs
 
 class DrawRectFeedback(
     private val centerStart: Boolean,
-    private val onCompleted: ((DoubleRectangle) -> Unit)
+    private val onCompleted: ((dataBounds: DoubleRectangle, flipped: Boolean, SelectionMode) -> Unit)
 ) : ToolFeedback {
 
     private var selector: Selector = UnknownSelector()
@@ -105,8 +105,8 @@ class DrawRectFeedback(
                 val selection = selector.getSelection(dragFrom, dragTo, target)
 
                 if (selector.isAcceptable(selection)) {
-                    val dataBounds = target.applyViewport(selection, ctx)
-                    onCompleted(dataBounds)
+                    val (dataBounds, flipped) = target.applyViewport(selection, ctx)
+                    onCompleted(dataBounds, flipped, selector.mode)
                 }
 
                 selector = UnknownSelector()
@@ -124,6 +124,8 @@ class DrawRectFeedback(
     }
 
     private abstract class Selector {
+        abstract val mode: SelectionMode
+
         fun limitToGeomBounds(to: DoubleVector, target: InteractionTarget): DoubleVector {
             return DoubleVector(
                 x = to.x.coerceIn(target.geomBounds.left, target.geomBounds.right),
@@ -141,6 +143,8 @@ class DrawRectFeedback(
     }
 
     private inner class UnknownSelector : Selector() {
+        override val mode: SelectionMode = SelectionMode.BOX
+
         override fun getSelection(from: DoubleVector, to: DoubleVector, target: InteractionTarget): DoubleRectangle {
             val drag = to.subtract(from)
             if (drag.length() > 20) {
@@ -158,6 +162,8 @@ class DrawRectFeedback(
     }
 
     private inner class HorizontalBandSelector : Selector() {
+        override val mode: SelectionMode = SelectionMode.HORIZONTAL_BAND
+
         override fun getSelection(from: DoubleVector, to: DoubleVector, target: InteractionTarget): DoubleRectangle {
             if (centerStart) {
                 val length = abs(to.subtract(from).y)
@@ -181,6 +187,8 @@ class DrawRectFeedback(
     }
 
     private inner class VerticalBandSelector : Selector() {
+        override val mode: SelectionMode = SelectionMode.VERTICAL_BAND
+
         override fun getSelection(from: DoubleVector, to: DoubleVector, target: InteractionTarget): DoubleRectangle {
             if (centerStart) {
                 val length = abs(to.subtract(from).x)
@@ -204,6 +212,8 @@ class DrawRectFeedback(
     }
 
     private inner class BoxSelector : Selector() {
+        override val mode: SelectionMode = SelectionMode.BOX
+
         override fun getSelection(from: DoubleVector, to: DoubleVector, target: InteractionTarget): DoubleRectangle {
             if (centerStart) {
                 val drag = to.subtract(from)
@@ -233,4 +243,11 @@ class DrawRectFeedback(
             return selection.width > MIN_SIZE || selection.height > MIN_SIZE
         }
     }
+
+    enum class SelectionMode {
+        HORIZONTAL_BAND,
+        VERTICAL_BAND,
+        BOX
+    }
+
 }

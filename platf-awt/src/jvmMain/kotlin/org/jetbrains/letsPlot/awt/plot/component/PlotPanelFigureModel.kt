@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -62,7 +63,7 @@ internal class PlotPanelFigureModel(
     }
 
     override fun updateView(specOverride: Map<String, Any>?) {
-        currSpecOverride = specOverride
+        currSpecOverride = FigureModelOptions.reconcile(currSpecOverride, specOverride)
         rebuildPlotComponent()
     }
 

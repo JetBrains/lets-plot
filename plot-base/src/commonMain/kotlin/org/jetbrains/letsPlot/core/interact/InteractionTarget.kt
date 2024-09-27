@@ -16,9 +16,11 @@ interface InteractionTarget {
     // applyViewport(geomBounds.add(10, 0))
     // applyViewport(geomBounds.add(10, 0))
     // will result a viewport that is shifted by 20 units to the right.
-    // Returns data bounds for the actual viewport.
+    // Returns a pair:
+    //   - data bounds for the actual viewport.
+    //   - coord flip flag.
     fun applyViewport(
         screenViewport: DoubleRectangle,
         ctx: InteractionContext
-    ): DoubleRectangle
+    ): Pair<DoubleRectangle, Boolean>
 }

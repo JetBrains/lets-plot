@@ -22,8 +22,8 @@ internal class LineMarkConverter private constructor(
     private fun process() {
         plotOptions.appendLayer {
             geom = GeomKind.LINE
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+
+            initDataAndMappings()
         }
     }
 }

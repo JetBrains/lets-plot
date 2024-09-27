@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option.Geom
 import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
 
@@ -18,6 +19,7 @@ class LayerOptions : Options() {
     var geom: GeomKind? by map(Layer.GEOM)
     var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
     var mappings: Map<Aes<*>, String>? by map(PlotBase.MAPPING)
+    var dataMeta: DataMetaOptions? by map(Meta.DATA_META)
     var tooltipsOptions: TooltipsOptions? by map(Layer.TOOLTIPS)
     var samplingOptions: SamplingOptions? by map(Layer.SAMPLING)
     var stat: String? by map(Layer.STAT)

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
@@ -52,6 +53,7 @@ class RuleMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.H_LINE)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.YINTERCEPT) to "mean_price",
@@ -61,9 +63,15 @@ class RuleMarkTransformTest {
             entry(
                 PlotBase.DATA, mapOf(
                     "symbol" to listOf("MSFT", "AMZN", "IBM", "GOOG", "AAPL"),
-                    "mean_price" to listOf(24.73674796747967, 47.98707317073172, 91.26121951219511, 415.8704411764706, 64.73048780487804)
+                    "mean_price" to listOf(
+                        24.73674796747967,
+                        47.98707317073172,
+                        91.26121951219511,
+                        415.8704411764706,
+                        64.73048780487804
+                    )
                 )
-            )
+            ),
         )
     }
 
@@ -96,6 +104,7 @@ class RuleMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.V_LINE)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.XINTERCEPT) to "mean_price",
@@ -105,9 +114,15 @@ class RuleMarkTransformTest {
             entry(
                 PlotBase.DATA, mapOf(
                     "symbol" to listOf("MSFT", "AMZN", "IBM", "GOOG", "AAPL"),
-                    "mean_price" to listOf(24.73674796747967, 47.98707317073172, 91.26121951219511, 415.8704411764706, 64.73048780487804)
+                    "mean_price" to listOf(
+                        24.73674796747967,
+                        47.98707317073172,
+                        91.26121951219511,
+                        415.8704411764706,
+                        64.73048780487804
+                    )
                 )
-            )
+            ),
         )
     }
 
@@ -124,7 +139,7 @@ class RuleMarkTransformTest {
                 |  "mark": "rule",
                 |  "encoding": {
                 |    "x": {"field": "Origin"},
-                |    "y": {"field": "min_Horsepower"},
+                |    "y": {"field": "min_Horsepower", "type": "quantitative"},
                 |    "y2": {"field": "max_Horsepower"}
                 |  }
                 |}
@@ -135,6 +150,7 @@ class RuleMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.SEGMENT)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.MAPPING, mapOf(
                     toOption(Aes.X) to "Origin",
@@ -149,7 +165,7 @@ class RuleMarkTransformTest {
                     "min_Horsepower" to listOf(52.0, 46.0, 52.0),
                     "max_Horsepower" to listOf(230.0, 133.0, 132.0)
                 )
-            )
+            ),
         )
     }
 
@@ -166,7 +182,7 @@ class RuleMarkTransformTest {
                 |  "mark": "rule",
                 |  "encoding": {
                 |    "y": {"field": "Origin"},
-                |    "x": {"field": "min_Horsepower"},
+                |    "x": {"field": "min_Horsepower", "type": "quantitative"},
                 |    "x2": {"field": "max_Horsepower"}
                 |  }
                 |}
@@ -191,7 +207,8 @@ class RuleMarkTransformTest {
                     "min_Horsepower" to listOf(52.0, 46.0, 52.0),
                     "max_Horsepower" to listOf(230.0, 133.0, 132.0)
                 )
-            )
+            ),
+            entry(Meta.DATA_META, empty()),
         )
     }
 }

@@ -24,8 +24,7 @@ internal class CircleMarkConverter private constructor(
         plotOptions.appendLayer {
             geom = GeomKind.POINT
             shape = NamedShape.SOLID_CIRCLE
-            data = Util.transformData(dataVegaSpec)
-            mappings = Util.transformMappings(encodingVegaSpec)
+            initDataAndMappings()
         }
     }
 }

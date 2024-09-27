@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
@@ -48,6 +49,18 @@ class BarMarkTransformTest {
                 )
             ),
             entry(PlotBase.MAPPING, mapOf("x" to "a")),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "a",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    )
+                )
+            ))
         )
     }
 
@@ -75,6 +88,18 @@ class BarMarkTransformTest {
                 )
             ),
             entry(PlotBase.MAPPING, mapOf("x" to "a")),
+            entry(Meta.DATA_META, mapOf(
+                Meta.MappingAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.MappingAnnotation.AES to toOption(Aes.X),
+                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                        Meta.MappingAnnotation.PARAMETERS to mapOf(
+                            Meta.MappingAnnotation.LABEL to "a",
+                            Meta.MappingAnnotation.ORDER to 1
+                        )
+                    )
+                )
+            ))
         )
     }
 
@@ -97,11 +122,14 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).containsOnly(entry("x", "a"))
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(PlotBase.MAPPING, emptyMap<String, Any?>()),
-            entry(PlotBase.DATA, mapOf(
-                "..count.." to listOf(1.0),
-                "a" to listOf(1.0)
-            )),
+            entry(PlotBase.MAPPING, empty()),
+            entry(Meta.DATA_META, empty()),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "..count.." to listOf(1.0),
+                    "a" to listOf(1.0)
+                )
+            ),
             entry(toOption(Aes.WIDTH), 0.5),
         )
     }
@@ -116,7 +144,7 @@ class BarMarkTransformTest {
                 |  ]},
                 |  "mark": "bar",
                 |  "encoding": {
-                |    "x": {"bin": true, "field": "v"},
+                |    "x": {"bin": true, "field": "v", "type": "quantitative"},
                 |    "y": {"aggregate": "count"}
                 |  }
                 |}
@@ -129,6 +157,7 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
+            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.DATA, mapOf(
                     "..count.." to listOf(

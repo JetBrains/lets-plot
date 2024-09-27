@@ -23,7 +23,6 @@ internal class RuleMarkConverter private constructor(
 
     private fun process() {
         plotOptions.appendLayer {
-            data = Util.transformData(dataVegaSpec)
             geom = when {
                 isVLine() -> GeomKind.V_LINE
                 isHLine() -> GeomKind.H_LINE
@@ -32,37 +31,29 @@ internal class RuleMarkConverter private constructor(
                 else -> error("Rule mark can be used only for vertical or horizontal lines or segments.\nEncoding: $encodingVegaSpec")
             }
 
-            mappings = when {
-                isVLine() -> Util.transformMappings(encodingVegaSpec, Channels.X to Aes.XINTERCEPT)
-                isHLine() -> Util.transformMappings(encodingVegaSpec, Channels.Y to Aes.YINTERCEPT)
-                isHSegment() -> Util.transformMappings(
-                    encodingVegaSpec,
-                    Channels.Y to Aes.Y,
-                    Channels.Y to Aes.YEND,
-                    Channels.X2 to Aes.XEND
-                )
-                isVSegment() -> Util.transformMappings(
-                    encodingVegaSpec,
-                    Channels.X to Aes.X,
-                    Channels.X to Aes.XEND,
-                    Channels.Y2 to Aes.YEND
-                )
-                else -> error("Rule mark can be used only for vertical or horizontal lines or segments")
-            }
+            initDataAndMappings(
+                customChannelMapping = when {
+                    isVLine() -> listOf(Channels.X to Aes.XINTERCEPT)
+                    isHLine() -> listOf(Channels.Y to Aes.YINTERCEPT)
+                    isHSegment() -> listOf(Channels.Y to Aes.Y, Channels.Y to Aes.YEND, Channels.X2 to Aes.XEND)
+                    isVSegment() -> listOf(Channels.X to Aes.X, Channels.X to Aes.XEND, Channels.Y2 to Aes.YEND)
+                    else -> error("Rule mark can be used only for vertical or horizontal lines or segments")
+                }
+            )
         }
     }
 
     private fun isVLine(): Boolean =
-        Channels.X in encodingVegaSpec.keys
+        Channels.X in encodingVegaSpec
                 && listOf(Channels.X2, Channels.Y, Channels.Y2).none(encodingVegaSpec::contains)
 
     private fun isHLine(): Boolean =
-        Channels.Y in encodingVegaSpec.keys &&
+        Channels.Y in encodingVegaSpec &&
                 listOf(Channels.X, Channels.X2, Channels.Y2).none(encodingVegaSpec::contains)
 
     private fun isVSegment(): Boolean =
         listOf(Channels.X, Channels.Y, Channels.Y2).all(encodingVegaSpec::contains)
-                && Channels.X2 !in encodingVegaSpec.keys
+                && Channels.X2 !in encodingVegaSpec
 
     private fun isHSegment(): Boolean =
         listOf(Channels.X, Channels.X2, Channels.Y).all(encodingVegaSpec::contains)

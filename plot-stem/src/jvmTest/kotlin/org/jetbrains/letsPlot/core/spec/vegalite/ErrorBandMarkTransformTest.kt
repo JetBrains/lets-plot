@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
+import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.asMutable
@@ -72,7 +73,8 @@ class ErrorBandMarkTransformTest {
                 toOption(Aes.YMAX) to "ci0",
                 toOption(Aes.X) to "Year"
             )),
-            entry(PlotBase.DATA, emptyMap<String, Any?>()),
+            entry(PlotBase.DATA, empty()),
+            entry(Meta.DATA_META, empty()),
         )
     }
 
@@ -120,9 +122,9 @@ class ErrorBandMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
-            entry(PlotBase.DATA, emptyMap<String, Any?>()),
-            entry(
-                PlotBase.MAPPING, mapOf(
+            entry(PlotBase.DATA, empty()),
+            entry(Meta.DATA_META, empty()),
+            entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.XMIN) to "ci1",
                 toOption(Aes.XMAX) to "ci0",
                 toOption(Aes.Y) to "Year"
