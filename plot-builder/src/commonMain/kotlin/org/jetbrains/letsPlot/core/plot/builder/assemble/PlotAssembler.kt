@@ -5,11 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -56,9 +59,7 @@ class PlotAssembler constructor(
     init {
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
-            exponentFormat = theme.exponentFormat.format.value,
-            minExponent = theme.exponentFormat.minExponent,
-            maxExponent = theme.exponentFormat.maxExponent
+            expFormat = extractExponentFormat(theme.exponentFormat)
         )
 
         val legendBoxInfos: List<LegendBoxInfo> = when {
@@ -258,6 +259,15 @@ class PlotAssembler constructor(
                     )
                 }
             }
+        }
+
+        fun extractExponentFormat(exponentFormat: ExponentFormat): StringFormat.ExponentFormat {
+            val notationType = when (exponentFormat.notationType) {
+                ExponentFormat.NotationType.E -> NumberFormat.ExponentNotationType.E
+                ExponentFormat.NotationType.POW -> NumberFormat.ExponentNotationType.POW
+                ExponentFormat.NotationType.POW_FULL -> NumberFormat.ExponentNotationType.POW_FULL
+            }
+            return StringFormat.ExponentFormat(notationType, exponentFormat.min, exponentFormat.max)
         }
     }
 }

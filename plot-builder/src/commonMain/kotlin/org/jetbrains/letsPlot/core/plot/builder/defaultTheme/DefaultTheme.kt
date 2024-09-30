@@ -37,8 +37,8 @@ class DefaultTheme internal constructor(
             return options[ThemeOption.EXPONENT_FORMAT].let {
                 when (it) {
                     is ExponentFormat -> it
-                    is ExponentFormat.Format -> ExponentFormat(it)
-                    else -> ExponentFormat(ExponentFormat.Format.E)
+                    is ExponentFormat.NotationType -> ExponentFormat(it)
+                    else -> ExponentFormat(ExponentFormat.NotationType.E)
                 }
             }
         }

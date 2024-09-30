@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import kotlin.math.min
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +17,7 @@ class NumericBreakFormatterTest {
 
     @Test
     fun formatZero() {
-        val formatter = NumericBreakFormatter(0.0, 0.0, true, exponentFormat = ExponentFormat.E)
+        val formatter = NumericBreakFormatter(0.0, 0.0, true, expFormat = ExponentFormat(ExponentNotationType.E))
         assertEquals("0.0", formatter.apply(0))
     }
 
@@ -74,7 +75,7 @@ class NumericBreakFormatterTest {
         val values = List(n) { i -> min(min + i * step, Double.MAX_VALUE) }
         val formatterStep = (max - min) / 100
         val formatters = values.map {
-            NumericBreakFormatter(it, formatterStep, metricPrefix, exponentFormat = ExponentFormat.E)
+            NumericBreakFormatter(it, formatterStep, metricPrefix, expFormat = ExponentFormat(ExponentNotationType.E))
         }
         return values.mapIndexed { i, v -> formatters[i].apply(v) }
     }

@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT> : Scale {
@@ -17,9 +18,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val providedScaleBreaks: ScaleBreaks?
     protected val providedFormatter: ((Any) -> String)?
     protected val labelLengthLimit: Int
-    protected val exponentFormat: ExponentFormat
-    protected val minExponent: Int?
-    protected val maxExponent: Int?
+    protected val expFormat: ExponentFormat
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
@@ -36,9 +35,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         providedScaleBreaks = null
         labelLengthLimit = 0
         providedFormatter = null
-        exponentFormat = ExponentFormat.E
-        minExponent = null
-        maxExponent = null
+        expFormat = ExponentFormat(ExponentNotationType.E)
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
@@ -49,9 +46,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         providedFormatter = b.providedFormatter
 
         labelLengthLimit = b.myLabelLengthLimit
-        exponentFormat = b.myExponentFormat
-        minExponent = b.myMinExponent
-        maxExponent = b.myMaxExponent
+        expFormat = b.myExpFormat
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -100,9 +95,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         internal var providedScaleBreaks: ScaleBreaks? = scale.providedScaleBreaks
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var providedFormatter: ((Any) -> String)? = scale.providedFormatter
-        internal var myExponentFormat: ExponentFormat = scale.exponentFormat
-        internal var myMinExponent: Int? = scale.minExponent
-        internal var myMaxExponent: Int? = scale.maxExponent
+        internal var myExpFormat: ExponentFormat = scale.expFormat
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
@@ -141,17 +134,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         }
 
         override fun exponentFormat(v: ExponentFormat): Scale.Builder {
-            myExponentFormat = v
-            return this
-        }
-
-        override fun minExponent(v: Int?): Scale.Builder {
-            myMinExponent = v
-            return this
-        }
-
-        override fun maxExponent(v: Int?): Scale.Builder {
-            myMaxExponent = v
+            myExpFormat = v
             return this
         }
 

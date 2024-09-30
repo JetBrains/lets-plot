@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
@@ -27,9 +26,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
     options: Map<String, Any>,
-    private val exponentFormat: ExponentFormat,
-    private val minExponent: Int?,
-    private val maxExponent: Int?
+    private val expFormat: StringFormat.ExponentFormat
 ) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
@@ -159,7 +156,7 @@ internal class FacetConfig(
         return when (optionVal) {
             null -> DEF_FORMATTER
             else -> {
-                val fmt = StringFormat.forOneArg(optionVal.toString(), exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)
+                val fmt = StringFormat.forOneArg(optionVal.toString(), expFormat = expFormat)
                 return { value: Any -> fmt.format(value) }
             }
         }

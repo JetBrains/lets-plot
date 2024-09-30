@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -56,9 +55,7 @@ internal object GeomProviderFactory {
         geomKind: GeomKind,
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        exponentFormat: ExponentFormat,
-        minExponent: Int?,
-        maxExponent: Int?
+        expFormat: StringFormat.ExponentFormat
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.AREA -> GeomProvider.area {
@@ -291,14 +288,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom, exponentFormat, minExponent, maxExponent)
+                applyTextOptions(layerConfig, geom, expFormat)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom, exponentFormat, minExponent, maxExponent)
+                applyTextOptions(layerConfig, geom, expFormat)
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
@@ -411,12 +408,10 @@ internal object GeomProviderFactory {
     private fun applyTextOptions(
         layerConfig: LayerConfig,
         geom: TextGeom,
-        exponentFormat: ExponentFormat,
-        minExponent: Int?,
-        maxExponent: Int?
+        expFormat: StringFormat.ExponentFormat
     ) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(it, exponentFormat = exponentFormat, minExponent = minExponent, maxExponent = maxExponent)::format
+            geom.formatter = StringFormat.forOneArg(it, expFormat = expFormat)::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it

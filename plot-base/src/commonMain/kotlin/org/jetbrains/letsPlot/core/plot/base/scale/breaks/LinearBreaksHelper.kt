@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
@@ -14,9 +14,7 @@ internal class LinearBreaksHelper(
     rangeEnd: Double,
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
-    exponentFormat: ExponentFormat,
-    minExponent: Int? = null,
-    maxExponent: Int? = null,
+    expFormat: ExponentFormat,
     precise: Boolean = false
 ) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
 
@@ -49,7 +47,7 @@ internal class LinearBreaksHelper(
             breaks
         }
 
-        this.formatter = providedFormatter ?: createFormatter(this.breaks, exponentFormat, minExponent, maxExponent)
+        this.formatter = providedFormatter ?: createFormatter(this.breaks, expFormat)
     }
 
     companion object {
@@ -101,9 +99,7 @@ internal class LinearBreaksHelper(
 
         private fun createFormatter(
             breakValues: List<Double>,
-            exponentFormat: ExponentFormat,
-            minExponent: Int?,
-            maxExponent: Int?
+            expFormat: ExponentFormat
         ): (Any) -> String {
             val (referenceValue, step) = when {
                 breakValues.isEmpty() -> Pair(0.0, 0.5)
@@ -121,9 +117,7 @@ internal class LinearBreaksHelper(
                 referenceValue,
                 step,
                 allowMetricPrefix = true,
-                exponentFormat = exponentFormat,
-                minExponent = minExponent,
-                maxExponent = maxExponent
+                expFormat = expFormat
             )
             return formatter::apply
         }

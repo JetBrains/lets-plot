@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
@@ -50,10 +50,6 @@ interface Scale {
         fun labelFormatter(v: (Any) -> String): Builder
 
         fun exponentFormat(v: ExponentFormat): Builder
-
-        fun minExponent(v: Int?): Builder
-
-        fun maxExponent(v: Int?): Builder
 
         fun multiplicativeExpand(v: Double): Builder
 

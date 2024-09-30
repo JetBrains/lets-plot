@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
@@ -14,9 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 internal class NonlinearBreaksGen(
     private val transform: ContinuousTransform,
     private val providedFormatter: ((Any) -> String)? = null,
-    private val exponentFormat: ExponentFormat,
-    private val minExponent: Int?,
-    private val maxExponent: Int?
+    private val expFormat: ExponentFormat
 ) : BreaksGenerator {
 
     override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
@@ -25,9 +23,7 @@ internal class NonlinearBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter,
-            exponentFormat,
-            minExponent,
-            maxExponent,
+            expFormat,
             transform,
             niceLogBreaks = true
         )
@@ -43,9 +39,7 @@ internal class NonlinearBreaksGen(
             domain.upperEnd,
             targetCount,
             providedFormatter = null,
-            exponentFormat,
-            minExponent,
-            maxExponent,
+            expFormat,
             transform,
             niceLogBreaks = false
         )

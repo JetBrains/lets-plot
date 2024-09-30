@@ -46,7 +46,7 @@ internal class ContinuousScale : AbstractScale<Double> {
         return if (customBreaksGenerator != null) {
             Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
         } else {
-            createBreaksGeneratorForTransformedDomain(continuousTransform, providedFormatter, exponentFormat, minExponent, maxExponent)
+            createBreaksGeneratorForTransformedDomain(continuousTransform, providedFormatter, expFormat)
         }
     }
 

@@ -6,7 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
@@ -15,9 +16,7 @@ internal class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
-    exponentFormat: ExponentFormat,
-    minExponent: Int? = null,
-    maxExponent: Int? = null
+    expFormat: ExponentFormat
 ) {
     private var formatter: NumberFormat
 
@@ -64,16 +63,21 @@ internal class NumericBreakFormatter(
 
         if (scientificNotation) {
             // generate 'engineering notation', in which the exponent is a multiple of three
-            type = if (domain10Power > 0 && allowMetricPrefix && exponentFormat == ExponentFormat.E) "s" else "e"
+            type = if (domain10Power > 0 && allowMetricPrefix && expFormat.notationType == ExponentNotationType.E) "s" else "e"
         } else {
             delimiter = ","
         }
 
-        val richOutput = if (type == "e" && exponentFormat != ExponentFormat.E) "&${exponentFormat.symbol}" else ""
-        val trim = if (type == "e" && exponentFormat != ExponentFormat.E) "~" else ""
-        val limits = if (maxExponent != null) "{$minExponent,$maxExponent}" else ""
+        val exponentNotationType = if (type == "e" && expFormat.notationType != ExponentNotationType.E) "&${expFormat.notationType.symbol}" else ""
+        val trim = if (type == "e" && expFormat.notationType != ExponentNotationType.E) "~" else ""
+        val limits = when {
+            expFormat.min != null && expFormat.max != null -> "{${expFormat.min},${expFormat.max}}"
+            expFormat.min != null -> "{${expFormat.min},}"
+            expFormat.max != null -> "{,${expFormat.max}}"
+            else -> ""
+        }
 
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput$limits")
+        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$exponentNotationType$limits")
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)

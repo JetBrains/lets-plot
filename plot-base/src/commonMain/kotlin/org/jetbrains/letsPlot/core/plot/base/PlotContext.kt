@@ -5,13 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 interface PlotContext {
-    val exponentFormat: ExponentFormat
-    val minExponent: Int?
-    val maxExponent: Int?
+    val expFormat: ExponentFormat
 
     fun hasScale(aes: Aes<*>): Boolean
     fun getScale(aes: Aes<*>): Scale
@@ -21,9 +20,7 @@ interface PlotContext {
 }
 
 object NullPlotContext : PlotContext {
-    override val exponentFormat: ExponentFormat = ExponentFormat.E
-    override val minExponent: Int? = null
-    override val maxExponent: Int? = null
+    override val expFormat = ExponentFormat(ExponentNotationType.E)
 
     override fun hasScale(aes: Aes<*>): Boolean = false
     override fun getScale(aes: Aes<*>): Scale = error("No scale for aesthetic $aes")

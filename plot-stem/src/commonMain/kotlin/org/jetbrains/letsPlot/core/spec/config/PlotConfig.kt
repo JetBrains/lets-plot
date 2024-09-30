@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
@@ -100,18 +101,14 @@ abstract class PlotConfig(
             scaleConfigs,
             excludeStatVariables,
             zeroPositionalExpands,
-            exponentFormat = theme.exponentFormat.format.value,
-            minExponent = theme.exponentFormat.minExponent,
-            maxExponent = theme.exponentFormat.maxExponent
+            expFormat = PlotAssembler.extractExponentFormat(theme.exponentFormat)
         )
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
             val facetConfig = FacetConfig(
                 facetOptions,
-                theme.exponentFormat.format.value,
-                theme.exponentFormat.minExponent,
-                theme.exponentFormat.maxExponent
+                PlotAssembler.extractExponentFormat(theme.exponentFormat)
             )
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {

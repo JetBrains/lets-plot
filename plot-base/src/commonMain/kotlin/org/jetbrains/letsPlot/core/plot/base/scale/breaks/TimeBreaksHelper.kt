@@ -5,8 +5,9 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.DAY
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
@@ -36,7 +37,7 @@ internal class TimeBreaksHelper(
             targetStep < 1000 -> LinearBreaksHelper(
                 rangeStart, rangeEnd, count,
                 providedFormatter = DUMMY_FORMATTER,
-                ExponentFormat.E,
+                ExponentFormat(ExponentNotationType.E),
             ).breaks
 
             else -> computeNiceTicks()

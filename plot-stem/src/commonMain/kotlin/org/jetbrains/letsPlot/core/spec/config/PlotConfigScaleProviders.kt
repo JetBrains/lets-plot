@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderBuilder
@@ -20,9 +20,7 @@ internal object PlotConfigScaleProviders {
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean,
         zeroPositionalExpands: Boolean,
-        exponentFormat: ExponentFormat,
-        minExponent: Int?,
-        maxExponent: Int?
+        expFormat: ExponentFormat
     ): Map<Aes<*>, ScaleProvider> {
 
         val scaleProviderBuilderByAes = HashMap<Aes<*>, ScaleProviderBuilder<*>>()
@@ -87,9 +85,7 @@ internal object PlotConfigScaleProviders {
 
         return scaleProviderBuilders.mapValues { (_, builder) ->
             builder
-                .exponentFormat(exponentFormat)
-                .minExponent(minExponent)
-                .maxExponent(maxExponent)
+                .exponentFormat(expFormat)
                 .build()
         }
     }

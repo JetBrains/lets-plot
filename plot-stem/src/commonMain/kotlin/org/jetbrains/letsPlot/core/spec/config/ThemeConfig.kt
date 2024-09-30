@@ -46,11 +46,11 @@ class ThemeConfig constructor(
 
     companion object {
         private fun convertExponentFormat(key: String, value: Any): Any {
-            fun toFormat(value: String): ExponentFormat.Format {
+            fun toFormat(value: String): ExponentFormat.NotationType {
                 return when (value.lowercase()) {
-                    "e" -> ExponentFormat.Format.E
-                    "pow" -> ExponentFormat.Format.POW
-                    "pow_full" -> ExponentFormat.Format.POW_FULL
+                    "e" -> ExponentFormat.NotationType.E
+                    "pow" -> ExponentFormat.NotationType.POW
+                    "pow_full" -> ExponentFormat.NotationType.POW_FULL
                     else -> throw IllegalArgumentException(
                         "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
                     )
@@ -61,9 +61,7 @@ class ThemeConfig constructor(
                     is String -> toFormat(value)
                     is List<*> -> {
                         val format = value[0].let { toFormat(it.toString()) }
-                        val minExponent = (value[1] as? Number)?.toInt() ?: throw IllegalArgumentException(
-                            "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} tuple should have integers for min_exp and max_exp values."
-                        )
+                        val minExponent = (value[1] as? Number?)?.toInt()
                         val maxExponent = (value[2] as? Number?)?.toInt()
                         ExponentFormat(format, minExponent, maxExponent)
                     }

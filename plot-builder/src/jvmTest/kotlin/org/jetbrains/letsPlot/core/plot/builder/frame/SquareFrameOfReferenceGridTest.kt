@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
@@ -196,11 +196,7 @@ class SquareFrameOfReferenceGridTest {
             theme = theme,
             flipAxis = false,
             plotContext = object : PlotContext {
-                override val exponentFormat: ExponentFormat
-                    get() = error("unexpected call")
-                override val minExponent: Int?
-                    get() = error("unexpected call")
-                override val maxExponent: Int?
+                override val expFormat: ExponentFormat
                     get() = error("unexpected call")
 
                 override fun hasScale(aes: Aes<*>): Boolean = error("unexpected call")

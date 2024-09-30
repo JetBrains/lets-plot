@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -25,9 +24,9 @@ class LinePattern(
 
     private var myLineFormatter: ((List<Any>) -> String)? = null
 
-    private fun initFormatter(exponentFormat: ExponentFormat, minExponent: Int?, maxExponent: Int?): (List<Any>) -> String {
+    private fun initFormatter(expFormat: StringFormat.ExponentFormat): (List<Any>) -> String {
         require(myLineFormatter == null)
-        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", exponentFormat, minExponent, maxExponent)::format
+        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat)::format
         return myLineFormatter!!
     }
 
@@ -36,7 +35,7 @@ class LinePattern(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myLineFormatter ?: initFormatter(ctx.exponentFormat, ctx.minExponent, ctx.maxExponent)
+        val formatter = myLineFormatter ?: initFormatter(ctx.expFormat)
 
         val dataValues = fields.map { dataValue ->
             dataValue.getDataPoint(index, ctx) ?: return null

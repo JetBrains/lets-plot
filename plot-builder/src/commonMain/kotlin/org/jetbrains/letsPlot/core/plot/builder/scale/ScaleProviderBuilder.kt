@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.scale
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
@@ -20,9 +20,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
-    private var myExponentFormat: ExponentFormat = ExponentFormat.E
-    private var myMinExponent: Int? = null
-    private var myMaxExponent: Int? = null
+    private var myExpFormat: StringFormat.ExponentFormat = StringFormat.ExponentFormat(ExponentNotationType.E)
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
     private var myLimits: List<Any?>? = null
@@ -112,18 +110,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun exponentFormat(v: ExponentFormat): ScaleProviderBuilder<T> {
-        myExponentFormat = v
-        return this
-    }
-
-    fun minExponent(v: Int?): ScaleProviderBuilder<T> {
-        myMinExponent = v
-        return this
-    }
-
-    fun maxExponent(v: Int?): ScaleProviderBuilder<T> {
-        myMaxExponent = v
+    fun exponentFormat(v: StringFormat.ExponentFormat): ScaleProviderBuilder<T> {
+        myExpFormat = v
         return this
     }
 
@@ -159,9 +147,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
-        private val myExponentFormat: ExponentFormat = b.myExponentFormat
-        private val myMinExponent: Int? = b.myMinExponent
-        private val myMaxExponent: Int? = b.myMaxExponent
+        private val myExpFormat: StringFormat.ExponentFormat = b.myExpFormat
         private val myAes: Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
@@ -240,9 +226,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
         private fun completeScale(scale: Scale): Scale {
             val with = scale.with()
-                .exponentFormat(myExponentFormat)
-                .minExponent(myMinExponent)
-                .maxExponent(myMaxExponent)
+                .exponentFormat(myExpFormat)
 
             if (breaks != null) {
                 with.breaks(breaks)
@@ -254,7 +238,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labelLengthLimit(myLabelLengthLimit)
             }
             if (myLabelFormat != null) {
-                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, exponentFormat = myExponentFormat, minExponent = myMinExponent, maxExponent = myMaxExponent)::format)
+                with.labelFormatter(StringFormat.forOneArg(myLabelFormat, expFormat = myExpFormat)::format)
             }
             if (myMultiplicativeExpand != null) {
                 with.multiplicativeExpand(myMultiplicativeExpand)
