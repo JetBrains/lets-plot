@@ -79,11 +79,11 @@ class StringFormat private constructor(
                 val formatSpec = NumberFormat.parseSpec(formatPattern)
 
                 // override exponent properties if expFormat is set
-                val spec = if (expFormat != null) {
-                    formatSpec.copy(expType = expFormat.notationType, minExp = expFormat.min, maxExp = expFormat.max)
-                } else {
-                    formatSpec
-                }
+                val spec = formatSpec.copy(
+                    expType = expFormat?.notationType ?: formatSpec.expType,
+                    minExp = expFormat?.min ?: formatSpec.minExp,
+                    maxExp = expFormat?.max ?: formatSpec.maxExp
+                )
                 val numberFormatter = NumberFormat(spec)
                 return { value: Any ->
                     when (value) {

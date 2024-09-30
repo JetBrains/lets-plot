@@ -26,8 +26,8 @@ class NumberFormat(spec: Spec) {
         val type: String = "",
         val trim: Boolean = false,
         val expType: ExponentNotationType = DEF_EXPONENT_NOTATION_TYPE,
-        val minExp: Int? = null,
-        val maxExp: Int? = null
+        val minExp: Int = DEF_MIN_EXP,
+        val maxExp: Int = precision
     )
 
     fun apply(num: Number): String {
@@ -157,17 +157,15 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val minExp = spec.minExp ?: DEF_MIN_EXP
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= -minExp - 1) {
+            } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
-            val maxExp = spec.maxExp ?: precision
-            if (numberInfo.integerLength > maxExp) {
+            if (numberInfo.integerLength > spec.maxExp) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
@@ -499,6 +497,7 @@ class NumberFormat(spec: Spec) {
         fun parseSpec(spec: String): Spec {
             val matchResult =
                 NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
+            val precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION
             val formatSpec = Spec(
                 fill = matchResult.groups["fill"]?.value ?: " ",
                 align = matchResult.groups["align"]?.value ?: ">",
@@ -507,12 +506,12 @@ class NumberFormat(spec: Spec) {
                 zero = matchResult.groups["zero"] != null,
                 width = matchResult.groups["width"]?.value?.toInt() ?: DEF_WIDTH,
                 comma = matchResult.groups["comma"] != null,
-                precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION,
+                precision = precision,
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
                 expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) } ?: DEF_EXPONENT_NOTATION_TYPE,
-                minExp = matchResult.groups["minexp"]?.value?.toInt(),
-                maxExp = matchResult.groups["maxexp"]?.value?.toInt(),
+                minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
+                maxExp = matchResult.groups["maxexp"]?.value?.toInt() ?: precision,
             )
 
             return normalizeSpec(formatSpec)
