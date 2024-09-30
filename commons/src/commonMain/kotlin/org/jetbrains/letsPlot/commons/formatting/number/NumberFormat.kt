@@ -479,14 +479,16 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    enum class ExponentFormat(val index: Int) {
-        E(0),
-        POW(1),
-        POW_FULL(2);
+    enum class ExponentFormat(val symbol: String) {
+        E("E"),
+        POW("P"),
+        POW_FULL("F");
 
         companion object {
-            fun fromInt(index: Int): ExponentFormat {
-                return entries.first { it.index == index }
+            val REGEXP = "[${entries.joinToString("") { it.symbol }}]"
+
+            fun bySymbol(symbol: String): ExponentFormat {
+                return entries.first { it.symbol == symbol }
             }
         }
     }
@@ -508,7 +510,7 @@ class NumberFormat(spec: Spec) {
                 precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION,
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
-                exponentFormat = matchResult.groups["expf"]?.value?.toInt()?.let { ExponentFormat.fromInt(it) } ?: DEF_EXPONENT_FORMAT,
+                exponentFormat = matchResult.groups["expf"]?.value?.let { ExponentFormat.bySymbol(it) } ?: DEF_EXPONENT_FORMAT,
                 minExp = matchResult.groups["minexp"]?.value?.toInt(),
                 maxExp = matchResult.groups["maxexp"]?.value?.toInt(),
             )
@@ -528,7 +530,7 @@ class NumberFormat(spec: Spec) {
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val NUMBER_REGEX =
-            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<expf>\d))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
+            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<expf>${ExponentFormat.REGEXP}))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private val DEF_EXPONENT_FORMAT = ExponentFormat.E
         private const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.

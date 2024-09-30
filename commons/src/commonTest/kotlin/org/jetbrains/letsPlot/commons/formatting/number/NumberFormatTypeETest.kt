@@ -34,7 +34,7 @@ class NumberFormatTypeETest {
 
     @Test
     fun canOutputScientificExponentNotation() {
-        val f = NumberFormat("e&1")
+        val f = NumberFormat("e&P")
         assertEquals("0.000000", f.apply(0))
         assertEquals("1.500000", f.apply(1.5e0))
         assertEquals("1.500000·10", f.apply(1.5e1))
@@ -49,18 +49,18 @@ class NumberFormatTypeETest {
 
     @Test
     fun trim() {
-        assertEquals("1.000000", NumberFormat("e&1").apply(1.0))
-        assertEquals("1", NumberFormat("~e&1").apply(1.0))
-        assertEquals("10", NumberFormat("~e&1").apply(10.0))
-        assertEquals("\\(10^{2}\\)", NumberFormat("~e&1").apply(100.0))
-        assertEquals("\\(10^{-1}\\)", NumberFormat("~e&1").apply(0.1))
+        assertEquals("1.000000", NumberFormat("e&P").apply(1.0))
+        assertEquals("1", NumberFormat("~e&P").apply(1.0))
+        assertEquals("10", NumberFormat("~e&P").apply(10.0))
+        assertEquals("\\(10^{2}\\)", NumberFormat("~e&P").apply(100.0))
+        assertEquals("\\(10^{-1}\\)", NumberFormat("~e&P").apply(0.1))
     }
 
     @Test
     fun compactFormatOfScientificNotation() {
         fun format(exponentFormat: ExponentFormat, limits: Pair<Int, Int>? = null): NumberFormat {
             val limitsStr = limits?.let { "{${it.first},${it.second}}" } ?: ""
-            return NumberFormat("&${exponentFormat.index}$limitsStr")
+            return NumberFormat("&${exponentFormat.symbol}$limitsStr")
         }
 
         //
