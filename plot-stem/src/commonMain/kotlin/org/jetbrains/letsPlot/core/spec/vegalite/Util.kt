@@ -27,8 +27,7 @@ internal object Util {
         return Pair(mark, options)
     }
 
-    fun transformData(vegaData: Map<*, *>): Map<String, List<Any?>> {
-        @Suppress("NAME_SHADOWING")
+    fun transformData(vegaData: Map<String, Any?>): Map<String, List<Any?>> {
         val data = if (Option.Data.URL in vegaData) {
             val url = vegaData.getString(Option.Data.URL) ?: error("URL is not specified")
             val json = when (url) {

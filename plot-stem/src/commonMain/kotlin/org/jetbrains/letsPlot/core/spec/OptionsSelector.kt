@@ -7,75 +7,61 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 
-fun Map<*, *>.read(vararg query: String): Any? {
-    return read(query.dropLast(1), query.last())
+fun Map<*, *>.getElement(path: List<Any>): Any? {
+    if (path.isEmpty()) {
+        return this
+    }
+
+    return path.fold<Any, Any>(this) { cont, key ->
+        when (key) {
+            is String -> {
+                require(cont is Map<*, *>) { "Expected Map but found: ${cont::class.simpleName}" }
+                cont[key]
+            }
+
+            is Int -> {
+                require(cont is List<*>) { "Expected List but found: ${cont::class.simpleName}" }
+                cont[key]
+            }
+
+            else -> error("Unexpected item type: $key")
+        } ?: return null
+    }
 }
 
-fun Map<*, *>.read(path: List<String>, item: String): Any? {
-    return getMap(path)?.get(item)
-}
-
-fun Map<*, *>.write(vararg query: String, value: () -> Any) {
-    write(query.dropLast(1), query.last(), value())
+fun Map<*, *>.read(path: List<Any>): Any? {
+    return getElement(path)
 }
 
 fun Map<*, *>.write(path: List<String>, item: String, value: Any) {
     provideMap(path)[item] = value
 }
 
-fun Map<*, *>.remove(vararg query: String) {
-    remove(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.remove(path: List<String>, item: String) {
+fun Map<*, *>.remove(path: List<Any>, item: Any) {
     getMap(path)?.asMutable()?.remove(item)
 }
 
-fun Map<*, *>.has(vararg query: String): Boolean {
-    return has(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.has(path: List<String>, item: String): Boolean {
+fun Map<*, *>.has(path: List<Any>, item: Any): Boolean {
     return getMap(path)?.containsKey(item) ?: false
 }
 
-fun Map<*, *>.getString(vararg query: String): String? {
-    return getString(query.dropLast(1), query.last())
+fun Map<*, *>.getString(path: List<Any>): String? {
+    return getElement(path) as? String
 }
 
-fun Map<*, *>.getString(path: List<String>, item: String): String? {
-    return getMap(path)?.get(item) as? String
+fun Map<*, *>.getDouble(path: List<Any>): Double? {
+    return getNumber(path)?.toDouble()
 }
 
-fun Map<*, *>.getDouble(vararg query: String): Double? {
-    return getDouble(query.dropLast(1), query.last())
+fun Map<*, *>.getInt(path: List<Any>): Int? {
+    return getNumber(path)?.toInt()
 }
 
-fun Map<*, *>.getDouble(path: List<String>, item: String): Double? {
-    return getNumber(path, item)?.toDouble()
+fun Map<*, *>.getNumber(path: List<Any>): Number? {
+    return getElement(path) as? Number
 }
 
-fun Map<*, *>.getInt(vararg query: String): Int? {
-    return getInt(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.getInt(path: List<String>, item: String): Int? {
-    return getNumber(path, item)?.toInt()
-}
-
-fun Map<*, *>.getNumber(vararg query: String): Number? {
-    return getNumber(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.getNumber(path: List<String>, item: String): Number? {
-    return getMap(path)?.get(item) as? Number
-}
-
-fun Map<*, *>.getBool(vararg query: String): Boolean? {
-    return getBool(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.getBool(path: List<String>, item: String): Boolean? {
+fun Map<*, *>.getBool(path: List<Any>, item: Any): Boolean? {
     return when (val v = getMap(path)?.get(item)) {
         is String -> when (v.lowercase()) {
             "1", "true" -> true
@@ -89,8 +75,8 @@ fun Map<*, *>.getBool(path: List<String>, item: String): Boolean? {
     }
 }
 
-inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(path: List<String>, item: String): EnumT? {
-    val name = getString(path, item) ?: return null
+inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(path: List<Any>): EnumT? {
+    val name = getString(path) ?: return null
     val enumInfo = EnumInfoFactory.createEnumInfo<EnumT>()
     val value = enumInfo.safeValueOf(name)
     require(value != null) {
@@ -103,49 +89,18 @@ inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(path: List<String>, i
     return value
 }
 
-inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(vararg query: String): EnumT? {
-    return getEnum<EnumT>(query.dropLast(1), query.last())
+fun Map<*, *>.getMap(path: List<Any>): Map<String, Any>? {
+    return (getElement(path) as? Map<*, *>)?.typed()
 }
 
-fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {
-    return getMap(query.toList())?.typed()
-}
-
-fun Map<*, *>.getMap(path: List<String>): Map<String, Any>? {
-    return path.fold<String, Map<*, *>?>(this) { section, next ->
-        section?.read(next)?.let { it as? Map<*, *> } ?: return@fold null
-    }?.typed()
-}
-
-fun Map<*, *>.getList(vararg query: String): List<*>? {
-    return getList(query.dropLast(1), query.last())
-}
-
-fun Map<*, *>.getList(path: List<String>, item: String): List<*>? {
-    return getMap(path)?.get(item) as? List<*>
-}
-
-fun Map<*, *>.getMaps(vararg query: String): List<Map<*, *>>? {
-    return getList(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
-}
-
-fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
-    return provideMap(query.toList())
+fun Map<*, *>.getList(path: List<Any>): List<*>? {
+    return getElement(path) as? List<*>
 }
 
 fun Map<*, *>.provideMap(path: List<String>): MutableMap<String, Any> {
-    return path.fold(
-        this
-    ) { acc, next ->
-        acc.asMutable().getOrPut(
-            key = next,
-            defaultValue = { HashMap<String, Any>() }
-        ) as Map<*, *>
+    return path.fold(this) { cont, key ->
+        cont.asMutable().getOrPut(key) { HashMap<String, Any>() } as Map<*, *>
     }.asMutable()
-}
-
-fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
-    return provideMaps(query.dropLast(1), query.last()).asMutable()
 }
 
 fun Map<*, *>.provideMaps(path: List<String>, item: String): MutableList<Map<*, *>> {
@@ -190,3 +145,67 @@ fun Map<*, *>.asMapOfMaps(): Map<*, Map<*, *>> {
     return this as Map<*, Map<*, *>>
 }
 
+// varargs version
+
+fun Map<*, *>.read(vararg query: Any): Any? {
+    return read(query.toList())
+}
+
+fun Map<*, *>.write(vararg query: String, value: () -> Any) {
+    write(query.dropLast(1), query.last(), value())
+}
+
+fun Map<*, *>.remove(vararg query: Any) {
+    remove(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.has(vararg query: Any): Boolean {
+    return has(query.dropLast(1), query.last())
+}
+
+fun Map<*, *>.getString(vararg query: Any): String? {
+    return getString(query.toList())
+}
+
+fun Map<*, *>.getDouble(vararg query: Any): Double? {
+    return getDouble(query.toList())
+}
+
+fun Map<*, *>.getInt(vararg query: Any): Int? {
+    return getInt(query.toList())
+}
+
+fun Map<*, *>.getNumber(vararg query: Any): Number? {
+    return getNumber(query.toList())
+}
+
+fun Map<*, *>.getBool(vararg query: Any): Boolean? {
+    return getBool(query.dropLast(1), query.last())
+}
+
+inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(vararg query: Any): EnumT? {
+    return getEnum<EnumT>(query.toList())
+}
+
+fun Map<*, *>.getMap(vararg query: Any): Map<String, Any>? {
+    return getMap(query.toList())?.typed()
+}
+
+fun Map<*, *>.getList(vararg query: Any): List<*>? {
+    return getList(query.toList())
+}
+
+fun Map<*, *>.getMaps(vararg query: Any): List<Map<*, *>>? {
+    return getList(*query)?.mapNotNull { it as? Map<*, *> }?.toList()
+}
+
+fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
+    return provideMap(query.toList())
+}
+
+fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
+    return provideMaps(query.dropLast(1), query.last()).asMutable()
+}
+
+fun emptyObj(): Map<String, Any?> = emptyMap()
+fun emptyData(): Map<String, List<Any?>> = emptyMap()

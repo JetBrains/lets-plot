@@ -73,7 +73,11 @@ class ErrorBandMarkTransformTest {
                 toOption(Aes.YMAX) to "ci0",
                 toOption(Aes.X) to "Year"
             )),
-            entry(PlotBase.DATA, empty()),
+            entry(PlotBase.DATA, mapOf(
+                "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
+                "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
+                "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
+            )),
             entry(Meta.DATA_META, empty()),
         )
     }
@@ -122,7 +126,11 @@ class ErrorBandMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RIBBON)),
-            entry(PlotBase.DATA, empty()),
+            entry(PlotBase.DATA, mapOf(
+                "ci0" to listOf(19.6912, 20.8554, 21.9749, 22.6203),
+                "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
+                "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
+            )),
             entry(Meta.DATA_META, empty()),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.XMIN) to "ci1",
