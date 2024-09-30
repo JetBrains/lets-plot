@@ -405,11 +405,7 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(
-        layerConfig: LayerConfig,
-        geom: TextGeom,
-        expFormat: StringFormat.ExponentFormat
-    ) {
+    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: StringFormat.ExponentFormat) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
             geom.formatter = StringFormat.forOneArg(it, expFormat = expFormat)::format
         }

@@ -52,7 +52,7 @@ class ThemeConfig constructor(
                     "pow" -> ExponentFormat.NotationType.POW
                     "pow_full" -> ExponentFormat.NotationType.POW_FULL
                     else -> throw IllegalArgumentException(
-                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
+                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full."
                     )
                 }
             }
@@ -66,7 +66,7 @@ class ThemeConfig constructor(
                         ExponentFormat(format, minExponent, maxExponent)
                     }
                     else -> throw IllegalArgumentException(
-                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full."
+                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
                     )
                 }
             }

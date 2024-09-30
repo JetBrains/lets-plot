@@ -97,10 +97,7 @@ internal class LinearBreaksHelper(
             return breaks
         }
 
-        private fun createFormatter(
-            breakValues: List<Double>,
-            expFormat: ExponentFormat
-        ): (Any) -> String {
+        private fun createFormatter(breakValues: List<Double>, expFormat: ExponentFormat): (Any) -> String {
             val (referenceValue, step) = when {
                 breakValues.isEmpty() -> Pair(0.0, 0.5)
                 else -> {

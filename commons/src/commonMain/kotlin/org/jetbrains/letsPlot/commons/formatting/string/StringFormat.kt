@@ -70,11 +70,7 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(
-        formatPattern: String,
-        formatType: FormatType,
-        expFormat: ExponentFormat?
-    ): ((Any) -> String) {
+    private fun initFormatter(formatPattern: String, formatType: FormatType, expFormat: ExponentFormat?): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
         }
@@ -82,7 +78,7 @@ class StringFormat private constructor(
             NUMBER_FORMAT -> {
                 val formatSpec = NumberFormat.parseSpec(formatPattern)
 
-                // override expType if specified
+                // override exponent properties if expFormat is set
                 val spec = if (expFormat != null) {
                     formatSpec.copy(expType = expFormat.notationType, minExp = expFormat.min, maxExp = expFormat.max)
                 } else {
@@ -168,11 +164,7 @@ class StringFormat private constructor(
             expFormat: ExponentFormat? = null
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(
-                pattern,
-                formatType,
-                expFormat = expFormat
-            ).also {
+            return StringFormat(pattern, formatType, expFormat = expFormat).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {
                         @Suppress("NAME_SHADOWING")
