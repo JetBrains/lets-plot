@@ -8,11 +8,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.spec.StatKind
-import org.jetbrains.letsPlot.core.spec.asMapOfMaps
-import org.jetbrains.letsPlot.core.spec.getDouble
-import org.jetbrains.letsPlot.core.spec.getMap
-import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
 import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.plotson.toJson
@@ -24,12 +20,9 @@ import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
-import kotlin.Pair
-import kotlin.String
-import kotlin.collections.get
 
 internal class VegaPlotConverter private constructor(
-    val vegaPlotSpec: MutableMap<String, Any>
+    private val vegaPlotSpec: MutableMap<String, Any>
 ) {
     companion object {
         fun convert(vegaPlotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
@@ -37,23 +30,14 @@ internal class VegaPlotConverter private constructor(
         }
     }
 
+    private val plotData: Map<String, List<Any?>> = Util.transformData(vegaPlotSpec.getMap(Option.DATA) ?: emptyMap())
+    private val plotEncoding = (vegaPlotSpec.getMap(Encodings.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
-
 
     private fun convert(): MutableMap<String, Any> {
         when (VegaConfig.getPlotKind(vegaPlotSpec)) {
             VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
-            VegaPlotKind.MULTI_LAYER -> {
-                val plotVegaData = vegaPlotSpec.getMap(Option.DATA) ?: emptyMap()
-                val plotVegaEncoding = (vegaPlotSpec.getMap(Encodings.ENCODING) ?: emptyMap()).asMapOfMaps()
-
-                plotOptions.data = Util.transformData(plotVegaData)
-                plotOptions.mappings = Util.transformMappings(plotVegaEncoding)
-                plotOptions.dataMeta = Util.transformDataMeta(plotOptions.data, emptyMap(), plotVegaEncoding, emptyList())
-                vegaPlotSpec.getMaps(Option.LAYER)!!
-                    .forEach { layerSpec -> processLayerSpec(layerSpec) }
-            }
-
+            VegaPlotKind.MULTI_LAYER -> vegaPlotSpec.getMaps(Option.LAYER)!!.forEach(::processLayerSpec)
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
 
@@ -62,17 +46,22 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
         val (markType, markVegaSpec) = readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
-        val vegaEncoding = (layerSpec.getMap(Encodings.ENCODING) ?: emptyMap()).asMapOfMaps()
+        val encoding = (layerSpec.getMap(Encodings.ENCODING) ?: plotEncoding).asMapOfMaps()
 
         fun LayerOptions.initDataAndMappings(vararg customChannelMapping: Pair<String, Aes<*>>) {
-            data = Util.transformData(layerSpec.getMap(Option.DATA) ?: emptyMap<String, Any>())
-            mappings = Util.transformMappings(vegaEncoding, customChannelMapping.toList())
-            dataMeta = Util.transformDataMeta(data, plotOptions.data, vegaEncoding, customChannelMapping.toList())
+            data = when {
+                Option.DATA !in layerSpec -> plotData
+                layerSpec[Option.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
+                layerSpec[Option.DATA] != null -> Util.transformData(layerSpec.getMap(Option.DATA)!!) // data is specified
+                else -> error("Unsupported data specification")
+            }
+            mappings = Util.transformMappings(encoding, customChannelMapping.toList())
+            dataMeta = Util.transformDataMeta(data, plotData, encoding, customChannelMapping.toList())
         }
 
         when (markType) {
             Mark.Types.BAR -> plotOptions.appendLayer {
-                if (vegaEncoding.values.any { Encodings.BIN in it }) {
+                if (encoding.values.any { Encodings.BIN in it }) {
                     geom = GeomKind.HISTOGRAM
                 } else {
                     geom = GeomKind.BAR
@@ -116,7 +105,7 @@ internal class VegaPlotConverter private constructor(
             }
 
             Mark.Types.RECT -> plotOptions.appendLayer {
-                if (listOf(X2, Y2).any { it in vegaEncoding }) {
+                if (listOf(X2, Y2).any { it in encoding }) {
                     geom = GeomKind.RECT
                     initDataAndMappings(X to Aes.XMIN, Y to Aes.YMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
                 } else {
@@ -126,10 +115,10 @@ internal class VegaPlotConverter private constructor(
             }
 
             Mark.Types.RULE -> {
-                val isVLine = X in vegaEncoding && listOf(X2, Y, Y2).none(vegaEncoding::contains)
-                val isHLine = Y in vegaEncoding && listOf(X, X2, Y2).none(vegaEncoding::contains)
-                val isVSegment = listOf(X, Y, Y2).all(vegaEncoding::contains) && X2 !in vegaEncoding
-                val isHSegment = listOf(X, X2, Y).all(vegaEncoding::contains) && Y2 !in vegaEncoding
+                val isVLine = X in encoding && listOf(X2, Y, Y2).none(encoding::contains)
+                val isHLine = Y in encoding && listOf(X, X2, Y2).none(encoding::contains)
+                val isVSegment = listOf(X, Y, Y2).all(encoding::contains) && X2 !in encoding
+                val isHSegment = listOf(X, X2, Y).all(encoding::contains) && Y2 !in encoding
 
                 plotOptions.appendLayer {
                     geom = when {
@@ -137,7 +126,7 @@ internal class VegaPlotConverter private constructor(
                         isHLine -> GeomKind.H_LINE
                         isVSegment -> GeomKind.SEGMENT
                         isHSegment -> GeomKind.SEGMENT
-                        else -> error("Rule markType can be used only for vertical or horizontal lines or segments.\nEncoding: $vegaEncoding")
+                        else -> error("Rule markType can be used only for vertical or horizontal lines or segments.\nEncoding: $encoding")
                     }
 
                     when {
@@ -168,7 +157,7 @@ internal class VegaPlotConverter private constructor(
                     else -> error("Unsupported markType type: $markType")
                 }
 
-                when (Util.iHorizontal(vegaEncoding)) {
+                when (Util.iHorizontal(encoding)) {
                     true -> initDataAndMappings(X to Aes.XMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
                     false -> initDataAndMappings(Y to Aes.YMIN, Y2 to Aes.YMAX, X2 to Aes.XMAX)
                 }
@@ -185,5 +174,4 @@ internal class VegaPlotConverter private constructor(
             else -> error("Unsupported markType type: $markType")
         }
     }
-
 }

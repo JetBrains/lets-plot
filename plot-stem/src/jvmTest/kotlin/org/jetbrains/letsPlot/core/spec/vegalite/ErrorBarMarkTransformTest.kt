@@ -91,7 +91,11 @@ class ErrorBarMarkTransformTest {
                 toOption(Aes.XMAX) to "lower_yield",
                 toOption(Aes.Y) to "variety"
             )),
-            entry(PlotBase.DATA, empty()),
+            entry(PlotBase.DATA, mapOf(
+                "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
+                "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
+                "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
+            )),
             entry(Option.Meta.DATA_META, empty()),
         )
     }
@@ -164,7 +168,11 @@ class ErrorBarMarkTransformTest {
                 toOption(Aes.YMAX) to "lower_yield",
                 toOption(Aes.X) to "variety"
             )),
-            entry(PlotBase.DATA, empty()),
+            entry(PlotBase.DATA, mapOf(
+                "lower_yield" to listOf(23.1311, 23.9503, 24.7778, 21.7823),
+                "upper_yield" to listOf(43.5522, 38.9775, 46.9167, 48.9732),
+                "variety" to listOf("Glabron", "Manchuria", "No. 457", "No. 462")
+            )),
             entry(Option.Meta.DATA_META, empty()),
         )
     }
