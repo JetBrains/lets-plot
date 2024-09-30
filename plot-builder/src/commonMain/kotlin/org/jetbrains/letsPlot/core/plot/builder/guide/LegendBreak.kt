@@ -36,19 +36,8 @@ class LegendBreak(val label: String) {
         )
     }
 
-    fun createKeyElement(size: DoubleVector, theme: LegendTheme): SvgGElement {
+    fun createKeyElement(size: DoubleVector): SvgGElement {
         val g = SvgGElement()
-
-        if (theme.showKeyRect()) {
-            val rectElement = LegendKeyElementFactory.createBackgroundRectForKey(
-                size,
-                color = theme.keyRectColor(),
-                fill = theme.keyRectFill(),
-                strokeWidth = theme.keyRectStrokeWidth(),
-                lineType = theme.keyLineType()
-            )
-            g.children().add(rectElement)
-        }
 
         for (layer in myLayers) {
             val keyElement = layer.keyElementFactory.createKeyElement(layer.dataPoint, size)

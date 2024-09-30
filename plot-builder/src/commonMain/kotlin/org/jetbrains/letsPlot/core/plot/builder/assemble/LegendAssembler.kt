@@ -31,8 +31,7 @@ class LegendAssembler(
     private val legendTitle: String,
     private val guideOptionsMap: Map<GuideKey, GuideOptionsList>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-    private val legendTheme: LegendTheme,
-    private val panelTheme: PanelTheme
+    private val legendTheme: LegendTheme
 ) {
 
     private val legendLayers = ArrayList<LegendLayer>()
@@ -121,7 +120,7 @@ class LegendAssembler(
 
         return object : LegendBoxInfo(spec.size) {
             override fun createLegendBox(): LegendBox {
-                val c = LegendComponent(spec, panelTheme)
+                val c = LegendComponent(spec)
                 c.debug = DEBUG_DRAWING
                 return c
             }

@@ -50,7 +50,7 @@ open class LegendDemo : SimpleDemoBase() {
         }
 
         val spec = LegendAssembler.createLegendSpec("Simple legend", legendBreaks, theme.legend())
-        val legendComponent = LegendComponent(spec, theme.panel())
+        val legendComponent = LegendComponent(spec)
         legendComponent.debug = DEBUG_DRAWING
 
         val groupComponent = GroupComponent()

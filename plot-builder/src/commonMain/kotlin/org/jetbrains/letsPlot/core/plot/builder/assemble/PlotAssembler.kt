@@ -68,8 +68,7 @@ class PlotAssembler constructor(
                 geomTiles,
                 geomTiles.mappersNP,
                 guideOptionsMap,
-                theme.legend(),
-                theme.panel()
+                theme.legend()
             )
 
             else -> emptyList()

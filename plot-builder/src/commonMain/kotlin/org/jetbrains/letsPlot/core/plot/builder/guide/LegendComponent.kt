@@ -8,20 +8,18 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 class LegendComponent(
-    override val spec: LegendComponentSpec,
-    private val panelTheme: PanelTheme
+    override val spec: LegendComponentSpec
 ) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
@@ -78,19 +76,19 @@ class LegendComponent(
     private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector): SvgGElement {
         val g = SvgGElement()
 
-        // use "plot panel" color for the legend icon bachground.
-        if (panelTheme.showRect()) {
-            val keyBounds = DoubleRectangle(DoubleVector.ZERO, size)
-            val backgroundRect = SvgRectElement(keyBounds)
-            backgroundRect.strokeWidth().set(0.0)
-            backgroundRect.fillColor().set(panelTheme.rectFill())
-
+        if (theme.showKeyRect()) {
+            val backgroundRect = LegendKeyElementFactory.createBackgroundRectForKey(
+                size,
+                color = theme.keyRectColor(),
+                fill = theme.keyRectFill(),
+                strokeWidth = theme.keyRectStrokeWidth(),
+                lineType = theme.keyLineType()
+            )
             g.children().add(backgroundRect)
         }
-
         // key
         val innerSize = DoubleVector(size.x - 2, size.y - 2)
-        val keyElement = legendBreak.createKeyElement(innerSize, spec.theme)
+        val keyElement = legendBreak.createKeyElement(innerSize)
         val keyElementTransform = buildTransform(DoubleVector(1.0, 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 
