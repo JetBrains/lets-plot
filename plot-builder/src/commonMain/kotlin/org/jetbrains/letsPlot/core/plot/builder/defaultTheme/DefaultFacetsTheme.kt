@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
-class DefaultFacetsTheme(
+internal class DefaultFacetsTheme(
     options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry
 ): FacetsTheme {
