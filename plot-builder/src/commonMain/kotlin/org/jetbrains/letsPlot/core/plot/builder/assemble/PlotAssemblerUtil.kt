@@ -188,7 +188,6 @@ internal object PlotAssemblerUtil {
             FacetedPlotLayout(
                 facets,
                 layoutProviderByTile,
-                facetsTheme.showStrip(),
                 hAxisTheme,
                 vAxisTheme,
                 plotTheme,

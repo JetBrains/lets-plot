@@ -820,7 +820,11 @@ object Option {
 
         // Facet
         const val FACET_STRIP_BGR_RECT = ThemeOption.FACET_STRIP_BGR_RECT
+        const val FACET_STRIP_BGR_RECT_X = ThemeOption.FACET_STRIP_BGR_RECT_X
+        const val FACET_STRIP_BGR_RECT_Y = ThemeOption.FACET_STRIP_BGR_RECT_Y
         const val FACET_STRIP_TEXT = ThemeOption.FACET_STRIP_TEXT
+        const val FACET_STRIP_TEXT_X = ThemeOption.FACET_STRIP_TEXT_X
+        const val FACET_STRIP_TEXT_Y = ThemeOption.FACET_STRIP_TEXT_Y
 
         // Legend
         const val LEGEND_BKGR_RECT = ThemeOption.LEGEND_BKGR_RECT

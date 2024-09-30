@@ -5,20 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
-import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-
 interface FacetsTheme {
-    fun showStrip(): Boolean
-    fun showStripBackground(): Boolean
-
-    fun stripFill(): Color
-    fun stripColor(): Color
-    fun stripStrokeWidth(): Double
-    fun stripLineType(): LineType
-    fun stripTextStyle(): ThemeTextStyle
-    fun stripMargins(): Thickness
-    fun stripTextJustification(): TextJustification
+    fun horizontalFacetStrip(): FacetStripTheme
+    fun verticalFacetStrip(): FacetStripTheme
 }

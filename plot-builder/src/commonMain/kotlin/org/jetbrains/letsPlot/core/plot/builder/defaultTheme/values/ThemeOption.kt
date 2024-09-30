@@ -81,8 +81,12 @@ object ThemeOption {
     const val PANEL_GRID_MINOR_Y = "panel_grid_minor_y"
 
     // Facet
-    const val FACET_STRIP_BGR_RECT = "strip_background"   // ToDo: x / y
-    const val FACET_STRIP_TEXT = "strip_text"   // ToDo: x / y
+    const val FACET_STRIP_BGR_RECT = "strip_background"
+    const val FACET_STRIP_BGR_RECT_X = "strip_background_x"
+    const val FACET_STRIP_BGR_RECT_Y = "strip_background_y"
+    const val FACET_STRIP_TEXT = "strip_text"
+    const val FACET_STRIP_TEXT_X = "strip_text_x"
+    const val FACET_STRIP_TEXT_Y = "strip_text_y"
 
     // Legend
     const val LEGEND_BKGR_RECT = "legend_background"
@@ -212,7 +216,8 @@ object ThemeOption {
             PANEL_GRID_MINOR_X,
             PANEL_GRID_MAJOR_Y,
             PANEL_GRID_MINOR_Y,
-            FACET_STRIP_BGR_RECT,
+            FACET_STRIP_BGR_RECT_X,
+            FACET_STRIP_BGR_RECT_Y,
             TOOLTIP_RECT
         )
 
@@ -227,7 +232,8 @@ object ThemeOption {
             AXIS_TEXT_Y,
             AXIS_TOOLTIP_TEXT_X,
             AXIS_TOOLTIP_TEXT_Y,
-            FACET_STRIP_TEXT,
+            FACET_STRIP_TEXT_X,
+            FACET_STRIP_TEXT_Y,
             LEGEND_TEXT,
             LEGEND_TITLE,
             TOOLTIP_TEXT,
@@ -240,7 +246,8 @@ object ThemeOption {
             AXIS_TOOLTIP_X,
             AXIS_TOOLTIP_Y,
             PANEL_BKGR_RECT,
-            FACET_STRIP_BGR_RECT,
+            FACET_STRIP_BGR_RECT_X,
+            FACET_STRIP_BGR_RECT_Y,
             TOOLTIP_RECT
         )
         val numericOptions = listOf(
@@ -259,7 +266,8 @@ object ThemeOption {
             AXIS_TEXT_Y,
             AXIS_TOOLTIP_TEXT_X,
             AXIS_TOOLTIP_TEXT_Y,
-            FACET_STRIP_TEXT,
+            FACET_STRIP_TEXT_X,
+            FACET_STRIP_TEXT_Y,
             LEGEND_TEXT,
             LEGEND_TITLE,
             TOOLTIP_TEXT,

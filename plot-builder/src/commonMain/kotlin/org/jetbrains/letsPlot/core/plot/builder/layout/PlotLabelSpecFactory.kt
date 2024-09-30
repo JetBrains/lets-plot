@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
@@ -31,7 +31,7 @@ object PlotLabelSpecFactory {
 
     fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
 
-    fun facetText(theme: FacetsTheme) = plotLabelSpec(theme.stripTextStyle())
+    fun facetText(theme: FacetStripTheme) = plotLabelSpec(theme.stripTextStyle())
 
     private fun plotLabelSpec(textStyle: ThemeTextStyle): LabelSpec {
         return PlotLabelSpec(
