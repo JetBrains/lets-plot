@@ -482,8 +482,6 @@ class NumberFormat(spec: Spec) {
         POW_FULL("F");
 
         companion object {
-            val REGEXP = "[${entries.joinToString("") { it.symbol }}]"
-
             fun bySymbol(symbol: String): ExponentNotationType {
                 return entries.first { it.symbol == symbol }
             }
@@ -529,8 +527,9 @@ class NumberFormat(spec: Spec) {
         private const val GROUP_SIZE = 3
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+        private val EXPONENT_TYPES_REGEX = "[${ExponentNotationType.entries.joinToString("") { it.symbol }}]"
         private val NUMBER_REGEX =
-            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>${ExponentNotationType.REGEXP}))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
+            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private const val DEF_PRECISION = 6
         private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E

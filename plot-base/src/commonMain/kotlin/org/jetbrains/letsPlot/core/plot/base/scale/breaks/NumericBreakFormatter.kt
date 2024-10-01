@@ -68,11 +68,7 @@ internal class NumericBreakFormatter(
             comma = true
         }
         val trim = type == "e" && expFormat.notationType != ExponentNotationType.E
-        val expType = if (trim) {
-            ExponentNotationType.bySymbol(expFormat.notationType.symbol)
-        } else {
-            ExponentNotationType.E
-        }
+        val expType = if (trim) expFormat.notationType else ExponentNotationType.E
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
