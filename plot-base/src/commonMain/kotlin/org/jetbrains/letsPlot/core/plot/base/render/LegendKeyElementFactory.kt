@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -24,14 +25,15 @@ interface LegendKeyElementFactory {
     }
 
     companion object {
-        fun createBackgroundRectForKey(
-            size: DoubleVector,
+        fun createBackgroundRect(
+            keySize: DoubleVector,
             color: Color,
             fill: Color,
             strokeWidth: Double,
             lineType: LineType,
         ): SvgRectElement {
-            val rect = SvgRectElement(0.0, 0.0, size.x, size.y)
+            val keyBounds = DoubleRectangle(DoubleVector.ZERO, keySize)
+            val rect = SvgRectElement(keyBounds)
             rect.fillColor().set(fill)
             rect.strokeColor().set(color)
             rect.strokeWidth().set(strokeWidth)

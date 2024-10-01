@@ -9,9 +9,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -19,7 +21,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 class LegendComponent(
-    override val spec: LegendComponentSpec
+    override val spec: LegendComponentSpec,
+    private val panelTheme: PanelTheme
 ) : LegendBox() {
 
     override fun appendGuideContent(contentRoot: SvgNode): DoubleVector {
@@ -76,13 +79,24 @@ class LegendComponent(
     private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector): SvgGElement {
         val g = SvgGElement()
 
+        // background rect for the legend icon
         if (theme.showKeyRect()) {
-            val backgroundRect = LegendKeyElementFactory.createBackgroundRectForKey(
+            val backgroundRect = LegendKeyElementFactory.createBackgroundRect(
                 size,
                 color = theme.keyRectColor(),
                 fill = theme.keyRectFill(),
                 strokeWidth = theme.keyRectStrokeWidth(),
                 lineType = theme.keyLineType()
+            )
+            g.children().add(backgroundRect)
+        } else if (panelTheme.showRect()) {
+            // use "plot panel" color
+            val backgroundRect = LegendKeyElementFactory.createBackgroundRect(
+                size,
+                color = panelTheme.rectFill(),
+                fill = panelTheme.rectFill(),
+                strokeWidth = 0.0,
+                lineType = NamedLineType.SOLID
             )
             g.children().add(backgroundRect)
         }

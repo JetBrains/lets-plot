@@ -23,7 +23,8 @@ internal object PlotAssemblerUtil {
         geomTiles: PlotGeomTiles,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<GuideKey, GuideOptionsList>,
-        legendTheme: LegendTheme
+        legendTheme: LegendTheme,
+        panelTheme: PanelTheme
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
@@ -82,7 +83,8 @@ internal object PlotAssemblerUtil {
                         scaleName,
                         guideOptionsMap,
                         scaleMappersNP,
-                        legendTheme
+                        legendTheme,
+                        panelTheme
                     )
                 }
 
@@ -119,7 +121,8 @@ internal object PlotAssemblerUtil {
                         legendTitle,
                         guideOptionsMap,
                         scaleMappersNP,
-                        legendTheme
+                        legendTheme,
+                        panelTheme
                     )
                 }
                 val allOverrideAesValues = processOverrideAesValues(
