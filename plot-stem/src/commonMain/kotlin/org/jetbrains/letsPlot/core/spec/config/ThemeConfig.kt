@@ -47,14 +47,10 @@ class ThemeConfig constructor(
     companion object {
         private fun convertExponentFormat(key: String, value: Any): Any {
             fun toFormat(value: String): ExponentFormat.NotationType {
-                return when (value.lowercase()) {
-                    "e" -> ExponentFormat.NotationType.E
-                    "pow" -> ExponentFormat.NotationType.POW
-                    "pow_full" -> ExponentFormat.NotationType.POW_FULL
-                    else -> throw IllegalArgumentException(
-                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full."
-                    )
-                }
+                val notationTypes = ExponentFormat.NotationType.entries.map { it.name.lowercase() to it }.toMap()
+                return notationTypes[value] ?: throw IllegalArgumentException(
+                    "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: ${notationTypes.keys.joinToString("|")}."
+                )
             }
             if (key == ThemeOption.EXPONENT_FORMAT) {
                 return when (value) {
