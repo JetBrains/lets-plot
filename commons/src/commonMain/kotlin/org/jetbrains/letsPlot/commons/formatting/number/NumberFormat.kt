@@ -202,7 +202,7 @@ class NumberFormat(spec: Spec) {
 
         if (precision > -1) {
             val formattedNumber = toFixedFormat(expNumberInfo, precision)
-            return formattedNumber.copy(exponentialPart = exponentString)
+            return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
         }
 
         val integerString = expNumberInfo.integerPart.toString()
@@ -241,7 +241,7 @@ class NumberFormat(spec: Spec) {
         val suffixIndex = 8 + suffixExp / 3
         val exponentString = SI_SUFFIXES[suffixIndex]
         val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
-        return formattedNumber.copy(exponentialPart = exponentString)
+        return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
     }
 
     private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
@@ -344,8 +344,9 @@ class NumberFormat(spec: Spec) {
             get() {
                 val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
                 val matchGroups = match.groups as MatchNamedGroupCollection
-                return matchGroups["degree"]?.value?.length?.plus(2)?.let { d -> if (omitUnit()) d - 1 else d }
-                    ?: exponentialPart.length
+                val degreeLength = matchGroups["degree"]?.value?.length ?: return exponentialPart.length
+                val fullLength = 2 + degreeLength // 2 for "10" in the "10^d"
+                return if (omitUnit()) fullLength else 1 + fullLength // 1 for "·" in the "·10^d"
             }
         val fullLength = integerLength + fractionalLength + exponentialLength
 

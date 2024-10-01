@@ -20,6 +20,13 @@ class NumberFormatAlignTest {
         assertEquals("0       ", format("<8,d").apply(0))
         assertEquals("0            ", format("<13,d").apply(0))
         assertEquals("0                    ", format("<21,d").apply(0))
+        assertEquals("1,000                ", format("<21,d").apply(1000))
+        assertEquals("1e+21                ", format("<21,d").apply(1e21))
+        assertEquals("1e-21                ", format("<21,d").apply(1e-21))
+        assertEquals("\\(10^{21}\\)                 ", format("<21,d&P").apply(1e21))
+        assertEquals("\\(10^{-21}\\)                ", format("<21,d&P").apply(1e-21))
+        assertEquals("1·\\(10^{21}\\)               ", format("<21,d&F").apply(1e21))
+        assertEquals("1·\\(10^{-21}\\)              ", format("<21,d&F").apply(1e-21))
     }
 
     @Test
@@ -33,6 +40,11 @@ class NumberFormatAlignTest {
         assertEquals("                    0", format(">21,d").apply(0))
         assertEquals("                1,000", format(">21,d").apply(1000))
         assertEquals("                1e+21", format(">21,d").apply(1e21))
+        assertEquals("                1e-21", format(">21,d").apply(1e-21))
+        assertEquals("                 \\(10^{21}\\)", format(">21,d&P").apply(1e21))
+        assertEquals("                \\(10^{-21}\\)", format(">21,d&P").apply(1e-21))
+        assertEquals("               1·\\(10^{21}\\)", format(">21,d&F").apply(1e21))
+        assertEquals("              1·\\(10^{-21}\\)", format(">21,d&F").apply(1e-21))
     }
 
     @Test
@@ -46,5 +58,10 @@ class NumberFormatAlignTest {
         assertEquals("          0          ", format("^21,d").apply(0))
         assertEquals("        1,000        ", format("^21,d").apply(1000))
         assertEquals("        1e+21        ", format("^21,d").apply(1e21))
+        assertEquals("        1e-21        ", format("^21,d").apply(1e-21))
+        assertEquals("        \\(10^{21}\\)         ", format("^21,d&P").apply(1e21))
+        assertEquals("        \\(10^{-21}\\)        ", format("^21,d&P").apply(1e-21))
+        assertEquals("       1·\\(10^{21}\\)        ", format("^21,d&F").apply(1e21))
+        assertEquals("       1·\\(10^{-21}\\)       ", format("^21,d&F").apply(1e-21))
     }
 }
