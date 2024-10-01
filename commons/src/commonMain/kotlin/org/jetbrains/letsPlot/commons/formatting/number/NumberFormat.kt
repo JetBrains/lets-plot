@@ -216,10 +216,8 @@ class NumberFormat(spec: Spec) {
         }
         return if (spec.expType != ExponentNotationType.E) {
             when {
-                exponent == 0 && (spec.minExp == null || spec.minExp < 0)
-                              && (spec.maxExp == null || spec.maxExp > 0) -> ""
-                exponent == 1 && (spec.minExp == null || spec.minExp < 1)
-                              && (spec.maxExp == null || spec.maxExp > 1) -> MULT_SIGN + "10"
+                exponent == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
+                exponent == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
                 else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
             }
         } else {
