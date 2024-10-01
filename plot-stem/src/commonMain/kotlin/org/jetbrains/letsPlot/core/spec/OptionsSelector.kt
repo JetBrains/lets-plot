@@ -206,6 +206,3 @@ fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
 fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
     return provideMaps(query.dropLast(1), query.last()).asMutable()
 }
-
-fun emptyObj(): Map<String, Any?> = emptyMap()
-fun emptyData(): Map<String, List<Any?>> = emptyMap()

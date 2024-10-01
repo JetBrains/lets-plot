@@ -9,7 +9,8 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 
 @Suppress("UNCHECKED_CAST")
 fun parsePlotSpec(spec: String): MutableMap<String, Any> {
-    return spec.replace("'", "\"").let {
-        JsonSupport.parseJson(it) as MutableMap<String, Any>
-    }
+    return when (spec.first { it == '\'' || it == '"' }) {
+        '\'' -> JsonSupport.parseJson(spec.replace("'", "\""))
+        else -> JsonSupport.parseJson(spec)
+    } as MutableMap<String, Any>
 }

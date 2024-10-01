@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
-import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
-import org.jetbrains.letsPlot.core.spec.plotson.toJson
+import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.AGGREGATE
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.X
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.X2
@@ -66,6 +66,20 @@ internal class VegaPlotConverter private constructor(
                 } else {
                     geom = GeomKind.BAR
                     width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
+
+                    stat = when (encoding.has(X, AGGREGATE) to encoding.has(Y, AGGREGATE)) {
+                        true to false -> encoding.getString(X, AGGREGATE)
+                        false to true -> encoding.getString(Y, AGGREGATE)
+                        else -> null
+                    }.let { aggr ->
+                        when (aggr) {
+                            null -> identityStat()
+                            Encodings.Aggregate.COUNT -> countStat()
+                            Encodings.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
+                            Encodings.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
+                            else -> error("Unsupported aggregate function: $aggr")
+                        }
+                    }
                 }
 
                 initDataAndMappings()
@@ -94,7 +108,7 @@ internal class VegaPlotConverter private constructor(
 
                 plotOptions.appendLayer {
                     geom = GeomKind.POINT
-                    stat = StatKind.BOXPLOT_OUTLIER.name.lowercase()
+                    stat = boxplotOutlierStat()
                     initDataAndMappings()
                 }
             }

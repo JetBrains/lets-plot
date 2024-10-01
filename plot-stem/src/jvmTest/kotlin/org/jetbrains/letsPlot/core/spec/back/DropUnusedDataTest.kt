@@ -756,7 +756,7 @@ class DropUnusedDataTest {
             "layers": [
               {
                 "geom": "bar",
-                "data": { "x": [0, 0],  "g": ['a', 'b'] },
+                "data": { "x": [0, 0],  "g": ["a", "b"] },
                 "mapping": { "x": "x" },
                 "tooltips": { "lines": [ "@g" ] }
               }

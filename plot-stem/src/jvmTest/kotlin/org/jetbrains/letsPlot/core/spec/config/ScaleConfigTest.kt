@@ -221,11 +221,11 @@ class ScaleConfigTest {
               ]
             }""".trimIndent()
 
-        val scaleNameParam = "{ 'aesthetic': 'color', 'name': 'name from scale' }"
-        val asDiscreteLabelParam = "{ 'label': 'label from as_discrete' }"
-        val guideParam = "'color': { 'title': 'guide title' }"
-        val scaleNameParamWithGuide = "{ 'aesthetic': 'color', 'name': 'name from scale', " +
-                "'guide': {'name': 'legend', 'title': 'scale guide title'} }"
+        val scaleNameParam = """{ "aesthetic": "color", "name": "name from scale" }"""
+        val asDiscreteLabelParam = """{ "label": "label from as_discrete" }"""
+        val guideParam = """"color": { "title": "guide title" }"""
+        val scaleNameParamWithGuide = """{ "aesthetic": "color", "name": "name from scale", """ +
+                """"guide": {"name": "legend", "title": "scale guide title"} }"""
 
         // use variable name by default
         transformToClientPlotConfig(makePlotSpec())

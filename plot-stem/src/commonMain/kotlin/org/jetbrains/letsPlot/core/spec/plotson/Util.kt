@@ -12,15 +12,16 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.ThemeName
+import org.jetbrains.letsPlot.core.spec.StatKind
 
 fun PlotOptions.toJson(): MutableMap<String, Any> {
     return toJson(properties)
 }
 
-private fun toJson(v: Any?): Any? {
+internal fun toJson(v: Any?): Any? {
     return when (v) {
         null -> null
+        is InlineOptions -> null
         is Options -> toJson(v.toSpec())
         is List<*> -> v.map(::toJson)
         is Map<*, *> -> toJson(v)
@@ -28,8 +29,8 @@ private fun toJson(v: Any?): Any? {
     }
 }
 
-private fun toJson(prop: Map<*, *>): MutableMap<String, Any> {
-    return prop.mapNotNull { (key, value) ->
+private fun toJson(obj: Map<*, *>): MutableMap<String, Any> {
+    return obj.mapNotNull { (key, value) ->
         val specKey = standardise(key)
         require(specKey != null) { "Spec key can't be null" }
         require(specKey is String) { "Spec key should be a string, but was '${specKey::class.simpleName}'" }
@@ -54,7 +55,9 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is LineType -> null
         is MappingAnnotationOptions.AnnotationType -> v.value
         is MappingAnnotationOptions.OrderType -> v.value
-        is ThemeName -> v.value
+        is StatKind -> v.name.lowercase()
+        is ThemeOptions.ThemeName -> v.value
+        is SummaryStatOptions.AggFunction -> v.value
         else -> v.also {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // analyzer fails to see first check: null -> null
             println("WARNING: standardising unknown type: '${v!!::class.simpleName}'")

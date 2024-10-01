@@ -20,9 +20,9 @@ import kotlin.test.assertNull
 
 class ScaleOrderingTest {
     private val myData = """{
-        'x'   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C", "B", "C" ],
-        'fill':  [ '4', '2', '3', '3', '2', '3', '1', '1', '3', '4', '2', '2', '2' ],
-        'color': [ '1', '0', '2', '1', '1', '2', '1', '1', '0', '2', '0', '0', '0' ]
+        "x"   :  [ "B", "A", "B", "B", "A", "A", "A", "B", "B", "C", "C", "B", "C" ],
+        "fill":  [ "4", "2", "3", "3", "2", "3", "1", "1", "3", "4", "2", "2", "2" ],
+        "color": [ "1", "0", "2", "1", "1", "2", "1", "1", "0", "2", "0", "0", "0" ]
     }"""
     private val myMappingFill: String = """{ "x": "x", "fill": "fill" }"""
     private val myMappingFillColor = """{ "x": "x", "fill": "fill", "color": "color" }"""
@@ -494,8 +494,8 @@ class ScaleOrderingTest {
     @Test
     fun `order in the bar and in the legend should be the same`() {
         val data = """{
-            'x'   :  [ "A", "A", "A"],
-            'fill':  [ "2", "1", "3"]
+            "x"   :  [ "A", "A", "A"],
+            "fill":  [ "2", "1", "3"]
         }"""
         val orderingSettings = makeOrderingSettings("fill", "..count..", -1)
         val spec = makePlotSpec(orderingSettings, data = data)
@@ -513,8 +513,8 @@ class ScaleOrderingTest {
     @Test
     fun `all null values`() {
         val data = """{
-            'x'   :  [ null, null ],
-            'fill':  [ null, null ]
+            "x"   :  [ null, null ],
+            "fill":  [ null, null ]
         }"""
         val orderingSettings = makeOrderingSettings("fill", null, 1)
         val spec = makePlotSpec(orderingSettings, data = data)
@@ -529,8 +529,8 @@ class ScaleOrderingTest {
     @Test
     fun `'order by' variable has null value`() {
         val data = """{
-            'x'   :  [ "A", "A",  "A", "A"],
-            'fill':  [ "3", null, "1", "2"]
+            "x"   :  [ "A", "A",  "A", "A"],
+            "fill":  [ "3", null, "1", "2"]
         }"""
         run {
             //ascending
@@ -563,9 +563,9 @@ class ScaleOrderingTest {
     @Test
     fun `few ordering fields with null values`() {
         val data = """{
-            'x'   :  [ "A", "A", "A"],
-            'fill':  [ null, "v", null],
-            'color': [ '2', null, '1']
+            "x"   :  [ "A", "A", "A"],
+            "fill":  [ null, "v", null],
+            "color": [ "2", null, "1"]
         }"""
         run {
             // color ascending

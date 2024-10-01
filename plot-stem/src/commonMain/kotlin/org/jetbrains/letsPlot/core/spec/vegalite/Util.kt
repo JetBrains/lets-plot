@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.spec.plotson.MappingAnnotationOptions
 import org.jetbrains.letsPlot.core.spec.plotson.SeriesAnnotationOptions
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
+import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
     internal fun readMark(spec: Any): Pair<String, Map<*, *>> {
@@ -33,6 +34,9 @@ internal object Util {
             val json = when (url) {
                 "data/penguins.json" -> Penguins.json
                 "data/cars.json" -> Cars.json
+                "data/seattle-weather.csv" -> SeattleWeather.json
+                "data/population.json" -> Population.json
+                "data/barley.json" -> Barley.json
                 else -> error("Unsupported URL: $url")
             }
             mapOf(Option.Data.VALUES to JsonParser(json).parseJson())
@@ -45,6 +49,18 @@ internal object Util {
     fun iHorizontal(encodingVegaSpec: Map<*, *>): Boolean {
         return listOf(Channels.X, Channels.X2, Channels.Y).all(encodingVegaSpec::containsKey)
                 && Channels.Y2 !in encodingVegaSpec
+    }
+
+    fun isQuantitative(channelEncoding: Map<*, *>): Boolean {
+        if (channelEncoding[Encodings.TYPE] == Encodings.Types.QUANTITATIVE) return true
+        if (channelEncoding.contains(Encodings.BIN)) return true
+        when(channelEncoding.getString(Encodings.AGGREGATE)) {
+            null -> {} // continue checking
+            Encodings.Aggregate.ARGMAX, Encodings.Aggregate.ARGMIN -> return false
+            else -> return true
+        }
+
+        return false
     }
 
     fun transformMappings(

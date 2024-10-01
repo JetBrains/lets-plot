@@ -28,6 +28,10 @@ internal object Option {
 
         object Aggregate {
             const val COUNT = "count"
+            const val SUM = "sum"
+            const val MEAN = "mean"
+            const val ARGMIN = "argmin"
+            const val ARGMAX = "argmax"
         }
 
         object Channels {

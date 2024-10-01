@@ -508,6 +508,18 @@ object Option {
             const val FUN = "fun"
             const val FUN_MIN = "fun_min"
             const val FUN_MAX = "fun_max"
+
+            object Functions {
+                const val COUNT = "count"
+                const val SUM = "sum"
+                const val MEAN = "mean"
+                const val MEDIAN = "median"
+                const val MIN = "min"
+                const val MAX = "max"
+                const val LQ = "lq"
+                const val MQ = "mq"
+                const val UQ = "uq"
+            }
         }
     }
 

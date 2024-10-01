@@ -228,7 +228,7 @@ object StatProto {
                 "width" -> YDensityStat.Scale.WIDTH
                 else -> throw IllegalArgumentException(
                     "Unsupported scale: '$it'\n" +
-                    "Use one of: area, count, width."
+                            "Use one of: area, count, width."
                 )
             }
         }
@@ -444,34 +444,32 @@ object StatProto {
     }
 
     private fun getSummaryAggFunctions(options: OptionsAccessor): Triple<(List<Double>) -> Double, (List<Double>) -> Double, (List<Double>) -> Double> {
+        val (lq, mq, uq) = getSummaryQuantiles(options)
         return Triple(
-            getAggFunction(options, Summary.FUN) ?: AggregateFunctions::mean,
-            getAggFunction(options, Summary.FUN_MIN) ?: AggregateFunctions::min,
-            getAggFunction(options, Summary.FUN_MAX) ?: AggregateFunctions::max
+            options.getString(Summary.FUN)?.let { getAggFunction(it, lq, mq, uq) } ?: AggregateFunctions::mean,
+            options.getString(Summary.FUN_MIN)?.let { getAggFunction(it, lq, mq, uq) } ?: AggregateFunctions::min,
+            options.getString(Summary.FUN_MAX)?.let { getAggFunction(it, lq, mq, uq) } ?: AggregateFunctions::max
         )
     }
 
-    private fun getAggFunction(
-        options: OptionsAccessor,
-        option: String
-    ): ((List<Double>) -> Double)? {
-        return options.getString(option)?.let {
-            when (it.lowercase()) {
-                "count" -> AggregateFunctions::count
-                "sum" -> AggregateFunctions::sum
-                "mean" -> AggregateFunctions::mean
-                "median" -> AggregateFunctions::median
-                "min" -> AggregateFunctions::min
-                "max" -> AggregateFunctions::max
-                "lq" -> getSummaryQuantiles(options).let { (lq, _, _) -> { values -> AggregateFunctions.quantile(values, lq) } }
-                "mq" -> getSummaryQuantiles(options).let { (_, mq, _) -> { values -> AggregateFunctions.quantile(values, mq) } }
-                "uq" -> getSummaryQuantiles(options).let { (_, _, uq) -> { values -> AggregateFunctions.quantile(values, uq) } }
-                else -> throw IllegalArgumentException(
-                    "Unsupported function name: '$it'\n" +
-                    "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
-                )
-            }
-        }
+    private fun getAggFunction(funcName: String, lq: Double, mq: Double, uq: Double): ((List<Double>) -> Double) {
+        val functions = mapOf(
+            Summary.Functions.COUNT to AggregateFunctions::count,
+            Summary.Functions.SUM to AggregateFunctions::sum,
+            Summary.Functions.MEAN to AggregateFunctions::mean,
+            Summary.Functions.MEDIAN to AggregateFunctions::median,
+            Summary.Functions.MIN to AggregateFunctions::min,
+            Summary.Functions.MAX to AggregateFunctions::max,
+            Summary.Functions.LQ to { values -> AggregateFunctions.quantile(values, lq) },
+            Summary.Functions.MQ to { values -> AggregateFunctions.quantile(values, mq) },
+            Summary.Functions.UQ to { values -> AggregateFunctions.quantile(values, uq) }
+        )
+
+        return functions[funcName]
+            ?: throw IllegalArgumentException(
+                "Unsupported function name: '$funcName'\n" +
+                        "Use one of: ${functions.keys.joinToString()}."
+            )
     }
 
     private fun getSummaryQuantiles(options: OptionsAccessor): Triple<Double, Double, Double> {
