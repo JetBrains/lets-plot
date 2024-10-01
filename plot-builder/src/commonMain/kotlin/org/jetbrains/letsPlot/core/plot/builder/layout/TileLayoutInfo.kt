@@ -71,20 +71,6 @@ class TileLayoutInfo constructor(
         )
     }
 
-    fun withFacetLabels(xLabels: List<Pair<String, Double>>, yLabel: Pair<String, Double>?): TileLayoutInfo {
-        return TileLayoutInfo(
-            this.offset,
-            this.geomWithAxisBounds,
-            this.geomOuterBounds,
-            this.geomInnerBounds,
-            this.geomContentBounds,
-            this.axisInfos,
-            this.hAxisShown, this.vAxisShown,
-            xLabels, yLabel,
-            this.trueIndex
-        )
-    }
-
     fun withAxisShown(hAxisShown: Boolean, vAxisShown: Boolean): TileLayoutInfo {
         return TileLayoutInfo(
             this.offset,

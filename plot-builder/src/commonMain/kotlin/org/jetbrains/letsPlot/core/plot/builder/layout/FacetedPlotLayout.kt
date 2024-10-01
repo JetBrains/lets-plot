@@ -219,6 +219,23 @@ internal class FacetedPlotLayout(
                 layoutInfo.geomInnerBounds.dimension
             )
 
+            val xLabels = when (facetsTheme.horizontalFacetStrip().showStrip()) {
+                 true -> {
+                    val colHeights = facetColTabHeights[facetTile.row] ?: facetTile.colLabs.map {
+                        facetLabelSize(
+                            it,
+                            facetsTheme.horizontalFacetStrip(),
+                            marginSize = Thickness::height
+                        )
+                    }
+                    facetTile.colLabs.zip(colHeights)
+                }
+                false -> emptyList()
+            }
+            val yLabel = when (facetsTheme.verticalFacetStrip().showStrip()) {
+                true -> facetTile.rowLab?.let { it to facetRowTabWidth }
+                false -> null
+            }
             val newLayoutInfo = TileLayoutInfo(
                 tilesPaddingLeftTop,
                 geomWithAxisBounds = tileBounds.add(originDelta),
@@ -228,27 +245,11 @@ internal class FacetedPlotLayout(
                 layoutInfo.axisInfos,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
-                trueIndex = facetTile.trueIndex
+                trueIndex = facetTile.trueIndex,
+                facetXLabels = xLabels,
+                facetYLabel = yLabel
             )
-
-            finalLayoutInfos.add(
-                if (facetsTheme.horizontalFacetStrip().showStrip()) {
-                    val colHeights = facetColTabHeights[facetTile.row] ?: facetTile.colLabs.map {
-                        facetLabelSize(
-                            it,
-                            facetsTheme.horizontalFacetStrip(),
-                            marginSize = Thickness::height
-                        )
-                    }
-
-                    newLayoutInfo.withFacetLabels(
-                        facetTile.colLabs.zip(colHeights),
-                        facetTile.rowLab?.let { it to facetRowTabWidth }
-                    )
-                } else {
-                    newLayoutInfo
-                }
-            )
+            finalLayoutInfos.add(newLayoutInfo)
         }
 
         val plotInsets = Insets(tilesPaddingLeftTop, insets.rightBottom)
