@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT> : Scale {
@@ -35,7 +35,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         providedScaleBreaks = null
         labelLengthLimit = 0
         providedFormatter = null
-        expFormat = ExponentFormat(ExponentNotationType.E)
+        expFormat = DEF_EXPONENT_FORMAT
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {

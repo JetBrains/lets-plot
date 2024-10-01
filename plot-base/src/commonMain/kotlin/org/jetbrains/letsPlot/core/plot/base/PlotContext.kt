@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 interface PlotContext {
@@ -20,7 +20,7 @@ interface PlotContext {
 }
 
 object NullPlotContext : PlotContext {
-    override val expFormat = ExponentFormat(ExponentNotationType.E)
+    override val expFormat = DEF_EXPONENT_FORMAT
 
     override fun hasScale(aes: Aes<*>): Boolean = false
     override fun getScale(aes: Aes<*>): Scale = error("No scale for aesthetic $aes")

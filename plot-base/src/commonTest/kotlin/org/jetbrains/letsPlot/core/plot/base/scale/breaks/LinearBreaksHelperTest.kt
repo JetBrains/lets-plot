@@ -6,8 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import demoAndTestShared.assertArrayEquals
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import kotlin.math.sign
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -134,7 +133,7 @@ class LinearBreaksHelperTest {
         }
 
         private fun computeBreaks(domainStart: Double, domainEnd: Double, targetCount: Int): Array<Double> {
-            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, null, ExponentFormat(ExponentNotationType.E))
+            val helper = LinearBreaksHelper(domainStart, domainEnd, targetCount, null, DEF_EXPONENT_FORMAT)
             return helper.breaks.toTypedArray()
         }
 

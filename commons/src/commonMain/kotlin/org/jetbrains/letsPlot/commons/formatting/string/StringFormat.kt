@@ -115,7 +115,11 @@ class StringFormat private constructor(
         val notationType: ExponentNotationType,
         val min: Int? = null,
         val max: Int? = null
-    )
+    ) {
+        companion object {
+            val DEF_EXPONENT_FORMAT = ExponentFormat(ExponentNotationType.E)
+        }
+    }
 
     companion object {
         // Format strings contain “replacement fields” surrounded by braces {}.

@@ -38,7 +38,7 @@ internal class NumericBreakFormatter(
 
 
         var type = "f"
-        var delimiter = ""
+        var comma = false
 
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
@@ -58,26 +58,31 @@ internal class NumericBreakFormatter(
             precision = 0.0
             type = "d"
         }
-        // round-up precision ulless it's very close to smaller int.
+        // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
         if (scientificNotation) {
             // generate 'engineering notation', in which the exponent is a multiple of three
             type = if (domain10Power > 0 && allowMetricPrefix && expFormat.notationType == ExponentNotationType.E) "s" else "e"
         } else {
-            delimiter = ","
+            comma = true
+        }
+        val trim = type == "e" && expFormat.notationType != ExponentNotationType.E
+        val expType = if (trim) {
+            ExponentNotationType.bySymbol(expFormat.notationType.symbol)
+        } else {
+            ExponentNotationType.E
         }
 
-        val exponentNotationType = if (type == "e" && expFormat.notationType != ExponentNotationType.E) "&${expFormat.notationType.symbol}" else ""
-        val trim = if (type == "e" && expFormat.notationType != ExponentNotationType.E) "~" else ""
-        val limits = when {
-            expFormat.min != null && expFormat.max != null -> "{${expFormat.min},${expFormat.max}}"
-            expFormat.min != null -> "{${expFormat.min},}"
-            expFormat.max != null -> "{,${expFormat.max}}"
-            else -> ""
-        }
-
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$exponentNotationType$limits")
+        formatter = NumberFormat(NumberFormat.Spec(
+            comma = comma,
+            precision = precision.toInt(),
+            trim = trim,
+            type = type,
+            expType = expType,
+            minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
+            maxExp = expFormat.max ?: precision.toInt()
+        ))
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)

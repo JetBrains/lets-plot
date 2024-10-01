@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
@@ -34,7 +33,7 @@ class DateTimeBreaksHelper(
             dateTimeFormatter = interval.getFormatter(step)
             pattern = interval.formatPattern(step)
             // compute step so that it is multiple of automatic time steps
-            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, ExponentFormat(ExponentNotationType.E)).breaks
+            breaks = LinearBreaksHelper(rangeStart, rangeEnd, count, DUMMY_FORMATTER, DEF_EXPONENT_FORMAT).breaks
 
         } else {
 
@@ -65,7 +64,7 @@ class DateTimeBreaksHelper(
                     startYear.toDouble(),
                     endYear.toDouble(),
                     count,
-                    expFormat = ExponentFormat(ExponentNotationType.E),
+                    expFormat = DEF_EXPONENT_FORMAT,
                     providedFormatter = DUMMY_FORMATTER
                 )
                 for (tickYear in helper.breaks) {
