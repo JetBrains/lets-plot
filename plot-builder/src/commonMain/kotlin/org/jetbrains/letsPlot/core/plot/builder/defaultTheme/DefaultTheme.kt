@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
@@ -38,7 +39,7 @@ class DefaultTheme internal constructor(
                 when (it) {
                     is ExponentFormat -> it
                     is ExponentFormat.NotationType -> ExponentFormat(it)
-                    else -> ExponentFormat(ExponentFormat.NotationType.E)
+                    else -> DEF_EXPONENT_FORMAT
                 }
             }
         }

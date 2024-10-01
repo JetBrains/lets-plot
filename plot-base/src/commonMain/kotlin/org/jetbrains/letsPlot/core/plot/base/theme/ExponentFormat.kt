@@ -13,4 +13,8 @@ data class ExponentFormat(
     enum class NotationType {
         E, POW, POW_FULL
     }
+
+    companion object {
+        val DEF_EXPONENT_FORMAT = ExponentFormat(NotationType.E)
+    }
 }
