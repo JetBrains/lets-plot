@@ -35,13 +35,15 @@ class DefaultTheme internal constructor(
 
     override val exponentFormat: ExponentFormat
         get() {
-            return options[ThemeOption.EXPONENT_FORMAT].let {
+            return options[ThemeOption.EXPONENT_FORMAT]?.let {
                 when (it) {
                     is ExponentFormat -> it
                     is ExponentFormat.NotationType -> ExponentFormat(it)
-                    else -> DEF_EXPONENT_FORMAT
+                    else -> throw IllegalArgumentException(
+                        "Illegal value: '$it'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
+                    )
                 }
-            }
+            } ?: DEF_EXPONENT_FORMAT
         }
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
