@@ -245,7 +245,7 @@ class CorrPlotOptionsBuilder private constructor(
                         keepDiag = keepDiag || combinedType == FULL,
                         threshold
                     )
-                    mappings = mapOf(
+                    mapping = Mapping(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.FILL to CorrVar.CORR,
@@ -268,7 +268,7 @@ class CorrPlotOptionsBuilder private constructor(
                         keepDiag = keepDiag || combinedType == FULL,
                         threshold
                     )
-                    mappings = mapOf(
+                    mapping = Mapping(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.SIZE to CorrVar.CORR_ABS,
@@ -290,7 +290,7 @@ class CorrPlotOptionsBuilder private constructor(
                         keepDiag = keepDiag || combinedType == FULL,
                         threshold
                     )
-                    mappings = mapOf(
+                    mapping = Mapping(
                         Aes.X to CorrVar.X,
                         Aes.Y to CorrVar.Y,
                         Aes.LABEL to CorrVar.CORR,

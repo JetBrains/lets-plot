@@ -23,13 +23,9 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.*
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.conversion.ShapeOptionConverter
-import org.jetbrains.letsPlot.core.spec.plotson.LayerOptions
+import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.Options.PropSpec
-import org.jetbrains.letsPlot.core.spec.plotson.PlotOptions
 import org.jetbrains.letsPlot.core.spec.plotson.ThemeOptions.ThemeName
-import org.jetbrains.letsPlot.core.spec.plotson.plot
-import org.jetbrains.letsPlot.core.spec.plotson.scale
-import org.jetbrains.letsPlot.core.spec.plotson.theme
 
 class QQPlotOptionsBuilder(
     data: Map<*, *>,
@@ -54,14 +50,14 @@ class QQPlotOptionsBuilder(
     private val statData = getStatData(standardiseData(data), distribution, distributionParameters)
 
     fun build(): PlotOptions {
-        val mappings = getMappings(sample, x, y, group)
+        val mapping = getMappings(sample, x, y, group)
         val scaleNames = getScaleNames(sample, x, y, distribution)
         return plot {
             layerOptions = listOf(
                 LayerOptions().also {
                     it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
                     it.data = statData
-                    it.mappings = mappings
+                    it.mapping = mapping
                     it[DISTRIBUTION_PROP] = distribution
                     it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
                     it[QUANTILES_PROP] = quantiles
@@ -75,7 +71,7 @@ class QQPlotOptionsBuilder(
                 LayerOptions().also {
                     it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
                     it.data = statData
-                    it.mappings = mappings
+                    it.mapping = mapping
                     it[DISTRIBUTION_PROP] = distribution
                     it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
                     it[QUANTILES_PROP] = quantiles
@@ -114,31 +110,22 @@ class QQPlotOptionsBuilder(
         x: String?,
         y: String?,
         group: String?
-    ): HashMap<Aes<*>, String> {
-        val mappings: HashMap<Aes<*>, String> = if (sample != null) {
-            require(x == null)
-                { "Parameter x shouldn't be specified when parameter sample is." }
-            require(y == null)
-                { "Parameter y shouldn't be specified when parameter sample is." }
-            hashMapOf(
-                Pair(Aes.SAMPLE, sample)
-            )
+    ): Mapping {
+        var mapping = if (sample != null) {
+            require(x == null) { "Parameter x shouldn't be specified when parameter sample is." }
+            require(y == null) { "Parameter y shouldn't be specified when parameter sample is." }
+            Mapping(Aes.SAMPLE to sample)
         } else {
-            require(x != null)
-                { "Parameter x should be specified when parameter sample isn't." }
-            require(y != null)
-                { "Parameter y should be specified when parameter sample isn't." }
-            hashMapOf(
-                Pair(Aes.X, x!!),
-                Pair(Aes.Y, y!!)
-            )
+            require(x != null) { "Parameter x should be specified when parameter sample isn't." }
+            require(y != null) { "Parameter y should be specified when parameter sample isn't." }
+            Mapping(Aes.X to x, Aes.Y to y)
         }
         if (group != null) {
-            mappings[Aes.COLOR] = group
-            mappings[Aes.FILL] = group
+            mapping += Aes.COLOR to group
+            mapping += Aes.FILL to group
         }
 
-        return mappings
+        return mapping
     }
 
     private fun getScaleNames(
@@ -180,12 +167,12 @@ class QQPlotOptionsBuilder(
     }
 
     private fun getMarginalLayer(geomKind: GeomKind, side: MarginSide, size: Double?): LayerOptions {
-        val mappings = getMarginalMappings(sample, x, y, group, side)
+        val mapping = getMarginalMappings(sample, x, y, group, side)
         val orientation = if ((geomKind == GeomKind.BOX_PLOT).xor(MarginSide.isVerticallyOriented(side))) "y" else "x"
         return LayerOptions().also {
             it.geom = geomKind
             it.data = statData
-            it.mappings = mappings
+            it.mapping = mapping
             it.orientation = orientation
             it.marginal = true
             it.marginSide = side.value
@@ -234,22 +221,18 @@ class QQPlotOptionsBuilder(
         y: String?,
         group: String?,
         side: MarginSide
-    ): HashMap<Aes<*>, String> {
-        val mappings: HashMap<Aes<*>, String> = if (MarginSide.isVerticallyOriented(side)) {
-            hashMapOf(
-                Pair(Aes.Y, sample ?: y!!)
-            )
+    ): Mapping {
+        var mapping = if (MarginSide.isVerticallyOriented(side)) {
+            Mapping(Aes.Y to (sample ?: y!!))
         } else {
-            hashMapOf(
-                Pair(Aes.X, if (sample != null) THEORETICAL_VAR.name else x!!)
-            )
+            Mapping(Aes.X to (if (sample != null) THEORETICAL_VAR.name else x!!))
         }
         if (group != null) {
-            mappings[Aes.COLOR] = group
-            mappings[Aes.FILL] = group
+            mapping += Aes.COLOR to group
+            mapping += Aes.FILL to group
         }
 
-        return mappings
+        return mapping
     }
 
     private fun <T, R : Comparable<R>> Iterable<T>.sortedIndices(selector: (IndexedValue<T>) -> R?) =

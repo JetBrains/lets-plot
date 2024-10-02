@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.GROUP
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
@@ -165,18 +166,19 @@ class DataTransformTest {
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(PlotBase.DATA, mapOf("B" to listOf(4.0, 5.0, 6.0))),
             entry(PlotBase.MAPPING, mapOf("x" to "B")),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to "x",
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "B",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "x",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "B",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )
             )
         )
     }
@@ -209,34 +211,39 @@ class DataTransformTest {
         assertThat(spec.getMap(PlotBase.DATA)).isNull()
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
-            entry(PlotBase.DATA, mapOf(
-                "A" to listOf(1.0, 2.0, 3.0),
-                "B" to listOf(4.0, 5.0, 6.0)
-            )),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "A",
-                toOption(Aes.Y) to "B"
-            )),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to "x",
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "A",
-                            Meta.MappingAnnotation.ORDER to 1
-                        )
-                    ),
-                    mapOf(
-                        Meta.MappingAnnotation.AES to "y",
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "B",
-                            Meta.MappingAnnotation.ORDER to 1
-                        )
-                    ),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "A" to listOf(1.0, 2.0, 3.0),
+                    "B" to listOf(4.0, 5.0, 6.0)
                 )
-            )
+            ),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "A",
+                    toOption(Aes.Y) to "B"
+                )
+            ),
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "x",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "A",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
+                        ),
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "y",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "B",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
+                        ),
+                    )
+                )
             )
         )
     }
@@ -267,18 +274,19 @@ class DataTransformTest {
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(PlotBase.DATA, mapOf("A" to listOf(1.0, 2.0, 3.0))),
             entry(PlotBase.MAPPING, mapOf("x" to "A")),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to "x",
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "A",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "x",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "A",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )
             )
         )
     }
@@ -308,19 +316,49 @@ class DataTransformTest {
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(PlotBase.DATA, mapOf("A" to listOf(1.0, 2.0, 3.0))),
             entry(PlotBase.MAPPING, mapOf("x" to "A")),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to "x",
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "A",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "x",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "A",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-                )
             )
         )
+    }
+
+    @Test
+    fun groupingVarMapping() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"A": 1, "B": "Foo"}, 
+                |      {"A": 2, "B": "Bar"}
+                |    ]
+                |  },
+                |  "mark": "point",
+                |  "encoding": {
+                |    "x": {"field": "A"},
+                |    "detail": {"field": "B"}
+                |  }
+                |}
+        """.trimMargin()
+        ).filterNotNullValues().asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+        spec.getMap(Plot.LAYERS, 0, PlotBase.MAPPING).let {
+            assertThat(it).containsOnly(
+                entry(toOption(Aes.X), "A"),
+                entry(GROUP, "B")
+            )
+        }
     }
 }

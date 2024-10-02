@@ -374,4 +374,28 @@ class BarMarkTransformTest {
         )
     }
 
+    @Test
+    fun barColorMustBeMappedToFill() {
+        val vegaSpec = parseJson("""
+            |{
+            |    "data": {
+            |        "values": [ {"a": "A"} ]
+            |    },
+            |    "mark": "bar",
+            |    "encoding": {
+            |        "x": {"field": "a"},
+            |        "color": {"field": "a"}
+            |    }
+            |}
+        """.trimMargin()).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getString(Plot.LAYERS, 0, PlotBase.MAPPING, toOption(Aes.COLOR)))
+            .isEqualTo("a")
+
+        assertThat(plotSpec.getString(Plot.LAYERS, 0, PlotBase.MAPPING, toOption(Aes.FILL)))
+            .isEqualTo("a")
+    }
+
 }

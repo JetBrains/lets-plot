@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.StatKind
 
 fun PlotOptions.toJson(): MutableMap<String, Any> {
@@ -48,11 +49,12 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is Boolean -> v
         is Color -> v.toHexColor()
         is GeomKind -> Option.GeomName.fromGeomKind(v)
-        is Aes<*> -> Option.Mapping.toOption(v)
+        is Aes<*> -> toOption(v)
         is Pair<*, *> -> listOf(v.first, v.second)
         is PointShape -> v.code
         is NamedLineType -> v.code
         is LineType -> null
+        is Mapping -> v.toSpec()
         is MappingAnnotationOptions.AnnotationType -> v.value
         is MappingAnnotationOptions.OrderType -> v.value
         is StatKind -> v.name.lowercase()

@@ -11,20 +11,35 @@ internal object Option {
     const val MARK = "mark"
     const val FACET = "facet"
     const val REPEAT = "repeat"
+    const val ENCODING = "encoding"
 
     object Data {
         const val VALUES = "values"
         const val URL = "url"
     }
 
-    object Encodings {
-        const val ENCODING = "encoding"
+    object Encoding {
         const val FIELD = "field"
         const val VALUE = "value"
-        const val TYPE = "type"
-        const val BIN = "bin"
-        const val TIMEUNIT = "timeUnit"
-        const val AGGREGATE = "aggregate"
+
+        object Property {
+            const val TYPE = "type"
+            const val BIN = "bin"
+            const val TIMEUNIT = "timeUnit"
+            const val AGGREGATE = "aggregate"
+            const val BAND = "band"
+            const val TITLE = "title"
+
+            const val SCALE = "scale"
+            const val AXIS = "axis"
+            const val LEGEND = "legend"
+            const val FORMAT = "format"
+            const val STACK = "stack"
+            const val SORT = "sort"
+            const val CONDITION = "condition"
+            const val TOOLTIP = "tooltip"
+            const val FORMAT_TYPE = "formatType"
+        }
 
         object Aggregate {
             const val COUNT = "count"
@@ -34,7 +49,13 @@ internal object Option {
             const val ARGMAX = "argmax"
         }
 
-        object Channels {
+        object Stack {
+            const val ZERO = "zero"
+            const val NORMALIZE = "normalize"
+            const val CENTER = "center"
+        }
+
+        object Channel {
             const val X = "x"
             const val Y = "y"
             const val X2 = "x2"
@@ -52,6 +73,7 @@ internal object Option {
             const val ANGLE = "angle"
             const val SHAPE = "shape"
             const val TEXT = "text"
+            const val DETAIL = "detail"
 
             const val ERROR_X = "errorX"
         }

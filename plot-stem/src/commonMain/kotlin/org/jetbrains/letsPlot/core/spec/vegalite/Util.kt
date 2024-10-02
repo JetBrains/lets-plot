@@ -7,13 +7,12 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonParser
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.spec.PosProto
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.getString
-import org.jetbrains.letsPlot.core.spec.plotson.DataMetaOptions
-import org.jetbrains.letsPlot.core.spec.plotson.MappingAnnotationOptions
-import org.jetbrains.letsPlot.core.spec.plotson.SeriesAnnotationOptions
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels
+import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
@@ -47,16 +46,16 @@ internal object Util {
     }
 
     fun iHorizontal(encodingVegaSpec: Map<*, *>): Boolean {
-        return listOf(Channels.X, Channels.X2, Channels.Y).all(encodingVegaSpec::containsKey)
-                && Channels.Y2 !in encodingVegaSpec
+        return listOf(Channel.X, Channel.X2, Channel.Y).all(encodingVegaSpec::containsKey)
+                && Channel.Y2 !in encodingVegaSpec
     }
 
     fun isQuantitative(channelEncoding: Map<*, *>): Boolean {
-        if (channelEncoding[Encodings.TYPE] == Encodings.Types.QUANTITATIVE) return true
-        if (channelEncoding.contains(Encodings.BIN)) return true
-        when(channelEncoding.getString(Encodings.AGGREGATE)) {
+        if (channelEncoding[Encoding.Property.TYPE] == Encoding.Types.QUANTITATIVE) return true
+        if (channelEncoding.contains(Encoding.Property.BIN)) return true
+        when(channelEncoding.getString(Encoding.Property.AGGREGATE)) {
             null -> {} // continue checking
-            Encodings.Aggregate.ARGMAX, Encodings.Aggregate.ARGMIN -> return false
+            Encoding.Aggregate.ARGMAX, Encoding.Aggregate.ARGMIN -> return false
             else -> return true
         }
 
@@ -66,14 +65,15 @@ internal object Util {
     fun transformMappings(
         encodingVegaSpec: Map<*, Map<*, *>>,
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
-    ): Map<Aes<*>, String> {
+    ): Mapping {
+        val groupingVar = encodingVegaSpec.getString(Channel.DETAIL, Encoding.FIELD)
         return encodingVegaSpec
             .flatMap { (channel, encoding) ->
                 val aesthetics = channelToAes(channel.toString(), customChannelMapping)
-                val field = encoding.getString(Encodings.FIELD) ?: return@flatMap emptyList()
+                val field = encoding.getString(Encoding.FIELD) ?: return@flatMap emptyList()
 
                 aesthetics.map { aes -> aes to field }
-            }.toMap()
+            }.fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
     }
 
     private fun channelToAes(
@@ -81,16 +81,16 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): List<Aes<*>> {
         val defaultChannelMapping = listOf(
-            Channels.X to Aes.X,
-            Channels.Y to Aes.Y,
-            Channels.COLOR to Aes.COLOR,
-            Channels.FILL to Aes.FILL,
-            Channels.OPACITY to Aes.ALPHA,
-            Channels.STROKE to Aes.STROKE,
-            Channels.SIZE to Aes.SIZE,
-            Channels.ANGLE to Aes.ANGLE,
-            Channels.SHAPE to Aes.SHAPE,
-            Channels.TEXT to Aes.LABEL
+            Channel.X to Aes.X,
+            Channel.Y to Aes.Y,
+            Channel.COLOR to Aes.COLOR,
+            Channel.FILL to Aes.FILL,
+            Channel.OPACITY to Aes.ALPHA,
+            Channel.STROKE to Aes.STROKE,
+            Channel.SIZE to Aes.SIZE,
+            Channel.ANGLE to Aes.ANGLE,
+            Channel.SHAPE to Aes.SHAPE,
+            Channel.TEXT to Aes.LABEL
         ).groupBy { (ch, _) -> ch }
 
         @Suppress("NAME_SHADOWING")
@@ -115,33 +115,33 @@ internal object Util {
             val ch = entry.key as? String ?: return@forEach
             val encoding = entry.value
 
-            if (ch == Channels.X2 || ch == Channels.Y2) {
+            if (ch == Channel.X2 || ch == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
                 // Yet need to check sorting and other options - they may affect series_meta or mapping_meta
                 return@forEach
             }
 
-            val encField = encoding.getString(Encodings.FIELD) ?: return@forEach
-            val encType = encoding[Encodings.TYPE] ?: when {
-                Encodings.TIMEUNIT in encoding -> Encodings.Types.QUANTITATIVE
-                Encodings.BIN in encoding -> Encodings.Types.QUANTITATIVE
-                Encodings.AGGREGATE in encoding -> Encodings.Types.QUANTITATIVE
-                else -> Encodings.Types.NOMINAL
+            val encField = encoding.getString(Encoding.FIELD) ?: return@forEach
+            val encType = encoding[Encoding.Property.TYPE] ?: when {
+                Encoding.Property.TIMEUNIT in encoding -> Encoding.Types.QUANTITATIVE
+                Encoding.Property.BIN in encoding -> Encoding.Types.QUANTITATIVE
+                Encoding.Property.AGGREGATE in encoding -> Encoding.Types.QUANTITATIVE
+                else -> Encoding.Types.NOMINAL
             }
 
             when (encType) {
-                Encodings.Types.QUANTITATIVE -> {
+                Encoding.Types.QUANTITATIVE -> {
                     // lp already treats data as continuous by default
                 }
 
-                Encodings.Types.TEMPORAL -> {
+                Encoding.Types.TEMPORAL -> {
                     dataMeta.appendSeriesAnnotation {
                         type = SeriesAnnotationOptions.Types.DATE_TIME
                         column = encField
                     }
                 }
 
-                Encodings.Types.NOMINAL, Encodings.Types.ORDINAL -> {
+                Encoding.Types.NOMINAL, Encoding.Types.ORDINAL -> {
                     if(ownData?.get(encField)?.all { it is String } == true
                         || commonData?.get(encField)?.all { it is String } == true
                         ) {
@@ -166,5 +166,18 @@ internal object Util {
         }
 
         return dataMeta
+    }
+
+    fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
+        val xStack = encodings.getString(Channel.X, Encoding.Property.STACK)
+        val yStack = encodings.getString(Channel.Y, Encoding.Property.STACK)
+
+        val stack = xStack ?: yStack ?: return null
+
+        return when (stack) {
+            Encoding.Stack.ZERO -> PositionOptions().apply { name = PosProto.STACK }
+            Encoding.Stack.NORMALIZE -> PositionOptions().apply { name = PosProto.FILL }
+            else -> error("Unsupported stack type: $stack")
+        }
     }
 }

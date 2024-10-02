@@ -187,7 +187,7 @@ class WaterfallPlotOptionsBuilder(
         return LayerOptions().also {
             it.geom = GeomKind.CROSS_BAR
             it.data = DataFrameUtil.toMap(statDf)
-            it.mappings = boxMappings()
+            it.mapping = boxMappings()
             it.color = color.takeUnless { color == COLOR_FLOW_TYPE }
             it.fill = fill.takeUnless { fill == COLOR_FLOW_TYPE }
             it.size = size
@@ -199,19 +199,19 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun boxMappings(): Map<Aes<*>, String> {
-        val mappings = mutableMapOf<Aes<*>, String>(
+    private fun boxMappings(): Mapping {
+        var mapping = Mapping(
             Aes.X to Waterfall.Var.Stat.X.name,
             Aes.YMIN to Waterfall.Var.Stat.YMIN.name,
             Aes.YMAX to Waterfall.Var.Stat.YMAX.name
         )
         if (color == COLOR_FLOW_TYPE) {
-            mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
+            mapping += Aes.COLOR to Waterfall.Var.Stat.FLOW_TYPE.name
         }
         if (fill == COLOR_FLOW_TYPE) {
-            mappings[Aes.FILL] = Waterfall.Var.Stat.FLOW_TYPE.name
+            mapping += Aes.FILL to Waterfall.Var.Stat.FLOW_TYPE.name
         }
-        return mappings
+        return mapping
     }
 
     private fun hLineOptions(): LayerOptions? {
@@ -231,7 +231,7 @@ class WaterfallPlotOptionsBuilder(
         return LayerOptions().also {
             it.geom = GeomKind.SPOKE
             it.data = DataFrameUtil.toMap(df)
-            it.mappings = mapOf(
+            it.mapping = Mapping(
                 Aes.X to Waterfall.Var.Stat.X.name,
                 Aes.Y to Waterfall.Var.Stat.VALUE.name,
                 Aes.RADIUS to Waterfall.Var.Stat.RADIUS.name
@@ -252,7 +252,7 @@ class WaterfallPlotOptionsBuilder(
         return LayerOptions().also {
             it.geom = GeomKind.TEXT
             it.data = DataFrameUtil.toMap(labelData)
-            it.mappings = labelMappings()
+            it.mapping = labelMappings()
             it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
             it.family = labelOptions.family
             it.fontface = labelOptions.face
@@ -265,16 +265,17 @@ class WaterfallPlotOptionsBuilder(
         }
     }
 
-    private fun labelMappings(): Map<Aes<*>, String> {
-        val mappings = mutableMapOf<Aes<*>, String>(
+    private fun labelMappings(): Mapping {
+        var mapping = Mapping(
             Aes.X to Waterfall.Var.Stat.X.name,
             Aes.Y to Waterfall.Var.Stat.YMIDDLE.name,
             Aes.LABEL to Waterfall.Var.Stat.LABEL.name,
         )
         if (labelOptions.color == COLOR_FLOW_TYPE) {
-            mappings[Aes.COLOR] = Waterfall.Var.Stat.FLOW_TYPE.name
+            mapping += Aes.COLOR to Waterfall.Var.Stat.FLOW_TYPE.name
         }
-        return mappings
+
+        return mapping
     }
 
     enum class Measure(val value: String) {

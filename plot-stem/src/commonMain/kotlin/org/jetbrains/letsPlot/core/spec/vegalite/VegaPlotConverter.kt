@@ -11,13 +11,13 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.AGGREGATE
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.COLOR
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.X
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.X2
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.Y
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encodings.Channels.Y2
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.COLOR
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X2
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y2
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Property.AGGREGATE
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
 
@@ -31,7 +31,7 @@ internal class VegaPlotConverter private constructor(
     }
 
     private val plotData: Map<String, List<Any?>> = Util.transformData(vegaPlotSpec.getMap(Option.DATA) ?: emptyMap())
-    private val plotEncoding = (vegaPlotSpec.getMap(Encodings.ENCODING) ?: emptyMap()).asMapOfMaps()
+    private val plotEncoding = (vegaPlotSpec.getMap(Option.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
@@ -46,7 +46,7 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
         val (markType, markVegaSpec) = readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
-        val encoding = (plotEncoding + (layerSpec.getMap(Encodings.ENCODING) ?: emptyMap())).asMapOfMaps()
+        val encoding = (plotEncoding + (layerSpec.getMap(Option.ENCODING) ?: emptyMap())).asMapOfMaps()
 
         fun LayerOptions.initDataAndMappings(vararg customChannelMapping: Pair<String, Aes<*>>) {
             data = when {
@@ -55,20 +55,20 @@ internal class VegaPlotConverter private constructor(
                 layerSpec[Option.DATA] != null -> Util.transformData(layerSpec.getMap(Option.DATA)!!) // data is specified
                 else -> error("Unsupported data specification")
             }
-            mappings = Util.transformMappings(encoding, customChannelMapping.toList())
+            mapping = Util.transformMappings(encoding, customChannelMapping.toList())
             dataMeta = Util.transformDataMeta(data, plotData, encoding, customChannelMapping.toList())
         }
 
         when (markType) {
             Mark.Types.BAR -> plotOptions.appendLayer {
-                if (encoding.values.any { Encodings.BIN in it }) {
+                if (encoding.values.any { Encoding.Property.BIN in it }) {
                     initDataAndMappings()
                     geom = GeomKind.HISTOGRAM
                 } else if (encoding.any { (channel, _) -> channel == X2 || channel == Y2 }) {
                     initDataAndMappings(X to Aes.XMIN, Y to Aes.YMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
                     geom = GeomKind.RECT
                 } else {
-                    initDataAndMappings()
+                    initDataAndMappings(COLOR to Aes.FILL, COLOR to Aes.COLOR)
                     geom = GeomKind.BAR
                     width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
 
@@ -79,14 +79,15 @@ internal class VegaPlotConverter private constructor(
                     }.let { aggr ->
                         when (aggr) {
                             null -> identityStat()
-                            Encodings.Aggregate.COUNT -> countStat()
-                            Encodings.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
-                            Encodings.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
+                            Encoding.Aggregate.COUNT -> countStat()
+                            Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
+                            Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
                             else -> error("Unsupported aggregate function: $aggr")
                         }
                     }
-                }
 
+                    position = Util.transformPositionAdjust(encoding)
+                }
             }
 
             Mark.Types.LINE, Mark.Types.TRAIL -> plotOptions.appendLayer {
