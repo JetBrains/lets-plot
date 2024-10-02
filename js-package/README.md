@@ -31,3 +31,18 @@ CDN link to release artifact looks like:
 `https://github.com/JetBrains/lets-plot/releases/download/<RELEASE_VERSION>/lets-plot.min.js`
 
 For example: https://github.com/JetBrains/lets-plot/releases/download/v3.2.0/lets-plot.min.js
+                                                                                                       
+## Local Dev
+
+The "dev" version of JS library can be served from `js-package/build/dist/js/developmentExecutable` folder:
+
+```
+$ cd lets-plot
+
+# Build developened JS package:
+$ ./gradlew js-package:jsBrowserDevelopmentWebpack
+  
+# Start local web-server to serve dev js script:
+$ python -m http.server 8080
+```
+

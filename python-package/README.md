@@ -41,11 +41,15 @@ When the "dev" version is built, `lets-plot` embeds current "dev" js into Jupyte
 
 If necessary, this default can be temporarily overwritten by editing `dev_xxx` settings in `_global_settings.py`
 
-The "dev" version of js library can be served from `dist` folder of **js-package** project like:
+The "dev" version of JS library can be served from `js-package/build/dist/js/developmentExecutable` folder (in **js-package** project):
 
-```shell script
-# Start local web-server to serve dev js script:
+```
 $ cd lets-plot
+
+# Build developened JS package:
+$ ./gradlew js-package:jsBrowserDevelopmentWebpack
+  
+# Start local web-server to serve dev js script:
 $ python -m http.server 8080
 ```
  
