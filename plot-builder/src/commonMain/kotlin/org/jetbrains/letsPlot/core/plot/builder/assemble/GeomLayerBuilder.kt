@@ -50,7 +50,6 @@ class GeomLayerBuilder(
 ) {
 
     private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
-    private var mySuperscriptExponent: Boolean = false
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
     private var myGroupingVarName: String? = null
@@ -165,11 +164,6 @@ class GeomLayerBuilder(
 
     fun geomTheme(geomTheme: GeomTheme): GeomLayerBuilder {
         myGeomTheme = geomTheme
-        return this
-    }
-
-    fun superscriptExponent(superscriptExponent: Boolean): GeomLayerBuilder {
-        mySuperscriptExponent = superscriptExponent
         return this
     }
 

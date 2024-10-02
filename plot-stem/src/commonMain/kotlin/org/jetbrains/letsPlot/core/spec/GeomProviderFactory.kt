@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
@@ -55,7 +57,7 @@ internal object GeomProviderFactory {
         geomKind: GeomKind,
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        superscriptExponent: Boolean
+        expFormat: ExponentFormat
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.AREA -> GeomProvider.area {
@@ -288,14 +290,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom, superscriptExponent)
+                applyTextOptions(layerConfig, geom, expFormat)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom, superscriptExponent)
+                applyTextOptions(layerConfig, geom, expFormat)
                 layerConfig.getDouble(Option.Geom.Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_R)?.let { geom.radiusFactor = it }
                 layerConfig.getDouble(Option.Geom.Label.LABEL_SIZE)?.let { geom.borderWidth = it }
@@ -405,9 +407,9 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, superscriptExponent: Boolean) {
+    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(it, superscriptExponent = superscriptExponent)::format
+            geom.formatter = StringFormat.forOneArg(it, expFormat = PlotAssembler.extractExponentFormat(expFormat))::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it

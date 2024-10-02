@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig
@@ -131,7 +132,11 @@ internal object PlotGeomTilesUtil {
         theme: Theme
     ): GeomLayerBuilder {
         val geomProvider =
-            layerConfig.geomProto.geomProvider(layerConfig, layerConfig.aopConversion, theme.exponentFormat.superscript)
+            layerConfig.geomProto.geomProvider(
+                layerConfig,
+                layerConfig.aopConversion,
+                expFormat = theme.exponentFormat
+            )
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -150,8 +155,6 @@ internal object PlotGeomTilesUtil {
 
         // geomTheme
         layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
-
-        layerBuilder.superscriptExponent(theme.exponentFormat.superscript)
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

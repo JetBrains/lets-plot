@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
@@ -20,7 +21,7 @@ internal class NonlinearBreaksHelper(
     rangeEnd: Double,
     targetCount: Int,
     private val providedFormatter: ((Any) -> String)?,
-    superscriptExponent: Boolean,
+    expFormat: ExponentFormat,
     transform: ContinuousTransform,
     niceLogBreaks: Boolean,
 ) : BreaksHelperBase(rangeStart, rangeEnd, targetCount) {
@@ -55,13 +56,13 @@ internal class NonlinearBreaksHelper(
                 transformedDomain.upperEnd,
                 targetCount,
                 providedFormatter = DUMMY_FORMATTER,
-                superscriptExponent,
+                expFormat = expFormat
             ).breaks
 
         // Transform back to data space.
         this.breaks = transform.applyInverse(transformedBreakValues).filterNotNull()
         this.formatter = providedFormatter ?: let {
-            val breakFormatters = createFormatters(this.breaks, superscriptExponent)
+            val breakFormatters = createFormatters(this.breaks, expFormat)
             MultiFormatter(this.breaks, breakFormatters)::apply
         }
     }
@@ -85,13 +86,13 @@ internal class NonlinearBreaksHelper(
 
         private fun createFormatters(
             breakValues: List<Double>,
-            superscriptExponent: Boolean
+            expFormat: ExponentFormat
         ): List<(Any) -> String> {
             if (breakValues.isEmpty()) return emptyList()
             if (breakValues.size == 1) {
                 val domainValue = breakValues[0]
                 val step = domainValue / 10
-                return listOf(createFormatter(domainValue, step, superscriptExponent))
+                return listOf(createFormatter(domainValue, step, expFormat))
             }
 
             // format each tick with its own formatter
@@ -102,7 +103,7 @@ internal class NonlinearBreaksHelper(
                         else -> currValue - breakValues[i - 1]
                     }
                 )
-                createFormatter(currValue, step, superscriptExponent)
+                createFormatter(currValue, step, expFormat)
             }
             return formatters
         }
@@ -110,13 +111,13 @@ internal class NonlinearBreaksHelper(
         private fun createFormatter(
             domainValue: Double,
             step: Double,
-            superscriptExponent: Boolean
+            expFormat: ExponentFormat
         ): (Any) -> String {
             return NumericBreakFormatter(
                 domainValue,
                 step,
                 true,
-                superscriptExponent = superscriptExponent
+                expFormat = expFormat
             )::apply
         }
     }

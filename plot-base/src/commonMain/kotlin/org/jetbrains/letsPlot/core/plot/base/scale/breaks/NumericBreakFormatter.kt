@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
@@ -14,7 +16,7 @@ internal class NumericBreakFormatter(
     value: Double,
     step: Double,
     allowMetricPrefix: Boolean,
-    superscriptExponent: Boolean
+    expFormat: ExponentFormat
 ) {
     private var formatter: NumberFormat
 
@@ -36,7 +38,7 @@ internal class NumericBreakFormatter(
 
 
         var type = "f"
-        var delimiter = ""
+        var comma = false
 
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
@@ -56,20 +58,27 @@ internal class NumericBreakFormatter(
             precision = 0.0
             type = "d"
         }
-        // round-up precision ulless it's very close to smaller int.
+        // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
         if (scientificNotation) {
             // generate 'engineering notation', in which the exponent is a multiple of three
-            type = if (domain10Power > 0 && allowMetricPrefix && !superscriptExponent) "s" else "e"
+            type = if (domain10Power > 0 && allowMetricPrefix && expFormat.notationType == ExponentNotationType.E) "s" else "e"
         } else {
-            delimiter = ","
+            comma = true
         }
+        val trim = type == "e" && expFormat.notationType != ExponentNotationType.E
+        val expType = if (trim) expFormat.notationType else ExponentNotationType.E
 
-        val richOutput = if (type == "e" && superscriptExponent) "&" else ""
-        val trim = if (type == "e" && superscriptExponent) "~" else ""
-
-        formatter = NumberFormat("$delimiter.${precision.toInt()}$trim$type$richOutput")
+        formatter = NumberFormat(NumberFormat.Spec(
+            comma = comma,
+            precision = precision.toInt(),
+            trim = trim,
+            type = type,
+            expType = expType,
+            minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
+            maxExp = expFormat.max ?: precision.toInt()
+        ))
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)

@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT> : Scale {
@@ -16,7 +18,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
     protected val providedScaleBreaks: ScaleBreaks?
     protected val providedFormatter: ((Any) -> String)?
     protected val labelLengthLimit: Int
-    protected val superscriptExponent: Boolean
+    protected val expFormat: ExponentFormat
 
     private var createdScaleBreaks: ScaleBreaks? = null
     private var createdScaleBreaksShortened: Boolean = false
@@ -33,7 +35,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         providedScaleBreaks = null
         labelLengthLimit = 0
         providedFormatter = null
-        superscriptExponent = false
+        expFormat = DEF_EXPONENT_FORMAT
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
@@ -44,7 +46,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         providedFormatter = b.providedFormatter
 
         labelLengthLimit = b.myLabelLengthLimit
-        superscriptExponent = b.mySuperscriptExponent
+        expFormat = b.myExpFormat
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -93,7 +95,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         internal var providedScaleBreaks: ScaleBreaks? = scale.providedScaleBreaks
         internal var myLabelLengthLimit: Int = scale.labelLengthLimit
         internal var providedFormatter: ((Any) -> String)? = scale.providedFormatter
-        internal var mySuperscriptExponent: Boolean = scale.superscriptExponent
+        internal var myExpFormat: ExponentFormat = scale.expFormat
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
@@ -131,8 +133,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
             return this
         }
 
-        override fun superscriptExponent(v: Boolean): Scale.Builder {
-            mySuperscriptExponent = v
+        override fun exponentFormat(v: ExponentFormat): Scale.Builder {
+            myExpFormat = v
             return this
         }
 

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.string
 import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.datetime.Pattern.Companion.isDateTimeFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.*
 import org.jetbrains.letsPlot.commons.intern.datetime.Instant
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
@@ -15,7 +16,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 class StringFormat private constructor(
     private val pattern: String,
     private val formatType: FormatType,
-    superscriptExponent: Boolean?
+    expFormat: ExponentFormat?
 ) {
     enum class FormatType {
         NUMBER_FORMAT,
@@ -27,7 +28,7 @@ class StringFormat private constructor(
 
     init {
         myFormatters = when (formatType) {
-            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, superscriptExponent))
+            NUMBER_FORMAT, DATETIME_FORMAT -> listOf(initFormatter(pattern, formatType, expFormat))
             STRING_FORMAT -> {
                 BRACES_REGEX.findAll(pattern)
                     .map { it.groupValues[TEXT_IN_BRACES] }
@@ -36,7 +37,7 @@ class StringFormat private constructor(
                         require(formatType == NUMBER_FORMAT || formatType == DATETIME_FORMAT) {
                             error("Can't detect type of pattern '$pattern' used in string pattern '${this.pattern}'")
                         }
-                        initFormatter(pattern, formatType, superscriptExponent)
+                        initFormatter(pattern, formatType, expFormat)
                     }
                     .toList()
             }
@@ -69,7 +70,7 @@ class StringFormat private constructor(
         }
     }
 
-    private fun initFormatter(formatPattern: String, formatType: FormatType, superscriptExponent: Boolean?): ((Any) -> String) {
+    private fun initFormatter(formatPattern: String, formatType: FormatType, expFormat: ExponentFormat?): ((Any) -> String) {
         if (formatPattern.isEmpty()) {
             return Any::toString
         }
@@ -77,13 +78,12 @@ class StringFormat private constructor(
             NUMBER_FORMAT -> {
                 val formatSpec = NumberFormat.parseSpec(formatPattern)
 
-                // override richOutput if superscriptExponent is set
-                val spec = if (superscriptExponent != null) {
-                    formatSpec.copy(richOutput = superscriptExponent)
-                } else {
-                    formatSpec
-                }
-
+                // override exponent properties if expFormat is set
+                val spec = formatSpec.copy(
+                    expType = expFormat?.notationType ?: formatSpec.expType,
+                    minExp = expFormat?.min ?: formatSpec.minExp,
+                    maxExp = expFormat?.max ?: formatSpec.maxExp
+                )
                 val numberFormatter = NumberFormat(spec)
                 return { value: Any ->
                     when (value) {
@@ -99,7 +99,7 @@ class StringFormat private constructor(
                     require(value is Number) {
                         error("Value '$value' to be formatted as DateTime expected to be a Number, but was ${value::class.simpleName}")
                     }
-                    value.toLong()
+                    (value as Number).toLong()
                         .let(::Instant)
                         .let(TimeZone.UTC::toDateTime)
                         .let(dateTimeFormatter::apply)
@@ -108,6 +108,16 @@ class StringFormat private constructor(
             else -> {
                 error("Undefined format pattern $formatPattern")
             }
+        }
+    }
+
+    data class ExponentFormat(
+        val notationType: ExponentNotationType,
+        val min: Int? = null,
+        val max: Int? = null
+    ) {
+        companion object {
+            val DEF_EXPONENT_FORMAT = ExponentFormat(ExponentNotationType.E)
         }
     }
 
@@ -128,18 +138,18 @@ class StringFormat private constructor(
             pattern: String,
             type: FormatType? = null,
             formatFor: String? = null,
-            superscriptExponent: Boolean = true,
+            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW)
         ): StringFormat {
-            return create(pattern, type, formatFor, expectedArgs = 1, superscriptExponent)
+            return create(pattern, type, formatFor, expectedArgs = 1, expFormat = expFormat)
         }
 
         fun forNArgs(
             pattern: String,
             argCount: Int,
             formatFor: String? = null,
-            superscriptExponent: Boolean = true,
+            expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.POW)
         ): StringFormat {
-            return create(pattern, STRING_FORMAT, formatFor, argCount, superscriptExponent)
+            return create(pattern, STRING_FORMAT, formatFor, argCount, expFormat = expFormat)
         }
 
         private fun detectFormatType(pattern: String): FormatType {
@@ -155,10 +165,10 @@ class StringFormat private constructor(
             type: FormatType? = null,
             formatFor: String? = null,
             expectedArgs: Int = -1,
-            superscriptExponent: Boolean? = null
+            expFormat: ExponentFormat? = null
         ): StringFormat {
             val formatType = type ?: detectFormatType(pattern)
-            return StringFormat(pattern, formatType, superscriptExponent = superscriptExponent).also {
+            return StringFormat(pattern, formatType, expFormat = expFormat).also {
                 if (expectedArgs > 0) {
                     require(it.argsNumber == expectedArgs) {
                         @Suppress("NAME_SHADOWING")

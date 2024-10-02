@@ -24,9 +24,9 @@ class LinePattern(
 
     private var myLineFormatter: ((List<Any>) -> String)? = null
 
-    private fun initFormatter(superscriptExponent: Boolean): (List<Any>) -> String {
+    private fun initFormatter(expFormat: StringFormat.ExponentFormat): (List<Any>) -> String {
         require(myLineFormatter == null)
-        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", superscriptExponent)::format
+        myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields", expFormat)::format
         return myLineFormatter!!
     }
 
@@ -35,7 +35,7 @@ class LinePattern(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myLineFormatter ?: initFormatter(ctx.superscriptExponent)
+        val formatter = myLineFormatter ?: initFormatter(ctx.expFormat)
 
         val dataValues = fields.map { dataValue ->
             dataValue.getDataPoint(index, ctx) ?: return null

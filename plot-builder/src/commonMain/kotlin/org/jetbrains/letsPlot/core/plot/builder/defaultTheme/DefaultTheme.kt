@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.*
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat.Companion.DEF_EXPONENT_FORMAT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
@@ -32,7 +33,18 @@ class DefaultTheme internal constructor(
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
     private val colors = DefaultColorTheme(options, fontFamilyRegistry)
 
-    override val exponentFormat: ExponentFormat = options[ThemeOption.EXPONENT_FORMAT] as? ExponentFormat ?: ExponentFormat.E
+    override val exponentFormat: ExponentFormat
+        get() {
+            return options[ThemeOption.EXPONENT_FORMAT]?.let {
+                when (it) {
+                    is ExponentFormat -> it
+                    is ExponentFormat.NotationType -> ExponentFormat(it)
+                    else -> throw IllegalArgumentException(
+                        "Illegal value: '$it'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
+                    )
+                }
+            } ?: DEF_EXPONENT_FORMAT
+        }
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 

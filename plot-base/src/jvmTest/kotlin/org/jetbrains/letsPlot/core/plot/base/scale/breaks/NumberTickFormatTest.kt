@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -153,13 +155,18 @@ class NumberTickFormatTest {
     @Test
     fun both_ultraSmall() {
         val domainAndStep = doubleArrayOf(1e-3, 5e-6)
-        assertEquals("5·\\(10^{-4}\\)", format(.0005, domainAndStep, superscriptExponent = true))
-        assertEquals("5.05·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, superscriptExponent = true))
-        assertEquals("1.505·\\(10^{-3}\\)", format(.0015 + 5e-6, domainAndStep, superscriptExponent = true))
 
-        assertEquals("5.000e-4", format(.0005, domainAndStep, superscriptExponent = false))
-        assertEquals("5.050e-4", format(.0005 + 5e-6, domainAndStep, superscriptExponent = false))
-        assertEquals("1.505e-3", format(.0015 + 5e-6, domainAndStep, superscriptExponent = false))
+        assertEquals("5·\\(10^{-4}\\)", format(.0005, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5.05·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("1.505·\\(10^{-3}\\)", format(.0015 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+
+        assertEquals("5·\\(10^{-4}\\)", format(.0005, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5.05·\\(10^{-4}\\)", format(.0005 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("1.505·\\(10^{-3}\\)", format(.0015 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+
+        assertEquals("5.000e-4", format(.0005, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("5.050e-4", format(.0005 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("1.505e-3", format(.0015 + 5e-6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
     }
 
     @Test
@@ -185,8 +192,11 @@ class NumberTickFormatTest {
         assertEquals("50,000,000", format(5e7, domainAndStep))
         assertEquals("50,000,005", format(5e7 + 5, domainAndStep))
 
-        assertEquals("50,000,000", format(5e7, domainAndStep, superscriptExponent = true))
-        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, superscriptExponent = true))
+        assertEquals("50,000,000", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+
+        assertEquals("50,000,000", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
     }
 
     @Test
@@ -197,24 +207,35 @@ class NumberTickFormatTest {
         assertEquals( "55M", format(5e7 + 5e6, domainAndStep))
         assertEquals("105M", format(1e8 + 5e6, domainAndStep))
 
-        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, superscriptExponent = true))
-        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, superscriptExponent = true))
-        assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, superscriptExponent = true))
-        assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, superscriptExponent = true))
+        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+
+        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
     }
 
     @Test
     fun both_ultraLarge_scientific() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
-        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, superscriptExponent = true))
-        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = true))
-        assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = true))
-        assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, superscriptExponent = true))
 
-        assertEquals("5.00e+7", formatScientific(5e7, domainAndStep, superscriptExponent = false))
-        assertEquals("5.00e+7", formatScientific(5e7 + 5, domainAndStep, superscriptExponent = false))
-        assertEquals("5.50e+7", formatScientific(5e7 + 5e6, domainAndStep, superscriptExponent = false))
-        assertEquals("1.05e+8", formatScientific(1e8 + 5e6, domainAndStep, superscriptExponent = false))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+
+        assertEquals("5.00e+7", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("5.00e+7", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("5.50e+7", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("1.05e+8", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
     }
 
     @Test
@@ -238,31 +259,31 @@ class NumberTickFormatTest {
     }
 
     companion object {
-        private fun format(number: Number, domainAndStep: DoubleArray, superscriptExponent: Boolean = false): String {
+        private fun format(number: Number, domainAndStep: DoubleArray, expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.E)): String {
             return format(
                 number,
                 domainAndStep[0],
                 domainAndStep[1],
-                superscriptExponent
+                expFormat
             )
         }
 
-        private fun format(number: Number, domain: Double, step: Double, superscriptExponent: Boolean = false): String {
+        private fun format(number: Number, domain: Double, step: Double, expFormat: ExponentFormat = ExponentFormat(ExponentNotationType.E)): String {
             val formatter = NumericBreakFormatter(
                 domain,
                 step,
                 allowMetricPrefix = true,
-                superscriptExponent = superscriptExponent
+                expFormat = expFormat
             )
             return formatter.apply(number)
         }
 
-        private fun formatScientific(number: Number, domainAndStep: DoubleArray, superscriptExponent: Boolean): String {
+        private fun formatScientific(number: Number, domainAndStep: DoubleArray, expFormat: ExponentFormat): String {
             val formatter = NumericBreakFormatter(
                 domainAndStep[0],
                 domainAndStep[1],
                 allowMetricPrefix = false,
-                superscriptExponent = superscriptExponent
+                expFormat = expFormat
             )
             return formatter.apply(number)
         }

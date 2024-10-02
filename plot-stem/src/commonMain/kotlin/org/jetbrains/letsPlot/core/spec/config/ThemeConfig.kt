@@ -46,12 +46,23 @@ class ThemeConfig constructor(
 
     companion object {
         private fun convertExponentFormat(key: String, value: Any): Any {
+            fun toFormat(value: String): ExponentFormat.NotationType {
+                val notationTypes = ExponentFormat.NotationType.entries.map { it.name.lowercase() to it }.toMap()
+                return notationTypes[value] ?: throw IllegalArgumentException(
+                    "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: ${notationTypes.keys.joinToString("|")}."
+                )
+            }
             if (key == ThemeOption.EXPONENT_FORMAT) {
-                return when (value.toString().lowercase()) {
-                    "e" -> ExponentFormat.E
-                    "pow" -> ExponentFormat.POW
+                return when (value) {
+                    is String -> toFormat(value)
+                    is List<*> -> {
+                        val format = value[0].let { toFormat(it.toString()) }
+                        val minExponent = (value[1] as? Number?)?.toInt()
+                        val maxExponent = (value[2] as? Number?)?.toInt()
+                        ExponentFormat(format, minExponent, maxExponent)
+                    }
                     else -> throw IllegalArgumentException(
-                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow."
+                        "Illegal value: '$value'.\n${ThemeOption.EXPONENT_FORMAT} expected value is a string: e|pow|pow_full or tuple (format, min_exp, max_exp)."
                     )
                 }
             }

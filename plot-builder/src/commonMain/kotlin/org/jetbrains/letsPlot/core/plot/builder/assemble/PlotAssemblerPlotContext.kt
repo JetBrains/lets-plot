@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -13,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
-    override val superscriptExponent: Boolean
+    override val expFormat: ExponentFormat,
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()

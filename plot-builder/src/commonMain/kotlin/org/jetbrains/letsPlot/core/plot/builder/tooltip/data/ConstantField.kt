@@ -50,7 +50,7 @@ class ConstantField(
 
     private fun initFormattedValue(ctx: PlotContext): String {
         formattedValue = format?.let {
-            StringFormat.forOneArg(format, superscriptExponent = ctx.superscriptExponent).format(value)
+            StringFormat.forOneArg(format, expFormat = ctx.expFormat).format(value)
         } ?: run {
             val tooltipAes = when {
                 Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, isYOrientation!!)

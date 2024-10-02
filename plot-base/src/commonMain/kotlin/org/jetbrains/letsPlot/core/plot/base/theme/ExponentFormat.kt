@@ -5,9 +5,16 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
-enum class ExponentFormat(
-    val superscript: Boolean,
+data class ExponentFormat(
+    val notationType: NotationType,
+    val min: Int? = null,
+    val max: Int? = null
 ) {
-    E(superscript = false),
-    POW(superscript = true)
+    enum class NotationType {
+        E, POW, POW_FULL
+    }
+
+    companion object {
+        val DEF_EXPONENT_FORMAT = ExponentFormat(NotationType.E)
+    }
 }

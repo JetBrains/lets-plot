@@ -8,6 +8,8 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets.Companion.DEF_LAB_WIDTH
@@ -26,7 +28,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Facet.Y_ORDER
 
 internal class FacetConfig(
     options: Map<String, Any>,
-    private val superscriptExponent: Boolean
+    private val expFormat: ExponentFormat
 ) : OptionsAccessor(options) {
 
     fun createFacets(dataByLayer: List<DataFrame>): PlotFacets {
@@ -156,7 +158,7 @@ internal class FacetConfig(
         return when (optionVal) {
             null -> DEF_FORMATTER
             else -> {
-                val fmt = StringFormat.forOneArg(optionVal.toString(), superscriptExponent = superscriptExponent)
+                val fmt = StringFormat.forOneArg(optionVal.toString(), expFormat = PlotAssembler.extractExponentFormat(expFormat))
                 return { value: Any -> fmt.format(value) }
             }
         }

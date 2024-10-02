@@ -20,12 +20,14 @@ class NumberFormat(spec: Spec) {
         val sign: String = "-",
         val symbol: String = "",
         val zero: Boolean = false,
-        val width: Int = -1,
+        val width: Int = DEF_WIDTH,
         val comma: Boolean = false,
-        val precision: Int = 6,
+        val precision: Int = DEF_PRECISION,
         val type: String = "",
         val trim: Boolean = false,
-        val richOutput: Boolean = false
+        val expType: ExponentNotationType = DEF_EXPONENT_NOTATION_TYPE,
+        val minExp: Int = DEF_MIN_EXP,
+        val maxExp: Int = precision
     )
 
     fun apply(num: Number): String {
@@ -158,14 +160,12 @@ class NumberFormat(spec: Spec) {
         if (numberInfo.integerPart == 0L) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= 6) {
-                // 6 is a magic number that triggers exponential notation (too long to be formatted as a simple number)
-                // Same as in JS (see toPrecision) and D3.format
+            } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
-            if (numberInfo.integerLength > precision) {
+            if (numberInfo.integerLength > spec.maxExp) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
             }
             return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
@@ -186,7 +186,7 @@ class NumberFormat(spec: Spec) {
         }
 
         if (newNumberInfo.fractionalPart == 0L) {
-            return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision))
+            return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision), expType = spec.expType)
         }
 
         val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
@@ -202,23 +202,23 @@ class NumberFormat(spec: Spec) {
 
         if (precision > -1) {
             val formattedNumber = toFixedFormat(expNumberInfo, precision)
-            return formattedNumber.copy(exponentialPart = exponentString)
+            return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
         }
 
         val integerString = expNumberInfo.integerPart.toString()
         val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
-        return FormattedNumber(integerString, fractionString, exponentString)
+        return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
     }
 
     private fun buildExponentString(exponent: Int?): String {
         if (exponent == null) {
             return ""
         }
-        return if (spec.richOutput) {
-            when (exponent) {
-                0 -> ""
-                1 -> "·10"
-                else -> "·\\(10^{${exponent}}\\)"
+        return if (spec.expType != ExponentNotationType.E) {
+            when {
+                exponent == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
+                exponent == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
+                else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
             }
         } else {
             val expSign = if (exponent.sign >= 0) "+" else ""
@@ -239,7 +239,7 @@ class NumberFormat(spec: Spec) {
         val suffixIndex = 8 + suffixExp / 3
         val exponentString = SI_SUFFIXES[suffixIndex]
         val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
-        return formattedNumber.copy(exponentialPart = exponentString)
+        return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
     }
 
     private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
@@ -333,24 +333,37 @@ class NumberFormat(spec: Spec) {
     private data class FormattedNumber(
         val integerPart: String = "",
         val fractionalPart: String = "",
-        val exponentialPart: String = ""
+        val exponentialPart: String = "",
+        val expType: ExponentNotationType = ExponentNotationType.E
     ) {
+        val integerLength = if (omitUnit()) 0 else integerPart.length
         val fractionalLength = if (fractionalPart.isEmpty()) 0 else fractionalPart.length + FRACTION_DELIMITER.length
-
         val exponentialLength: Int
             get() {
                 val match = POWER_REGEX.find(exponentialPart) ?: return exponentialPart.length
                 val matchGroups = match.groups as MatchNamedGroupCollection
-                return matchGroups["degree"]?.value?.length?.plus(2) ?: exponentialPart.length
+                val degreeLength = matchGroups["degree"]?.value?.length ?: return exponentialPart.length
+                val fullLength = 2 + degreeLength // 2 for "10" in the "10^d"
+                return if (omitUnit()) fullLength else 1 + fullLength // 1 for "·" in the "·10^d"
             }
-        val fullLength = integerPart.length + fractionalLength + exponentialLength
+        val fullLength = integerLength + fractionalLength + exponentialLength
 
-        override fun toString() =
-            "$integerPart${FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""}$fractionalPart$exponentialPart"
+        override fun toString(): String {
+            val fractionDelimiter = FRACTION_DELIMITER.takeIf { fractionalPart.isNotEmpty() } ?: ""
+            val fullString = "$integerPart$fractionDelimiter$fractionalPart$exponentialPart"
+            return if (omitUnit()) {
+                fullString.replace("1$MULT_SIGN", "")
+            } else {
+                fullString
+            }
+        }
+
+        // Number of the form 1·10^n should be transformed to 10^n if expType is POW
+        private fun omitUnit(): Boolean = expType == ExponentNotationType.POW && integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.isNotEmpty()
 
         companion object {
             @Suppress("RegExpRedundantEscape") // breaks tests
-            private val POWER_REGEX = """^·\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
+            private val POWER_REGEX = """^${MULT_SIGN}\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
         }
     }
 
@@ -463,28 +476,45 @@ class NumberFormat(spec: Spec) {
         }
     }
 
+    enum class ExponentNotationType(val symbol: String) {
+        E("E"),
+        POW("P"),
+        POW_FULL("F");
+
+        companion object {
+            fun bySymbol(symbol: String): ExponentNotationType {
+                return entries.first { it.symbol == symbol }
+            }
+        }
+    }
+
     companion object {
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
         fun parseSpec(spec: String): Spec {
             val matchResult =
                 NUMBER_REGEX.find(spec) ?: throw IllegalArgumentException("Wrong number format pattern: '$spec'")
+            val precision = matchResult.groups["precision"]?.value?.toInt() ?: DEF_PRECISION
             val formatSpec = Spec(
-                fill = matchResult.groups[1]?.value ?: " ",
-                align = matchResult.groups[2]?.value ?: ">",
-                sign = matchResult.groups[3]?.value ?: "-",
-                symbol = matchResult.groups[4]?.value ?: "",
-                zero = matchResult.groups[5] != null,
-                width = (matchResult.groups[6]?.value ?: "-1").toInt(),
-                comma = matchResult.groups[7] != null,
-                precision = (matchResult.groups[8]?.value ?: "6").toInt(),
-                trim = matchResult.groups[9] != null,
-                type = matchResult.groups[10]?.value ?: "",
-                richOutput = matchResult.groups[11] != null
+                fill = matchResult.groups["fill"]?.value ?: " ",
+                align = matchResult.groups["align"]?.value ?: ">",
+                sign = matchResult.groups["sign"]?.value ?: "-",
+                symbol = matchResult.groups["symbol"]?.value ?: "",
+                zero = matchResult.groups["zero"] != null,
+                width = matchResult.groups["width"]?.value?.toInt() ?: DEF_WIDTH,
+                comma = matchResult.groups["comma"] != null,
+                precision = precision,
+                trim = matchResult.groups["trim"] != null,
+                type = matchResult.groups["type"]?.value ?: "",
+                expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) } ?: DEF_EXPONENT_NOTATION_TYPE,
+                minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
+                maxExp = matchResult.groups["maxexp"]?.value?.toInt() ?: precision,
             )
 
             return normalizeSpec(formatSpec)
         }
+
+        const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
 
         internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
@@ -493,12 +523,16 @@ class NumberFormat(spec: Spec) {
         private const val PERCENT = "%"
         private const val COMMA = ","
         private const val FRACTION_DELIMITER = "."
+        private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
         private val SI_SUFFIXES =
             arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
+        private val EXPONENT_TYPES_REGEX = "[${ExponentNotationType.entries.joinToString("") { it.symbol }}]"
         private val NUMBER_REGEX =
-            """^(?:([^{}])?([<>=^]))?([+ -])?([#$])?(0)?(\d+)?(,)?(?:\.(\d+))?(~)?([%bcdefgosXx])?(&)?$""".toRegex()
-
+            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
+        private const val DEF_WIDTH = -1
+        private const val DEF_PRECISION = 6
+        private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E
 
         internal fun normalizeSpec(spec: Spec): Spec {
             var precision = spec.precision

@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.DefaultSampling
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
@@ -28,9 +29,9 @@ class GeomProto(val geomKind: GeomKind) {
     fun geomProvider(
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        superscriptExponent: Boolean
+        expFormat: ExponentFormat
     ): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, superscriptExponent)
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, aopConversion, expFormat)
     }
 
     fun defaultOptions(): Map<String, Any> {

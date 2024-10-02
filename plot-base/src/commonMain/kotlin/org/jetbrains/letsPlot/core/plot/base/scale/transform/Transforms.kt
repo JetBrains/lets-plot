@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.transform
 
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -29,15 +30,15 @@ object Transforms {
     fun createBreaksGeneratorForTransformedDomain(
         transform: ContinuousTransform,
         providedFormatter: ((Any) -> String)? = null,
-        superscriptExponent: Boolean
+        expFormat: ExponentFormat
     ): BreaksGenerator {
         val breaksGenerator: BreaksGenerator = when (transform.unwrap()) {
-            IDENTITY -> LinearBreaksGen(providedFormatter, superscriptExponent)
-            REVERSE -> LinearBreaksGen(providedFormatter, superscriptExponent)
-            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, superscriptExponent)
-            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, superscriptExponent)
-            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, superscriptExponent)
-            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, superscriptExponent)
+            IDENTITY -> LinearBreaksGen(providedFormatter, expFormat)
+            REVERSE -> LinearBreaksGen(providedFormatter, expFormat)
+            SQRT -> NonlinearBreaksGen(SQRT, providedFormatter, expFormat)
+            LOG10 -> NonlinearBreaksGen(LOG10, providedFormatter, expFormat)
+            LOG2 -> NonlinearBreaksGen(LOG2, providedFormatter, expFormat)
+            SYMLOG -> NonlinearBreaksGen(SYMLOG, providedFormatter, expFormat)
             else -> throw IllegalStateException("Unexpected 'transform' type: ${transform::class.simpleName}")
         }
 

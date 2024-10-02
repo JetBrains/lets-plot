@@ -22,12 +22,12 @@ class DataFrameField(
     private lateinit var myVariable: DataFrame.Variable
     private var myFormatter: ((Any) -> String)? = null
 
-    private fun initFormatter(superscriptExponent: Boolean): (Any) -> String {
+    private fun initFormatter(expFormat: StringFormat.ExponentFormat): (Any) -> String {
         require(myFormatter == null)
 
         myFormatter = when (format) {
-            null -> TooltipFormatting.createFormatter(myVariable, superscriptExponent)
-            else -> StringFormat.forOneArg(format, formatFor = name, superscriptExponent = superscriptExponent)::format
+            null -> TooltipFormatting.createFormatter(myVariable, expFormat)
+            else -> StringFormat.forOneArg(format, formatFor = name, expFormat = expFormat)::format
         }
         return myFormatter!!
     }
@@ -44,7 +44,7 @@ class DataFrameField(
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
-        val formatter = myFormatter ?: initFormatter(ctx.superscriptExponent)
+        val formatter = myFormatter ?: initFormatter(ctx.expFormat)
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,

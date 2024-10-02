@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -136,7 +138,7 @@ class TopDownTileLayoutTest {
                 Transforms.createBreaksGeneratorForTransformedDomain(
                     Transforms.IDENTITY,
                     providedFormatter = null,
-                    superscriptExponent = false
+                    expFormat = StringFormat.ExponentFormat(ExponentNotationType.E)
                 )
 
             )
