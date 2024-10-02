@@ -46,7 +46,7 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
         val (markType, markVegaSpec) = readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
-        val encoding = (layerSpec.getMap(Encodings.ENCODING) ?: plotEncoding).asMapOfMaps()
+        val encoding = (plotEncoding + (layerSpec.getMap(Encodings.ENCODING) ?: emptyMap())).asMapOfMaps()
 
         fun LayerOptions.initDataAndMappings(vararg customChannelMapping: Pair<String, Aes<*>>) {
             data = when {
@@ -62,8 +62,13 @@ internal class VegaPlotConverter private constructor(
         when (markType) {
             Mark.Types.BAR -> plotOptions.appendLayer {
                 if (encoding.values.any { Encodings.BIN in it }) {
+                    initDataAndMappings()
                     geom = GeomKind.HISTOGRAM
+                } else if (encoding.any { (channel, _) -> channel == X2 || channel == Y2 }) {
+                    initDataAndMappings(X to Aes.XMIN, Y to Aes.YMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
+                    geom = GeomKind.RECT
                 } else {
+                    initDataAndMappings()
                     geom = GeomKind.BAR
                     width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
 
@@ -82,7 +87,6 @@ internal class VegaPlotConverter private constructor(
                     }
                 }
 
-                initDataAndMappings()
             }
 
             Mark.Types.LINE, Mark.Types.TRAIL -> plotOptions.appendLayer {
