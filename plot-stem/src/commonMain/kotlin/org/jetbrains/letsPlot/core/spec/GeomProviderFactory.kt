@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
+import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
+import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Pie
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Spoke
@@ -55,7 +57,7 @@ internal object GeomProviderFactory {
         geomKind: GeomKind,
         layerConfig: LayerConfig,
         aopConversion: AesOptionConversion,
-        expFormat: StringFormat.ExponentFormat
+        expFormat: ExponentFormat
     ): GeomProvider {
         return when (geomKind) {
             GeomKind.AREA -> GeomProvider.area {
@@ -405,9 +407,9 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: StringFormat.ExponentFormat) {
+    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(it, expFormat = expFormat)::format
+            geom.formatter = StringFormat.forOneArg(it, expFormat = PlotAssembler.extractExponentFormat(expFormat))::format
         }
         layerConfig.getString(Option.Geom.Text.NA_TEXT)?.let {
             geom.naValue = it
