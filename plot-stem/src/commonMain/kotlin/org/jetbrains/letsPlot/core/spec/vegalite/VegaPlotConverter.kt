@@ -8,18 +8,20 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.asMapOfMaps
+import org.jetbrains.letsPlot.core.spec.getDouble
+import org.jetbrains.letsPlot.core.spec.getMap
+import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.plotson.*
-import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y2
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Property.AGGREGATE
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
+import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformStat
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpec: MutableMap<String, Any>
@@ -71,21 +73,7 @@ internal class VegaPlotConverter private constructor(
                     initDataAndMappings(COLOR to Aes.FILL, COLOR to Aes.COLOR)
                     geom = GeomKind.BAR
                     width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
-
-                    stat = when (encoding.has(X, AGGREGATE) to encoding.has(Y, AGGREGATE)) {
-                        true to false -> encoding.getString(X, AGGREGATE)
-                        false to true -> encoding.getString(Y, AGGREGATE)
-                        else -> null
-                    }.let { aggr ->
-                        when (aggr) {
-                            null -> identityStat()
-                            Encoding.Aggregate.COUNT -> countStat()
-                            Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
-                            Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
-                            else -> error("Unsupported aggregate function: $aggr")
-                        }
-                    }
-
+                    stat = transformStat(encoding) ?: identityStat()
                     position = Util.transformPositionAdjust(encoding)
                 }
             }
@@ -120,6 +108,9 @@ internal class VegaPlotConverter private constructor(
 
             Mark.Types.TEXT -> plotOptions.appendLayer {
                 geom = GeomKind.TEXT
+                stat = transformStat(encoding)
+                position = Util.transformPositionAdjust(encoding)
+
                 initDataAndMappings()
             }
 

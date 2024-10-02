@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
@@ -396,6 +397,50 @@ class BarMarkTransformTest {
 
         assertThat(plotSpec.getString(Plot.LAYERS, 0, PlotBase.MAPPING, toOption(Aes.FILL)))
             .isEqualTo("a")
+    }
+
+    @Test
+    fun positionAndStat() {
+        val vegaSpec = parseJson(
+            """
+            |{
+            |  "data": { "url": "data/population.json"},
+            |  "encoding": {
+            |    "y": {"field": "age"}
+            |  },
+            |  "layer": [{
+            |    "mark": "bar",
+            |    "encoding": {
+            |      "x": {
+            |        "aggregate": "sum", "field": "people",
+            |        "stack":  "normalize"
+            |      },
+            |      "color": {
+            |        "field": "sex"
+            |      }
+            |    }
+            |  }]
+            |}
+        """.trimMargin()
+        ).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Plot.LAYERS, 0)).contains(
+            entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
+            entry(Stat.Summary.FUN, Stat.Summary.Functions.SUM),
+            entry(Layer.POS, mapOf(Option.Pos.NAME to PosProto.FILL)),
+            entry(Layer.ORIENTATION, "y"),
+            entry(
+                PlotBase.MAPPING,
+                mapOf(
+                    toOption(Aes.X) to "people",
+                    toOption(Aes.Y) to "age",
+                    toOption(Aes.FILL) to "sex",
+                    toOption(Aes.COLOR) to "sex",
+                ),
+            ),
+        )
     }
 
 }

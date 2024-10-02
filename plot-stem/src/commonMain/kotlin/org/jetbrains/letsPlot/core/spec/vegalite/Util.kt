@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.spec.PosProto
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
@@ -166,6 +167,24 @@ internal object Util {
         }
 
         return dataMeta
+    }
+
+    fun LayerOptions.transformStat(encodings: Map<*, Map<*, *>>): StatOptions? {
+        val xAggregate = encodings.getString(Channel.X, Encoding.Property.AGGREGATE)
+        val yAggregate = encodings.getString(Channel.Y, Encoding.Property.AGGREGATE)
+
+        if (xAggregate != null && yAggregate != null) {
+            error("Both x and y aggregates are not supported")
+        }
+
+        val aggregate = xAggregate ?: yAggregate ?: return null
+
+        return when (aggregate) {
+            Encoding.Aggregate.COUNT -> countStat()
+            Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
+            Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
+            else -> error("Unsupported aggregate function: $aggregate")
+        }
     }
 
     fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
