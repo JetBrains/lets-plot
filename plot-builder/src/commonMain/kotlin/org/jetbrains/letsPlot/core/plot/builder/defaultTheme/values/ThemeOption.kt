@@ -92,6 +92,8 @@ object ThemeOption {
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"
 
+    const val LEGEND_MARGIN = "legend_margin"
+
     // Tooltip
     const val TOOLTIP_RECT = "tooltip"
     const val TOOLTIP_TEXT = "tooltip_text"

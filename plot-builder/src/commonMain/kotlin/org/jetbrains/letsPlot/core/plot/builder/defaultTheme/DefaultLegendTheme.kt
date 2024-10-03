@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
@@ -32,9 +33,7 @@ internal class DefaultLegendTheme(
         return 23.0
     }
 
-    override fun margin(): Double {
-        return 5.0
-    }
+    override fun margin() = getMargins(getElemValue(listOf(LEGEND_MARGIN)))
 
     override fun padding(): Double {
         return 5.0

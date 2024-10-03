@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION_POSITION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
@@ -149,7 +150,7 @@ class ThemeConfig constructor(
             }
 
             return when {
-                key == PLOT_MARGIN -> toMarginSpec(value)
+                key == PLOT_MARGIN || key == LEGEND_MARGIN -> toMarginSpec(value)
                 value is Map<*, *> && value.containsKey(ThemeOption.Elem.MARGIN) -> {
                     val margins = toMarginSpec(value[ThemeOption.Elem.MARGIN])
                     // to keep other options
