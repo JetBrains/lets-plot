@@ -50,7 +50,7 @@ object RichText {
     private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
         val lines = text.split("\n")
             .map { line ->
-                val specialTerms = PowerTerm.toPowerTerms(line) + LinkTerm.parse(line)
+                val specialTerms = PowerTerm.toPowerTerms(line) + SubscriptTerm.toSubscriptTerms(line) + LinkTerm.parse(line)
                 if (specialTerms.isEmpty()) {
                     listOf(TextTerm(line))
                 } else {
@@ -142,57 +142,85 @@ object RichText {
     }
 
     private class PowerTerm(
+        base: String,
+        degree: String,
+    ) : IndexTerm(base, degree, true) {
+        companion object {
+            fun toPowerTerms(text: String): List<Pair<Term, IntRange>> {
+                return toTerms(text, "\\^") { base, degree -> PowerTerm(base, degree) }
+            }
+        }
+    }
+
+    private class SubscriptTerm(
+        base: String,
+        index: String,
+    ) : IndexTerm(base, index, false) {
+        companion object {
+            fun toSubscriptTerms(text: String): List<Pair<Term, IntRange>> {
+                return toTerms(text, "_") { base, index -> SubscriptTerm(base, index) }
+            }
+        }
+    }
+
+    private open class IndexTerm(
         private val base: String,
-        private val degree: String,
+        private val index: String,
+        isSuperior: Boolean,
     ) : Term {
-        override val visualCharCount: Int = base.length + degree.length
+        override val visualCharCount: Int = base.length + index.length
         override val svg: List<SvgTSpanElement>
 
         init {
+            val shift = if (isSuperior) { "-" } else { "" }
+            val backShift = if (isSuperior) { "" } else { "-" }
             val baseTSpan = SvgTSpanElement(base)
             val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
                 setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
             }
-            val degreeTSpan = SvgTSpanElement(degree).apply {
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
-                setAttribute(SvgTSpanElement.DY, "-${SUPERSCRIPT_RELATIVE_SHIFT}em")
+            val indexTSpan = SvgTSpanElement(index).apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
             }
-            // The following tspan element is used to restore the baseline after the degree
-            // Restoring works only if there is some symbol after the degree, so we use ZERO_WIDTH_SPACE_SYMBOL
+            // The following tspan element is used to restore the baseline after the index
+            // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
             // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
             // Attribute 'baseline-shift' is better suited for such usecase -
             // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
             // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
             val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 // Size of shift depends on the font size, and it should be equal to the superscript shift size
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${SUPERSCRIPT_SIZE_FACTOR}em")
-                setAttribute(SvgTSpanElement.DY, "${SUPERSCRIPT_RELATIVE_SHIFT}em")
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
             }
 
-            svg = listOf(baseTSpan, indentTSpan, degreeTSpan, restoreBaselineTSpan)
+            svg = listOf(baseTSpan, indentTSpan, indexTSpan, restoreBaselineTSpan)
         }
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             val baseWidth = widthCalculator(base, font)
-            val degreeFontSize = (font.size * SUPERSCRIPT_SIZE_FACTOR).roundToInt()
-            val superscriptFont = Font(font.family, degreeFontSize, font.isBold, font.isItalic)
-            val degreeWidth = widthCalculator(degree, superscriptFont)
-            return baseWidth + degreeWidth
+            val indexFontSize = (font.size * INDEX_SIZE_FACTOR).roundToInt()
+            val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
+            val indexWidth = widthCalculator(index, indexFont)
+            return baseWidth + indexWidth
         }
 
         companion object {
             private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
             private const val INDENT_SYMBOL = " "
             private const val INDENT_SIZE_FACTOR = 0.1
-            private const val SUPERSCRIPT_SIZE_FACTOR = 0.7
-            private const val SUPERSCRIPT_RELATIVE_SHIFT = 0.4
-            val REGEX = """\\\(\s*(?<base>\d+)\^(\{\s*)?(?<degree>-?\d+)(\s*\})?\s*\\\)""".toRegex()
+            private const val INDEX_SIZE_FACTOR = 0.7
+            private const val INDEX_RELATIVE_SHIFT = 0.4
 
-            fun toPowerTerms(text: String): List<Pair<Term, IntRange>> {
-                return REGEX.findAll(text).map { match ->
+            fun toTerms(text: String, symbol: String, toTerm: (String, String) -> IndexTerm): List<Pair<Term, IntRange>> {
+                return getRegex(symbol).findAll(text).map { match ->
                     val groups = match.groups as MatchNamedGroupCollection
-                    PowerTerm(groups["base"]!!.value, groups["degree"]!!.value) to match.range
+                    toTerm(groups["base"]!!.value, groups["index"]!!.value) to match.range
                 }.toList()
+            }
+
+            private fun getRegex(symbol: String): Regex {
+                return """\\\(\s*(?<base>(?:-?[a-zA-Z0-9]+)*)$symbol(\{\s*)?(?<index>-?[a-zA-Z0-9]+)(\s*\})?\s*\\\)""".toRegex()
             }
         }
     }
