@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X2
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
+import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformStat
 
@@ -58,7 +59,9 @@ internal class VegaPlotConverter private constructor(
                 else -> error("Unsupported data specification")
             }
             mapping = Util.transformMappings(encoding, customChannelMapping.toList())
-            dataMeta = Util.transformDataMeta(data, plotData, encoding, customChannelMapping.toList())
+            dataMeta = Util.transformDataMeta(data, encoding, customChannelMapping.toList())
+
+            applyConstants(markVegaSpec, customChannelMapping.toList())
         }
 
         when (markType) {

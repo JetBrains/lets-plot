@@ -54,7 +54,7 @@ internal object Util {
     fun isQuantitative(channelEncoding: Map<*, *>): Boolean {
         if (channelEncoding[Encoding.Property.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding.contains(Encoding.Property.BIN)) return true
-        when(channelEncoding.getString(Encoding.Property.AGGREGATE)) {
+        when (channelEncoding.getString(Encoding.Property.AGGREGATE)) {
             null -> {} // continue checking
             Encoding.Aggregate.ARGMAX, Encoding.Aggregate.ARGMIN -> return false
             else -> return true
@@ -103,10 +103,16 @@ internal object Util {
         return channelToAes[channel] ?: emptyList()
     }
 
+    fun LayerOptions.applyConstants(markSpec: Map<*, *>, customChannelMapping: List<Pair<String, Aes<*>>>) {
+        markSpec.forEach { (prop, value) ->
+            channelToAes(prop.toString(), customChannelMapping)
+                .forEach { aes -> const(aes, value) }
+        }
+    }
+
     // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.
     fun transformDataMeta(
-        ownData: Map<String, List<Any?>>?,
-        commonData: Map<String, List<Any?>>?,
+        data: Map<String, List<Any?>>?,
         encodingVegaSpec: Map<*, Map<*, *>>,
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): DataMetaOptions {
@@ -143,9 +149,7 @@ internal object Util {
                 }
 
                 Encoding.Types.NOMINAL, Encoding.Types.ORDINAL -> {
-                    if(ownData?.get(encField)?.all { it is String } == true
-                        || commonData?.get(encField)?.all { it is String } == true
-                        ) {
+                    if (data?.get(encField)?.all { it is String } == true) {
                         // lp treats strings as discrete by default
                         // No need to add annotation
                         return@forEach

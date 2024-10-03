@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option.Geom
 import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
@@ -82,6 +83,10 @@ class LayerOptions : Options() {
     var radius: Double? by map(Aes.RADIUS)
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
+
+    fun const(aes: Aes<*>, value: Any?) {
+        properties[toOption(aes)] = value
+    }
 }
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)

@@ -98,6 +98,8 @@ class TextMarkTransformTest {
             entry(Option.Stat.Summary.FUN, Option.Stat.Summary.Functions.SUM),
             entry(Option.Layer.POS, mapOf(Option.Pos.NAME to PosProto.FILL)),
             entry(Option.Layer.ORIENTATION, "y"),
+            entry(toOption(Aes.ALPHA), 0.9),
+            entry(toOption(Aes.COLOR), "white"),
             entry(
                 Option.PlotBase.MAPPING,
                 mapOf(
