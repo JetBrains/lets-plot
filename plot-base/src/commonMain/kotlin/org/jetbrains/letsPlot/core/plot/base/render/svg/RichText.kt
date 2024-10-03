@@ -50,7 +50,7 @@ object RichText {
     private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
         val lines = text.split("\n")
             .map { line ->
-                val specialTerms = PowerTerm.toPowerTerms(line) + SubscriptTerm.toSubscriptTerms(line) + LinkTerm.parse(line)
+                val specialTerms = GreekLetterTerm.parse(line) + PowerTerm.toPowerTerms(line) + SubscriptTerm.toSubscriptTerms(line) + LinkTerm.parse(line)
                 if (specialTerms.isEmpty()) {
                     listOf(TextTerm(line))
                 } else {
@@ -137,6 +137,83 @@ object RichText {
                         val (href, label) = match.destructured
                         LinkTerm(label, href) to match.range
                     }.toList()
+            }
+        }
+    }
+
+    private class GreekLetterTerm(
+        letter: String
+    ) : Term {
+        private val symbol = toSymbol(letter)
+        override val visualCharCount: Int = 1
+        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(symbol))
+
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return widthCalculator(symbol, font)
+        }
+
+        companion object {
+            val LETTERS = mapOf(
+                "Alpha" to "Α",
+                "Beta" to "Β",
+                "Gamma" to "Γ",
+                "Delta" to "Δ",
+                "Epsilon" to "Ε",
+                "Zeta" to "Ζ",
+                "Eta" to "Η",
+                "Theta" to "Θ",
+                "Iota" to "Ι",
+                "Kappa" to "Κ",
+                "Lambda" to "Λ",
+                "Mu" to "Μ",
+                "Nu" to "Ν",
+                "Xi" to "Ξ",
+                "Omicron" to "Ο",
+                "Pi" to "Π",
+                "Rho" to "Ρ",
+                "Sigma" to "Σ",
+                "Tau" to "Τ",
+                "Upsilon" to "Υ",
+                "Phi" to "Φ",
+                "Chi" to "Χ",
+                "Psi" to "Ψ",
+                "Omega" to "Ω",
+                "alpha" to "α",
+                "beta" to "β",
+                "gamma" to "γ",
+                "delta" to "δ",
+                "epsilon" to "ε",
+                "zeta" to "ζ",
+                "eta" to "η",
+                "theta" to "θ",
+                "iota" to "ι",
+                "kappa" to "κ",
+                "lambda" to "λ",
+                "mu" to "μ",
+                "nu" to "ν",
+                "xi" to "ξ",
+                "omicron" to "ο",
+                "pi" to "π",
+                "rho" to "ρ",
+                "sigma" to "σ",
+                "tau" to "τ",
+                "upsilon" to "υ",
+                "phi" to "φ",
+                "chi" to "χ",
+                "psi" to "ψ",
+                "omega" to "ω",
+            )
+            private val REGEX = """\\\(\s*\\(?<letter>${LETTERS.keys.joinToString("|")})\s*\\\)""".toRegex()
+
+            fun toSymbol(letter: String): String {
+                return LETTERS[letter] ?: error("Unknown letter: $letter")
+            }
+
+            fun parse(text: String): List<Pair<Term, IntRange>> {
+                return REGEX.findAll(text).map { match ->
+                    val groups = match.groups as MatchNamedGroupCollection
+                    GreekLetterTerm(groups["letter"]!!.value) to match.range
+                }.toList()
             }
         }
     }

@@ -28,11 +28,11 @@ class LatexElements {
             )),
             getPlotSpec("Greek alphabet", listOf(
                 """\(\alpha\) and \(\Alpha\)""",
-                """\(\beta\) and \(Beta\)""",
-                """\(\gamma\) and \(Gamma\)""",
-                """\(\chi\) and \(\Chi\)""",
-                """\(\psi\) and \(\Psi\)""",
-                """\(\omega\) and \(\Omega\)""",
+                """\(\beta\) and \(\Beta\)""",
+                """\(\gamma\) and \(\Gamma\)""",
+                """\( \chi \) and \( \Chi \)""",
+                """\( \psi \) and \( \Psi \)""",
+                """\( \omega \) and \( \Omega \)""",
             )),
         )
     }
