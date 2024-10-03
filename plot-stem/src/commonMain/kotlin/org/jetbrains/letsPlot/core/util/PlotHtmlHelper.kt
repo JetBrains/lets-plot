@@ -121,32 +121,48 @@ object PlotHtmlHelper {
         return """
             |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |       (function() {
-            |           var plotSpec=$plotSpecAsJsObjectInitializer;
-            |           var containerDiv = document.getElementById("$outputId");
+            |   
+            |   var containerDiv$outputId = document.getElementById("$outputId");
+            |   var observer$outputId = new ResizeObserver(function(entries) {
+            |        
+            |       for (let entry of entries) {
+            |           var width = containerDiv$outputId.clientWidth
+            |           if (entry.contentBoxSize && width > 0) {
             |           
-            |           window.letsPlotCall(function() {{
-            |               var sizingPolicy = {
-            |                           width_mode: "min",
-            |                           height_mode: "scaled",
-            |                           width: containerDiv.clientWidth
-            |               };
-            |
+            |               // Render plot
+            |               if (observer$outputId) {
+            |                   observer$outputId.disconnect();
+            |                   observer$outputId = null;
+            |               }
+
+            |               var plotSpec=$plotSpecAsJsObjectInitializer;
+            |               window.letsPlotCall(function() {
+            |       
 ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar, uniqueSuffix = outputId)}               
             |               
-            |               var options = {
-            |                   sizing: sizingPolicy
-            |               };
-            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
-            |               if (typeof toolbar$outputId !== 'undefined') {
-            |                 toolbar$outputId.bind(fig);
-            |               }
-            |           }});
-            |       })();
+            |                   var options = {
+            |                       sizing: {
+            |                           width_mode: "min",
+            |                           height_mode: "scaled",
+            |                           width: width
+            |                       }
+            |                   };
+            |                   var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
+            |                   if (typeof toolbar$outputId !== 'undefined') {
+            |                     toolbar$outputId.bind(fig);
+            |                   }
+            |               });
+            |               
+            |               break;
+            |           }
+            |       }
+            |   });
+            |   
+            |   observer$outputId.observe(containerDiv$outputId);
+            |   
             |   </script>
         """.trimMargin()
     }
-
 
     /**
      * Common part in both, "dynamic" and "static" html-s.
@@ -161,7 +177,7 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar, 
             |               // Wrapper for toolbar and chart
             |               var outputDiv = document.createElement('div');
             |               outputDiv.setAttribute('style', 'display: inline-block;');
-            |               containerDiv.appendChild(outputDiv);
+            |               containerDiv$uniqueSuffix.appendChild(outputDiv);
             |           
             |               // Toolbar
             |               var toolbar$uniqueSuffix = new LetsPlot.tools.DefaultToolbar();
@@ -173,7 +189,7 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar, 
             """.trimIndent()
         } else {
             """
-            |               var plotContainer = containerDiv;
+            |               var plotContainer = containerDiv$uniqueSuffix;
             """.trimIndent()
         }
     }
@@ -220,12 +236,12 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar, 
             |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
             |       var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       var containerDiv = document.getElementById("$outputId");
+            |       var containerDiv$outputId = document.getElementById("$outputId");
             |       
             |       var sizingPolicy = {
             |                   width_mode: "min",
             |                   height_mode: "scaled",
-            |                   width: containerDiv.clientWidth
+            |                   width: containerDiv$outputId.clientWidth
             |       };
             |
 ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar, uniqueSuffix = outputId)}               
