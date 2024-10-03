@@ -37,6 +37,7 @@ internal object Util {
                 "data/seattle-weather.csv" -> SeattleWeather.json
                 "data/population.json" -> Population.json
                 "data/barley.json" -> Barley.json
+                "data/stocks.csv" -> Stocks.json
                 else -> error("Unsupported URL: $url")
             }
             mapOf(Option.Data.VALUES to JsonParser(json).parseJson())
