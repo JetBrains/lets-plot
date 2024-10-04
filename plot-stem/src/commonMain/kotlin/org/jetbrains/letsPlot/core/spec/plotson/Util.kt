@@ -61,6 +61,7 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is ThemeOptions.ThemeName -> v.value
         is SummaryStatOptions.AggFunction -> v.value
         is PositionOptions.PosKind -> v.value
+        is SeriesAnnotationOptions.Types -> v.value
         else -> v.also {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // analyzer fails to see first check: null -> null
             println("WARNING: standardising unknown type: '${v!!::class.simpleName}'")

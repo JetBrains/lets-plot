@@ -57,7 +57,10 @@ internal object Util {
     fun isContinuous(channel: String, encoding: Map<*, Map<*, *>>): Boolean {
         val channelEncoding = encoding[channel] ?: return false
         if (channelEncoding[Property.TYPE] == Encoding.Types.QUANTITATIVE) return true
+        if (channelEncoding[Property.TYPE] == Encoding.Types.ORDINAL) return false
+        if (channelEncoding[Property.TYPE] == Encoding.Types.NOMINAL) return false
         if (channelEncoding.contains(Property.BIN)) return true
+        if (channelEncoding.contains(Property.TIMEUNIT)) return true
         when (channelEncoding.getString(Property.AGGREGATE)) {
             null -> {} // continue checking
             Encoding.Aggregate.ARGMAX, Encoding.Aggregate.ARGMIN -> return false
@@ -126,7 +129,7 @@ internal object Util {
 
         encodingVegaSpec.entries.forEach { entry ->
             val ch = entry.key as? String ?: return@forEach
-            val encoding = entry.value
+            val channelEncoding = entry.value
 
             if (ch == Channel.X2 || ch == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
@@ -134,32 +137,21 @@ internal object Util {
                 return@forEach
             }
 
-            val encField = encoding.getString(FIELD) ?: return@forEach
-            val encType = encoding[Property.TYPE] ?: when {
-                Property.TIMEUNIT in encoding -> Encoding.Types.QUANTITATIVE
-                Property.BIN in encoding -> Encoding.Types.QUANTITATIVE
-                Property.AGGREGATE in encoding -> Encoding.Types.QUANTITATIVE
-                else -> Encoding.Types.NOMINAL
+            val encField = channelEncoding.getString(FIELD) ?: return@forEach
+            if (channelEncoding[Property.TYPE] == Encoding.Types.TEMPORAL
+                || channelEncoding.contains(Property.TIMEUNIT)
+            ) {
+                dataMeta.appendSeriesAnnotation {
+                    type = SeriesAnnotationOptions.Types.DATE_TIME
+                    column = encField
+                }
             }
 
-            when (encType) {
-                Encoding.Types.QUANTITATIVE -> {
-                    // lp already treats data as continuous by default
-                }
 
-                Encoding.Types.TEMPORAL -> {
-                    dataMeta.appendSeriesAnnotation {
-                        type = SeriesAnnotationOptions.Types.DATE_TIME
-                        column = encField
-                    }
-                }
-
-                Encoding.Types.NOMINAL, Encoding.Types.ORDINAL -> {
-                    if (data?.get(encField)?.all { it is String } == true) {
-                        // lp treats strings as discrete by default
-                        // No need to add annotation
-                        return@forEach
-                    }
+            if (!isContinuous(ch, encodingVegaSpec)) {
+                if (data?.get(encField)?.all { it is String } != true) {
+                    // lp treats strings as discrete by default
+                    // No need to add annotation
 
                     channelToAes(ch, customChannelMapping)
                         .forEach {
