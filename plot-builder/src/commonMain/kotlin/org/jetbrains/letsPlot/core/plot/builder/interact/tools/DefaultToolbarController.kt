@@ -8,8 +8,10 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
@@ -74,6 +76,12 @@ class DefaultToolbarController(
 
             ROLLBACK_ALL_CHANGES -> {
                 resetFigure(deactiveTools = false)
+            }
+
+            INTERACTION_UNSUPPORTED -> {
+                figure.showError(
+                    (event[EVENT_RESULT_ERROR_MSG] as? String) ?: "Unspecified error."
+                )
             }
 
             else -> {}

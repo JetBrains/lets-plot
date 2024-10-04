@@ -29,6 +29,15 @@ internal class MouseDragInteraction(
             return _target ?: throw IllegalStateException("Mouse drag target wasn't acquired.")
         }
 
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_RELEASED,
+                MouseEventSpec.MOUSE_DRAGGED
+            )
+        )
+    }
+
     // Coordinate relative to the entire plot.
     // Need to be translated to "geom" coordinate.
     private var dragFrom: DoubleVector = DoubleVector.ZERO

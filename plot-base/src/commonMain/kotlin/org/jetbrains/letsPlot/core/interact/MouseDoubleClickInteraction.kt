@@ -22,6 +22,14 @@ internal class MouseDoubleClickInteraction(
     private var disposed = false
     private val reg: CompositeRegistration = CompositeRegistration()
 
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_DOUBLE_CLICKED,
+            )
+        )
+    }
+
     fun loop(
         onAction: ((MouseDoubleClickInteraction) -> Unit)
     ) {

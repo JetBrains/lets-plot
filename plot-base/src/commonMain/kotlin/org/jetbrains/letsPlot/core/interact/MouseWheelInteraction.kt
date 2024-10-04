@@ -28,11 +28,19 @@ class MouseWheelInteraction(
         }
 
     // Zoom origin in plot coordinates
-    var zoomOrigin: DoubleVector = DoubleVector.ZERO
+    private var zoomOrigin: DoubleVector = DoubleVector.ZERO
         private set
 
-    var zoomDelta: Double = 0.0
+    private var zoomDelta: Double = 0.0
         private set
+
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_WHEEL_ROTATED,
+            )
+        )
+    }
 
     fun loop(
         onZoomed: ((MouseWheelInteraction) -> Unit)

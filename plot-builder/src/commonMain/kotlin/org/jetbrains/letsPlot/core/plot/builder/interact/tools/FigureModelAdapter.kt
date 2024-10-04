@@ -9,4 +9,5 @@ interface FigureModelAdapter {
     fun activateTool(tool: ToggleTool)
     fun deactivateTool(tool: ToggleTool)
     fun updateView(specOverride: Map<String, Any>? = null)
+    fun showError(msg:String)
 }

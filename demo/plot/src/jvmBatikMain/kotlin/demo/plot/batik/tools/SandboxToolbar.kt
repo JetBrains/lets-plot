@@ -15,7 +15,9 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.BBOX_ZO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.CBOX_ZOOM_TOOL_SPEC
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs.PAN_TOOL_SPEC
 import javax.swing.JButton
+import javax.swing.JOptionPane
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 internal class SandboxToolbar(
     figureModel: FigureModel
@@ -92,6 +94,17 @@ internal class SandboxToolbar(
 
                 override fun updateView(specOverride: Map<String, Any>?) {
                     figureModel.updateView(specOverride)
+                }
+
+                override fun showError(msg: String) {
+                    SwingUtilities.invokeLater {
+                        JOptionPane.showMessageDialog(
+                            null,
+                            msg,
+                            "Situation",
+                            JOptionPane.ERROR_MESSAGE
+                        )
+                    }
                 }
             }
         }

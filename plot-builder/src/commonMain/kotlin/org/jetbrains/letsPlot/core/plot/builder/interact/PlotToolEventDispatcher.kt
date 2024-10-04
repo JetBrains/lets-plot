@@ -10,20 +10,19 @@ import kotlinx.coroutines.Dispatchers
 import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.interact.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.*
 import org.jetbrains.letsPlot.core.interact.DrawRectFeedback.SelectionMode
-import org.jetbrains.letsPlot.core.interact.PanGeomFeedback
 import org.jetbrains.letsPlot.core.interact.PanGeomFeedback.PanningMode
-import org.jetbrains.letsPlot.core.interact.RollbackAllChangesFeedback
-import org.jetbrains.letsPlot.core.interact.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_ACTIVATED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEACTIVATED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
@@ -54,6 +53,24 @@ internal class PlotToolEventDispatcher(
 
     private fun activateInteraction(origin: String, interactionSpec: Map<String, Any>) {
         deactivateOverlappingInteractions(origin, interactionSpec)
+
+        try {
+            activateInteractionIntern(origin, interactionSpec)
+        } catch (e: UnsupportedInteractionException) {
+            if (origin != ORIGIN_FIGURE_IMPLICIT) {
+                toolEventCallback.invoke(
+                    mapOf(
+                        EVENT_NAME to INTERACTION_UNSUPPORTED,
+                        EVENT_INTERACTION_ORIGIN to origin,
+                        EVENT_INTERACTION_NAME to interactionSpec.getValue(ToolInteractionSpec.NAME) as String,
+                        EVENT_RESULT_ERROR_MSG to "Mot supported: ${e.message}"
+                    )
+                )
+            }
+        }
+    }
+
+    private fun activateInteractionIntern(origin: String, interactionSpec: Map<String, Any>) {
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
         val fireSelectionChangedDebounced =
@@ -130,8 +147,7 @@ internal class PlotToolEventDispatcher(
             )
 
             else -> {
-                // ToDo: send an error event
-                throw IllegalStateException("Unsupported interaction: $interactionName")
+                throw UnsupportedInteractionException("Interaction '$interactionName'")
             }
         }
 
