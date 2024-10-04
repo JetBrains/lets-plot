@@ -50,7 +50,7 @@ object RichText {
     private fun parseText(text: String, wrapLength: Int = -1, maxLinesCount: Int = -1): List<List<Term>> {
         val lines = text.split("\n")
             .map { line ->
-                val specialTerms = GreekLetterTerm.parse(line) + PowerTerm.toPowerTerms(line) + SubscriptTerm.toSubscriptTerms(line) + LinkTerm.parse(line)
+                val specialTerms = FormulaTerm.parse(line) + LinkTerm.parse(line)
                 if (specialTerms.isEmpty()) {
                     listOf(TextTerm(line))
                 } else {
@@ -141,19 +141,117 @@ object RichText {
         }
     }
 
-    private class GreekLetterTerm(
-        letter: String
+    private class FormulaTerm(
+        private val root: Leaf
     ) : Term {
-        private val symbol = toSymbol(letter)
-        override val visualCharCount: Int = 1
-        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(symbol))
+        override val visualCharCount: Int = root.visualCharCount
+        override val svg: List<SvgTSpanElement> = root.svg
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(symbol, font)
+            return root.estimateWidth(font, widthCalculator)
+        }
+
+        private class InnerLeaf(val operator: Operator, val subleafs: List<Leaf>) : Leaf {
+            override val visualCharCount: Int = operator.calcVisualCharCount(subleafs.sumOf { it.visualCharCount })
+            override val svg: List<SvgTSpanElement> = operator.getSvg(subleafs.map { it.svg })
+
+            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+                return operator.estimateWidth(subleafs, font, widthCalculator)
+            }
+        }
+
+        private class TerminalLeaf(val body: String) : Leaf {
+            override val visualCharCount: Int = body.length
+            override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(body))
+
+            override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+                return widthCalculator(body, font)
+            }
+        }
+
+        private interface Leaf : Term {
+            companion object {
+                fun strToLeaf(body: String): Leaf {
+                    val operators: List<Operator> = Operator.operators
+                    return operators.mapNotNull { operator ->
+                        operator.parse(body)?.map { strToLeaf(it) }?.let { leafs ->
+                            InnerLeaf(operator, leafs)
+                        }
+                    }.firstOrNull() ?: TerminalLeaf(body)
+                }
+            }
+        }
+
+        private class Operator(
+            val parse: (String) -> List<String>?,
+            val calcVisualCharCount: (Int) -> Int,
+            val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement>,
+            val estimateWidth: (List<Leaf>, Font, (String, Font) -> Double) -> Double
+        ) {
+            companion object {
+                val operators: List<Operator> = listOf(
+                    getIndexOperator(true, "\\^"),
+                    getIndexOperator(false, "_")
+                )
+
+                private fun getIndexOperator(isSuperior: Boolean, symbol: String): Operator {
+                    val zeroWidthSpaceSymbol = "\u200B"
+                    val indentSymbol = " "
+                    val indentSizeFactor = 0.1
+                    val indexSizeFactor = 0.7
+                    val indexRelativeShift = 0.4
+                    val wordCharacters = "[a-zA-Z0-9${GREEK_LETTERS.values.joinToString()}]"
+
+                    val parse: (String) -> List<String>? = { text ->
+                        val regex = """\s*((?:-?${wordCharacters}+)*)$symbol(?:\{\s*)?(-?${wordCharacters}+)(?:\s*\})?\s*""".toRegex()
+                        regex.matchEntire(text)?.let { match ->
+                            match.groups.toList().drop(1).mapNotNull { it?.value }
+                        }
+                    }
+                    val calcVisualCharCount: (Int) -> Int = { it }
+                    val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement> = { elements ->
+                        val shift = if (isSuperior) { "-" } else { "" }
+                        val backShift = if (isSuperior) { "" } else { "-" }
+
+                        val indentTSpan = SvgTSpanElement(indentSymbol).apply {
+                            setAttribute(SvgTSpanElement.FONT_SIZE, "${indentSizeFactor}em")
+                        }
+                        val baseTSpanElements = elements[0]
+                        val indexTSpanElements = elements[1].mapIndexed { i, element -> element.apply {
+                            setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSizeFactor}em")
+                            if (i == 0) {
+                                setAttribute(SvgTSpanElement.DY, "$shift${indexRelativeShift}em")
+                            }
+                        } }
+                        // The following tspan element is used to restore the baseline after the index
+                        // Restoring works only if there is some symbol after the index, so we use zeroWidthSpaceSymbol
+                        // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
+                        // Attribute 'baseline-shift' is better suited for such usecase -
+                        // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
+                        // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
+                        val restoreBaselineTSpan = SvgTSpanElement(zeroWidthSpaceSymbol).apply {
+                            // Size of shift depends on the font size, and it should be equal to the superscript shift size
+                            setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSizeFactor}em")
+                            setAttribute(SvgTSpanElement.DY, "$backShift${indexRelativeShift}em")
+                        }
+
+                        listOf(baseTSpanElements, listOf(indentTSpan), indexTSpanElements, listOf(restoreBaselineTSpan)).flatten()
+                    }
+                    val estimateWidth: (List<Leaf>, Font, (String, Font) -> Double) -> Double = { subleafs, font, widthCalculator ->
+                        val baseWidth = subleafs[0].estimateWidth(font, widthCalculator)
+                        val indexFontSize = (font.size * indexSizeFactor).roundToInt()
+                        val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
+                        val indexWidth = subleafs[1].estimateWidth(indexFont, widthCalculator)
+                        baseWidth + indexWidth
+                    }
+                    return Operator(parse, calcVisualCharCount, getSvg, estimateWidth)
+                }
+            }
         }
 
         companion object {
-            val LETTERS = mapOf(
+            private val REGEX = """\\\(\s*(?<formula>[^(\))]+)\s*\\\)""".toRegex()
+            val GREEK_LETTERS = mapOf(
                 "Alpha" to "Α",
                 "Beta" to "Β",
                 "Gamma" to "Γ",
@@ -203,101 +301,16 @@ object RichText {
                 "psi" to "ψ",
                 "omega" to "ω",
             )
-            private val REGEX = """\\\(\s*\\(?<letter>${LETTERS.keys.joinToString("|")})\s*\\\)""".toRegex()
-
-            fun toSymbol(letter: String): String {
-                return LETTERS[letter] ?: error("Unknown letter: $letter")
-            }
+            val GREEK_LETTERS_REGEX = """\s*\\(?<letter>${GREEK_LETTERS.keys.joinToString("|")})\s*""".toRegex()
 
             fun parse(text: String): List<Pair<Term, IntRange>> {
                 return REGEX.findAll(text).map { match ->
                     val groups = match.groups as MatchNamedGroupCollection
-                    GreekLetterTerm(groups["letter"]!!.value) to match.range
+                    val body = GREEK_LETTERS_REGEX.replace(groups["formula"]!!.value) { match ->
+                        GREEK_LETTERS[match.groups["letter"]!!.value]!!
+                    }
+                    FormulaTerm(Leaf.strToLeaf(body)) to match.range
                 }.toList()
-            }
-        }
-    }
-
-    private class PowerTerm(
-        base: String,
-        degree: String,
-    ) : IndexTerm(base, degree, true) {
-        companion object {
-            fun toPowerTerms(text: String): List<Pair<Term, IntRange>> {
-                return toTerms(text, "\\^") { base, degree -> PowerTerm(base, degree) }
-            }
-        }
-    }
-
-    private class SubscriptTerm(
-        base: String,
-        index: String,
-    ) : IndexTerm(base, index, false) {
-        companion object {
-            fun toSubscriptTerms(text: String): List<Pair<Term, IntRange>> {
-                return toTerms(text, "_") { base, index -> SubscriptTerm(base, index) }
-            }
-        }
-    }
-
-    private open class IndexTerm(
-        private val base: String,
-        private val index: String,
-        isSuperior: Boolean,
-    ) : Term {
-        override val visualCharCount: Int = base.length + index.length
-        override val svg: List<SvgTSpanElement>
-
-        init {
-            val shift = if (isSuperior) { "-" } else { "" }
-            val backShift = if (isSuperior) { "" } else { "-" }
-            val baseTSpan = SvgTSpanElement(base)
-            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-            }
-            val indexTSpan = SvgTSpanElement(index).apply {
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
-                setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-            }
-            // The following tspan element is used to restore the baseline after the index
-            // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
-            // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
-            // Attribute 'baseline-shift' is better suited for such usecase -
-            // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
-            // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                // Size of shift depends on the font size, and it should be equal to the superscript shift size
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
-                setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-            }
-
-            svg = listOf(baseTSpan, indentTSpan, indexTSpan, restoreBaselineTSpan)
-        }
-
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            val baseWidth = widthCalculator(base, font)
-            val indexFontSize = (font.size * INDEX_SIZE_FACTOR).roundToInt()
-            val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
-            val indexWidth = widthCalculator(index, indexFont)
-            return baseWidth + indexWidth
-        }
-
-        companion object {
-            private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-            private const val INDENT_SYMBOL = " "
-            private const val INDENT_SIZE_FACTOR = 0.1
-            private const val INDEX_SIZE_FACTOR = 0.7
-            private const val INDEX_RELATIVE_SHIFT = 0.4
-
-            fun toTerms(text: String, symbol: String, toTerm: (String, String) -> IndexTerm): List<Pair<Term, IntRange>> {
-                return getRegex(symbol).findAll(text).map { match ->
-                    val groups = match.groups as MatchNamedGroupCollection
-                    toTerm(groups["base"]!!.value, groups["index"]!!.value) to match.range
-                }.toList()
-            }
-
-            private fun getRegex(symbol: String): Regex {
-                return """\\\(\s*(?<base>(?:-?[a-zA-Z0-9]+)*)$symbol(\{\s*)?(?<index>-?[a-zA-Z0-9]+)(\s*\})?\s*\\\)""".toRegex()
             }
         }
     }
