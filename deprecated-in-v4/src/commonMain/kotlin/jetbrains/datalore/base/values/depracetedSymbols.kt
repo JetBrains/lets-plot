@@ -7,6 +7,6 @@ package jetbrains.datalore.base.values
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.commons.values\"",
-    ReplaceWith("org.jetbrains.letsPlot.commons.values.Color"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.commons.values.Color"), level = DeprecationLevel.ERROR
 )
 typealias Color = org.jetbrains.letsPlot.commons.values.Color
