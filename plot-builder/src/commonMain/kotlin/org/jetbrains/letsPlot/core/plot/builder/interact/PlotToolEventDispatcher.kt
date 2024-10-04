@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.*
-import org.jetbrains.letsPlot.core.interact.DrawRectFeedback.SelectionMode
-import org.jetbrains.letsPlot.core.interact.PanGeomFeedback.PanningMode
+import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback.SelectionMode
+import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback.PanningMode
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
@@ -27,6 +27,10 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHA
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
+import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.RollbackAllChangesFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 
