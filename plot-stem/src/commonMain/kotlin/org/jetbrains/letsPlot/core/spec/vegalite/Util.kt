@@ -54,7 +54,8 @@ internal object Util {
                 && Channel.Y2 !in encodingVegaSpec
     }
 
-    fun isQuantitative(channelEncoding: Map<*, *>): Boolean {
+    fun isContinuous(channel: String, encoding: Map<*, Map<*, *>>): Boolean {
+        val channelEncoding = encoding[channel] ?: return false
         if (channelEncoding[Property.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding.contains(Property.BIN)) return true
         when (channelEncoding.getString(Property.AGGREGATE)) {
@@ -109,7 +110,9 @@ internal object Util {
     fun LayerOptions.applyConstants(markSpec: Map<*, *>, customChannelMapping: List<Pair<String, Aes<*>>>) {
         markSpec.forEach { (prop, value) ->
             channelToAes(prop.toString(), customChannelMapping)
-                .forEach { aes -> const(aes, value) }
+                .forEach { aes ->
+                    const(aes, value)
+                }
         }
     }
 

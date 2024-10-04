@@ -15,8 +15,15 @@ import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 
-class LayerOptions : Options() {
+open class LayerOptions(
+    geomKind: GeomKind? = null
+) : Options() {
     var geom: GeomKind? by map(Layer.GEOM)
+
+    init {
+        geom = geomKind
+    }
+
     var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
     var mapping: Mapping? by map(PlotBase.MAPPING)
     var dataMeta: DataMetaOptions? by map(Meta.DATA_META)
@@ -31,11 +38,6 @@ class LayerOptions : Options() {
     var marginal: Boolean? by map(Layer.MARGINAL)
     var marginSide: String? by map(Layer.Marginal.SIDE)
     var marginSize: Double? by map(Layer.Marginal.SIZE)
-
-    // geom_text
-    var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)
-    var naText: String? by map(Geom.Text.NA_TEXT)
-    var labelFormat: String? by map(Geom.Text.LABEL_FORMAT)
 
     // Aes
 
@@ -86,6 +88,44 @@ class LayerOptions : Options() {
 
     fun const(aes: Aes<*>, value: Any?) {
         properties[toOption(aes)] = value
+    }
+}
+
+class PointLayer : LayerOptions(GeomKind.POINT) {
+    var sizeUnit: Aes<*>? by map(SIZE_UNIT)
+
+    companion object {
+        val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Point.SIZE_UNIT)
+    }
+}
+
+class BoxplotLayer : LayerOptions(GeomKind.BOX_PLOT) {
+    var whiskerWidth: Double? by map(WHISKER_WIDTH)
+    var fatten: Double? by map(FATTEN)
+
+    companion object {
+        val WHISKER_WIDTH = PropSpec<Double?>(Geom.Boxplot.WHISKER_WIDTH)
+        val FATTEN = PropSpec<Double?>(Geom.Boxplot.FATTEN)
+    }
+}
+
+class CrossbarLayer : LayerOptions(GeomKind.CROSS_BAR) {
+    var fatten: Double? by map(FATTEN)
+
+    companion object {
+        val FATTEN = PropSpec<Double?>(Geom.CrossBar.FATTEN)
+    }
+}
+
+class TextLayer : LayerOptions(GeomKind.TEXT) {
+    var naText: String? by map(NA_TEXT.key)
+    var labelFormat: String? by map(LABEL_FORMAT.key)
+    var sizeUnit: Aes<*>? by map(SIZE_UNIT.key)
+
+    companion object {
+        val NA_TEXT = PropSpec<String?>(Geom.Text.NA_TEXT)
+        val LABEL_FORMAT = PropSpec<String?>(Geom.Text.LABEL_FORMAT)
+        val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Text.SIZE_UNIT)
     }
 }
 

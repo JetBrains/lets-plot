@@ -261,6 +261,7 @@ class CorrPlotOptionsBuilder private constructor(
             layers.add(
                 newCorrPlotLayerOptions {
                     geom = GeomKind.POINT
+                    prop[PointLayer.SIZE_UNIT] = Aes.X
                     this.data = layerData(
                         points,
                         correlations,
@@ -274,7 +275,6 @@ class CorrPlotOptionsBuilder private constructor(
                         Aes.SIZE to CorrVar.CORR_ABS,
                         Aes.COLOR to CorrVar.CORR,
                     )
-                    sizeUnit = Aes.X
                 }
             )
         }
@@ -283,6 +283,9 @@ class CorrPlotOptionsBuilder private constructor(
             layers.add(
                 newCorrPlotLayerOptions {
                     geom = GeomKind.TEXT
+                    prop[TextLayer.NA_TEXT] = ""
+                    prop[TextLayer.LABEL_FORMAT] = VALUE_FORMAT
+                    prop[TextLayer.SIZE_UNIT] = Aes.X
                     this.data = layerData(
                         labels,
                         correlations,
@@ -297,7 +300,6 @@ class CorrPlotOptionsBuilder private constructor(
                         Aes.SIZE to CorrVar.CORR_ABS,
                         Aes.COLOR to CorrVar.CORR
                     )
-                    sizeUnit = Aes.X
                     size = if (labels.mapSize == true) null else 1.0
                     color = labels.color
                 }
@@ -363,8 +365,6 @@ class CorrPlotOptionsBuilder private constructor(
 
     private fun newCorrPlotLayerOptions(block: LayerOptions.() -> Unit): LayerOptions {
         return LayerOptions().apply {
-            naText = ""
-            labelFormat = VALUE_FORMAT
             showLegend = this@CorrPlotOptionsBuilder.showLegend
             tooltipsOptions = tooltips {
                 lines = listOf(TooltipsOptions.variable(CorrVar.CORR))

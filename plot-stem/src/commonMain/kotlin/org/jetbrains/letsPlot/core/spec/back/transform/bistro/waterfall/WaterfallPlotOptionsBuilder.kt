@@ -248,8 +248,7 @@ class WaterfallPlotOptionsBuilder(
 
     private fun labelOptions(labelData: DataFrame): LayerOptions? {
         if (labelOptions.blank) return null
-        return LayerOptions().also {
-            it.geom = GeomKind.TEXT
+        return TextLayer().also {
             it.data = DataFrameUtil.toMap(labelData)
             it.mapping = labelMappings()
             it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
