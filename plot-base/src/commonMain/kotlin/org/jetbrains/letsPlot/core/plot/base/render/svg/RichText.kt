@@ -264,7 +264,7 @@ object RichText {
                     val wordCharacters = "[a-zA-Z0-9${GREEK_LETTERS.values.joinToString()}]"
 
                     val parse: (String) -> List<String>? = { text ->
-                        val regex = """\s*((?:-?${wordCharacters}+)*)$symbol\{?([^\}]+)\}?\s*""".toRegex()
+                        val regex = """\s*((?:-?${wordCharacters}+)*)$symbol\{?([^$symbol\}]+)\}?\s*""".toRegex()
                         regex.matchEntire(text)?.let { match ->
                             match.groups.toList().drop(1).mapNotNull { it?.value }
                         }
