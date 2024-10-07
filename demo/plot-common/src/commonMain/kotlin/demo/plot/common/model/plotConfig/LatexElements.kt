@@ -12,6 +12,7 @@ class LatexElements {
         return listOf(
             getPlotSpec("""Power degree: \\(a^b\\)""", listOf(
                 """\(2^a x^2\)""",
+                """\((1 + 2)(2^2 - (2 - 10^0))\)""",
                 """\(-2^3\)-5""",
                 """-2·\(3^{-13}\) + 7""",
                 """a·\(b^{cde} + f\)""",
@@ -20,6 +21,7 @@ class LatexElements {
             )),
             getPlotSpec("""Index: \\(a_b\\)""", listOf(
                 """\(2_a x_2\)""",
+                """\((1 + 2)(2^2 - (2 - 1_\kappa))\)""",
                 """\(-2_3\)-5""",
                 """-2·\(3_{-13}\) + 7""",
                 """a·\(b_{cde} + f\)""",
