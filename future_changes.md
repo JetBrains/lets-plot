@@ -29,7 +29,11 @@
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb).
 
+  - `strip_background_x, strip_background_y, strip_text_x, strip_text_y` parameters.
+     
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
 
+ 
 ### Changed
 
 - Compact format of scientific notation; new values for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
