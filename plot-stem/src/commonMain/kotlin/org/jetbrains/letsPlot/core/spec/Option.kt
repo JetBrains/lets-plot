@@ -830,8 +830,6 @@ object Option {
         const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
         const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
 
-        const val LEGEND_MARGIN = ThemeOption.LEGEND_MARGIN
-
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
         const val TOOLTIP_TEXT = ThemeOption.TOOLTIP_TEXT

@@ -43,7 +43,6 @@ def theme(*,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
           # ToDo: other legend options...
-          legend_margin=None,
 
           panel_background=None,
           panel_border=None,
@@ -175,16 +174,6 @@ def theme(*,
         For string parameter the only possible value is 'center'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
-    legend_margin : number or list of numbers
-        Margin around legend.
-        The margin may be specified using a number or a list of numbers:
-
-        - a number or list of one number - the same margin it applied to all four sides;
-        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
-        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
-        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
-
-        It is acceptable to use None for any side; in this case, the default value for the legend margin side will be used.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.

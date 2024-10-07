@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
@@ -148,13 +147,6 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,
-
-            LEGEND_MARGIN to mapOf(
-                Elem.Margin.TOP to 5.0,
-                Elem.Margin.RIGHT to 5.0,
-                Elem.Margin.BOTTOM to 5.0,
-                Elem.Margin.LEFT to 5.0
-            ),
 
             FACET_STRIP_TEXT to mapOf(
                 Elem.HJUST to 0.5,

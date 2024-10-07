@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface LegendTheme {
@@ -19,7 +18,7 @@ interface LegendTheme {
     /**
      * extra space added around legend (px, no support for ggplot 'units')
      */
-    fun margin(): Thickness
+    fun margin(): Double
 
     /**
      * space around legend content (px)
