@@ -24,6 +24,12 @@
 
 - Support for 3-character hex color codes     
 
+- In the `theme()` function:
+  - `legend_key`, `legend_key_size, legend_key_width, legend_key_height, legend_key_spacing, legend_key_spacing_x, legend_key_spacing_y` parameters  [[#1181](https://github.com/JetBrains/lets-plot/issues/1181)].
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb).
+
+
 ### Changed
 
 - Compact format of scientific notation; new values for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
