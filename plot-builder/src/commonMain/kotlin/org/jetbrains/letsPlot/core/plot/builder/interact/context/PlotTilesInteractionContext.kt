@@ -8,7 +8,10 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.context
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.interact.*
+import org.jetbrains.letsPlot.core.interact.EventsManager
+import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.InteractionTarget
+import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.PlotTile
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -44,13 +47,14 @@ internal class PlotTilesInteractionContext(
         return dataSelectionStrategy.clientRectToDataBounds(clientRect, coord)
     }
 
-    override fun checkSupported(events: List<MouseEventSpec>) {
-        events.firstOrNull { _ ->
-            tiles.any { (_, tile) ->
-                tile.liveMapFigure != null
+    /**
+     * Throws UnsupportedInteractionException if not supported
+     */
+    override fun checkSupported(eventSpecs: List<MouseEventSpec>) {
+        for (eventSpec in eventSpecs) {
+            for ((_, tile) in tiles) {
+                tile.checkMouseInteractionSupported(eventSpec)
             }
-        }?.let { eventSpec ->
-            throw UnsupportedInteractionException("$eventSpec denied by LiveMap component.")
         }
     }
 }

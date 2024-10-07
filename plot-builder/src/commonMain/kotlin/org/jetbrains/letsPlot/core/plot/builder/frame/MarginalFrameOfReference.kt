@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -58,5 +60,9 @@ internal class MarginalFrameOfReference(
 
     override fun setClip(element: SvgComponent) {
         element.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+    }
+
+    override fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
+        throw UnsupportedInteractionException("$eventSpec denied by marginal plot component.")
     }
 }

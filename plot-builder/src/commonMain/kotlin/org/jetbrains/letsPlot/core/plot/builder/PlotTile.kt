@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -228,6 +230,16 @@ internal class PlotTile(
         rotation?.let { lab.rotate(it.angle) }
 
         add(lab)
+    }
+
+    /**
+     * Throws UnsupportedInteractionException if not supported
+     */
+    fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
+        if (liveMapFigure != null) {
+            throw UnsupportedInteractionException("$eventSpec denied by LiveMap component.")
+        }
+        frameOfReference.checkMouseInteractionSupported(eventSpec)
     }
 
     companion object {
