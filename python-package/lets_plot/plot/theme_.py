@@ -75,8 +75,8 @@ def theme(*,
           plot_title_position=None,
           plot_caption_position=None,
 
-          strip_background=None,  # ToDo: x/y
-          strip_text=None,  # ToDo: x/y
+          strip_background=None, strip_background_x=None, strip_background_y=None,
+          strip_text=None, strip_text_x=None, strip_text_y=None,
           # ToDo: strip.placement
 
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
@@ -273,10 +273,26 @@ def theme(*,
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify facet label background parameters, inherited from `rect`.
+    strip_background_x : str or dict
+        Horizontal facet background.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
+    strip_background_y : str or dict
+        Vertical facet background.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
     strip_text : str or dict
         Facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `text`.
+    strip_text_x : str or dict
+        Horizontal facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
+    strip_text_y : str or dict
+        Vertical facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
     axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
         Axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
