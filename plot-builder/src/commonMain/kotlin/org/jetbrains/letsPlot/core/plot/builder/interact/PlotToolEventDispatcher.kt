@@ -67,7 +67,7 @@ internal class PlotToolEventDispatcher(
                         EVENT_NAME to INTERACTION_UNSUPPORTED,
                         EVENT_INTERACTION_ORIGIN to origin,
                         EVENT_INTERACTION_NAME to interactionSpec.getValue(ToolInteractionSpec.NAME) as String,
-                        EVENT_RESULT_ERROR_MSG to "Mot supported: ${e.message}"
+                        EVENT_RESULT_ERROR_MSG to "Not supported: ${e.message}"
                     )
                 )
             }
