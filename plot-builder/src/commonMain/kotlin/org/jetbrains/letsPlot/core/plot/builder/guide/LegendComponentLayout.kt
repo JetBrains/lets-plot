@@ -76,6 +76,7 @@ abstract class LegendComponentLayout(
             val labelHOffset = keySize.x + horizontalGap / 2
             val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, height)
                 .let {
+                    // Not add a space for the last item in the row/column
                     val xSpacing = if (i / rowCount != colCount - 1) {
                         theme.keySpacing().x
                     } else {
