@@ -32,13 +32,13 @@ class ColorBarComponentSpec(
         internal fun barAbsoluteSize(horizontal: Boolean, theme: LegendTheme): DoubleVector {
             return when {
                 horizontal -> DoubleVector(
-                    DEF_BAR_LENGTH * theme.keySize(),
-                    DEF_BAR_THICKNESS * theme.keySize()
+                    DEF_BAR_LENGTH * theme.keySize().x,
+                    DEF_BAR_THICKNESS * theme.keySize().y
                 )
 
                 else -> DoubleVector(
-                    DEF_BAR_THICKNESS * theme.keySize(),
-                    DEF_BAR_LENGTH * theme.keySize()
+                    DEF_BAR_THICKNESS * theme.keySize().x,
+                    DEF_BAR_LENGTH * theme.keySize().y
                 )
             }
         }

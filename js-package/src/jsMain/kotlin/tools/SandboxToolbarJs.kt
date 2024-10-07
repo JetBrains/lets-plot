@@ -7,6 +7,7 @@ package tools
 
 import FigureModelJs
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
@@ -110,6 +111,10 @@ class SandboxToolbarJs() {
 
         override fun updateView(specOverride: Map<String, Any>?) {
             figureModel?.updateView(dynamicFromAnyQ(specOverride))
+        }
+
+        override fun showError(msg: String) {
+            window.alert(msg)
         }
     }
 

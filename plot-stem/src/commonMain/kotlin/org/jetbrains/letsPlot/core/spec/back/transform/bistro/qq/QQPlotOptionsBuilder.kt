@@ -56,11 +56,12 @@ class QQPlotOptionsBuilder(
             layerOptions = listOf(
                 LayerOptions().also {
                     it.geom = if (sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
+                    it.prop[DISTRIBUTION] = distribution
+                    it.prop[DISTRIBUTION_PARAMETERS] = distributionParameters
+                    it.prop[QUANTILES] = quantiles
+
                     it.data = statData
                     it.mapping = mapping
-                    it[DISTRIBUTION_PROP] = distribution
-                    it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
-                    it[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = color
                     it.fill = fill
@@ -70,11 +71,12 @@ class QQPlotOptionsBuilder(
                 },
                 LayerOptions().also {
                     it.geom = if (sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
+                    it.prop[DISTRIBUTION] = distribution
+                    it.prop[DISTRIBUTION_PARAMETERS] = distributionParameters
+                    it.prop[QUANTILES] = quantiles
+
                     it.data = statData
                     it.mapping = mapping
-                    it[DISTRIBUTION_PROP] = distribution
-                    it[DISTRIBUTION_PARAMETERS_PROP] = distributionParameters
-                    it[QUANTILES_PROP] = quantiles
                     it.showLegend = showLegend
                     it.color = lineColor ?: if (group == null) DEF_LINE_COLOR else null
                     it.size = lineSize
@@ -264,9 +266,9 @@ class QQPlotOptionsBuilder(
         const val DEF_MARGINAL: String = "dens:tr"
         const val DEF_MARGINAL_ALPHA = 0.25
 
-        private val DISTRIBUTION_PROP = PropSpec<String?>(QQ.DISTRIBUTION)
-        private val DISTRIBUTION_PARAMETERS_PROP = PropSpec<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS)
-        private val QUANTILES_PROP = PropSpec<List<Double>?>(QQ.QUANTILES)
+        private val DISTRIBUTION = PropSpec<String?>(QQ.DISTRIBUTION)
+        private val DISTRIBUTION_PARAMETERS = PropSpec<List<Double>?>(QQ.DISTRIBUTION_PARAMETERS)
+        private val QUANTILES = PropSpec<List<Double>?>(QQ.QUANTILES)
 
         val THEORETICAL_VAR = DataFrame.Variable("..theoretical_bistro..")
     }

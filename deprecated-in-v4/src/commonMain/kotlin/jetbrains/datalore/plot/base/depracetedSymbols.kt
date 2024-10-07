@@ -7,6 +7,6 @@ package jetbrains.datalore.plot.base
 
 //@Deprecated(
 //    "Moved to package \"org.jetbrains.letsPlot.core.plot.base\"",
-//    ReplaceWith("org.jetbrains.letsPlot.core.plot.base.Aes"), level = DeprecationLevel.WARNING
+//    ReplaceWith("org.jetbrains.letsPlot.core.plot.base.Aes"), level = DeprecationLevel.ERROR
 //)
 //typealias Aes = org.jetbrains.letsPlot.core.plot.base.Aes

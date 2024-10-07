@@ -13,14 +13,16 @@ abstract class Options(
     val properties: MutableMap<String, Any?> = mutableMapOf(),
     private val toSpecDelegate: (Options) -> Any? = Options::properties
 ) {
-    class PropSpec<T>(val name: String)
-
-    operator fun <T> set(prop: PropSpec<T>, value: T) {
-        properties[prop.name] = value
-    }
+    val prop: PropertyDelegate = PropertyDelegate()
 
     // for short-form specs, e.g., "tooltip": "none" or "sampling": "random"
     fun toSpec(): Any? = toSpecDelegate(this)
+
+    class PropSpec<T>(val key: String)
+    inner class PropertyDelegate() {
+        operator fun <T> get(propSpec: PropSpec<T>): T? = properties[propSpec.key] as T?
+        operator fun <T> set(propSpec: PropSpec<T>, value: T?)  = run { properties[propSpec.key] = value }
+    }
 }
 
 inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
@@ -44,3 +46,4 @@ inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, T
 //      at BackendSpecTransformUtil.processTransformIntern_0
 //      at BackendSpecTransformUtil.processTransform_2wxo1b$
 inline fun <reified TValue> map(aes: Aes<*>): ReadWriteProperty<Options, TValue?> = map(aes.name.lowercase())
+inline fun <reified TValue> map(prop: Options.PropSpec<*>): ReadWriteProperty<Options, TValue?> = map(prop.key)

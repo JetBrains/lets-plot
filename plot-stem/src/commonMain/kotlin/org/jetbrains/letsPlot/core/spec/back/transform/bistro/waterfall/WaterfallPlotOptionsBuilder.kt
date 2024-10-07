@@ -237,8 +237,7 @@ class WaterfallPlotOptionsBuilder(
                 Aes.RADIUS to Waterfall.Var.Stat.RADIUS.name
             )
             it.angle = 0.0
-            it.position = position {
-                name = CONNECTOR_POSITION_NAME
+            it.position = nudge {
                 x = 0.5 - (1 - width) / 2.0
             }
             it.color = connectorOptions.color
@@ -249,8 +248,7 @@ class WaterfallPlotOptionsBuilder(
 
     private fun labelOptions(labelData: DataFrame): LayerOptions? {
         if (labelOptions.blank) return null
-        return LayerOptions().also {
-            it.geom = GeomKind.TEXT
+        return TextLayer().also {
             it.data = DataFrameUtil.toMap(labelData)
             it.mapping = labelMappings()
             it.color = labelOptions.color.takeUnless { labelOptions.color == COLOR_FLOW_TYPE }
@@ -359,7 +357,6 @@ class WaterfallPlotOptionsBuilder(
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
         private const val VALUE_TOOLTIP_NAME = "Value"
-        private const val CONNECTOR_POSITION_NAME = "nudge"
         private const val TOOLTIPS_VALUE_FORMAT = ".2~f"
 
         const val DEF_COLOR = "black"

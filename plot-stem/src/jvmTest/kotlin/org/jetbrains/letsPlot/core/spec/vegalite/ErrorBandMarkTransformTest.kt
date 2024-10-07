@@ -78,7 +78,14 @@ class ErrorBandMarkTransformTest {
                 "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
                 "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
             )),
-            entry(Meta.DATA_META, empty()),
+            entry(Meta.DATA_META, mapOf(
+                Meta.SeriesAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.SeriesAnnotation.COLUMN to "Year",
+                        Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+                    )
+                )
+            ))
         )
     }
 
@@ -131,7 +138,14 @@ class ErrorBandMarkTransformTest {
                 "ci1" to listOf(23.5007, 25.8214, 26.4472, 27.7074),
                 "Year" to listOf(1.893024E11, 2.209248E11, 2.524608E11, 2.839968E11)
             )),
-            entry(Meta.DATA_META, empty()),
+            entry(Meta.DATA_META, mapOf(
+                Meta.SeriesAnnotation.TAG to listOf(
+                    mapOf(
+                        Meta.SeriesAnnotation.COLUMN to "Year",
+                        Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
+                    )
+                )
+            )),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.XMIN) to "ci1",
                 toOption(Aes.XMAX) to "ci0",

@@ -7,6 +7,6 @@ package jetbrains.datalore.plot.base.data
 
 //@Deprecated(
 //    "Moved to package \"org.jetbrains.letsPlot.core.plot.base.data\"",
-//    ReplaceWith("org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil"), level = DeprecationLevel.WARNING
+//    ReplaceWith("org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil"), level = DeprecationLevel.ERROR
 //)
 //typealias DataFrameUtil = org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil

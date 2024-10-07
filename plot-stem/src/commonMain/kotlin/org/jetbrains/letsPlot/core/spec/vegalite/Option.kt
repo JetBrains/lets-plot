@@ -75,6 +75,9 @@ internal object Option {
             const val TEXT = "text"
             const val DETAIL = "detail"
 
+            const val X_OFFSET = "xOffset"
+            const val Y_OFFSET = "yOffset"
+
             const val ERROR_X = "errorX"
         }
 

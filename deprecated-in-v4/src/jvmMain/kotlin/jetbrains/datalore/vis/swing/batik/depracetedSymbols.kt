@@ -7,12 +7,12 @@ package jetbrains.datalore.vis.swing.batik
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.batik.plot.component\"",
-    ReplaceWith("org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik"), level = DeprecationLevel.ERROR
 )
 typealias PlotViewerWindowBatik = org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.batik.plot.component\"",
-    ReplaceWith("org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik"), level = DeprecationLevel.ERROR
 )
 typealias DefaultPlotPanelBatik = org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
