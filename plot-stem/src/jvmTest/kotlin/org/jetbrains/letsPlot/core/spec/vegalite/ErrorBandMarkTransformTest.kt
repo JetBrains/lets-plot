@@ -85,7 +85,8 @@ class ErrorBandMarkTransformTest {
                         Meta.SeriesAnnotation.TYPE to Meta.SeriesAnnotation.Types.DATE_TIME
                     )
                 )
-            ))
+            )),
+            entry(toOption(Aes.LINETYPE), 0)
         )
     }
 
@@ -151,6 +152,7 @@ class ErrorBandMarkTransformTest {
                 toOption(Aes.XMAX) to "ci0",
                 toOption(Aes.Y) to "Year"
             )),
+            entry(toOption(Aes.LINETYPE), 0)
         )
     }
 

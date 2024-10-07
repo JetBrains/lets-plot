@@ -171,7 +171,7 @@ internal object Util {
         return dataMeta
     }
 
-    fun LayerOptions.transformStat(encodings: Map<*, Map<*, *>>): StatOptions? {
+    fun LayerOptions.transformStat(encodings: Map<*, Map<*, *>>): Boolean {
         val xAggregate = encodings.getString(Channel.X, Property.AGGREGATE)
         val yAggregate = encodings.getString(Channel.Y, Property.AGGREGATE)
 
@@ -179,14 +179,16 @@ internal object Util {
             error("Both x and y aggregates are not supported")
         }
 
-        val aggregate = xAggregate ?: yAggregate ?: return null
+        val aggregate = xAggregate ?: yAggregate ?: return false
 
-        return when (aggregate) {
+        when (aggregate) {
             Encoding.Aggregate.COUNT -> countStat()
             Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
             Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
             else -> error("Unsupported aggregate function: $aggregate")
         }
+
+        return true
     }
 
     fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
