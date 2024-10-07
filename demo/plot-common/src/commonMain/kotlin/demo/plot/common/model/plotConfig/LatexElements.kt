@@ -11,7 +11,7 @@ class LatexElements {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             getPlotSpec("""Power degree: \\(a^b\\)""", listOf(
-                """\(x^1\)""",
+                """\(2^a x^2\)""",
                 """\(-2^3\)-5""",
                 """-2·\(3^{-13}\) + 7""",
                 """a·\(b^{cde} + f\)""",
@@ -19,7 +19,7 @@ class LatexElements {
                 """\((\alpha^{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
             )),
             getPlotSpec("""Index: \\(a_b\\)""", listOf(
-                """\(x_1\)""",
+                """\(2_a x_2\)""",
                 """\(-2_3\)-5""",
                 """-2·\(3_{-13}\) + 7""",
                 """a·\(b_{cde} + f\)""",

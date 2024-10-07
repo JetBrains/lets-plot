@@ -160,30 +160,43 @@ object RichText {
             }
         }
 
-        private class TerminalLeaf(val body: String) : Leaf {
-            override val visualCharCount: Int = body.length
-            override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(body))
+        private class TerminalLeaf(body: String) : Leaf {
+            private val body = body.trim()
+            override val visualCharCount: Int = this.body.length
+            override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(this.body))
 
             override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
                 return widthCalculator(body, font)
             }
         }
 
-        private interface Leaf : Term {
+        private interface Leaf {
+            val visualCharCount: Int
+            val svg: List<SvgTSpanElement>
+
+            fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+
             companion object {
-                fun strToLeaf(body: String): Leaf {
-                    val operators: List<Operator> = Operator.operators
-                    return operators.mapNotNull { operator ->
-                        operator.parse(body.trim())?.map { strToLeaf(it) }?.let { leafs ->
-                            InnerLeaf(operator, leafs)
+                fun strToLeaf(body: String): Leaf? {
+                    val operators = Operator.operators
+                    for (operator in operators) {
+                        val bodyParts = operator.parseEntire(body.trim())
+                        if (bodyParts != null) {
+                            return InnerLeaf(operator, bodyParts.map { strToLeaf(it) ?: TerminalLeaf(it) })
                         }
-                    }.firstOrNull() ?: TerminalLeaf(body.trim())
+                        val (start, end) = operator.parseStart(body.trim()) ?: continue
+                        val endLeaf = strToLeaf(end) ?: continue
+                        val startLeaf = InnerLeaf(operator, start.map { strToLeaf(it) ?: TerminalLeaf(it) })
+                        return InnerLeaf(Operator.multOperatorWithoutSymbol, listOf(startLeaf, endLeaf))
+                    }
+                    return null
                 }
             }
         }
 
         private class Operator(
-            val parse: (String) -> List<String>?,
+            val parseEntire: (String) -> List<String>?,
+            val parseStart: (String) -> Pair<List<String>, String>?,
             val calcVisualCharCount: (Int) -> Int,
             val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement>,
             val estimateWidth: (List<Leaf>, Font, (String, Font) -> Double) -> Double
@@ -197,15 +210,12 @@ object RichText {
                     getIndexOperator(true, "\\^"),
                     getIndexOperator(false, "_"),
                 )
+                val multOperatorWithoutSymbol = Operator({ null }, { null }, { it }, { it.flatten() }, { subleafs, font, widthCalculator ->
+                    subleafs.sumOf { it.estimateWidth(font, widthCalculator) }
+                })
 
                 private fun getBracketsOperator(): Operator {
-                    val parse: (String) -> List<String>? = { text ->
-                        val regex = """\s*\(([^\)]+)\)\s*""".toRegex()
-                        regex.matchEntire(text)?.let { match ->
-                            val t = match.groups.toList().drop(1)
-                            t.mapNotNull { it?.value }
-                        }
-                    }
+                    val regex = """\s*\(([^\)]+)\)\s*""".toRegex()
                     val calcVisualCharCount: (Int) -> Int = { it + 2 }
                     val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement> = { elements ->
                         val innerElements = elements[0]
@@ -216,11 +226,11 @@ object RichText {
                         val bracketsWidth = widthCalculator("()", font)
                         innerWidth + bracketsWidth
                     }
-                    return Operator(parse, calcVisualCharCount, getSvg, estimateWidth)
+                    return Operator(parseEntireByRegex(regex), parseStartByRegex(regex), calcVisualCharCount, getSvg, estimateWidth)
                 }
 
                 private fun getBinaryOperator(operator: Char): Operator {
-                    fun parse(text: String): List<String>? {
+                    fun parseEntire(text: String): List<String>? {
                         var brackets = 0
                         var curlyBrackets = 0
                         for (i in text.indices) {
@@ -252,7 +262,7 @@ object RichText {
                         val plusWidth = widthCalculator(operator.toString(), font)
                         leftOperandWidth + plusWidth + rightOperandWidth
                     }
-                    return Operator(::parse, calcVisualCharCount, getSvg, estimateWidth)
+                    return Operator(::parseEntire, { null }, calcVisualCharCount, getSvg, estimateWidth)
                 }
 
                 private fun getIndexOperator(isSuperior: Boolean, symbol: String): Operator {
@@ -261,12 +271,15 @@ object RichText {
                     val indentSizeFactor = 0.1
                     val indexSizeFactor = 0.7
                     val indexRelativeShift = 0.4
-                    val wordCharacters = "[a-zA-Z0-9${GREEK_LETTERS.values.joinToString()}]"
+                    val wordCharacters = "[a-zA-Z0-9${GREEK_LETTERS.values.joinToString("")}]"
 
-                    val parse: (String) -> List<String>? = { text ->
-                        val regex = """\s*((?:-?${wordCharacters}+)*)$symbol\{?([^$symbol\}]+)\}?\s*""".toRegex()
-                        regex.matchEntire(text)?.let { match ->
-                            match.groups.toList().drop(1).mapNotNull { it?.value }
+                    val regex = """\s*((?:-?${wordCharacters}+)*)$symbol(${wordCharacters}|\{[^$symbol\}]+\})\s*""".toRegex()
+                    val parseEntire: (String) -> List<String>? = { text ->
+                        parseEntireByRegex(regex)(text)?.map { if (it.startsWith("{")) it.drop(1).dropLast(1) else it }
+                    }
+                    val parseStart: (String) -> Pair<List<String>, String>? = { text ->
+                        parseStartByRegex(regex)(text)?.let { (start, end) ->
+                            Pair(start.map { if (it.startsWith("{")) it.drop(1).dropLast(1) else it }, end)
                         }
                     }
                     val calcVisualCharCount: (Int) -> Int = { it }
@@ -305,7 +318,25 @@ object RichText {
                         val indexWidth = subleafs[1].estimateWidth(indexFont, widthCalculator)
                         baseWidth + indexWidth
                     }
-                    return Operator(parse, calcVisualCharCount, getSvg, estimateWidth)
+                    return Operator(parseEntire, parseStart, calcVisualCharCount, getSvg, estimateWidth)
+                }
+
+                private fun parseEntireByRegex(regex: Regex): (String) -> List<String>? {
+                    return { text ->
+                        regex.matchEntire(text)?.let { match ->
+                            match.groups.toList().drop(1).mapNotNull { it?.value }
+                        }
+                    }
+                }
+
+                private fun parseStartByRegex(regex: Regex): (String) -> Pair<List<String>, String>? {
+                    return { text ->
+                        ("^" + regex.pattern).toRegex().find(text)?.let { match ->
+                            val start = match.groups.toList().drop(1).mapNotNull { it?.value }
+                            val end = text.substring(match.range.last + 1)
+                            Pair(start, end)
+                        }
+                    }
                 }
             }
         }
@@ -367,8 +398,8 @@ object RichText {
                 return extractFormulas(text).map { (formula, range) ->
                     val body = GREEK_LETTERS_REGEX.replace(formula) { match ->
                         GREEK_LETTERS[match.groups["letter"]!!.value]!!
-                    }
-                    FormulaTerm(Leaf.strToLeaf(body.trim())) to range
+                    }.trim()
+                    FormulaTerm(Leaf.strToLeaf(body) ?: TerminalLeaf(body)) to range
                 }.toList()
             }
 
