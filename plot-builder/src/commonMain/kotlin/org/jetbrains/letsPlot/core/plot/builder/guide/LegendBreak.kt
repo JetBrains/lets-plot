@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class LegendBreak(val label: String) {
@@ -53,7 +52,6 @@ class LegendBreak(val label: String) {
     )
 
     companion object {
-        // for demo
         fun simple(
             label: String,
             dataPoint: DataPointAesthetics,
