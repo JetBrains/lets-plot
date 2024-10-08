@@ -53,6 +53,16 @@ internal open class Token {
     object CloseBrace : Token()
     object Superscript : Token()
     object Subscript : Token()
+    object Space : Token()
+    data class ExplicitSpace(val type: Type) : Token() {
+        enum class Type(val symbol: String) {
+            QUAD(" "),
+            QQUAD("  "),
+            COMMA(" "),
+            COLON(" "),
+            SPACE(" ");
+        }
+    }
     data class Text(val content: String) : Token()
 
     private enum class ControlSymbol(val symbol: Char) {
@@ -60,7 +70,8 @@ internal open class Token {
         OPEN_BRACE('{'),
         CLOSE_BRACE('}'),
         SUPERSCRIPT('^'),
-        SUBSCRIPT('_');
+        SUBSCRIPT('_'),
+        SPACE(' ');
 
         companion object {
             fun fromChar(char: Char): ControlSymbol? {
@@ -81,11 +92,18 @@ internal open class Token {
                     ControlSymbol.BACKSLASH -> {
                         val command = StringBuilder()
                         i++
-                        while (i < input.length && input[i].isLetter()) {
+                        while (i < input.length && (input[i].isLetter() || (command.isEmpty() && input[i] in ",: "))) {
                             command.append(input[i])
                             i++
                         }
-                        yield(Command(command.toString()))
+                        when (command.toString()) {
+                            "quad" -> yield(ExplicitSpace(ExplicitSpace.Type.QUAD))
+                            "qquad" -> yield(ExplicitSpace(ExplicitSpace.Type.QQUAD))
+                            "," -> yield(ExplicitSpace(ExplicitSpace.Type.COMMA))
+                            ":" -> yield(ExplicitSpace(ExplicitSpace.Type.COLON))
+                            " " -> yield(ExplicitSpace(ExplicitSpace.Type.SPACE))
+                            else -> yield(Command(command.toString()))
+                        }
                     }
                     ControlSymbol.OPEN_BRACE -> {
                         yield(OpenBrace)
@@ -101,6 +119,10 @@ internal open class Token {
                     }
                     ControlSymbol.SUBSCRIPT ->{
                         yield(Subscript)
+                        i++
+                    }
+                    ControlSymbol.SPACE -> {
+                        yield(Space)
                         i++
                     }
                     else -> {
@@ -236,12 +258,14 @@ internal abstract class Node {
             while (iterator.hasNext()) {
                 val token = iterator.next()
                 when (token) {
-                    is Token.Command -> nodes.add(parseCommand(token)) // For now we just replace the command with its name if it's not a special symbol
+                    is Token.Command -> nodes.add(parseCommand(token)) // For now, we just replace the command with its name if it's not a special symbol
                     is Token.OpenBrace -> nodes.add(parseGroup(iterator))
                     is Token.CloseBrace -> break
                     is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator)))
                     is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator)))
                     is Token.Text -> nodes.add(TextNode(token.content))
+                    is Token.Space -> continue
+                    is Token.ExplicitSpace -> nodes.add(TextNode(token.type.symbol))
                 }
             }
             return GroupNode(nodes)
@@ -257,7 +281,7 @@ internal abstract class Node {
         }
 
         private fun parseCommand(token: Token.Command): Node {
-            // For now we just replace the command with its name if it's not a special symbol
+            // For now, we just replace the command with its name if it's not a special symbol
             return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
 
