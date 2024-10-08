@@ -18,6 +18,10 @@ internal class MouseWheelSelectionStrategy : DataSelectionStrategy {
         val domainPoint1 = coord.fromClient(clientBottomRight)
             ?: error("Can't translate client $clientBottomRight to data domain.")
 
-        return DoubleRectangle.span(domainPoint0, domainPoint1)
+        val dataBounds = DoubleRectangle.span(domainPoint0, domainPoint1).let {
+            DataBoundsFix.unImplode(it)
+        }
+
+        return dataBounds
     }
 }
