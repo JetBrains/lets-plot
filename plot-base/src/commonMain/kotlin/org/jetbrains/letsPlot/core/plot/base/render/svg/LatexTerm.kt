@@ -88,7 +88,22 @@ internal open class Token {
         fun tokenize(input: String): Sequence<Token> = sequence {
             var i = 0
             while (i < input.length) {
-                when (ControlSymbol.fromChar(input[i])) {
+                val controlSymbol = ControlSymbol.fromChar(input[i])
+                if (controlSymbol == null) {
+                    val text = StringBuilder()
+                    if (i > 0 && ControlSymbol.isSupOrSub(input[i - 1])) {
+                        text.append(input[i])
+                        i++
+                    } else {
+                        while (i < input.length && ControlSymbol.fromChar(input[i]) == null) {
+                            text.append(input[i])
+                            i++
+                        }
+                    }
+                    yield(Text(text.toString()))
+                    continue
+                }
+                when (controlSymbol) {
                     ControlSymbol.BACKSLASH -> {
                         val command = StringBuilder()
                         i++
@@ -124,19 +139,6 @@ internal open class Token {
                     ControlSymbol.SPACE -> {
                         yield(Space)
                         i++
-                    }
-                    else -> {
-                        val text = StringBuilder()
-                        if (i > 0 && ControlSymbol.isSupOrSub(input[i - 1])) {
-                            text.append(input[i])
-                            i++
-                        } else {
-                            while (i < input.length && ControlSymbol.fromChar(input[i]) == null) {
-                                text.append(input[i])
-                                i++
-                            }
-                        }
-                        yield(Text(text.toString()))
                     }
                 }
             }
