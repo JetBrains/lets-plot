@@ -20,11 +20,10 @@ internal class LatexTerm(
         node.estimateWidth(font, widthCalculator)
 
     companion object {
-
-
         fun parse(text: String): List<Pair<Term, IntRange>> {
             return extractFormulas(text).map { (formula, range) ->
-                LatexTerm(Node.parse(Token.tokenize(formula))) to range
+                val text = formula.replace("-", "−") // Use minus sign instead of hyphen
+                LatexTerm(Node.parse(Token.tokenize(text))) to range
             }.toList()
         }
 
