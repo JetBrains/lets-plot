@@ -37,10 +37,12 @@ class SummaryStatOptions(holder: Options): StatOptions(StatKind.SUMMARY, holder)
     }
 }
 
-fun LayerOptions.identityStat() = StatOptions(StatKind.IDENTITY, this)
-fun LayerOptions.countStat() = StatOptions(StatKind.COUNT, this)
-fun LayerOptions.boxplotOutlierStat() = StatOptions(StatKind.BOXPLOT_OUTLIER, this)
+// Inline option is a part of the parent object and can't be used separately.
 
-fun LayerOptions.summaryStat(block: SummaryStatOptions.() -> Unit): SummaryStatOptions {
-    return SummaryStatOptions(this).apply(block)
+fun LayerOptions.identityStat() { stat = StatOptions(StatKind.IDENTITY, this) }
+fun LayerOptions.countStat() { stat = StatOptions(StatKind.COUNT, this) }
+fun LayerOptions.boxplotOutlierStat() { stat = StatOptions(StatKind.BOXPLOT_OUTLIER, this) }
+fun LayerOptions.binStat() { stat = StatOptions(StatKind.BIN, this) }
+fun LayerOptions.summaryStat(block: SummaryStatOptions.() -> Unit) {
+    stat = SummaryStatOptions(this).apply(block)
 }

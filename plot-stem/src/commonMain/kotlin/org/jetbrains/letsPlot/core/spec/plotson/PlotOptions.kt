@@ -30,8 +30,11 @@ class PlotOptions : Options(
     }
 
     fun appendLayer(block: LayerOptions.() -> Unit) {
-        val layer = LayerOptions().apply(block)
-        layerOptions = (layerOptions ?: emptyList()) + layer
+        appendLayer(LayerOptions().apply(block))
+    }
+
+    fun appendLayer(layerOptions: LayerOptions) {
+        this.layerOptions = (this.layerOptions ?: emptyList()) + layerOptions
     }
 
     companion object {

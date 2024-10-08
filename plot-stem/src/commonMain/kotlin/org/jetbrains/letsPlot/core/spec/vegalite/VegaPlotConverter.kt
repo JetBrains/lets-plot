@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.asMapOfMaps
 import org.jetbrains.letsPlot.core.spec.getDouble
@@ -22,9 +23,6 @@ import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
-import org.jetbrains.letsPlot.core.spec.vegalite.Util.iHorizontal
-import org.jetbrains.letsPlot.core.spec.vegalite.Util.isContinuous
-import org.jetbrains.letsPlot.core.spec.vegalite.Util.readMark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformStat
 
 internal class VegaPlotConverter private constructor(
@@ -51,139 +49,144 @@ internal class VegaPlotConverter private constructor(
     }
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
-        val (markType, markVegaSpec) = readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
+        val (markType, markVegaSpec) = Util.readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
         val encoding = (plotEncoding + (layerSpec.getMap(Option.ENCODING) ?: emptyMap())).asMapOfMaps()
 
-        fun LayerOptions.initDataAndMappings(customChannelMapping: List<Pair<String, Aes<*>>>) {
-            data = when {
-                Option.DATA !in layerSpec -> plotData
-                layerSpec[Option.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                layerSpec[Option.DATA] != null -> Util.transformData(layerSpec.getMap(Option.DATA)!!) // data is specified
-                else -> error("Unsupported data specification")
-            }
-            mapping = Util.transformMappings(encoding, customChannelMapping.toList())
-            dataMeta = Util.transformDataMeta(data, encoding, customChannelMapping.toList())
+        fun appendLayer(
+            geom: GeomKind,
+            channelMapping: List<Pair<String, Aes<*>>> = emptyList(),
+            block: LayerOptions.() -> Unit = {}
+        ) {
+            val layerOptions = LayerOptions()
+                .apply(block)
+                .apply {
+                    this.geom = geom
+                    if (data == null) {
+                        data = when {
+                            Option.DATA !in layerSpec -> plotData
+                            layerSpec[Option.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
+                            layerSpec[Option.DATA] != null -> Util.transformData(layerSpec.getMap(Option.DATA)!!) // data is specified
+                            else -> error("Unsupported data specification")
+                        }
+                    }
 
-            applyConstants(markVegaSpec, customChannelMapping.toList())
-        }
+                    if (mapping == null) {
+                        mapping = Util.transformMappings(encoding, channelMapping)
+                    }
 
-        fun LayerOptions.initDataAndMappings(vararg customChannelMapping: Pair<String, Aes<*>>) {
-            initDataAndMappings(customChannelMapping.toList())
+                    if (stat == null) {
+                        transformStat(encoding)
+                    }
+
+                    if (position == null) {
+                        position = Util.transformPositionAdjust(encoding)
+                    }
+
+                    if (dataMeta == null) {
+                        dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
+                    }
+
+                    applyConstants(markVegaSpec, channelMapping)
+                }
+
+            plotOptions.appendLayer(layerOptions)
         }
 
         when (markType) {
-            Mark.Types.BAR -> plotOptions.appendLayer {
+            Mark.Types.BAR ->
                 if (encoding.values.any { Encoding.Property.BIN in it }) {
-                    initDataAndMappings()
-                    geom = GeomKind.HISTOGRAM
+                    appendLayer(
+                        geom = GeomKind.HISTOGRAM
+                    ) {
+                        binStat()
+                    }
                 } else if (encoding.any { (channel, _) -> channel == X2 }) {
-                    initDataAndMappings(
-                        X to Aes.XMIN,
-                        X2 to Aes.XMAX,
-                        Y to Aes.Y,
-                        COLOR to Aes.FILL,
-                        COLOR to Aes.COLOR
+                    appendLayer(
+                        geom = GeomKind.CROSS_BAR,
+                        channelMapping = listOf(
+                            X to Aes.XMIN,
+                            X2 to Aes.XMAX,
+                            Y to Aes.Y,
+                            COLOR to Aes.FILL,
+                            COLOR to Aes.COLOR
+                        )
                     )
-                    geom = GeomKind.CROSS_BAR
                 } else if (encoding.any { (channel, _) -> channel == Y2 }) {
-                    initDataAndMappings(
-                        X to Aes.X,
-                        Y to Aes.YMIN,
-                        Y2 to Aes.YMAX,
-                        COLOR to Aes.FILL,
-                        COLOR to Aes.COLOR
+                    appendLayer(
+                        geom = GeomKind.CROSS_BAR,
+                        channelMapping = listOf(
+                            X to Aes.X,
+                            Y to Aes.YMIN,
+                            Y2 to Aes.YMAX,
+                            COLOR to Aes.FILL,
+                            COLOR to Aes.COLOR
+                        )
                     )
-                    geom = GeomKind.CROSS_BAR
                 } else {
-                    initDataAndMappings(COLOR to Aes.FILL, COLOR to Aes.COLOR)
-                    geom = GeomKind.BAR
-                    width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
-                    stat = transformStat(encoding) ?: identityStat()
-                    position = Util.transformPositionAdjust(encoding)
+                    appendLayer(
+                        geom = GeomKind.BAR,
+                        channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
+                    ) {
+                        if (!transformStat(encoding)) {
+                            identityStat()
+                        }
+                        width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
+                    }
                 }
-            }
 
-            Mark.Types.LINE, Mark.Types.TRAIL -> plotOptions.appendLayer {
-                geom = GeomKind.LINE
-                initDataAndMappings()
-            }
 
-            Mark.Types.POINT -> plotOptions.appendLayer {
-                geom = GeomKind.POINT
-                initDataAndMappings()
-            }
-
-            Mark.Types.AREA -> plotOptions.appendLayer {
-                geom = GeomKind.AREA
-                initDataAndMappings()
-            }
+            Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
+            Mark.Types.POINT -> appendLayer(GeomKind.POINT)
+            Mark.Types.AREA -> appendLayer(GeomKind.AREA)
 
             Mark.Types.BOXPLOT -> {
-                val layerOrientation = when (isContinuous(X, encoding)) {
+                val layerOrientation = when (Util.isContinuous(X, encoding)) {
                     true -> "y"
                     else -> null
                 }
 
-                plotOptions.appendLayer {
-                    geom = GeomKind.BOX_PLOT
+                appendLayer(GeomKind.BOX_PLOT) {
                     orientation = layerOrientation
-
-                    initDataAndMappings()
                 }
 
-                plotOptions.appendLayer {
-                    geom = GeomKind.POINT
+                appendLayer(GeomKind.POINT) {
                     orientation = layerOrientation
-                    stat = boxplotOutlierStat()
-                    initDataAndMappings()
+                    boxplotOutlierStat()
                 }
             }
 
-            Mark.Types.TEXT -> plotOptions.appendLayer {
-                initDataAndMappings()
-                geom = GeomKind.TEXT
-                stat = transformStat(encoding)
-                position = Util.transformPositionAdjust(encoding)
-            }
+            Mark.Types.TEXT -> appendLayer(GeomKind.TEXT)
 
-            Mark.Types.RECT -> plotOptions.appendLayer {
+            Mark.Types.RECT ->
                 if (listOf(X2, Y2).any { it in encoding }) {
-                    geom = GeomKind.RECT
-                    initDataAndMappings(X to Aes.XMIN, Y to Aes.YMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
+                    appendLayer(
+                        geom = GeomKind.RECT,
+                        channelMapping = listOf(X to Aes.XMIN, Y to Aes.YMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
+                    )
                 } else {
-                    geom = GeomKind.RASTER
-                    initDataAndMappings(COLOR to Aes.FILL)
+                    appendLayer(
+                        geom = GeomKind.RASTER,
+                        channelMapping = listOf(COLOR to Aes.FILL)
+                    )
                 }
-            }
 
             Mark.Types.RULE -> {
                 val isVLine = X in encoding && listOf(X2, Y, Y2).none(encoding::contains)
                 val isHLine = Y in encoding && listOf(X, X2, Y2).none(encoding::contains)
                 val isVSegment = listOf(X, Y, Y2).all(encoding::contains) && X2 !in encoding
                 val isHSegment = listOf(X, X2, Y).all(encoding::contains) && Y2 !in encoding
-
-                plotOptions.appendLayer {
-                    geom = when {
-                        isVLine -> GeomKind.V_LINE
-                        isHLine -> GeomKind.H_LINE
-                        isVSegment -> GeomKind.SEGMENT
-                        isHSegment -> GeomKind.SEGMENT
-                        else -> error("Rule markType can be used only for vertical or horizontal lines or segments.\nEncoding: $encoding")
-                    }
-
-                    when {
-                        isVLine -> initDataAndMappings(X to Aes.XINTERCEPT)
-                        isHLine -> initDataAndMappings(Y to Aes.YINTERCEPT)
-                        isHSegment -> initDataAndMappings(Y to Aes.Y, Y to Aes.YEND, X2 to Aes.XEND)
-                        isVSegment -> initDataAndMappings(X to Aes.X, X to Aes.XEND, Y2 to Aes.YEND)
-                        else -> error("Rule markType can be used only for vertical or horizontal lines or segments")
-                    }
+                when {
+                    isVLine -> appendLayer(GeomKind.V_LINE, listOf(X to Aes.XINTERCEPT))
+                    isHLine -> appendLayer(GeomKind.H_LINE, listOf(Y to Aes.YINTERCEPT))
+                    isVSegment -> appendLayer(GeomKind.SEGMENT, listOf(X to Aes.X, X to Aes.XEND, Y2 to Aes.YEND))
+                    isHSegment -> appendLayer(GeomKind.SEGMENT, listOf(Y to Aes.Y, Y to Aes.YEND, X2 to Aes.XEND))
+                    else -> error("Rule markType can be used only for vertical or horizontal lines or segments.\nEncoding: $encoding")
                 }
             }
 
-            Mark.Types.CIRCLE, Mark.Types.SQUARE -> plotOptions.appendLayer {
-                initDataAndMappings()
+            Mark.Types.CIRCLE, Mark.Types.SQUARE -> appendLayer(
                 geom = GeomKind.POINT
+            ) {
                 shape = when (markType) {
                     Mark.Types.CIRCLE -> NamedShape.SOLID_CIRCLE
                     Mark.Types.SQUARE -> NamedShape.SOLID_SQUARE
@@ -191,26 +194,34 @@ internal class VegaPlotConverter private constructor(
                 }
             }
 
-            Mark.Types.ERROR_BAR, Mark.Types.ERROR_BAND -> plotOptions.appendLayer {
-                when (iHorizontal(encoding)) {
-                    true -> initDataAndMappings(X to Aes.XMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
-                    false -> initDataAndMappings(Y to Aes.YMIN, Y2 to Aes.YMAX, X2 to Aes.XMAX)
-                }
 
-                geom = when (markType) {
-                    Mark.Types.ERROR_BAR -> GeomKind.ERROR_BAR
-                    Mark.Types.ERROR_BAND -> GeomKind.RIBBON
-                    else -> error("Unsupported markType type: $markType")
+            Mark.Types.ERROR_BAR -> appendLayer(
+                geom = GeomKind.ERROR_BAR,
+                channelMapping = when (Util.iHorizontal(encoding)) {
+                    true -> listOf(X to Aes.XMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
+                    false -> listOf(Y to Aes.YMIN, Y2 to Aes.YMAX, X2 to Aes.XMAX)
                 }
+            )
+
+            Mark.Types.ERROR_BAND -> appendLayer(
+                geom = GeomKind.RIBBON,
+                channelMapping = when (Util.iHorizontal(encoding)) {
+                    true -> listOf(X to Aes.XMIN, X2 to Aes.XMAX, Y2 to Aes.YMAX)
+                    false -> listOf(Y to Aes.YMIN, Y2 to Aes.YMAX, X2 to Aes.XMAX)
+                }
+            ) {
+                linetype = NamedLineType.BLANK
             }
 
-            Mark.Types.TICK -> plotOptions.appendLayer {
-                when (isContinuous(X, encoding) == isContinuous(Y, encoding) || isContinuous(X, encoding)) {
-                     true -> listOf(X to Aes.XMIN, X to Aes.XMAX)
+            Mark.Types.TICK -> appendLayer(
+                geom = GeomKind.CROSS_BAR,
+                channelMapping = when (Util.isContinuous(X, encoding) == Util.isContinuous(Y, encoding)
+                        || Util.isContinuous(X, encoding)
+                ) {
+                    true -> listOf(X to Aes.XMIN, X to Aes.XMAX)
                     false -> listOf(Y to Aes.YMIN, Y to Aes.YMAX)
-                }.let { initDataAndMappings(listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR, SIZE to Aes.WIDTH) + it) }
-
-                geom = GeomKind.CROSS_BAR
+                } + listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR, SIZE to Aes.WIDTH)
+            ) {
                 prop[CrossbarLayer.FATTEN] = 0.0
             }
 
