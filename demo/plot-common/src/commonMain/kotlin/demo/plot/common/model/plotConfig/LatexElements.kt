@@ -21,20 +21,21 @@ class LatexElements {
             )),
             getPlotSpec("""Index: \\(a_b\\)""", listOf(
                 """\(2_a x_2\)""",
-                """\((1 + 2)(2^2 - (2 - 1_\kappa))\)""",
+                """\((1 + 2)(2_2 - (2 - 1_\kappa))\)""",
                 """\(-2_3\)-5""",
                 """-2·\(3_{-13}\) + 7""",
                 """a·\(b_{cde} + f\)""",
                 """A\(_{-B \cdot C}\)""",
                 """\((\alpha_{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
             )),
-            getPlotSpec("Greek alphabet", listOf(
+            getPlotSpec("Symbols", listOf(
                 """\(\alpha\) and \(\Alpha\)""",
                 """\(\beta\) and \(\Beta\)""",
                 """\(\gamma\) and \(\Gamma\)""",
                 """\( \chi \) and \( \Chi \)""",
                 """\( \psi \) and \( \Psi \)""",
                 """\( \omega \) and \( \Omega \)""",
+                """\( \pm \) and \( \neq \) and \( \unknown \)""",
             )),
         )
     }

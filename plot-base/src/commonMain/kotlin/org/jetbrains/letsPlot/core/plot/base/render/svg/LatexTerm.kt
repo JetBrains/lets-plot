@@ -20,6 +20,134 @@ internal class LatexTerm(
         node.estimateWidth(font, widthCalculator)
 
     companion object {
+
+
+        fun parse(text: String): List<Pair<Term, IntRange>> {
+            return extractFormulas(text).map { (formula, range) ->
+                LatexTerm(Node.parse(Token.tokenize(formula))) to range
+            }.toList()
+        }
+
+        private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
+            val formulas = mutableListOf<Pair<String, IntRange>>()
+            var formulaStart = 0
+            for (i in text.indices.toList().dropLast(1)) {
+                when (text.substring(i, i + 2)) {
+                    "\\(" -> {
+                        formulaStart = i + 2
+                    }
+                    "\\)" -> {
+                        val formula = text.substring(formulaStart, i)
+                        val range = IntRange(formulaStart - 2, i + 1)
+                        formulas.add(Pair(formula, range))
+                    }
+                }
+            }
+            return formulas
+        }
+    }
+}
+
+internal open class Token {
+    data class Command(val name: String) : Token()
+    object OpenBrace : Token()
+    object CloseBrace : Token()
+    object Superscript : Token()
+    object Subscript : Token()
+    data class Text(val content: String) : Token()
+
+    companion object {
+        fun tokenize(input: String): List<Token> {
+            val tokens = mutableListOf<Token>()
+            var i = 0
+            while (i < input.length) {
+                when (input[i]) {
+                    '\\' -> {
+                        val command = StringBuilder()
+                        i++
+                        while (i < input.length && input[i].isLetter()) {
+                            command.append(input[i])
+                            i++
+                        }
+                        tokens.add(Command(command.toString()))
+                    }
+                    '{' -> {
+                        tokens.add(OpenBrace)
+                        i++
+                    }
+                    '}' -> {
+                        tokens.add(CloseBrace)
+                        i++
+                    }
+                    '^' -> {
+                        tokens.add(Superscript)
+                        i++
+                    }
+                    '_' -> {
+                        tokens.add(Subscript)
+                        i++
+                    }
+                    else -> {
+                        val text = StringBuilder()
+                        if (i > 0 && input[i - 1] in "^_") {
+                            text.append(input[i])
+                            i++
+                        } else {
+                            while (i < input.length && input[i] !in "{}^_\\") {
+                                text.append(input[i])
+                                i++
+                            }
+                        }
+                        tokens.add(Text(text.toString()))
+                    }
+                }
+            }
+            return tokens
+        }
+    }
+}
+
+internal abstract class Node {
+    abstract val visualCharCount: Int
+    abstract val svg: List<SvgTSpanElement>
+    abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+
+    data class TextNode(val content: String) : Node() {
+        override val visualCharCount: Int = content.length
+        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(content))
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return widthCalculator(content, font)
+        }
+    }
+    data class GroupNode(val children: List<Node>) : Node() {
+        override val visualCharCount: Int = children.sumOf { it.visualCharCount }
+        override val svg: List<SvgTSpanElement> = children.flatMap { it.svg }
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return children.sumOf { it.estimateWidth(font, widthCalculator) }
+        }
+    }
+    data class SuperscriptNode(val content: Node) : Node() {
+        override val visualCharCount: Int = content.visualCharCount
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return content.estimateWidth(font, widthCalculator)
+        }
+    }
+    data class SubscriptNode(val content: Node) : Node() {
+        override val visualCharCount: Int = content.visualCharCount
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return content.estimateWidth(font, widthCalculator)
+        }
+    }
+
+    companion object {
+        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
+        private const val INDENT_SYMBOL = " "
+        private const val INDENT_SIZE_FACTOR = 0.1
+        private const val INDEX_SIZE_FACTOR = 0.7
+        private const val INDEX_RELATIVE_SHIFT = 0.4
+
         private val GREEK_LETTERS = mapOf(
             "Alpha" to "Α",
             "Beta" to "Β",
@@ -82,126 +210,7 @@ internal class LatexTerm(
             "geq" to "≥",
             "neq" to "≠",
         )
-        private val REPLACES = GREEK_LETTERS + OPERATIONS + RELATIONS
-
-        fun parse(text: String): List<Pair<Term, IntRange>> {
-            return extractFormulas(text).map { (formula, range) ->
-                val text = REPLACES.toList().fold(formula) { acc, (keyword, replacement) ->
-                    acc.replace("\\$keyword", replacement)
-                }
-                LatexTerm(Node.parse(Token.tokenize(text))) to range
-            }.toList()
-        }
-
-        private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
-            val formulas = mutableListOf<Pair<String, IntRange>>()
-            var formulaStart = 0
-            for (i in text.indices.toList().dropLast(1)) {
-                when (text.substring(i, i + 2)) {
-                    "\\(" -> {
-                        formulaStart = i + 2
-                    }
-                    "\\)" -> {
-                        val formula = text.substring(formulaStart, i)
-                        val range = IntRange(formulaStart - 2, i + 1)
-                        formulas.add(Pair(formula, range))
-                    }
-                }
-            }
-            return formulas
-        }
-    }
-}
-
-internal open class Token {
-    object OpenBrace : Token()
-    object CloseBrace : Token()
-    object Superscript : Token()
-    object Subscript : Token()
-    data class Text(val content: String) : Token()
-
-    companion object {
-        fun tokenize(input: String): List<Token> {
-            val tokens = mutableListOf<Token>()
-            var i = 0
-            while (i < input.length) {
-                when (input[i]) {
-                    '{' -> {
-                        tokens.add(OpenBrace)
-                        i++
-                    }
-                    '}' -> {
-                        tokens.add(CloseBrace)
-                        i++
-                    }
-                    '^' -> {
-                        tokens.add(Superscript)
-                        i++
-                    }
-                    '_' -> {
-                        tokens.add(Subscript)
-                        i++
-                    }
-                    else -> {
-                        val text = StringBuilder()
-                        if (i > 0 && input[i - 1] in "^_") {
-                            text.append(input[i])
-                            i++
-                        } else {
-                            while (i < input.length && input[i] !in "{}^_") {
-                                text.append(input[i])
-                                i++
-                            }
-                        }
-                        tokens.add(Text(text.toString()))
-                    }
-                }
-            }
-            return tokens
-        }
-    }
-}
-
-internal abstract class Node {
-    abstract val visualCharCount: Int
-    abstract val svg: List<SvgTSpanElement>
-    abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-
-    data class TextNode(val content: String) : Node() {
-        override val visualCharCount: Int = content.length
-        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(content))
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(content, font)
-        }
-    }
-    data class GroupNode(val children: List<Node>) : Node() {
-        override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override val svg: List<SvgTSpanElement> = children.flatMap { it.svg }
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return children.sumOf { it.estimateWidth(font, widthCalculator) }
-        }
-    }
-    data class SuperscriptNode(val content: Node) : Node() {
-        override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true)
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
-    }
-    data class SubscriptNode(val content: Node) : Node() {
-        override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false)
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
-    }
-
-    companion object {
-        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-        private const val INDENT_SYMBOL = " "
-        private const val INDENT_SIZE_FACTOR = 0.1
-        private const val INDEX_SIZE_FACTOR = 0.7
-        private const val INDEX_RELATIVE_SHIFT = 0.4
+        private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS
 
         fun parse(tokens: List<Token>): Node {
             return parseGroup(tokens.iterator())
@@ -212,6 +221,7 @@ internal abstract class Node {
             while (iterator.hasNext()) {
                 val token = iterator.next()
                 when (token) {
+                    is Token.Command -> nodes.add(parseCommand(token)) // For now we just replace the command with its name if it's not a special symbol
                     is Token.OpenBrace -> nodes.add(parseGroup(iterator))
                     is Token.CloseBrace -> break
                     is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator)))
@@ -226,8 +236,14 @@ internal abstract class Node {
             return when (val nextToken = iterator.next()) {
                 is Token.OpenBrace -> parseGroup(iterator)
                 is Token.Text -> TextNode(nextToken.content)
+                is Token.Command -> parseCommand(nextToken)
                 else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
             }
+        }
+
+        private fun parseCommand(token: Token.Command): Node {
+            // For now we just replace the command with its name if it's not a special symbol
+            return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
 
         private fun getSvgForIndexNode(content: Node, isSuperior: Boolean): List<SvgTSpanElement> {
