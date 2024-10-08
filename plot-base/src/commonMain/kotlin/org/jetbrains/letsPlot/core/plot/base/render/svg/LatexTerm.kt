@@ -55,13 +55,31 @@ internal open class Token {
     object Subscript : Token()
     data class Text(val content: String) : Token()
 
+    private enum class ControlSymbol(val symbol: Char) {
+        BACKSLASH('\\'),
+        OPEN_BRACE('{'),
+        CLOSE_BRACE('}'),
+        SUPERSCRIPT('^'),
+        SUBSCRIPT('_');
+
+        companion object {
+            fun fromChar(char: Char): ControlSymbol? {
+                return entries.find { it.symbol == char }
+            }
+
+            fun isSupOrSub(char: Char): Boolean {
+                return fromChar(char) in listOf(SUPERSCRIPT, SUBSCRIPT)
+            }
+        }
+    }
+
     companion object {
         fun tokenize(input: String): List<Token> {
             val tokens = mutableListOf<Token>()
             var i = 0
             while (i < input.length) {
-                when (input[i]) {
-                    '\\' -> {
+                when (ControlSymbol.fromChar(input[i])) {
+                    ControlSymbol.BACKSLASH -> {
                         val command = StringBuilder()
                         i++
                         while (i < input.length && input[i].isLetter()) {
@@ -70,29 +88,29 @@ internal open class Token {
                         }
                         tokens.add(Command(command.toString()))
                     }
-                    '{' -> {
+                    ControlSymbol.OPEN_BRACE -> {
                         tokens.add(OpenBrace)
                         i++
                     }
-                    '}' -> {
+                    ControlSymbol.CLOSE_BRACE -> {
                         tokens.add(CloseBrace)
                         i++
                     }
-                    '^' -> {
+                    ControlSymbol.SUPERSCRIPT ->{
                         tokens.add(Superscript)
                         i++
                     }
-                    '_' -> {
+                    ControlSymbol.SUBSCRIPT ->{
                         tokens.add(Subscript)
                         i++
                     }
                     else -> {
                         val text = StringBuilder()
-                        if (i > 0 && input[i - 1] in "^_") {
+                        if (i > 0 && ControlSymbol.isSupOrSub(input[i - 1])) {
                             text.append(input[i])
                             i++
                         } else {
-                            while (i < input.length && input[i] !in "{}^_\\") {
+                            while (i < input.length && ControlSymbol.fromChar(input[i]) == null) {
                                 text.append(input[i])
                                 i++
                             }
