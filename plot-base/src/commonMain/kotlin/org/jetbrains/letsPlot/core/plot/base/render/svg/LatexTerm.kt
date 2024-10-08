@@ -74,8 +74,7 @@ internal open class Token {
     }
 
     companion object {
-        fun tokenize(input: String): List<Token> {
-            val tokens = mutableListOf<Token>()
+        fun tokenize(input: String): Sequence<Token> = sequence {
             var i = 0
             while (i < input.length) {
                 when (ControlSymbol.fromChar(input[i])) {
@@ -86,22 +85,22 @@ internal open class Token {
                             command.append(input[i])
                             i++
                         }
-                        tokens.add(Command(command.toString()))
+                        yield(Command(command.toString()))
                     }
                     ControlSymbol.OPEN_BRACE -> {
-                        tokens.add(OpenBrace)
+                        yield(OpenBrace)
                         i++
                     }
                     ControlSymbol.CLOSE_BRACE -> {
-                        tokens.add(CloseBrace)
+                        yield(CloseBrace)
                         i++
                     }
                     ControlSymbol.SUPERSCRIPT ->{
-                        tokens.add(Superscript)
+                        yield(Superscript)
                         i++
                     }
                     ControlSymbol.SUBSCRIPT ->{
-                        tokens.add(Subscript)
+                        yield(Subscript)
                         i++
                     }
                     else -> {
@@ -115,11 +114,10 @@ internal open class Token {
                                 i++
                             }
                         }
-                        tokens.add(Text(text.toString()))
+                        yield(Text(text.toString()))
                     }
                 }
             }
-            return tokens
         }
     }
 }
@@ -229,7 +227,7 @@ internal abstract class Node {
         )
         private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS
 
-        fun parse(tokens: List<Token>): Node {
+        fun parse(tokens: Sequence<Token>): Node {
             return parseGroup(tokens.iterator())
         }
 
