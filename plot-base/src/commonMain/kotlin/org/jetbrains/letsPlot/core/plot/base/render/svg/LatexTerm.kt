@@ -232,8 +232,7 @@ internal abstract class Node {
         }
 
         private fun getSvgForIndexNode(content: Node, isSuperior: Boolean): List<SvgTSpanElement> {
-            val shift = if (isSuperior) { "-" } else { "" }
-            val backShift = if (isSuperior) { "" } else { "-" }
+            val (shift, backShift) = if (isSuperior) { "-" to "" } else { "" to "-" }
 
             val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
                 setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
