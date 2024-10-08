@@ -8,266 +8,19 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText.Term
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import kotlin.math.roundToInt
+import kotlin.collections.plus
 
 internal class LatexTerm(
-    private val root: Node
+    private val node: Node
 ) : Term {
-    override val visualCharCount: Int = root.visualCharCount
-    override val svg: List<SvgTSpanElement> = root.svg
+    override val visualCharCount: Int = node.visualCharCount
+    override val svg: List<SvgTSpanElement> = node.svg
 
-    override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-        return root.estimateWidth(font, widthCalculator)
-    }
-
-    // Inner structure to construct a formula tree
-    internal interface Node {
-        val visualCharCount: Int
-        val svg: List<SvgTSpanElement>
-
-        fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
-
-        companion object {
-            fun textToNode(text: String): Node? {
-                val trimmedText = text.trim()
-                for (operator in Operator.operators) {
-                    // Try to apply operator to whole text
-                    val operands = operator.parseEntire(trimmedText)
-                    if (operands != null) {
-                        return InnerNode(operator, operands.map { textToNode(it) ?: Leaf(it) })
-                    }
-                    // Try to apply operator to start of the text
-                    val (start, end) = operator.parseStart(trimmedText) ?: continue
-                    val endNode = textToNode(end) ?: continue // If other part is a Node - the string is a multiplication without explicit symbol (like "ab")
-                    val startNode = InnerNode(operator, start.map { textToNode(it) ?: Leaf(it) })
-                    return InnerNode(Operator.multiplicationOperatorWithoutSymbol, listOf(startNode, endNode))
-                }
-                return null // No operator is applicable to the text
-            }
-        }
-    }
-
-    private class InnerNode(val operator: Operator, val subnodes: List<Node>) : Node {
-        override val visualCharCount: Int = operator.calcVisualCharCount(subnodes.sumOf { it.visualCharCount })
-        override val svg: List<SvgTSpanElement> = operator.getSvg(subnodes.map { it.svg })
-
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return operator.estimateWidth(subnodes, font, widthCalculator)
-        }
-    }
-
-    private class Leaf(text: String) : Node {
-        private val trimmedText = text.trim()
-        override val visualCharCount: Int = trimmedText.length
-        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(trimmedText))
-
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return widthCalculator(trimmedText, font)
-        }
-    }
-
-    private class Operator(
-        val parseEntire: (String) -> List<String>?, // return substrings, if the operator is applicable to the whole text. For example, +: "a+b" -> ["a", "b"]
-        val parseStart: (String) -> Pair<List<String>, String>?, // return substrings and the rest of the text, if the operator is applicable to the start of the text. For example, +: "(a+b)c" -> (["a", "b"], "c")
-        val calcVisualCharCount: (Int) -> Int, // calculate visual char count of the operator, based on the sum of visual char counts of the subnodes
-        val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement>, // construct svg, based on the svg of the subnodes
-        val estimateWidth: (List<Node>, Font, (String, Font) -> Double) -> Double // estimate width of the operator, based on the widths of the subnodes
-    ) {
-        companion object {
-            val operators: List<Operator> = listOf(
-                getBracketsOperator(),
-                getBinaryOperator('+'),
-                getBinaryOperator('-'),
-                getBinaryOperator('/'),
-                getIndexOperator(true, "\\^"),
-                getIndexOperator(false, "_"),
-            )
-            val multiplicationOperatorWithoutSymbol = Operator(
-                parseEntire = { null }, // parsed specially in textToNode, because it doesn't have explicit symbol (like "ab")
-                parseStart = { null },
-                calcVisualCharCount = { it },
-                getSvg = { it.flatten() },
-                estimateWidth = { subnodes, font, widthCalculator ->
-                    subnodes.sumOf { it.estimateWidth(font, widthCalculator)
-                }
-            })
-
-            private fun getBracketsOperator(): Operator {
-                fun bracketsClosedCorrectly(text: String): Boolean {
-                    var brackets = 0
-                    for (i in text.indices) {
-                        when (text[i]) {
-                            '(' -> brackets++
-                            ')' -> if (brackets > 0) {
-                                brackets--
-                            } else {
-                                return false
-                            }
-                        }
-                    }
-                    return true
-                }
-                fun parseEntire(text: String): List<String>? {
-                    val trimmedText = text.trim()
-                    if (trimmedText.length < 2) {
-                        return null
-                    }
-                    val innerPart = trimmedText.substring(1, trimmedText.length - 1)
-                    return if (trimmedText.startsWith("(") && trimmedText.endsWith(")") && bracketsClosedCorrectly(innerPart)) {
-                        listOf(innerPart)
-                    } else {
-                        null
-                    }
-                }
-                fun parseStart(text: String): Pair<List<String>, String>? {
-                    val trimmedText = text.trim()
-                    if (!trimmedText.startsWith("(") || !bracketsClosedCorrectly(trimmedText)) {
-                        return null
-                    }
-                    var brackets = 0
-                    for (i in trimmedText.indices) {
-                        when (trimmedText[i]) {
-                            '(' -> brackets++
-                            ')' -> if (brackets > 1) {
-                                brackets--
-                            } else {
-                                val innerPart = trimmedText.substring(1, i)
-                                val rest = trimmedText.substring(i + 1)
-                                return Pair(listOf(innerPart), rest)
-                            }
-                        }
-                    }
-                    return null
-                }
-                val calcVisualCharCount: (Int) -> Int = { it + 2 }
-                val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement> = { elements ->
-                    val innerElements = elements[0]
-                    listOf(SvgTSpanElement("(")) + innerElements + listOf(SvgTSpanElement(")"))
-                }
-                val estimateWidth: (List<Node>, Font, (String, Font) -> Double) -> Double = { subnodes, font, widthCalculator ->
-                    val innerWidth = subnodes[0].estimateWidth(font, widthCalculator)
-                    val bracketsWidth = widthCalculator("()", font)
-                    innerWidth + bracketsWidth
-                }
-                return Operator(::parseEntire, ::parseStart, calcVisualCharCount, getSvg, estimateWidth)
-            }
-
-            private fun getBinaryOperator(operator: Char): Operator {
-                fun parseEntire(text: String): List<String>? {
-                    val brackets = mutableListOf<Char>()
-                    for (i in text.indices) {
-                        when (text[i]) {
-                            '(' -> brackets.add(')')
-                            '{' -> brackets.add('}')
-                            ')', '}' -> if (brackets.isNotEmpty() && brackets.last() == text[i]) {
-                                brackets.removeLast()
-                            } else {
-                                return null
-                            }
-                            operator -> if (brackets.isEmpty()) {
-                                val leftOperand = text.substring(0, i)
-                                val rightOperand = text.substring(i + 1)
-                                if (leftOperand.trim().isNotEmpty() && rightOperand.trim().isNotEmpty()) {
-                                    return listOf(text.substring(0, i), text.substring(i + 1))
-                                }
-                            }
-                        }
-                    }
-                    return null
-                }
-                val calcVisualCharCount: (Int) -> Int = { it + 1 }
-                val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement> = { elements ->
-                    val leftOperand = elements[0]
-                    val rightOperand = elements[1]
-                    leftOperand + listOf(SvgTSpanElement(operator.toString())) + rightOperand
-                }
-                val estimateWidth: (List<Node>, Font, (String, Font) -> Double) -> Double = { subnodes, font, widthCalculator ->
-                    val leftOperandWidth = subnodes[0].estimateWidth(font, widthCalculator)
-                    val rightOperandWidth = subnodes[1].estimateWidth(font, widthCalculator)
-                    val plusWidth = widthCalculator(operator.toString(), font)
-                    leftOperandWidth + plusWidth + rightOperandWidth
-                }
-                return Operator(::parseEntire, { null }, calcVisualCharCount, getSvg, estimateWidth)
-            }
-
-            private fun getIndexOperator(isSuperior: Boolean, symbol: String): Operator {
-                val zeroWidthSpaceSymbol = "\u200B"
-                val indentSymbol = " "
-                val indentSizeFactor = 0.1
-                val indexSizeFactor = 0.7
-                val indexRelativeShift = 0.4
-                val wordCharacters = "[a-zA-Z0-9${GREEK_LETTERS.values.joinToString("")}]"
-
-                val regex = """\s*((?:-?${wordCharacters}+)*)$symbol(${wordCharacters}|\{[^$symbol\}]+\})\s*""".toRegex()
-                val parseEntire: (String) -> List<String>? = { text ->
-                    parseEntireByRegex(regex)(text)?.map { if (it.startsWith("{")) it.drop(1).dropLast(1) else it }
-                }
-                val parseStart: (String) -> Pair<List<String>, String>? = { text ->
-                    parseStartByRegex(regex)(text)?.let { (start, end) ->
-                        Pair(start.map { if (it.startsWith("{")) it.drop(1).dropLast(1) else it }, end)
-                    }
-                }
-                val calcVisualCharCount: (Int) -> Int = { it }
-                val getSvg: (List<List<SvgTSpanElement>>) -> List<SvgTSpanElement> = { elements ->
-                    val shift = if (isSuperior) { "-" } else { "" }
-                    val backShift = if (isSuperior) { "" } else { "-" }
-
-                    val indentTSpan = SvgTSpanElement(indentSymbol).apply {
-                        setAttribute(SvgTSpanElement.FONT_SIZE, "${indentSizeFactor}em")
-                    }
-                    val baseTSpanElements = elements[0]
-                    val indexTSpanElements = elements[1].mapIndexed { i, element -> element.apply {
-                        setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSizeFactor}em")
-                        if (i == 0) {
-                            setAttribute(SvgTSpanElement.DY, "$shift${indexRelativeShift}em")
-                        }
-                    } }
-                    // The following tspan element is used to restore the baseline after the index
-                    // Restoring works only if there is some symbol after the index, so we use zeroWidthSpaceSymbol
-                    // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
-                    // Attribute 'baseline-shift' is better suited for such usecase -
-                    // it doesn't require to add an empty tspan at the end to restore the baseline (as 'dy').
-                    // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-                    val restoreBaselineTSpan = SvgTSpanElement(zeroWidthSpaceSymbol).apply {
-                        // Size of shift depends on the font size, and it should be equal to the superscript shift size
-                        setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSizeFactor}em")
-                        setAttribute(SvgTSpanElement.DY, "$backShift${indexRelativeShift}em")
-                    }
-
-                    listOf(baseTSpanElements, listOf(indentTSpan), indexTSpanElements, listOf(restoreBaselineTSpan)).flatten()
-                }
-                val estimateWidth: (List<Node>, Font, (String, Font) -> Double) -> Double = { subnodes, font, widthCalculator ->
-                    val baseWidth = subnodes[0].estimateWidth(font, widthCalculator)
-                    val indexFontSize = (font.size * indexSizeFactor).roundToInt()
-                    val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
-                    val indexWidth = subnodes[1].estimateWidth(indexFont, widthCalculator)
-                    baseWidth + indexWidth
-                }
-                return Operator(parseEntire, parseStart, calcVisualCharCount, getSvg, estimateWidth)
-            }
-
-            private fun parseEntireByRegex(regex: Regex): (String) -> List<String>? {
-                return { text ->
-                    regex.matchEntire(text)?.let { match ->
-                        match.groups.toList().drop(1).mapNotNull { it?.value }
-                    }
-                }
-            }
-
-            private fun parseStartByRegex(regex: Regex): (String) -> Pair<List<String>, String>? {
-                return { text ->
-                    ("^" + regex.pattern).toRegex().find(text)?.let { match ->
-                        val start = match.groups.toList().drop(1).mapNotNull { it?.value }
-                        val end = text.substring(match.range.last + 1)
-                        Pair(start, end)
-                    }
-                }
-            }
-        }
-    }
+    override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+        node.estimateWidth(font, widthCalculator)
 
     companion object {
-        val GREEK_LETTERS = mapOf(
+        private val GREEK_LETTERS = mapOf(
             "Alpha" to "Α",
             "Beta" to "Β",
             "Gamma" to "Γ",
@@ -317,14 +70,27 @@ internal class LatexTerm(
             "psi" to "ψ",
             "omega" to "ω",
         )
-        val GREEK_LETTERS_REGEX = """\s*\\(?<letter>${GREEK_LETTERS.keys.joinToString("|")})\s*""".toRegex()
+        private val OPERATIONS = mapOf(
+            "pm" to "±",
+            "mp" to "∓",
+            "times" to "×",
+            "div" to "÷",
+            "cdot" to "·",
+        )
+        private val RELATIONS = mapOf(
+            "leq" to "≤",
+            "geq" to "≥",
+            "neq" to "≠",
+        )
+        private val REPLACES = GREEK_LETTERS + OPERATIONS + RELATIONS
+        private val REPLACES_REGEX = """\\(?<keyword>${REPLACES.keys.joinToString("|")})""".toRegex()
 
         fun parse(text: String): List<Pair<Term, IntRange>> {
             return extractFormulas(text).map { (formula, range) ->
-                val text = GREEK_LETTERS_REGEX.replace(formula) { match ->
-                    GREEK_LETTERS[match.groups["letter"]!!.value]!!
+                val text = REPLACES_REGEX.replace(formula) { match ->
+                    REPLACES[match.groups["keyword"]!!.value]!!
                 }
-                LatexTerm(Node.textToNode(text) ?: Leaf(text)) to range
+                LatexTerm(Node.parse(Token.tokenize(text))) to range
             }.toList()
         }
 
@@ -344,6 +110,153 @@ internal class LatexTerm(
                 }
             }
             return formulas
+        }
+    }
+}
+
+internal open class Token {
+    object OpenBrace : Token()
+    object CloseBrace : Token()
+    object Superscript : Token()
+    object Subscript : Token()
+    data class Text(val content: String) : Token()
+
+    companion object {
+        fun tokenize(input: String): List<Token> {
+            val tokens = mutableListOf<Token>()
+            var i = 0
+            while (i < input.length) {
+                when (input[i]) {
+                    '{' -> {
+                        tokens.add(OpenBrace)
+                        i++
+                    }
+                    '}' -> {
+                        tokens.add(CloseBrace)
+                        i++
+                    }
+                    '^' -> {
+                        tokens.add(Superscript)
+                        i++
+                    }
+                    '_' -> {
+                        tokens.add(Subscript)
+                        i++
+                    }
+                    else -> {
+                        val text = StringBuilder()
+                        if (i > 0 && input[i - 1] in "^_") {
+                            text.append(input[i])
+                            i++
+                        } else {
+                            while (i < input.length && input[i] !in "{}^_") {
+                                text.append(input[i])
+                                i++
+                            }
+                        }
+                        tokens.add(Text(text.toString()))
+                    }
+                }
+            }
+            return tokens
+        }
+    }
+}
+
+internal abstract class Node {
+    abstract val visualCharCount: Int
+    abstract val svg: List<SvgTSpanElement>
+    abstract fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+
+    data class TextNode(val content: String) : Node() {
+        override val visualCharCount: Int = content.length
+        override val svg: List<SvgTSpanElement> = listOf(SvgTSpanElement(content))
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return widthCalculator(content, font)
+        }
+    }
+    data class GroupNode(val children: List<Node>) : Node() {
+        override val visualCharCount: Int = children.sumOf { it.visualCharCount }
+        override val svg: List<SvgTSpanElement> = children.flatMap { it.svg }
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return children.sumOf { it.estimateWidth(font, widthCalculator) }
+        }
+    }
+    data class SuperscriptNode(val content: Node) : Node() {
+        override val visualCharCount: Int = content.visualCharCount
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return content.estimateWidth(font, widthCalculator)
+        }
+    }
+    data class SubscriptNode(val content: Node) : Node() {
+        override val visualCharCount: Int = content.visualCharCount
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+            return content.estimateWidth(font, widthCalculator)
+        }
+    }
+
+    companion object {
+        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
+        private const val INDENT_SYMBOL = " "
+        private const val INDENT_SIZE_FACTOR = 0.1
+        private const val INDEX_SIZE_FACTOR = 0.7
+        private const val INDEX_RELATIVE_SHIFT = 0.4
+
+        fun parse(tokens: List<Token>): Node {
+            return parseGroup(tokens.iterator())
+        }
+
+        private fun parseGroup(iterator: Iterator<Token>): GroupNode {
+            val nodes = mutableListOf<Node>()
+            while (iterator.hasNext()) {
+                val token = iterator.next()
+                when (token) {
+                    is Token.OpenBrace -> nodes.add(parseGroup(iterator))
+                    is Token.CloseBrace -> break
+                    is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator)))
+                    is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator)))
+                    is Token.Text -> nodes.add(TextNode(token.content))
+                }
+            }
+            return GroupNode(nodes)
+        }
+
+        private fun parseSupOrSub(iterator: Iterator<Token>): Node {
+            return when (val nextToken = iterator.next()) {
+                is Token.OpenBrace -> parseGroup(iterator)
+                is Token.Text -> TextNode(nextToken.content)
+                else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
+            }
+        }
+
+        private fun getSvgForIndexNode(content: Node, isSuperior: Boolean): List<SvgTSpanElement> {
+            val shift = if (isSuperior) { "-" } else { "" }
+            val backShift = if (isSuperior) { "" } else { "-" }
+
+            val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
+            }
+            val indexTSpanElements = content.svg.mapIndexed { i, element -> element.apply {
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                if (i == 0) {
+                    setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
+                }
+            } }
+            // The following 'tspan' element is used to restore the baseline after the index
+            // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
+            // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
+            // Attribute 'baseline-shift' is better suited for such use case -
+            // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
+            // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
+            val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                // Size of shift depends on the font size, and it should be equal to the superscript shift size
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
+            }
+
+            return listOf(indentTSpan) + indexTSpanElements + restoreBaselineTSpan
         }
     }
 }

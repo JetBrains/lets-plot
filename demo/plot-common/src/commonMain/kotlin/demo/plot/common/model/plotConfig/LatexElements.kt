@@ -16,7 +16,7 @@ class LatexElements {
                 """\(-2^3\)-5""",
                 """-2·\(3^{-13}\) + 7""",
                 """a·\(b^{cde} + f\)""",
-                """A\(^{-B + C}\)""",
+                """A\(^{-B \cdot C}\)""",
                 """\((\alpha^{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
             )),
             getPlotSpec("""Index: \\(a_b\\)""", listOf(
@@ -25,7 +25,7 @@ class LatexElements {
                 """\(-2_3\)-5""",
                 """-2·\(3_{-13}\) + 7""",
                 """a·\(b_{cde} + f\)""",
-                """A\(_{-B + C}\)""",
+                """A\(_{-B \cdot C}\)""",
                 """\((\alpha_{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
             )),
             getPlotSpec("Greek alphabet", listOf(
