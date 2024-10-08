@@ -83,12 +83,11 @@ internal class LatexTerm(
             "neq" to "≠",
         )
         private val REPLACES = GREEK_LETTERS + OPERATIONS + RELATIONS
-        private val REPLACES_REGEX = """\\(?<keyword>${REPLACES.keys.joinToString("|")})""".toRegex()
 
         fun parse(text: String): List<Pair<Term, IntRange>> {
             return extractFormulas(text).map { (formula, range) ->
-                val text = REPLACES_REGEX.replace(formula) { match ->
-                    REPLACES[match.groups["keyword"]!!.value]!!
+                val text = REPLACES.toList().fold(formula) { acc, (keyword, replacement) ->
+                    acc.replace("\\$keyword", replacement)
                 }
                 LatexTerm(Node.parse(Token.tokenize(text))) to range
             }.toList()
