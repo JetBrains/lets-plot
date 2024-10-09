@@ -35,8 +35,9 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
         internal const val pathData = 18
         internal const val transform = 19
         internal const val strokeDashArray = 20
+        internal const val strokeDashOffset = 21
 
-        internal val ATTR_KEYS = arrayOf("fill", "fill-opacity", "stroke", "stroke-opacity", "stroke-width", "transform", "classes", "x1", "y1", "x2", "y2", "cx", "cy", "r", "x", "y", "height", "width", "d", "transform", "stroke-dasharray")
+        internal val ATTR_KEYS = arrayOf("fill", "fill-opacity", "stroke", "stroke-opacity", "stroke-width", "transform", "classes", "x1", "y1", "x2", "y2", "cx", "cy", "r", "x", "y", "height", "width", "d", "transform", "stroke-dasharray", "stroke-dashoffset")
         internal val ATTR_COUNT = ATTR_KEYS.size
     }
 
@@ -60,6 +61,10 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
 
     override fun setStrokeDashArray(v: String) {
         setAttribute(strokeDashArray, v)
+    }
+
+    override fun strokeDashOffset(v: Double) {
+        setAttribute(strokeDashOffset, v)
     }
 
     override fun setTransform(t: SvgTransform) {

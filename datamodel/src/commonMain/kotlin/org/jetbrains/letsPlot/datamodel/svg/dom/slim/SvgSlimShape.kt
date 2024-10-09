@@ -13,5 +13,6 @@ interface SvgSlimShape : SvgSlimObject {
     fun setStroke(c: Color, alpha: Double)
     fun setStrokeWidth(v: Double)
     fun setStrokeDashArray(v: String)
+    fun strokeDashOffset(v: Double)
     fun setTransform(t: SvgTransform)
 }
