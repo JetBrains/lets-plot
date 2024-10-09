@@ -833,6 +833,10 @@ object Option {
         const val LEGEND_POSITION = ThemeOption.LEGEND_POSITION
         const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
         const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
+        const val LEGEND_MARGIN = ThemeOption.LEGEND_MARGIN
+        const val LEGEND_SPACING = ThemeOption.LEGEND_SPACING
+        const val LEGEND_SPACING_X = ThemeOption.LEGEND_SPACING_X
+        const val LEGEND_SPACING_Y = ThemeOption.LEGEND_SPACING_Y
 
         const val LEGEND_KEY_RECT = ThemeOption.LEGEND_KEY_RECT
         const val LEGEND_KEY_SIZE = ThemeOption.LEGEND_KEY_SIZE
@@ -841,6 +845,8 @@ object Option {
         const val LEGEND_KEY_SPACING = ThemeOption.LEGEND_KEY_SPACING
         const val LEGEND_KEY_SPACING_X = ThemeOption.LEGEND_KEY_SPACING_X
         const val LEGEND_KEY_SPACING_Y = ThemeOption.LEGEND_KEY_SPACING_Y
+
+        const val LEGEND_BOX = ThemeOption.LEGEND_BOX
 
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT

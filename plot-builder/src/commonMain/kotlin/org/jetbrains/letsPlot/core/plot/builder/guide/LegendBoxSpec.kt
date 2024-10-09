@@ -35,12 +35,13 @@ abstract class LegendBoxSpec(
         get() = DoubleRectangle(contentOrigin, contentSize)
 
     init {
-        val contentExpand = theme.margin() + theme.padding()
-        contentOrigin = DoubleVector(contentExpand, contentExpand)
-        fullContentExtend = DoubleVector(contentExpand * 2, contentExpand * 2)
+        val marginAroundLegend = theme.margin()
 
-        innerOrigin = DoubleVector(theme.margin(), theme.margin())
-        innerContentExtend = DoubleVector(theme.padding() * 2, theme.padding() * 2)
+        contentOrigin = marginAroundLegend.leftTop.add(theme.padding().leftTop)
+        fullContentExtend = marginAroundLegend.inflateSize(theme.padding().size)
+
+        innerOrigin = marginAroundLegend.leftTop
+        innerContentExtend = theme.padding().size
     }
 
     fun hasTitle(): Boolean {

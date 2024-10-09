@@ -9,24 +9,23 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.builder.guide.LegendArrangement
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
 
 internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
         infos: List<LegendBoxInfo>,
-        @Suppress("UNUSED_PARAMETER") theme: LegendTheme
+        theme: LegendTheme
     ): LegendsBlockInfo {
-        // ToDo: legend.box options in theme
-        val legendArrangement = LegendArrangement.VERTICAL
-        val boxWithLocationList = when (legendArrangement) {
-            LegendArrangement.VERTICAL -> verticalStack(infos)
-            else -> horizontalStack(infos)
+        val boxWithLocationList = when (theme.legendBoxArrangement()) {
+            LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y)
+            LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x)
         }
         return LegendsBlockInfo(boxWithLocationList)
     }
 
-    private fun verticalStack(boxInfos: List<LegendBoxInfo>): List<LegendBoxesLayout.BoxWithLocation> {
+    private fun verticalStack(boxInfos: List<LegendBoxInfo>, spacing: Double): List<LegendBoxesLayout.BoxWithLocation> {
         val result = ArrayList<LegendBoxesLayout.BoxWithLocation>()
         var y = 0.0
         for (info in boxInfos) {
@@ -36,12 +35,12 @@ internal object LegendBoxesLayoutUtil {
                     DoubleVector(0.0, y)
                 )
             )
-            y += info.size.y
+            y += info.size.y + spacing
         }
         return result
     }
 
-    private fun horizontalStack(boxInfos: List<LegendBoxInfo>): List<LegendBoxesLayout.BoxWithLocation> {
+    private fun horizontalStack(boxInfos: List<LegendBoxInfo>, spacing: Double): List<LegendBoxesLayout.BoxWithLocation> {
         val result = ArrayList<LegendBoxesLayout.BoxWithLocation>()
         var x = 0.0
         for (info in boxInfos) {
@@ -51,7 +50,7 @@ internal object LegendBoxesLayoutUtil {
                     DoubleVector(x, 0.0)
                 )
             )
-            x += info.size.x
+            x += info.size.x + spacing
         }
         return result
     }
@@ -85,7 +84,7 @@ internal object LegendBoxesLayoutUtil {
         legendSize: DoubleVector,
         legendPosition: LegendPosition,
         legendJustification: LegendJustification,
-        margin: Double
+        margin: Thickness
     ): DoubleVector {
 
         return when (legendPosition) {
@@ -93,8 +92,8 @@ internal object LegendBoxesLayoutUtil {
                 val y = (innerBounds.top + (innerBounds.height - legendSize.y) * ( 1 - legendJustification.y)).let {
                     // ensure alignment with the plotting area
                     when (legendJustification.y) {
-                        1.0 -> it - margin
-                        0.0 -> it + margin
+                        1.0 -> it - margin.top
+                        0.0 -> it + margin.bottom
                         else -> it
                     }
                 }
@@ -105,8 +104,8 @@ internal object LegendBoxesLayoutUtil {
                 val x = (innerBounds.left + (innerBounds.width - legendSize.x) * legendJustification.x).let {
                     // ensure alignment with the plotting area
                     when (legendJustification.x) {
-                        1.0 -> it + margin
-                        0.0 -> it - margin
+                        1.0 -> it + margin.right
+                        0.0 -> it - margin.left
                         else -> it
                     }
                 }
