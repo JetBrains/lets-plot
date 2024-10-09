@@ -75,6 +75,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -152,6 +153,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -261,6 +267,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame`
         Data containing coordinates of lines.
     map_join : str or list
@@ -448,6 +455,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -474,6 +482,11 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -573,6 +586,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -631,6 +645,11 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : fill color for the confidence interval around the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -753,6 +772,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     labels : `layer_labels`
         Result of the call to the `layer_labels()` function.
         Specify style and content of the annotations.
@@ -800,6 +820,11 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -918,6 +943,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     labels : `layer_labels`
         Result of the call to the `layer_labels()` function.
         Specify style and content of the annotations.
@@ -971,6 +997,11 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -1077,6 +1108,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
@@ -1131,6 +1163,11 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -1247,6 +1284,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     bins : list of int, default=[30, 30]
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
     binwidth : list of float
@@ -1285,6 +1323,11 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -1413,6 +1456,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -1441,6 +1485,11 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -1659,6 +1708,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -1687,6 +1737,11 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -1800,6 +1855,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1835,6 +1891,11 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -1938,6 +1999,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     fatten : float, default=5.0
         A multiplicative factor applied to size of the middle point.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -1975,6 +2037,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - shape : shape of the mid-point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : line width.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -2073,6 +2140,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
@@ -2100,6 +2168,11 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -2194,6 +2267,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     bins : int
         Number of levels.
     binwidth : float
@@ -2228,6 +2302,11 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -2342,6 +2421,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     bins : int
         Number of levels.
     binwidth : float
@@ -2398,7 +2478,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         rv = multivariate_normal(mean, cov)
         Z = rv.pdf(np.dstack((X, Y)))
         data = {'x': X.flatten(), 'y': Y.flatten(), 'z': Z.flatten()}
-        ggplot(data, aes(x='x', y='y', z='z')) + geom_contourf()
+        ggplot(data, aes(x='x', y='y', z='z')) + geom_contourf(aes(fill='..level..'))
 
     |
 
@@ -2491,6 +2571,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Data contains coordinates of polygon vertices on map.
     map_join : str or list
@@ -2681,6 +2762,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str or list
@@ -2964,6 +3046,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -3080,6 +3163,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     yintercept : float
         The value of y at the point where the line crosses the y axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -3204,6 +3288,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     xintercept : float
         The value of x at the point where the line crosses the x axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -3331,6 +3416,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
@@ -3394,6 +3480,11 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -3554,6 +3645,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
@@ -3624,6 +3716,11 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'ydensity' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -3781,6 +3878,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
@@ -3842,6 +3940,11 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - stroke : width of the dot border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -3966,6 +4069,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     trim : bool, default=False
         Trim the tails of the ridges to the range of the data.
     tails_cutoff : float
@@ -4033,6 +4137,11 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -4148,6 +4257,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -4177,6 +4287,11 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -4273,6 +4388,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     flat : bool, default=False.
         True - keep a line straight (corresponding to a loxodrome in case of Mercator projection).
         False - allow a line to be reprojected, so it can become a curve.
@@ -4304,6 +4420,11 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -4412,6 +4533,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -4470,6 +4592,11 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -4625,6 +4752,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -4671,6 +4799,11 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density2d' stat to compute weighted density.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     ----
 
@@ -4851,6 +4984,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -4916,7 +5050,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         x = np.random.normal(size=n)
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
-            geom_density2df()
+            geom_density2df(aes(fill='..level..'))
 
     |
 
@@ -5080,6 +5214,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     width : float, default=0.4
         Amount of horizontal variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
         Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
@@ -5119,6 +5254,11 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -5218,6 +5358,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
@@ -5265,6 +5406,11 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -5354,6 +5500,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -5390,6 +5537,11 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -5466,6 +5618,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
@@ -5600,6 +5753,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
@@ -5702,6 +5856,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -5734,6 +5889,11 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -5825,6 +5985,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
@@ -5853,6 +6014,11 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -5941,6 +6107,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Bounding boxes of geometries will be drawn.
     map_join : str or list
@@ -6119,6 +6286,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : bool, default=False.
@@ -6280,6 +6448,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     curvature : float, default=0.5
@@ -6432,6 +6601,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     pivot : {'tail', 'middle', 'mid', 'tip'}, default='tail'
@@ -6582,6 +6752,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -6817,6 +6988,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -7062,6 +7234,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     labels : `layer_labels`
         Result of the call to the `layer_labels()` function.
         Specify style and content of the annotations.
@@ -7157,6 +7330,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
       Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
 
       - map_join=['County_name', 'State_Name']
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -7307,6 +7485,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
@@ -7354,6 +7533,11 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
     So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -7457,6 +7641,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -7490,6 +7675,11 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
     - shape : shape of the point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
@@ -7619,6 +7809,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
     - y : y-axis value.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color.
+
     ----
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.

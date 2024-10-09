@@ -114,6 +114,7 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     fun : function
         A function of one variable in Python syntax.
     xlim : list of float, default=[0.0, 1.0]
@@ -142,6 +143,11 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------

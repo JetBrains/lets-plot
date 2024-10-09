@@ -214,6 +214,11 @@ def residual_plot(data=None, x=None, y=None, *,
     When using 'lm' and 'loess' methods,
     this function requires the `statsmodels` and `scipy` libraries to be installed.
 
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
     Examples
     --------
     .. jupyter-execute::

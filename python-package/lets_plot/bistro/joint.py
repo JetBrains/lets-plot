@@ -97,6 +97,11 @@ def joint_plot(data, x, y, *,
     `PlotSpec`
         Plot object specification.
 
+    Notes
+    -----
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
     Examples
     --------
     .. jupyter-execute::

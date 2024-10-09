@@ -101,6 +101,11 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     If the two distributions being compared are similar, the points in the Q-Q plot
     will approximately lie on the straight line.
 
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
     Examples
     --------
     .. jupyter-execute::
