@@ -260,6 +260,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.setLineDashes(*lineDash)
     }
 
+    override fun setLineDashOffset(lineDashOffset: Double) {
+        myContext2d.lineDashOffset = lineDashOffset
+    }
+
     override fun measureText(str: String): Double {
         val text = Text(str)
         text.font = myContext2d.font

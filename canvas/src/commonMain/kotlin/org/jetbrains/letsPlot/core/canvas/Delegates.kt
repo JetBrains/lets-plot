@@ -55,6 +55,7 @@ class Context2dDelegate : Context2d {
     override fun setTextAlign(align: TextAlign) { }
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) { }
     override fun setLineDash(lineDash: DoubleArray) { }
+    override fun setLineDashOffset(lineDashOffset: Double) { }
     override fun measureText(str: String): Double { return 0.0}
 }
 
