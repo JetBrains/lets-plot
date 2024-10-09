@@ -136,4 +136,8 @@ object SvgUtils {
     fun depthFirstTraversal(node: SvgNode): Sequence<SvgNode> {
         return sequenceOf(node) + node.children().asSequence().flatMap(::depthFirstTraversal)
     }
+
+    fun findNodeById(node: SvgNode, id: String): SvgNode? {
+        return breadthFirstTraversal(node).find { (it as? SvgElement)?.id()?.get() == id }
+    }
 }
