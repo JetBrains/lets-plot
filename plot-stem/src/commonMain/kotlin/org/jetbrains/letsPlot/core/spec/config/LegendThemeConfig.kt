@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection.HORIZONTAL
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection.VERTICAL
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
@@ -21,6 +21,7 @@ internal object LegendThemeConfig {
             LEGEND_POSITION -> toPosition(value)
             LEGEND_JUSTIFICATION -> toJustification(value)
             LEGEND_DIRECTION -> toDirection(value)
+            LEGEND_BOX -> toArrangement(value)
             else -> value
         }
     }
@@ -82,10 +83,21 @@ internal object LegendThemeConfig {
     private fun toDirection(value: Any): LegendDirection {
         // "horizontal" or "vertical"
         return when (value) {
-            "horizontal" -> HORIZONTAL
-            "vertical" -> VERTICAL
+            "horizontal" -> LegendDirection.HORIZONTAL
+            "vertical" -> LegendDirection.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_DIRECTION. Expected values are: 'horizontal' or 'vertical'."
+            )
+        }
+    }
+
+    private fun toArrangement(value: Any): LegendArrangement {
+        // "horizontal" or "vertical"
+        return when (value) {
+            "horizontal" -> LegendArrangement.HORIZONTAL
+            "vertical" -> LegendArrangement.VERTICAL
+            else -> throw IllegalArgumentException(
+                "Illegal value: $value, $LEGEND_BOX. Expected values are: 'horizontal' or 'vertical'."
             )
         }
     }

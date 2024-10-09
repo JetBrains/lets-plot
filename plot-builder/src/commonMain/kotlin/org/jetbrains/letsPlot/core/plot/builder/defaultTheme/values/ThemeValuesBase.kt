@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
@@ -20,12 +21,15 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_SPACING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_ONTOP
@@ -150,10 +154,20 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,
+            LEGEND_SPACING to 0.0,
 
             LEGEND_KEY_RECT to ELEMENT_BLANK,
             LEGEND_KEY_SIZE to 23.0,
             LEGEND_KEY_SPACING to 0.0,
+
+            LEGEND_MARGIN to mapOf(
+                Elem.Margin.TOP to 5.0,
+                Elem.Margin.RIGHT to 5.0,
+                Elem.Margin.BOTTOM to 5.0,
+                Elem.Margin.LEFT to 5.0
+            ),
+
+            LEGEND_BOX to LegendArrangement.VERTICAL,
 
             FACET_STRIP_TEXT to mapOf(
                 Elem.HJUST to 0.5,

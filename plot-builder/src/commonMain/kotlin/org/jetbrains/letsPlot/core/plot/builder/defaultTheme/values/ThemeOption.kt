@@ -95,15 +95,20 @@ object ThemeOption {
     const val LEGEND_POSITION = "legend_position"
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"
+    const val LEGEND_MARGIN = "legend_margin"
+    const val LEGEND_SPACING = "legend_spacing"
+    const val LEGEND_SPACING_X = "legend_spacing_x"
+    const val LEGEND_SPACING_Y = "legend_spacing_y"
 
     const val LEGEND_KEY_RECT = "legend_key"
     const val LEGEND_KEY_SIZE = "legend_key_size"
     const val LEGEND_KEY_WIDTH = "legend_key_width"
     const val LEGEND_KEY_HEIGHT = "legend_key_height"
-
     const val LEGEND_KEY_SPACING = "legend_key_spacing"
     const val LEGEND_KEY_SPACING_X = "legend_key_spacing_x"
     const val LEGEND_KEY_SPACING_Y = "legend_key_spacing_y"
+
+    const val LEGEND_BOX = "legend_box"
 
     // Tooltip
     const val TOOLTIP_RECT = "tooltip"
