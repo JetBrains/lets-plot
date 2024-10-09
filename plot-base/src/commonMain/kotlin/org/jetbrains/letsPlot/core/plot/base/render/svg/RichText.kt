@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.LP_HREF
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
@@ -121,7 +122,7 @@ object RichText {
         override val svg: List<SvgTSpanElement> = listOf(
             SvgTSpanElement(text).apply {
                 fillColor().set(Colors.forName("blue")) // TODO: do not hardcode color
-                setAttribute("lp-href", href)
+                setAttribute(LP_HREF, href)
             })
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
