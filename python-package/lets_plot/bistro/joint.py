@@ -77,7 +77,7 @@ def joint_plot(data, x, y, *,
         True - show the line of linear regression.
     se : bool, default=True
         Display confidence interval around regression line.
-    marginal : str, default='dens:r'
+    marginal : str
         Description of marginal layers packed to string value.
         Different marginals are separated by the ',' char.
         Parameters of a marginal are separated by the ':' char.
