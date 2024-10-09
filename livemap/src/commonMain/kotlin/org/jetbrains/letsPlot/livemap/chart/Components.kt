@@ -29,6 +29,7 @@ class ChartElementComponent : EcsComponent {
     var fillColor: Color? = null
     var strokeColor: Color? = null
     var lineDash: DoubleArray? = null
+    var lineDashOffset: Double = 0.0
     var arrowSpec: ArrowSpec? = null
     var lineheight: Double? = null
 
@@ -44,6 +45,7 @@ class ChartElementComponent : EcsComponent {
     fun scaledFillColor() = alphaScaledColor(fillColor!!, scalingAlphaValue)
     fun scaledStrokeWidth() = strokeWidth * scalingSizeFactor
     fun scaledLineDash() = lineDash!!.map { it * scalingSizeFactor }.toDoubleArray()
+    fun scaledLineDashOffset() = lineDashOffset * scalingSizeFactor
 
     fun scaledStartPadding() = startPadding * scalingSizeFactor
     fun scaledEndPadding() = endPadding * scalingSizeFactor

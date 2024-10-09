@@ -117,6 +117,7 @@ internal class ScaledContext2d(
 
     override fun fillEvenOdd() = ctx.fillEvenOdd()
     override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(scaled(lineDash))
+    override fun setLineDashOffset(lineDashOffset: Double) = ctx.setLineDashOffset(lineDashOffset)
     override fun measureText(str: String): Double = descaled(ctx.measureText(str))
 
     override fun clearRect(rect: DoubleRectangle) {

@@ -179,6 +179,9 @@ internal class DomContext2d(
     }
 
     override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(lineDash.toTypedArray())
+    override fun setLineDashOffset(lineDashOffset: Double) {
+        ctx.lineDashOffset = lineDashOffset
+    }
     override fun measureText(str: String): Double = ctx.measureText(str).width
     override fun clearRect(rect: DoubleRectangle) = ctx.clearRect(rect.left, rect.top, rect.width, rect.height)
 }

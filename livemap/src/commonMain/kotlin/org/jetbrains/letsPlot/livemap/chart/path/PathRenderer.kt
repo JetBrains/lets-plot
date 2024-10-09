@@ -47,6 +47,7 @@ open class PathRenderer : Renderer {
 
             ctx.setStrokeStyle(color)
             ctx.setLineDash(chartElement.scaledLineDash())
+            ctx.setLineDashOffset(chartElement.scaledLineDashOffset())
             ctx.setLineWidth(chartElement.scaledStrokeWidth())
             ctx.stroke()
 

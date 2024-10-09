@@ -73,6 +73,7 @@ class PolygonEntityBuilder(
     var geoObject: GeoObject? = null
 
     var lineDash: List<Double> = emptyList()
+    var lineDashOffset: Double = 0.0
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
     var fillColor: Color = Color.GREEN
@@ -107,6 +108,7 @@ class PolygonEntityBuilder(
                     sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PolygonEntityBuilder.alphaScalingEnabled
                     lineDash = this@PolygonEntityBuilder.lineDash.toDoubleArray()
+                    lineDashOffset = this@PolygonEntityBuilder.lineDashOffset
                     fillColor = this@PolygonEntityBuilder.fillColor
                     strokeColor = this@PolygonEntityBuilder.strokeColor
                     strokeWidth = this@PolygonEntityBuilder.strokeWidth

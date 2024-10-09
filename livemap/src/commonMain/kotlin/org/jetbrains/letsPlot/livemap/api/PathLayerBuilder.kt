@@ -81,6 +81,7 @@ class PathEntityBuilder(
     var regionId: String = ""
 
     var lineDash: List<Double> = emptyList()
+    var lineDashOffset: Double = 0.0
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
 
@@ -166,6 +167,7 @@ class PathEntityBuilder(
                         strokeColor = this@PathEntityBuilder.strokeColor
                         strokeWidth = this@PathEntityBuilder.strokeWidth
                         lineDash = this@PathEntityBuilder.lineDash.toDoubleArray()
+                        lineDashOffset = this@PathEntityBuilder.lineDashOffset
                         arrowSpec = this@PathEntityBuilder.arrowSpec
                         this.startPadding = startPadding
                         this.endPadding = endPadding
