@@ -3513,8 +3513,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
-        y = np.random.normal(size=n)
+        x = np.random.normal(size=n)
+        y = np.random.choice(['a', 'b', 'b', 'c'], size=n)
         ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
             geom_boxplot(fatten=5, varwidth=True, \\
                          outlier_shape=8, outlier_size=2)
@@ -3555,10 +3555,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         LetsPlot.setup_html()
         n, m = 100, 5
         np.random.seed(42)
-        df = pd.DataFrame({'x%s' % i: np.random.normal(size=n) \\
+        df = pd.DataFrame({'y%s' % i: np.random.normal(size=n) \\
                            for i in range(1, m + 1)})
         ggplot(df.melt()) + \\
-            geom_boxplot(aes(x='variable', y='value', color='variable', \\
+            geom_boxplot(aes(x='value', y='variable', color='variable', \\
                              fill='variable'), \\
                          outlier_shape=21, outlier_size=1.5, size=2, \\
                          alpha=.5, width=.5, show_legend=False)
