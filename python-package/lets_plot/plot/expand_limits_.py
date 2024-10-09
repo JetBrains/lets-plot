@@ -11,7 +11,7 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
 
     This function extends the plot boundaries to encompass new data points,
     whether a single value or multiple values are provided. It acts as a
-    thin wrapper around geom_blank().
+    thin wrapper around `geom_blank()`.
 
     Parameters
     ----------
@@ -26,7 +26,7 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
 
     Examples
     --------
-        .. jupyter-execute::
+    .. jupyter-execute::
         :linenos:
         :emphasize-lines: 10
 
@@ -38,12 +38,12 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
         }
 
         # Include the value -10 along the x-axis
-        ggplot(data, aes('x', 'y')) + geom_point() + \
+        ggplot(data, aes('x', 'y')) + geom_point() + \\
             expand_limits(x=-10)
 
     |
 
-        .. jupyter-execute::
+    .. jupyter-execute::
         :linenos:
         :emphasize-lines: 10
 
@@ -55,7 +55,7 @@ def expand_limits(*, x=None, y=None, size=None, color=None, fill=None, alpha=Non
         }
 
         # Expand Limits Along the y-axis
-        ggplot(data, aes('x', 'y')) + geom_point() + \
+        ggplot(data, aes('x', 'y')) + geom_point() + \\
             expand_limits(y=range(-10, 10))
 
     """
