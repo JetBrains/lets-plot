@@ -42,9 +42,12 @@ def theme(*,
           legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
+          legend_margin=None,
+          legend_spacing=None, legend_spacing_x=None,legend_spacing_y=None,
           legend_key=None,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
+          legend_box=None, legend_box_spacing=None,
           # ToDo: other legend options...
 
           panel_background=None,

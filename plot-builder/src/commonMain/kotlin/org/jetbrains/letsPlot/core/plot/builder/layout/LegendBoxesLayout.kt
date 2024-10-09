@@ -27,8 +27,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
                 outerBounds,
                 blockSize,
                 legendPosition,
-                legendJustification,
-                theme.margin()
+                legendJustification
             )
         } else {
             LegendBoxesLayoutUtil.overlayLegendOriginInsidePlot(

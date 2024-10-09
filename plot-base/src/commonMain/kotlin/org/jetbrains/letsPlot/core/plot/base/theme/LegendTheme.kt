@@ -34,13 +34,12 @@ interface LegendTheme {
      */
     fun legendBoxArrangement(): LegendArrangement
 
+    // Space between plotting area and legend box
+    fun legendBoxSpacing(): Double
 
     /**
      * Legend Options for each legend
      */
-
-    // Extra space added around legend (px, no support for ggplot 'units')
-    fun margin(): Thickness
 
     // Space around legend content (px) = 'legend.margin' in ggplot2
     fun padding(): Thickness

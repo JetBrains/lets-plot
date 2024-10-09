@@ -847,6 +847,7 @@ object Option {
         const val LEGEND_KEY_SPACING_Y = ThemeOption.LEGEND_KEY_SPACING_Y
 
         const val LEGEND_BOX = ThemeOption.LEGEND_BOX
+        const val LEGEND_BOX_SPACING = ThemeOption.LEGEND_BOX_SPACING
 
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
