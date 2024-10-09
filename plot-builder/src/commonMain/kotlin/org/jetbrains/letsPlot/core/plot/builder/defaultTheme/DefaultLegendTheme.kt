@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_KEY_RECT
@@ -73,13 +74,13 @@ internal class DefaultLegendTheme(
         return DoubleVector(spacingX, spacingY)
     }
 
-    override fun margin(): Thickness = Thickness.uniform(5.0)
-
     override fun padding() = getMargins(getElemValue(listOf(LEGEND_MARGIN)))
 
     override fun legendBoxArrangement(): LegendArrangement {
         return getValue(LEGEND_BOX) as LegendArrangement
     }
+
+    override fun legendBoxSpacing(): Double = getNumber(listOf(LEGEND_BOX_SPACING))
 
     override fun spacing(): DoubleVector {
         val spacingX = getNumber(listOf(LEGEND_SPACING_X, LEGEND_SPACING))
