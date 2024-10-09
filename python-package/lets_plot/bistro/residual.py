@@ -178,7 +178,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Applicable simultaneously for 'tile' geom and 'histogram' marginal.
     color : str
         Color of the geometry.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     size : float
         Size of the geometry.
     alpha : float

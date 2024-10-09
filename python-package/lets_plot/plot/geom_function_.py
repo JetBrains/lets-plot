@@ -140,8 +140,8 @@ def geom_function(mapping=None, *, data=None, stat=None, geom=None, position=Non
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     - size : line width.
 
     ----

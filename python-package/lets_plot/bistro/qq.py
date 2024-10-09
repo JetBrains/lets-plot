@@ -66,27 +66,27 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         "box : tr : .05, dens : bl".
     color : str
         Color of a points.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     fill : str
         Color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     alpha : float, default=0.5
         Transparency level of points. Accept values between 0 and 1.
     size : float, default=3.0
         Size of the points.
     shape : int
         Shape of the points, an integer from 0 to 25.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
+        For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     line_color : str, default='#FF0000'
         Color of the fitting line.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     line_size : float, default=0.75
         Width of the fitting line.
     linetype : int or str
         Type of the fitting line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
         3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     Returns
     -------

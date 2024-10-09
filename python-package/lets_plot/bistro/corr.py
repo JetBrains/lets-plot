@@ -210,7 +210,7 @@ class corr_plot:
             If False - the text size is constant. Default - contextual.
         color : str
             Set text color.
-            For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+            For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
             Default - contextual.
 
         Returns

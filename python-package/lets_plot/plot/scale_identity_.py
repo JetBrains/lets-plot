@@ -54,7 +54,7 @@ def scale_identity(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -124,7 +124,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -197,7 +197,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -270,7 +270,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -343,7 +343,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, li
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -419,7 +419,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -489,7 +489,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -559,7 +559,7 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, l
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -627,7 +627,7 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limi
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------

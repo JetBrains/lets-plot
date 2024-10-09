@@ -165,7 +165,7 @@ class layer_tooltips(FeatureSpec):
 
         ----
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
         Examples
         --------

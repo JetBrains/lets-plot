@@ -106,7 +106,7 @@ def theme(*,
 
         - the first element is the format - 'e', 'pow', 'pow_full';
         - the second element is minimum exponent value from which to use scientific notation (default is -7);
-        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see https://lets-plot.org/python/pages/formats.html).
+        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__).
 
         Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
     line : str or dict
@@ -441,7 +441,7 @@ def element_rect(
     linetype : int or str
         Type of the line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

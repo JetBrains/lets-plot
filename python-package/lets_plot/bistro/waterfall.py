@@ -40,11 +40,11 @@ def waterfall_plot(data, x, y, *,
         Grouping variable. Each group calculates its own statistics.
     color : str
         Color of the box boundary lines.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color lines by the direction of the flow.
     fill : str
         Fill color of the boxes.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
         Use 'flow_type' to color boxes by the direction of the flow.
     size : float, default=0.0
         Line width of the box boundary lines.
@@ -54,7 +54,7 @@ def waterfall_plot(data, x, y, *,
         Type of the box boundary lines.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
         3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     width : float, default=0.9
         Width of the boxes. Typically range between 0 and 1.
         Values that are greater than 1 lead to overlapping of the boxes.
@@ -109,7 +109,7 @@ def waterfall_plot(data, x, y, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
