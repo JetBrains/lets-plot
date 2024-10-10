@@ -36,18 +36,8 @@ enum class NamedLineType(val code: Int, private val myDashArray: List<Double>?) 
     override val dashOffset: Double = 0.0
 }
 
-private val LINE_TYPE_BY_CODE = NamedLineType.values().associateBy { it.code }
-private val LINE_TYPE_BY_NAME = NamedLineType.values().associateBy { it.name.lowercase() }
-
-
-class DashedLineType(private val myDashArray: List<Double>, private val offset: Double) : LineType {
-    override val isSolid: Boolean
-        get() = false
-
-    override val dashArray: List<Double> = myDashArray
-
-    override val dashOffset: Double = offset
-}
+private val LINE_TYPE_BY_CODE = NamedLineType.entries.associateBy { it.code }
+private val LINE_TYPE_BY_NAME = NamedLineType.entries.associateBy { it.name.lowercase() }
 
 
 fun parse(value: Any?): LineType {
@@ -57,24 +47,15 @@ fun parse(value: Any?): LineType {
     * - Codes and names:
     *   0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
     * - List: [dash, gap, ...] or (offset, [dash, gap, ...]).
-    * - ToDo: could be string of hexadecimal digits (not implemented)
+    * - String of hexadecimal digits
     */
     return when {
         value == null -> NamedLineType.SOLID
         value is LineType -> value
         value is String && LINE_TYPE_BY_NAME.containsKey(value) -> LINE_TYPE_BY_NAME[value]!!
         value is Number && LINE_TYPE_BY_CODE.containsKey(value.toInt()) -> LINE_TYPE_BY_CODE[value.toInt()]!!
-        value is List<*> -> {
-            fun parseDashArray(v: List<*>): List<Double> {
-                require(v.all { it is Number }) { "The option 'linetype' requires a list of numbers, but was: $v." }
-                return v.map { (it as Number).toDouble() }
-            }
-            if (value.size == 2 && value[0] is Number && value[1] is List<*>) {
-                DashedLineType(parseDashArray(value[1] as List<*>), offset = (value[0] as Number).toDouble())
-            } else {
-                DashedLineType(parseDashArray(value), offset = 0.0)
-            }
-        }
+        value is String -> HexLineType.parse(value)
+        value is List<*> -> DashedLineType.parse(value)
         else -> NamedLineType.SOLID
     }
 }
