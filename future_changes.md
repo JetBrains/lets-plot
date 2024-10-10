@@ -33,7 +33,11 @@
      
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
 
- 
+- Improve LaTeX support [[#861](https://github.com/JetBrains/lets-plot/issues/861)], [[#960](https://github.com/JetBrains/lets-plot/issues/960)].
+
+  TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/latex.ipynb).
+
+
 ### Changed
 
 - Compact format of scientific notation; new values for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
