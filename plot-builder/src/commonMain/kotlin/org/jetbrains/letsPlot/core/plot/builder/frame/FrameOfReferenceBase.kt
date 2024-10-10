@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.frame
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -141,6 +143,12 @@ internal abstract class FrameOfReferenceBase(
             rect.strokeWidth().set(1.0)
             rect.fillOpacity().set(0.5)
             parent.add(rect)
+        }
+    }
+
+    override fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
+        if (coord.isPolar) {
+            throw UnsupportedInteractionException("$eventSpec denied by Polar coordinate system.")
         }
     }
 

@@ -3,13 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.interact
+package org.jetbrains.letsPlot.core.interact.mouse
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.event.MouseWheelEvent
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.InteractionTarget
 
 class MouseWheelInteraction(
     private val ctx: InteractionContext
@@ -28,11 +30,19 @@ class MouseWheelInteraction(
         }
 
     // Zoom origin in plot coordinates
-    var zoomOrigin: DoubleVector = DoubleVector.ZERO
+    private var zoomOrigin: DoubleVector = DoubleVector.ZERO
         private set
 
-    var zoomDelta: Double = 0.0
+    private var zoomDelta: Double = 0.0
         private set
+
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_WHEEL_ROTATED,
+            )
+        )
+    }
 
     fun loop(
         onZoomed: ((MouseWheelInteraction) -> Unit)

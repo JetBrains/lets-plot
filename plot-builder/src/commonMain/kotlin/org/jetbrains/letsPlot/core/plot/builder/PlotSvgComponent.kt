@@ -26,8 +26,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayout
@@ -256,6 +256,9 @@ class PlotSvgComponent constructor(
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
                 StrokeDashArraySupport.apply(this, plotTheme.backgroundStrokeWidth(), plotTheme.backgroundLineType())
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
+
+                // Even open path still blocks mouse events. Add pointer-events: none to make links clickable.
+                setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "pointer-events: none;")
             }
         }
 

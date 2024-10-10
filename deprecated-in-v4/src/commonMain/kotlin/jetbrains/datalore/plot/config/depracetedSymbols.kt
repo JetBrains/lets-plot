@@ -7,6 +7,6 @@ package jetbrains.datalore.plot.config
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.core.spec\"",
-    ReplaceWith("org.jetbrains.letsPlot.core.spec.FailureHandler"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.core.spec.FailureHandler"), level = DeprecationLevel.ERROR
 )
 typealias FailureHandler = org.jetbrains.letsPlot.core.spec.FailureHandler

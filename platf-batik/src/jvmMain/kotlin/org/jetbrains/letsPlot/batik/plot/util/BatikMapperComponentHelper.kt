@@ -5,14 +5,6 @@
 
 package org.jetbrains.letsPlot.batik.plot.util
 
-import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
-import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.batik.mapping.svg.SvgRootDocumentMapper
-import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.DEBUG_REPAINT_MAPPER_COMPONENT
-import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.USE_WEIRD_PERFORMANCE_TUNEUP
 import org.apache.batik.bridge.BridgeContext
 import org.apache.batik.bridge.GVTBuilder
 import org.apache.batik.bridge.UserAgent
@@ -22,6 +14,14 @@ import org.apache.batik.gvt.RootGraphicsNode
 import org.apache.batik.gvt.event.AWTEventDispatcher
 import org.apache.batik.gvt.event.EventDispatcher
 import org.apache.batik.gvt.event.GraphicsNodeChangeListener
+import org.jetbrains.letsPlot.batik.mapping.svg.SvgRootDocumentMapper
+import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.DEBUG_REPAINT_MAPPER_COMPONENT
+import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.USE_WEIRD_PERFORMANCE_TUNEUP
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.AlphaComposite
 import java.awt.Dimension
 import java.awt.Graphics2D
@@ -32,6 +32,8 @@ class BatikMapperComponentHelper private constructor(
     private val svgRoot: SvgSvgElement,
     val messageCallback: BatikMessageCallback
 ) {
+    val eventDispatcher: EventDispatcher get() = myUserAgent.eventDispatcher
+
     private val nodeContainer = SvgNodeContainer(svgRoot)
     private val registrations = CompositeRegistration()
 

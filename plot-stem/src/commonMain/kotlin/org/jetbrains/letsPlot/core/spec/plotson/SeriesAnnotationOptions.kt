@@ -13,12 +13,16 @@ class SeriesAnnotationOptions : Options() {
     var order: Order? by map(Option.Meta.SeriesAnnotation.ORDER)
     var factorLevels: List<Any?>? by map(Option.Meta.SeriesAnnotation.FACTOR_LEVELS)
 
-    enum class Order(value: Int) {
+    enum class Order(
+        val value: Int
+    ) {
         ASCENDING(1),
         DESCENDING(-1)
     }
 
-    enum class Types(value: String) {
+    enum class Types(
+        val value: String
+    ) {
         DATE_TIME(Option.Meta.SeriesAnnotation.Types.DATE_TIME),
         INTEGER(Option.Meta.SeriesAnnotation.Types.INTEGER),
         FLOATING(Option.Meta.SeriesAnnotation.Types.FLOATING),

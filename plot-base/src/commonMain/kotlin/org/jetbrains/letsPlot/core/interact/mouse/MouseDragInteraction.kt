@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.interact
+package org.jetbrains.letsPlot.core.interact.mouse
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.InteractionTarget
 
 internal class MouseDragInteraction(
     private val ctx: InteractionContext
@@ -28,6 +30,15 @@ internal class MouseDragInteraction(
         get():InteractionTarget {
             return _target ?: throw IllegalStateException("Mouse drag target wasn't acquired.")
         }
+
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_DRAGGED,
+                MouseEventSpec.MOUSE_RELEASED,
+            )
+        )
+    }
 
     // Coordinate relative to the entire plot.
     // Need to be translated to "geom" coordinate.

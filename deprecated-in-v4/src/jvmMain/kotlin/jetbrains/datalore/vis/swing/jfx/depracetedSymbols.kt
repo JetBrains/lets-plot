@@ -7,13 +7,13 @@ package jetbrains.datalore.vis.swing.jfx
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.jfx.plot.component\"",
-    ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx"), level = DeprecationLevel.ERROR
 )
 typealias PlotViewerWindowJfx = org.jetbrains.letsPlot.jfx.plot.component.PlotViewerWindowJfx
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.jfx.plot.component\"",
-    ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx"), level = DeprecationLevel.ERROR
 )
 typealias DefaultPlotPanelJfx = org.jetbrains.letsPlot.jfx.plot.component.DefaultPlotPanelJfx
 

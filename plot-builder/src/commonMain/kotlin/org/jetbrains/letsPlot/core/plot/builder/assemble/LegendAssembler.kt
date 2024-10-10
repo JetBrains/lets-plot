@@ -246,7 +246,7 @@ class LegendAssembler(
                 )
             }
 
-            val themeKeySize = DoubleVector(theme.keySize(), theme.keySize())
+            val themeKeySize = theme.keySize()
             val keySizes = breaks
                 .map { br -> themeKeySize.max(pretty(br.minimumKeySize)) }
                 .let { sizes ->

@@ -820,7 +820,11 @@ object Option {
 
         // Facet
         const val FACET_STRIP_BGR_RECT = ThemeOption.FACET_STRIP_BGR_RECT
+        const val FACET_STRIP_BGR_RECT_X = ThemeOption.FACET_STRIP_BGR_RECT_X
+        const val FACET_STRIP_BGR_RECT_Y = ThemeOption.FACET_STRIP_BGR_RECT_Y
         const val FACET_STRIP_TEXT = ThemeOption.FACET_STRIP_TEXT
+        const val FACET_STRIP_TEXT_X = ThemeOption.FACET_STRIP_TEXT_X
+        const val FACET_STRIP_TEXT_Y = ThemeOption.FACET_STRIP_TEXT_Y
 
         // Legend
         const val LEGEND_BKGR_RECT = ThemeOption.LEGEND_BKGR_RECT
@@ -829,6 +833,14 @@ object Option {
         const val LEGEND_POSITION = ThemeOption.LEGEND_POSITION
         const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
         const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
+
+        const val LEGEND_KEY_RECT = ThemeOption.LEGEND_KEY_RECT
+        const val LEGEND_KEY_SIZE = ThemeOption.LEGEND_KEY_SIZE
+        const val LEGEND_KEY_WIDTH = ThemeOption.LEGEND_KEY_WIDTH
+        const val LEGEND_KEY_HEIGHT = ThemeOption.LEGEND_KEY_HEIGHT
+        const val LEGEND_KEY_SPACING = ThemeOption.LEGEND_KEY_SPACING
+        const val LEGEND_KEY_SPACING_X = ThemeOption.LEGEND_KEY_SPACING_X
+        const val LEGEND_KEY_SPACING_Y = ThemeOption.LEGEND_KEY_SPACING_Y
 
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT

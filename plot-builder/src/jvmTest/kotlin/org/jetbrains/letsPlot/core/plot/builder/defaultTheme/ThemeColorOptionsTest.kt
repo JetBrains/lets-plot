@@ -305,12 +305,12 @@ class ThemeColorOptionsTest(
         private fun facetStripBackgroundRect(expectedColor: Color, expectedFill: Color) = listOf(
             Expected(
                 expectedColor,
-                { theme: Theme -> theme.facets().stripColor() },
+                { theme: Theme -> theme.facets().horizontalFacetStrip().stripColor() },
                 "Wrong ${ThemeOption.FACET_STRIP_BGR_RECT}/color"
             ),
             Expected(
                 expectedFill,
-                { theme: Theme -> theme.facets().stripFill() },
+                { theme: Theme -> theme.facets().horizontalFacetStrip().stripFill() },
                 "Wrong ${ThemeOption.FACET_STRIP_BGR_RECT}/fill"
             )
         )

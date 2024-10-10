@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.core.spec\"",
-    ReplaceWith("org.jetbrains.letsPlot.core.spec.Option"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.core.spec.Option"), level = DeprecationLevel.ERROR
 )
 object Option {
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -32,4 +33,9 @@ abstract class FrameOfReference {
     abstract fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent
 
     abstract fun setClip(element: SvgComponent)
+
+    /**
+     * Throws UnsupportedInteractionException if not supported
+     */
+    abstract fun checkMouseInteractionSupported(eventSpec: MouseEventSpec)
 }

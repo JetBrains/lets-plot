@@ -1,13 +1,15 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.interact
+package org.jetbrains.letsPlot.core.interact.mouse
 
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.InteractionTarget
 
 internal class MouseDoubleClickInteraction(
     private val ctx: InteractionContext
@@ -21,6 +23,14 @@ internal class MouseDoubleClickInteraction(
 
     private var disposed = false
     private val reg: CompositeRegistration = CompositeRegistration()
+
+    init {
+        ctx.checkSupported(
+            listOf(
+                MouseEventSpec.MOUSE_DOUBLE_CLICKED,
+            )
+        )
+    }
 
     fun loop(
         onAction: ((MouseDoubleClickInteraction) -> Unit)

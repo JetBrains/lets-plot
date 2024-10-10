@@ -70,7 +70,23 @@ fun buildPlotFromRawSpecs(
 
 /**
  * The entry point to call in JS
- * `processed specs` are plot specs processed by datalore plot backend
+ * `processed specs` are plot specs processed by datalore plot backend.
+ *
+ * @param plotSpecJs plot specifications (a dictionary)
+ * @param width number, if > 0, plot will assume given fixed width in px.
+ * @param height number, if > 0, plot will assume given fixed height in px.
+ * @param parentElement DOM element to add the plot to.
+ *      If fixed `width/height` aren't provided, the plot size will be determined using `clientWidth` of the parent element.
+ * @param optionsJs miscellaneous settings.
+ *      For example, set max width to 500px:
+ *                          optionsJs = {
+ *                              sizing: {
+ *                                  width_mode: "min",
+ *                                  height_mode: "scaled",
+ *                                  width: 500
+ *                              }
+ *                          };
+ *
  */
 @OptIn(ExperimentalJsExport::class)
 @Suppress("unused")

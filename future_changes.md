@@ -24,6 +24,16 @@
 
 - Support for 3-character hex color codes     
 
+- In the `theme()` function:
+  - `legend_key, legend_key_size, legend_key_width, legend_key_height, legend_key_spacing, legend_key_spacing_x, legend_key_spacing_y` parameters  [[#1181](https://github.com/JetBrains/lets-plot/issues/1181)].
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb).
+
+  - `strip_background_x, strip_background_y, strip_text_x, strip_text_y` parameters.
+     
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
+
+ 
 ### Changed
 
 - Compact format of scientific notation; new values for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
@@ -44,3 +54,5 @@
 - sampling_vertex_vw doesn't work as expected [[#1175](https://github.com/JetBrains/lets-plot/issues/1175)].
 - sampling_vertex_dp may break rings [[#1176](https://github.com/JetBrains/lets-plot/issues/1176)].
 - ggmarginal: bottom boxplot is broken [[#1189](https://github.com/JetBrains/lets-plot/issues/1189)].
+- Offscreen cells are sometimes not rendered in JupyterLab.
+- The legend_justification parameter doesn't work if the legend_position='top' [[#1031](https://github.com/JetBrains/lets-plot/issues/1031)].

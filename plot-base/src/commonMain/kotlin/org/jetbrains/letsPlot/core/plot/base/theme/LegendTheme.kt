@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.theme
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
@@ -13,7 +14,15 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 
 interface LegendTheme {
-    fun keySize(): Double
+    fun keySize(): DoubleVector
+    // background underneath legend keys
+    fun showKeyRect(): Boolean
+    fun keyRectFill(): Color
+    fun keyRectColor(): Color
+    fun keyRectStrokeWidth(): Double
+    fun keyLineType(): LineType
+
+    fun keySpacing(): DoubleVector
 
     /**
      * extra space added around legend (px, no support for ggplot 'units')

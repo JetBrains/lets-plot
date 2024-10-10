@@ -42,6 +42,9 @@ def theme(*,
           legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
+          legend_key=None,
+          legend_key_size=None, legend_key_width=None, legend_key_height=None,
+          legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
           # ToDo: other legend options...
 
           panel_background=None,
@@ -72,8 +75,8 @@ def theme(*,
           plot_title_position=None,
           plot_caption_position=None,
 
-          strip_background=None,  # ToDo: x/y
-          strip_text=None,  # ToDo: x/y
+          strip_background=None, strip_background_x=None, strip_background_y=None,
+          strip_text=None, strip_text_x=None, strip_text_y=None,
           # ToDo: strip.placement
 
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
@@ -174,6 +177,22 @@ def theme(*,
         For string parameter the only possible value is 'center'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
+    legend_key : str or dict
+        Background underneath legend keys.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify legend key background parameters, inherited from `rect`.
+    legend_key_size : float
+        Size of legend keys.
+    legend_key_width : float
+        Key background width, inherited from `legend_key_size`.
+    legend_key_height : float
+        Key background height, inherited from `legend_key_size`.
+    legend_key_spacing : float
+        Spacing between legend keys.
+    legend_key_spacing_x : float
+        Spacing in the horizontal direction, inherited from `legend_key_spacing`.
+    legend_key_spacing_y : float
+        Spacing in the vertical direction, inherited from `legend_key_spacing`.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -254,10 +273,26 @@ def theme(*,
         Background of facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify facet label background parameters, inherited from `rect`.
+    strip_background_x : str or dict
+        Horizontal facet background.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
+    strip_background_y : str or dict
+        Vertical facet background.
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify facet label background parameters, inherited from `strip_background`.
     strip_text : str or dict
         Facet labels.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify facet label parameters, inherited from `text`.
+    strip_text_x : str or dict
+        Horizontal facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
+    strip_text_y : str or dict
+        Vertical facet labels.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify facet label parameters, inherited from `strip_text`.
     axis_tooltip, axis_tooltip_x, axis_tooltip_y : str or dict
         Axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.

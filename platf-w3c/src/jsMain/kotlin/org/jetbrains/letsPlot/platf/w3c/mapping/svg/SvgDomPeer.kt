@@ -5,10 +5,15 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
+import kotlinx.browser.window
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGElement
 import org.w3c.dom.svg.SVGGraphicsElement
@@ -17,6 +22,7 @@ import org.w3c.dom.svg.SVGTextContentElement
 
 class SvgDomPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
+    private val linkRegs = mutableMapOf<SvgNode, Registration>()
 
     private fun ensureSourceRegistered(source: SvgNode) {
 
@@ -27,6 +33,20 @@ class SvgDomPeer : SvgPlatformPeer {
 
     fun registerMapper(source: SvgNode, mapper: SvgNodeMapper<out SvgNode, out Node>) {
         myMappingMap[source] = mapper
+
+        if (source is SvgElement && SvgTextContent.LP_HREF in source.attributeKeys) {
+            linkRegs[source] = CompositeRegistration(
+                source.addEventHandler<MouseEvent>(MOUSE_OVER) { _, _ ->
+                    println("OVER: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
+                },
+                source.addEventHandler<MouseEvent>(MOUSE_OUT) { _, _ ->
+                    println("OUT: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
+                },
+                source.addEventHandler<MouseEvent>(MOUSE_CLICKED) { _, _ ->
+                    window.open(source.getAttribute(SvgTextContent.LP_HREF).get()!!)
+                }
+            )
+        }
     }
 
     fun unregisterMapper(source: SvgNode) {
@@ -85,10 +105,10 @@ class SvgDomPeer : SvgPlatformPeer {
     }
 
     override fun invertTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector =
-            transformCoordinates(relative, point, true)
+        transformCoordinates(relative, point, true)
 
     override fun applyTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector =
-            transformCoordinates(relative, point, false)
+        transformCoordinates(relative, point, false)
 
     override fun getBBox(element: SvgLocatable): DoubleRectangle {
         ensureSourceRegistered(element as SvgNode)

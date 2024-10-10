@@ -12,6 +12,10 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.*
+import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.RollbackAllChangesFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator

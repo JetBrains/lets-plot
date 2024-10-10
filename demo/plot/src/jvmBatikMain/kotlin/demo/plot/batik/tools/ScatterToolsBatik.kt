@@ -53,5 +53,35 @@ object ScatterToolsBatik {
 
             return parsePlotSpec(spec)
         }
+//        fun plotSpec(): MutableMap<String, Any> {
+//            val n = 50
+//            val step = 4 * PI / n
+//            val x = List(n) { it * step }
+//            val y = List(n) { sin(it * step) }
+//
+//            val spec = """
+//            {
+//              'kind': 'plot',
+//              'data': {
+//                'x': $x,
+//                'y': $y
+//              },
+//              'mapping': {
+//                'x': 'x',
+//                'y': 'y',
+//                'color': 'y'
+//              },
+//               'coord': {'name': 'flip', 'flip': true},
+//              'layers': [
+//                {
+//                  'geom': 'point',
+//                  'sampling': 'none'
+//                }
+//              ]
+//            }
+//        """.trimIndent()
+//
+//            return parsePlotSpec(spec)
+//        }
     }
 }

@@ -5,51 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
-import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 internal class DefaultFacetsTheme(
     options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry
-) : ThemeValuesAccess(options, fontFamilyRegistry), FacetsTheme {
+): FacetsTheme {
+    private val horizontalStrip = DefaultFacetStripTheme("x", options, fontFamilyRegistry)
+    private val verticalStrip = DefaultFacetStripTheme("y", options, fontFamilyRegistry)
 
-    internal val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
-    internal val textKey = listOf(FACET_STRIP_TEXT, TEXT)
-
-    override fun showStrip(): Boolean {
-        return !isElemBlank(textKey)
-    }
-
-    override fun showStripBackground(): Boolean {
-        return showStrip() && !isElemBlank(rectKey)
-    }
-
-    override fun stripFill(): Color {
-        return getColor(getElemValue(rectKey), Elem.FILL)
-    }
-
-    override fun stripColor(): Color {
-        return getColor(getElemValue(rectKey), Elem.COLOR)
-    }
-
-    override fun stripStrokeWidth(): Double {
-        return getNumber(getElemValue(rectKey), Elem.SIZE)
-    }
-
-    override fun stripLineType() = getLineType(getElemValue(rectKey))
-
-    override fun stripTextStyle(): ThemeTextStyle {
-        return getTextStyle(getElemValue(textKey))
-    }
-
-    override fun stripMargins() = getMargins(getElemValue(textKey))
-
-    override fun stripTextJustification() = getTextJustification(getElemValue(textKey))
+    override fun horizontalFacetStrip(): FacetStripTheme = horizontalStrip
+    override fun verticalFacetStrip(): FacetStripTheme = verticalStrip
 }

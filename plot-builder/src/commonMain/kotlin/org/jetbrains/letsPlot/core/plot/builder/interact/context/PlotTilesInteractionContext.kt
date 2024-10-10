@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.context
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.interact.EventsManager
@@ -44,5 +45,16 @@ internal class PlotTilesInteractionContext(
 
     override fun clientRectToDataBounds(clientRect: DoubleRectangle, coord: CoordinateSystem): DoubleRectangle {
         return dataSelectionStrategy.clientRectToDataBounds(clientRect, coord)
+    }
+
+    /**
+     * Throws UnsupportedInteractionException if not supported
+     */
+    override fun checkSupported(eventSpecs: List<MouseEventSpec>) {
+        for (eventSpec in eventSpecs) {
+            for ((_, tile) in tiles) {
+                tile.checkMouseInteractionSupported(eventSpec)
+            }
+        }
     }
 }

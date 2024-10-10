@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder
 
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.interact.InteractionContext
+import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
@@ -19,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
@@ -126,51 +129,58 @@ internal class PlotTile(
     }
 
     private fun addFacetLabels(geomBounds: DoubleRectangle, theme: FacetsTheme) {
-//        if (!theme.showStrip()) return
-
         // facet X label (on top of geom area)
-        val xLabels = tileLayoutInfo.facetXLabels
-        if (xLabels.isNotEmpty()) {
-            val totalHeadHeight = tileLayoutInfo.facetXLabels.map { it.second }.let(::facetColHeadTotalHeight)
-            val labelOrig = DoubleVector(
-                geomBounds.left,
-                geomBounds.top - totalHeadHeight
-            )
-            var curLabelOrig = labelOrig
-            xLabels.forEach { (xLabel, labHeight) ->
-                val labelBounds = DoubleRectangle(
-                    curLabelOrig,
-                    DoubleVector(geomBounds.width, labHeight)
-                )
-
-                // ToDo: Use "facet X" theme.
-                addFacetLabBackground(labelBounds, theme)
-
-                addLabelElement(labelBounds, theme, xLabel, isColumnLabel = true)
-
-                curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labHeight))
-            }
-        }
+        addHorizontalFacetLabels(geomBounds, theme.horizontalFacetStrip())
 
         // facet Y label (to the right from geom area)
-        if (tileLayoutInfo.facetYLabel != null) {
-            val (yLabel, labWidth) = tileLayoutInfo.facetYLabel
+        addVerticalFacetLabels(geomBounds, theme.verticalFacetStrip())
+    }
 
+    private fun addHorizontalFacetLabels(geomBounds: DoubleRectangle, theme: FacetStripTheme) {
+        if (!theme.showStrip() || tileLayoutInfo.facetXLabels.isEmpty()) {
+            return
+        }
+
+        val totalHeadHeight = tileLayoutInfo.facetXLabels.map { it.second }.let(::facetColHeadTotalHeight)
+        val labelOrig = DoubleVector(
+            geomBounds.left,
+            geomBounds.top - totalHeadHeight
+        )
+        var curLabelOrig = labelOrig
+        tileLayoutInfo.facetXLabels.forEach { (xLabel, labHeight) ->
             val labelBounds = DoubleRectangle(
-                geomBounds.right + FACET_PADDING,
-                geomBounds.top,
-                labWidth,
-                geomBounds.height
+                curLabelOrig,
+                DoubleVector(geomBounds.width, labHeight)
             )
 
-            // ToDo: Use "facet Y" theme.
             addFacetLabBackground(labelBounds, theme)
 
-            addLabelElement(labelBounds, theme, yLabel, isColumnLabel = false)
+            addLabelElement(labelBounds, theme, xLabel, isColumnLabel = true)
+
+            curLabelOrig = curLabelOrig.add(DoubleVector(0.0, labHeight))
         }
     }
 
-    private fun addFacetLabBackground(labelBounds: DoubleRectangle, facetTheme: FacetsTheme) {
+    private fun addVerticalFacetLabels(geomBounds: DoubleRectangle, theme: FacetStripTheme) {
+        if (!theme.showStrip() || tileLayoutInfo.facetYLabel == null) {
+            return
+        }
+
+        val (yLabel, labWidth) = tileLayoutInfo.facetYLabel
+
+        val labelBounds = DoubleRectangle(
+            geomBounds.right + FACET_PADDING,
+            geomBounds.top,
+            labWidth,
+            geomBounds.height
+        )
+
+        addFacetLabBackground(labelBounds, theme)
+
+        addLabelElement(labelBounds, theme, yLabel, isColumnLabel = false)
+    }
+
+    private fun addFacetLabBackground(labelBounds: DoubleRectangle, facetTheme: FacetStripTheme) {
         if (facetTheme.showStripBackground()) {
             val rect = SvgRectElement(labelBounds).apply {
                 strokeWidth().set(facetTheme.stripStrokeWidth())
@@ -184,7 +194,7 @@ internal class PlotTile(
 
     private fun addLabelElement(
         labelBounds: DoubleRectangle,
-        theme: FacetsTheme,
+        theme: FacetStripTheme,
         label: String,
         isColumnLabel: Boolean
     ) {
@@ -220,6 +230,16 @@ internal class PlotTile(
         rotation?.let { lab.rotate(it.angle) }
 
         add(lab)
+    }
+
+    /**
+     * Throws UnsupportedInteractionException if not supported
+     */
+    fun checkMouseInteractionSupported(eventSpec: MouseEventSpec) {
+        if (liveMapFigure != null) {
+            throw UnsupportedInteractionException("$eventSpec denied by LiveMap component.")
+        }
+        frameOfReference.checkMouseInteractionSupported(eventSpec)
     }
 
     companion object {

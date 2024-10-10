@@ -10,13 +10,13 @@ import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Pos
 import org.jetbrains.letsPlot.core.spec.Option.Stat
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.junit.Test
@@ -163,6 +163,7 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
+            entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.DATA, mapOf(
@@ -429,7 +430,7 @@ class BarMarkTransformTest {
         assertThat(spec.getMap(Plot.LAYERS, 0)).contains(
             entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
             entry(Stat.Summary.FUN, Stat.Summary.Functions.SUM),
-            entry(Layer.POS, mapOf(Option.Pos.NAME to PosProto.FILL)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.FILL)),
             entry(Layer.ORIENTATION, "y"),
             entry(
                 PlotBase.MAPPING,
@@ -442,5 +443,114 @@ class BarMarkTransformTest {
             ),
         )
     }
+
+    @Test
+    fun posDodge() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"category":"A", "group": "x", "value":0.1},
+                |      {"category":"A", "group": "y", "value":0.6},
+                |      {"category":"A", "group": "z", "value":0.9},
+                |      {"category":"B", "group": "x", "value":0.7},
+                |      {"category":"B", "group": "y", "value":0.2},
+                |      {"category":"B", "group": "z", "value":1.1},
+                |      {"category":"C", "group": "x", "value":0.6},
+                |      {"category":"C", "group": "y", "value":0.1},
+                |      {"category":"C", "group": "z", "value":0.2}
+                |    ]
+                |  },
+                |  "mark": {
+                |    "type": "bar"
+                |   },
+                |  "encoding": {
+                |    "x": {"field": "category"},
+                |    "y": {"field": "value", "type": "quantitative"},
+                |    "color": { "field": "group" },
+                |    "xOffset": {"field": "group"}
+                |  }
+                |}
+            """.trimMargin()).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
+            entry(PlotBase.DATA, mapOf(
+                "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
+                "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
+                "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
+            )),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.DODGE)),
+            entry(Meta.DATA_META, empty()),
+            entry(Layer.STAT, StatKind.IDENTITY.name.lowercase()),
+            entry(
+                PlotBase.MAPPING,
+                mapOf(
+                    toOption(Aes.X) to "category",
+                    toOption(Aes.Y) to "value",
+                    toOption(Aes.FILL) to "group",
+                    toOption(Aes.COLOR) to "group",
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun posIdentity() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"category":"A", "group": "x", "value":0.1},
+                |      {"category":"A", "group": "y", "value":0.6},
+                |      {"category":"A", "group": "z", "value":0.9},
+                |      {"category":"B", "group": "x", "value":0.7},
+                |      {"category":"B", "group": "y", "value":0.2},
+                |      {"category":"B", "group": "z", "value":1.1},
+                |      {"category":"C", "group": "x", "value":0.6},
+                |      {"category":"C", "group": "y", "value":0.1},
+                |      {"category":"C", "group": "z", "value":0.2}
+                |    ]
+                |  },
+                |  "mark": {
+                |    "type": "bar", "opacity": 0.2
+                |   },
+                |  "encoding": {
+                |    "x": {"field": "category"},
+                |    "y": {"field": "value", "type": "quantitative", "stack":  null},
+                |    "color": { "field": "group" }
+                |  }
+                |}
+            """.trimMargin()).asMutable()
+
+        val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
+            entry(PlotBase.DATA, mapOf(
+                "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
+                "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
+                "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
+            )),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.IDENTITY)),
+            entry(toOption(Aes.ALPHA), 0.2),
+            entry(Meta.DATA_META, empty()),
+            entry(Layer.STAT, StatKind.IDENTITY.name.lowercase()),
+            entry(
+                PlotBase.MAPPING,
+                mapOf(
+                    toOption(Aes.X) to "category",
+                    toOption(Aes.Y) to "value",
+                    toOption(Aes.FILL) to "group",
+                    toOption(Aes.COLOR) to "group",
+                ),
+            ),
+        )
+    }
+
 
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
 import org.jetbrains.letsPlot.commons.event.Event
-import org.jetbrains.letsPlot.datamodel.svg.util.ListMap
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
@@ -17,6 +16,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.util.ListMap
 
 abstract class SvgElement : SvgNode() {
 
@@ -55,6 +55,12 @@ abstract class SvgElement : SvgNode() {
 
     fun <EventT : Event> addEventHandler(spec: SvgEventSpec, handler: SvgEventHandler<EventT>): Registration {
         return myEventPeer.addEventHandler(spec, handler)
+    }
+
+    fun <EventT : Event> addEventHandler(spec: SvgEventSpec, handler: (node: SvgNode, e: EventT) -> Unit): Registration {
+        return addEventHandler(spec, object : SvgEventHandler<EventT> {
+            override fun handle(node: SvgNode, e: EventT) = handler(node, e)
+        })
     }
 
     fun <EventT : Event> dispatch(spec: SvgEventSpec, event: EventT) {

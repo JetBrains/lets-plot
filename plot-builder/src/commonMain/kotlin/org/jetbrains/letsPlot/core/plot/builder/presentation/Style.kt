@@ -100,8 +100,8 @@ object Style {
             "$AXIS_TEXT-$vAxisName" to ts(vAxisTheme.labelStyle()),
             "$AXIS_TOOLTIP_TEXT-$vAxisName" to ts(vAxisTheme.tooltipTextStyle()),
 
-            "$FACET_STRIP_TEXT-x" to ts(theme.facets().stripTextStyle()),
-            "$FACET_STRIP_TEXT-y" to ts(theme.facets().stripTextStyle()),
+            "$FACET_STRIP_TEXT-x" to ts(theme.facets().horizontalFacetStrip().stripTextStyle()),
+            "$FACET_STRIP_TEXT-y" to ts(theme.facets().verticalFacetStrip().stripTextStyle()),
 
             TOOLTIP_TEXT to ts(theme.tooltips().textStyle()),
             TOOLTIP_TITLE to ts(theme.tooltips().titleStyle()),

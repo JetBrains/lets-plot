@@ -33,6 +33,10 @@ internal class MouseDragSelectionStrategy : DataSelectionStrategy {
                 ?: error("Can't translate client $it to data domain.")
         }
 
-        return DoubleRectangle.span(domainPoint0, domainPoint1)
+        val dataBounds = DoubleRectangle.span(domainPoint0, domainPoint1).let {
+            DataBoundsFix.unImplode(it)
+        }
+
+        return dataBounds
     }
 }

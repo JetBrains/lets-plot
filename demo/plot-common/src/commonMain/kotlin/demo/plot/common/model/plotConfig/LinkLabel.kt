@@ -12,8 +12,66 @@ class LinkLabel {
         return listOf(
             simple(),
             twoLinks(),
-            titles()
+            titles(),
+            facets(),
         )
+    }
+
+    private fun facets(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "text": [
+                  "Here is a label with a <a href=\"https://lets-plot.org\">Lets-Plot</a>! link",
+                  "Here is a label with a <a href=\"https://github.com/JetBrains/lets-plot\">GitHub</a>! link"
+                ]
+              },
+              "mapping": {},
+              "data_meta": {
+                "series_annotations": [
+                  {
+                    "type": "str",
+                    "column": "text"
+                  }
+                ]
+              },
+              "ggtitle": {
+                "text": "Notebook with <a href=\"https://google.com\">links</a>",
+                "subtitle": "Visit <a href=\"https://lets-plot.org\">lets-plot.org</a> for more examples"
+              },
+              "caption": {
+                "text": "Data provided by <a href=\"https://nasa.com\">NASA</a> and <a href=\"https://eida.com\">EISA</a>."
+              },
+              "facet": {
+                "name": "grid",
+                "x": "text",
+                "x_order": 1.0,
+                "y_order": 1.0
+              },
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                  "geom": "label",
+                  "mapping": {
+                    "label": "text"
+                  },
+                  "tooltips": {
+                    "formats": [],
+                    "lines": [
+                      "^label"
+                    ]
+                  },
+                  "data_meta": {},
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun titles(): MutableMap<String, Any> {
@@ -22,28 +80,37 @@ class LinkLabel {
               "mapping": {},
               "data_meta": {},
               "ggtitle": {
-                "text": "Notebook with <a href=\"https://google.com\">links</a>",
-                "subtitle": "Visit <a href=\"https://lets-plot.org\">lets-plot.org</a> for more examples"
+                "text": "Notebook with <a href=\"https://lets-plot.org\">Lets-Plot</a>",
+                "subtitle": "Visit <a href=\"https://github.com/JetBrains/lets-plot\">GitHub</a> for more info"
               },
               "caption": {
-                "text": "Data provided by <a href=\"https://nasa.com\">NASA</a> and <a href=\"https://eida.com\">EISA</a>."
+                "text": "Data provided by <a href=\"https://nasa.com\">NASA</a> and <a href=\"https://eisa.com\">EISA</a>."
               },
               "kind": "plot",
               "scales": [],
               "layers": [
+                {
+                    "geom": "rect",
+                    "xmin": -5,
+                    "xmax": 5,
+                    "ymin": -5,
+                    "ymax": 5,
+                    "fill": "red",
+                    "alpha": 0.5
+                },
                 {
                   "geom": "label",
                   "mapping": {},
                   "tooltips": {
                     "formats": [],
                     "lines": [
-                      "Link to a <a href=\"https://google.com\">google</a> inside a tooltip"
+                      "Link to <a href=\"https://google.com?q=lets-plot\">google the Lets-Plot</a> inside a tooltip"
                     ]
                   },
                   "data_meta": {},
                   "x": 0.0,
                   "y": 0.0,
-                  "label": "Here is a label with a <a href=\"https://google.com\">google</a>! link"
+                  "label": "Here is a label with a <a href=\"https://lets-plot.org/python/pages/gallery.html\">Lets-Plot gallery</a>! link"
                 }
               ],
               "metainfo_list": []
@@ -65,7 +132,7 @@ class LinkLabel {
                   "geom": "label",
                   "mapping": {
                     "y": [0.0],
-                    "label": ["This is a <a href=\"https://opentopomap.org/\">first link</a> and <a href=\"https://opentopomap.org/\">second link</a>!"]
+                    "label": ["Visit <a href=\"https://lets-plot.org\">Lets-Plot</a> and <a href=\"https://lets-plot.org/python/pages/gallery.html\">gallery</a>!"]
                   },
                   "data_meta": {},
                   "label_padding": 0.0,
@@ -92,7 +159,7 @@ class LinkLabel {
                   "geom": "label",
                   "mapping": {
                     "y": [0.0],
-                    "label": ["This is a <a href=\"https://opentopomap.org/\">link</a>!"]
+                    "label": ["This is a <a href=\"https://lets-plot.org/\">Lets-Plot</a>!"]
                   },
                   "data_meta": {},
                   "label_padding": 0.0,

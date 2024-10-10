@@ -7,6 +7,6 @@ package jetbrains.datalore.plot.server.config.transform
 
 @Deprecated(
     "Moved to package \"org.jetbrains.letsPlot.core.spec.back.transform\"",
-    ReplaceWith("org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms"), level = DeprecationLevel.WARNING
+    ReplaceWith("org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms"), level = DeprecationLevel.ERROR
 )
 typealias PlotConfigServerSideTransforms = org.jetbrains.letsPlot.core.spec.back.transform.PlotConfigBackendTransforms
