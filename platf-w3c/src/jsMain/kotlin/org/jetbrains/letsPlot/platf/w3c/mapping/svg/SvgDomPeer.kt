@@ -53,6 +53,7 @@ class SvgDomPeer : SvgPlatformPeer {
 
     fun unregisterMapper(source: SvgNode) {
         myMappingMap.remove(source)
+        linkRegs.remove(source)?.dispose()
     }
 
     override fun getComputedTextLength(node: SvgTextContent): Double {
