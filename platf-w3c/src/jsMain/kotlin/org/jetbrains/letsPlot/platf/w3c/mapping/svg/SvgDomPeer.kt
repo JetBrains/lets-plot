@@ -14,6 +14,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssCursor
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setCursor
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGElement
 import org.w3c.dom.svg.SVGGraphicsElement
@@ -37,10 +39,10 @@ class SvgDomPeer : SvgPlatformPeer {
         if (source is SvgElement && SvgTextContent.LP_HREF in source.attributeKeys) {
             linkRegs[source] = CompositeRegistration(
                 source.addEventHandler<MouseEvent>(MOUSE_OVER) { _, _ ->
-                    println("OVER: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
+                    (mapper.target as? SVGElement)?.style?.setCursor(CssCursor.POINTER)
                 },
                 source.addEventHandler<MouseEvent>(MOUSE_OUT) { _, _ ->
-                    println("OUT: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
+                    (mapper.target as? SVGElement)?.style?.setCursor(CssCursor.CROSSHAIR)
                 },
                 source.addEventHandler<MouseEvent>(MOUSE_CLICKED) { _, _ ->
                     window.open(source.getAttribute(SvgTextContent.LP_HREF).get()!!)
