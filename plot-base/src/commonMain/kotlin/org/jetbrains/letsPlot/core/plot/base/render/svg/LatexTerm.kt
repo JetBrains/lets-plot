@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText.Term
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.collections.plus
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 internal class LatexTerm(
     private val node: Node
@@ -168,17 +169,15 @@ internal abstract class Node {
     }
     data class SuperscriptNode(val content: Node, val level: Int) : Node() {
         override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true, level = level)
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, level, isSuperior = true)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            estimateWidthForIndexNode(content, level, font, widthCalculator)
     }
     data class SubscriptNode(val content: Node, val level: Int) : Node() {
         override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false, level = level)
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
-            return content.estimateWidth(font, widthCalculator)
-        }
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, level, isSuperior = false)
+        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
+            estimateWidthForIndexNode(content, level, font, widthCalculator)
     }
 
     companion object {
@@ -288,7 +287,7 @@ internal abstract class Node {
             return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
 
-        private fun getSvgForIndexNode(content: Node, isSuperior: Boolean, level: Int): List<SvgTSpanElement> {
+        private fun getSvgForIndexNode(content: Node, level: Int, isSuperior: Boolean): List<SvgTSpanElement> {
             val (shift, backShift) = if (isSuperior) { "-" to "" } else { "" to "-" }
 
             val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
@@ -316,6 +315,12 @@ internal abstract class Node {
             }
 
             return listOf(indentTSpan) + indexTSpanElements + restoreBaselineTSpan
+        }
+
+        private fun estimateWidthForIndexNode(content: Node, level: Int, font: Font, widthCalculator: (String, Font) -> Double): Double {
+            val degreeFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
+            val superscriptFont = Font(font.family, degreeFontSize, font.isBold, font.isItalic)
+            return content.estimateWidth(superscriptFont, widthCalculator)
         }
     }
 }
