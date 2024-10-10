@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
+import org.jetbrains.letsPlot.commons.event.Button.LEFT
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
@@ -40,12 +42,13 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 
 internal class TooltipRenderer constructor(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
-    plotSize: DoubleVector,
+    private val plotSize: DoubleVector,
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
@@ -59,6 +62,8 @@ internal class TooltipRenderer constructor(
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: RetainableComponents<TooltipBox>
     private val crosshairStorage: RetainableComponents<CrosshairComponent>
+    private val fadeEffectRect: SvgRectElement
+    private var frozen = false
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
@@ -74,10 +79,40 @@ internal class TooltipRenderer constructor(
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
 
+        fadeEffectRect = SvgRectElement().apply {
+            width().set(0.0)
+            height().set(0.0)
+            fillColor().set(plotBackground)
+            opacity().set(0.7)
+            decorationLayer.children().add(0, this)
+        }
+
         regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltips() }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler { hideTooltips() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler { switchFrozenState(it) }))
+    }
+
+    private fun switchFrozenState(mouseEvent: MouseEvent) {
+        if (mouseEvent.button != LEFT) return
+        if (mouseEvent.modifiers.isCtrl) return
+
+        if (frozen) {
+            frozen = false
+            fadeEffectRect.width().set(0.0)
+            fadeEffectRect.height().set(0.0)
+            hideTooltips()
+        } else {
+            val geomBounds = findTileInfo(mouseEvent.location.toDoubleVector())?.geomBounds ?: return
+            if (tooltipStorage.size == 0) return
+
+            frozen = true
+            fadeEffectRect.x().set(geomBounds.left)
+            fadeEffectRect.y().set(geomBounds.top)
+            fadeEffectRect.width().set(geomBounds.width)
+            fadeEffectRect.height().set(geomBounds.height)
+        }
     }
 
     override fun dispose() {
@@ -86,6 +121,10 @@ internal class TooltipRenderer constructor(
     }
 
     private fun showTooltips(cursor: DoubleVector) {
+        if (frozen) {
+            return
+        }
+
         val tileInfo = findTileInfo(cursor)
         if (tileInfo == null) {
             hideTooltips()
@@ -186,6 +225,8 @@ internal class TooltipRenderer constructor(
     }
 
     private fun hideTooltips() {
+        if (frozen) return
+
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
     }

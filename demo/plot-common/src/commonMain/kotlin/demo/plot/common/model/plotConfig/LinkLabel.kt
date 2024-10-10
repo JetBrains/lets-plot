@@ -20,6 +20,7 @@ class LinkLabel {
     private fun facets(): MutableMap<String, Any> {
         val spec = """
             {
+              "theme": { "flavor": "darcula" },
               "data": {
                 "text": [
                   "Here is a label with a <a href=\"https://lets-plot.org\">Lets-Plot</a>! link",
@@ -104,13 +105,13 @@ class LinkLabel {
                   "tooltips": {
                     "formats": [],
                     "lines": [
-                      "Link to <a href=\"https://google.com?q=lets-plot\">google the Lets-Plot</a> inside a tooltip"
+                      "Link to the <a href=\"https://lets-plot.org/python/pages/gallery.html\">Lets-Plot gallery</a> inside a tooltip"
                     ]
                   },
                   "data_meta": {},
                   "x": 0.0,
                   "y": 0.0,
-                  "label": "Here is a label with a <a href=\"https://lets-plot.org/python/pages/gallery.html\">Lets-Plot gallery</a>! link"
+                  "label": "Here is a label with a <a href=\"https://lets-plot.org\">Lets-Plot</a>! link"
                 }
               ],
               "metainfo_list": []
