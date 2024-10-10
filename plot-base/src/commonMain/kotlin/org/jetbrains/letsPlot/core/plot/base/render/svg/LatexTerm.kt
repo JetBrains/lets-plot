@@ -30,7 +30,7 @@ internal class LatexTerm(
         private fun extractFormulas(text: String): List<Pair<String, IntRange>> {
             val formulas = mutableListOf<Pair<String, IntRange>>()
             var formulaStart = 0
-            for (i in text.indices.toList().dropLast(1)) {
+            for (i in 0 until text.length - 1) {
                 when (text.substring(i, i + 2)) {
                     "\\(" -> {
                         formulaStart = i + 2
@@ -54,13 +54,13 @@ internal open class Token {
     object Superscript : Token()
     object Subscript : Token()
     object Space : Token()
-    data class ExplicitSpace(val type: Type) : Token() {
-        enum class Type(val symbol: String) {
-            QUAD(" "),
-            QQUAD("  "),
-            COMMA(" "),
-            COLON(" "),
-            SPACE(" ");
+    data class ExplicitSpace(val space: String) : Token() {
+        companion object {
+            val QUAD = ExplicitSpace(" ")
+            val QQUAD = ExplicitSpace("  ")
+            val COMMA = ExplicitSpace(" ")
+            val COLON = ExplicitSpace(" ")
+            val SPACE = ExplicitSpace(" ")
         }
     }
     data class Text(val content: String) : Token()
@@ -112,11 +112,11 @@ internal open class Token {
                             i++
                         }
                         when (command.toString()) {
-                            "quad" -> yield(ExplicitSpace(ExplicitSpace.Type.QUAD))
-                            "qquad" -> yield(ExplicitSpace(ExplicitSpace.Type.QQUAD))
-                            "," -> yield(ExplicitSpace(ExplicitSpace.Type.COMMA))
-                            ":" -> yield(ExplicitSpace(ExplicitSpace.Type.COLON))
-                            " " -> yield(ExplicitSpace(ExplicitSpace.Type.SPACE))
+                            "quad" -> yield(ExplicitSpace.QUAD)
+                            "qquad" -> yield(ExplicitSpace.QQUAD)
+                            "," -> yield(ExplicitSpace.COMMA)
+                            ":" -> yield(ExplicitSpace.COLON)
+                            " " -> yield(ExplicitSpace.SPACE)
                             else -> yield(Command(command.toString()))
                         }
                     }
@@ -267,7 +267,7 @@ internal abstract class Node {
                     is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator)))
                     is Token.Text -> nodes.add(TextNode(token.content))
                     is Token.Space -> continue
-                    is Token.ExplicitSpace -> nodes.add(TextNode(token.type.symbol))
+                    is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
                 }
             }
             return GroupNode(nodes)
