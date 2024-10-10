@@ -318,9 +318,9 @@ internal abstract class Node {
         }
 
         private fun estimateWidthForIndexNode(content: Node, level: Int, font: Font, widthCalculator: (String, Font) -> Double): Double {
-            val degreeFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
-            val superscriptFont = Font(font.family, degreeFontSize, font.isBold, font.isItalic)
-            return content.estimateWidth(superscriptFont, widthCalculator)
+            val indexFontSize = (font.size * INDEX_SIZE_FACTOR.pow(level + 1)).roundToInt()
+            val indexFont = Font(font.family, indexFontSize, font.isBold, font.isItalic)
+            return content.estimateWidth(indexFont, widthCalculator)
         }
     }
 }
