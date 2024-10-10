@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText.Term
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import kotlin.collections.plus
+import kotlin.math.pow
 
 internal class LatexTerm(
     private val node: Node
@@ -165,16 +166,16 @@ internal abstract class Node {
             return children.sumOf { it.estimateWidth(font, widthCalculator) }
         }
     }
-    data class SuperscriptNode(val content: Node) : Node() {
+    data class SuperscriptNode(val content: Node, val level: Int) : Node() {
         override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true)
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = true, level = level)
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return content.estimateWidth(font, widthCalculator)
         }
     }
-    data class SubscriptNode(val content: Node) : Node() {
+    data class SubscriptNode(val content: Node, val level: Int) : Node() {
         override val visualCharCount: Int = content.visualCharCount
-        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false)
+        override val svg: List<SvgTSpanElement> = getSvgForIndexNode(content, isSuperior = false, level = level)
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return content.estimateWidth(font, widthCalculator)
         }
@@ -252,19 +253,19 @@ internal abstract class Node {
         private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS
 
         fun parse(tokens: Sequence<Token>): Node {
-            return parseGroup(tokens.iterator())
+            return parseGroup(tokens.iterator(), level = 0)
         }
 
-        private fun parseGroup(iterator: Iterator<Token>): GroupNode {
+        private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
             val nodes = mutableListOf<Node>()
             while (iterator.hasNext()) {
                 val token = iterator.next()
                 when (token) {
                     is Token.Command -> nodes.add(parseCommand(token)) // For now, we just replace the command with its name if it's not a special symbol
-                    is Token.OpenBrace -> nodes.add(parseGroup(iterator))
+                    is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
                     is Token.CloseBrace -> break
-                    is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator)))
-                    is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator)))
+                    is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1), level))
+                    is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1), level))
                     is Token.Text -> nodes.add(TextNode(token.content))
                     is Token.Space -> continue
                     is Token.ExplicitSpace -> nodes.add(TextNode(token.space))
@@ -273,9 +274,9 @@ internal abstract class Node {
             return GroupNode(nodes)
         }
 
-        private fun parseSupOrSub(iterator: Iterator<Token>): Node {
+        private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): Node {
             return when (val nextToken = iterator.next()) {
-                is Token.OpenBrace -> parseGroup(iterator)
+                is Token.OpenBrace -> parseGroup(iterator, level)
                 is Token.Text -> TextNode(nextToken.content)
                 is Token.Command -> parseCommand(nextToken)
                 else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
@@ -287,14 +288,17 @@ internal abstract class Node {
             return TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" })
         }
 
-        private fun getSvgForIndexNode(content: Node, isSuperior: Boolean): List<SvgTSpanElement> {
+        private fun getSvgForIndexNode(content: Node, isSuperior: Boolean, level: Int): List<SvgTSpanElement> {
             val (shift, backShift) = if (isSuperior) { "-" to "" } else { "" to "-" }
 
             val indentTSpan = SvgTSpanElement(INDENT_SYMBOL).apply {
                 setAttribute(SvgTSpanElement.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
             }
+            val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
             val indexTSpanElements = content.svg.mapIndexed { i, element -> element.apply {
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                if (getAttribute(SvgTSpanElement.FONT_SIZE).get() == null) {
+                    setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
+                }
                 if (i == 0) {
                     setAttribute(SvgTSpanElement.DY, "$shift${INDEX_RELATIVE_SHIFT}em")
                 }
@@ -307,7 +311,7 @@ internal abstract class Node {
             // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
             val restoreBaselineTSpan = SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 // Size of shift depends on the font size, and it should be equal to the superscript shift size
-                setAttribute(SvgTSpanElement.FONT_SIZE, "${INDEX_SIZE_FACTOR}em")
+                setAttribute(SvgTSpanElement.FONT_SIZE, "${indexSize}em")
                 setAttribute(SvgTSpanElement.DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
             }
 
