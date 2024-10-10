@@ -24,6 +24,12 @@ import org.w3c.dom.svg.SVGSVGElement
 @JsName("DefaultToolbar")
 @JsExport
 class DefaultToolbarJs() {
+
+    //
+    // Note:    The expected toolbar height is 35px
+    //          See: PlotHtmlExport.buildHtmlFromRawSpecs()
+    //
+
     private val element: HTMLElement = (document.createElement("div") as HTMLElement).apply {
         style.apply {
             display = "flex"
