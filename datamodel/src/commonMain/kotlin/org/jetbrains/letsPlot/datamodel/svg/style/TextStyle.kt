@@ -13,4 +13,15 @@ data class TextStyle(
     val face: FontFace,
     val size: Double,
     val color: Color
-)
+) {
+    val isNoneSize: Boolean
+        get() = size == NONE_SIZE
+
+    val isNoneFamily: Boolean
+        get() = family == NONE_FAMILY
+
+    companion object {
+        const val NONE_SIZE = -1.0
+        const val NONE_FAMILY = ""
+    }
+}

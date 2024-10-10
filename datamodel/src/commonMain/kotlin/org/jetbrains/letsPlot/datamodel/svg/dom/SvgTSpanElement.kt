@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.STROKE_
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_ANCHOR
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.TEXT_DY
 
-class SvgTSpanElement() : SvgElement(), SvgTextContent {
+class SvgTSpanElement() : SvgStylableElement(), SvgTextContent {
 
     companion object {
         private val X: SvgAttributeSpec<Double> =
