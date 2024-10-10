@@ -5,10 +5,7 @@
 
 package org.jetbrains.letsPlot.batik.plot.util
 
-import org.apache.batik.bridge.BridgeContext
-import org.apache.batik.bridge.GVTBuilder
-import org.apache.batik.bridge.UserAgent
-import org.apache.batik.bridge.UserAgentAdapter
+import org.apache.batik.bridge.*
 import org.apache.batik.ext.awt.RenderingHintsKeyExt
 import org.apache.batik.gvt.RootGraphicsNode
 import org.apache.batik.gvt.event.AWTEventDispatcher
@@ -22,7 +19,10 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
+import org.w3c.dom.Element
 import java.awt.AlphaComposite
+import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics2D
 import kotlin.math.ceil
@@ -30,7 +30,8 @@ import kotlin.math.ceil
 
 class BatikMapperComponentHelper private constructor(
     private val svgRoot: SvgSvgElement,
-    val messageCallback: BatikMessageCallback
+    val messageCallback: BatikMessageCallback,
+    val onSetCursor: (Cursor) -> Unit
 ) {
     val eventDispatcher: EventDispatcher get() = myUserAgent.eventDispatcher
 
@@ -58,6 +59,10 @@ class BatikMapperComponentHelper private constructor(
         myUserAgent = object : UserAgentAdapter() {
             private val dispatcher = AWTEventDispatcher()
 
+            override fun setSVGCursor(cursor: Cursor?) {
+                cursor?.let { onSetCursor(it) }
+            }
+
             override fun getEventDispatcher(): EventDispatcher {
                 return dispatcher
             }
@@ -71,8 +76,23 @@ class BatikMapperComponentHelper private constructor(
             }
         }
 
+        // Workaround for Batik using auto cursor even with the cursor style set in the root SVG element.
+        myBridgeContext = object : BridgeContext(myUserAgent) {
+            val lpCursorManager = object : CursorManager(this) {
+                override fun convertCursor(e: Element?): Cursor {
+                    return when (e is Element && e.hasAttribute(SvgTextContent.LP_HREF.name)) {
+                        true -> Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                        false -> Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)
+                    }
+                }
+            }
+
+            override fun getCursorManager(): CursorManager {
+                return lpCursorManager
+            }
+        }
+
         // Set-up GraphicsNode
-        myBridgeContext = BridgeContext(myUserAgent)
         myBridgeContext.isDynamic = true
 
         // Build Batik SVG model.
@@ -151,10 +171,11 @@ class BatikMapperComponentHelper private constructor(
     companion object {
         fun forUnattached(
             svgRoot: SvgSvgElement,
-            messageCallback: BatikMessageCallback
+            messageCallback: BatikMessageCallback,
+            cursorCallback: (Cursor) -> Unit
         ): BatikMapperComponentHelper {
             require(!svgRoot.isAttached()) { "SvgSvgElement must be unattached" }
-            return BatikMapperComponentHelper(svgRoot, messageCallback)
+            return BatikMapperComponentHelper(svgRoot, messageCallback, cursorCallback)
         }
     }
 }

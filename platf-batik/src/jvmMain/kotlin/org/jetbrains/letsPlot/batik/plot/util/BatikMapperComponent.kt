@@ -41,7 +41,7 @@ class BatikMapperComponent(
         cursor = Cursor(Cursor.CROSSHAIR_CURSOR)
         layout = null  // Composite figure contains sub-panels with provided bounds.
 
-        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
+        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback) { cursor = it }
 
         addMouseListener(object : MouseListener {
             override fun mouseClicked(e: MouseEvent?) {

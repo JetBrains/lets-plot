@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.MOUSE_CLICKED
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGLocatable
 import org.w3c.dom.svg.SVGTransformable
@@ -68,12 +68,6 @@ internal class SvgBatikPeer : SvgPlatformPeer {
 
         if (source is SvgElement && SvgTextContent.LP_HREF in source.attributeKeys) {
             linkRegs[source] = CompositeRegistration(
-                source.addEventHandler<MouseEvent>(MOUSE_OVER) { _, _ ->
-                    println("OVER: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
-                },
-                source.addEventHandler<MouseEvent>(MOUSE_OUT) { _, _ ->
-                    println("OUT: ${source.getAttribute(SvgTextContent.LP_HREF).get()}")
-                },
                 source.addEventHandler<MouseEvent>(MOUSE_CLICKED) { _, _ ->
                     Desktop.getDesktop().browse(java.net.URI(source.getAttribute(SvgTextContent.LP_HREF).get()!!))
                 }

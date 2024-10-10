@@ -13,9 +13,8 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
-import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssCursor
-import org.jetbrains.letsPlot.platf.w3c.dom.css.setCursor
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGElement
 import org.w3c.dom.svg.SVGGraphicsElement
@@ -39,10 +38,10 @@ class SvgDomPeer : SvgPlatformPeer {
         if (source is SvgElement && SvgTextContent.LP_HREF in source.attributeKeys) {
             linkRegs[source] = CompositeRegistration(
                 source.addEventHandler<MouseEvent>(MOUSE_OVER) { _, _ ->
-                    (mapper.target as? SVGElement)?.style?.setCursor(CssCursor.POINTER)
+                    source.setAttribute(SVG_STYLE_ATTRIBUTE, "cursor: pointer;")
                 },
                 source.addEventHandler<MouseEvent>(MOUSE_OUT) { _, _ ->
-                    (mapper.target as? SVGElement)?.style?.setCursor(CssCursor.CROSSHAIR)
+                    source.setAttribute(SVG_STYLE_ATTRIBUTE, "")
                 },
                 source.addEventHandler<MouseEvent>(MOUSE_CLICKED) { _, _ ->
                     window.open(source.getAttribute(SvgTextContent.LP_HREF).get()!!)
