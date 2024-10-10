@@ -8,22 +8,16 @@ package org.jetbrains.letsPlot.batik.mapping.svg
 import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.anim.dom.SVGOMTextContentElement
 import org.apache.batik.dom.svg.SVGOMPoint
-import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.MOUSE_CLICKED
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGLocatable
 import org.w3c.dom.svg.SVGTransformable
-import java.awt.Desktop
 
 internal class SvgBatikPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
-    private val linkRegs = mutableMapOf<SvgNode, Registration>()
 
     private fun ensureElementConsistency(source: SvgNode, target: Node) {
         if (source is SvgElement && target !is SVGOMElement) {
@@ -65,19 +59,10 @@ internal class SvgBatikPeer : SvgPlatformPeer {
     fun registerMapper(source: SvgNode, mapper: SvgNodeMapper<out SvgNode, out Node>) {
         ensureSourceTargetConsistency(source, mapper.target)
         myMappingMap[source] = mapper
-
-        if (source is SvgElement && SvgTextContent.LP_HREF in source.attributeKeys) {
-            linkRegs[source] = CompositeRegistration(
-                source.addEventHandler<MouseEvent>(MOUSE_CLICKED) { _, _ ->
-                    Desktop.getDesktop().browse(java.net.URI(source.getAttribute(SvgTextContent.LP_HREF).get()!!))
-                }
-            )
-        }
     }
 
     fun unregisterMapper(source: SvgNode) {
         myMappingMap.remove(source)
-        linkRegs.remove(source)?.dispose()
     }
 
     override fun getComputedTextLength(node: SvgTextContent): Double {

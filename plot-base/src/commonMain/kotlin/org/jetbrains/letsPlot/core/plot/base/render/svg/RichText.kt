@@ -7,8 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent.Companion.LP_HREF
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 object RichText {
@@ -21,7 +22,7 @@ object RichText {
 
         return lines.map { line ->
             SvgTextElement().apply {
-                line.flatMap(Term::svg).forEach(::addTSpan)
+                children().addAll(line.flatMap(Term::svg))
             }
         }
     }
@@ -118,11 +119,17 @@ object RichText {
         private val href: String,
     ) : Term {
         override val visualCharCount: Int = text.length
-        override val svg: List<SvgTSpanElement> = listOf(
-            SvgTSpanElement(text).apply {
-                fillColor().set(Colors.forName("blue")) // TODO: do not hardcode color
-                setAttribute(LP_HREF, href)
-            })
+        override val svg: List<SvgElement> = listOf(
+            SvgAElement().apply {
+                href().set(href)
+                xlinkHref().set(href)
+                children().add(
+                    SvgTSpanElement(text).apply {
+                        fillColor().set(Colors.forName("blue")) // TODO: do not hardcode color
+                    }
+                )
+            }
+        )
 
         override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
             return widthCalculator(text, font)
@@ -143,7 +150,7 @@ object RichText {
 
     internal interface Term {
         val visualCharCount: Int // in chars, used for line wrapping
-        val svg: List<SvgTSpanElement>
+        val svg: List<SvgElement>
 
         fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
     }

@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.batik.plot.util
 
+import org.apache.batik.anim.dom.SVGOMAElement
+import org.apache.batik.anim.dom.SVGOMTSpanElement
 import org.apache.batik.bridge.*
 import org.apache.batik.ext.awt.RenderingHintsKeyExt
 import org.apache.batik.gvt.RootGraphicsNode
@@ -16,15 +18,15 @@ import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.DEB
 import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent.Companion.USE_WEIRD_PERFORMANCE_TUNEUP
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import org.w3c.dom.Element
-import java.awt.AlphaComposite
-import java.awt.Cursor
-import java.awt.Dimension
-import java.awt.Graphics2D
+import org.w3c.dom.svg.SVGAElement
+import java.awt.*
+import java.awt.Cursor.CROSSHAIR_CURSOR
+import java.awt.Cursor.getPredefinedCursor
 import kotlin.math.ceil
 
 
@@ -74,16 +76,22 @@ class BatikMapperComponentHelper private constructor(
             override fun displayError(e: Exception) {
                 messageCallback.handleException(e)
             }
+
+            override fun openLink(elt: SVGAElement?) {
+                Desktop.getDesktop().browse(java.net.URI(elt?.href?.baseVal ?: error("No href")))
+            }
         }
 
         // Workaround for Batik using auto cursor even with the cursor style set in the root SVG element.
         myBridgeContext = object : BridgeContext(myUserAgent) {
             val lpCursorManager = object : CursorManager(this) {
                 override fun convertCursor(e: Element?): Cursor {
-                    return when (e is Element && e.hasAttribute(SvgTextContent.LP_HREF.name)) {
-                        true -> Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
-                        false -> Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)
-                    }
+                    if (e == null) return getPredefinedCursor(CROSSHAIR_CURSOR)
+                    if (e !is SVGOMTSpanElement) getPredefinedCursor(CROSSHAIR_CURSOR)
+                    val parentA = e.parentNode as? SVGOMAElement ?: return getPredefinedCursor(CROSSHAIR_CURSOR)
+                    if (!parentA.hasAttribute(SvgAElement.HREF.name)) return getPredefinedCursor(CROSSHAIR_CURSOR)
+
+                    return getPredefinedCursor(Cursor.HAND_CURSOR)
                 }
             }
 

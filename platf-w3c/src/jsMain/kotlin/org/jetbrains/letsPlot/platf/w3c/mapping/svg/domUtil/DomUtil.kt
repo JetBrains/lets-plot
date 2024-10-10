@@ -5,26 +5,26 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domUtil
 
+import kotlinx.browser.document
+import kotlinx.browser.window
+import kotlinx.dom.addClass
+import kotlinx.dom.removeClass
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.function.Supplier
 import org.jetbrains.letsPlot.commons.intern.function.Value
-import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import org.jetbrains.letsPlot.commons.intern.observable.property.*
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.css.CssDisplay
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.*
 import org.w3c.dom.*
 import org.w3c.dom.svg.SVGElement
-import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.dom.addClass
-import kotlinx.dom.removeClass
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.*
 
 object DomUtil {
     fun elementChildren(e: Element): MutableList<Node?> {
@@ -241,6 +241,7 @@ object DomUtil {
                 is SvgDefsElement -> createSVGElement("defs")
                 is SvgClipPathElement -> createSVGElement("clipPath")
                 is SvgImageElement -> createSVGElement("image")
+                is SvgAElement -> createSVGElement("a")
                 else -> throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
             }
 

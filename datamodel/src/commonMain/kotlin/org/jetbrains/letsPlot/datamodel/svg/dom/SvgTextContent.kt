@@ -26,8 +26,6 @@ interface SvgTextContent {
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE)
         val TEXT_DY: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec(SvgConstants.SVG_TEXT_DY_ATTRIBUTE)
-        val LP_HREF: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("lp-href")
     }
 
     val computedTextLength: Double
