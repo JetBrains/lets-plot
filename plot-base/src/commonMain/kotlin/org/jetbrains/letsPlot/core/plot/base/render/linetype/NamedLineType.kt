@@ -40,6 +40,14 @@ private val LINE_TYPE_BY_CODE = NamedLineType.entries.associateBy { it.code }
 private val LINE_TYPE_BY_NAME = NamedLineType.entries.associateBy { it.name.lowercase() }
 
 
+private class CustomLineType(myDashArray: List<Double>, offset: Double) : LineType {
+    override val isSolid: Boolean = false
+
+    override val dashArray: List<Double> = myDashArray
+
+    override val dashOffset: Double = offset
+}
+
 fun parse(value: Any?): LineType {
     /*
     * The line type is specified by either an integer (code 0..6) or a name
@@ -54,8 +62,24 @@ fun parse(value: Any?): LineType {
         value is LineType -> value
         value is String && LINE_TYPE_BY_NAME.containsKey(value) -> LINE_TYPE_BY_NAME[value]!!
         value is Number && LINE_TYPE_BY_CODE.containsKey(value.toInt()) -> LINE_TYPE_BY_CODE[value.toInt()]!!
-        value is String -> HexLineType.parse(value)
-        value is List<*> -> DashedLineType.parse(value)
+        value is String -> {
+            require(value.length % 2 == 0 && value.length <= 8) {
+                "The option 'linetype' requires a string of an even number (up to eight) of hexadecimal digits, " +
+                        "but was: $value." }
+            val dashArray = value.map { it.toString().toInt(16).toDouble() }
+            CustomLineType(dashArray, offset = 0.0)
+        }
+        value is List<*> -> {
+            fun parseDashArray(v: List<*>): List<Double> {
+                require(v.all { it is Number }) { "The option 'linetype' requires a list of numbers, but was: $v." }
+                return v.map { (it as Number).toDouble() }
+            }
+            return if (value.size == 2 && value[0] is Number && value[1] is List<*>) {
+                CustomLineType(parseDashArray(value[1] as List<*>), offset = (value[0] as Number).toDouble())
+            } else {
+                CustomLineType(parseDashArray(value), offset = 0.0)
+            }
+        }
         else -> NamedLineType.SOLID
     }
 }
