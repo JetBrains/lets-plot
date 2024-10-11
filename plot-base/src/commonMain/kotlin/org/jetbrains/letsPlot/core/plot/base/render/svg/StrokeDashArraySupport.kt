@@ -19,7 +19,7 @@ object StrokeDashArraySupport {
         val dashArray = toStrokeDashArray(strokeWidth, lineType)
         if (dashArray != null) {
             element.strokeDashArray().set(dashArray)
-            element.strokeDashOffset().set(lineType.dashOffset)
+            element.strokeDashOffset().set(lineType.dashOffset * strokeWidth)
         }
     }
 
@@ -27,7 +27,7 @@ object StrokeDashArraySupport {
         val dashArray = toStrokeDashArray(strokeWidth, lineType)
         if (dashArray != null) {
             element.setStrokeDashArray(dashArray)
-            element.strokeDashOffset(lineType.dashOffset)
+            element.strokeDashOffset(lineType.dashOffset * strokeWidth)
         }
     }
 
