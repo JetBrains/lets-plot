@@ -55,12 +55,12 @@ class StyleSheet constructor(
         }
 
         private fun TextStyle.toCSS(): String {
-            return """
-                |   fill: ${color.toHexColor()};
-                |   font-family: ${family};
-                |   font-size: ${size}px;
-                |   ${face.toCSS()}   
-                """.trimMargin()
+            val css = StringBuilder()
+            css.appendLine("fill: ${color.toHexColor()};")
+            css.append(face.toCSS())
+            if (!isNoneFamily) css.appendLine("font-family: $family;")
+            if (!isNoneSize) css.appendLine("font-size: ${size}px;")
+            return css.toString()
         }
 
         // .className text : {
