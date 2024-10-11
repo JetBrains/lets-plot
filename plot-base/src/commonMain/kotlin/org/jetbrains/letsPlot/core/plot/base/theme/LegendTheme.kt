@@ -41,8 +41,8 @@ interface LegendTheme {
      * Legend Options for each legend
      */
 
-    // Space around legend content (px) = 'legend.margin' in ggplot2
-    fun padding(): Thickness
+    // Space around legend content (px)
+    fun margins(): Thickness
 
     // Space between legends
     fun spacing(): DoubleVector

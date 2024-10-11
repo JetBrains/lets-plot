@@ -74,7 +74,7 @@ internal class DefaultLegendTheme(
         return DoubleVector(spacingX, spacingY)
     }
 
-    override fun padding() = getMargins(getElemValue(listOf(LEGEND_MARGIN)))
+    override fun margins() = getMargins(getElemValue(listOf(LEGEND_MARGIN)))
 
     override fun legendBoxArrangement(): LegendArrangement {
         return getValue(LEGEND_BOX) as LegendArrangement
