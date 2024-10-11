@@ -230,9 +230,11 @@ internal object PlotLayoutUtil {
 
     private fun legendBlockDelta(
         legendsBlockInfo: LegendsBlockInfo,
-        theme: LegendTheme,
+        theme: LegendTheme
     ): DoubleVector {
         if (!theme.position().isFixed) return DoubleVector.ZERO
+
+        if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
         val spacing = theme.legendBoxSpacing()
@@ -245,9 +247,11 @@ internal object PlotLayoutUtil {
 
     fun legendBlockLeftTopDelta(
         legendsBlockInfo: LegendsBlockInfo,
-        theme: LegendTheme,
+        theme: LegendTheme
     ): DoubleVector {
         if (!theme.position().isFixed) return DoubleVector.ZERO
+
+        if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
         val spacing = theme.legendBoxSpacing()
