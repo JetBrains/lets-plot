@@ -438,9 +438,12 @@ def element_rect(
         Border color.
     size : int
         Border size.
-    linetype : int or str
+    linetype : int or str or list
         Type of the line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        It can also be specified with a string of hexadecimal digits, giving the lengths in consecutive positions.
+        A list defines the pattern of dashes and gaps with offset: [offset, [dash, gap, dash, gap, ...]]
+        or without offset: [dash, gap, dash, gap, ...].
         For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
@@ -485,9 +488,13 @@ def element_line(
         Line color.
     size : int
         Line size.
-    linetype : int or str
+    linetype : int or str or list
         Type of the line.
         Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        It can also be specified with a string of hexadecimal digits, giving the lengths in consecutive positions.
+        A list defines the pattern of dashes and gaps with offset: [offset, [dash, gap, dash, gap, ...]]
+        or without offset: [dash, gap, dash, gap, ...].
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
