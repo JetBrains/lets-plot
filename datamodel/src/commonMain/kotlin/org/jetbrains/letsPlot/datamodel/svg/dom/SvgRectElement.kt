@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.FILL_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_DASHARRAY
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_DASHOFFSET
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_OPACITY
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape.Companion.STROKE_WIDTH
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
@@ -99,6 +100,10 @@ class SvgRectElement() : SvgGraphicsElement(), SvgTransformable,
 
     override fun strokeDashArray(): Property<String?> {
         return getAttribute(STROKE_DASHARRAY)
+    }
+
+    override fun strokeDashOffset(): Property<Double?> {
+        return getAttribute(STROKE_DASHOFFSET)
     }
 
     override fun pointToTransformedCoordinates(point: DoubleVector): DoubleVector {

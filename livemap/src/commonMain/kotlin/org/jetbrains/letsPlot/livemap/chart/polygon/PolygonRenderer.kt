@@ -35,6 +35,7 @@ class PolygonRenderer : Renderer {
         if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
             ctx.setStrokeStyle(chartElement.scaledStrokeColor())
             ctx.setLineDash(chartElement.scaledLineDash())
+            ctx.setLineDashOffset(chartElement.scaledLineDashOffset())
             ctx.setLineWidth(chartElement.scaledStrokeWidth())
             ctx.stroke()
         }
