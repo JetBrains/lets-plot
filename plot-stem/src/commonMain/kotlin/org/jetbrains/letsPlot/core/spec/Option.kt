@@ -891,30 +891,24 @@ object Option {
             const val LP_NONE = ThemeOption.Name.LP_NONE
         }
 
-        object LegendDirection {
-            const val HORIZONTAL = "horizontal"
-            const val VERTICAL = "vertical"
-        }
+        object Legend {
+            const val DIRECTION_HORIZONTAL = "horizontal"
+            const val DIRECTION_VERTICAL = "vertical"
 
-        object LegendArrangement {
-            const val HORIZONTAL = "horizontal"
-            const val VERTICAL = "vertical"
-        }
+            const val ARRANGEMENT_HORIZONTAL = "horizontal"
+            const val ARRANGEMENT_VERTICAL = "vertical"
 
-        object LegendPosition {
-            const val LEFT = "left"
-            const val RIGHT = "right"
-            const val TOP = "top"
-            const val BOTTOM = "bottom"
-            const val NONE = "none"
-        }
+            const val POSITION_LEFT = "left"
+            const val POSITION_RIGHT = "right"
+            const val POSITION_TOP = "top"
+            const val POSITION_BOTTOM = "bottom"
+            const val POSITION_NONE = "none"
 
-        object LegendJustification {
-            const val LEFT = "left"
-            const val RIGHT = "right"
-            const val TOP = "top"
-            const val BOTTOM = "bottom"
-            const val CENTER = "center"
+            const val JUSTIFICATION_LEFT = "left"
+            const val JUSTIFICATION_RIGHT = "right"
+            const val JUSTIFICATION_TOP = "top"
+            const val JUSTIFICATION_BOTTOM = "bottom"
+            const val JUSTIFICATION_CENTER = "center"
         }
 
         object Flavor {

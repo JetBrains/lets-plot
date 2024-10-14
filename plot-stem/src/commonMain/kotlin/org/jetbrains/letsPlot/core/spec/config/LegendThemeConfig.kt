@@ -35,11 +35,11 @@ internal object LegendThemeConfig {
         return when (value) {
             is String -> {
                 when (value) {
-                    Theme.LegendPosition.LEFT -> LegendPosition.LEFT
-                    Theme.LegendPosition.RIGHT -> LegendPosition.RIGHT
-                    Theme.LegendPosition.TOP -> LegendPosition.TOP
-                    Theme.LegendPosition.BOTTOM -> LegendPosition.BOTTOM
-                    Theme.LegendPosition.NONE -> LegendPosition.NONE
+                    Theme.Legend.POSITION_LEFT -> LegendPosition.LEFT
+                    Theme.Legend.POSITION_RIGHT -> LegendPosition.RIGHT
+                    Theme.Legend.POSITION_TOP -> LegendPosition.TOP
+                    Theme.Legend.POSITION_BOTTOM -> LegendPosition.BOTTOM
+                    Theme.Legend.POSITION_NONE -> LegendPosition.NONE
                     else -> throw IllegalArgumentException(
                         "Illegal value: '$value'.\n$LEGEND_POSITION " +
                                 "expected value is either a string: left|right|top|bottom|none or two-element numeric list."
@@ -65,7 +65,7 @@ internal object LegendThemeConfig {
         return when (value) {
             is String -> {
                 when (value) {
-                    Theme.LegendJustification.CENTER -> LegendJustification.CENTER
+                    Theme.Legend.JUSTIFICATION_CENTER -> LegendJustification.CENTER
                     else -> throw IllegalArgumentException(
                         "Illegal value '$value', $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
                     )
@@ -87,8 +87,8 @@ internal object LegendThemeConfig {
     private fun toDirection(value: Any): LegendDirection {
         // "horizontal" or "vertical"
         return when (value) {
-            Theme.LegendDirection.HORIZONTAL -> LegendDirection.HORIZONTAL
-            Theme.LegendDirection.VERTICAL -> LegendDirection.VERTICAL
+            Theme.Legend.DIRECTION_HORIZONTAL -> LegendDirection.HORIZONTAL
+            Theme.Legend.DIRECTION_VERTICAL -> LegendDirection.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_DIRECTION. Expected values are: 'horizontal' or 'vertical'."
             )
@@ -98,8 +98,8 @@ internal object LegendThemeConfig {
     private fun toArrangement(value: Any): LegendArrangement {
         // "horizontal" or "vertical"
         return when (value) {
-            Theme.LegendArrangement.HORIZONTAL -> LegendArrangement.HORIZONTAL
-            Theme.LegendArrangement.VERTICAL -> LegendArrangement.VERTICAL
+            Theme.Legend.ARRANGEMENT_HORIZONTAL -> LegendArrangement.HORIZONTAL
+            Theme.Legend.ARRANGEMENT_VERTICAL -> LegendArrangement.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_BOX. Expected values are: 'horizontal' or 'vertical'."
             )
@@ -108,11 +108,11 @@ internal object LegendThemeConfig {
 
     private fun toBoxJustification(value: Any): LegendBoxJustification {
         return when (value) {
-            Theme.LegendJustification.LEFT -> LegendBoxJustification.LEFT
-            Theme.LegendJustification.RIGHT -> LegendBoxJustification.RIGHT
-            Theme.LegendJustification.TOP -> LegendBoxJustification.TOP
-            Theme.LegendJustification.BOTTOM -> LegendBoxJustification.BOTTOM
-            Theme.LegendJustification.CENTER -> LegendBoxJustification.CENTER
+            Theme.Legend.JUSTIFICATION_LEFT -> LegendBoxJustification.LEFT
+            Theme.Legend.JUSTIFICATION_RIGHT -> LegendBoxJustification.RIGHT
+            Theme.Legend.JUSTIFICATION_TOP -> LegendBoxJustification.TOP
+            Theme.Legend.JUSTIFICATION_BOTTOM -> LegendBoxJustification.BOTTOM
+            Theme.Legend.JUSTIFICATION_CENTER -> LegendBoxJustification.CENTER
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_BOX_JUST. Expected values are: 'left', 'right', 'top', 'bottom', 'center'."
             )
