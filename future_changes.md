@@ -37,6 +37,12 @@
 
   TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/latex.ipynb).
 
+- New methods to set `linetype`:
+  - list, which specifies the pattern of dashes and gaps used to draw the line: `[dash, gap, dash, gap, ...]`;
+  - list with a specified offset: `[offset, [dash, gap, dash, gap, ...]]`;
+  - string of an even number (up to eight) of hexadecimal digits which give the lengths in consecutive positions in the string.
+    
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/linetype_custom.ipynb).
 
 ### Changed
 
@@ -61,3 +67,4 @@
 - Offscreen cells are sometimes not rendered in JupyterLab.
 - The legend_justification parameter doesn't work if the legend_position='top' [[#1031](https://github.com/JetBrains/lets-plot/issues/1031)].
 - Interactive links in tooltipss/labels/texts [[#1091](https://github.com/JetBrains/lets-plot/issues/1091)].
+- Allow tuples to define the linetype in element_line [[#1198](https://github.com/JetBrains/lets-plot/issues/1198)].
