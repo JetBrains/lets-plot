@@ -14,10 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.ReadablePropert
 import org.jetbrains.letsPlot.commons.intern.observable.property.SimpleCollectionProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
@@ -78,38 +75,50 @@ internal class SvgTextElementMapper(
 
     companion object {
         private fun sourceTextRunProperty(nodes: ObservableCollection<SvgNode>): ReadableProperty<List<TextLine.TextRun>> {
+            fun handleTSpanElement(node: SvgTSpanElement): List<TextLine.TextRun> =
+                node.children().map { child ->
+                    require(child is SvgTextNode)
+                    val fontScale = node.getAttribute("font-size").get()?.let {
+                        require(it is String) { "font-size: only string value is supported, but was $it" }
+                        require(it.endsWith("em")) { "font-size: only `em` value is supported, but was $it" }
+                        it.removeSuffix("em").toDouble()
+                    }
+
+                    val baselineShift = node.getAttribute("baseline-shift").get()?.let {
+                        when (it) {
+                            "sub" -> TextLine.BaselineShift.SUB
+                            "super" -> TextLine.BaselineShift.SUPER
+                            else -> error("Unexpected baseline-shift value: $it")
+                        }
+                    }
+
+                    val dy = node.getAttribute("dy").get()?.let {
+                        require(it is String) { "dy: only string value is supported, but was $it" }
+                        require(it.endsWith("em")) { "dy: only `em` value is supported, but was $it" }
+                        it.removeSuffix("em").toDouble()
+                    }
+
+                    TextLine.TextRun(
+                        text = child.textContent().get(),
+                        baselineShift = baselineShift,
+                        fontScale = fontScale,
+                        dy = dy
+                    )
+                }
+
             fun textRuns(nodes: ObservableCollection<SvgNode>): List<TextLine.TextRun> {
                 return nodes.flatMap { node ->
                     val nodeTextRuns = when (node) {
                         is SvgTextNode -> listOf(TextLine.TextRun(node.textContent().get()))
-                        is SvgTSpanElement -> node.children().map { child ->
-                            require(child is SvgTextNode)
-                            val fontScale = node.getAttribute("font-size").get()?.let {
-                                require(it is String) { "font-size: only string value is supported, but was $it" }
-                                require(it.endsWith("em")) { "font-size: only `em` value is supported, but was $it" }
-                                it.removeSuffix("em").toDouble()
+                        is SvgTSpanElement -> handleTSpanElement(node)
+                        is SvgAElement -> {
+                            val href = node.getAttribute("href").get() as String
+                            node.children().map { child ->
+                                require(child is SvgTSpanElement)
+                                handleTSpanElement(child)
                             }
-
-                            val baselineShift = node.getAttribute("baseline-shift").get()?.let {
-                                when (it) {
-                                    "sub" -> TextLine.BaselineShift.SUB
-                                    "super" -> TextLine.BaselineShift.SUPER
-                                    else -> error("Unexpected baseline-shift value: $it")
-                                }
-                            }
-
-                            val dy = node.getAttribute("dy").get()?.let {
-                                require(it is String) { "dy: only string value is supported, but was $it" }
-                                require(it.endsWith("em")) { "dy: only `em` value is supported, but was $it" }
-                                it.removeSuffix("em").toDouble()
-                            }
-
-                            TextLine.TextRun(
-                                text = child.textContent().get(),
-                                baselineShift = baselineShift,
-                                fontScale = fontScale,
-                                dy = dy
-                            )
+                                .flatten()
+                                .map { run -> run.copy(href = href) }
                         }
 
                         else -> error("Unexpected node type: ${node::class.simpleName}")

@@ -91,8 +91,8 @@ internal object SvgTextElementAttrMapping : SvgAttrMapping<TextLine>() {
                 }
             }
 
-            SvgTextElement.X.name -> target.x = asDouble(value)
-            SvgTextElement.Y.name -> target.y = asDouble(value)
+            SvgTextElement.X.name -> target.layoutX = asDouble(value)
+            SvgTextElement.Y.name -> target.layoutY = asDouble(value)
             SvgTextContent.TEXT_ANCHOR.name ->
                 target.textAlignment = when (value as String?) {
                     SvgConstants.SVG_TEXT_ANCHOR_END -> TextAlignment.RIGHT

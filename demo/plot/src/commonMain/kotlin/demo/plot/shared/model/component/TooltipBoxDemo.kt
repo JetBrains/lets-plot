@@ -5,17 +5,17 @@
 
 package demo.plot.shared.model.component
 
+import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
-import demo.plot.common.model.SimpleDemoBase
-import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
@@ -84,6 +84,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private val DEMO_BOX_SIZE = DoubleVector(250.0, 150.0)
 
         private val WITH_LABEL = TooltipSpec.Line.withLabelAndValue("some label:", "value")
+        private val WITH_HYPERLINK = TooltipSpec.Line.withLabelAndValue("It's a <a href=\"https://lets-plot.org/\">link</a>!", "")
         private val STATIC_TEXT = TooltipSpec.Line.withValue("only value")
         private val SPLITTED_TEXT = TooltipSpec.Line.withValue("Line #1\nand\nLine #2")
         private val EMPTY_LINE = TooltipSpec.Line.withValue("")
@@ -114,6 +115,15 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
                 markerColors = listOf(Color.DARK_GREEN, Color.GRAY),
                 pointerCoord = DoubleVector(83.0, 90.0)
+            ),
+            // with hyperlink
+            MyTooltipSpec(
+                fillColor = Color.LIGHT_YELLOW,
+                textColor = Color.BLUE,
+                borderColor = Color.BLACK,
+                lines = listOf(WITH_HYPERLINK),
+                markerColors = listOf(Color.DARK_GREEN, Color.GRAY),
+                pointerCoord = DoubleVector(37.0, 40.0)
             ),
            // with horizontal orientation
             MyTooltipSpec(
