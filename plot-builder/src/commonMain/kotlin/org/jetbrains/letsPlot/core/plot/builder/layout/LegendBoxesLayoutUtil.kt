@@ -11,27 +11,55 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
 
 internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
         infos: List<LegendBoxInfo>,
         theme: LegendTheme
     ): LegendsBlockInfo {
-        val boxWithLocationList = when (theme.boxArrangement()) {
-            LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y)
-            LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x)
+        val legendArrangement = theme.boxArrangement()
+        val legendBoxJustification = legendBoxJustification(theme.boxJustification(), legendArrangement)
+        val boxWithLocationList = when (legendArrangement) {
+            LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y, legendBoxJustification)
+            LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x, legendBoxJustification)
         }
         return LegendsBlockInfo(boxWithLocationList)
     }
 
-    private fun verticalStack(boxInfos: List<LegendBoxInfo>, spacing: Double): List<LegendBoxesLayout.BoxWithLocation> {
+    private fun legendBoxJustification(
+        legendBoxJustification: LegendBoxJustification,
+        legendArrangement: LegendArrangement
+    ): LegendBoxJustification {
+        return if (legendBoxJustification === LegendBoxJustification.AUTO) {
+            when (legendArrangement) {
+                LegendArrangement.VERTICAL -> LegendBoxJustification.LEFT
+                LegendArrangement.HORIZONTAL -> LegendBoxJustification.TOP
+            }
+        } else {
+            legendBoxJustification
+        }
+    }
+
+    private fun verticalStack(
+        boxInfos: List<LegendBoxInfo>,
+        spacing: Double,
+        boxJustification: LegendBoxJustification
+    ): List<LegendBoxesLayout.BoxWithLocation> {
         val result = ArrayList<LegendBoxesLayout.BoxWithLocation>()
         var y = 0.0
+        val boxWidth = boxInfos.maxOfOrNull { it.size.x } ?: 0.0
+
         for (info in boxInfos) {
+            val x = when (boxJustification) {
+                LegendBoxJustification.LEFT -> 0.0
+                LegendBoxJustification.RIGHT -> boxWidth - info.size.x
+                else -> (boxWidth - info.size.x) / 2
+            }
             result.add(
                 LegendBoxesLayout.BoxWithLocation(
                     info,
-                    DoubleVector(0.0, y)
+                    DoubleVector(x, y)
                 )
             )
             y += info.size.y + spacing
@@ -39,14 +67,25 @@ internal object LegendBoxesLayoutUtil {
         return result
     }
 
-    private fun horizontalStack(boxInfos: List<LegendBoxInfo>, spacing: Double): List<LegendBoxesLayout.BoxWithLocation> {
+    private fun horizontalStack(
+        boxInfos: List<LegendBoxInfo>,
+        spacing: Double,
+        boxJustification: LegendBoxJustification
+    ): List<LegendBoxesLayout.BoxWithLocation> {
         val result = ArrayList<LegendBoxesLayout.BoxWithLocation>()
         var x = 0.0
+        val boxHeight = boxInfos.maxOfOrNull { it.size.y } ?: 0.0
+
         for (info in boxInfos) {
+            val y = when (boxJustification) {
+                LegendBoxJustification.TOP -> 0.0
+                LegendBoxJustification.BOTTOM -> boxHeight - info.size.y
+                else -> (boxHeight - info.size.y) / 2
+            }
             result.add(
                 LegendBoxesLayout.BoxWithLocation(
                     info,
-                    DoubleVector(x, 0.0)
+                    DoubleVector(x, y)
                 )
             )
             x += info.size.x + spacing

@@ -109,6 +109,7 @@ object ThemeOption {
     const val LEGEND_KEY_SPACING_Y = "legend_key_spacing_y"
 
     const val LEGEND_BOX = "legend_box"
+    const val LEGEND_BOX_JUST = "legend_box_just"
     const val LEGEND_BOX_SPACING = "legend_box_spacing"
 
     // Tooltip

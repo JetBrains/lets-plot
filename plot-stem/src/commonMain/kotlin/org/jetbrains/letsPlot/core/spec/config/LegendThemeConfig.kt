@@ -6,10 +6,12 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX_JUST
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
@@ -22,6 +24,7 @@ internal object LegendThemeConfig {
             LEGEND_JUSTIFICATION -> toJustification(value)
             LEGEND_DIRECTION -> toDirection(value)
             LEGEND_BOX -> toArrangement(value)
+            LEGEND_BOX_JUST -> toBoxJustification(value)
             else -> value
         }
     }
@@ -98,6 +101,20 @@ internal object LegendThemeConfig {
             "vertical" -> LegendArrangement.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_BOX. Expected values are: 'horizontal' or 'vertical'."
+            )
+        }
+    }
+
+    private fun toBoxJustification(value: Any): LegendBoxJustification {
+        // "top", "bottom", "left", "right", "center"
+        return when (value) {
+            "top" -> LegendBoxJustification.TOP
+            "bottom" -> LegendBoxJustification.BOTTOM
+            "left" -> LegendBoxJustification.LEFT
+            "right" -> LegendBoxJustification.RIGHT
+            "center" -> LegendBoxJustification.CENTER
+            else -> throw IllegalArgumentException(
+                "Illegal value: $value, $LEGEND_BOX_JUST. Expected values are: 'left', 'right', 'top', 'bottom', 'center'."
             )
         }
     }

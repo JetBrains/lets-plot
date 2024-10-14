@@ -47,7 +47,7 @@ def theme(*,
           legend_key=None,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
-          legend_box=None, legend_box_spacing=None,
+          legend_box=None, legend_box_just=None, legend_box_spacing=None,
           # ToDo: other legend options...
 
           panel_background=None,
@@ -214,6 +214,8 @@ def theme(*,
         Spacing between legend keys in the vertical direction, inherited from `legend_key_spacing`.
     legend_box : str
         Arrangement of multiple legends ("horizontal" or "vertical").
+    legend_box_just : {'left', 'right', 'bottom', 'top', 'center'}
+        Justification of each legend within the overall bounding box, when there are multiple legends.
     legend_box_spacing : float
         Spacing between plotting area and legend box.
     panel_background : str or dict

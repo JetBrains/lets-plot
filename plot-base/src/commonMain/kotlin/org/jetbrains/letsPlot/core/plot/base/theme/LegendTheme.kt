@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.theme
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
@@ -36,6 +37,8 @@ interface LegendTheme {
 
     // Space between plotting area and legend box
     fun boxSpacing(): Double
+
+    fun boxJustification(): LegendBoxJustification
 
     /**
      * Legend Options for each legend
