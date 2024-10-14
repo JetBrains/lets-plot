@@ -891,6 +891,32 @@ object Option {
             const val LP_NONE = ThemeOption.Name.LP_NONE
         }
 
+        object LegendDirection {
+            const val HORIZONTAL = "horizontal"
+            const val VERTICAL = "vertical"
+        }
+
+        object LegendArrangement {
+            const val HORIZONTAL = "horizontal"
+            const val VERTICAL = "vertical"
+        }
+
+        object LegendPosition {
+            const val LEFT = "left"
+            const val RIGHT = "right"
+            const val TOP = "top"
+            const val BOTTOM = "bottom"
+            const val NONE = "none"
+        }
+
+        object LegendJustification {
+            const val LEFT = "left"
+            const val RIGHT = "right"
+            const val TOP = "top"
+            const val BOTTOM = "bottom"
+            const val CENTER = "center"
+        }
+
         object Flavor {
             const val DARCULA = ThemeOption.Flavor.DARCULA
             const val SOLARIZED_LIGHT = ThemeOption.Flavor.SOLARIZED_LIGHT

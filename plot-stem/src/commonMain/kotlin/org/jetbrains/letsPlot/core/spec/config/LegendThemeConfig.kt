@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
+import org.jetbrains.letsPlot.core.spec.Option.Theme
 
 internal object LegendThemeConfig {
 
@@ -34,11 +35,11 @@ internal object LegendThemeConfig {
         return when (value) {
             is String -> {
                 when (value) {
-                    "right" -> LegendPosition.RIGHT
-                    "left" -> LegendPosition.LEFT
-                    "top" -> LegendPosition.TOP
-                    "bottom" -> LegendPosition.BOTTOM
-                    "none" -> LegendPosition.NONE
+                    Theme.LegendPosition.LEFT -> LegendPosition.LEFT
+                    Theme.LegendPosition.RIGHT -> LegendPosition.RIGHT
+                    Theme.LegendPosition.TOP -> LegendPosition.TOP
+                    Theme.LegendPosition.BOTTOM -> LegendPosition.BOTTOM
+                    Theme.LegendPosition.NONE -> LegendPosition.NONE
                     else -> throw IllegalArgumentException(
                         "Illegal value: '$value'.\n$LEGEND_POSITION " +
                                 "expected value is either a string: left|right|top|bottom|none or two-element numeric list."
@@ -64,7 +65,7 @@ internal object LegendThemeConfig {
         return when (value) {
             is String -> {
                 when (value) {
-                    "center" -> LegendJustification.CENTER
+                    Theme.LegendJustification.CENTER -> LegendJustification.CENTER
                     else -> throw IllegalArgumentException(
                         "Illegal value '$value', $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
                     )
@@ -86,8 +87,8 @@ internal object LegendThemeConfig {
     private fun toDirection(value: Any): LegendDirection {
         // "horizontal" or "vertical"
         return when (value) {
-            "horizontal" -> LegendDirection.HORIZONTAL
-            "vertical" -> LegendDirection.VERTICAL
+            Theme.LegendDirection.HORIZONTAL -> LegendDirection.HORIZONTAL
+            Theme.LegendDirection.VERTICAL -> LegendDirection.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_DIRECTION. Expected values are: 'horizontal' or 'vertical'."
             )
@@ -97,8 +98,8 @@ internal object LegendThemeConfig {
     private fun toArrangement(value: Any): LegendArrangement {
         // "horizontal" or "vertical"
         return when (value) {
-            "horizontal" -> LegendArrangement.HORIZONTAL
-            "vertical" -> LegendArrangement.VERTICAL
+            Theme.LegendArrangement.HORIZONTAL -> LegendArrangement.HORIZONTAL
+            Theme.LegendArrangement.VERTICAL -> LegendArrangement.VERTICAL
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_BOX. Expected values are: 'horizontal' or 'vertical'."
             )
@@ -106,13 +107,12 @@ internal object LegendThemeConfig {
     }
 
     private fun toBoxJustification(value: Any): LegendBoxJustification {
-        // "top", "bottom", "left", "right", "center"
         return when (value) {
-            "top" -> LegendBoxJustification.TOP
-            "bottom" -> LegendBoxJustification.BOTTOM
-            "left" -> LegendBoxJustification.LEFT
-            "right" -> LegendBoxJustification.RIGHT
-            "center" -> LegendBoxJustification.CENTER
+            Theme.LegendJustification.LEFT -> LegendBoxJustification.LEFT
+            Theme.LegendJustification.RIGHT -> LegendBoxJustification.RIGHT
+            Theme.LegendJustification.TOP -> LegendBoxJustification.TOP
+            Theme.LegendJustification.BOTTOM -> LegendBoxJustification.BOTTOM
+            Theme.LegendJustification.CENTER -> LegendBoxJustification.CENTER
             else -> throw IllegalArgumentException(
                 "Illegal value: $value, $LEGEND_BOX_JUST. Expected values are: 'left', 'right', 'top', 'bottom', 'center'."
             )
