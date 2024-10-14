@@ -212,8 +212,8 @@ def theme(*,
         Spacing between legend keys in the horizontal direction, inherited from `legend_key_spacing`.
     legend_key_spacing_y : float
         Spacing between legend keys in the vertical direction, inherited from `legend_key_spacing`.
-    legend_box : str
-        Arrangement of multiple legends ("horizontal" or "vertical").
+    legend_box : {'horizontal', 'vertical'}
+        Arrangement of multiple legends.
     legend_box_just : {'left', 'right', 'bottom', 'top', 'center'}
         Justification of each legend within the overall bounding box, when there are multiple legends.
     legend_box_spacing : float
