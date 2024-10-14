@@ -833,6 +833,10 @@ object Option {
         const val LEGEND_POSITION = ThemeOption.LEGEND_POSITION
         const val LEGEND_JUSTIFICATION = ThemeOption.LEGEND_JUSTIFICATION
         const val LEGEND_DIRECTION = ThemeOption.LEGEND_DIRECTION
+        const val LEGEND_MARGIN = ThemeOption.LEGEND_MARGIN
+        const val LEGEND_SPACING = ThemeOption.LEGEND_SPACING
+        const val LEGEND_SPACING_X = ThemeOption.LEGEND_SPACING_X
+        const val LEGEND_SPACING_Y = ThemeOption.LEGEND_SPACING_Y
 
         const val LEGEND_KEY_RECT = ThemeOption.LEGEND_KEY_RECT
         const val LEGEND_KEY_SIZE = ThemeOption.LEGEND_KEY_SIZE
@@ -841,6 +845,10 @@ object Option {
         const val LEGEND_KEY_SPACING = ThemeOption.LEGEND_KEY_SPACING
         const val LEGEND_KEY_SPACING_X = ThemeOption.LEGEND_KEY_SPACING_X
         const val LEGEND_KEY_SPACING_Y = ThemeOption.LEGEND_KEY_SPACING_Y
+
+        const val LEGEND_BOX = ThemeOption.LEGEND_BOX
+        const val LEGEND_BOX_JUST = ThemeOption.LEGEND_BOX_JUST
+        const val LEGEND_BOX_SPACING = ThemeOption.LEGEND_BOX_SPACING
 
         // Tooltip
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
@@ -881,6 +889,26 @@ object Option {
             // lets-plot themes
             const val LP_MINIMAL = ThemeOption.Name.LP_MINIMAL
             const val LP_NONE = ThemeOption.Name.LP_NONE
+        }
+
+        object Legend {
+            const val DIRECTION_HORIZONTAL = "horizontal"
+            const val DIRECTION_VERTICAL = "vertical"
+
+            const val ARRANGEMENT_HORIZONTAL = "horizontal"
+            const val ARRANGEMENT_VERTICAL = "vertical"
+
+            const val POSITION_LEFT = "left"
+            const val POSITION_RIGHT = "right"
+            const val POSITION_TOP = "top"
+            const val POSITION_BOTTOM = "bottom"
+            const val POSITION_NONE = "none"
+
+            const val JUSTIFICATION_LEFT = "left"
+            const val JUSTIFICATION_RIGHT = "right"
+            const val JUSTIFICATION_TOP = "top"
+            const val JUSTIFICATION_BOTTOM = "bottom"
+            const val JUSTIFICATION_CENTER = "center"
         }
 
         object Flavor {
