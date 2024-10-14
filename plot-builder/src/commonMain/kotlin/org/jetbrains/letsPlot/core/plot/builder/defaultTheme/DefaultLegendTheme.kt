@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
-import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
@@ -76,11 +75,9 @@ internal class DefaultLegendTheme(
 
     override fun margins() = getMargins(getElemValue(listOf(LEGEND_MARGIN)))
 
-    override fun legendBoxArrangement(): LegendArrangement {
-        return getValue(LEGEND_BOX) as LegendArrangement
-    }
+    override fun boxArrangement() = getValue(LEGEND_BOX) as LegendArrangement
 
-    override fun legendBoxSpacing(): Double = getNumber(listOf(LEGEND_BOX_SPACING))
+    override fun boxSpacing(): Double = getNumber(listOf(LEGEND_BOX_SPACING))
 
     override fun spacing(): DoubleVector {
         val spacingX = getNumber(listOf(LEGEND_SPACING_X, LEGEND_SPACING))

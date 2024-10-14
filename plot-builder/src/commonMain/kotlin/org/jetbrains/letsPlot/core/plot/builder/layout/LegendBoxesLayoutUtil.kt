@@ -17,7 +17,7 @@ internal object LegendBoxesLayoutUtil {
         infos: List<LegendBoxInfo>,
         theme: LegendTheme
     ): LegendsBlockInfo {
-        val boxWithLocationList = when (theme.legendBoxArrangement()) {
+        val boxWithLocationList = when (theme.boxArrangement()) {
             LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y)
             LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x)
         }

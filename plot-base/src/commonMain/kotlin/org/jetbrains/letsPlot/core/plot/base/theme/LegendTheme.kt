@@ -32,10 +32,10 @@ interface LegendTheme {
     /**
      * Legend Box Options - full legend area
      */
-    fun legendBoxArrangement(): LegendArrangement
+    fun boxArrangement(): LegendArrangement
 
     // Space between plotting area and legend box
-    fun legendBoxSpacing(): Double
+    fun boxSpacing(): Double
 
     /**
      * Legend Options for each legend

@@ -237,7 +237,7 @@ internal object PlotLayoutUtil {
         if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
-        val spacing = theme.legendBoxSpacing()
+        val spacing = theme.boxSpacing()
         return when (theme.position()) {
             LegendPosition.LEFT,
             LegendPosition.RIGHT -> DoubleVector(size.x + spacing, 0.0)
@@ -254,7 +254,7 @@ internal object PlotLayoutUtil {
         if (legendsBlockInfo.boxWithLocationList.isEmpty()) return DoubleVector.ZERO
 
         val size = legendsBlockInfo.size()
-        val spacing = theme.legendBoxSpacing()
+        val spacing = theme.boxSpacing()
         return when (theme.position()) {
             LegendPosition.LEFT -> DoubleVector(size.x + spacing, 0.0)
             LegendPosition.TOP -> DoubleVector(0.0, size.y + spacing)
