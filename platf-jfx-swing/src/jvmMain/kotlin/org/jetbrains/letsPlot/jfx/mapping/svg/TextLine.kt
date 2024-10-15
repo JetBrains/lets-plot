@@ -34,6 +34,7 @@ internal class TextLine : Region() {
         // NOTE: resets between runs, yet by standard it alters the baseline for the rest of the text
         val dy: Double? = null,
         val href: String? = null,
+        val fill: Color? = null,
     )
 
     init {
@@ -174,7 +175,7 @@ internal class TextLine : Region() {
         val scaleFactor = textRun.fontScale ?: 1.0
 
         val text = if (textRun.href == null) Text() else HyperlinkText(textRun.href)
-        fill?.let { text.fill = it }
+        (textRun.fill ?: fill)?.let { text.fill = it }
         stroke?.let { text.stroke = it }
         strokeWidth?.let { text.strokeWidth = it }
         text.text = textRun.text

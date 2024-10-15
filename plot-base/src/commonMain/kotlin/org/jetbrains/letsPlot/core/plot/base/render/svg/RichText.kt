@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 object RichText {
-    const val ANCHOR_ELEMENT_CLASS = "anchor-element"
+    const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
     fun toSvg(
         text: String,
@@ -126,7 +126,7 @@ object RichText {
                 xlinkHref().set(href)
                 children().add(
                     SvgTSpanElement(text).apply {
-                        addClass(ANCHOR_ELEMENT_CLASS)
+                        addClass(HYPERLINK_ELEMENT_CLASS)
                     }
                 )
             }

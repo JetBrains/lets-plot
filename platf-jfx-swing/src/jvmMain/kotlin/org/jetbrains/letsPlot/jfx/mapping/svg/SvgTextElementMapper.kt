@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.WritablePropert
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.jfx.util.toFxColor
 
 
 internal class SvgTextElementMapper(
@@ -32,7 +33,7 @@ internal class SvgTextElementMapper(
         super.registerSynchronizers(conf)
 
         // Sync TextNodes, TextSpans
-        val sourceTextRunProperty = sourceTextRunProperty(source.children())
+        val sourceTextRunProperty = sourceTextRunProperty(source.children(), peer.styleSheet)
         val targetTextRunProperty = targetTextRunProperty(target)
         conf.add(
             Synchronizers.forPropsOneWay(
@@ -74,7 +75,7 @@ internal class SvgTextElementMapper(
     }
 
     companion object {
-        private fun sourceTextRunProperty(nodes: ObservableCollection<SvgNode>): ReadableProperty<List<TextLine.TextRun>> {
+        private fun sourceTextRunProperty(nodes: ObservableCollection<SvgNode>, styleSheet: StyleSheet?): ReadableProperty<List<TextLine.TextRun>> {
             fun handleTSpanElement(node: SvgTSpanElement): List<TextLine.TextRun> =
                 node.children().map { child ->
                     require(child is SvgTextNode)
@@ -98,8 +99,17 @@ internal class SvgTextElementMapper(
                         it.removeSuffix("em").toDouble()
                     }
 
+                    val style = styleSheet?.getTextStyle(node.fullClass())
+
+                    val fill = when {
+                        style == null -> null
+                        style.isNoneColor -> null
+                        else -> style.color
+                    }
+
                     TextLine.TextRun(
                         text = child.textContent().get(),
+                        fill = fill?.toFxColor(),
                         baselineShift = baselineShift,
                         fontScale = fontScale,
                         dy = dy

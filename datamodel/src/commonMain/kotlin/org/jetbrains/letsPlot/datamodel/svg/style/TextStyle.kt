@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.datamodel.svg.style
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 
-data class TextStyle(
+class TextStyle(
     val family: String,
     val face: FontFace,
     val size: Double,
@@ -20,8 +20,12 @@ data class TextStyle(
     val isNoneFamily: Boolean
         get() = family == NONE_FAMILY
 
+    val isNoneColor: Boolean
+        get() = color == NONE_COLOR
+
     companion object {
         const val NONE_SIZE = -1.0
         const val NONE_FAMILY = ""
+        val NONE_COLOR = Color(1, 2, 3, 4)
     }
 }

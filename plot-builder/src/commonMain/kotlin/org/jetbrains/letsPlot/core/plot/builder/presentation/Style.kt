@@ -91,7 +91,7 @@ object Style {
             PLOT_SUBTITLE to ts(theme.plot().subtitleStyle()),
             PLOT_CAPTION to ts(theme.plot().captionStyle()),
 
-            RichText.ANCHOR_ELEMENT_CLASS to TextStyle(
+            RichText.HYPERLINK_ELEMENT_CLASS to TextStyle(
                 color = theme.colors().brush(),
                 family = TextStyle.NONE_FAMILY,
                 size = TextStyle.NONE_SIZE,
