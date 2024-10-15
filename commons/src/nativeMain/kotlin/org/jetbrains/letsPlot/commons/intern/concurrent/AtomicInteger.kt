@@ -5,11 +5,15 @@
 
 package org.jetbrains.letsPlot.commons.intern.concurrent
 
-/**
- * We don't use it in 'native' code.
- */
-actual class AtomicInteger actual constructor(int: Int) {
+import kotlin.concurrent.AtomicInt
+
+actual class AtomicInteger actual constructor(initialValue: Int) {
+    private val value = AtomicInt(initialValue)
     actual fun decrementAndGet(): Int {
-        throw IllegalStateException("'AtomicInteger' is not supported in any 'native' target.")
+        return value.decrementAndGet()
+    }
+
+    actual fun incrementAndGet(): Int {
+        return value.incrementAndGet()
     }
 }

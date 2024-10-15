@@ -9,14 +9,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.letsPlot.commons.debounce
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.interact.*
-import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback.SelectionMode
-import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback.PanningMode
+import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher.Companion.ORIGIN_FIGURE_IMPLICIT
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
@@ -28,7 +28,9 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGE
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback.SelectionMode
 import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
+import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback.PanningMode
 import org.jetbrains.letsPlot.core.interact.feedback.RollbackAllChangesFeedback
 import org.jetbrains.letsPlot.core.interact.feedback.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
@@ -78,15 +80,18 @@ internal class PlotToolEventDispatcher(
 
         val interactionName = interactionSpec.getValue(ToolInteractionSpec.NAME) as String
         val fireSelectionChangedDebounced =
-            debounce<DoubleRectangle>(DEBOUNCE_DELAY_MS, CoroutineScope(Dispatchers.Default)) { dataBounds ->
-                println("Debounced interaction: $interactionName, dataBounds: $dataBounds")
+            debounce<Pair<String?, DoubleRectangle>>(
+                DEBOUNCE_DELAY_MS,
+                CoroutineScope(Dispatchers.Default)
+            ) { (targetId, dataBounds) ->
+                println("Debounced interaction: $interactionName, target id: $targetId, dataBounds: $dataBounds")
                 val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
+                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
             }
 
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
-                onCompleted = { dataBounds, flipped, panningMode ->
+                onCompleted = { targetId, dataBounds, flipped, panningMode ->
                     println("Pan tool: apply $dataBounds, flipped: $flipped, mode: $panningMode")
                     // flip panning mode if coord flip
                     @Suppress("NAME_SHADOWING")
@@ -104,48 +109,51 @@ internal class PlotToolEventDispatcher(
                             PanningMode.VERTICAL -> listOf(null, top, null, bottom)
                         }
                     }
-                    fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
+                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
                 }
             )
 
             ToolInteractionSpec.BOX_ZOOM -> {
                 val centerStart = interactionSpec[ToolInteractionSpec.ZOOM_BOX_MODE] == ZoomBoxMode.CENTER_START
-                DrawRectFeedback(centerStart) { dataBounds, flipped, selectionMode ->
-                    println("client: data $dataBounds, flipped: $flipped, selection mode: $selectionMode")
-                    // flip selection mode if coord flip
-                    @Suppress("NAME_SHADOWING")
-                    val selectionMode = if (!flipped) {
-                        selectionMode
-                    } else when (selectionMode) {
-                        SelectionMode.BOX -> selectionMode
-                        SelectionMode.HORIZONTAL_BAND -> SelectionMode.VERTICAL_BAND
-                        SelectionMode.VERTICAL_BAND -> SelectionMode.HORIZONTAL_BAND
-                    }
-                    val dataBoundsLTRB = dataBounds.run {
-                        when (selectionMode) {
-                            SelectionMode.BOX -> listOf(left, top, right, bottom)
-                            SelectionMode.VERTICAL_BAND -> listOf(left, null, right, null)
-                            SelectionMode.HORIZONTAL_BAND -> listOf(null, top, null, bottom)
+                DrawRectFeedback(
+                    centerStart,
+                    onCompleted = { targetId, dataBounds, flipped, selectionMode ->
+                        println("client: data $dataBounds, flipped: $flipped, selection mode: $selectionMode")
+                        // flip selection mode if coord flip
+                        @Suppress("NAME_SHADOWING")
+                        val selectionMode = if (!flipped) {
+                            selectionMode
+                        } else when (selectionMode) {
+                            SelectionMode.BOX -> selectionMode
+                            SelectionMode.HORIZONTAL_BAND -> SelectionMode.VERTICAL_BAND
+                            SelectionMode.VERTICAL_BAND -> SelectionMode.HORIZONTAL_BAND
                         }
-                    }
-                    fireSelectionChanged(origin, interactionName, dataBoundsLTRB)
-                }
+                        val dataBoundsLTRB = dataBounds.run {
+                            when (selectionMode) {
+                                SelectionMode.BOX -> listOf(left, top, right, bottom)
+                                SelectionMode.VERTICAL_BAND -> listOf(left, null, right, null)
+                                SelectionMode.HORIZONTAL_BAND -> listOf(null, top, null, bottom)
+                            }
+                        }
+                        fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
+                    })
             }
 
             ToolInteractionSpec.WHEEL_ZOOM -> WheelZoomFeedback(
-                onCompleted = { dataBounds ->
-                    fireSelectionChangedDebounced(dataBounds)
+                onCompleted = { targetId, dataBounds ->
+                    fireSelectionChangedDebounced(Pair(targetId, dataBounds))
                 }
             )
 
             ToolInteractionSpec.ROLLBACK_ALL_CHANGES -> RollbackAllChangesFeedback(
-                onAction = {
+                onAction = { targetId: String? ->
                     toolEventCallback.invoke(
                         mapOf(
                             EVENT_NAME to ROLLBACK_ALL_CHANGES,
                             EVENT_INTERACTION_ORIGIN to origin,
                             EVENT_INTERACTION_NAME to interactionName,
-                        )
+                            EVENT_INTERACTION_TARGET to targetId
+                        ).filterNotNullValues()
                     )
                 }
             )
@@ -175,6 +183,7 @@ internal class PlotToolEventDispatcher(
     private fun fireSelectionChanged(
         origin: String,
         interactionName: String,
+        targetId: String?,
         dataBoundsLTRB: List<Double?>
     ) {
         toolEventCallback.invoke(
@@ -182,8 +191,9 @@ internal class PlotToolEventDispatcher(
                 EVENT_NAME to SELECTION_CHANGED,
                 EVENT_INTERACTION_ORIGIN to origin,
                 EVENT_INTERACTION_NAME to interactionName,
-                EVENT_RESULT_DATA_BOUNDS to dataBoundsLTRB
-            )
+                EVENT_RESULT_DATA_BOUNDS to dataBoundsLTRB,
+                EVENT_INTERACTION_TARGET to targetId,
+            ).filterNotNullValues()
         )
     }
 

@@ -5,16 +5,16 @@
 
 package demo.common.batik.demoUtils
 
+import demo.common.util.demoUtils.swing.PlotResizableDemoWindowBase
+import org.jetbrains.letsPlot.awt.plot.component.PlotComponentProvider
+import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik
+import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
-import demo.common.util.demoUtils.swing.PlotResizableDemoWindowBase
-import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent
-import org.jetbrains.letsPlot.awt.plot.component.PlotComponentProvider
-import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
-import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik
 import java.awt.Dimension
 import javax.swing.JComponent
 
@@ -49,7 +49,7 @@ class PlotResizableDemoWindowBatik(
             return containerSize
         }
 
-        override fun createComponent(containerSize: Dimension?, specOverride: Map<String, Any>?): JComponent {
+        override fun createComponent(containerSize: Dimension?, specOverrideList: List<Map<String, Any>>): JComponent {
             val plotSize = if (containerSize != null) {
                 DoubleVector(
                     containerSize.getWidth(),

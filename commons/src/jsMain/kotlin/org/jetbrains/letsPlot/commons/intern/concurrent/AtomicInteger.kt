@@ -5,9 +5,13 @@
 
 package org.jetbrains.letsPlot.commons.intern.concurrent
 
-actual class AtomicInteger actual constructor(int: Int) {
-    private var value: Int = int
+actual class AtomicInteger actual constructor(initialValue: Int) {
+    private var value: Int = initialValue
     actual fun decrementAndGet(): Int {
         return --value
+    }
+
+    actual fun incrementAndGet(): Int {
+        return ++value
     }
 }

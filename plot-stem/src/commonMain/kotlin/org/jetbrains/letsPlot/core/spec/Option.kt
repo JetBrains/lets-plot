@@ -164,6 +164,7 @@ object Option {
         const val METAINFO_LIST = "metainfo_list"
         const val METAINFO = "metainfo"  // a special kind of FeatureSpec
         const val SPEC_OVERRIDE = "spec_override"  // Tools support. Values that tool passes to a FigureModel.
+        const val SPEC_ID = "spec_id"  // Tools support. ID of the target for "spec override".
     }
 
     object Layer {

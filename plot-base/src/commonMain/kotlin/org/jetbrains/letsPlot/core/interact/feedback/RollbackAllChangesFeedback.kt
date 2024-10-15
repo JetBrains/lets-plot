@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.interact.ToolFeedback
 import org.jetbrains.letsPlot.core.interact.mouse.MouseDoubleClickInteraction
 
 class RollbackAllChangesFeedback(
-    private val onAction: (() -> Unit) = { println("RollbackAllChangesFeedback 'onAction'.") },
+    private val onAction: ((targetId: String?) -> Unit) = { println("RollbackAllChangesFeedback 'onAction'.") },
 ) : ToolFeedback {
 
     override fun start(ctx: InteractionContext): Disposable {
@@ -19,8 +19,8 @@ class RollbackAllChangesFeedback(
 
         interaction.loop(
             onAction = {
-                println("RollbackAllChangesFeedback fire 'onAction'.")
-                onAction()
+                println("RollbackAllChangesFeedback fire 'onAction', target id: ${interaction.target.id} .")
+                onAction(interaction.target.id)
             }
         )
 

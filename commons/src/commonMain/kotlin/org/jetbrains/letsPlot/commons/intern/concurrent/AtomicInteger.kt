@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.concurrent
 
-expect class AtomicInteger(int: Int) {
+expect class AtomicInteger(initialValue: Int) {
     fun decrementAndGet(): Int
+    fun incrementAndGet(): Int
 }

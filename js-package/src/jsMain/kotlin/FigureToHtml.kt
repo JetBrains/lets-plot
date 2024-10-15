@@ -13,12 +13,12 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.interact.event.UnsupportedToolEventDispatcher
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
@@ -162,26 +162,30 @@ internal class FigureToHtml(
             val origin = origin ?: DoubleVector.ZERO
 
             // Sub-figures
+            val elementToolEventDispatchers = ArrayList<ToolEventDispatcher>()
+            val elementRegistractions = CompositeRegistration()
 
             for (figureSvgRoot in svgRoot.elements) {
                 val elementOrigin = figureSvgRoot.bounds.origin.add(origin)
-                if (figureSvgRoot is PlotSvgRoot) {
+                val (toolEventDispatcher, registration) = if (figureSvgRoot is PlotSvgRoot) {
                     // Create "container" with absolute positioning.
                     val figureContainer = createContainerElement(elementOrigin)
                     parentElement.appendChild(figureContainer)
                     processPlotFigure(
                         svgRoot = figureSvgRoot,
                         parentElement = figureContainer,
-//                        eventArea = figureSvgRoot.bounds.add(origin)
                         eventArea = DoubleRectangle(DoubleVector.ZERO, figureSvgRoot.bounds.dimension)
                     )
                 } else {
                     figureSvgRoot as CompositeFigureSvgRoot
                     processCompositeFigure(figureSvgRoot, elementOrigin, parentElement)
                 }
+
+                elementToolEventDispatchers.add(toolEventDispatcher)
+                elementRegistractions.add(registration)
             }
 
-            return UnsupportedToolEventDispatcher() to Registration.EMPTY
+            return CompositeToolEventDispatcher(elementToolEventDispatchers) to elementRegistractions
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {

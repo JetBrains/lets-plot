@@ -44,7 +44,10 @@ object PlotConfigFrontendUtil {
             }
     }
 
-    private fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>, aopConversion: AesOptionConversion): Map<GuideKey, GuideOptionsList> {
+    private fun createGuideOptionsMap(
+        scaleConfigs: List<ScaleConfig<*>>,
+        aopConversion: AesOptionConversion
+    ): Map<GuideKey, GuideOptionsList> {
         val guideOptionsByAesName = HashMap<GuideKey, GuideOptionsList>()
         for (scaleConfig in scaleConfigs) {
             if (scaleConfig.hasGuideOptions()) {
@@ -55,7 +58,10 @@ object PlotConfigFrontendUtil {
         return guideOptionsByAesName
     }
 
-    private fun createGuideOptionsMap(guideOptionsList: Map<String, Any>, aopConversion: AesOptionConversion): Map<GuideKey, GuideOptionsList> {
+    private fun createGuideOptionsMap(
+        guideOptionsList: Map<String, Any>,
+        aopConversion: AesOptionConversion
+    ): Map<GuideKey, GuideOptionsList> {
         val guideOptionsByName = HashMap<GuideKey, GuideOptionsList>()
         for ((key, value) in guideOptionsList) {
             val guideKey = when (key) {
@@ -147,9 +153,9 @@ object PlotConfigFrontendUtil {
             @Suppress("UNCHECKED_CAST")
             config[Option.Plot.SPEC_OVERRIDE]?.let { specOverride ->
                 val accessor = over(specOverride as Map<String, Any>)
-                val xlimOverride = accessor.getNumQPair(SpecOverride.COORD_XLIM_TRANSFORMED)
+                val xlimOverride = accessor.getNumQPairDef(SpecOverride.COORD_XLIM_TRANSFORMED, Pair(null, null))
                     .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
-                val ylimOverride = accessor.getNumQPair(SpecOverride.COORD_YLIM_TRANSFORMED)
+                val ylimOverride = accessor.getNumQPairDef(SpecOverride.COORD_YLIM_TRANSFORMED, Pair(null, null))
                     .let { Pair(it.first?.toDouble(), it.second?.toDouble()) }
 
                 coordProvider
@@ -195,7 +201,8 @@ object PlotConfigFrontendUtil {
             title = config.title,
             subtitle = config.subtitle,
             caption = config.caption,
-            guideOptionsMap = config.guideOptionsMap
+            guideOptionsMap = config.guideOptionsMap,
+            plotSpecId = config.specId,
         )
     }
 }

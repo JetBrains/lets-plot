@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.interact.mouse.MouseWheelInteraction
 import kotlin.math.abs
 
 class WheelZoomFeedback(
-    private val onCompleted: (DoubleRectangle) -> Unit
+    private val onCompleted: (targetId: String?, dataBounds: DoubleRectangle) -> Unit
 ) : ToolFeedback {
     override fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx)
@@ -38,7 +38,7 @@ class WheelZoomFeedback(
 
                 val viewport = InteractionUtil.viewportFromScale(target.geomBounds, factor, zoomOrigin)
                 val (dataBounds, _) = target.applyViewport(viewport, ctx)
-                onCompleted(dataBounds)
+                onCompleted(target.id, dataBounds)
             }
         )
 
