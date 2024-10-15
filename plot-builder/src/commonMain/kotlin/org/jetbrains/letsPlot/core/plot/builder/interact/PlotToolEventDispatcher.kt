@@ -84,7 +84,6 @@ internal class PlotToolEventDispatcher(
                 DEBOUNCE_DELAY_MS,
                 CoroutineScope(Dispatchers.Default)
             ) { (targetId, dataBounds) ->
-                println("Debounced interaction: $interactionName, target id: $targetId, dataBounds: $dataBounds")
                 val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
                 fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB)
             }
@@ -92,7 +91,6 @@ internal class PlotToolEventDispatcher(
         val feedback = when (interactionName) {
             ToolInteractionSpec.DRAG_PAN -> PanGeomFeedback(
                 onCompleted = { targetId, dataBounds, flipped, panningMode ->
-                    println("Pan tool: apply $dataBounds, flipped: $flipped, mode: $panningMode")
                     // flip panning mode if coord flip
                     @Suppress("NAME_SHADOWING")
                     val panningMode = if (!flipped) {
@@ -118,7 +116,6 @@ internal class PlotToolEventDispatcher(
                 DrawRectFeedback(
                     centerStart,
                     onCompleted = { targetId, dataBounds, flipped, selectionMode ->
-                        println("client: data $dataBounds, flipped: $flipped, selection mode: $selectionMode")
                         // flip selection mode if coord flip
                         @Suppress("NAME_SHADOWING")
                         val selectionMode = if (!flipped) {

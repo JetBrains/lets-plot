@@ -20,7 +20,7 @@ class PanGeomFeedback(
         dataBounds: DoubleRectangle,
         flipped: Boolean,
         mode: PanningMode
-    ) -> Unit) = { _, _, _, _ -> println("PanGeomFeedback complete.") },
+    ) -> Unit)
 ) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
@@ -65,7 +65,6 @@ class PanGeomFeedback(
             },
             onCompleted = {
                 val (target, _, _, dragDelta) = it
-                println("PanGeomFeedback completed, target: ${target.id}.")
 
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val (dataBounds, flipped) = target.applyViewport(viewport, ctx)
@@ -78,7 +77,6 @@ class PanGeomFeedback(
                 }
             },
             onAborted = {
-                println("PanGeomFeedback abort.")
                 it.reset()
                 // ToDo: ...
             }
@@ -86,7 +84,6 @@ class PanGeomFeedback(
 
         return object : Disposable {
             override fun dispose() {
-                println("PanGeomFeedback dispose.")
                 interaction.dispose()
             }
         }

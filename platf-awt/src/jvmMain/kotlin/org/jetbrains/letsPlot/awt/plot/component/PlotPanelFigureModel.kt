@@ -66,7 +66,6 @@ internal class PlotPanelFigureModel constructor(
     }
 
     override fun updateView(specOverride: Map<String, Any>?) {
-        println("Update view: specOverride = $specOverride")
         currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
             specOverrideList = currSpecOverrideList,
             newSpecOverride = specOverride

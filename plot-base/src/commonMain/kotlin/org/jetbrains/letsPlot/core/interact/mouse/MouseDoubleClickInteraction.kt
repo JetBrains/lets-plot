@@ -51,7 +51,6 @@ internal class MouseDoubleClickInteraction(
 
     override fun dispose() {
         if (!disposed) {
-            println("MouseDoubleClickInteraction dispose.")
             disposed = true
             _target = null
             reg.dispose()

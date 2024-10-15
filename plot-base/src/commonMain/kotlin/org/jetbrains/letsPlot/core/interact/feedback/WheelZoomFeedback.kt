@@ -44,7 +44,6 @@ class WheelZoomFeedback(
 
         return object : Disposable {
             override fun dispose() {
-                println("WheelZoomFeedback dispose.")
                 interaction.dispose()
             }
         }

@@ -108,7 +108,6 @@ internal class MouseDragInteraction(
 
     fun reset() {
         check(!disposed) { "Disposed." }
-        println("MouseDragInteraction reset.")
         _target = null
         completed = false
         aborted = false
@@ -116,7 +115,6 @@ internal class MouseDragInteraction(
 
     override fun dispose() {
         if (!disposed) {
-            println("MouseDragInteraction dispose.")
             disposed = true
             _target = null
             reg.dispose()
