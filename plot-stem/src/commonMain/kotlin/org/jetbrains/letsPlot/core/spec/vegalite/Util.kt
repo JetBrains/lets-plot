@@ -7,15 +7,15 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonParser
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.getMaps
-import org.jetbrains.letsPlot.core.spec.getString
-import org.jetbrains.letsPlot.core.spec.has
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.FIELD
 import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Property
+import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
@@ -216,6 +216,49 @@ internal object Util {
             Encoding.Stack.ZERO -> stack()
             Encoding.Stack.NORMALIZE -> fill()
             else -> error("Unsupported stack type: $stack")
+        }
+    }
+
+    fun transformCoordinateSystem(encoding: Map<*, Map<*, *>>, plotOptions: PlotOptions) {
+        fun domain(channel: String): Pair<Double?, Double?> {
+            val domainMin = encoding.getNumber(channel, Property.SCALE, Scale.DOMAIN_MIN)
+            val domainMax = encoding.getNumber(channel, Property.SCALE, Scale.DOMAIN_MAX)
+            val domain = encoding.getList(channel, Property.SCALE, Scale.DOMAIN)
+
+            return Pair(
+                (domainMin ?: (domain?.getOrNull(0) as? Number))?.toDouble(),
+                (domainMax ?: (domain?.getOrNull(1) as? Number))?.toDouble()
+            )
+        }
+
+        fun union(curDomain: Pair<Double?, Double?>?, newDomain: Pair<Double?, Double?>): Pair<Double?, Double?>? {
+            val (curMin, curMax) = curDomain ?: Pair(null, null)
+            val (newMin, newMax) = newDomain
+
+            val resultMin = listOfNotNull(curMin, newMin).minOrNull()
+            val resultMax = listOfNotNull(curMax, newMax).maxOrNull()
+
+            return if (resultMin != null || resultMax != null) {
+                Pair(resultMin, resultMax)
+            } else {
+                null
+            }
+        }
+
+        val newXDomain = union(plotOptions.coord?.xLim, domain(Channel.X))
+        val newYDomain = union(plotOptions.coord?.yLim, domain(Channel.Y))
+
+        if (newXDomain != null || newYDomain != null) {
+            if (plotOptions.coord == null) {
+                plotOptions.coord = coord {
+                    name = CARTESIAN
+                }
+            }
+
+            plotOptions.coord!!.apply {
+                xLim = newXDomain
+                yLim = newYDomain
+            }
         }
     }
 }

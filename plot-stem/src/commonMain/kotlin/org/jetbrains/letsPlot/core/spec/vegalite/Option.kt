@@ -49,6 +49,12 @@ internal object Option {
             const val ARGMAX = "argmax"
         }
 
+        object Scale {
+            const val DOMAIN = "domain"
+            const val DOMAIN_MIN = "domainMin"
+            const val DOMAIN_MAX = "domainMax"
+        }
+
         object Stack {
             const val ZERO = "zero"
             const val NORMALIZE = "normalize"

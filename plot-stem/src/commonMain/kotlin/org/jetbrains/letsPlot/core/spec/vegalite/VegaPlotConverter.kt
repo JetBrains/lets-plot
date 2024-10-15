@@ -86,6 +86,8 @@ internal class VegaPlotConverter private constructor(
                         dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
                     }
 
+                    Util.transformCoordinateSystem(encoding, plotOptions)
+
                     applyConstants(markVegaSpec, channelMapping)
                 }
 
