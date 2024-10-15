@@ -7,13 +7,20 @@ package demo.plot.batik.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.commons.intern.json.JsonParser
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.spec.write
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import java.awt.Point
 import java.awt.Rectangle
 import java.awt.event.ComponentEvent
 import java.awt.event.ComponentListener
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.swing.*
 
 fun main() {
@@ -95,12 +102,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
     fun evaluate() {
+        val spec = parsePlotSpec(plotSpecTextArea.text)
+            .let(::fetchVegaLiteData)
+
         plotPanel.components.forEach(plotPanel::remove)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(
-                parsePlotSpec(plotSpecTextArea.text),
-                frontendOnly = false
-            ),
+            processedSpec = MonolithicCommon.processRawSpecs(spec, frontendOnly = false),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,
@@ -113,6 +120,33 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             alignmentX = CENTER_ALIGNMENT
         })
         pack()
+    }
+
+    private fun fetchVegaLiteData(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+        // fetch Vega-Lite data
+        val url = plotSpec.getString("data", "url")
+        if (url != null) {
+            val urlObj = URL("https://vega.github.io/editor/$url")
+            val connection = urlObj.openConnection() as HttpURLConnection
+
+            // Optional: configure connection (timeouts, etc.)
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 5000
+            connection.readTimeout = 5000
+
+            // Read the input stream into a String
+            val inputStream = connection.inputStream
+            val content = BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                reader.readText()
+            }
+
+            if (url.endsWith(".json")) {
+                plotSpec.remove("data")
+                plotSpec.write("data", "value") { JsonParser(content).parseJson()!! }
+            }
+        }
+
+        return plotSpec
     }
 
     fun setSpec(spec: String) {
