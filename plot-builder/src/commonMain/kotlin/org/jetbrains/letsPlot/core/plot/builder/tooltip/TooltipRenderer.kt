@@ -63,7 +63,7 @@ internal class TooltipRenderer constructor(
     private val tooltipStorage: RetainableComponents<TooltipBox>
     private val crosshairStorage: RetainableComponents<CrosshairComponent>
     private val fadeEffectRect: SvgRectElement
-    private var frozen = false
+    private var pinned = false
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
@@ -91,15 +91,15 @@ internal class TooltipRenderer constructor(
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltips() }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler { hideTooltips() }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler { switchFrozenState(it) }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler { switchPinnedState(it) }))
     }
 
-    private fun switchFrozenState(mouseEvent: MouseEvent) {
+    private fun switchPinnedState(mouseEvent: MouseEvent) {
         if (mouseEvent.button != LEFT) return
         if (mouseEvent.modifiers.isCtrl) return
 
-        if (frozen) {
-            frozen = false
+        if (pinned) {
+            pinned = false
             fadeEffectRect.width().set(0.0)
             fadeEffectRect.height().set(0.0)
             hideTooltips()
@@ -107,7 +107,7 @@ internal class TooltipRenderer constructor(
             val geomBounds = findTileInfo(mouseEvent.location.toDoubleVector())?.geomBounds ?: return
             if (tooltipStorage.size == 0) return
 
-            frozen = true
+            pinned = true
             fadeEffectRect.x().set(geomBounds.left)
             fadeEffectRect.y().set(geomBounds.top)
             fadeEffectRect.width().set(geomBounds.width)
@@ -121,7 +121,7 @@ internal class TooltipRenderer constructor(
     }
 
     private fun showTooltips(cursor: DoubleVector) {
-        if (frozen) {
+        if (pinned) {
             return
         }
 
@@ -225,7 +225,7 @@ internal class TooltipRenderer constructor(
     }
 
     private fun hideTooltips() {
-        if (frozen) return
+        if (pinned) return
 
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
