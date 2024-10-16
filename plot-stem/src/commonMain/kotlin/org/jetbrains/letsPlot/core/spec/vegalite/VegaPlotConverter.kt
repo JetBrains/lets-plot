@@ -14,16 +14,16 @@ import org.jetbrains.letsPlot.core.spec.getDouble
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.getMaps
 import org.jetbrains.letsPlot.core.spec.plotson.*
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.COLOR
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.SIZE
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.X2
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel.Y2
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Mark
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformStat
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X2
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpec: MutableMap<String, Any>
@@ -34,14 +34,14 @@ internal class VegaPlotConverter private constructor(
         }
     }
 
-    private val plotData: Map<String, List<Any?>> = Util.transformData(vegaPlotSpec.getMap(Option.DATA) ?: emptyMap())
-    private val plotEncoding = (vegaPlotSpec.getMap(Option.ENCODING) ?: emptyMap()).asMapOfMaps()
+    private val plotData: Map<String, List<Any?>> = Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
+    private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
         when (VegaConfig.getPlotKind(vegaPlotSpec)) {
             VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
-            VegaPlotKind.MULTI_LAYER -> vegaPlotSpec.getMaps(Option.LAYER)!!.forEach(::processLayerSpec)
+            VegaPlotKind.MULTI_LAYER -> vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach(::processLayerSpec)
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
 
@@ -49,8 +49,8 @@ internal class VegaPlotConverter private constructor(
     }
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
-        val (markType, markVegaSpec) = Util.readMark(layerSpec[Option.MARK] ?: error("Mark is not specified"))
-        val encoding = (plotEncoding + (layerSpec.getMap(Option.ENCODING) ?: emptyMap())).asMapOfMaps()
+        val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
+        val encoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: emptyMap())).asMapOfMaps()
 
         fun appendLayer(
             geom: GeomKind,
@@ -63,9 +63,9 @@ internal class VegaPlotConverter private constructor(
                     this.geom = geom
                     if (data == null) {
                         data = when {
-                            Option.DATA !in layerSpec -> plotData
-                            layerSpec[Option.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                            layerSpec[Option.DATA] != null -> Util.transformData(layerSpec.getMap(Option.DATA)!!) // data is specified
+                            VegaOption.DATA !in layerSpec -> plotData
+                            layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
+                            layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getMap(VegaOption.DATA)!!) // data is specified
                             else -> error("Unsupported data specification")
                         }
                     }

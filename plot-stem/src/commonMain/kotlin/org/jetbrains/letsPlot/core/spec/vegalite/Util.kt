@@ -11,28 +11,28 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Channel
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.FIELD
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Property
-import org.jetbrains.letsPlot.core.spec.vegalite.Option.Encoding.Scale
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.FIELD
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Property
+import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
 internal object Util {
     internal fun readMark(spec: Any): Pair<String, Map<*, *>> {
         val options = when (spec) {
-            is String -> mapOf(Option.Mark.TYPE to spec)
+            is String -> mapOf(VegaOption.Mark.TYPE to spec)
             is Map<*, *> -> spec
             else -> error("Unsupported mark spec: $spec")
         }
 
-        val mark = options.getString(Option.Mark.TYPE) ?: error("Mark type is not specified")
+        val mark = options.getString(VegaOption.Mark.TYPE) ?: error("Mark type is not specified")
         return Pair(mark, options)
     }
 
     fun transformData(vegaData: Map<String, Any?>): Map<String, List<Any?>> {
-        val data = if (Option.Data.URL in vegaData) {
-            val url = vegaData.getString(Option.Data.URL) ?: error("URL is not specified")
+        val data = if (VegaOption.Data.URL in vegaData) {
+            val url = vegaData.getString(VegaOption.Data.URL) ?: error("URL is not specified")
             val json = when (url) {
                 "data/penguins.json" -> Penguins.json
                 "data/cars.json" -> Cars.json
@@ -42,9 +42,9 @@ internal object Util {
                 "data/stocks.csv" -> Stocks.json
                 else -> error("Unsupported URL: $url")
             }
-            mapOf(Option.Data.VALUES to JsonSupport.parse(json))
+            mapOf(VegaOption.Data.VALUES to JsonSupport.parse(json))
         } else vegaData
-        val rows = data.getMaps(Option.Data.VALUES) ?: return emptyMap()
+        val rows = data.getMaps(VegaOption.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
