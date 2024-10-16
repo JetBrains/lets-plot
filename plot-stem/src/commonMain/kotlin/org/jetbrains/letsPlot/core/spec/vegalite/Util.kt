@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
-import org.jetbrains.letsPlot.commons.intern.json.JsonParser
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
@@ -42,7 +42,7 @@ internal object Util {
                 "data/stocks.csv" -> Stocks.json
                 else -> error("Unsupported URL: $url")
             }
-            mapOf(Option.Data.VALUES to JsonParser(json).parseJson())
+            mapOf(Option.Data.VALUES to JsonSupport.parse(json))
         } else vegaData
         val rows = data.getMaps(Option.Data.VALUES) ?: return emptyMap()
         val columnKeys = rows.flatMap { it.keys.filterNotNull() }.distinct().map(Any::toString)

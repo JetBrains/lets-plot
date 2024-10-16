@@ -7,7 +7,6 @@ package demo.plot.batik.plotConfig
 
 import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
-import org.jetbrains.letsPlot.commons.intern.json.JsonParser
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.write
@@ -142,7 +141,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
             if (url.endsWith(".json")) {
                 plotSpec.remove("data")
-                plotSpec.write("data", "value") { JsonParser(content).parseJson()!! }
+                plotSpec.write("data", "value") { JsonSupport.parse(content)!! }
             }
         }
 
