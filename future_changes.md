@@ -67,7 +67,7 @@
 
 ### Changed
 
-- Use `theme_light()` as default theme for the `qq_plot()`.
+- Use `theme_light()` as the default theme in `qq_plot()`.
 
 - [**BREAKING**] for API deprecated in v4.0 the deprecation level rised to "Error" (only relevant for Kotlin clients). 
 
