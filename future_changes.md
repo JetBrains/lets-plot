@@ -2,67 +2,77 @@
 
 ### Added
 
-- `ggtb()` function to enable zoom/pan interactivity [[#983](https://github.com/JetBrains/lets-plot/issues/983)],[[#1019](https://github.com/JetBrains/lets-plot/issues/1019)]
+- Python 3.13 support
+
+- `ggtb()`: enable **zoom/pan** interactivity on plot [[#983](https://github.com/JetBrains/lets-plot/issues/983)],[[#1019](https://github.com/JetBrains/lets-plot/issues/1019)]
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interact_pan_zoom.ipynb).
-                 
-- `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
 
-- `expand_limits()` [[#820](https://github.com/JetBrains/lets-plot/issues/820)].
+- Interactive **links** in tooltipss/labels/texts [[#1091](https://github.com/JetBrains/lets-plot/issues/1091)].
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/expand_limits.ipynb).
+  TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/interactive_links.ipynb).
 
-- `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)].
+- Formatting:
+  - **LaTeX** support [[#861](https://github.com/JetBrains/lets-plot/issues/861)], [[#960](https://github.com/JetBrains/lets-plot/issues/960)].
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
+    TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/latex.ipynb).
+  
+  - Scientific notation: **compact form**. Enable the compact form using the  `exponent_format` parameter in `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
 
-- `check_overlap` parameter for `geom_text()` and `geom_label()`.
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/scientific_notation_table.ipynb).
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/check_overlap.ipynb).
-       
-- `marginal` parameter in `qq_plot()`:
-
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
-
-- `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
-
-- Support for 3-character hex color codes     
-
-- In the `theme()` function:
+- In `theme()`:
   - `legend_margin, legend_spacing, legend_spacing_x, legend_spacing_y, legend_box, legend_box_just, legend_box_spacing` parameters [[#1180](https://github.com/JetBrains/lets-plot/issues/1180)].
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_margins.ipynb).
-  
+
   - `legend_key, legend_key_size, legend_key_width, legend_key_height, legend_key_spacing, legend_key_spacing_x, legend_key_spacing_y` parameters  [[#1181](https://github.com/JetBrains/lets-plot/issues/1181)].
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb).
 
   - `strip_background_x, strip_background_y, strip_text_x, strip_text_y` parameters [[#1195](https://github.com/JetBrains/lets-plot/issues/1195)].
-     
+
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
 
-- Improve LaTeX support [[#861](https://github.com/JetBrains/lets-plot/issues/861)], [[#960](https://github.com/JetBrains/lets-plot/issues/960)].
-
-  TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/latex.ipynb).
-
-- New methods to set `linetype`:
+- Custom `linetype` patterns [[#1198](https://github.com/JetBrains/lets-plot/issues/1198)]:
   - list, which specifies the pattern of dashes and gaps used to draw the line: `[dash, gap, dash, gap, ...]`;
   - list with a specified offset: `[offset, [dash, gap, dash, gap, ...]]`;
   - string of an even number (up to eight) of hexadecimal digits which give the lengths in consecutive positions in the string.
-    
+
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/linetype_custom.ipynb).
 
-- Python 3.13 support
+- Geometries:
+  - `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
+
+  - `base` parameter in `waterfall_plot()` [[#1159](https://github.com/JetBrains/lets-plot/issues/1159)].
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/waterfall_plot_base.ipynb).
+
+  - `check_overlap` parameter in `geom_text()` and `geom_label()`.
+
+    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/check_overlap.ipynb).
+       
+  - `marginal` parameter in `qq_plot()`:
+
+      See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
+
+  - `inherit_aes` parameter in layers [[#1172](https://github.com/JetBrains/lets-plot/issues/1172)].
+
+- `expand_limits()` [[#820](https://github.com/JetBrains/lets-plot/issues/820)].
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/expand_limits.ipynb).
+
+- Support for 3-character hex color codes     
+
 
 ### Changed
 
-- Compact format of scientific notation; new values for the `exponent_format` parameter of `theme()` [[#1071](https://github.com/JetBrains/lets-plot/issues/1071)].
-
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/scientific_notation_table.ipynb).
-
 - Use `theme_light()` as default theme for the `qq_plot()`.
 
+- [**BREAKING**] for API deprecated in v4.0 the deprecation level rised to "Error" (only relevant for Kotlin clients). 
+
 ### Fixed
+
 - Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
 - Support layering `aes()` multiple times [[#822](https://github.com/JetBrains/lets-plot/issues/822)].
 - waterfall_plot: faceting doesn't work without a measure mapping [[#1152](https://github.com/JetBrains/lets-plot/issues/1152)].
@@ -76,5 +86,3 @@
 - ggmarginal: bottom boxplot is broken [[#1189](https://github.com/JetBrains/lets-plot/issues/1189)].
 - Offscreen cells are sometimes not rendered in JupyterLab.
 - The legend_justification parameter doesn't work if the legend_position='top' [[#1031](https://github.com/JetBrains/lets-plot/issues/1031)].
-- Interactive links in tooltipss/labels/texts [[#1091](https://github.com/JetBrains/lets-plot/issues/1091)].
-- Allow tuples to define the linetype in element_line [[#1198](https://github.com/JetBrains/lets-plot/issues/1198)].
