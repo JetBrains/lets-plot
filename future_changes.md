@@ -1,6 +1,10 @@
-## [4.4.2] - 2024-mm-dd
+## [4.5.0] - 2024-10-dd
 
 ### Added
+
+- `ggtb()` function to enable zoom/pan interactivity [[#983](https://github.com/JetBrains/lets-plot/issues/983)],[[#1019](https://github.com/JetBrains/lets-plot/issues/1019)]
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interact_pan_zoom.ipynb).
                  
 - `geom_blank()` [[#831](https://github.com/JetBrains/lets-plot/issues/831)].
 
