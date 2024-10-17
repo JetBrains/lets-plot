@@ -71,6 +71,8 @@
 
 - [**BREAKING**] for API deprecated in v4.0 the deprecation level raised to "Error" (only relevant for Kotlin clients). 
 
+- Parameters `labwidth` in `facet_wrap()`, `x_labwidth, y_labwidth` in `facet_grid()`: the maximum label length is applied after splitting at `\n` separators, if present.
+ 
 ### Fixed
 
 - Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
