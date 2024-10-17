@@ -26,7 +26,7 @@ import org.w3c.dom.svg.SVGSVGElement
 class DefaultToolbarJs() {
 
     //
-    // Note:    The expected toolbar height is 35px
+    // Note:    The expected toolbar height is 33px
     //          See: PlotHtmlExport.buildHtmlFromRawSpecs()
     //
 
@@ -112,8 +112,8 @@ class DefaultToolbarJs() {
 
     private fun styleToolButton(button: HTMLButtonElement) {
         button.style.apply {
-            width = "24px"
-            height = "24px"
+            width = "22px"
+            height = "22px"
             margin = "0 3px"
             padding = "3px"
             border = "none"
