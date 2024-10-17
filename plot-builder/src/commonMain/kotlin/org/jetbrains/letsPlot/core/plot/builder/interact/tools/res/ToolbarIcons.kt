@@ -7,32 +7,36 @@ package org.jetbrains.letsPlot.core.plot.builder.interact.tools.res
 
 object ToolbarIcons {
     val PAN_TOOL = """
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" >
-          <path fill="none" d="M8,1 L8,15 M1,8 L15,8" />
-          <path fill="none" d="M4,4 L12,12 M12,4 L4,12" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <g stroke="none" fill="#6C707E">
+                <path d="M7.301,1 V6.313 L4.494,3.506 3.506,4.494 6.313,7.301 H1 V8.699 H6.313 L3.506,11.506 4.494,12.494 7.301,9.688 V15 H8.699 V9.688 L11.506,12.494 12.494,11.506 9.688,8.699 H15 V7.301 H9.688 L12.494,4.494 11.506,3.506 8.699,6.313 V1 Z" />
+            </g>    
         </svg>
     """.trimIndent()
 
     val ZOOM_CORNER = """
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" >
-          <rect x="2" y="2" width="12" height="12" fill="none" />
-          <path fill="none" d="M2,2 L14,14" />
-          <circle cx="2" cy="2" r="1.5" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <g stroke="none" fill="#6C707E">
+                <circle cx="2.641" cy="3.651" r="2.1"/>
+                <path d="M3.983,2.751 c-1.23,0 -2.242,1.013 -2.242,2.242 v6.751 c0,1.23 1.013,2.242 2.242,2.242 h8.77 c1.23,0 2.242,-1.013 2.242,-2.242 V4.993 c0,-1.23 -1.013,-2.242 -2.242 ,-2.242 z m0,1.4 h8.77 c0.478,0 0.842,0.364 0.842,0.842 v6.751 c0,0.478 -0.364,0.842 -0.842,0.842 H3.983 c-0.478,0 -0.842,-0.364 -0.842,-0.842 V4.993 c0,-0.478 0.364,-0.842 0.842,-0.842 z" />
+            </g>
         </svg>
     """.trimIndent()
 
     val ZOOM_CENTER = """
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" >
-          <rect x="2" y="2" width="12" height="12" fill="none" />
-          <path fill="none" d="M2,2 L14,14" />
-          <circle cx="8" cy="8" r="1.5" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <g stroke="none" fill="#6C707E">
+                <circle cx="8" cy="8" r="2.1" />
+                <path d="M3.247,2 c-1.23,0 -2.242,1.013 -2.242,2.242 v7.501 c0,1.23 1.013,2.242 2.242,2.242 h9.507 c1.23,0 2.242,-1.013 2.242,-2.242 V4.243 c0,-1.23 -1.013,-2.242 -2.242,-2.242 z m0,1.4 h9.507 c0.478,0 0.842,0.364 0.842,0.842 v7.501 c0,0.478 -0.364,0.842 -0.842,0.842 H3.247 c-0.478,0 -0.842,-0.364 -0.842,-0.842 V4.243 c0,-0.478 0.364,-0.842 0.842,-0.842 z" />
+            </g>
         </svg>
     """.trimIndent()
 
     val RESET = """
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" >
-          <path fill="none" d="M14,8 A6,6 0 1,1 8,2" />
-          <polygon points="8,2 11,5 5,5" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+            <g stroke="none" fill="#6C707E">
+                <path d="M1.801,1 V5.699 H6.5 V4.301 H4.287 C5.901,2.583 8.119,2.306 10.021,3.094 12.284,4.03 13.934,6.294 13.117,9.357 12.3,12.421 9.741,13.563 7.313,13.248 4.884,12.934 2.703,11.182 2.699,8 H1.301 c0.004,3.845 2.817,6.246 5.832,6.637 C10.148,15.027 13.483,13.424 14.471,9.719 15.459,6.013 13.366,2.964 10.557,1.801 8.158,0.808 5.219,1.275 3.199,3.473 V1 Z"/>
+            </g>
         </svg>
     """.trimIndent()
 }
