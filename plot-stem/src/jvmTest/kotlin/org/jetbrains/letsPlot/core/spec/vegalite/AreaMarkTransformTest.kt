@@ -7,11 +7,13 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromStatKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
@@ -64,6 +66,51 @@ class AreaMarkTransformTest {
                     )
                 )
             )
+    }
+
+    @Test
+    fun densityTransform() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"v": 1}, {"v": 1}, {"v": 1}, {"v": 1}, {"v": 1}, {"v": 1}, 
+                |      {"v": 2}, {"v": 2}, {"v": 2},
+                |      {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3}, {"v": 3},
+                |      {"v": 4}, {"v": 4}, {"v": 4}
+                |    ]
+                |  },
+                |  "transform":[{
+                |    "density": "v",
+                |    "bandwidth": 0.3
+                |  }],
+                |  "mark": "area",
+                |  "encoding": {
+                |    "x": {
+                |      "field": "value",
+                |      "type": "quantitative"
+                |    },
+                |    "y": {
+                |      "field": "density",
+                |      "type": "quantitative"
+                |    }
+                |  }
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.DENSITY)),
+            entry(Option.Meta.DATA_META, empty()),
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "v",
+                toOption(Aes.Y) to "..density.."
+            )),
+            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+        )
     }
 
 }

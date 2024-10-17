@@ -5,17 +5,15 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.spec.asMapOfMaps
-import org.jetbrains.letsPlot.core.spec.getDouble
-import org.jetbrains.letsPlot.core.spec.getMap
-import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
-import org.jetbrains.letsPlot.core.spec.vegalite.Util.transformStat
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
@@ -34,7 +32,8 @@ internal class VegaPlotConverter private constructor(
         }
     }
 
-    private val plotData: Map<String, List<Any?>> = Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
+    private val plotData: Map<String, List<Any?>> =
+        Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
     private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
 
@@ -53,54 +52,50 @@ internal class VegaPlotConverter private constructor(
         val encoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: emptyMap())).asMapOfMaps()
 
         fun appendLayer(
-            geom: GeomKind,
+            geom: GeomKind? = null,
             channelMapping: List<Pair<String, Aes<*>>> = emptyList(),
             block: LayerOptions.() -> Unit = {}
         ) {
             val layerOptions = LayerOptions()
-                .apply(block)
                 .apply {
                     this.geom = geom
-                    if (data == null) {
-                        data = when {
-                            VegaOption.DATA !in layerSpec -> plotData
-                            layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                            layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getMap(VegaOption.DATA)!!) // data is specified
-                            else -> error("Unsupported data specification")
-                        }
+                    data = when {
+                        VegaOption.DATA !in layerSpec -> plotData
+                        layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
+                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getMap(VegaOption.DATA)!!) // data is specified
+                        else -> error("Unsupported data specification")
                     }
 
-                    if (mapping == null) {
-                        mapping = Util.transformMappings(encoding, channelMapping)
-                    }
+                    val vegaMapping = encoding
+                        .mapKeys { (k, _) -> k as? String }.filterNotNullKeys()
+                        .mapValues { (_, v) -> v[Encoding.FIELD] as? String }
+                        .filterNotNullValues()
 
-                    if (stat == null) {
-                        transformStat(encoding)
-                    }
+                    mapping = Util.transformMappings(vegaMapping, channelMapping)
+                    position = Util.transformPositionAdjust(encoding)
+                    dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
 
-                    if (position == null) {
-                        position = Util.transformPositionAdjust(encoding)
-                    }
-
-                    if (dataMeta == null) {
-                        dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
+                    Util.transformStat(encoding, layerSpec, mapping)?.let { (newStat, newMapping) ->
+                        stat = newStat
+                        mapping = newMapping
                     }
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
                     applyConstants(markVegaSpec, channelMapping)
                 }
+                .apply(block)
 
             plotOptions.appendLayer(layerOptions)
         }
 
         when (markType) {
             Mark.Types.BAR ->
-                if (encoding.values.any { Encoding.Property.BIN in it }) {
+                if (encoding.values.any { Encoding.BIN in it }) {
                     appendLayer(
                         geom = GeomKind.HISTOGRAM
                     ) {
-                        binStat()
+                        stat = binStat()
                     }
                 } else if (encoding.any { (channel, _) -> channel == X2 }) {
                     appendLayer(
@@ -129,8 +124,8 @@ internal class VegaPlotConverter private constructor(
                         geom = GeomKind.BAR,
                         channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
                     ) {
-                        if (!transformStat(encoding)) {
-                            identityStat()
+                        if (stat == null) {
+                            stat = identityStat()
                         }
                         width = markVegaSpec.getDouble(Mark.WIDTH, Mark.Width.BAND)
                     }
@@ -139,7 +134,12 @@ internal class VegaPlotConverter private constructor(
 
             Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
             Mark.Types.POINT -> appendLayer(GeomKind.POINT)
-            Mark.Types.AREA -> appendLayer(GeomKind.AREA)
+            Mark.Types.AREA -> appendLayer() {
+                geom = when (stat?.kind) {
+                    StatKind.DENSITY -> GeomKind.DENSITY
+                    else -> GeomKind.AREA
+                }
+            }
 
             Mark.Types.BOXPLOT -> {
                 val layerOrientation = when (Util.isContinuous(X, encoding)) {
@@ -153,7 +153,7 @@ internal class VegaPlotConverter private constructor(
 
                 appendLayer(GeomKind.POINT) {
                     orientation = layerOrientation
-                    boxplotOutlierStat()
+                    stat = boxplotOutlierStat()
                 }
             }
 
