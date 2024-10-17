@@ -21,25 +21,22 @@ internal object VegaOption {
     object Encoding {
         const val FIELD = "field"
         const val VALUE = "value"
+        const val TYPE = "type"
+        const val BIN = "bin"
+        const val TIMEUNIT = "timeUnit"
+        const val AGGREGATE = "aggregate"
+        const val BAND = "band"
+        const val TITLE = "title"
 
-        object Property {
-            const val TYPE = "type"
-            const val BIN = "bin"
-            const val TIMEUNIT = "timeUnit"
-            const val AGGREGATE = "aggregate"
-            const val BAND = "band"
-            const val TITLE = "title"
-
-            const val SCALE = "scale"
-            const val AXIS = "axis"
-            const val LEGEND = "legend"
-            const val FORMAT = "format"
-            const val STACK = "stack"
-            const val SORT = "sort"
-            const val CONDITION = "condition"
-            const val TOOLTIP = "tooltip"
-            const val FORMAT_TYPE = "formatType"
-        }
+        const val SCALE = "scale"
+        const val AXIS = "axis"
+        const val LEGEND = "legend"
+        const val FORMAT = "format"
+        const val STACK = "stack"
+        const val SORT = "sort"
+        const val CONDITION = "condition"
+        const val TOOLTIP = "tooltip"
+        const val FORMAT_TYPE = "formatType"
 
         object Aggregate {
             const val COUNT = "count"
@@ -97,6 +94,7 @@ internal object VegaOption {
 
     object Mark {
         const val TYPE = "type"
+        const val TRANSFORM = "transform"
         const val WIDTH = "width"
         object Width {
             const val BAND = "band"
@@ -117,6 +115,16 @@ internal object VegaOption {
             const val ERROR_BAR = "errorbar"
             const val ERROR_BAND = "errorband"
             const val TICK = "tick"
+        }
+    }
+
+    object Transform {
+        const val DENSITY = "density"
+
+        object Density {
+            const val DENSITY = "density"
+            const val GROUP_BY = "groupby"
+            const val AS = "as"
         }
     }
 

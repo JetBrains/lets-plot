@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
@@ -14,7 +15,6 @@ import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.FIELD
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Property
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
@@ -56,12 +56,12 @@ internal object Util {
 
     fun isContinuous(channel: String, encoding: Map<*, Map<*, *>>): Boolean {
         val channelEncoding = encoding[channel] ?: return false
-        if (channelEncoding[Property.TYPE] == Encoding.Types.QUANTITATIVE) return true
-        if (channelEncoding[Property.TYPE] == Encoding.Types.ORDINAL) return false
-        if (channelEncoding[Property.TYPE] == Encoding.Types.NOMINAL) return false
-        if (channelEncoding.contains(Property.BIN)) return true
-        if (channelEncoding.contains(Property.TIMEUNIT)) return true
-        when (channelEncoding.getString(Property.AGGREGATE)) {
+        if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
+        if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
+        if (channelEncoding[Encoding.TYPE] == Encoding.Types.NOMINAL) return false
+        if (channelEncoding.contains(Encoding.BIN)) return true
+        if (channelEncoding.contains(Encoding.TIMEUNIT)) return true
+        when (channelEncoding.getString(Encoding.AGGREGATE)) {
             null -> {} // continue checking
             Encoding.Aggregate.ARGMAX, Encoding.Aggregate.ARGMIN -> return false
             else -> return true
@@ -71,15 +71,13 @@ internal object Util {
     }
 
     fun transformMappings(
-        encodingVegaSpec: Map<*, Map<*, *>>,
+        vegaMapping: Map<String, String>,
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
-        val groupingVar = encodingVegaSpec.getString(Channel.DETAIL, FIELD)
-        return encodingVegaSpec
-            .flatMap { (channel, encoding) ->
+        val groupingVar = vegaMapping.getString(Channel.DETAIL)
+        return vegaMapping
+            .flatMap { (channel, field) ->
                 val aesthetics = channelToAes(channel.toString(), customChannelMapping)
-                val field = encoding.getString(FIELD) ?: return@flatMap emptyList()
-
                 aesthetics.map { aes -> aes to field }
             }.fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
     }
@@ -138,8 +136,8 @@ internal object Util {
             }
 
             val encField = channelEncoding.getString(FIELD) ?: return@forEach
-            if (channelEncoding[Property.TYPE] == Encoding.Types.TEMPORAL
-                || channelEncoding.contains(Property.TIMEUNIT)
+            if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
+                || channelEncoding.contains(Encoding.TIMEUNIT)
             ) {
                 dataMeta.appendSeriesAnnotation {
                     type = SeriesAnnotationOptions.Types.DATE_TIME
@@ -171,24 +169,62 @@ internal object Util {
         return dataMeta
     }
 
-    fun LayerOptions.transformStat(encodings: Map<*, Map<*, *>>): Boolean {
-        val xAggregate = encodings.getString(Channel.X, Property.AGGREGATE)
-        val yAggregate = encodings.getString(Channel.Y, Property.AGGREGATE)
+    fun transformStat(encodings: Map<*, Map<*, *>>, layerSpec: Map<*, *>, mapping: Mapping?): Pair<StatOptions, Mapping?>? {
+        run { // aggregate -> countStat/summaryStat
+            val xAggregate = encodings.getString(Channel.X, Encoding.AGGREGATE)
+            val yAggregate = encodings.getString(Channel.Y, Encoding.AGGREGATE)
 
-        if (xAggregate != null && yAggregate != null) {
-            error("Both x and y aggregates are not supported")
+            if (xAggregate != null && yAggregate != null) {
+                error("Both x and y aggregates are not supported")
+            }
+
+            val aggregate = xAggregate ?: yAggregate
+            if (aggregate != null) {
+                return when (aggregate) {
+                    Encoding.Aggregate.COUNT -> countStat() to mapping
+                    Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM } to mapping
+                    Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN } to mapping
+                    else -> error("Unsupported aggregate function: $aggregate")
+                }
+            }
         }
 
-        val aggregate = xAggregate ?: yAggregate ?: return false
+        run { // transform.density -> densityStat
+            val densityTransform = layerSpec
+                .getMaps(VegaOption.Mark.TRANSFORM)
+                ?.firstOrNull { VegaOption.Transform.DENSITY in it }
+                ?: return@run
 
-        when (aggregate) {
-            Encoding.Aggregate.COUNT -> countStat()
-            Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM }
-            Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN }
-            else -> error("Unsupported aggregate function: $aggregate")
+            val densityVar = densityTransform.getString(VegaOption.Transform.Density.DENSITY) ?: return@run
+            val densityGroup = densityTransform.getString(VegaOption.Transform.Density.GROUP_BY)
+
+            val yVar = if (mapping?.aesthetics?.get(Aes.Y) == VegaOption.Transform.Density.DENSITY) {
+                Stats.DENSITY.name
+            } else {
+                mapping?.aesthetics?.get(Aes.Y)!!
+            }
+
+            val groupingVar = mapping.groupingVar ?: densityGroup
+
+            return densityStat() to (mapping + Mapping(groupingVar, Aes.X to densityVar, Aes.Y to yVar))
         }
 
-        return true
+        run { // encoding.bin -> binStat
+            val xBinDefinition = encodings.getString(Channel.X, Encoding.BIN)
+            val yBinDefinition = encodings.getString(Channel.Y, Encoding.BIN)
+
+            val channel = when {
+                xBinDefinition != null -> Channel.X
+                yBinDefinition != null -> Channel.Y
+                else -> null
+            }
+
+            if (channel != null) {
+                return binStat() to mapping
+            }
+        }
+
+        return null
     }
 
     fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
@@ -202,14 +238,14 @@ internal object Util {
             return dodge()
         }
 
-        if (!encodings.has(Channel.X, Property.STACK)
-            && !encodings.has(Channel.Y, Property.STACK)
+        if (!encodings.has(Channel.X, Encoding.STACK)
+            && !encodings.has(Channel.Y, Encoding.STACK)
         ) {
             return null
         }
 
-        val stack = encodings.getString(Channel.X, Property.STACK)
-            ?: encodings.getString(Channel.Y, Property.STACK)
+        val stack = encodings.getString(Channel.X, Encoding.STACK)
+            ?: encodings.getString(Channel.Y, Encoding.STACK)
 
         return when (stack) {
             null -> identity()
@@ -221,9 +257,9 @@ internal object Util {
 
     fun transformCoordinateSystem(encoding: Map<*, Map<*, *>>, plotOptions: PlotOptions) {
         fun domain(channel: String): Pair<Double?, Double?> {
-            val domainMin = encoding.getNumber(channel, Property.SCALE, Scale.DOMAIN_MIN)
-            val domainMax = encoding.getNumber(channel, Property.SCALE, Scale.DOMAIN_MAX)
-            val domain = encoding.getList(channel, Property.SCALE, Scale.DOMAIN)
+            val domainMin = encoding.getNumber(channel, Encoding.SCALE, Scale.DOMAIN_MIN)
+            val domainMax = encoding.getNumber(channel, Encoding.SCALE, Scale.DOMAIN_MAX)
+            val domain = encoding.getList(channel, Encoding.SCALE, Scale.DOMAIN)
 
             return Pair(
                 (domainMin ?: (domain?.getOrNull(0) as? Number))?.toDouble(),

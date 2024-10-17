@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromStatKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
@@ -485,7 +486,7 @@ class BarMarkTransformTest {
             )),
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.DODGE)),
             entry(Meta.DATA_META, empty()),
-            entry(Layer.STAT, StatKind.IDENTITY.name.lowercase()),
+            entry(Layer.STAT, fromStatKind(StatKind.IDENTITY)),
             entry(
                 PlotBase.MAPPING,
                 mapOf(
