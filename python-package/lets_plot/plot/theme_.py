@@ -464,11 +464,12 @@ def element_rect(
     size : int
         Border size.
     linetype : int or str or list
-        Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-        It can also be specified with a string of hexadecimal digits, giving the lengths in consecutive positions.
-        A list defines the pattern of dashes and gaps with offset: [offset, [dash, gap, dash, gap, ...]]
-        or without offset: [dash, gap, dash, gap, ...].
+        Type of the line. Accepts the following values:
+
+        - Codes or names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
+        - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
+
         For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
@@ -514,11 +515,12 @@ def element_line(
     size : int
         Line size.
     linetype : int or str or list
-        Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-        It can also be specified with a string of hexadecimal digits, giving the lengths in consecutive positions.
-        A list defines the pattern of dashes and gaps with offset: [offset, [dash, gap, dash, gap, ...]]
-        or without offset: [dash, gap, dash, gap, ...].
+        Type of the line. Accepts the following values:
+
+        - Codes or names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
+        - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
+
         For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
