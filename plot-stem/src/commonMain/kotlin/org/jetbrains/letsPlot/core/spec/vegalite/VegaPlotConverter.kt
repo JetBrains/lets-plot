@@ -93,7 +93,8 @@ internal class VegaPlotConverter private constructor(
             Mark.Types.BAR ->
                 if (encoding.values.any { Encoding.BIN in it }) {
                     appendLayer(
-                        geom = GeomKind.HISTOGRAM
+                        geom = GeomKind.HISTOGRAM,
+                        channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
                     ) {
                         stat = binStat()
                     }

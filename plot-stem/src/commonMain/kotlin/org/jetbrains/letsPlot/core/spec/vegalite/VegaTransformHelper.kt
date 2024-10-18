@@ -23,7 +23,6 @@ class TransformResult internal constructor(
 }
 
 object VegaTransformHelper {
-
     fun applyTransform(encodings: Map<*, Map<*, *>>, layerSpec: Map<*, *>): TransformResult? {
         run { // y.aggregate(count/sum/mean) -> countStat/summaryStat
             val xAggregate = encodings.getString(Channel.X, Encoding.AGGREGATE)
