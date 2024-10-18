@@ -187,7 +187,11 @@ internal class VegaPlotConverter private constructor(
             }
 
             Mark.Types.CIRCLE, Mark.Types.SQUARE -> appendLayer(
-                geom = GeomKind.POINT
+                geom = GeomKind.POINT,
+                channelMapping = listOf(
+                    COLOR to Aes.FILL,
+                    COLOR to Aes.COLOR
+                )
             ) {
                 shape = when (markType) {
                     Mark.Types.CIRCLE -> NamedShape.SOLID_CIRCLE
