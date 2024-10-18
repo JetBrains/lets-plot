@@ -75,9 +75,9 @@ internal class VegaPlotConverter private constructor(
                     position = Util.transformPositionAdjust(encoding)
                     dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
 
-                    Util.transformStat(encoding, layerSpec, mapping)?.let { (newStat, newMapping) ->
-                        stat = newStat
-                        mapping = newMapping
+                    VegaTransformHelper.applyTransform(encoding, layerSpec)?.let { res ->
+                        stat = res.stat
+                        mapping = res.adjustMapping(mapping ?: Mapping.EMPTY)
                     }
 
                     Util.transformCoordinateSystem(encoding, plotOptions)

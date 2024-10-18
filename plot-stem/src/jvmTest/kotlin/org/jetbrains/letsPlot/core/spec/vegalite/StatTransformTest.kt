@@ -104,10 +104,12 @@ class StatTransformTest {
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
             entry(Meta.DATA_META, empty()),
+            entry(toOption(Aes.SHAPE), 16),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.X) to "v",
-                toOption(Aes.COLOR) to Stats.COUNT.name,
-                toOption(Aes.FILL) to Stats.COUNT.name,
+                toOption(Aes.Y) to Stats.DENSITY.name,
+                toOption(Aes.COLOR) to Stats.DENSITY.name,
+                toOption(Aes.FILL) to Stats.DENSITY.name,
             )),
         )
     }

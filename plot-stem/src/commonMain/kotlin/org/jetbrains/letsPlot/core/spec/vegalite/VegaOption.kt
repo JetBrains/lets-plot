@@ -125,6 +125,9 @@ internal object VegaOption {
             const val DENSITY = "density"
             const val GROUP_BY = "groupby"
             const val AS = "as"
+
+            const val VAR_VALUE = "value"
+            const val VAR_DENSITY = "density"
         }
     }
 
