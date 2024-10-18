@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
-import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
-import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
@@ -14,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.SIZE
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.X
@@ -32,8 +29,7 @@ internal class VegaPlotConverter private constructor(
         }
     }
 
-    private val plotData: Map<String, List<Any?>> =
-        Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
+    private val plotData = Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
     private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
 
@@ -49,7 +45,10 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Map<*, *>) {
         val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val encoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: emptyMap())).asMapOfMaps()
+        val rawEncoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: emptyMap())).asMapOfMaps()
+
+        val transformResult = VegaTransformHelper.applyTransform(rawEncoding, layerSpec)
+        val encoding = transformResult?.adjustedEncoding ?: rawEncoding
 
         fun appendLayer(
             geom: GeomKind? = null,
@@ -66,19 +65,10 @@ internal class VegaPlotConverter private constructor(
                         else -> error("Unsupported data specification")
                     }
 
-                    val vegaMapping = encoding
-                        .mapKeys { (k, _) -> k as? String }.filterNotNullKeys()
-                        .mapValues { (_, v) -> v[Encoding.FIELD] as? String }
-                        .filterNotNullValues()
-
-                    mapping = Util.transformMappings(vegaMapping, channelMapping)
+                    mapping = Util.transformMappings(encoding, channelMapping)
                     position = Util.transformPositionAdjust(encoding)
                     dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
-
-                    VegaTransformHelper.applyTransform(encoding, layerSpec)?.let { res ->
-                        stat = res.stat
-                        mapping = res.adjustMapping(mapping ?: Mapping.EMPTY)
-                    }
+                    stat = transformResult?.stat
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
@@ -91,14 +81,7 @@ internal class VegaPlotConverter private constructor(
 
         when (markType) {
             Mark.Types.BAR ->
-                if (encoding.values.any { Encoding.BIN in it }) {
-                    appendLayer(
-                        geom = GeomKind.HISTOGRAM,
-                        channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
-                    ) {
-                        stat = binStat()
-                    }
-                } else if (encoding.any { (channel, _) -> channel == X2 }) {
+                if (encoding.any { (channel, _) -> channel == X2 }) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(

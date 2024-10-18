@@ -141,7 +141,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
             if (url.endsWith(".json")) {
                 plotSpec.remove("data")
-                plotSpec.write("data", "value") { JsonSupport.parse(content)!! }
+                plotSpec.write("data", "values") { JsonSupport.parse(content)!! }
             }
         }
 

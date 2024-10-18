@@ -49,11 +49,12 @@ class StatTransformTest {
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
-            entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
+            entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Meta.DATA_META, empty()),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.X) to "v",
+                toOption(Aes.Y) to Stats.COUNT.name,
                 toOption(Aes.COLOR) to Stats.COUNT.name,
                 toOption(Aes.FILL) to Stats.COUNT.name,
             )),

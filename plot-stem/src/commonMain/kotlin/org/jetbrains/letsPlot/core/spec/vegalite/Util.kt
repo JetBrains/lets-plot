@@ -5,16 +5,15 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
-import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.FIELD
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Scale
 import org.jetbrains.letsPlot.core.spec.vegalite.data.*
 
@@ -70,14 +69,21 @@ internal object Util {
         return false
     }
 
+    // Convert from channel to field  to aes to variable
+    // Aggregate and other transforms are already applied and not considered here
     fun transformMappings(
-        vegaMapping: Map<String, String>,
+        encoding: Map<*, Map<*, *>>,
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
-        val groupingVar = vegaMapping.getString(Channel.DETAIL)
-        return vegaMapping
+        val fieldsEncoding = encoding
+            .mapKeys { (k, _) -> k as? String }.filterNotNullKeys()
+            .mapValues { (_, v) -> v[Encoding.FIELD] as? String }
+            .filterNotNullValues()
+
+        val groupingVar = fieldsEncoding[Channel.DETAIL]
+        return fieldsEncoding
             .flatMap { (channel, field) ->
-                val aesthetics = channelToAes(channel.toString(), customChannelMapping)
+                val aesthetics = channelToAes(channel, customChannelMapping)
                 aesthetics.map { aes -> aes to field }
             }.fold(Mapping(groupingVar)) { mapping, (aes, field) -> mapping + (aes to field) }
     }
@@ -135,7 +141,7 @@ internal object Util {
                 return@forEach
             }
 
-            val encField = channelEncoding.getString(FIELD) ?: return@forEach
+            val encField = channelEncoding.getString(Encoding.FIELD) ?: return@forEach
             if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
                 || channelEncoding.contains(Encoding.TIMEUNIT)
             ) {
@@ -169,67 +175,9 @@ internal object Util {
         return dataMeta
     }
 
-    fun transformStat(encodings: Map<*, Map<*, *>>, layerSpec: Map<*, *>, mapping: Mapping?): Pair<StatOptions, Mapping?>? {
-        run { // aggregate -> countStat/summaryStat
-            val xAggregate = encodings.getString(Channel.X, Encoding.AGGREGATE)
-            val yAggregate = encodings.getString(Channel.Y, Encoding.AGGREGATE)
-
-            if (xAggregate != null && yAggregate != null) {
-                error("Both x and y aggregates are not supported")
-            }
-
-            val aggregate = xAggregate ?: yAggregate
-            if (aggregate != null) {
-                return when (aggregate) {
-                    Encoding.Aggregate.COUNT -> countStat() to mapping
-                    Encoding.Aggregate.SUM -> summaryStat { f = AggFunction.SUM } to mapping
-                    Encoding.Aggregate.MEAN -> summaryStat { f = AggFunction.MEAN } to mapping
-                    else -> error("Unsupported aggregate function: $aggregate")
-                }
-            }
-        }
-
-        run { // transform.density -> densityStat
-            val densityTransform = layerSpec
-                .getMaps(VegaOption.Mark.TRANSFORM)
-                ?.firstOrNull { VegaOption.Transform.DENSITY in it }
-                ?: return@run
-
-            val densityVar = densityTransform.getString(VegaOption.Transform.Density.DENSITY) ?: return@run
-            val densityGroup = densityTransform.getString(VegaOption.Transform.Density.GROUP_BY)
-
-            val yVar = if (mapping?.aesthetics?.get(Aes.Y) == VegaOption.Transform.Density.DENSITY) {
-                Stats.DENSITY.name
-            } else {
-                mapping?.aesthetics?.get(Aes.Y)!!
-            }
-
-            val groupingVar = mapping.groupingVar ?: densityGroup
-
-            return densityStat() to (mapping + Mapping(groupingVar, Aes.X to densityVar, Aes.Y to yVar))
-        }
-
-        run { // encoding.bin -> binStat
-            val xBinDefinition = encodings.getString(Channel.X, Encoding.BIN)
-            val yBinDefinition = encodings.getString(Channel.Y, Encoding.BIN)
-
-            val channel = when {
-                xBinDefinition != null -> Channel.X
-                yBinDefinition != null -> Channel.Y
-                else -> null
-            }
-
-            if (channel != null) {
-                return binStat() to mapping
-            }
-        }
-
-        return null
-    }
-
     fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
-        if (encodings.getString(Channel.X_OFFSET, FIELD) != null
-            || encodings.getString(Channel.Y_OFFSET, FIELD) != null
+        if (encodings.getString(Channel.X_OFFSET, Encoding.FIELD) != null
+            || encodings.getString(Channel.Y_OFFSET, Encoding.FIELD) != null
         ) {
             // Lots of false positives here:
             // - check is the field is used as grouping variable
