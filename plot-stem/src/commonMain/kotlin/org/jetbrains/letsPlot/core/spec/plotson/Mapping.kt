@@ -28,18 +28,6 @@ class Mapping(
         return Mapping(groupingVar, aesthetics + other)
     }
 
-    operator fun plus(other: Map<Aes<*>, String>?): Mapping {
-        return Mapping(groupingVar, aesthetics + (other ?: emptyMap()))
-    }
-
-    operator fun minus(aes: Aes<*>): Mapping {
-        return Mapping(groupingVar, aesthetics - aes)
-    }
-
-    operator fun plus(other: Mapping): Mapping {
-        return Mapping(other.groupingVar, aesthetics + other.aesthetics)
-    }
-
     companion object {
         val EMPTY = Mapping()
     }

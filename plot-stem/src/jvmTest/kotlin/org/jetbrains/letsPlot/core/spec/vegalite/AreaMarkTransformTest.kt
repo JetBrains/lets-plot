@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Pos
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.junit.Test
 import java.util.Map.entry
@@ -104,12 +105,13 @@ class AreaMarkTransformTest {
 
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.DENSITY)),
+            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
             entry(Option.Meta.DATA_META, empty()),
             entry(PlotBase.MAPPING, mapOf(
                 toOption(Aes.X) to "v",
                 toOption(Aes.Y) to "..density.."
             )),
-            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
         )
     }
 
