@@ -131,39 +131,38 @@ internal object Util {
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        encodingVegaSpec.entries.forEach { entry ->
-            val ch = entry.key as? String ?: return@forEach
-            val channelEncoding = entry.value
+        encodingVegaSpec.entries.forEach { (channel, encoding) ->
+            if (channel !is String) return@forEach
 
-            if (ch == Channel.X2 || ch == Channel.Y2) {
+            if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
                 // Yet need to check sorting and other options - they may affect series_meta or mapping_meta
                 return@forEach
             }
 
-            val encField = channelEncoding.getString(Encoding.FIELD) ?: return@forEach
-            if (channelEncoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
-                || channelEncoding.contains(Encoding.TIMEUNIT)
+            val field = encoding.getString(Encoding.FIELD) ?: return@forEach
+            if (encoding[Encoding.TYPE] == Encoding.Types.TEMPORAL
+                || encoding.contains(Encoding.TIMEUNIT)
             ) {
                 dataMeta.appendSeriesAnnotation {
                     type = SeriesAnnotationOptions.Types.DATE_TIME
-                    column = encField
+                    column = field
                 }
             }
 
 
-            if (!isContinuous(ch, encodingVegaSpec)) {
-                if (data?.get(encField)?.all { it is String } != true) {
+            if (!isContinuous(channel, encodingVegaSpec)) {
+                if (data?.get(field)?.all { it is String } != true) {
                     // lp treats strings as discrete by default
                     // No need to add an annotation
 
-                    channelToAes(ch, customChannelMapping)
+                    channelToAes(channel, customChannelMapping)
                         .forEach {
                             dataMeta.appendMappingAnnotation {
                                 aes = it
                                 annotation = MappingAnnotationOptions.AnnotationType.AS_DISCRETE
                                 parameters {
-                                    label = encField
+                                    label = field
                                     order = MappingAnnotationOptions.OrderType.ASCENDING
                                 }
                             }
@@ -177,9 +176,10 @@ internal object Util {
 
     fun transformPositionAdjust(encodings: Map<*, Map<*, *>>, stat: StatOptions?): PositionOptions? {
         run {
-            if (encodings.getString(Channel.X_OFFSET, Encoding.FIELD) != null
-                || encodings.getString(Channel.Y_OFFSET, Encoding.FIELD) != null
-            ) {
+            val xOffsetField = encodings.getString(Channel.X_OFFSET, Encoding.FIELD)
+            val yOffsetField = encodings.getString(Channel.Y_OFFSET, Encoding.FIELD)
+
+            if (xOffsetField != null || yOffsetField != null) {
                 // Lots of false positives here:
                 // - check is the field is used as grouping variable
                 // - check is plot direction matches the offset direction
@@ -189,12 +189,13 @@ internal object Util {
         }
 
         run {
-            // Note that stack=null is a valid option in Vega-Lite for disabling stacking
+            val xStackDefinition = encodings.read(Channel.X, Encoding.STACK)
+            val yStackDefinition = encodings.read(Channel.Y, Encoding.STACK)
+
+            // Note that stack=null is a valid option in Vega-Lite for disabling stacking,
             // and it's not the same as missing stack option.
             val hasXStack = encodings.has(Channel.X, Encoding.STACK)
-            val xStackDefinition = encodings.read(Channel.X, Encoding.STACK)
             val hasYStack = encodings.has(Channel.Y, Encoding.STACK)
-            val yStackDefinition = encodings.read(Channel.Y, Encoding.STACK)
 
             val defaultPos = when(stat?.kind) {
                 StatKind.DENSITY -> stack()

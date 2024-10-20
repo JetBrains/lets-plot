@@ -13,7 +13,6 @@ class Mapping(
     val groupingVar: String?,
     val aesthetics: Map<Aes<*>, String>
 ) {
-    constructor(groupingVar: String?, vararg aesthetics: Pair<Aes<*>, String>) : this(groupingVar, aesthetics.toMap())
     constructor(vararg aesthetics: Pair<Aes<*>, String>) : this(null, aesthetics.toMap())
     constructor(aesthetics: Map<Aes<*>, String>) : this(null, aesthetics)
     constructor(groupingVar: String?) : this(groupingVar, emptyMap())
@@ -26,9 +25,5 @@ class Mapping(
 
     operator fun plus(other: Pair<Aes<*>, String>): Mapping {
         return Mapping(groupingVar, aesthetics + other)
-    }
-
-    companion object {
-        val EMPTY = Mapping()
     }
 }
