@@ -65,10 +65,11 @@ internal class VegaPlotConverter private constructor(
                         else -> error("Unsupported data specification")
                     }
 
-                    mapping = Util.transformMappings(encoding, channelMapping)
-                    position = Util.transformPositionAdjust(encoding)
-                    dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
                     stat = transformResult?.stat
+
+                    mapping = Util.transformMappings(encoding, channelMapping)
+                    position = Util.transformPositionAdjust(encoding, stat)
+                    dataMeta = Util.transformDataMeta(data, encoding, channelMapping)
 
                     Util.transformCoordinateSystem(encoding, plotOptions)
 
@@ -118,7 +119,9 @@ internal class VegaPlotConverter private constructor(
 
             Mark.Types.LINE, Mark.Types.TRAIL -> appendLayer(GeomKind.LINE)
             Mark.Types.POINT -> appendLayer(GeomKind.POINT)
-            Mark.Types.AREA -> appendLayer() {
+            Mark.Types.AREA -> appendLayer(
+                channelMapping = listOf(COLOR to Aes.FILL, COLOR to Aes.COLOR)
+            ) {
                 geom = when (stat?.kind) {
                     StatKind.DENSITY -> GeomKind.DENSITY
                     else -> GeomKind.AREA

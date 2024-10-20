@@ -17,6 +17,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase
+import org.jetbrains.letsPlot.core.spec.Option.Pos
+import org.jetbrains.letsPlot.core.spec.PosProto
 import org.jetbrains.letsPlot.core.spec.StatKind
 import org.jetbrains.letsPlot.core.spec.asMutable
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
@@ -104,6 +106,7 @@ class StatTransformTest {
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
             entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
             entry(Meta.DATA_META, empty()),
             entry(toOption(Aes.SHAPE), 16),
             entry(PlotBase.MAPPING, mapOf(
@@ -114,4 +117,181 @@ class StatTransformTest {
             )),
         )
     }
+
+    @Test
+    fun `if transform=density and stack is not set then position should be stack`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"value": 21, "group": "A"}, {"value": 38, "group": "A"},
+                |      {"value": 7, "group": "B"}, {"value": 8, "group": "B"},
+                |      {"value": 13, "group": "B"}, {"value": 18, "group": "B"},
+                |      {"value": 51, "group": "C"}, {"value": 51, "group": "C"},
+                |      {"value": 55, "group": "C"}, {"value": 89, "group": "C"}
+                |    ]
+                |  },
+                |  "transform": [
+                |    {
+                |      "density": "value",
+                |      "groupby": ["group"]
+                |    }
+                |  ],
+                |  "mark": "circle",
+                |  "encoding": {
+                |    "x": {
+                |      "field": "value",
+                |      "type": "quantitative"
+                |    },
+                |    "y": {
+                |      "field": "density",
+                |      "type": "quantitative"
+                |    },
+                |    "color": {
+                |      "field": "group",
+                |      "type": "nominal"
+                |    }
+                |  }
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
+        assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
+            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
+            entry(Meta.DATA_META, empty()),
+            entry(toOption(Aes.SHAPE), 16),
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "value",
+                toOption(Aes.Y) to Stats.DENSITY.name,
+                toOption(Aes.COLOR) to "group",
+                toOption(Aes.FILL) to "group",
+            )),
+        )
+    }
+
+    @Test
+    fun `if transform=density and stack=zero then position should be stack`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"value": 21, "group": "A"}, {"value": 38, "group": "A"},
+                |      {"value": 7, "group": "B"}, {"value": 8, "group": "B"},
+                |      {"value": 13, "group": "B"}, {"value": 18, "group": "B"},
+                |      {"value": 51, "group": "C"}, {"value": 51, "group": "C"},
+                |      {"value": 55, "group": "C"}, {"value": 89, "group": "C"}
+                |    ]
+                |  },
+                |  "transform": [
+                |    {
+                |      "density": "value",
+                |      "groupby": ["group"]
+                |    }
+                |  ],
+                |  "mark": "circle",
+                |  "encoding": {
+                |    "x": {
+                |      "field": "value",
+                |      "type": "quantitative"
+                |    },
+                |    "y": {
+                |      "field": "density",
+                |      "type": "quantitative",
+                |      "stack": "zero"
+                |    },
+                |    "color": {
+                |      "field": "group",
+                |      "type": "nominal"
+                |    }
+                |  }
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
+        assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
+            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.STACK)),
+            entry(Meta.DATA_META, empty()),
+            entry(toOption(Aes.SHAPE), 16),
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "value",
+                toOption(Aes.Y) to Stats.DENSITY.name,
+                toOption(Aes.COLOR) to "group",
+                toOption(Aes.FILL) to "group",
+            )),
+        )
+    }
+
+    @Test
+    fun `if transform=density and stack=null then position should be identity`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {
+                |    "values": [
+                |      {"value": 21, "group": "A"}, {"value": 38, "group": "A"},
+                |      {"value": 7, "group": "B"}, {"value": 8, "group": "B"},
+                |      {"value": 13, "group": "B"}, {"value": 18, "group": "B"},
+                |      {"value": 51, "group": "C"}, {"value": 51, "group": "C"},
+                |      {"value": 55, "group": "C"}, {"value": 89, "group": "C"}
+                |    ]
+                |  },
+                |  "transform": [
+                |    {
+                |      "density": "value",
+                |      "groupby": ["group"]
+                |    }
+                |  ],
+                |  "mark": "circle",
+                |  "encoding": {
+                |    "x": {
+                |      "field": "value",
+                |      "type": "quantitative"
+                |    },
+                |    "y": {
+                |      "field": "density",
+                |      "type": "quantitative",
+                |      "stack": null
+                |    },
+                |    "color": {
+                |      "field": "group",
+                |      "type": "nominal"
+                |    }
+                |  }
+                |}
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
+        assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.POINT)),
+            entry(Layer.STAT, fromStatKind(StatKind.DENSITY)),
+            entry(Layer.POS, mapOf(Pos.NAME to PosProto.IDENTITY)),
+            entry(Meta.DATA_META, empty()),
+            entry(toOption(Aes.SHAPE), 16),
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "value",
+                toOption(Aes.Y) to Stats.DENSITY.name,
+                toOption(Aes.COLOR) to "group",
+                toOption(Aes.FILL) to "group",
+            )),
+        )
+    }
+
 }

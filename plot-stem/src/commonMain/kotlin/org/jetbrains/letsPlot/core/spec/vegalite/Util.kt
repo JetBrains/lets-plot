@@ -155,7 +155,7 @@ internal object Util {
             if (!isContinuous(ch, encodingVegaSpec)) {
                 if (data?.get(encField)?.all { it is String } != true) {
                     // lp treats strings as discrete by default
-                    // No need to add annotation
+                    // No need to add an annotation
 
                     channelToAes(ch, customChannelMapping)
                         .forEach {
@@ -175,32 +175,49 @@ internal object Util {
         return dataMeta
     }
 
-    fun transformPositionAdjust(encodings: Map<*, Map<*, *>>): PositionOptions? {
-        if (encodings.getString(Channel.X_OFFSET, Encoding.FIELD) != null
-            || encodings.getString(Channel.Y_OFFSET, Encoding.FIELD) != null
-        ) {
-            // Lots of false positives here:
-            // - check is the field is used as grouping variable
-            // - check is plot direction matches the offset direction
-            // But I don't see any other use cases for offset encoding other than dodging
-            return dodge()
+    fun transformPositionAdjust(encodings: Map<*, Map<*, *>>, stat: StatOptions?): PositionOptions? {
+        run {
+            if (encodings.getString(Channel.X_OFFSET, Encoding.FIELD) != null
+                || encodings.getString(Channel.Y_OFFSET, Encoding.FIELD) != null
+            ) {
+                // Lots of false positives here:
+                // - check is the field is used as grouping variable
+                // - check is plot direction matches the offset direction
+                // But I don't see any other use cases for offset encoding other than dodging
+                return dodge()
+            }
         }
 
-        if (!encodings.has(Channel.X, Encoding.STACK)
-            && !encodings.has(Channel.Y, Encoding.STACK)
-        ) {
-            return null
+        run {
+            // Note that stack=null is a valid option in Vega-Lite for disabling stacking
+            // and it's not the same as missing stack option.
+            val hasXStack = encodings.has(Channel.X, Encoding.STACK)
+            val xStackDefinition = encodings.read(Channel.X, Encoding.STACK)
+            val hasYStack = encodings.has(Channel.Y, Encoding.STACK)
+            val yStackDefinition = encodings.read(Channel.Y, Encoding.STACK)
+
+            val defaultPos = when(stat?.kind) {
+                StatKind.DENSITY -> stack()
+                else -> null
+            }
+
+            val stackChannel = when {
+                !hasXStack && !hasYStack -> return defaultPos
+                hasXStack && xStackDefinition == null -> return identity()
+                hasYStack && yStackDefinition == null -> return identity()
+                xStackDefinition != null -> xStackDefinition
+                yStackDefinition != null -> yStackDefinition
+                else -> return@run
+            }
+
+            return when (stackChannel) {
+                Encoding.Stack.ZERO -> stack()
+                Encoding.Stack.NORMALIZE -> fill()
+                else -> error("Unsupported stack type: $stackChannel")
+            }
         }
 
-        val stack = encodings.getString(Channel.X, Encoding.STACK)
-            ?: encodings.getString(Channel.Y, Encoding.STACK)
-
-        return when (stack) {
-            null -> identity()
-            Encoding.Stack.ZERO -> stack()
-            Encoding.Stack.NORMALIZE -> fill()
-            else -> error("Unsupported stack type: $stack")
-        }
+        return null
     }
 
     fun transformCoordinateSystem(encoding: Map<*, Map<*, *>>, plotOptions: PlotOptions) {
