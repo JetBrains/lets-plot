@@ -36,7 +36,7 @@ object VegaTransformHelper {
 
             val adjustedEncoding = encodings.mapValues { (channel, encoding) ->
                 when {
-                    channel == statInputChannel -> encoding - Encoding.BIN // cleanup
+                    channel == statInputChannel -> encoding - Encoding.BIN + (Encoding.TYPE to Encoding.Types.QUANTITATIVE)
                     encoding[Encoding.AGGREGATE] == Aggregate.COUNT -> {
                         encoding - Encoding.AGGREGATE +
                                 (Encoding.FIELD to Stats.COUNT.name) +

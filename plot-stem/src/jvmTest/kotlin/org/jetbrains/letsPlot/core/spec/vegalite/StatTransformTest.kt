@@ -30,6 +30,43 @@ import java.util.Map.entry
 class StatTransformTest {
 
     @Test
+    fun `bin source axis without type should be continuous`() {
+        val vegaSpec = parseJson(
+            """
+                |{
+                |  "data": {"values": [
+                |    {"v": 0}, {"v": 1}, {"v": 1}, {"v": 2}, {"v": 2}, {"v": 2}, {"v": 2}, {"v": 3}, {"v": 3}, {"v": 4}
+                |  ]},
+                |  "mark": "bar",
+                |  "encoding": {
+                |    "x": {"bin": {"step":1}, "field": "v"},
+                |    "y": {"aggregate": "count"},
+                |    "color": {"aggregate":"count"}
+                |  }
+                |}                
+            """.trimMargin()
+        ).asMutable()
+
+        val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
+
+        assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
+        assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
+            entry(Layer.STAT, StatKind.BIN.name.lowercase()),
+            entry(Stat.Bin.BINWIDTH, 1.0),
+            entry(Meta.DATA_META, empty()), // All axis are continuous
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "v",
+                toOption(Aes.Y) to Stats.COUNT.name,
+                toOption(Aes.COLOR) to Stats.COUNT.name,
+                toOption(Aes.FILL) to Stats.COUNT.name,
+            )),
+        )
+
+    }
+
+    @Test
     fun `encoding color channel to aggregate should produce mappings to COLOR and FILL`() {
         val vegaSpec = parseJson(
             """
