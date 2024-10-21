@@ -88,3 +88,4 @@
 - ggmarginal: bottom boxplot is broken [[#1189](https://github.com/JetBrains/lets-plot/issues/1189)].
 - Offscreen cells are sometimes not rendered in JupyterLab.
 - The legend_justification parameter doesn't work if the legend_position='top' [[#1031](https://github.com/JetBrains/lets-plot/issues/1031)].
+- coord_polar: geom_point tooltips should take in account point size [[#1214](https://github.com/JetBrains/lets-plot/issues/1214)].
