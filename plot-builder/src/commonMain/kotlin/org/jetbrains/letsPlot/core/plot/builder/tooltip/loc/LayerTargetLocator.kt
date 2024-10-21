@@ -59,6 +59,7 @@ internal class LayerTargetLocator(
             return when (prototype.hitShape.kind) {
                 POINT -> PointTargetProjection.create(
                     prototype.hitShape.point.center,
+                    prototype.hitShape.point.radius,
                     lookupSpec.lookupSpace
                 )
 

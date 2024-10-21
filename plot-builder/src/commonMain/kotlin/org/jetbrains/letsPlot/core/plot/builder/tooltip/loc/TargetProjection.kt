@@ -21,17 +21,20 @@ import kotlin.math.min
 
 internal open class TargetProjection
 
-internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
+internal class PointTargetProjection private constructor(
+    val data: Any,
+    val radius: Double
+) : TargetProjection() {
     fun x() = data as Double
     fun y() = data as Double
     fun xy() = data as DoubleVector
 
     companion object {
-        fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
+        fun create(p: DoubleVector, radius: Double, lookupSpace: LookupSpace): PointTargetProjection {
             return when (lookupSpace) {
-                X -> PointTargetProjection(p.x)
-                Y -> PointTargetProjection(p.y)
-                XY -> PointTargetProjection(p)
+                X -> PointTargetProjection(p.x, radius)
+                Y -> PointTargetProjection(p.y, radius)
+                XY -> PointTargetProjection(p, radius)
                 NONE -> undefinedLookupSpaceError()
             }
         }
@@ -165,9 +168,9 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
         companion object {
             internal fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
                 return when (lookupSpace) {
-                    X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
-                    Y -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
-                    XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                    X -> PathPoint(PointTargetProjection.create(p, radius = 0.0, lookupSpace), p, index)
+                    Y -> PathPoint(PointTargetProjection.create(p, radius = 0.0, lookupSpace), p, index)
+                    XY -> PathPoint(PointTargetProjection.create(p, radius = 0.0, lookupSpace), p, index)
                     NONE -> undefinedLookupSpaceError()
                 }
             }
