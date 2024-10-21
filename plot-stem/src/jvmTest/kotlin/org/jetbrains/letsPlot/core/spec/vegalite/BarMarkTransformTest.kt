@@ -164,7 +164,7 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
-            entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
+            entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Meta.DATA_META, empty()),
             entry(PlotBase.MAPPING, mapOf(

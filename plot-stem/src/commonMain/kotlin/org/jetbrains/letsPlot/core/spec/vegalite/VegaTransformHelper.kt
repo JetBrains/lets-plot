@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Transform
 class TransformResult internal constructor(
     val adjustedEncoding: Map<*, Map<*, *>>, // Vega "stat" configs (aggregate, bin, ...) replaced with LP stat vars
     val stat: StatOptions,
+    val orientation: String? = null
 )
 
 object VegaTransformHelper {
@@ -27,7 +28,7 @@ object VegaTransformHelper {
             val xBinDefinition = encodings.read(Channel.X, Encoding.BIN)
             val yBinDefinition = encodings.read(Channel.Y, Encoding.BIN)
 
-            val binChannel = when {
+            val statInputChannel = when {
                 xBinDefinition != null -> Channel.X
                 yBinDefinition != null -> Channel.Y
                 else -> return@run
@@ -35,7 +36,7 @@ object VegaTransformHelper {
 
             val adjustedEncoding = encodings.mapValues { (channel, encoding) ->
                 when {
-                    channel == binChannel -> encoding - Encoding.BIN // cleanup
+                    channel == statInputChannel -> encoding - Encoding.BIN // cleanup
                     encoding[Encoding.AGGREGATE] == Aggregate.COUNT -> {
                         encoding - Encoding.AGGREGATE +
                                 (Encoding.FIELD to Stats.COUNT.name) +
@@ -45,9 +46,19 @@ object VegaTransformHelper {
                 }
             }
 
+            val binDefinition = xBinDefinition ?: yBinDefinition!!
             return TransformResult(
                 adjustedEncoding,
-                binStat(),
+                binStat {
+                    (binDefinition as? Map<*, *>)?.forEach { (key, value) ->
+                        when (key) {
+                            Transform.Bin.MAXBINS -> bins = (value as? Number)?.toInt()
+                            Transform.Bin.STEP -> binWidth = (value as? Number)?.toDouble()
+                            else -> println("Unsupported bin parameter: $key")
+                        }
+                    }
+                },
+                "y".takeIf { statInputChannel == Channel.Y }
             )
         }
 
@@ -61,6 +72,7 @@ object VegaTransformHelper {
             }
 
             val aggregate = xAggregate ?: yAggregate ?: return@run
+            // layer orientation implicit inference works fine for agg, not need to pass it explicitly
             return when (aggregate) {
                 Aggregate.COUNT -> TransformResult(encodings, countStat())
                 Aggregate.SUM -> TransformResult(encodings, summaryStat { f = AggFunction.SUM })
@@ -68,6 +80,7 @@ object VegaTransformHelper {
                 else -> error("Unsupported aggregate function: $aggregate")
             }
         }
+
 
         run { // transform.density -> densityStat
             val densityTransform = layerSpec
@@ -78,6 +91,12 @@ object VegaTransformHelper {
             val origVar = densityTransform.getString(Transform.Density.DENSITY) ?: return@run
             val groupingVar = densityTransform.getString(Transform.Density.GROUP_BY)
 
+            val statInputChannel = encodings
+                .entries
+                .filter { (channel, _) -> channel == Channel.X || channel == Channel.Y }
+                .singleOrNull { (_, encoding) -> encoding[Encoding.FIELD] == Transform.Density.VAR_VALUE }
+                ?.key
+
             return TransformResult(
                 encodings.mapValues { (_, encoding) ->
                     when {
@@ -86,10 +105,10 @@ object VegaTransformHelper {
                         else -> encoding
                     }
                 },
-                densityStat()
+                densityStat(),
+                "y".takeIf { statInputChannel == Channel.Y }
             )
-
-            }
+        }
 
         return null
     }

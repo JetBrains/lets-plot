@@ -121,6 +121,11 @@ internal object VegaOption {
     object Transform {
         const val DENSITY = "density"
 
+        object Bin {
+            const val MAXBINS = "maxbins"
+            const val STEP = "step"
+        }
+
         object Density {
             const val DENSITY = "density"
             const val GROUP_BY = "groupby"

@@ -66,6 +66,7 @@ internal class VegaPlotConverter private constructor(
                     }
 
                     stat = transformResult?.stat
+                    orientation = transformResult?.orientation
 
                     mapping = Util.transformMappings(encoding, channelMapping)
                     position = Util.transformPositionAdjust(encoding, stat)
@@ -82,7 +83,17 @@ internal class VegaPlotConverter private constructor(
 
         when (markType) {
             Mark.Types.BAR ->
-                if (encoding.any { (channel, _) -> channel == X2 }) {
+                if (transformResult?.stat?.kind == StatKind.BIN) {
+                    appendLayer(
+                        geom = GeomKind.HISTOGRAM,
+                        channelMapping = listOf(
+                            X to Aes.X,
+                            Y to Aes.Y,
+                            COLOR to Aes.FILL,
+                            COLOR to Aes.COLOR
+                        )
+                    )
+                } else if (encoding.any { (channel, _) -> channel == X2 }) {
                     appendLayer(
                         geom = GeomKind.CROSS_BAR,
                         channelMapping = listOf(
@@ -129,17 +140,8 @@ internal class VegaPlotConverter private constructor(
             }
 
             Mark.Types.BOXPLOT -> {
-                val layerOrientation = when (Util.isContinuous(X, encoding)) {
-                    true -> "y"
-                    else -> null
-                }
-
-                appendLayer(GeomKind.BOX_PLOT) {
-                    orientation = layerOrientation
-                }
-
+                appendLayer(GeomKind.BOX_PLOT)
                 appendLayer(GeomKind.POINT) {
-                    orientation = layerOrientation
                     stat = boxplotOutlierStat()
                 }
             }

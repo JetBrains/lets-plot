@@ -46,9 +46,17 @@ class DensityStatOptions(): StatOptions(StatKind.DENSITY) {
     var quantiles: List<Double>? by map(Option.Stat.Density.QUANTILES)
 }
 
+class BinStatOptions(): StatOptions(StatKind.BIN) {
+    var threshold: Double? by map(Option.Stat.Bin.THRESHOLD)
+    var bins: Int? by map(Option.Stat.Bin.BINS)
+    var binWidth: Double? by map(Option.Stat.Bin.BINWIDTH)
+    var center: Double? by map(Option.Stat.Bin.CENTER)
+    var boundary: Double? by map(Option.Stat.Bin.BOUNDARY)
+}
+
 fun identityStat() = StatOptions(StatKind.IDENTITY)
 fun countStat() = StatOptions(StatKind.COUNT)
 fun boxplotOutlierStat() = StatOptions(StatKind.BOXPLOT_OUTLIER)
-fun binStat() = StatOptions(StatKind.BIN)
+fun binStat(block: BinStatOptions.() -> Unit = {}) = BinStatOptions().apply(block)
 fun summaryStat(block: SummaryStatOptions.() -> Unit = {}) = SummaryStatOptions().apply(block)
 fun densityStat(block: DensityStatOptions.() -> Unit = {}) = DensityStatOptions().apply(block)
