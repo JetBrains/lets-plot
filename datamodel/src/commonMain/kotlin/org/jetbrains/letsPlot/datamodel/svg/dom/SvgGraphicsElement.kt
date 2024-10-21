@@ -12,7 +12,7 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
 
     companion object {
 
-        private val POINTER_EVENTS: SvgAttributeSpec<PointerEvents> =
+        val POINTER_EVENTS: SvgAttributeSpec<PointerEvents> =
             SvgAttributeSpec.createSpec("pointer-events")
         val OPACITY: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec("opacity")
@@ -46,16 +46,16 @@ abstract class SvgGraphicsElement : SvgStylableElement() {
     }
 
     enum class PointerEvents(private val myAttributeString: String) {
-        VISIBLE_PAINTED("visiblePainted"),
-        VISIBLE_FILL("visibleFill"),
-        VISIBLE_STROKE("visibleStroke"),
-        VISIBLE("visible"),
-        PAINTED("painted"),
-        FILL("fill"),
-        STROKE("stroke"),
-        ALL("all"),
-        NONE("none"),
-        INHERIT("inherit");
+        //VISIBLE_PAINTED("visiblePainted"),
+        //VISIBLE_FILL("visibleFill"),
+        //VISIBLE_STROKE("visibleStroke"),
+        //VISIBLE("visible"),
+        //PAINTED("painted"),
+        //FILL("fill"),
+        //STROKE("stroke"),
+        //ALL("all"),
+        //INHERIT("inherit"),
+        NONE("none");
 
         override fun toString(): String {
             return myAttributeString

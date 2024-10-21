@@ -261,7 +261,7 @@ class PlotSvgComponent constructor(
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
 
                 // Even open path still blocks mouse events. Add pointer-events: none to make links clickable.
-                setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "pointer-events: none;")
+                pointerEvents().set(SvgGraphicsElement.PointerEvents.NONE)
             }
         }
 

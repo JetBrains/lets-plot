@@ -31,8 +31,8 @@ class PolarAxisComponent(
 ) : SvgComponent() {
     init {
         rootGroup.pointerEvents().set(SvgGraphicsElement.PointerEvents.NONE)
-
     }
+
     override fun buildComponent() {
         buildAxis()
     }

@@ -10,6 +10,7 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.jfx.mapping.svg.unScaleTransforms
 
 internal abstract class SvgAttrMapping<in TargetT : Node> {
@@ -21,12 +22,13 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Circle(center.x, center.y, width / 2) }
             SvgGraphicsElement.CLIP_PATH.name -> Unit // TODO: ignored
 
-            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(target, value as? String ?: "")
+            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
 
             SvgElement.ID.name -> target.id = value as? String // TODO: or ignore it?
+            SvgGraphicsElement.POINTER_EVENTS.name -> target.isMouseTransparent = value == PointerEvents.NONE
             SvgConstants.DISPLAY -> {} // not needed for JavaFX
 
             else -> throw IllegalArgumentException("Unsupported attribute `$name` in ${target.javaClass.simpleName}")
@@ -43,11 +45,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
     }
 
     companion object {
-        internal fun svgStyleToFx(target: Node, value: String): String {
-            if (value.contains("pointer-events: none")) {
-                target.isMouseTransparent = true
-            }
-
+        internal fun svgStyleToFx(value: String): String {
             return value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
         }
 
