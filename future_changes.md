@@ -10,7 +10,7 @@
 
 - Interactive **links** in tooltips/labels/texts [[#1091](https://github.com/JetBrains/lets-plot/issues/1091)].
 
-  TODO: See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/interactive_links.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/interactive_links.ipynb).
 
 - Formatting:
   - **LaTeX** support [[#861](https://github.com/JetBrains/lets-plot/issues/861)], [[#960](https://github.com/JetBrains/lets-plot/issues/960)].
