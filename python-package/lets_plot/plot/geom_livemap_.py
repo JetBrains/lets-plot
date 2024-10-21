@@ -210,7 +210,8 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
                     tiles[MAPTILES_MIN_ZOOM] == 1 and tiles[MAPTILES_MAX_ZOOM] == 20:
                 # TODO: Remove this branch in future releases.
                 tileset = tiles[MAPTILES_URL].split('/')[3]
-                print(f"WARN: The '{tileset}' tileset is deprecated and will be removed in future releases.")
+                if tileset in ['base-midnight', 'base-antique', 'base-flatblue']:
+                    print(f"WARN: The '{tileset}' tileset is deprecated and will be removed in future releases.")
             return {
                 OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
