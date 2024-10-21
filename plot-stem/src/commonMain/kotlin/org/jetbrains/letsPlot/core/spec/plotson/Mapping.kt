@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 
 class Mapping(
-    private val groupingVar: String?,
-    private val aesthetics: Map<Aes<*>, String>
+    val groupingVar: String?,
+    val aesthetics: Map<Aes<*>, String>
 ) {
     constructor(vararg aesthetics: Pair<Aes<*>, String>) : this(null, aesthetics.toMap())
     constructor(aesthetics: Map<Aes<*>, String>) : this(null, aesthetics)

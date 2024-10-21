@@ -9,8 +9,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromGeomKind
+import org.jetbrains.letsPlot.core.spec.Option.GeomName.fromStatKind
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta
@@ -161,17 +163,14 @@ class BarMarkTransformTest {
 
         assertThat(plotSpec.getMap(PlotBase.DATA)).isNull()
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
-        assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
-            entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
+        assertThat(plotSpec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA).containsOnly(
+            entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Meta.DATA_META, empty()),
-            entry(
-                PlotBase.DATA, mapOf(
-                    "..count.." to listOf( 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0),
-                    "v" to listOf( -0.023555555555555552, 0.11599999999999999, 0.25555555555555554, 0.3951111111111111, 0.5346666666666666, 0.6742222222222222, 0.8137777777777777, 0.9533333333333333, 1.0928888888888888, 1.2324444444444442, 1.3719999999999999, 1.5115555555555555, 1.651111111111111, 1.7906666666666664, 1.930222222222222, 2.0697777777777775, 2.2093333333333334, 2.3488888888888884, 2.4884444444444442, 2.628, 2.767555555555555, 2.907111111111111, 3.046666666666667, 3.186222222222222, 3.3257777777777777, 3.4653333333333327, 3.6048888888888886, 3.7444444444444445, 3.8839999999999995, 4.023555555555555)
-                )
-            ),
-            entry(PlotBase.MAPPING, mapOf("x" to "v")),
+            entry(PlotBase.MAPPING, mapOf(
+                toOption(Aes.X) to "v",
+                toOption(Aes.Y) to Stats.COUNT.name,
+            )),
         )
     }
 
@@ -485,7 +484,7 @@ class BarMarkTransformTest {
             )),
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.DODGE)),
             entry(Meta.DATA_META, empty()),
-            entry(Layer.STAT, StatKind.IDENTITY.name.lowercase()),
+            entry(Layer.STAT, fromStatKind(StatKind.IDENTITY)),
             entry(
                 PlotBase.MAPPING,
                 mapOf(

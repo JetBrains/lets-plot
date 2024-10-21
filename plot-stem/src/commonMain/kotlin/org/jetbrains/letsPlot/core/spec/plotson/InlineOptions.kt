@@ -6,5 +6,5 @@
 package org.jetbrains.letsPlot.core.spec.plotson
 
 abstract class InlineOptions(
-    map: MutableMap<String, Any?>
-) : Options(map)
+    toSpecDelegate: (Options) -> Any? = Options::properties
+) : Options(toSpecDelegate = toSpecDelegate)
