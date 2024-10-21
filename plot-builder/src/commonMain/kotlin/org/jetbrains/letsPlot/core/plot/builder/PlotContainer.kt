@@ -46,6 +46,7 @@ class PlotContainer constructor(
                 plotSize = plot.figureSize,    // ToDo: svgRoot.bounds.dimension
                 flippedAxis = plot.flippedAxis,
                 theme = plot.theme,
+                styleSheet = plot.styleSheet,
                 plotContext = plot.plotContext
             )
             plot.interactor = plotInteractor

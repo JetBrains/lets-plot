@@ -11,7 +11,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.core.interact.*
+import org.jetbrains.letsPlot.core.interact.EventsManager
+import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.ToolInteractor
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
 import org.jetbrains.letsPlot.core.interact.feedback.RollbackAllChangesFeedback
@@ -27,6 +29,7 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPos
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 internal class PlotInteractor(
     val decorationLayer: SvgNode,
@@ -34,6 +37,7 @@ internal class PlotInteractor(
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
     theme: Theme,
+    styleSheet: StyleSheet,
     plotContext: PlotContext
 ) : ToolInteractor, Disposable {
     val eventsManager: EventsManager = EventsManager()
@@ -55,6 +59,7 @@ internal class PlotInteractor(
             theme.verticalAxis(flippedAxis),
             theme.tooltips(),
             theme.plot().backgroundFill(),
+            styleSheet,
             plotContext,
             mouseEventPeer
         )

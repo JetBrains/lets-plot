@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.HORIZONTAL
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.VERTICAL
@@ -39,7 +40,7 @@ class TooltipBoxTest {
             labelsBbox(word)
         }
 
-        tooltipBox = TooltipBox().apply {
+        tooltipBox = TooltipBox(Style.default()).apply {
             root.children().add(rootGroup)
             update(
                 fillColor = Color.BLACK,

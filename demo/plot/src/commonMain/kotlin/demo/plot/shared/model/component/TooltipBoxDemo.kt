@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
@@ -46,7 +47,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     private fun tooltip(spec: MyTooltipSpec): Pair<GroupComponent, () -> Unit> {
         val groupComponent = GroupComponent()
-        val tooltipBox = TooltipBox()
+        val tooltipBox = TooltipBox(Style.default())
         groupComponent.add(tooltipBox.rootGroup)
         return groupComponent to with(tooltipBox, spec)
     }

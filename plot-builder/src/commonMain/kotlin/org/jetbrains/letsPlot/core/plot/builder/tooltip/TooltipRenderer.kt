@@ -43,9 +43,10 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
-internal class TooltipRenderer constructor(
+internal class TooltipRenderer(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
     private val plotSize: DoubleVector,
@@ -53,6 +54,7 @@ internal class TooltipRenderer constructor(
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
     private val plotBackground: Color,
+    private val styleSheet: StyleSheet,
     private val plotContext: PlotContext,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
@@ -75,7 +77,7 @@ internal class TooltipRenderer constructor(
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
         tooltipStorage = RetainableComponents(
-            itemFactory = ::TooltipBox,
+            itemFactory = { TooltipBox(styleSheet) },
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
 

@@ -10,10 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
-import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
@@ -27,6 +24,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Too
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.ROTATION_ANGLE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.HORIZONTAL
@@ -34,10 +32,13 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Ori
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.PointerDirection.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import kotlin.math.max
 import kotlin.math.min
 
-class TooltipBox : SvgComponent() {
+class TooltipBox(
+    private val styleSheet: StyleSheet
+) : SvgComponent() {
     enum class Orientation {
         VERTICAL,
         HORIZONTAL
@@ -127,6 +128,17 @@ class TooltipBox : SvgComponent() {
         if (DEBUG_DRAWING) {
             myContentBox.drawDebugRect()
         }
+    }
+
+    private fun setSvgSvgStyle(svgSvgElement: SvgSvgElement, prefix: String) {
+        val id = SvgUID.get(prefix)
+        svgSvgElement.id().set(id)
+        svgSvgElement.setStyle(object : SvgCssResource {
+            override fun css(): String {
+                return Style.generateCSS(styleSheet, id, prefix)
+            }
+        })
+
     }
 
     private inner class PointerBox : SvgComponent() {
@@ -300,6 +312,10 @@ class TooltipBox : SvgComponent() {
         val dimension get() = myContent.run { DoubleVector(width().get()!!, height().get()!!) }
 
         override fun buildComponent() {
+            setSvgSvgStyle(myContent, "tt-c-")
+            setSvgSvgStyle(myTitleContainer, "tt-t-")
+            setSvgSvgStyle(myLinesContainer, "tt-l-")
+
             add(myContent)
             myContent.children().add(myTitleContainer)
             myContent.children().add(myLinesContainer)
@@ -541,7 +557,7 @@ class TooltipBox : SvgComponent() {
                         0.0
                     }
 
-                    line.label!!.isEmpty() && component.second.linesCount() == 1 -> {
+                    line.label.isEmpty() && component.second.linesCount() == 1 -> {
                         // label is not null, but empty - add space for the label, the value will be moved to the right;
                         // also value should not be multiline for right alignment
                         maxLabelWidth
