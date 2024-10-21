@@ -25,7 +25,11 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
-            SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
+            SvgTransformable.TRANSFORM.name -> when (value) {
+                is SvgTransform -> setTransform(value.toString(), target)
+                is String -> setTransform(value, target) // SlimObject bypasses typing system and can provide a string
+                else -> throw IllegalArgumentException("Unsupported value type for `transform` attribute: ${value?.javaClass}")
+            }
 
             SvgElement.ID.name -> target.id = value as? String // TODO: or ignore it?
             SvgGraphicsElement.POINTER_EVENTS.name -> target.isMouseTransparent = value == PointerEvents.NONE
