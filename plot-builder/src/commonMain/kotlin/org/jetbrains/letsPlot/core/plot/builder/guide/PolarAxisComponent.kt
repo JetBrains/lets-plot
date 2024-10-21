@@ -18,10 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.atan2
 
 class PolarAxisComponent(
@@ -32,6 +29,10 @@ class PolarAxisComponent(
     private val axisTheme: AxisTheme,
     private val hideAxisBreaks: Boolean = false,
 ) : SvgComponent() {
+    init {
+        rootGroup.pointerEvents().set(SvgGraphicsElement.PointerEvents.NONE)
+
+    }
     override fun buildComponent() {
         buildAxis()
     }
