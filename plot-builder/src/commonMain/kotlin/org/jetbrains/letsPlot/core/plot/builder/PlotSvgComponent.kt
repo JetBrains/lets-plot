@@ -54,6 +54,7 @@ class PlotSvgComponent constructor(
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     val interactionsEnabled: Boolean,
+    private val plotSpecId: String?,
     val theme: Theme,
     val styleSheet: StyleSheet,
     val plotContext: PlotContext
@@ -82,7 +83,7 @@ class PlotSvgComponent constructor(
     override fun clear() {
         // Effectivly disposes the plot component
         // because "interactor" is likely got disposed too,
-        // and "interactor" can't be reset.
+        // and "interactor" can't be reused.
         isDisposed = true
         super.clear()
     }
@@ -193,7 +194,9 @@ class PlotSvgComponent constructor(
             val tile = PlotTile(
                 coreLayers = coreLayersByTile[tileIndex],
                 marginalLayers = marginalLayersByTile[tileIndex],
-                tilesOrigin, tileLayoutInfo, theme,
+                tilesOrigin, tileLayoutInfo,
+                plotSpecId,
+                theme,
                 tileFrame,
                 marginalFrameByMargin
             )

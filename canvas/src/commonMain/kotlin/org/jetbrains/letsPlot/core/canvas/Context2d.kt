@@ -59,6 +59,7 @@ interface Context2d {
     fun setTextAlign(align: TextAlign)
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
+    fun setLineDashOffset(lineDashOffset: Double)
     fun measureText(str: String): Double
 
     // https://github.com/d3/d3/blob/9364923ee2b35ec2eb80ffc4bdac12a7930097fc/src/svg/line.js#L236

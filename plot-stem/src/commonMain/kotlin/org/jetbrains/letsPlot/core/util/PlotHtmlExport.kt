@@ -74,7 +74,7 @@ object PlotHtmlExport {
             val frameHeight = fixedSizeQ!!.y.toInt().let {
                 if(PlotConfigUtil.containsToolbar(plotSpec)) {
                     // adjust for toolbar height
-                    it + 35  // The expected height of toolbar, see: DefaultToolbarJs
+                    it + 33  // The expected height of toolbar, see: DefaultToolbarJs
                 } else {
                     it
                 }

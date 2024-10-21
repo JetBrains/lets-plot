@@ -21,7 +21,7 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgGraphicsElement.CLIP_CIRCLE_JFX.name -> target.clip = (value as? DoubleRectangle)?.run { Circle(center.x, center.y, width / 2) }
             SvgGraphicsElement.CLIP_PATH.name -> Unit // TODO: ignored
 
-            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")
+            SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(target, value as? String ?: "")
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
             SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
@@ -43,7 +43,11 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
     }
 
     companion object {
-        internal fun svgStyleToFx(value: String): String {
+        internal fun svgStyleToFx(target: Node, value: String): String {
+            if (value.contains("pointer-events: none")) {
+                target.isMouseTransparent = true
+            }
+
             return value.split(";").joinToString(";") { if (it.isNotEmpty()) "-fx-${it.trim()}" else it }
         }
 

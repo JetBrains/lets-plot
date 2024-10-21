@@ -37,11 +37,12 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.loc.LayerTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
-internal class PlotTile(
+internal class PlotTile constructor(
     private val coreLayers: List<GeomLayer>,
     private val marginalLayers: List<GeomLayer>,
     private val tilesOrigin: DoubleVector,
     private val tileLayoutInfo: TileLayoutInfo,
+    val plotSpecId: String?,
     private val theme: Theme,
     private val frameOfReference: FrameOfReference,
     private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>

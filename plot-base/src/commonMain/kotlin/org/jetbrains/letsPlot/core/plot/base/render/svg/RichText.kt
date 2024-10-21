@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
-import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -13,6 +12,8 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 object RichText {
+    const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
+
     fun toSvg(
         text: String,
         wrapLength: Int = -1,
@@ -125,7 +126,7 @@ object RichText {
                 xlinkHref().set(href)
                 children().add(
                     SvgTSpanElement(text).apply {
-                        fillColor().set(Colors.forName("blue")) // TODO: do not hardcode color
+                        addClass(HYPERLINK_ELEMENT_CLASS)
                     }
                 )
             }

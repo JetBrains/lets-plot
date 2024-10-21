@@ -7,8 +7,8 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
-import org.jetbrains.letsPlot.core.spec.Option.Plot.SPEC_OVERRIDE
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
+import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
@@ -26,7 +26,8 @@ class FigureModelJs internal constructor(
 ) {
     private var toolEventCallback: ((dynamic) -> Unit)? = null
 
-    private var currSpecOverride: Map<String, Any>? = null
+    //    private var currSpecOverride: Map<String, Any>? = null
+    private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
     fun onToolEvent(callback: (dynamic) -> Unit) {
         toolEventCallback = callback
@@ -48,19 +49,20 @@ class FigureModelJs internal constructor(
             null
         }
 
-        currSpecOverride = FigureModelOptions.reconcile(currSpecOverride, specOverride)
+        currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
+            specOverrideList = currSpecOverrideList,
+            newSpecOverride = specOverride
+        )
 
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
         figureRegistration?.dispose()
         figureRegistration = null
 
-        val newPlotSpec = currSpecOverride?.let {
-            processedPlotSpec + mapOf(SPEC_OVERRIDE to it)
-        } ?: processedPlotSpec
+        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, currSpecOverrideList)
 
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
-            newPlotSpec,
+            plotSpec,
             monolithicParameters.width,
             monolithicParameters.height,
             monolithicParameters.parentElement,

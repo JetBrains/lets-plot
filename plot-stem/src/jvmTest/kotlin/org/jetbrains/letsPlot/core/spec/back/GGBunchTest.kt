@@ -8,10 +8,22 @@ package org.jetbrains.letsPlot.core.spec.back
 import demoAndTestShared.SimpleTestSpecs.simpleBunch
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.Option
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class GGBunchTest {
+    @Before
+    fun setUp() {
+        SpecIdGeneration.disable()
+    }
+
+    @After
+    fun tearDown() {
+        SpecIdGeneration.enable()
+    }
+
     @Test
     fun testBackendTransform() {
         val geom0 = mapOf(

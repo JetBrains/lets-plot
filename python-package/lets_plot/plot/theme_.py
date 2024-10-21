@@ -42,9 +42,12 @@ def theme(*,
           legend_background=None,
           legend_text=None, legend_title=None,
           legend_position=None, legend_justification=None, legend_direction=None,
+          legend_margin=None,
+          legend_spacing=None, legend_spacing_x=None,legend_spacing_y=None,
           legend_key=None,
           legend_key_size=None, legend_key_width=None, legend_key_height=None,
           legend_key_spacing=None, legend_key_spacing_x=None, legend_key_spacing_y=None,
+          legend_box=None, legend_box_just=None, legend_box_spacing=None,
           # ToDo: other legend options...
 
           panel_background=None,
@@ -177,6 +180,22 @@ def theme(*,
         For string parameter the only possible value is 'center'.
     legend_direction : {'horizontal', 'vertical'}
         Layout of items in legends.
+    legend_margin : number or list of numbers
+        Margin around each legend.
+        The margin may be specified using a number or a list of numbers:
+
+        - a number or list of one number - the same margin it applied to all four sides;
+        - a list of two numbers - the first margin applies to the top and bottom, the second - to the left and right;
+        - a list of three numbers - the first margin applies to the top, the second - to the right and left, the third - to the bottom;
+        - a list of four numbers - the margins are applied to the top, right, bottom and left in that order.
+
+        It is acceptable to use None for any side; in this case, the default value for the legend margin side will be used.
+    legend_spacing : float
+        Spacing between legends.
+    legend_spacing_x : float
+         Spacing between legends in the horizontal direction, inherited from `legend_spacing`.
+    legend_spacing_y : float
+        Spacing between legends in the vertical direction, inherited from `legend_spacing`.
     legend_key : str or dict
         Background underneath legend keys.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -190,9 +209,15 @@ def theme(*,
     legend_key_spacing : float
         Spacing between legend keys.
     legend_key_spacing_x : float
-        Spacing in the horizontal direction, inherited from `legend_key_spacing`.
+        Spacing between legend keys in the horizontal direction, inherited from `legend_key_spacing`.
     legend_key_spacing_y : float
-        Spacing in the vertical direction, inherited from `legend_key_spacing`.
+        Spacing between legend keys in the vertical direction, inherited from `legend_key_spacing`.
+    legend_box : {'horizontal', 'vertical'}
+        Arrangement of multiple legends.
+    legend_box_just : {'left', 'right', 'bottom', 'top', 'center'}
+        Justification of each legend within the overall bounding box, when there are multiple legends.
+    legend_box_spacing : float
+        Spacing between plotting area and legend box.
     panel_background : str or dict
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
@@ -438,9 +463,13 @@ def element_rect(
         Border color.
     size : int
         Border size.
-    linetype : int or str
-        Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    linetype : int or str or list
+        Type of the line. Accepts the following values:
+
+        - Codes or names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
+        - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
+
         For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
@@ -485,9 +514,14 @@ def element_line(
         Line color.
     size : int
         Line size.
-    linetype : int or str
-        Type of the line.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    linetype : int or str or list
+        Type of the line. Accepts the following values:
+
+        - Codes or names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
+        - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
+
+        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

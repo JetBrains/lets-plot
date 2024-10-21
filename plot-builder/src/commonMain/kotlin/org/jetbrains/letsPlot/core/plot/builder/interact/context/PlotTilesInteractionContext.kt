@@ -20,7 +20,7 @@ internal class PlotTilesInteractionContext(
     override val decorationsLayer: SvgNode,
     override val eventsManager: EventsManager,
     val tiles: List<Pair<DoubleRectangle, PlotTile>>,
-    val dataSelectionStrategy: DataSelectionStrategy
+    private val dataSelectionStrategy: DataSelectionStrategy
 ) : InteractionContext {
 
     override fun findTarget(plotCoord: DoubleVector): InteractionTarget? {
@@ -28,6 +28,7 @@ internal class PlotTilesInteractionContext(
         val (geomBounds, tile) = target
         return object : InteractionTarget {
             override val geomBounds: DoubleRectangle = geomBounds
+            override val id: String? = tile.plotSpecId
 
             override fun applyViewport(
                 screenViewport: DoubleRectangle,

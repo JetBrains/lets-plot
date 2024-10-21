@@ -81,6 +81,7 @@ internal interface Symbolizer {
             myStyle.lineCap?.let { ctx.setLineCap(stringToLineCap(it)) }
             myStyle.lineJoin?.let { ctx.setLineJoin(stringToLineJoin(it)) }
             myStyle.lineDash?.let { ctx.setLineDash(it.toDoubleArray()) }
+            myStyle.lineDashOffset?.let(ctx::setLineDashOffset)
         }
     }
 

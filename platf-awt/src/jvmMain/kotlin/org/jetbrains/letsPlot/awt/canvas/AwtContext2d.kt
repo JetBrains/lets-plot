@@ -341,6 +341,14 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
+    override fun setLineDashOffset(lineDashOffset: Double) {
+        state.stroke = state.stroke.change(
+            dashPhase = lineDashOffset.toFloat()
+        )
+
+        graphics.stroke = state.stroke
+    }
+
     override fun measureText(str: String): Double {
         return graphics.glyphVector(str).visualBounds.width
     }

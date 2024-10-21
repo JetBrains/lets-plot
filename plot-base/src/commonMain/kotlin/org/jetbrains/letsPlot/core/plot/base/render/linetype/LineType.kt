@@ -9,4 +9,6 @@ interface LineType {
     val isSolid: Boolean
 
     val dashArray: List<Double>
+
+    val dashOffset: Double
 }

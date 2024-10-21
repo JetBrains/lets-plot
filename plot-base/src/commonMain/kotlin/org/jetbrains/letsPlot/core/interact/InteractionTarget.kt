@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 interface InteractionTarget {
     val geomBounds: DoubleRectangle
 
+    val id: String?
+
     // Apply new viewport over the current one.
     // Passing the geomBounds will result in the same viewport.
     // Viewport change is additive:

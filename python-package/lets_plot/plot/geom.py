@@ -301,7 +301,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     ----
@@ -472,7 +472,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -629,7 +629,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color for the confidence interval around the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of conditional mean line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
     Examples
@@ -1440,7 +1440,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - size : line width, default=0 (i.e. tiles outline initially is not visible).
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
-    - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of tile's border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1686,7 +1686,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1834,7 +1834,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -1971,7 +1971,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : size of mid-point.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - shape : shape of the mid-point, an integer from 0 to 25. For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : line width.
@@ -2099,7 +2099,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2227,7 +2227,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2530,7 +2530,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -2719,7 +2719,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -2877,7 +2877,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -2991,7 +2991,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3103,7 +3103,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3227,7 +3227,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -3392,7 +3392,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
 
     Examples
@@ -3621,7 +3621,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'ydensity' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -4030,7 +4030,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -4176,7 +4176,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -4303,7 +4303,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -4467,7 +4467,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
@@ -4669,7 +4669,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - weight : used by 'density2d' stat to compute weighted density.
 
     ----
@@ -5506,7 +5506,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -5626,7 +5626,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size : line width.
 
     Examples
@@ -5733,7 +5733,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line of border. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -5852,7 +5852,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -5981,7 +5981,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - fill : fill color. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : lines width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 
@@ -6154,7 +6154,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the segment start coordinate (usually equal to the size of the point object from which the segment starts to avoid overlapping with it).
     - size_end : offset from the segment end coordinate (usually equal to the size of the point object from which the segment ends to avoid overlapping with it).
     - stroke_start : offset from the segment start coordinate (usually equal to the stroke of the point object from which the segment starts to avoid overlapping with it).
@@ -6320,7 +6320,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
     - size_start : offset from the start coordinate (usually equal to the size of the point object from which the curve starts to avoid overlapping with it).
     - size_end : offset from the end coordinate (usually equal to the size of the point object from which the curve ends to avoid overlapping with it).
     - stroke_start : offset from the start coordinate (usually equal to the stroke of the point object from which the curve starts to avoid overlapping with it).
@@ -6460,7 +6460,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the line. For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
     - size : line width.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     Examples
     --------
@@ -7348,7 +7348,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
     - linewidth : stick width.
-    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+    - linetype : type of the stick line. Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'), a hex string (up to 8 digits for dash-gap lengths), or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...]. For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
 
     ----
 

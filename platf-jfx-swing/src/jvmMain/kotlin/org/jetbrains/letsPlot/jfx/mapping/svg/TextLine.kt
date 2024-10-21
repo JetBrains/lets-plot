@@ -6,13 +6,17 @@
 package org.jetbrains.letsPlot.jfx.mapping.svg
 
 import javafx.collections.ListChangeListener
+import javafx.event.EventHandler
 import javafx.geometry.Bounds
 import javafx.geometry.VPos
+import javafx.scene.Cursor
 import javafx.scene.layout.Region
 import javafx.scene.paint.Color
 import javafx.scene.text.*
+import java.awt.Desktop
+import java.awt.EventQueue
 
-// Manually positions text runs along the x-axis, supports super/subscript.
+// Manually positions text runs along the x-axis, supports super/subscript/hyperlinks.
 
 // Limitations:
 // Supports only a single line of text.
@@ -29,6 +33,8 @@ internal class TextLine : Region() {
         val fontScale: Double? = null,
         // NOTE: resets between runs, yet by standard it alters the baseline for the rest of the text
         val dy: Double? = null,
+        val href: String? = null,
+        val fill: Color? = null,
     )
 
     init {
@@ -40,18 +46,6 @@ internal class TextLine : Region() {
     }
 
     var content: List<TextRun> = emptyList()
-        set(value) {
-            field = value
-            rebuild()
-        }
-
-    var x: Double = 0.0
-        set(value) {
-            field = value
-            rebuild()
-        }
-
-    var y: Double = 0.0
         set(value) {
             field = value
             rebuild()
@@ -144,7 +138,7 @@ internal class TextLine : Region() {
 
         val texts = content.map(::textRunToTextFx)
 
-        val width = texts.sumOf { it.boundsInLocal.width }
+        val width = texts.sumOf { it.boundsInParent.width }
         val dx = when (textAlignment) {
             TextAlignment.RIGHT -> -width
             TextAlignment.CENTER -> -width / 2
@@ -165,11 +159,11 @@ internal class TextLine : Region() {
         }
 
         // Arrange runs one after another
-        var currentRunPosX = x
+        var currentRunPosX = 0.0
         texts.forEach { text ->
             text.x = currentRunPosX + dx
-            text.y += y + dy
-            currentRunPosX += text.boundsInLocal.width
+            text.y += dy
+            currentRunPosX += text.boundsInParent.width
         }
 
         children.clear()
@@ -180,8 +174,8 @@ internal class TextLine : Region() {
         val font = font ?: error("Font is not specified")
         val scaleFactor = textRun.fontScale ?: 1.0
 
-        val text = Text()
-        fill?.let { text.fill = it }
+        val text = if (textRun.href == null) Text() else HyperlinkText(textRun.href)
+        (textRun.fill ?: fill)?.let { text.fill = it }
         stroke?.let { text.stroke = it }
         strokeWidth?.let { text.strokeWidth = it }
         text.text = textRun.text
@@ -195,8 +189,7 @@ internal class TextLine : Region() {
             }
         }
 
-        val bounds = text.boundsInLocal
-        val lineHeight = bounds.height
+        val lineHeight = text.boundsInParent.height
 
         val dy = textRun.dy?.let { lineHeight * it } ?: 0.0
         val baseline = when (textRun.baselineShift) {
@@ -211,5 +204,40 @@ internal class TextLine : Region() {
 
     override fun toString(): String {
         return "TextLine(content=$content, fill=$fill, stroke=$stroke, font=$font, textOrigin=$textOrigin, textAlignment=$textAlignment)"
+    }
+}
+
+// Can't use javafx.scene.control.Hyperlink.
+// It has a different baseline, so, to align it with a Text the layoutY modification is needed.
+// But in this case MultiLineLabel (that uses TextLine internally) returns bounds larger than expected.
+// Lots of extra styling required to make a Hyperlink look like a regular text.
+// Another problem is that Hyperlink requires an extra frame to layout it properly, without it bounds is 0x0.
+// This is not compatible with tooltips - they should get the bounds immediately.
+// As a workaround hyperlink.graphic.boundingRectInLocal can be used, but this doesn't solve problem with layoutY and
+// incorrect bounds of MultiLineLabel.
+internal class HyperlinkText(
+    private var href: String? = null
+) : Text() {
+    private var sceneCursor: Cursor? = null
+
+    init {
+        onMouseClicked = EventHandler {
+            href?.let {
+                // On Linux, Desktop.browse() may hang the application.
+                // https://stackoverflow.com/questions/65852545/desktop-getdesktop-openfile-on-ubuntu-not-working
+                EventQueue.invokeLater {
+                    Desktop.getDesktop().browse(java.net.URI(it))
+                }
+            }
+        }
+
+        onMouseEntered = EventHandler {
+            sceneCursor = scene.cursor
+            scene.cursor = Cursor.HAND
+        }
+
+        onMouseExited = EventHandler {
+            scene.cursor = sceneCursor
+        }
     }
 }

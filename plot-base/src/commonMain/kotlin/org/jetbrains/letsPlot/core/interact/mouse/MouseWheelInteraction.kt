@@ -66,7 +66,6 @@ class MouseWheelInteraction(
 
     override fun dispose() {
         if (!disposed) {
-            println("MouseWheelInteraction dispose.")
             disposed = true
             _target = null
             reg.dispose()

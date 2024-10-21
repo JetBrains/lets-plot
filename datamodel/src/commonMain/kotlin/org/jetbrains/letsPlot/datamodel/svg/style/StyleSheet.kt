@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.datamodel.svg.style
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle.Companion.NONE_COLOR
 
 
 class StyleSheet constructor(
@@ -21,7 +22,7 @@ class StyleSheet constructor(
                 family = defaultFamily,
                 face = UNDEFINED_FONT_FACE,
                 size = DEFAULT_FONT_SIZE,
-                color = UNDEFINED_FONT_COLOR
+                color = NONE_COLOR
             )
     }
 
@@ -46,7 +47,6 @@ class StyleSheet constructor(
 
     companion object {
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
-        val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
         private const val DEFAULT_FONT_SIZE = 15.0
 
         fun FontFace.toCSS(): String {
@@ -55,12 +55,12 @@ class StyleSheet constructor(
         }
 
         private fun TextStyle.toCSS(): String {
-            return """
-                |   fill: ${color.toHexColor()};
-                |   font-family: ${family};
-                |   font-size: ${size}px;
-                |   ${face.toCSS()}   
-                """.trimMargin()
+            val css = StringBuilder()
+            css.appendLine("fill: ${color.toHexColor()};")
+            css.append(face.toCSS())
+            if (!isNoneFamily) css.appendLine("font-family: $family;")
+            if (!isNoneSize) css.appendLine("font-size: ${size}px;")
+            return css.toString()
         }
 
         // .className text : {

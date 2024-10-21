@@ -103,7 +103,6 @@ internal class PlotToolbox(
 
         protected val regs = CompositeRegistration()
         override fun dispose() {
-            println("Tool dispose.")
             regs.dispose()
         }
     }

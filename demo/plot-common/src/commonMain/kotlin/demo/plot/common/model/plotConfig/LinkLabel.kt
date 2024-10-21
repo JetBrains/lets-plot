@@ -14,6 +14,7 @@ class LinkLabel {
             twoLinks(),
             titles(),
             facets(),
+            tooltip()
         )
     }
 
@@ -160,7 +161,7 @@ class LinkLabel {
                   "geom": "label",
                   "mapping": {
                     "y": [0.0],
-                    "label": ["This is a <a href=\"https://lets-plot.org/\">Lets-Plot</a>!"]
+                    "label": ["This is a <a href=\"https://lets-plot.org/\">Lets-Plot</a>!\nSay HI!"]
                   },
                   "data_meta": {},
                   "label_padding": 0.0,
@@ -174,4 +175,44 @@ class LinkLabel {
 
         return parsePlotSpec(spec)
     }
+
+    private fun tooltip(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "mapping": {},
+              "data_meta": {},
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                    "geom": "rect",
+                    "xmin": -5,
+                    "xmax": 5,
+                    "ymin": -5,
+                    "ymax": 5,
+                    "fill": "red",
+                    "alpha": 0.5
+                },
+                {
+                  "geom": "label",
+                  "mapping": {},
+                  "tooltips": {
+                    "formats": [],
+                    "lines": [
+                      "First line\nSecond Line\nThird Line\nLink to the <a href=\"https://lets-plot.org/python/pages/gallery.html\">Lets-Plot gallery</a> inside a tooltip"
+                    ]
+                  },
+                  "data_meta": {},
+                  "x": 0.0,
+                  "y": 0.0,
+                  "label": "Hey"
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
 }

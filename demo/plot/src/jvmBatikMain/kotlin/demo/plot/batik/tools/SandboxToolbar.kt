@@ -40,7 +40,6 @@ internal class SandboxToolbar(
         this.add(resetButton())
 
         figureModel.onToolEvent { event ->
-            println("Tool event: $event")
             controller.handleToolFeedback(event)
         }
     }

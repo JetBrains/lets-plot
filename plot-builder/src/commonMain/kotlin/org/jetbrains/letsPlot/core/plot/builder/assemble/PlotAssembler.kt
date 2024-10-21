@@ -40,6 +40,7 @@ class PlotAssembler constructor(
     subtitle: String? = null,
     caption: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
+    private val plotSpecId: String?,
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
@@ -156,6 +157,7 @@ class PlotAssembler constructor(
             frameProviderByTile = frameProviderByTile,
             coordProvider = geomTiles.coordProvider,
             interactionsEnabled = interactionsEnabled,
+            plotSpecId = plotSpecId,
             theme = theme,
             styleSheet = styleSheet,
             plotContext = plotContext
@@ -183,7 +185,8 @@ class PlotAssembler constructor(
                 PlotFacets.UNDEFINED,
                 xAxisPosition = xAxisPosition,
                 yAxisPosition = yAxisPosition,
-                theme = theme
+                theme = theme,
+                plotSpecId = null
             )
         }
 

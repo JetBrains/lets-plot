@@ -40,6 +40,7 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
                 val strokeDashArray = (value as String).split(",").map { it.toDouble() }
                 target.strokeDashArray.addAll(strokeDashArray)
             }
+            SvgConstants.SVG_STROKE_DASHOFFSET_ATTRIBUTE -> target.strokeDashOffset = asDouble(value)
             else -> super.setAttribute(target, name, value)
         }
     }

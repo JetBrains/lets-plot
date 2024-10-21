@@ -7,6 +7,10 @@ package org.jetbrains.letsPlot.commons.intern.json
 
 
 object JsonSupport {
+    fun parse(jsonString: String): Any? {
+        return JsonParser(jsonString).parseJson()
+    }
+
     fun parseJson(jsonString: String): MutableMap<String, Any?> {
         @Suppress("UNCHECKED_CAST")
         return JsonParser(jsonString).parseJson() as MutableMap<String, Any?>

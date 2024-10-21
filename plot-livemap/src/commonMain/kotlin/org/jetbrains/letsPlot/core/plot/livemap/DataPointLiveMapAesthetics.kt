@@ -144,6 +144,17 @@ internal class DataPointLiveMapAesthetics {
             return lineType.dashArray.map { it * width }
         }
 
+    val lineDashOffset: Double
+        get() {
+            val lineType = myP.lineType()
+
+            if (lineType.isSolid) {
+                return 0.0
+            }
+            val width = AestheticsUtil.strokeWidth(myP)
+            return lineType.dashOffset * width
+        }
+
     val geoObject
         get(): GeoObject? {
             if (myP.mapId() != DefaultNaValue[MAP_ID]) {

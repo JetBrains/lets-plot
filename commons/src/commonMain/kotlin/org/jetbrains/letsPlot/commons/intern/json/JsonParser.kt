@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.json
 
-class JsonParser(
+internal class JsonParser(
     private val json: String
 ) {
     fun parseJson(): Any? {

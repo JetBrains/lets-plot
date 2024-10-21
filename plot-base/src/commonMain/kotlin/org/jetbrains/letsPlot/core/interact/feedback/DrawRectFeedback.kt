@@ -22,7 +22,7 @@ import kotlin.math.abs
 
 class DrawRectFeedback(
     private val centerStart: Boolean,
-    private val onCompleted: ((dataBounds: DoubleRectangle, flipped: Boolean, SelectionMode) -> Unit)
+    private val onCompleted: ((targetId: String?, dataBounds: DoubleRectangle, flipped: Boolean, SelectionMode) -> Unit)
 ) : ToolFeedback {
 
     private var selector: Selector = UnknownSelector()
@@ -110,7 +110,7 @@ class DrawRectFeedback(
 
                 if (selector.isAcceptable(selection)) {
                     val (dataBounds, flipped) = target.applyViewport(selection, ctx)
-                    onCompleted(dataBounds, flipped, selector.mode)
+                    onCompleted(target.id, dataBounds, flipped, selector.mode)
                 }
 
                 selector = UnknownSelector()

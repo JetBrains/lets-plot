@@ -6,7 +6,7 @@
  - Linux Ubuntu 20.04+
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
- - Python 3.8-3.12
+ - Python 3.8-3.13
  - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](../tools/README.md)   
@@ -28,7 +28,7 @@ For `RC` skip this step.
  - move new release information from `future_changes.md` to `CHANGELOG.md`
  - clean up `future_changes.md` leaving the template.
 
-### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
+### 2. Set release or pre-release version in the properties (remove _"-SNAPSHOT"_ and _"dev"_): 
 
  - `version` in `build.gradle` (`X.X.X` or `X.X.X-rcN`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X` or `X.X.XrcN`)
@@ -43,9 +43,9 @@ For `RC` skip this step.
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
  
-### 5. Prepare to the next dev cycle: increment versions and add _"-alpha1"_ and _"dev1"_:
+### 5. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev1"_:
          
- - `version` in `build.gradle` (`X.X.X-alphaN`)
+ - `version` in `build.gradle` (`X.X.X-SNAPSHOT`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
 ### 6. Push new dev version to GitHub
@@ -53,6 +53,7 @@ For `RC` skip this step.
 ## Build the project for publishing
 
 **The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**
+Put `local.properties` in the project root. See `local.properties.template` for an example.
 
 ### 1. Checkout repository in a new directory: 
 
@@ -61,7 +62,7 @@ For `RC` skip this step.
 ### 2. Prepare config file with Python paths for release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.8 to 3.12.
+each Python version: from 3.8 to 3.13.
 For **Linux**, it is enough to point one Python version.
 
 **Example:**
@@ -98,15 +99,14 @@ python .\build_release.py ..\release_pythons.yml
 ### 4. Check Python artifacts
 
 The directory `python-package/dist` must contain Python release wheels:
- - Windows: `x64` wheels for Python versions 3.8-3.12
- - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.8-3.12
- - Mac: `x64` and `arm64` wheels for 3.8-3.12
+ - Windows: `x64` wheels for Python versions 3.8-3.13
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.8-3.13
+ - Mac: `x64` and `arm64` wheels for 3.8-3.13
 
 
 ## Publish artifacts
-
-Put `local.properties` in the project root. See `local.properties.template` for an example.   
-Fill `pypi` and `sonatype` sections with credentials.
+ 
+Fill `pypi` and `sonatype` sections with credentials in the `local.properties` file.
 
 ### 1. Python wheels (PyPi):
 

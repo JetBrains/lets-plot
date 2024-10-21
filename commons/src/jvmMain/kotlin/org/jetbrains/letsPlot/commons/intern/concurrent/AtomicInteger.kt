@@ -7,10 +7,14 @@ package org.jetbrains.letsPlot.commons.intern.concurrent
 
 import java.util.concurrent.atomic.AtomicInteger
 
-actual class AtomicInteger actual constructor(int: Int) {
-    private val value: AtomicInteger = AtomicInteger(int)
+actual class AtomicInteger actual constructor(initialValue: Int) {
+    private val value: AtomicInteger = AtomicInteger(initialValue)
 
     actual fun decrementAndGet(): Int {
         return value.decrementAndGet()
+    }
+
+    actual fun incrementAndGet(): Int {
+        return value.incrementAndGet()
     }
 }
