@@ -140,6 +140,7 @@ def _carto_tiles(tileset, cdn):
         if cdn == 'carto':
             base_url = "https://{{s}}.basemaps.cartocdn.com/rastertiles/{tileset}/{{z}}/{{x}}/{{y}}{hi_res}.png"
         elif cdn == 'fastly':
+            # TODO: remove this branch in future releases
             base_url = "https://cartocdn_{{s}}.global.ssl.fastly.net/{tileset}/{{z}}/{{x}}/{{y}}{hi_res}.png"
         else:
             raise ValueError("Unknown carto cdn: {}. Expected 'carto' or 'fastly'.".format(cdn))
@@ -267,85 +268,19 @@ Examples
 
 CARTO_MIDNIGHT_COMMANDER, CARTO_MIDNIGHT_COMMANDER_HIRES = _carto_tiles('base-midnight', cdn='fastly')
 """
-CARTO tiles, midnight commander theme.
-
-Examples
---------
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_MIDNIGHT_COMMANDER)
-
-|
-
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_MIDNIGHT_COMMANDER_HIRES)
+The tileset is deprecated and will be removed in future releases.
 
 """
 
 CARTO_ANTIQUE, CARTO_ANTIQUE_HIRES = _carto_tiles('base-antique', cdn='fastly')
 """
-CARTO tiles, antique theme.
-
-Examples
---------
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_ANTIQUE)
-
-|
-
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_ANTIQUE_HIRES)
+The tileset is deprecated and will be removed in future releases.
 
 """
 
 CARTO_FLAT_BLUE, CARTO_FLAT_BLUE_HIRES = _carto_tiles('base-flatblue', cdn='fastly')
 """
-CARTO tiles, flat blue theme.
-
-Examples
---------
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_FLAT_BLUE)
-
-|
-
-.. jupyter-execute::
-    :linenos:
-    :emphasize-lines: 4
-
-    from lets_plot import *
-    from lets_plot import tilesets
-    LetsPlot.setup_html()
-    ggplot() + geom_livemap(tiles=tilesets.CARTO_FLAT_BLUE_HIRES)
+The tileset is deprecated and will be removed in future releases.
 
 """
 
