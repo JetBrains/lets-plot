@@ -17,7 +17,7 @@ class LatexElements {
                 """-2·\(3^{-13}\) + 7""",
                 """a·\(b^{c \quad d \, e \: f \  g \qquad h} + A\)""",
                 """A\(^{-B \cdot C}\)""",
-                """\((\alpha^{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
+                """\((\alpha^{-\infty \gamma} - 1) / (\theta + \eta ) \)""",
             )),
             getPlotSpec("""Index: \\(a_b\\)""", listOf(
                 """\(2_a x_2\)""",
@@ -26,7 +26,7 @@ class LatexElements {
                 """-2·\(3_{-13}\) + 7""",
                 """a·\(b_{c \quad d \, e \: f \  g \qquad h} + A\)""",
                 """A\(_{-B \cdot C}\)""",
-                """\((\alpha_{-\Delta \gamma} - 1) / (\theta + \eta ) \)""",
+                """\((\alpha_{-\infty \gamma} - 1) / (\theta + \eta ) \)""",
             )),
             getPlotSpec("Symbols", listOf(
                 """\(\alpha\) and \(\Alpha\)""",
