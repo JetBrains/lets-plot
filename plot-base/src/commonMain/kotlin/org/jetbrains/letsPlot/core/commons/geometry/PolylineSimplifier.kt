@@ -93,7 +93,12 @@ class PolylineSimplifier private constructor(
         }
 
         fun douglasPeucker(points: List<DoubleVector>, threshold: Double): List<DoubleVector> {
-            return douglasPeucker(points).setWeightLimit(threshold).points.single()
+            val simplifiedPath = douglasPeucker(points).setWeightLimit(threshold).points
+            if (simplifiedPath.size != 1) {
+                println("PolylineSimplifier: expected a single path, but got ${simplifiedPath.size}")
+            }
+
+            return simplifiedPath.firstOrNull() ?: emptyList()
         }
 
         fun douglasPeuckerMultipath(points: List<List<DoubleVector>>, threshold: Double): List<List<DoubleVector>> {

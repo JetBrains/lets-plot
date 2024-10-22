@@ -130,7 +130,13 @@ class RectanglesHelper(
                     ) { toClient(it, p) }
 
                     // Resampling of a tiny rectangle still can produce a very small polygon - simplify it.
-                    val simplified = PolylineSimplifier.douglasPeucker(polyRect).setWeightLimit(PolylineSimplifier.DOUGLAS_PEUCKER_PIXEL_THRESHOLD).points.single()
+                    val simplified = PolylineSimplifier.douglasPeucker(polyRect).setWeightLimit(PolylineSimplifier.DOUGLAS_PEUCKER_PIXEL_THRESHOLD).points.let {
+                        if (it.size != 1) {
+                            println("RectanglesHelper: expected a single path, but got ${it.size}")
+                        }
+
+                        it.firstOrNull() ?: emptyList()
+                    }
 
                     onGeometry(p, null, simplified)
 

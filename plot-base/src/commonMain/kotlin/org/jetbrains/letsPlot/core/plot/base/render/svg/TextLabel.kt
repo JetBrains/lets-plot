@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 class TextLabel(text: String) : SvgComponent() {
-    private val myText: SvgTextElement = RichText.toSvg(text).single()
+    private val myText: SvgTextElement
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -23,6 +23,9 @@ class TextLabel(text: String) : SvgComponent() {
     private var myFontStyle: String? = null
 
     init {
+        // TextLabel is a single-line text element
+        val singleLineText = text.replace("\n", " ")
+        myText = RichText.toSvg(singleLineText).firstOrNull() ?: SvgTextElement()
         rootGroup.children().add(myText)
     }
 
