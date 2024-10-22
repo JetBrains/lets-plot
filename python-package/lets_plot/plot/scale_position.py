@@ -65,7 +65,7 @@ def scale_x_continuous(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -149,7 +149,7 @@ def scale_y_continuous(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -230,7 +230,7 @@ def scale_x_log10(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -307,7 +307,7 @@ def scale_y_log10(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -384,7 +384,7 @@ def scale_x_log2(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -461,7 +461,7 @@ def scale_y_log2(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -538,7 +538,7 @@ def scale_x_reverse(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -615,7 +615,7 @@ def scale_y_reverse(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -699,7 +699,7 @@ def scale_x_discrete(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -784,7 +784,7 @@ def scale_x_discrete_reversed(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -868,7 +868,7 @@ def scale_y_discrete(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -953,7 +953,7 @@ def scale_y_discrete_reversed(name=None, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -1041,7 +1041,7 @@ def scale_x_datetime(name=None, *,
         - '%B %Y' -> 'August 2019'
         - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 
@@ -1128,7 +1128,7 @@ def scale_y_datetime(name=None, *,
         - '%B %Y' -> 'August 2019'
         - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
         The position of the axis:
 

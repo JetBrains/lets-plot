@@ -54,7 +54,7 @@ def scale_identity(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -124,7 +124,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -133,11 +133,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, lablim=None, limit
 
     Notes
     -----
-    Input data expected: list of strings containing:
-
-    - names of colors (e.g. 'green'),
-    - hex codes of colors (e.g. 'x00ff00'),
-    - css colors (e.g. 'rgb(0, 255, 0)').
+    For more info about input data format, see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
 
     Examples
     --------
@@ -197,7 +193,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -206,11 +202,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, lablim=None, limits
 
     Notes
     -----
-    Input data expected: list of strings containing:
-
-    - names of colors (e.g. 'green'),
-    - hex codes of colors (e.g. 'x00ff00'),
-    - css colors (e.g. 'rgb(0, 255, 0)').
+    For more info about input data format, see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
 
     Examples
     --------
@@ -270,7 +262,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -343,7 +335,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, lablim=None, li
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -419,7 +411,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, lablim=None, limit
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -489,7 +481,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, lablim=None, limits
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -559,7 +551,7 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, lablim=None, l
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -627,7 +619,7 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, lablim=None, limi
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------

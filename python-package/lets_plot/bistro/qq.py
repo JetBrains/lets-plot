@@ -66,20 +66,20 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         "box : tr : .05, dens : bl".
     color : str
         Color of a points.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     fill : str
         Color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     alpha : float, default=0.5
         Transparency level of points. Accept values between 0 and 1.
     size : float, default=3.0
         Size of the points.
     shape : int
         Shape of the points, an integer from 0 to 25.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#point-shapes.
+        For more info see `Point Shapes <https://lets-plot.org/python/pages/aesthetics.html#point-shapes>`__.
     line_color : str, default='#FF0000'
         Color of the fitting line.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     line_size : float, default=0.75
         Width of the fitting line.
     linetype : int or str or list
@@ -87,7 +87,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'),
         a hex string (up to 8 digits for dash-gap lengths),
         or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...].
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
 
     Returns
     -------
@@ -101,6 +101,11 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
 
     If the two distributions being compared are similar, the points in the Q-Q plot
     will approximately lie on the straight line.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
