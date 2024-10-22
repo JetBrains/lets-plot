@@ -356,7 +356,7 @@ class CorrPlotOptionsBuilder private constructor(
                 fillScaleOptions
             )
             coord = coord {
-                name = Option.CoordName.FIXED
+                name = CoordOptions.CoordName.FIXED
                 xLim = Pair(-0.6, plotX.size - 1 + 0.6)
                 yLim = Pair(-0.6, plotY.size - 1 + 0.6)
             }

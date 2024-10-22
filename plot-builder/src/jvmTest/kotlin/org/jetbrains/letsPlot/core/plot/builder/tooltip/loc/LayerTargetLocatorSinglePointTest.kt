@@ -8,9 +8,9 @@ package org.jetbrains.letsPlot.core.plot.builder.tooltip.loc
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertEmpty
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.assertObjects
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.createLocator
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.offsetX
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.offsetY
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.point
@@ -18,6 +18,27 @@ import org.jetbrains.letsPlot.core.plot.builder.tooltip.TestUtil.pointTarget
 import kotlin.test.Test
 
 class LayerTargetLocatorSinglePointTest {
+
+    @Test
+    fun `issue1214 - coord_polar geom_point tooltips should take in account point size`() {
+        val pointKey = 1
+        val pointCenter = 50.0
+        val pointRadius = 20.0
+
+        val locator = createLocator(
+            LookupStrategy.HOVER,
+            LookupSpace.XY,
+            pointTarget(pointKey, point(pointCenter, pointCenter), pointRadius)
+        )
+
+        val locatorExtraDistance = 5.1 // see POINT_AREA_EPSILON
+
+        // exceeds the radius
+        assertEmpty(locator, point(pointCenter - pointRadius - locatorExtraDistance - 1.0, pointCenter))
+
+        // within the radius
+        assertObjects(locator, point(pointCenter - pointRadius - locatorExtraDistance + 1.0, pointCenter), pointKey)
+    }
 
     @Test
     fun hoverXy() {
@@ -55,7 +76,7 @@ class LayerTargetLocatorSinglePointTest {
     }
 
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {
-        return TestUtil.createLocator(
+        return createLocator(
             strategy, space,
             TARGET
         )

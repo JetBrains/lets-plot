@@ -6,13 +6,12 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.spec.getMaps
-import kotlin.collections.contains
 
 object VegaConfig {
     fun isVegaLiteSpec(opts: Map<String, Any>): Boolean {
-        if (Option.DATA !in opts) return false
-        if (Option.LAYER !in opts && Option.MARK !in opts) return false
-        if (Option.LAYER in opts && opts.getMaps(Option.LAYER)!!.any { Option.MARK !in it }) return false
+        if (VegaOption.DATA !in opts) return false
+        if (VegaOption.LAYER !in opts && VegaOption.MARK !in opts) return false
+        if (VegaOption.LAYER in opts && opts.getMaps(VegaOption.LAYER)!!.any { VegaOption.MARK !in it }) return false
 
         return true
     }
@@ -27,9 +26,9 @@ object VegaConfig {
         }
 
         return when {
-            Option.LAYER in opts -> VegaPlotKind.MULTI_LAYER
-            Option.MARK in opts -> VegaPlotKind.SINGLE_LAYER
-            Option.FACET in opts || Option.REPEAT in opts -> VegaPlotKind.FACETED
+            VegaOption.LAYER in opts -> VegaPlotKind.MULTI_LAYER
+            VegaOption.MARK in opts -> VegaPlotKind.SINGLE_LAYER
+            VegaOption.FACET in opts || VegaOption.REPEAT in opts -> VegaPlotKind.FACETED
             else -> throw IllegalArgumentException("VegaLite: Unsupported plot kind")
         }
     }

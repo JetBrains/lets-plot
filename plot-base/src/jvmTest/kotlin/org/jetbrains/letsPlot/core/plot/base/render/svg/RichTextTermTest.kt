@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
@@ -80,6 +81,11 @@ class RichTextTermTest {
             when (item) {
                 is SvgTextNode -> listOf(item.textContent().get())
                 is SvgTSpanElement -> item.children().map { (it as SvgTextNode).textContent().get() }
+                is SvgAElement -> item.children().map { aChild ->
+                    (aChild as SvgTSpanElement).children().single().let { tSpanChild ->
+                        (tSpanChild as SvgTextNode).textContent().get()
+                    }
+                }
                 else -> error("Unexpected element type")
             }
         }

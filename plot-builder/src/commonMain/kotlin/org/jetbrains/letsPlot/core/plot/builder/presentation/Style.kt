@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.plot.base.render.svg.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
@@ -88,6 +90,13 @@ object Style {
             PLOT_TITLE to ts(theme.plot().titleStyle()),
             PLOT_SUBTITLE to ts(theme.plot().subtitleStyle()),
             PLOT_CAPTION to ts(theme.plot().captionStyle()),
+
+            RichText.HYPERLINK_ELEMENT_CLASS to TextStyle(
+                color = theme.colors().brush(),
+                family = TextStyle.NONE_FAMILY,
+                size = TextStyle.NONE_SIZE,
+                face = FontFace.NORMAL,
+            ),
 
             LEGEND_TITLE to ts(theme.legend().titleStyle()),
             LEGEND_ITEM to ts(theme.legend().textStyle()),

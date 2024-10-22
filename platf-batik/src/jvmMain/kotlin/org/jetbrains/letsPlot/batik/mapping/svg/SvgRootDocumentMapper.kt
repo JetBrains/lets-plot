@@ -5,12 +5,13 @@
 
 package org.jetbrains.letsPlot.batik.mapping.svg
 
-import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
-import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.apache.batik.anim.dom.SVGDOMImplementation
 import org.apache.batik.anim.dom.SVGOMDocument
 import org.apache.batik.anim.dom.SVGOMSVGElement
+import org.apache.batik.util.ParsedURL
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, SVGOMDocument>(
     source,
@@ -21,7 +22,12 @@ class SvgRootDocumentMapper(source: SvgSvgElement) : Mapper<SvgSvgElement, SVGOM
         private fun createDocument(): SVGOMDocument {
             val impl = SVGDOMImplementation.getDOMImplementation()
             val svgNS = SVGDOMImplementation.SVG_NAMESPACE_URI
-            return impl.createDocument(svgNS, "svg", null) as SVGOMDocument
+            val svgDocument = impl.createDocument(svgNS, "svg", null) as SVGOMDocument
+
+            // to avoid NPE on link click:
+            // java.lang.NullPointerException: Cannot read field "data" because "other" is null
+            svgDocument.parsedURL = ParsedURL("")
+            return svgDocument
         }
     }
 

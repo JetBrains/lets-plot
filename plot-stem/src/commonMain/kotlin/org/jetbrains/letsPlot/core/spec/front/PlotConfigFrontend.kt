@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideKey
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GuideOptionsList
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Plot.GUIDES
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
@@ -27,6 +28,7 @@ class PlotConfigFrontend private constructor(
     isClientSide = true
 ) {
 
+    val specId: String? = opts[Option.Plot.SPEC_ID] as? String
     internal val guideOptionsMap: Map<GuideKey, GuideOptionsList>
 
     internal val xAxisPosition: AxisPosition

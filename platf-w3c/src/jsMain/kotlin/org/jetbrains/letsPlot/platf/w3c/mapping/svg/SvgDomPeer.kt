@@ -85,10 +85,10 @@ class SvgDomPeer : SvgPlatformPeer {
     }
 
     override fun invertTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector =
-            transformCoordinates(relative, point, true)
+        transformCoordinates(relative, point, true)
 
     override fun applyTransform(relative: SvgLocatable, point: DoubleVector): DoubleVector =
-            transformCoordinates(relative, point, false)
+        transformCoordinates(relative, point, false)
 
     override fun getBBox(element: SvgLocatable): DoubleRectangle {
         ensureSourceRegistered(element as SvgNode)

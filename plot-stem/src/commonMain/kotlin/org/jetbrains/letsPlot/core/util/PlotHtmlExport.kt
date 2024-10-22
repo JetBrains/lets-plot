@@ -6,13 +6,19 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
-import kotlin.math.round
+import kotlin.math.floor
 
 object PlotHtmlExport {
     /**
+     * Generates HTML for both:
+     * - exporting to file
+     * - cell output for notebooks which wrap the output cell content in an iframe.
+     *
      * @param plotSpec Raw specification of a plot or GGBunch.
      * @param scriptUrl A URL to load the Lets-plot JS library from.
      * @param iFrame Whether to wrap HTML in IFrame
@@ -26,10 +32,23 @@ object PlotHtmlExport {
         plotSize: DoubleVector? = null
     ): String {
 
+        val fixedSizeQ = if (iFrame) {
+            // Use fixed sizing when in iframe
+            plotSize ?: preferredPlotSizeFromRawSpec(plotSpec) ?: DEF_PLOT_SIZE
+        } else {
+            null
+        }?.let {
+            DoubleVector(
+                floor(it.x),
+                floor(it.y)
+            )
+        }
+
+
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
         val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(
             plotSpec,
-            plotSize,
+            size = fixedSizeQ,
             removeComputationMessages = true,
             logComputationMessages = true
         )
@@ -52,14 +71,20 @@ object PlotHtmlExport {
         """.trimMargin()
 
         return if (iFrame) {
+            val frameHeight = fixedSizeQ!!.y.toInt().let {
+                if(PlotConfigUtil.containsToolbar(plotSpec)) {
+                    // adjust for toolbar height
+                    it + 33  // The expected height of toolbar, see: DefaultToolbarJs
+                } else {
+                    it
+                }
+            }
+
             val attributes = ArrayList<String>()
             attributes.add("src='about:blank'")
             attributes.add("style='border:none !important;'")
-            val preferredSize = preferredPlotSizeFromRawSpec(plotSpec, plotSize)
-            if (preferredSize != null) {
-                attributes.add("width='${round(preferredSize.x + 0.5).toInt()}'")
-                attributes.add("height='${round(preferredSize.y + 0.5).toInt()}'")
-            }
+            attributes.add("width='${fixedSizeQ.x.toInt()}'")
+            attributes.add("height='$frameHeight'")
             attributes.add("srcdoc=\"${escapeHtmlAttr(html)}\"")
 
             """
@@ -79,8 +104,8 @@ object PlotHtmlExport {
 
     private fun preferredPlotSizeFromRawSpec(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector?
     ): DoubleVector? {
+
         try {
             @Suppress("NAME_SHADOWING")
             val plotSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
@@ -93,7 +118,8 @@ object PlotHtmlExport {
                 FigKind.SUBPLOTS_SPEC -> {
                     val config = PlotConfigFrontend.create(plotSpec, containerTheme = null) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
-                        plotSpec, plotSize,
+                        plotSpec,
+                        plotSize = null,
                         plotMaxWidth = null,
                         plotPreferredWidth = null,
                         config.facets, config.containsLiveMap

@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.batik.mapping.svg
 
-import org.jetbrains.letsPlot.commons.event.Button
-import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -83,6 +83,7 @@ internal object Utils {
             is SvgDefsElement -> SVGOMDefsElement(null, myDoc)
             is SvgClipPathElement -> SVGOMClipPathElement(null, myDoc)
             is SvgImageElement -> SVGOMImageElement(null, myDoc)
+            is SvgAElement -> SVGOMAElement(null, myDoc)
             else -> throw IllegalStateException("Unsupported SvgElement $source")
         }
     }

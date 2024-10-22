@@ -14,6 +14,7 @@ class RetainableComponents<T : SvgComponent>(
     private val parent: SvgNode
 ) {
     private val components: MutableList<T> = mutableListOf()
+    val size get() = components.size
 
     fun provide(requestCount: Int): List<T> {
         (components.size - requestCount).let { itemsDelta ->

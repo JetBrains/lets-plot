@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.PLOT
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.junit.After
+import org.junit.Before
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
@@ -23,6 +25,15 @@ class DataVectorsTransformTest(
     private val myExpected: Map<String, Any>,
     private val myIdentityComparison: Boolean
 ) {
+    @Before
+    fun setUp() {
+        SpecIdGeneration.disable()
+    }
+
+    @After
+    fun tearDown() {
+        SpecIdGeneration.enable()
+    }
 
     @Test
     fun transformed() {

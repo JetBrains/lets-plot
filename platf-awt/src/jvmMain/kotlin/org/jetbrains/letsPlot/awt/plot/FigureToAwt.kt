@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
+import org.jetbrains.letsPlot.core.plot.builder.interact.CompositeToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
@@ -104,17 +105,22 @@ internal class FigureToAwt(
         //
 
         val elementJComponents = ArrayList<JComponent>()
+        val elementToolEventDispatchers = ArrayList<ToolEventDispatcher>()
         for (element in svgRoot.elements) {
-            if (element is PlotSvgRoot) {
-                val comp = processPlotFigure(element)
-                comp.bounds = toJBounds(element.bounds)
-                elementJComponents.add(comp)
+            val comp = if (element is PlotSvgRoot) {
+                processPlotFigure(element)
             } else {
-                val comp = processCompositeFigure(element as CompositeFigureSvgRoot)
-                comp.bounds = toJBounds(element.bounds)
-                elementJComponents.add(comp)
+                processCompositeFigure(element as CompositeFigureSvgRoot)
+            }
+            comp.bounds = toJBounds(element.bounds)
+            elementJComponents.add(comp)
+            (comp.getClientProperty(ToolEventDispatcher::class) as? ToolEventDispatcher)?.let {
+                elementToolEventDispatchers.add(it)
             }
         }
+
+        val toolEventDispatcher = CompositeToolEventDispatcher(elementToolEventDispatchers)
+        rootJPanel.putClientProperty(ToolEventDispatcher::class, toolEventDispatcher)
 
         elementJComponents.forEach {
 //            rootJPanel.add(it)   // Do not!!!
@@ -136,7 +142,6 @@ internal class FigureToAwt(
 
         return if (svgRoot.isLiveMap) {
             AwtLiveMapPanel(
-//                plotContainer,
                 svgRoot.liveMapFigures,
                 plotComponent,
                 executor,

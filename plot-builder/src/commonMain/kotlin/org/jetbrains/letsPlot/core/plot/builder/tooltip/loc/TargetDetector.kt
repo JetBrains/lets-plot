@@ -104,19 +104,19 @@ internal class TargetDetector(
             LookupSpace.NONE -> false
             LookupSpace.X -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> false
-                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.x(), cursorCoord.x, POINT_AREA_EPSILON)
+                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.x(), cursorCoord.x, pointProjection.radius + POINT_AREA_EPSILON)
                 LookupStrategy.NEAREST -> closestPointChecker.check(DoubleVector(pointProjection.x(), 0.0))
             }
 
             LookupSpace.Y -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> false
-                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.y(), cursorCoord.y, POINT_AREA_EPSILON)
+                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.y(), cursorCoord.y, pointProjection.radius + POINT_AREA_EPSILON)
                 LookupStrategy.NEAREST -> closestPointChecker.check(DoubleVector(0.0, pointProjection.y()))
             }
 
             LookupSpace.XY -> when (locatorLookupStrategy) {
                 LookupStrategy.NONE -> false
-                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.xy(), cursorCoord, POINT_AREA_EPSILON)
+                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.xy(), cursorCoord, pointProjection.radius + POINT_AREA_EPSILON)
                 LookupStrategy.NEAREST -> closestPointChecker.check(pointProjection.xy())
             }
         }

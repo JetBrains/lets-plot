@@ -56,7 +56,6 @@ class SandboxToolbarJs() {
         this.figureModel = figure
         figure.onToolEvent { e: dynamic ->
             val event = dynamicObjectToMap(e)
-            println("Tool event: $event")
             controller.handleToolFeedback(event)
         }
     }

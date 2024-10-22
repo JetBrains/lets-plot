@@ -16,8 +16,11 @@ import kotlin.math.abs
 
 class PanGeomFeedback(
     private val onCompleted: ((
-        dataBounds: DoubleRectangle, flipped: Boolean, PanningMode
-    ) -> Unit) = { _, _, _ -> println("PanGeomFeedback complete.") },
+        targetId: String?,
+        dataBounds: DoubleRectangle,
+        flipped: Boolean,
+        mode: PanningMode
+    ) -> Unit)
 ) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
@@ -61,7 +64,6 @@ class PanGeomFeedback(
                 }
             },
             onCompleted = {
-                println("PanGeomFeedback complete.")
                 val (target, _, _, dragDelta) = it
 
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
@@ -71,11 +73,10 @@ class PanGeomFeedback(
 
                 panningMode?.let { pm ->
                     panningMode = null
-                    onCompleted(dataBounds, flipped, pm)
+                    onCompleted(target.id, dataBounds, flipped, pm)
                 }
             },
             onAborted = {
-                println("PanGeomFeedback abort.")
                 it.reset()
                 // ToDo: ...
             }
@@ -83,7 +84,6 @@ class PanGeomFeedback(
 
         return object : Disposable {
             override fun dispose() {
-                println("PanGeomFeedback dispose.")
                 interaction.dispose()
             }
         }

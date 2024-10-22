@@ -62,10 +62,10 @@ open class PlotPanel(
         figureModel = PlotPanelFigureModel(
             plotPanel = this,
             providedComponent = providedComponent,
-            plotComponentFactory = { containerSize: Dimension, specOverride: Map<String, Any>? ->
+            plotComponentFactory = { containerSize: Dimension, specOverrideList: List<Map<String, Any>> ->
                 rebuildProvidedComponent(
                     containerSize,
-                    specOverride
+                    specOverrideList
                 )
             },
             applicationContext = applicationContext,
@@ -120,10 +120,10 @@ open class PlotPanel(
 
     private fun rebuildProvidedComponent(
         containerSize: Dimension?,
-        specOverride: Map<String, Any>? = null
+        specOverrideList: List<Map<String, Any>> = emptyList()
     ): JComponent {
         removeAll()
-        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize, specOverride)
+        val providedComponent: JComponent = plotComponentProvider.createComponent(containerSize, specOverrideList)
 
         // notify
         plotComponentCreated(actualPlotComponentFromProvidedComponent(providedComponent))

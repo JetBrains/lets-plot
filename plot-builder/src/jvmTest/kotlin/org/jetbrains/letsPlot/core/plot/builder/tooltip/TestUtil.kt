@@ -324,8 +324,8 @@ object TestUtil {
         )
     }
 
-    internal fun pointTarget(key: Any, p: DoubleVector): TargetPrototype {
-        val pointShape = HitShape.point(p, 0.0)
+    internal fun pointTarget(key: Any, p: DoubleVector, radius: Double = 0.0): TargetPrototype {
+        val pointShape = HitShape.point(p, radius)
         return TargetPrototype(
             pointShape, { key as Int },
             defaultTooltipParams, TipLayoutHint.Kind.VERTICAL_TOOLTIP

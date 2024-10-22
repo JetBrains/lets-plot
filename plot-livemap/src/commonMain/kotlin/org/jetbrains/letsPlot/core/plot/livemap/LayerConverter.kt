@@ -110,6 +110,7 @@ object LayerConverter {
                         geometry = createMultiPolygon(it.geometry!!)
                         geoObject = it.geoObject
                         lineDash = it.lineDash
+                        lineDashOffset = it.lineDashOffset
                         fillColor = it.fillColor
                         strokeColor = it.strokeColor
                         strokeWidth = AestheticsUtil.strokeWidth(it.myP)
@@ -129,6 +130,7 @@ object LayerConverter {
                             flat = it.flat
                             geodesic = it.geodesic
                             lineDash = it.lineDash
+                            lineDashOffset = it.lineDashOffset
                             strokeColor = it.strokeColor
                             strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                             animation = it.animation
@@ -153,6 +155,7 @@ object LayerConverter {
                         this.alphaScalingEnabled = alphaScalingEnabled
                         point = it.point
                         lineDash = it.lineDash
+                        lineDashOffset = it.lineDashOffset
                         strokeColor = it.strokeColor
                         strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                     }
@@ -166,6 +169,7 @@ object LayerConverter {
                         this.alphaScalingEnabled = alphaScalingEnabled
                         point = it.point
                         lineDash = it.lineDash
+                        lineDashOffset = it.lineDashOffset
                         strokeColor = it.strokeColor
                         strokeWidth = AestheticsUtil.strokeWidth(it.myP)
                     }

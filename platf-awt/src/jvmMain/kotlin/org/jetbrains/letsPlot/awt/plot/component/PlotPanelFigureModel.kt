@@ -9,20 +9,23 @@ import org.jetbrains.letsPlot.awt.plot.FigureModel
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel.Companion.actualPlotComponentFromProvidedComponent
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
-import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import java.awt.Dimension
 import javax.swing.JComponent
 
-internal class PlotPanelFigureModel(
+internal class PlotPanelFigureModel constructor(
     private val plotPanel: PlotPanel,
     providedComponent: JComponent?,
-    private val plotComponentFactory: (containerSize: Dimension, specOverride: Map<String, Any>?) -> JComponent,
+    private val plotComponentFactory: (
+        containerSize: Dimension,
+        specOverrideList: List<Map<String, Any>>
+    ) -> JComponent,
     private val applicationContext: ApplicationContext,
 ) : FigureModel {
 
     private var toolEventCallback: ((Map<String, Any>) -> Unit)? = null
 
-    private var currSpecOverride: Map<String, Any>? = null
+    private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
     private var toolEventDispatcher: ToolEventDispatcher? = null
         set(value) {
@@ -63,7 +66,11 @@ internal class PlotPanelFigureModel(
     }
 
     override fun updateView(specOverride: Map<String, Any>?) {
-        currSpecOverride = FigureModelOptions.reconcile(currSpecOverride, specOverride)
+        currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
+            specOverrideList = currSpecOverrideList,
+            newSpecOverride = specOverride
+        )
+
         rebuildPlotComponent()
     }
 
@@ -71,14 +78,15 @@ internal class PlotPanelFigureModel(
         onComponentCreated: (JComponent) -> Unit = {},
         expared: () -> Boolean = { false }
     ) {
-        val specOverride = currSpecOverride
+        val specOverrideList = ArrayList(currSpecOverrideList)
         val action = Runnable {
 
             val containerSize = plotPanel.size
             if (containerSize == null) return@Runnable
 
-            val providedComponent = plotComponentFactory(containerSize, specOverride)
+            val providedComponent = plotComponentFactory(containerSize, specOverrideList)
             onComponentCreated(providedComponent)
+
             toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
 
             plotPanel.revalidate()

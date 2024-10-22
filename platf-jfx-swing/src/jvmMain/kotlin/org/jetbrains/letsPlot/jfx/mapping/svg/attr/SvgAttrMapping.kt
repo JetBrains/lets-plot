@@ -10,6 +10,7 @@ import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.PointerEvents
 import org.jetbrains.letsPlot.jfx.mapping.svg.unScaleTransforms
 
 internal abstract class SvgAttrMapping<in TargetT : Node> {
@@ -24,9 +25,10 @@ internal abstract class SvgAttrMapping<in TargetT : Node> {
             SvgConstants.SVG_STYLE_ATTRIBUTE -> target.style = svgStyleToFx(value as? String ?: "")
             SvgStylableElement.CLASS.name -> setStyleClass(value as String?, target)
 
-            SvgTransformable.TRANSFORM.name -> setTransform((value as SvgTransform).toString(), target)
+            SvgTransformable.TRANSFORM.name -> value?.toString()?.let { setTransform(it, target) } // might be SvgTransform or String (for SlimObject)
 
             SvgElement.ID.name -> target.id = value as? String // TODO: or ignore it?
+            SvgGraphicsElement.POINTER_EVENTS.name -> target.isMouseTransparent = value == PointerEvents.NONE
             SvgConstants.DISPLAY -> {} // not needed for JavaFX
 
             else -> throw IllegalArgumentException("Unsupported attribute `$name` in ${target.javaClass.simpleName}")

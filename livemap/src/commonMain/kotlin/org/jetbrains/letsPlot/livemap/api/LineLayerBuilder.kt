@@ -66,6 +66,7 @@ class LineEntityBuilder(
     var alphaScalingEnabled: Boolean = false
     var point: Vec<LonLat>? = null
     var lineDash: List<Double> = emptyList()
+    var lineDashOffset: Double = 0.0
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 1.0
 
@@ -87,6 +88,7 @@ class LineEntityBuilder(
             strokeColor = this@LineEntityBuilder.strokeColor
             strokeWidth = this@LineEntityBuilder.strokeWidth
             lineDash = this@LineEntityBuilder.lineDash.toDoubleArray()
+            lineDashOffset = this@LineEntityBuilder.lineDashOffset
         }
         +WorldOriginComponent(bbox.origin)
         +WorldGeometryComponent().apply { geometry = Geometry.of(line) }

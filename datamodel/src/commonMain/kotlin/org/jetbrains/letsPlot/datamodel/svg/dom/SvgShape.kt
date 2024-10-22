@@ -27,6 +27,8 @@ interface SvgShape {
 
     fun strokeDashArray(): Property<String?>
 
+    fun strokeDashOffset(): Property<Double?>
+
     companion object {
         val FILL: SvgAttributeSpec<SvgColor> =
             SvgAttributeSpec.createSpec("fill")
@@ -40,5 +42,7 @@ interface SvgShape {
             SvgAttributeSpec.createSpec("stroke-width")
         val STROKE_DASHARRAY: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec(SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE)
+        val STROKE_DASHOFFSET: SvgAttributeSpec<Double> =
+            SvgAttributeSpec.createSpec(SvgConstants.SVG_STROKE_DASHOFFSET_ATTRIBUTE)
     }
 }

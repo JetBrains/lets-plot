@@ -99,25 +99,22 @@ object PlotHtmlHelper {
         """.trimMargin()
     }
 
-    fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
+    fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
         val plotSpec = SpecTransformBackendUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return getDynamicDisplayHtml(
-            plotSpecJs, size,
+        return dynamicDisplayHtml(
+            plotSpecJs,
             showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
         )
     }
 
-    private fun getDynamicDisplayHtml(
+    private fun dynamicDisplayHtml(
         plotSpecAsJsObjectInitializer: String,
-        size: DoubleVector?,
         showToolbar: Boolean
     ): String {
         val outputId = randomString(6)
-        val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
-
         return """
             |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
@@ -149,7 +146,7 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}
             |                           width: width
             |                       }
             |                   };
-            |                   var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
+            |                   var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
             |                   if (toolbar) {
             |                     toolbar.bind(fig);
             |                   }
@@ -224,20 +221,28 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}
         }
 
         val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
-        return getStaticDisplayHtml(
-            plotSpecJs,
-            size,
-            showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
-        )
+        return when (size) {
+            null ->
+                staticDisplayHtmlWithRelativeSizing(
+                    plotSpecJs,
+                    showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
+                )
+
+            else ->
+                staticDisplayHtmlWithFixedSizing(
+                    plotSpecJs,
+                    size,
+                    showToolbar = PlotConfigUtil.containsToolbar(plotSpec)
+                )
+        }
     }
 
-    private fun getStaticDisplayHtml(
+    private fun staticDisplayHtmlWithFixedSizing(
         plotSpecAsJsObjectInitializer: String,
-        size: DoubleVector?,
+        size: DoubleVector,
         showToolbar: Boolean,
     ): String {
         val outputId = randomString(6)
-        val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
         return """
             |   <div id="$outputId"></div>
             |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
@@ -252,16 +257,71 @@ ${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}
             |               
             |       var options = {
             |           sizing: {
-            |               width_mode: "min",
-            |               height_mode: "scaled",
-            |               width: containerDiv.clientWidth
+            |               width_mode: "fixed",
+            |               height_mode: "fixed",
+            |               width: ${size.x},
+            |               height: ${size.y}
             |           }
             |       };
-            |       var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer, options);
+            |       var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
             |       if (toolbar) {
             |         toolbar.bind(fig);
             |       }
             |       
+            |   // ----------
+            |   })();
+            |   
+            |   </script>
+        """.trimMargin()
+    }
+
+    private fun staticDisplayHtmlWithRelativeSizing(
+        plotSpecAsJsObjectInitializer: String,
+        showToolbar: Boolean,
+    ): String {
+        val outputId = randomString(6)
+        return """
+            |   <div id="$outputId"></div>
+            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
+            |   
+            |   (function() {
+            |   // ----------
+            |   
+            |   var containerDiv = document.getElementById("$outputId");
+            |   var observer = new ResizeObserver(function(entries) {
+            |       for (let entry of entries) {
+            |           var width = containerDiv.clientWidth
+            |           if (entry.contentBoxSize && width > 0) {
+            |           
+            |               // Render plot
+            |               if (observer) {
+            |                   observer.disconnect();
+            |                   observer = null;
+            |               }
+
+            |               var plotSpec=$plotSpecAsJsObjectInitializer;
+            |       
+${plotContainerHtmlSnippet(showToolbar = PLOT_VIEW_TOOLBOX_HTML || showToolbar)}               
+            |               
+            |               var options = {
+            |                   sizing: {
+            |                       width_mode: "min",
+            |                       height_mode: "scaled",
+            |                       width: width
+            |                   }
+            |               };
+            |               var fig = LetsPlot.buildPlotFromProcessedSpecs(plotSpec, -1, -1, plotContainer, options);
+            |               if (toolbar) {
+            |                 toolbar.bind(fig);
+            |               }
+            |               
+            |               break;
+            |           }
+            |       }
+            |   });
+            |   
+            |   observer.observe(containerDiv);
+            |   
             |   // ----------
             |   })();
             |   

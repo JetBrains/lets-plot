@@ -19,5 +19,5 @@ interface InteractionContext {
 
     fun clientRectToDataBounds(clientRect: DoubleRectangle, coord: CoordinateSystem): DoubleRectangle
 
-    fun checkSupported(events: List<MouseEventSpec>)
+    fun checkSupported(eventSpecs: List<MouseEventSpec>)
 }

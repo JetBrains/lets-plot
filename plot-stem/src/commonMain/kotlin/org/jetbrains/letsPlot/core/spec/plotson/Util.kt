@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.StatKind
+import org.jetbrains.letsPlot.core.spec.typed
 
 fun PlotOptions.toJson(): MutableMap<String, Any> {
     return toJson(properties)
@@ -22,7 +23,6 @@ fun PlotOptions.toJson(): MutableMap<String, Any> {
 internal fun toJson(v: Any?): Any? {
     return when (v) {
         null -> null
-        is InlineOptions -> null
         is Options -> toJson(v.toSpec())
         is List<*> -> v.map(::toJson)
         is Map<*, *> -> toJson(v)
@@ -31,12 +31,18 @@ internal fun toJson(v: Any?): Any? {
 }
 
 private fun toJson(obj: Map<*, *>): MutableMap<String, Any> {
-    return obj.mapNotNull { (key, value) ->
-        val specKey = standardise(key)
-        require(specKey != null) { "Spec key can't be null" }
-        require(specKey is String) { "Spec key should be a string, but was '${specKey::class.simpleName}'" }
-        toJson(value)?.let { specValue -> specKey to specValue }
-    }.toMap().toMutableMap()
+    val map = mutableMapOf<String, Any>()
+    obj.forEach { (key, v) ->
+        val specKey = standardise(key) as? String ?: error("Map key must be a string, but was $key::class.simpleName")
+        val specValue = toJson(v) ?: return@forEach
+
+        if (v is InlineOptions && specValue is Map<*, *>) {
+            map += specValue.typed(strict = true)
+        }else {
+            map[specKey] = specValue
+        }
+    }
+    return map
 }
 
 private inline fun <reified TValue> standardise(v: TValue?): Any? {
@@ -59,6 +65,7 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is MappingAnnotationOptions.OrderType -> v.value
         is StatKind -> v.name.lowercase()
         is ThemeOptions.ThemeName -> v.value
+        is CoordOptions.CoordName -> v.value
         is SummaryStatOptions.AggFunction -> v.value
         is PositionOptions.PosKind -> v.value
         is SeriesAnnotationOptions.Types -> v.value

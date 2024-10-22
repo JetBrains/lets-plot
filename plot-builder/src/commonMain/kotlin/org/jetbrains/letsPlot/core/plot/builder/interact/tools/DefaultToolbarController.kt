@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_ORIGIN
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_INTERACTION_TARGET
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_NAME
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_DATA_BOUNDS
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.EVENT_RESULT_ERROR_MSG
@@ -16,6 +17,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHA
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 
 /**
  * "open" class ?
@@ -69,13 +71,20 @@ class DefaultToolbarController(
                     val specOverride = HashMap<String, Any>().also { map ->
                         map[COORD_XLIM_TRANSFORMED] = listOf(bounds[0], bounds[2])
                         map[COORD_YLIM_TRANSFORMED] = listOf(bounds[1], bounds[3])
+                        event[EVENT_INTERACTION_TARGET]?.let { targetId ->
+                            map[TARGET_ID] = targetId
+                        }
                     }
                     figure.updateView(specOverride)
                 }
             }
 
             ROLLBACK_ALL_CHANGES -> {
-                resetFigure(deactiveTools = false)
+                val targetId = event[EVENT_INTERACTION_TARGET]
+                val specOverride = targetId?.let {
+                    mapOf(TARGET_ID to targetId)
+                }
+                figure.updateView(specOverride)
             }
 
             INTERACTION_UNSUPPORTED -> {

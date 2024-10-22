@@ -17,7 +17,64 @@ class CoordPolarPlotSpecs {
             geomTile(),
             geomSegment(),
             windRose(),
+            pointTooltip(),
         )
+    }
+
+    private fun pointTooltip(): MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "data": {
+            |        "x": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |        "y": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |        "s": [ 5.0, 4.0, 3.0, 2.0, 1.0 ]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" },
+            |          { "type": "int", "column": "y" },
+            |          { "type": "int", "column": "s" }
+            |        ]
+            |      },
+            |      "kind": "plot",
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "mapping": { "x": "x", "y": "y", "size": "s" }
+            |        }
+            |      ]
+            |    },
+            |    {
+            |      "data": {
+            |        "x": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |        "y": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |        "s": [ 5.0, 4.0, 3.0, 2.0, 1.0 ]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" },
+            |          { "type": "int", "column": "y" },
+            |          { "type": "int", "column": "s" }
+            |        ]
+            |      },
+            |      "coord": { "name": "polar" },
+            |      "kind": "plot",
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "mapping": { "x": "x", "y": "y", "size": "s" }
+            |        }
+            |      ]
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        return parsePlotSpec(spec)
     }
 
     private fun windRose(): MutableMap<String, Any> {

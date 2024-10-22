@@ -26,8 +26,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayout
@@ -54,6 +54,7 @@ class PlotSvgComponent constructor(
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     val interactionsEnabled: Boolean,
+    private val plotSpecId: String?,
     val theme: Theme,
     val styleSheet: StyleSheet,
     val plotContext: PlotContext
@@ -82,7 +83,7 @@ class PlotSvgComponent constructor(
     override fun clear() {
         // Effectivly disposes the plot component
         // because "interactor" is likely got disposed too,
-        // and "interactor" can't be reset.
+        // and "interactor" can't be reused.
         isDisposed = true
         super.clear()
     }
@@ -193,7 +194,9 @@ class PlotSvgComponent constructor(
             val tile = PlotTile(
                 coreLayers = coreLayersByTile[tileIndex],
                 marginalLayers = marginalLayersByTile[tileIndex],
-                tilesOrigin, tileLayoutInfo, theme,
+                tilesOrigin, tileLayoutInfo,
+                plotSpecId,
+                theme,
                 tileFrame,
                 marginalFrameByMargin
             )
@@ -256,6 +259,9 @@ class PlotSvgComponent constructor(
                 strokeWidth().set(plotTheme.backgroundStrokeWidth())
                 StrokeDashArraySupport.apply(this, plotTheme.backgroundStrokeWidth(), plotTheme.backgroundLineType())
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
+
+                // Even open path still blocks mouse events. Add pointer-events: none to make links clickable.
+                pointerEvents().set(SvgGraphicsElement.PointerEvents.NONE)
             }
         }
 

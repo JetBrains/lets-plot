@@ -21,20 +21,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
     }
 
     fun moveAll(delta: DoubleVector): LegendsBlockInfo {
-        val result = ArrayList<LegendBoxesLayout.BoxWithLocation>()
-        for (boxWithLocation in boxWithLocationList) {
-            result.add(
-                LegendBoxesLayout.BoxWithLocation(
-                    boxWithLocation.legendBox,
-                    boxWithLocation.location.add(delta)
-                )
-            )
-        }
-
         val newList = boxWithLocationList.map {
             LegendBoxesLayout.BoxWithLocation(it.legendBox, it.location.add(delta))
         }
-
         return LegendsBlockInfo(newList)
     }
 }

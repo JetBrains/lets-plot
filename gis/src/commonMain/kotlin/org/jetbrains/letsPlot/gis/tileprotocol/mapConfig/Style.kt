@@ -15,6 +15,7 @@ class Style {
     var lineCap: String? = null
     var lineJoin: String? = null
     var lineDash: List<Double>? = null
+    var lineDashOffset: Double? = null
     var labelField: String? = null
     var fontStyle: String? = null
     var fontFamily: String? = null

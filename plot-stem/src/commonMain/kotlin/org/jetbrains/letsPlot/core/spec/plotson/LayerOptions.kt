@@ -29,7 +29,7 @@ open class LayerOptions(
     var dataMeta: DataMetaOptions? by map(Meta.DATA_META)
     var tooltipsOptions: TooltipsOptions? by map(Layer.TOOLTIPS)
     var samplingOptions: SamplingOptions? by map(Layer.SAMPLING)
-    var stat: StatOptions? = null // inline option, do not use map()
+    var stat: StatOptions? by map(Layer.STAT)
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
     var position: PositionOptions? by map(Layer.POS)
     var orientation: String? by map(Layer.ORIENTATION)

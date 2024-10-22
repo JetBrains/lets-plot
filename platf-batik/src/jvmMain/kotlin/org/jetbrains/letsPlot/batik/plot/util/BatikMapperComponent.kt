@@ -18,6 +18,9 @@ import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
+import java.awt.event.MouseEvent
+import java.awt.event.MouseListener
+import java.awt.event.MouseMotionListener
 import javax.swing.JPanel
 
 class BatikMapperComponent(
@@ -38,7 +41,39 @@ class BatikMapperComponent(
         cursor = Cursor(Cursor.CROSSHAIR_CURSOR)
         layout = null  // Composite figure contains sub-panels with provided bounds.
 
-        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
+        myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback) { cursor = it }
+
+        addMouseListener(object : MouseListener {
+            override fun mouseClicked(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+
+            override fun mousePressed(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+
+            override fun mouseReleased(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+
+            override fun mouseEntered(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+
+            override fun mouseExited(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+        })
+
+        addMouseMotionListener(object : MouseMotionListener {
+            override fun mouseDragged(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+
+            override fun mouseMoved(e: MouseEvent?) {
+                myHelper.eventDispatcher.dispatchEvent(e!!)
+            }
+        })
 
         myHelper.addSvgNodeContainerListener(object : SvgNodeContainerAdapter() {
             override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {

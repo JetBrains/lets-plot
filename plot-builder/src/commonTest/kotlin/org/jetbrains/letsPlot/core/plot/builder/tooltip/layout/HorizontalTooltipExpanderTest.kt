@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
@@ -215,7 +216,7 @@ class HorizontalTooltipExpanderTest {
             isSide = true
         )
         return PositionedTooltip(
-            MeasuredTooltip(spec, size, TooltipBox(), strokeWidth = 0.0),
+            MeasuredTooltip(spec, size, TooltipBox(Style.default()), strokeWidth = 0.0),
             position,
             pointer
         )
