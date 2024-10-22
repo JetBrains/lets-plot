@@ -21,6 +21,8 @@
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/superscript_exponent.ipynb).
 
+  [**WARNING**] Subscripts and superscripts are not supported in PDF and PNG exports.
+
 - In `theme()`:
   - `legend_margin, legend_spacing, legend_spacing_x, legend_spacing_y, legend_box, legend_box_just, legend_box_spacing` parameters [[#1180](https://github.com/JetBrains/lets-plot/issues/1180)].
 
