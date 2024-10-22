@@ -71,7 +71,7 @@ Also read:
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/latex_support.ipynb).
 
-> [!WARNING]  
+> [!CAUTION]  
 > Subscripts and superscripts are not supported in PDF and PNG exports.
 
 - #### Compact Scientific Notation Formatting
@@ -79,7 +79,7 @@ Also read:
      
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/superscript_exponent.ipynb).
 
-> [!WARNING]  
+> [!CAUTION]  
 > `pow` and `pow_full` options are not supported in PDF and PNG exports.     
 
 - #### QQ-Plot: Marginal Distributions
