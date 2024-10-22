@@ -205,13 +205,7 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
 
     if isinstance(tiles, dict):
         if tiles.get(MAPTILES_KIND) == TILES_RASTER_ZXY:
-            if tiles[MAPTILES_URL].startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
-                    tiles[MAPTILES_ATTRIBUTION].endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>') and \
-                    tiles[MAPTILES_MIN_ZOOM] == 1 and tiles[MAPTILES_MAX_ZOOM] == 20:
-                # TODO: Remove this branch in future releases.
-                tileset = tiles[MAPTILES_URL].split('/')[3]
-                if tileset in ['base-midnight', 'base-antique', 'base-flatblue']:
-                    print(f"WARN: The '{tileset}' tileset is deprecated and will be removed in future releases.")
+            _warn_deprecated_tiles(tiles)
             return {
                 OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: tiles[MAPTILES_URL],
@@ -247,15 +241,20 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
             raise ValueError('URL for tiles service is not set')
 
         if get_global_val(MAPTILES_KIND) == TILES_RASTER_ZXY:
+            global_tiles = {MAPTILES_URL: get_global_val(MAPTILES_URL),
+                            MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION)
+                                if has_global_value(MAPTILES_ATTRIBUTION) else None,
+                            MAPTILES_MIN_ZOOM: get_global_val(MAPTILES_MIN_ZOOM)
+                                if has_global_value(MAPTILES_MIN_ZOOM) else None,
+                            MAPTILES_MAX_ZOOM: get_global_val(MAPTILES_MAX_ZOOM)
+                                if has_global_value(MAPTILES_MAX_ZOOM) else None}
+            _warn_deprecated_tiles(global_tiles)
             return {
                 OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
-                OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
-                OPTIONS_MAPTILES_ATTRIBUTION: get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(
-                    MAPTILES_ATTRIBUTION) else None,
-                OPTIONS_MAPTILES_MIN_ZOOM: get_global_val(MAPTILES_MIN_ZOOM) if has_global_value(
-                    MAPTILES_MIN_ZOOM) else None,
-                OPTIONS_MAPTILES_MAX_ZOOM: get_global_val(MAPTILES_MAX_ZOOM) if has_global_value(
-                    MAPTILES_MAX_ZOOM) else None,
+                OPTIONS_MAPTILES_URL: global_tiles[MAPTILES_URL],
+                OPTIONS_MAPTILES_ATTRIBUTION: global_tiles[MAPTILES_ATTRIBUTION],
+                OPTIONS_MAPTILES_MIN_ZOOM: global_tiles[MAPTILES_MIN_ZOOM],
+                OPTIONS_MAPTILES_MAX_ZOOM: global_tiles[MAPTILES_MAX_ZOOM],
             }
 
         if get_global_val(MAPTILES_KIND) == TILES_VECTOR_LETS_PLOT:
@@ -274,6 +273,15 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
             }
 
     raise ValueError('Tile provider is not set.')
+
+
+def _warn_deprecated_tiles(tiles: dict):
+    if tiles[MAPTILES_URL].startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
+       tiles[MAPTILES_URL].split('/')[3] in ['base-midnight', 'base-antique', 'base-flatblue'] and \
+       tiles[MAPTILES_ATTRIBUTION].endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>') and \
+       tiles[MAPTILES_MIN_ZOOM] == 1 and tiles[MAPTILES_MAX_ZOOM] == 20:
+        # TODO: Remove this warning in future releases.
+        print(f"WARN: The tileset is deprecated and will be removed in future releases.")
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
