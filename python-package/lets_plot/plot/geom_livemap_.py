@@ -272,10 +272,12 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
 
 
 def _warn_deprecated_tiles(tiles: Union[dict, None]):
-    maptiles_url = tiles[MAPTILES_URL] if tiles is not None else get_global_val(MAPTILES_URL)
-    maptiles_attribution = tiles[MAPTILES_ATTRIBUTION] if tiles is not None else (
-        get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None
-    )
+    if tiles is None:
+        maptiles_url = get_global_val(MAPTILES_URL)
+        maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None
+    else:
+        maptiles_url = tiles[MAPTILES_URL]
+        maptiles_attribution = tiles[MAPTILES_ATTRIBUTION]
     if maptiles_url.startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
        ('base-midnight' in maptiles_url or 'base-antique' in maptiles_url or 'base-flatblue' in maptiles_url) and \
        maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'):
