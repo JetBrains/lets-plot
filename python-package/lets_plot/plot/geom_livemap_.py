@@ -272,14 +272,13 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
 
 
 def _warn_deprecated_tiles(tiles: Union[dict, None]):
-    maptiles_url = get_global_val(MAPTILES_URL) if tiles is None else tiles[MAPTILES_URL]
-    maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION) if tiles is None else tiles[MAPTILES_ATTRIBUTION]
-    maptiles_min_zoom = get_global_val(MAPTILES_MIN_ZOOM) if tiles is None else tiles[MAPTILES_MIN_ZOOM]
-    maptiles_max_zoom = get_global_val(MAPTILES_MAX_ZOOM) if tiles is None else tiles[MAPTILES_MAX_ZOOM]
+    maptiles_url = tiles[MAPTILES_URL] if tiles is not None else get_global_val(MAPTILES_URL)
+    maptiles_attribution = tiles[MAPTILES_ATTRIBUTION] if tiles is not None else (
+        get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None
+    )
     if maptiles_url.startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
-       maptiles_url.split('/')[3] in ['base-midnight', 'base-antique', 'base-flatblue'] and \
-       maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>') and \
-       maptiles_min_zoom == 1 and maptiles_max_zoom == 20:
+       ('base-midnight' in maptiles_url or 'base-antique' in maptiles_url or 'base-flatblue' in maptiles_url) and \
+       maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'):
         # TODO: Remove this warning in future releases.
         print(f"WARN: The tileset is deprecated and will be removed in future releases.")
 
