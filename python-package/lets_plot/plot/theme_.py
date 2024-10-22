@@ -111,6 +111,9 @@ def theme(*,
         - the second element is minimum exponent value from which to use scientific notation (default is -7);
         - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__).
 
+        Minimum and maximum exponent values are only taken into account when "g" format is used,
+        see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+
         Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         All line elements.
