@@ -13,7 +13,7 @@
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interactive_links.ipynb).
 
 - Formatting:
-  - **LaTeX** support [[#861](https://github.com/JetBrains/lets-plot/issues/861)], [[#960](https://github.com/JetBrains/lets-plot/issues/960)].
+  - **LaTeX** support: superscript, subscript ([[#861](https://github.com/JetBrains/lets-plot/issues/861)]) and Greek letters ([[#960](https://github.com/JetBrains/lets-plot/issues/960)]).
 
     See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/dev/notebooks/latex_support.ipynb).
   
@@ -69,10 +69,12 @@
 
 - Use `theme_light()` as the default theme in `qq_plot()`.
 
-- [**BREAKING**] for API deprecated in v4.0 the deprecation level raised to "Error" (only relevant for Kotlin clients). 
+- [**BREAKING**] for API deprecated in v4.0 the deprecation level raised to "Error" (only relevant for Kotlin clients).
+
+- [**BREAKING**] The 'base-midnight', 'base-antique' and 'base-flatblue' tilesets are deprecated and will be removed in future releases.
 
 - Parameters `labwidth` in `facet_wrap()`, `x_labwidth, y_labwidth` in `facet_grid()`: the maximum label length is applied after splitting at `\n` separators, if present.
- 
+
 ### Fixed
 
 - Better Marimo Support (via [PR-2084](https://github.com/marimo-team/marimo/pull/2084)) [[#1018](https://github.com/JetBrains/lets-plot/issues/1018)].
