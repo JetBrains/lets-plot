@@ -272,17 +272,33 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
 
 
 def _warn_deprecated_tiles(tiles: Union[dict, None]):
+    # TODO: Remove this warning in future releases.
+
     if tiles is None:
         maptiles_url = get_global_val(MAPTILES_URL)
-        maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION) if has_global_value(MAPTILES_ATTRIBUTION) else None
     else:
         maptiles_url = tiles[MAPTILES_URL]
+
+    if not isinstance(maptiles_url, str):
+        return
+    if not maptiles_url.startswith("https://cartocdn_[abc].global.ssl.fastly.net/"):
+        return
+    if 'base-midnight' not in maptiles_url and 'base-antique' not in maptiles_url and 'base-flatblue' not in maptiles_url:
+        return
+
+    if tiles is None:
+        if not has_global_value(MAPTILES_ATTRIBUTION):
+            return
+        maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION)
+    else:
         maptiles_attribution = tiles[MAPTILES_ATTRIBUTION]
-    if maptiles_url.startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
-       ('base-midnight' in maptiles_url or 'base-antique' in maptiles_url or 'base-flatblue' in maptiles_url) and \
-       maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'):
-        # TODO: Remove this warning in future releases.
-        print(f"WARN: The tileset is deprecated and will be removed in future releases.")
+
+    if not isinstance(maptiles_attribution, str):
+        return
+    if not maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'):
+        return
+
+    print(f"WARN: The tileset is deprecated and will be removed in future releases.")
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
