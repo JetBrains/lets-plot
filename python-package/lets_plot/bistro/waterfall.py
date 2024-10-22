@@ -50,10 +50,11 @@ def waterfall_plot(data, x, y, *,
         Line width of the box boundary lines.
     alpha : float
         Transparency level of the boxes. Accept values between 0 and 1.
-    linetype : int or str
+    linetype : int or str or list
         Type of the box boundary lines.
-        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
-        3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+        Accept codes or names (0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'),
+        a hex string (up to 8 digits for dash-gap lengths),
+        or a list pattern [offset, [dash, gap, ...]] / [dash, gap, ...].
         For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     width : float, default=0.9
         Width of the boxes. Typically range between 0 and 1.
