@@ -70,14 +70,17 @@ Also read:
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/latex.png" alt="f-24g/images/latex.png" width="300" height="227">
 
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/latex_support.ipynb).
-   
+
+> [!WARNING]  
+> Subscripts and superscripts are not supported in PDF and PNG exports.
+
 - #### Compact Scientific Notation Formatting
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/compact_exp.png" alt="f-24g/images/compact_exp.png" width="400" height="174">
      
   See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/superscript_exponent.ipynb).
 
 > [!WARNING]  
-> Subscripts and superscripts are not supported in PDF and PNG exports.     
+> `pow` and `pow_full` options are not supported in PDF and PNG exports.     
 
 - #### QQ-Plot: Marginal Distributions
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/gg_marins.png" alt="f-24g/images/gg_marins.png" width="400" height="249">
