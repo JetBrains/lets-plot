@@ -241,7 +241,7 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
             raise ValueError('URL for tiles service is not set')
 
         if get_global_val(MAPTILES_KIND) == TILES_RASTER_ZXY:
-            _warn_deprecated_tiles(tiles=None, get_global=True)
+            _warn_deprecated_tiles(None)
             return {
                 OPTIONS_MAPTILES_KIND: TILES_RASTER_ZXY,
                 OPTIONS_MAPTILES_URL: get_global_val(MAPTILES_URL),
@@ -271,11 +271,11 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
     raise ValueError('Tile provider is not set.')
 
 
-def _warn_deprecated_tiles(tiles: Union[dict, None], get_global: bool = False):
-    maptiles_url = get_global_val(MAPTILES_URL) if get_global else tiles[MAPTILES_URL]
-    maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION) if get_global else tiles[MAPTILES_ATTRIBUTION]
-    maptiles_min_zoom = get_global_val(MAPTILES_MIN_ZOOM) if get_global else tiles[MAPTILES_MIN_ZOOM]
-    maptiles_max_zoom = get_global_val(MAPTILES_MAX_ZOOM) if get_global else tiles[MAPTILES_MAX_ZOOM]
+def _warn_deprecated_tiles(tiles: Union[dict, None]):
+    maptiles_url = get_global_val(MAPTILES_URL) if tiles is None else tiles[MAPTILES_URL]
+    maptiles_attribution = get_global_val(MAPTILES_ATTRIBUTION) if tiles is None else tiles[MAPTILES_ATTRIBUTION]
+    maptiles_min_zoom = get_global_val(MAPTILES_MIN_ZOOM) if tiles is None else tiles[MAPTILES_MIN_ZOOM]
+    maptiles_max_zoom = get_global_val(MAPTILES_MAX_ZOOM) if tiles is None else tiles[MAPTILES_MAX_ZOOM]
     if maptiles_url.startswith("https://cartocdn_[abc].global.ssl.fastly.net/") and \
        maptiles_url.split('/')[3] in ['base-midnight', 'base-antique', 'base-flatblue'] and \
        maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>') and \
