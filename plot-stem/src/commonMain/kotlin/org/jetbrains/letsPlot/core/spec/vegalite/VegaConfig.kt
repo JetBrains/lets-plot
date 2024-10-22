@@ -20,10 +20,10 @@ object VegaConfig {
         return VegaPlotConverter.convert(map)
     }
 
-    internal fun getPlotKind(opts: Map<String, Any>): VegaPlotKind {
-        if (!isVegaLiteSpec(opts)) {
-            throw IllegalArgumentException("Not a Vega-Lite spec")
-        }
+    internal fun getPlotKind(opts: VegaSpecProp): VegaPlotKind {
+        //if (!isVegaLiteSpec(opts)) {
+        //    throw IllegalArgumentException("Not a Vega-Lite spec")
+        //}
 
         return when {
             VegaOption.LAYER in opts -> VegaPlotKind.MULTI_LAYER
