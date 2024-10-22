@@ -249,7 +249,10 @@ internal abstract class Node {
             "geq" to "≥",
             "neq" to "≠",
         )
-        private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS
+        private val MISCELLANEOUS = mapOf(
+            "infty" to "∞",
+        )
+        private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
 
         fun parse(tokens: Sequence<Token>): Node {
             return parseGroup(tokens.iterator(), level = 0)
