@@ -111,7 +111,7 @@ def theme(*,
         - the second element is minimum exponent value from which to use scientific notation (default is -7);
         - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__).
 
-        Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
+        Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         All line elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
