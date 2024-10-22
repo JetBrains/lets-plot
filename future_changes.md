@@ -69,13 +69,13 @@
 
 ### Changed
 
+- Parameters `labwidth` in `facet_wrap()`, `x_labwidth, y_labwidth` in `facet_grid()`: the maximum label length is applied after splitting at `\n` separators, if present.
+
 - Use `theme_light()` as the default theme in `qq_plot()`.
 
-- [**BREAKING**] for API deprecated in v4.0 the deprecation level raised to "Error" (only relevant for Kotlin clients).
+- [**BREAKING**] For API deprecated in v4.0 the deprecation level raised to "Error" (only relevant for Kotlin clients).
 
-- [**BREAKING**] The 'base-midnight', 'base-antique' and 'base-flatblue' tilesets are deprecated and will be removed in future releases.
-
-- Parameters `labwidth` in `facet_wrap()`, `x_labwidth, y_labwidth` in `facet_grid()`: the maximum label length is applied after splitting at `\n` separators, if present.
+- [**BREAKING**] The 'base-midnight', 'base-antique' and 'base-flatblue' tilesets are deprecated (no longer served by CARTO) and will be removed in future releases.
 
 ### Fixed
 
