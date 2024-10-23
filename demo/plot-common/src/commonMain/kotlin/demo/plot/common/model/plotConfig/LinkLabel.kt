@@ -15,8 +15,55 @@ class LinkLabel {
             titles(),
             facets(),
             tooltip(),
-            polar()
+            polar(),
+            livemap(),
         )
+    }
+
+    private fun livemap(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "request": ["Texas", "Nevada", "Iowa"],
+                "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
+                "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
+                "found name": ["Texas", "Nevada", "Iowa"]
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": null
+                  },
+                  "geocoding": {}
+                },
+                {
+                  "geom": "point",
+                  "mapping": {
+                    "x": "lon",
+                    "y": "lat"
+                  },
+                  "tooltips": {
+                    "lines": [
+                        "^x",
+                        "Report issues <a href=\"https://github.com/JetBrains/lets-plot/issues\">here</a>."
+                     ],
+                     "formats": [
+                        { "field": "^x", "format": "mean = {.4f}" }
+                     ]
+                  },
+                  "symbol": "point",
+                  "size": 50
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
+
     }
 
     private fun polar(): MutableMap<String, Any> {
