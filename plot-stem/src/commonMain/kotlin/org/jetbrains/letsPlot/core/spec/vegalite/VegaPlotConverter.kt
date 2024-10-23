@@ -9,7 +9,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.StatKind
+import org.jetbrains.letsPlot.core.spec.getDouble
+import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
@@ -48,10 +50,9 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Properties) {
         val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val rawEncoding = plotEncoding.merge(layerSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
+        val encoding = plotEncoding.merge(layerSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
 
-        val transformResult = VegaTransformHelper.applyTransform(rawEncoding, layerSpec)
-        val encoding = transformResult?.adjustedEncoding ?: rawEncoding
+        val transformResult = VegaTransformHelper.applyTransform(encoding, layerSpec)
 
         fun appendLayer(
             geom: GeomKind? = null,

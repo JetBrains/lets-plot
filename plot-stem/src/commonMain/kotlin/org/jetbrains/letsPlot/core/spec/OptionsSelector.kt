@@ -37,6 +37,10 @@ fun Map<*, *>.write(path: List<String>, item: String, value: Any) {
     provideMap(path)[item] = value
 }
 
+fun Map<*, *>.write(path: List<String>, value: Any) {
+    provideMap(path.dropLast(1))[path.last()] = value
+}
+
 fun Map<*, *>.remove(path: List<Any>, item: Any) {
     getMap(path)?.asMutable()?.remove(item)
 }

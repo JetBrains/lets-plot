@@ -7,31 +7,40 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.has
+import org.jetbrains.letsPlot.core.spec.write
 
 class Properties(
     private val vegaSpec: Map<*, *>,
     private val sectionPath: List<Any> = emptyList(),
 ) {
 
+    fun write(vararg path: String, value: () -> Any) {
+        vegaSpec.write(sectionPath.map { it.toString() } + path.toList(), value())
+    }
+
     fun getAny(vararg path: Any): Any? {
-        return read(path)
+        return read(path.toList())
     }
 
     fun getString(vararg path: String): String? {
-        return read(*path) as? String
+        return read(path.toList()) as? String
     }
 
     fun getDouble(vararg path: String): Double? {
-        return read(*path) as? Double
+        return read(path.toList()) as? Double
     }
 
     fun getMap(vararg path: Any): Properties? {
-        val map = read(*path) as? Map<*, *> ?: return null
+        val map = read(path.toList()) as? Map<*, *> ?: return null
         return Properties(vegaSpec, sectionPath + path)
     }
 
+    fun getNumber(key: String): Number? {
+        return read(listOf(key)) as? Number
+    }
+
     fun getMaps(vararg path: Any): List<Properties>? {
-        val list = read(*path) as? List<*> ?: return null
+        val list = read(path.toList()) as? List<*> ?: return null
 
         return list.mapIndexed { i, v ->
             when (v) {
@@ -43,7 +52,7 @@ class Properties(
     }
 
     fun getList(vararg path: Any): List<*>? {
-        val list = read(*path) as? List<*> ?: return null
+        val list = read(path.toList()) as? List<*> ?: return null
         return list.mapIndexed { i, v ->
             when (v) {
                 is Map<*, *> -> Properties(vegaSpec, sectionPath + path + i)
@@ -53,7 +62,7 @@ class Properties(
     }
 
     operator fun get(key: String): Any? {
-        return read(key)
+        return read(listOf(key))
     }
 
     val entries: List<Pair<*, *>>
@@ -97,10 +106,6 @@ class Properties(
         return vegaSpec.any { predicate(it) }
     }
 
-    fun getNumber(key: String): Number? {
-        return read(sectionPath + key) as? Number
-    }
-
     //fun mapKeys(transform: (Map.Entry<Any?, Any?>) -> String?): MapObj {
     //    return MapObj(vegaSpec.mapKeys { transform(it) })
     //}
@@ -110,11 +115,11 @@ class Properties(
     //}
 
     fun <K, V, R> flatMap(transform: (Map.Entry<K, V>) -> Iterable<*>): List<R> {
-        return vegaSpec.flatMap { transform(it as Map.Entry<K, V>) } as List<R>
+        return (read() as Map<*, *>).flatMap { transform(it as Map.Entry<K, V>) } as List<R>
     }
 
     fun <R> map(transform: (Pair<*, *>) -> R): List<R> {
-        return vegaSpec.map {
+        return (read() as Map<*, *>).map {
             val value = if (it.value is Map<*, *>) {
                 Properties(it.value as Map<*, *>)
             } else {
@@ -125,19 +130,19 @@ class Properties(
     }
 
     fun has(vararg path: String): Boolean {
-        return vegaSpec.has(*path)
-    }
+        val item = read(path.dropLast(1)) ?: return false
 
-    fun isMap(): Boolean = read() is Map<*, *>
-    fun isList(): Boolean = read() is List<*>
+        return (item as Map<*, *>).has(path.last())
+    }
 
     fun getData(): Map<String, Any> {
         return vegaSpec.getMap(VegaOption.DATA) ?: emptyMap()
     }
 
 
-    private fun read(vararg p: Any): Any? {
-        return p.fold<Any, Any?>(this) { acc, cur ->
+    private fun read(p: List<Any> = emptyList()): Any? {
+        val fullPath = sectionPath + p
+        return fullPath.fold<Any, Any?>(vegaSpec) { acc, cur ->
             if (acc == null) return null
 
             when (cur) {
@@ -149,11 +154,8 @@ class Properties(
     }
 
     fun merge(other: Properties): Properties {
+        //require(sectionPath == other.sectionPath) { "Properties sections are different: $sectionPath != ${other.sectionPath}" }
         return Properties(vegaSpec + other.vegaSpec, sectionPath)
-    }
-
-    operator fun minus(key: String): Properties {
-        return Properties(vegaSpec - key, sectionPath)
     }
 
     companion object {
