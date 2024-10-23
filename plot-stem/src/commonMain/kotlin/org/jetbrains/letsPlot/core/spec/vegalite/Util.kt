@@ -7,7 +7,9 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.StatKind
+import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
@@ -46,12 +48,12 @@ internal object Util {
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
 
-    fun iHorizontal(encodingVegaSpec: VegaSpecProp): Boolean {
+    fun iHorizontal(encodingVegaSpec: Properties): Boolean {
         return listOf(Channel.X, Channel.X2, Channel.Y).all(encodingVegaSpec::contains)
                 && Channel.Y2 !in encodingVegaSpec
     }
 
-    fun isContinuous(channel: String, encoding: VegaSpecProp): Boolean {
+    fun isContinuous(channel: String, encoding: Properties): Boolean {
         val channelEncoding = encoding.getMap(channel) ?: return false
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
@@ -70,14 +72,14 @@ internal object Util {
     // Convert from channel to field  to aes to variable
     // Aggregate and other transforms are already applied and not considered here
     fun transformMappings(
-        encoding: VegaSpecProp,
+        encoding: Properties,
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL)
         return encoding
             .map { (channel, encoding) ->
                 channel as String
-                encoding as VegaSpecProp
+                encoding as Properties
                 val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
                 val aesthetics = channelToAes(channel, customChannelMapping)
                 aesthetics.map { aes -> aes to field}
@@ -124,13 +126,13 @@ internal object Util {
     // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.
     fun transformDataMeta(
         data: Map<String, List<Any?>>?,
-        encodingVegaSpec: VegaSpecProp,
+        encodingVegaSpec: Properties,
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
-        encodingVegaSpec.asMapEntries.forEach { (channel, encoding) ->
-            require(encoding.isMap())
+        encodingVegaSpec.entries.forEach { (channel, encoding) ->
+            require(encoding is Properties)
             if (channel !is String) return@forEach
 
             if (channel == Channel.X2 || channel == Channel.Y2) {
@@ -173,7 +175,7 @@ internal object Util {
         return dataMeta
     }
 
-    fun transformPositionAdjust(encodings: VegaSpecProp, stat: StatOptions?): PositionOptions? {
+    fun transformPositionAdjust(encodings: Properties, stat: StatOptions?): PositionOptions? {
         run {
             val xOffsetField = encodings.getString(Channel.X_OFFSET, Encoding.FIELD)
             val yOffsetField = encodings.getString(Channel.Y_OFFSET, Encoding.FIELD)
@@ -220,7 +222,7 @@ internal object Util {
         return null
     }
 
-    fun transformCoordinateSystem(encoding: VegaSpecProp, plotOptions: PlotOptions) {
+    fun transformCoordinateSystem(encoding: Properties, plotOptions: PlotOptions) {
         fun domain(channel: String): Pair<Double?, Double?> {
             val domainMin = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MIN)
             val domainMax = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MAX)

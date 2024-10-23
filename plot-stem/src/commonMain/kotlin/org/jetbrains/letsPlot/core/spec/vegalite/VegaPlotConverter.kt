@@ -28,17 +28,17 @@ internal class VegaPlotConverter private constructor(
             return VegaPlotConverter(vegaPlotSpec).convert()
         }
     }
-    private val vegaPlotSpec = VegaSpecProp(vegaPlotSpecMap)
+    private val vegaPlotSpec = Properties(vegaPlotSpecMap)
 
     private val plotData = Util.transformData(vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap())
-    private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: VegaSpecProp.EMPTY)
+    private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
         when (VegaConfig.getPlotKind(vegaPlotSpec)) {
             VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
             VegaPlotKind.MULTI_LAYER -> {
-                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach(::processLayerSpec)
+                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach { processLayerSpec(it) }
             }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
@@ -46,9 +46,9 @@ internal class VegaPlotConverter private constructor(
         return plotOptions.toJson()
     }
 
-    private fun processLayerSpec(layerSpec: VegaSpecProp) {
+    private fun processLayerSpec(layerSpec: Properties) {
         val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val rawEncoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: VegaSpecProp.EMPTY))
+        val rawEncoding = plotEncoding.merge(layerSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
 
         val transformResult = VegaTransformHelper.applyTransform(rawEncoding, layerSpec)
         val encoding = transformResult?.adjustedEncoding ?: rawEncoding

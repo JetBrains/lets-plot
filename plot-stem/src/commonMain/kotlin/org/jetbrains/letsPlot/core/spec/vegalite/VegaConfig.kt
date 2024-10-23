@@ -20,7 +20,7 @@ object VegaConfig {
         return VegaPlotConverter.convert(map)
     }
 
-    internal fun getPlotKind(opts: VegaSpecProp): VegaPlotKind {
+    internal fun getPlotKind(opts: Properties): VegaPlotKind {
         //if (!isVegaLiteSpec(opts)) {
         //    throw IllegalArgumentException("Not a Vega-Lite spec")
         //}

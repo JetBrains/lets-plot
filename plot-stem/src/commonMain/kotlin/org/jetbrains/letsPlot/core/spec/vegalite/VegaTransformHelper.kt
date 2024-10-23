@@ -14,16 +14,16 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Transform
 
 class TransformResult internal constructor(
-    val adjustedEncoding: VegaSpecProp, // Vega "stat" configs (aggregate, bin, ...) replaced with LP stat vars
+    val adjustedEncoding: Properties, // Vega "stat" configs (aggregate, bin, ...) replaced with LP stat vars
     val stat: StatOptions,
     val orientation: String? = null
 )
 
 object VegaTransformHelper {
-    fun applyTransform(encodings: VegaSpecProp, layerSpec: VegaSpecProp): TransformResult? {
+    fun applyTransform(encodings: Properties, layerSpec: Properties): TransformResult? {
         run { // x.bin -> binStat
-            val xBinDefinition = encodings.read(Channel.X, Encoding.BIN)
-            val yBinDefinition = encodings.read(Channel.Y, Encoding.BIN)
+            val xBinDefinition = encodings.getAny(Channel.X, Encoding.BIN)
+            val yBinDefinition = encodings.getAny(Channel.Y, Encoding.BIN)
 
             val statInputChannel = when {
                 xBinDefinition != null -> Channel.X
@@ -32,7 +32,7 @@ object VegaTransformHelper {
             }
 
             val adjustedEncoding = encodings.mapValues { (channel, encoding) ->
-                require(encoding is VegaSpecProp)
+                encoding as Properties
                 when {
                     channel == statInputChannel -> encoding - Encoding.BIN + (Encoding.TYPE to Encoding.Types.QUANTITATIVE)
                     encoding[Encoding.AGGREGATE] == Aggregate.COUNT -> {
@@ -90,14 +90,14 @@ object VegaTransformHelper {
             val groupingVar = densityTransform.getString(Transform.Density.GROUP_BY)
 
             val statInputChannel = encodings
-                .asMapEntries
+                .entries
                 .filter { (channel, _) -> channel == Channel.X || channel == Channel.Y }
-                .singleOrNull { (_, encoding) -> (encoding as VegaSpecProp)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
+                .singleOrNull { (_, encoding) -> (encoding as Properties)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
                 ?.key
 
             return TransformResult(
                 encodings.mapValues { (_, encoding) ->
-                    require(encoding is VegaSpecProp)
+                    require(encoding is Properties)
                     when {
                         encoding[Encoding.FIELD] == Transform.Density.VAR_DENSITY -> encoding + (Encoding.FIELD to Stats.DENSITY.name)
                         encoding[Encoding.FIELD] == Transform.Density.VAR_VALUE -> encoding + (Encoding.FIELD to origVar)
