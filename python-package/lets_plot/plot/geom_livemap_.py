@@ -298,7 +298,7 @@ def _warn_deprecated_tiles(tiles: Union[dict, None]):
     if not maptiles_attribution.endswith('map data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a> <a href="https://carto.com/attributions#basemaps">© CARTO</a>, <a href="https://carto.com/attributions">© CARTO</a>'):
         return
 
-    print(f"WARN: The tileset is deprecated and will be removed in future releases.")
+    print(f"WARN: The tileset is no longer available and the corresponding constant will be removed in future releases.")
 
 
 def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
