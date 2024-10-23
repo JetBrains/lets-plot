@@ -12,8 +12,159 @@ import kotlin.test.fail
 class JsonSupportTest {
 
     @Test
-    fun parser() {
+    fun parserErrorMessage() {
+        val jsonString = """
+            |{
+            |    "a": ]
+            |}
+        """.trimMargin()
 
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+
+        // TODO: improve error message
+        assertEquals("Invalid token: RIGHT_BRACKET", res.message)
+    }
+
+    @Test
+    fun unknownTokenInTheMiddleOfTheLongLine() {
+        // Line is longer than 80 characters
+        val jsonString = """
+            |{
+            |    "a": 1,
+            |    "b": 2,
+            |    "c": 3,
+            |    "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": '4', "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": 5
+            |}
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 135 (5:98)
+            |ddddddddddddddddddddddddddddddddddddd": '4', "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            |                                        ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenAtTheStartOfTheLongLine() {
+        // Line is longer than 80 characters
+        val jsonString = """
+            |{
+            |    "a": 1,
+            |    "b": 2,
+            |    "c": 3,
+            |    "d": '4', "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": 5, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff": 6
+            |}
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 47 (5:10)
+            |    "d": '4', "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+            |         ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenAtTheEndOfTheLongLine() {
+        // Line is longer than 80 characters
+        val jsonString = """
+            |{
+            |    "a": 1,
+            |    "b": 2,
+            |    "c": 3,
+            |    "ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd": '4', "e": 5, "f": 6
+            |}
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 135 (5:98)
+            |ddddddddddddddddddddddddddddddddddddd": '4', "e": 5, "f": 6
+            |                                        ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenInMultiLineJson() {
+        val jsonString = """
+            |{
+            |    "a": 1,
+            |    "b": 2,
+            |    "c": '3',
+            |    "d": 4
+            |}
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 35 (4:10)
+            |    "c": '3',
+            |         ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenInLastLine() {
+        val jsonString = """
+            |{
+            |    "a": 1,
+            |    "b": 2,
+            |    "c": 3,
+            |    "d": '4' }
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 47 (5:10)
+            |    "d": '4' }
+            |         ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenInFirstLine() {
+        val jsonString = """
+            |{ "a": '1',
+            |    "b": 2,
+            |    "c": 3,
+            |    "d": 4
+            |}
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 7 (1:8)
+            |{ "a": '1',
+            |       ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+    @Test
+    fun unknownTokenInSingleLineJson() {
+        val jsonString = """
+            |{ "a": 1, "b": 2, "c": '3', "d": 4 }
+        """.trimMargin()
+
+        val res = kotlin.runCatching { JsonSupport.parse(jsonString) }.exceptionOrNull() ?: fail("Exception expected")
+        val expectedErrorText = """
+            |Unknown token >'< at 23 (1:24)
+            |{ "a": 1, "b": 2, "c": '3', "d": 4 }
+            |                       ^
+        """.trimMargin()
+        assertEquals(expectedErrorText, res.message)
+    }
+
+
+
+    @Test
+    fun parser() {
         val cases = listOf(
             testCase("""[null, 1, "1", {}]""", listOf<Any?>(null, 1.0, "1", emptyMap<Any, Any>())),
             testCase("""[1,null,null,null,2]""", listOf(1.0, null, null,null, 2.0)),

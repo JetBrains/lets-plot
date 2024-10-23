@@ -39,7 +39,7 @@ internal class JsonLexer(
             currentChar == 'n' -> Token.NULL.also { read("null") }
             currentChar == '"' -> Token.STRING.also { readString() }
             readNumber() -> Token.NUMBER
-            else -> error("$i:${currentChar} - unkown token")
+            else -> error(formatErrorMessage())
         }.also { currentToken = it }
     }
 
@@ -48,18 +48,18 @@ internal class JsonLexer(
     private fun readString() {
         startToken()
         advance() // opening quote
-        while(!(currentChar == '"')) {
-            if(currentChar == '\\') {
+        while (currentChar != '"') {
+            if (currentChar == '\\') {
                 advance()
-                when {
-                    currentChar == 'u' -> {
+                when (currentChar) {
+                    'u' -> {
                         advance()
                         repeat(4) {
-                            require(currentChar.isHex());
+                            require(currentChar.isHex())
                             advance()
                         }
                     }
-                    currentChar in SPECIAL_CHARS -> advance()
+                    in SPECIAL_CHARS -> advance()
                     else -> error("Invalid escape sequence")
                 }
             } else {
@@ -114,9 +114,33 @@ internal class JsonLexer(
         }
     }
 
+    private fun formatErrorMessage(): String {
+        val errLineStart = input.subSequence(0, i).lastIndexOf('\n').let { if (it == -1) 0 else it + 1 }
+        val errLineEnd = input.indexOf('\n', i).let { if (it == -1) input.length else it }
+        val errLineLength = errLineEnd - errLineStart
+
+        val (errFragmentStart, errFragmentEnd) = when {
+            errLineLength <= 81 -> Pair(errLineStart, errLineEnd)
+            errLineLength > 81 -> Pair(
+                maxOf(errLineStart, i - 40),
+                minOf(errLineEnd, i + 41)
+            )
+            errLineLength < 0 -> error("Negative line length") // should never happen
+            else -> error("Unexpected line length: $errLineLength") // should never happen either
+        }
+
+        // Note that "at $i" is a zero-based index, while "$errorLineNumber" and "$errorSymbolLinePos" are one-based.
+        val errorLineNumber = input.subSequence(0, i).count { it == '\n' }.let { if (it == 0) 1 else it + 1 }
+        val errorSymbolLinePos = i - errLineStart + 1
+
+        return "Unknown token >$currentChar< at $i ($errorLineNumber:$errorSymbolLinePos)\n" +
+                "${input.substring(errFragmentStart, errFragmentEnd)}\n" +
+                " ".repeat(i - errFragmentStart) + "^"
+    }
+
     companion object {
         private val digits: CharRange = '0'..'9'
         private fun Char?.isDigit() = this in digits
-        private fun Char.isHex(): Boolean { return isDigit() || this in 'a'..'f' || this in 'A'..'F' }
+        private fun Char.isHex(): Boolean = isDigit() || this in 'a'..'f' || this in 'A'..'F'
     }
 }
