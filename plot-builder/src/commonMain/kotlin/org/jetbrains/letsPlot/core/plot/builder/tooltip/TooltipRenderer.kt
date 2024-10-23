@@ -89,32 +89,11 @@ internal class TooltipRenderer(
             decorationLayer.children().add(0, this)
         }
 
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltips() }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler { hideTooltips() }))
-        regs.add(mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler { switchPinnedState(it) }))
-    }
-
-    private fun switchPinnedState(mouseEvent: MouseEvent) {
-        if (mouseEvent.button != LEFT) return
-        if (mouseEvent.modifiers.isCtrl) return
-
-        if (pinned) {
-            pinned = false
-            fadeEffectRect.width().set(0.0)
-            fadeEffectRect.height().set(0.0)
-            hideTooltips()
-        } else {
-            val geomBounds = findTileInfo(mouseEvent.location.toDoubleVector())?.geomBounds ?: return
-            if (tooltipStorage.size == 0) return
-
-            pinned = true
-            fadeEffectRect.x().set(geomBounds.left)
-            fadeEffectRect.y().set(geomBounds.top)
-            fadeEffectRect.width().set(geomBounds.width)
-            fadeEffectRect.height().set(geomBounds.height)
-        }
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler(::onMouseMoved)))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler(::onMouseDragged)))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler(::onMouseLeft)))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_CLICKED, handler(::onMouseClicked)))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler(::onMouseDoubleClicked)))
     }
 
     override fun dispose() {
@@ -123,10 +102,6 @@ internal class TooltipRenderer(
     }
 
     private fun showTooltips(cursor: DoubleVector) {
-        if (pinned) {
-            return
-        }
-
         val tileInfo = findTileInfo(cursor)
         if (tileInfo == null) {
             hideTooltips()
@@ -227,8 +202,6 @@ internal class TooltipRenderer(
     }
 
     private fun hideTooltips() {
-        if (pinned) return
-
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
     }
@@ -245,9 +218,9 @@ internal class TooltipRenderer(
             .mapNotNull { tooltip -> tooltip.tooltipSpec.layoutHint.coord }
             .toList()
 
-        val crosshariComponents = crosshairStorage.provide(coords.size)
+        val crosshairComponents = crosshairStorage.provide(coords.size)
 
-        coords.zip(crosshariComponents)
+        coords.zip(crosshairComponents)
             .forEach { (coord, crosshairComponent) ->
                 crosshairComponent.update(
                     coord = coord,
@@ -256,6 +229,69 @@ internal class TooltipRenderer(
                     showVertical = showVertical
                 )
             }
+    }
+
+    private fun onMouseClicked(mouseEvent: MouseEvent) {
+        if (mouseEvent.button != LEFT) return
+
+        // On a Livemap, this allows zooming in with a tooltip, avoiding the epilepsy-inducing blinking fade effect
+        if (mouseEvent.modifiers.isCtrl) return
+
+        if (pinned) {
+            unpin()
+            hideTooltips()
+        } else {
+            if (tooltipStorage.size == 0) return
+            val geomBounds = findTileInfo(mouseEvent.location.toDoubleVector())?.geomBounds ?: return
+            pin(geomBounds)
+        }
+    }
+
+    private fun onMouseDoubleClicked(mouseEvent: MouseEvent) {
+        // Double-clicking on the plot resets zoom and pan or zooms the livemap
+        // so we should unpin the tooltip to remove the fade effect
+        if (pinned) {
+            unpin()
+        }
+
+        hideTooltips()
+    }
+
+    private fun onMouseLeft(mouseEvent: MouseEvent) {
+        // Not yet happened. Subj to change if needed.
+        if (!pinned) {
+            hideTooltips()
+        }
+    }
+
+    private fun onMouseDragged(mouseEvent: MouseEvent) {
+        // Dragging the plot should unpin the tooltip to remove the fade effect and make the plot interactive again
+        // This is also needed for the livemap for the same reason
+        if (pinned) {
+            unpin()
+        }
+
+        hideTooltips()
+    }
+
+    private fun onMouseMoved(mouseEvent: MouseEvent) {
+        if (!pinned) {
+            showTooltips(mouseEvent.location.toDoubleVector())
+        }
+    }
+
+    private fun unpin() {
+        fadeEffectRect.width().set(0.0)
+        fadeEffectRect.height().set(0.0)
+        pinned = false
+    }
+
+    private fun pin(geomBounds: DoubleRectangle) {
+        fadeEffectRect.x().set(geomBounds.left)
+        fadeEffectRect.y().set(geomBounds.top)
+        fadeEffectRect.width().set(geomBounds.width)
+        fadeEffectRect.height().set(geomBounds.height)
+        pinned = true
     }
 
     fun addTileInfo(
