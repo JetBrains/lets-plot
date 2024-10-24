@@ -59,7 +59,9 @@ class MouseWheelInteraction(
                 zoomOrigin = e.location.toDoubleVector()
                 zoomDelta = e.scrollAmount
                 _target = ctx.findTarget(e.location.toDoubleVector())
-                onZoomed(this)
+                if (_target != null) {
+                    onZoomed(this)
+                }
             }
         )
     }
