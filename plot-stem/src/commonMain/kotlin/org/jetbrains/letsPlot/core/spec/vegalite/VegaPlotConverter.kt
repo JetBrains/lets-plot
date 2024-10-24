@@ -28,16 +28,16 @@ internal class VegaPlotConverter private constructor(
             return VegaPlotConverter(vegaPlotSpec).convert()
         }
     }
-    private val vegaPlotSpec = Properties(vegaPlotSpecMap)
 
     private val plotData = Util.transformData(vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap())
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
+        val accessLogger = Properties.AccessLogger()
         when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
-            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpecMap)
+            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpecMap, accessLogger)
             VegaPlotKind.MULTI_LAYER -> {
-                vegaPlotSpecMap.getMaps(VegaOption.LAYER)!!.forEach {
+                vegaPlotSpecMap.getMaps(VegaOption.LAYER)!!.forEachIndexed { i, it ->
                     val layerSpecMap = it as MutableMap<*, *>
                     if (VegaOption.ENCODING !in layerSpecMap) {
                         layerSpecMap.write(VegaOption.ENCODING) { mutableMapOf<String, Any?>() }
@@ -49,7 +49,7 @@ internal class VegaPlotConverter private constructor(
                         }
                     }
 
-                    processLayerSpec(layerSpecMap)
+                    processLayerSpec(layerSpecMap, accessLogger.nested(listOf(VegaOption.LAYER, i)))
                 }
             }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
@@ -58,16 +58,19 @@ internal class VegaPlotConverter private constructor(
         return plotOptions.toJson()
     }
 
-    private fun processLayerSpec(layerSpecMap: MutableMap<*, *>) {
+    private fun processLayerSpec(layerSpecMap: MutableMap<*, *>, accessLogger: Properties.AccessLogger) {
         val (markType, markVegaSpec) = Util.readMark(layerSpecMap[VegaOption.MARK] ?: error("Mark is not specified"))
-        val transformResult = VegaTransformHelper.applyTransform(Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!), Properties(layerSpecMap))
+        val transformResult = VegaTransformHelper.applyTransform(
+            Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!, accessLogger.nested(listOf(VegaOption.ENCODING))),
+            Properties(layerSpecMap, accessLogger)
+        )
 
         transformResult?.encodingAdjustment?.forEach { (path, value) ->
             layerSpecMap.getMap(VegaOption.ENCODING)!!.write(path, value)
         }
 
-        val encoding = Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!)
-        val layerSpec = Properties(layerSpecMap)
+        val encoding = Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!, accessLogger.nested(listOf(VegaOption.ENCODING)))
+        val layerSpec = Properties(layerSpecMap, accessLogger)
 
         fun appendLayer(
             geom: GeomKind? = null,

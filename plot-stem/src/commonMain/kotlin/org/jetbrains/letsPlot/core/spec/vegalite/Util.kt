@@ -7,9 +7,7 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.spec.StatKind
-import org.jetbrains.letsPlot.core.spec.getMaps
-import org.jetbrains.letsPlot.core.spec.getString
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.CoordOptions.CoordName.CARTESIAN
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
@@ -48,12 +46,12 @@ internal object Util {
         return columnKeys.associateWith { columnKey -> rows.map { row -> row[columnKey] } }
     }
 
-    fun iHorizontal(encodingVegaSpec: Properties): Boolean {
+    fun iHorizontal(encodingVegaSpec: Map<*, *>): Boolean {
         return listOf(Channel.X, Channel.X2, Channel.Y).all(encodingVegaSpec::contains)
                 && Channel.Y2 !in encodingVegaSpec
     }
 
-    fun isContinuous(channel: String, encoding: Properties): Boolean {
+    fun isContinuous(channel: String, encoding: Map<*, *>): Boolean {
         val channelEncoding = encoding.getMap(channel) ?: return false
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.QUANTITATIVE) return true
         if (channelEncoding[Encoding.TYPE] == Encoding.Types.ORDINAL) return false
@@ -72,12 +70,13 @@ internal object Util {
     // Convert from channel to field  to aes to variable
     // Aggregate and other transforms are already applied and not considered here
     fun transformMappings(
-        encoding: Properties,
+        encoding: Map<*, *>,
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
         return encoding.entries.map { (channel, encoding) ->
-                encoding as Properties
+                channel as String
+                encoding as Map<*, *>
                 val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
                 val aesthetics = channelToAes(channel, customChannelMapping)
                 aesthetics.map { aes -> aes to field}
@@ -124,14 +123,14 @@ internal object Util {
     // Data should be in columnar format, not in Vega format, i.e., a list of values rather than a list of objects.
     fun transformDataMeta(
         data: Map<String, List<Any?>>?,
-        encodingVegaSpec: Properties,
+        encodingVegaSpec: Map<*, *>,
         customChannelMapping: List<Pair<String, Aes<*>>>
     ): DataMetaOptions {
         val dataMeta = DataMetaOptions()
 
         encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            require(encoding is Properties)
-            if (channel !is String) return@forEach
+            channel as String
+            require(encoding is Map<*, *>)
 
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
@@ -173,7 +172,7 @@ internal object Util {
         return dataMeta
     }
 
-    fun transformPositionAdjust(encodings: Properties, stat: StatOptions?): PositionOptions? {
+    fun transformPositionAdjust(encodings: Map<*, *>, stat: StatOptions?): PositionOptions? {
         run {
             val xOffsetField = encodings.getString(Channel.X_OFFSET, Encoding.FIELD)
             val yOffsetField = encodings.getString(Channel.Y_OFFSET, Encoding.FIELD)
@@ -188,8 +187,8 @@ internal object Util {
         }
 
         run {
-            val xStackDefinition = encodings.getMap(Channel.X)?.getAny(Encoding.STACK)
-            val yStackDefinition = encodings.getMap(Channel.Y)?.getAny(Encoding.STACK)
+            val xStackDefinition = encodings.read(Channel.X, Encoding.STACK)
+            val yStackDefinition = encodings.read(Channel.Y, Encoding.STACK)
 
             // Note that stack=null is a valid option in Vega-Lite for disabling stacking,
             // and it's not the same as missing stack option.
@@ -220,7 +219,7 @@ internal object Util {
         return null
     }
 
-    fun transformCoordinateSystem(encoding: Properties, plotOptions: PlotOptions) {
+    fun transformCoordinateSystem(encoding: Map<*, *>, plotOptions: PlotOptions) {
         fun domain(channel: String): Pair<Double?, Double?> {
             val domainMin = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MIN)
             val domainMax = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MAX)
