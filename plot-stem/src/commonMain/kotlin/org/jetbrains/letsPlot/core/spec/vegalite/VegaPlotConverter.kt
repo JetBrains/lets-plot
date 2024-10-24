@@ -9,9 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
-import org.jetbrains.letsPlot.core.spec.StatKind
-import org.jetbrains.letsPlot.core.spec.getDouble
-import org.jetbrains.letsPlot.core.spec.getMap
+import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.vegalite.Util.applyConstants
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.COLOR
@@ -23,28 +21,35 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 
 internal class VegaPlotConverter private constructor(
-    vegaPlotSpecMap: MutableMap<String, Any>
+    private val vegaPlotSpecMap: MutableMap<String, Any?>
 ) {
     companion object {
-        fun convert(vegaPlotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+        fun convert(vegaPlotSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
             return VegaPlotConverter(vegaPlotSpec).convert()
         }
     }
     private val vegaPlotSpec = Properties(vegaPlotSpecMap)
 
     private val plotData = Util.transformData(vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap())
-    private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
-        when (VegaConfig.getPlotKind(vegaPlotSpec)) {
-            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
+        when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
+            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpecMap)
             VegaPlotKind.MULTI_LAYER -> {
-                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach {
-                    if (VegaOption.ENCODING !in it) {
-                        it[VegaOption.ENCODING] = mutableMapOf<String, Any?>()
+                vegaPlotSpecMap.getMaps(VegaOption.LAYER)!!.forEach {
+                    val layerSpecMap = it as MutableMap<*, *>
+                    if (VegaOption.ENCODING !in layerSpecMap) {
+                        layerSpecMap.write(VegaOption.ENCODING) { mutableMapOf<String, Any?>() }
                     }
-                    processLayerSpec(it)
+
+                    vegaPlotSpecMap.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
+                        if (!layerSpecMap.has(VegaOption.ENCODING, channel)) {
+                            layerSpecMap.write(VegaOption.ENCODING, channel) { encoding }
+                        }
+                    }
+
+                    processLayerSpec(layerSpecMap)
                 }
             }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
@@ -53,17 +58,16 @@ internal class VegaPlotConverter private constructor(
         return plotOptions.toJson()
     }
 
-    private fun processLayerSpec(layerSpec: Properties) {
-        val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val layerEncoding = layerSpec.getMap(VegaOption.ENCODING)!!
-        plotEncoding.entries.forEach { (channel, encoding) ->
-            if (channel !in layerEncoding) {
-                layerEncoding[channel] = encoding
-            }
-        }
-        val encoding = layerEncoding
+    private fun processLayerSpec(layerSpecMap: MutableMap<*, *>) {
+        val (markType, markVegaSpec) = Util.readMark(layerSpecMap[VegaOption.MARK] ?: error("Mark is not specified"))
+        val transformResult = VegaTransformHelper.applyTransform(Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!), Properties(layerSpecMap))
 
-        val transformResult = VegaTransformHelper.applyTransform(encoding, layerSpec)
+        transformResult?.encodingAdjustment?.forEach { (path, value) ->
+            layerSpecMap.getMap(VegaOption.ENCODING)!!.write(path, value)
+        }
+
+        val encoding = Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!)
+        val layerSpec = Properties(layerSpecMap)
 
         fun appendLayer(
             geom: GeomKind? = null,
@@ -76,7 +80,7 @@ internal class VegaPlotConverter private constructor(
                     data = when {
                         VegaOption.DATA !in layerSpec -> plotData
                         layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getData()) // data is specified
+                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpecMap.getMap(VegaOption.DATA)!!.typed()) // data is specified
                         else -> error("Unsupported data specification")
                     }
 

@@ -9,48 +9,38 @@ import org.jetbrains.letsPlot.core.spec.has
 
 class Properties(
     private val vegaSpec: Map<*, *>,
-    private val sectionPath: List<Any> = emptyList(),
-) {
-    fun write(vararg path: String, value: () -> Any?) {
-        val map = read(path.dropLast(1)) as? MutableMap<String, Any?> ?: error("Can't write to the path: ${path.toList()}")
-        val v = value().let {
-            if (it is Properties) {
-                map[path.last()] = it.getAny()
-            } else {
-                map[path.last()] = it
-            }
+    private val basePath: List<Any> = emptyList(),
+) : Map<String, Any?> {
+
+    @Suppress("UNCHECKED_CAST")
+    private val thisMap: Map<String, Any?> get() = read() as Map<String, Any?>
+
+    fun getAny(vararg path: Any): Any? {
+        return when (val v = read(path.toList())) {
+            is Map<*, *> -> Properties(vegaSpec, basePath + path)
+            else -> v
         }
     }
 
-    fun getAny(vararg path: Any): Any? {
-        return read(path.toList())
-    }
-
-    fun getString(vararg path: String): String? {
-        return read(path.toList()) as? String
-    }
-
-    fun getDouble(vararg path: String): Double? {
-        return read(path.toList()) as? Double
-    }
+    fun getString(vararg path: String) = read(path.toList()) as? String
+    fun getDouble(vararg path: String) = read(path.toList()) as? Double
+    fun getNumber(key: String) = read(listOf(key)) as? Number
 
     fun getMap(vararg path: Any): Properties? {
-        val map = read(path.toList()) as? Map<*, *> ?: return null
-        return Properties(vegaSpec, sectionPath + path)
-    }
-
-    fun getNumber(key: String): Number? {
-        return read(listOf(key)) as? Number
+        if (!has(*path)) {
+            return null
+        }
+        return Properties(vegaSpec, basePath + path)
     }
 
     fun getMaps(vararg path: Any): List<Properties>? {
-        val list = read(path.toList()) as? List<*> ?: return null
+        val maps = read(path.toList()) as? List<*> ?: return null
 
-        return list.mapIndexed { i, v ->
-            when (v) {
-                is Map<*, *> -> Properties(vegaSpec, sectionPath + path + i)
+        return maps.mapIndexed { i, map ->
+            when (map) {
+                is Map<*, *> -> Properties(vegaSpec, basePath + path + i)
                 null -> null
-                else -> error("Unexpected item type: ${v::class.simpleName}")
+                else -> error("Unexpected item type: ${map::class.simpleName}")
             }
         }.filterNotNull()
     }
@@ -59,79 +49,47 @@ class Properties(
         val list = read(path.toList()) as? List<*> ?: return null
         return list.mapIndexed { i, v ->
             when (v) {
-                is Map<*, *> -> Properties(vegaSpec, sectionPath + path + i)
+                is Map<*, *> -> Properties(vegaSpec, basePath + path + i)
                 else -> v
             }
         }
     }
 
-    operator fun get(key: String): Any? {
-        return read(listOf(key))
-    }
-
-    operator fun set(key: String, value: Any?) {
-        if (value == null) {
-            error("not implemented")
-        }
-        write(key) { value }
-    }
-
-    val entries: List<Pair<String, Any?>>
+    override val entries: Set<Map.Entry<String, Any?>>
         get() {
-            @Suppress("UNCHECKED_CAST")
-            val map = read() as Map<String, Any?>
-            return map.entries.map { (key, v) ->
-                when (v) {
-                    is Map<*, *> -> key to Properties(vegaSpec, sectionPath + key!!)
-                    else -> key to v
+            return thisMap.entries.map { (key, v) ->
+                val value = when (v) {
+                    is Map<*, *> -> Properties(vegaSpec, basePath + key)
+                    else -> v
                 }
-            }
+                object : Map.Entry<String, Any?> {
+                    override val key = key
+                    override val value = value
+                }
+            }.toSet()
         }
 
-    operator fun contains(key: String): Boolean {
-        return (read() as? Map<*, *>)?.contains(key) ?: false
+    override val keys: Set<String> get() = (read() as Map<*, *>).keys.map { it as String }.toSet()
+    override val size: Int get() = (read() as Map<*, *>).size
+    override val values: Collection<Any?> get() = thisMap.values
+
+    override fun get(key: String): Any? = getAny(key)
+    override fun isEmpty(): Boolean = thisMap.isEmpty()
+
+    override fun containsValue(value: Any?): Boolean {
+        if (value is Properties) {
+            error("Properties instance can't be used as a value")
+        }
+        return thisMap.containsValue(value)
     }
 
-    //operator fun plus(vegaSpec: MapObj<*>): MapObj<*> {
-    //    return MapObj(this@VegaSpecObject.vegaSpec + vegaSpec.vegaSpec)
-    //}
+    override fun containsKey(key: String): Boolean = thisMap.containsKey(key)
+    operator fun contains(key: String): Boolean = containsKey(key)
 
-    //operator fun plus(pair: Pair<String, Any?>): MapObj {
-    //    return MapObj(vegaSpec + pair)
-    //}
-
-    fun mapValues(transform: (Pair<String, *>) -> Any?): Properties {
-        return Properties(vegaSpec.mapValues { (key, value) ->
-            val pair = (key as String) to when (value) {
-                is Map<*, *> -> Properties(value)
-                else -> value
-            }
-            transform(pair)
-        })
-    }
-
-    //operator fun minus(key: String): MapObj {
-    //    return this//VegaSpecAccessor(vegaSpec - key)
-    //}
-
-    fun any(predicate: (Map.Entry<*, *>) -> Boolean): Boolean {
-        return vegaSpec.any { predicate(it) }
-    }
-
-    //fun mapKeys(transform: (Map.Entry<Any?, Any?>) -> String?): MapObj {
-    //    return MapObj(vegaSpec.mapKeys { transform(it) })
-    //}
-
-    //fun filterNotNullKeys(): MapObj {
-    //    return MapObj(vegaSpec.filter { it.key != null })
-    //}
-
-    fun <K, V, R> flatMap(transform: (Map.Entry<K, V>) -> Iterable<*>): List<R> {
-        return (read() as Map<*, *>).flatMap { transform(it as Map.Entry<K, V>) } as List<R>
-    }
+    fun any(predicate: (Map.Entry<*, *>) -> Boolean): Boolean = vegaSpec.any(predicate)
 
     fun <R> map(transform: (Pair<*, *>) -> R): List<R> {
-        return (read() as Map<*, *>).map {
+        return thisMap.map {
             val value = if (it.value is Map<*, *>) {
                 Properties(it.value as Map<*, *>)
             } else {
@@ -141,20 +99,13 @@ class Properties(
         }
     }
 
-    fun has(vararg path: String): Boolean {
-        val item = read(path.dropLast(1)) ?: return false
-
-        return (item as Map<*, *>).has(path.last())
+    fun has(vararg path: Any): Boolean {
+        val properties = read(path.dropLast(1)) ?: return false
+        return (properties as Map<*, *>).has(path.last())
     }
 
-    fun getData(): Map<String, Any> {
-        @Suppress("UNCHECKED_CAST")
-        return getAny(VegaOption.DATA) as? Map<String, Any> ?: emptyMap()
-    }
-
-
-    private fun read(p: List<Any> = emptyList()): Any? {
-        val fullPath = sectionPath + p
+    private fun read(path: List<Any> = emptyList()): Any? {
+        val fullPath = basePath + path
         return fullPath.fold<Any, Any?>(vegaSpec) { acc, cur ->
             if (acc == null) return null
 
@@ -165,14 +116,4 @@ class Properties(
             }
         }
     }
-
-    fun merge(other: Properties): Properties {
-        //require(sectionPath == other.sectionPath) { "Properties sections are different: $sectionPath != ${other.sectionPath}" }
-        return Properties(vegaSpec + other.vegaSpec, sectionPath)
-    }
-
-    companion object {
-        val EMPTY = Properties(emptyMap<Any?, Any?>())
-    }
 }
-

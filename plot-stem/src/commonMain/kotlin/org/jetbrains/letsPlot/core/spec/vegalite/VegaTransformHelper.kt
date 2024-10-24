@@ -15,12 +15,15 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Transform
 
 class TransformResult internal constructor(
     val stat: StatOptions,
-    val orientation: String? = null
+    val orientation: String? = null,
+    val encodingAdjustment: List<Pair<List<String>, Any>>?
 )
 
 object VegaTransformHelper {
     // Adjusts Vega "stat" configs (aggregate, bin, ...), replacing them with the LP stat vars
     fun applyTransform(encodings: Properties, layerSpec: Properties): TransformResult? {
+        val encodingAdj = mutableListOf<Pair<List<String>, Any>>()
+
         run { // x.bin -> binStat
             val xBinDefinition = encodings.getAny(Channel.X, Encoding.BIN)
             val yBinDefinition = encodings.getAny(Channel.Y, Encoding.BIN)
@@ -34,17 +37,14 @@ object VegaTransformHelper {
             encodings.entries.forEach { (channel, encoding) ->
                 encoding as Properties
                 if (channel == statInputChannel) {
-                    encoding.write(Encoding.TYPE) { Encoding.Types.QUANTITATIVE }
-                    //encoding - Encoding.BIN + (Encoding.TYPE to Encoding.Types.QUANTITATIVE)
+                    encodingAdj.add(listOf(channel, Encoding.TYPE) to Encoding.Types.QUANTITATIVE)
                 }
 
                 if (encoding[Encoding.AGGREGATE] == Aggregate.COUNT) {
-                    encoding.write(Encoding.FIELD) { Stats.COUNT.name }
-                    encoding.write(Encoding.TYPE) { Encoding.Types.QUANTITATIVE }
-                    //encoding - Encoding.AGGREGATE + (Encoding.FIELD to Stats.COUNT.name) + (Encoding.TYPE to Encoding.Types.QUANTITATIVE)
+                    encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.COUNT.name)
+                    encodingAdj.add(listOf(channel, Encoding.TYPE) to Encoding.Types.QUANTITATIVE)
                 }
             }
-
 
             val binDefinition = xBinDefinition ?: yBinDefinition!!
             return TransformResult(
@@ -57,7 +57,8 @@ object VegaTransformHelper {
                         }
                     }
                 },
-                "y".takeIf { statInputChannel == Channel.Y }
+                "y".takeIf { statInputChannel == Channel.Y },
+                encodingAdj
             )
         }
 
@@ -73,9 +74,9 @@ object VegaTransformHelper {
             val aggregate = xAggregate ?: yAggregate ?: return@run
             // layer orientation implicit inference works fine for agg, not need to pass it explicitly
             return when (aggregate) {
-                Aggregate.COUNT -> TransformResult(countStat())
-                Aggregate.SUM -> TransformResult(summaryStat { f = AggFunction.SUM })
-                Aggregate.MEAN -> TransformResult(summaryStat { f = AggFunction.MEAN })
+                Aggregate.COUNT -> TransformResult(countStat(), encodingAdjustment = null)
+                Aggregate.SUM -> TransformResult(summaryStat { f = AggFunction.SUM }, encodingAdjustment = null)
+                Aggregate.MEAN -> TransformResult(summaryStat { f = AggFunction.MEAN }, encodingAdjustment = null)
                 else -> error("Unsupported aggregate function: $aggregate")
             }
         }
@@ -94,19 +95,20 @@ object VegaTransformHelper {
                 .entries
                 .filter { (channel, _) -> channel == Channel.X || channel == Channel.Y }
                 .singleOrNull { (_, encoding) -> (encoding as Properties)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
-                ?.first
+                ?.key
 
-            encodings.entries.forEach { (_, encoding) ->
+            encodings.entries.forEach { (channel, encoding) ->
                 require(encoding is Properties)
                 when (encoding[Encoding.FIELD]) {
-                    Transform.Density.VAR_DENSITY -> encoding.write(Encoding.FIELD) { Stats.DENSITY.name }
-                    Transform.Density.VAR_VALUE -> encoding.write(Encoding.FIELD) { origVar }
+                    Transform.Density.VAR_DENSITY -> encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.DENSITY.name)
+                    Transform.Density.VAR_VALUE -> encodingAdj.add(listOf(channel, Encoding.FIELD) to origVar)
                 }
             }
 
             return TransformResult(
                 densityStat(),
-                "y".takeIf { statInputChannel == Channel.Y }
+                "y".takeIf { statInputChannel == Channel.Y },
+                encodingAdj
             )
         }
 

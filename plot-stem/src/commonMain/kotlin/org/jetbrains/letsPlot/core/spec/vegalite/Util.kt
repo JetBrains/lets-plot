@@ -76,9 +76,7 @@ internal object Util {
         customChannelMapping: List<Pair<String, Aes<*>>> = emptyList()
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
-        return encoding
-            .map { (channel, encoding) ->
-                channel as String
+        return encoding.entries.map { (channel, encoding) ->
                 encoding as Properties
                 val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
                 val aesthetics = channelToAes(channel, customChannelMapping)

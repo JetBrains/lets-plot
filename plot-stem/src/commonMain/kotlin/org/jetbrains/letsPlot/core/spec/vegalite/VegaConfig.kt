@@ -16,11 +16,11 @@ object VegaConfig {
         return true
     }
 
-    fun transform(map: MutableMap<String, Any>): MutableMap<String, Any> {
+    fun transform(map: MutableMap<String, Any?>): MutableMap<String, Any> {
         return VegaPlotConverter.convert(map)
     }
 
-    internal fun getPlotKind(opts: Properties): VegaPlotKind {
+    internal fun getPlotKind(opts: Map<*, *>): VegaPlotKind {
         //if (!isVegaLiteSpec(opts)) {
         //    throw IllegalArgumentException("Not a Vega-Lite spec")
         //}
