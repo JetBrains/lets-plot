@@ -227,18 +227,18 @@ class DataTransformTest {
                 Meta.DATA_META, mapOf(
                     Meta.MappingAnnotation.TAG to listOf(
                         mapOf(
-                            Meta.MappingAnnotation.AES to "x",
-                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                            Meta.MappingAnnotation.PARAMETERS to mapOf(
-                                Meta.MappingAnnotation.LABEL to "A",
-                                Meta.MappingAnnotation.ORDER to 1
-                            )
-                        ),
-                        mapOf(
                             Meta.MappingAnnotation.AES to "y",
                             Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
                             Meta.MappingAnnotation.PARAMETERS to mapOf(
                                 Meta.MappingAnnotation.LABEL to "B",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
+                        ),
+                        mapOf(
+                            Meta.MappingAnnotation.AES to "x",
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "A",
                                 Meta.MappingAnnotation.ORDER to 1
                             )
                         ),

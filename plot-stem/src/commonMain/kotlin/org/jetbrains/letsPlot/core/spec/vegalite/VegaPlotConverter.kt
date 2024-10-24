@@ -40,7 +40,12 @@ internal class VegaPlotConverter private constructor(
         when (VegaConfig.getPlotKind(vegaPlotSpec)) {
             VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
             VegaPlotKind.MULTI_LAYER -> {
-                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach { processLayerSpec(it) }
+                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach {
+                    if (VegaOption.ENCODING !in it) {
+                        it[VegaOption.ENCODING] = mutableMapOf<String, Any?>()
+                    }
+                    processLayerSpec(it)
+                }
             }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
@@ -50,7 +55,13 @@ internal class VegaPlotConverter private constructor(
 
     private fun processLayerSpec(layerSpec: Properties) {
         val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val encoding = plotEncoding.merge(layerSpec.getMap(VegaOption.ENCODING) ?: Properties.EMPTY)
+        val layerEncoding = layerSpec.getMap(VegaOption.ENCODING)!!
+        plotEncoding.entries.forEach { (channel, encoding) ->
+            if (channel !in layerEncoding) {
+                layerEncoding[channel] = encoding
+            }
+        }
+        val encoding = layerEncoding
 
         val transformResult = VegaTransformHelper.applyTransform(encoding, layerSpec)
 

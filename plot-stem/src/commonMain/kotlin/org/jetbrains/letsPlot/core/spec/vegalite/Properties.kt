@@ -5,17 +5,21 @@
 
 package org.jetbrains.letsPlot.core.spec.vegalite
 
-import org.jetbrains.letsPlot.core.spec.getMap
 import org.jetbrains.letsPlot.core.spec.has
-import org.jetbrains.letsPlot.core.spec.write
 
 class Properties(
     private val vegaSpec: Map<*, *>,
     private val sectionPath: List<Any> = emptyList(),
 ) {
-
-    fun write(vararg path: String, value: () -> Any) {
-        vegaSpec.write(sectionPath.map { it.toString() } + path.toList(), value())
+    fun write(vararg path: String, value: () -> Any?) {
+        val map = read(path.dropLast(1)) as? MutableMap<String, Any?> ?: error("Can't write to the path: ${path.toList()}")
+        val v = value().let {
+            if (it is Properties) {
+                map[path.last()] = it.getAny()
+            } else {
+                map[path.last()] = it
+            }
+        }
     }
 
     fun getAny(vararg path: Any): Any? {
@@ -65,9 +69,17 @@ class Properties(
         return read(listOf(key))
     }
 
-    val entries: List<Pair<*, *>>
+    operator fun set(key: String, value: Any?) {
+        if (value == null) {
+            error("not implemented")
+        }
+        write(key) { value }
+    }
+
+    val entries: List<Pair<String, Any?>>
         get() {
-            val map = read() as Map<*, *>
+            @Suppress("UNCHECKED_CAST")
+            val map = read() as Map<String, Any?>
             return map.entries.map { (key, v) ->
                 when (v) {
                     is Map<*, *> -> key to Properties(vegaSpec, sectionPath + key!!)
@@ -136,7 +148,8 @@ class Properties(
     }
 
     fun getData(): Map<String, Any> {
-        return vegaSpec.getMap(VegaOption.DATA) ?: emptyMap()
+        @Suppress("UNCHECKED_CAST")
+        return getAny(VegaOption.DATA) as? Map<String, Any> ?: emptyMap()
     }
 
 

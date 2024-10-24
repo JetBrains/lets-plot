@@ -49,18 +49,20 @@ class BarMarkTransformTest {
                 )
             ),
             entry(PlotBase.MAPPING, mapOf("x" to "a")),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "a",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "a",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(Layer.STAT, StatKind.IDENTITY.name.lowercase())
         )
     }
@@ -88,18 +90,20 @@ class BarMarkTransformTest {
                 )
             ),
             entry(PlotBase.MAPPING, mapOf("x" to "a")),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "a",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "a",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(Layer.STAT, StatKind.IDENTITY.name.lowercase())
         )
     }
@@ -124,19 +128,25 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
             entry(PlotBase.MAPPING, mapOf("x" to "a")),
-            entry(Meta.DATA_META, mapOf(Meta.MappingAnnotation.TAG to listOf(
-                mapOf(
-                    Meta.MappingAnnotation.AES to toOption(Aes.X),
-                    Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                    Meta.MappingAnnotation.PARAMETERS to mapOf(
-                        Meta.MappingAnnotation.LABEL to "a",
-                        Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "a",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
+                        )
                     )
                 )
-            ))),
-            entry(PlotBase.DATA, mapOf(
-                "a" to listOf(1.0)
-            )),
+            ),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "a" to listOf(1.0)
+                )
+            ),
             entry(toOption(Aes.WIDTH), 0.5),
             entry(Layer.STAT, StatKind.IDENTITY.name.lowercase())
         )
@@ -167,10 +177,12 @@ class BarMarkTransformTest {
             entry(Layer.GEOM, fromGeomKind(GeomKind.HISTOGRAM)),
             entry(Layer.STAT, StatKind.BIN.name.lowercase()),
             entry(Meta.DATA_META, empty()),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to Stats.COUNT.name,
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to Stats.COUNT.name,
+                )
+            ),
         )
     }
 
@@ -197,28 +209,32 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "v",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "v",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(
                 PlotBase.DATA, mapOf(
                     "g" to listOf(1.0, 2.0, 4.0, 2.0, 1.0),
                     "v" to listOf(0.0, 1.0, 2.0, 3.0, 4.0),
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to "g"
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to "g"
+                )
+            ),
             entry(Layer.STAT, StatKind.COUNT.name.lowercase())
         )
     }
@@ -247,18 +263,20 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "v",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "v",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(
                 PlotBase.DATA, mapOf<String, List<Any?>>(
                     "..ymax.." to listOf(2.0, 2.0, 2.0, 2.0, 2.0),
@@ -267,9 +285,11 @@ class BarMarkTransformTest {
                     "g" to listOf(2.0, 4.0, 8.0, 4.0, 2.0),
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to "g")
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to "g"
+                )
             ),
             entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
             entry(Stat.Summary.FUN, Stat.Summary.Functions.SUM)
@@ -299,18 +319,20 @@ class BarMarkTransformTest {
         assertThat(plotSpec.getMap(PlotBase.MAPPING)).isNull()
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(Meta.DATA_META, mapOf(
-                Meta.MappingAnnotation.TAG to listOf(
-                    mapOf(
-                        Meta.MappingAnnotation.AES to toOption(Aes.X),
-                        Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
-                        Meta.MappingAnnotation.PARAMETERS to mapOf(
-                            Meta.MappingAnnotation.LABEL to "v",
-                            Meta.MappingAnnotation.ORDER to 1
+            entry(
+                Meta.DATA_META, mapOf(
+                    Meta.MappingAnnotation.TAG to listOf(
+                        mapOf(
+                            Meta.MappingAnnotation.AES to toOption(Aes.X),
+                            Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                            Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                Meta.MappingAnnotation.LABEL to "v",
+                                Meta.MappingAnnotation.ORDER to 1
+                            )
                         )
                     )
                 )
-            )),
+            ),
             entry(
                 PlotBase.DATA, mapOf<String, List<Any?>>(
                     "..ymax.." to listOf(2.0, 2.0, 2.0, 2.0, 2.0),
@@ -319,9 +341,11 @@ class BarMarkTransformTest {
                     "g" to listOf(2.0, 2.0, 2.0, 2.0, 2.0),
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "v",
-                toOption(Aes.Y) to "g")
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "v",
+                    toOption(Aes.Y) to "g"
+                )
             ),
             entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
             entry(Stat.Summary.FUN, Stat.Summary.Functions.MEAN)
@@ -330,7 +354,8 @@ class BarMarkTransformTest {
 
     @Test
     fun defaultBarStatIsIdentity() {
-        val vegaSpec = parseJson("""
+        val vegaSpec = parseJson(
+            """
             |{
             |    "description": "A simple bar chart with embedded data.",
             |    "data": {
@@ -352,7 +377,8 @@ class BarMarkTransformTest {
             |        "y": {"field": "b", "type": "quantitative"}
             |    }
             |}
-        """.trimMargin()).asMutable()
+        """.trimMargin()
+        ).asMutable()
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
@@ -367,17 +393,20 @@ class BarMarkTransformTest {
                     "b" to listOf(28.0, 55.0, 43.0, 91.0, 81.0, 53.0, 19.0, 87.0, 52.0)
                 )
             ),
-            entry(PlotBase.MAPPING, mapOf(
-                toOption(Aes.X) to "a",
-                toOption(Aes.Y) to "b"
-            )),
+            entry(
+                PlotBase.MAPPING, mapOf(
+                    toOption(Aes.X) to "a",
+                    toOption(Aes.Y) to "b"
+                )
+            ),
             entry(Layer.STAT, StatKind.IDENTITY.name.lowercase())
         )
     }
 
     @Test
     fun barColorMustBeMappedToFill() {
-        val vegaSpec = parseJson("""
+        val vegaSpec = parseJson(
+            """
             |{
             |    "data": {
             |        "values": [ {"a": "A"} ]
@@ -388,7 +417,8 @@ class BarMarkTransformTest {
             |        "color": {"field": "a"}
             |    }
             |}
-        """.trimMargin()).asMutable()
+        """.trimMargin()
+        ).asMutable()
 
         val plotSpec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
@@ -412,7 +442,8 @@ class BarMarkTransformTest {
             |    "mark": "bar",
             |    "encoding": {
             |      "x": {
-            |        "aggregate": "sum", "field": "people",
+            |        "field": "people", 
+            |        "aggregate": "sum", 
             |        "stack":  "normalize"
             |      },
             |      "color": {
@@ -426,21 +457,52 @@ class BarMarkTransformTest {
 
         val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
-        assertThat(spec.getMap(Plot.LAYERS, 0)).contains(
-            entry(Layer.STAT, StatKind.SUMMARY.name.lowercase()),
-            entry(Stat.Summary.FUN, Stat.Summary.Functions.SUM),
-            entry(Layer.POS, mapOf(Pos.NAME to PosProto.FILL)),
-            entry(Layer.ORIENTATION, "y"),
-            entry(
-                PlotBase.MAPPING,
+        assertThat(spec.getMap(Plot.LAYERS, 0)!! - PlotBase.DATA)
+            .usingRecursiveComparison()
+            .withComparatorForType({ _, _ -> 0 }, Map::class.java)
+            .isEqualTo(
                 mapOf(
-                    toOption(Aes.X) to "people",
-                    toOption(Aes.Y) to "age",
-                    toOption(Aes.FILL) to "sex",
-                    toOption(Aes.COLOR) to "sex",
+                    Layer.GEOM to fromGeomKind(GeomKind.BAR),
+                    Layer.STAT to fromStatKind(StatKind.SUMMARY),
+                    Stat.Summary.FUN to Stat.Summary.Functions.SUM,
+                    Layer.POS to mapOf(Pos.NAME to PosProto.FILL),
+                    Layer.ORIENTATION to "y",
+                    PlotBase.MAPPING to mapOf(
+                        toOption(Aes.X) to "people",
+                        toOption(Aes.Y) to "age",
+                        toOption(Aes.FILL) to "sex",
+                        toOption(Aes.COLOR) to "sex",
+                    ),
+                    Meta.DATA_META to mapOf(
+                        Meta.MappingAnnotation.TAG to listOf(
+                            mapOf(
+                                Meta.MappingAnnotation.AES to toOption(Aes.FILL),
+                                Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                                Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                    Meta.MappingAnnotation.LABEL to "sex",
+                                    Meta.MappingAnnotation.ORDER to 1
+                                )
+                            ),
+                            mapOf(
+                                Meta.MappingAnnotation.AES to toOption(Aes.Y),
+                                Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                                Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                    Meta.MappingAnnotation.LABEL to "age",
+                                    Meta.MappingAnnotation.ORDER to 1
+                                )
+                            ),
+                            mapOf(
+                                Meta.MappingAnnotation.AES to toOption(Aes.COLOR),
+                                Meta.MappingAnnotation.ANNOTATION to Meta.MappingAnnotation.AS_DISCRETE,
+                                Meta.MappingAnnotation.PARAMETERS to mapOf(
+                                    Meta.MappingAnnotation.LABEL to "sex",
+                                    Meta.MappingAnnotation.ORDER to 1
+                                )
+                            ),
+                        )
+                    )
                 ),
-            ),
-        )
+            )
     }
 
     @Test
@@ -471,17 +533,20 @@ class BarMarkTransformTest {
                 |    "xOffset": {"field": "group"}
                 |  }
                 |}
-            """.trimMargin()).asMutable()
+            """.trimMargin()
+        ).asMutable()
 
         val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(PlotBase.DATA, mapOf(
-                "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
-                "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
-                "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
-            )),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
+                    "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
+                    "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
+                )
+            ),
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.DODGE)),
             entry(Meta.DATA_META, empty()),
             entry(Layer.STAT, fromStatKind(StatKind.IDENTITY)),
@@ -524,17 +589,20 @@ class BarMarkTransformTest {
                 |    "color": { "field": "group" }
                 |  }
                 |}
-            """.trimMargin()).asMutable()
+            """.trimMargin()
+        ).asMutable()
 
         val spec = SpecTransformBackendUtil.processTransform(vegaSpec)
 
         assertThat(spec.getMap(Plot.LAYERS, 0)).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.BAR)),
-            entry(PlotBase.DATA, mapOf(
-                "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
-                "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
-                "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
-            )),
+            entry(
+                PlotBase.DATA, mapOf(
+                    "category" to listOf("A", "A", "A", "B", "B", "B", "C", "C", "C"),
+                    "group" to listOf("x", "y", "z", "x", "y", "z", "x", "y", "z"),
+                    "value" to listOf(0.1, 0.6, 0.9, 0.7, 0.2, 1.1, 0.6, 0.1, 0.2),
+                )
+            ),
             entry(Layer.POS, mapOf(Pos.NAME to PosProto.IDENTITY)),
             entry(toOption(Aes.ALPHA), 0.2),
             entry(Meta.DATA_META, empty()),
