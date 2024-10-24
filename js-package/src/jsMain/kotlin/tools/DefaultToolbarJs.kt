@@ -34,8 +34,9 @@ class DefaultToolbarJs() {
         style.apply {
             display = "flex"
             justifyContent = "center"
-//        alignItems = "center"
-            padding = "0 0 5px 0"
+            alignItems = "center"
+//            padding = "0 0 5px 0"
+            margin = "0 0 5px 0"
         }
     }
 
@@ -51,6 +52,8 @@ class DefaultToolbarJs() {
                 position = "relative"
                 display = "inline-flex"
                 justifyContent = "center"
+                alignItems = "center"
+                boxSizing = "border-box"
                 padding = "2px 5px"
                 backgroundColor = "$C_BACKGR"
                 border = "1px solid rgb(200, 200, 200)"
