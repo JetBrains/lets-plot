@@ -24,7 +24,8 @@ typealias AwtFont = java.awt.Font
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath = GeneralPath()
     private var state = ContextState()
-    private val stack = ArrayList<ContextState>()
+    private val stateStack = ArrayList<ContextState>()
+    private var clipStack = ArrayList<GeneralPath>()
 
     init {
         RenderingHints(
@@ -40,6 +41,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     internal data class ContextState(
+        var numClipPath: Int = 0,
         var strokeColor: AwtColor = AwtColor.BLACK,
         var fillColor: AwtColor = AwtColor.BLACK,
         var stroke: BasicStroke = BasicStroke(),
@@ -131,6 +133,12 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath.closePath()
     }
 
+    override fun clip() {
+        clipStack.add(currentPath)
+        state.numClipPath = clipStack.size
+        graphics.clip = currentPath
+    }
+
     override fun stroke() {
         graphics.color = state.strokeColor
         graphics.strokePath(currentPath)
@@ -214,20 +222,24 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun save() {
-        stack.add(state.copy())
+        stateStack.add(state.copy())
     }
 
     override fun restore() {
-        stack.lastOrNull()
+        stateStack.lastOrNull()
             ?.let {
                 state = it
+                if (state.numClipPath < clipStack.size) {
+                    clipStack.subList(state.numClipPath, clipStack.size).clear()
+                }
 
+                graphics.clip = clipStack.lastOrNull()
                 graphics.transform = state.transform
                 graphics.stroke = state.stroke
                 graphics.font = state.font
                 graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
 
-                stack.removeAt(stack.lastIndex)
+                stateStack.removeAt(stateStack.lastIndex)
             }
     }
 

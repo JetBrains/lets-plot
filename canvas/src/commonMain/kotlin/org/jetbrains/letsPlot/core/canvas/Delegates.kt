@@ -25,6 +25,7 @@ class Context2dDelegate : Context2d {
     override fun drawImage(snapshot: Canvas.Snapshot, sx: Double, sy: Double, sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) { }
     override fun beginPath() { }
     override fun closePath() { }
+    override fun clip() { }
     override fun stroke() { }
     override fun fill() { }
     override fun fillEvenOdd() { }

@@ -107,6 +107,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.closePath()
     }
 
+    override fun clip() {
+        myContext2d.clip()
+    }
+
     override fun stroke() {
         myContext2d.stroke()
     }

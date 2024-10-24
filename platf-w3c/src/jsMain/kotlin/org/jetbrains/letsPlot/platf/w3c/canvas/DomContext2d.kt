@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.platf.w3c.canvas
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.DomSnapshot
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
@@ -85,6 +84,7 @@ internal class DomContext2d(
     override fun beginPath() = ctx.beginPath()
     override fun scale(xy: Double) = scale(xy, xy)
     override fun closePath() = ctx.closePath()
+    override fun clip() =  ctx.clip()
     override fun stroke() = ctx.stroke()
     override fun fill() = ctx.fill(CanvasFillRule.NONZERO)
     override fun fillEvenOdd() = ctx.fill(CanvasFillRule.EVENODD)
