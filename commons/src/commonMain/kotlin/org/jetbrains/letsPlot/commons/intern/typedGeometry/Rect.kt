@@ -60,6 +60,9 @@ fun <TypeT> Rect<TypeT>.toPolygon(): Polygon<TypeT> {
     return Polygon(Ring(points))
 }
 
+fun <TypeT> Rect<TypeT>.toMultiPolygon(): MultiPolygon<TypeT> {
+    return MultiPolygon(listOf(toPolygon()))
+}
 
 fun <TypeT> Rect<TypeT>.contains(v: Vec<TypeT>): Boolean {
     return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
