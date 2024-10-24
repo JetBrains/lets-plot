@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.livemap.core.multitasking
 
 object MicroTaskUtil {
-    private val EMPTY_MICRO_THREAD: MicroTask<Unit> = object : MicroTask<Unit> {
+    private val EMPTY_MICRO_TASK: MicroTask<Unit> = object : MicroTask<Unit> {
         override fun getResult() {}
 
         override fun resume() {}
@@ -65,52 +65,85 @@ object MicroTaskUtil {
     }
 
     fun create(task: () -> Unit): MicroTask<Unit> {
-        return CompositeMicroThread(listOf(task))
+        return CompositeMicroTask(listOf(task))
     }
 
     fun create(tasks: Iterable<() -> Unit>): MicroTask<Unit> {
-        return CompositeMicroThread(tasks)
+        return CompositeMicroTask(tasks)
     }
 
     fun join(tasks: Iterable<MicroTask<Unit>>): MicroTask<Unit> {
-        return MultiMicroThread(tasks)
+        return MultiMicroTask(tasks)
     }
 
-    private class CompositeMicroThread internal constructor(tasks: Iterable<() -> Unit>) : MicroTask<Unit> {
+    fun <FirstT, SecondT> pair(first: MicroTask<FirstT>, second: MicroTask<SecondT>): MicroTask<Pair<FirstT, SecondT>> {
+        return PairMicroTask(first, second)
+    }
 
-        private val myTasks = tasks.iterator()
+    private class CompositeMicroTask internal constructor(tasks: Iterable<() -> Unit>) : MicroTask<Unit> {
+
+        private val iterator = tasks.iterator()
 
         override fun resume() {
-            myTasks.next()()
+            iterator.next()()
         }
 
-        override fun alive(): Boolean = myTasks.hasNext()
+        override fun alive(): Boolean = iterator.hasNext()
 
         override fun getResult() {}
     }
 
-    private class MultiMicroThread internal constructor(microThreads: Iterable<MicroTask<Unit>>) : MicroTask<Unit> {
+    private class PairMicroTask<FirstT, SecondT> internal constructor(
+        private val first: MicroTask<FirstT>,
+        private val second: MicroTask<SecondT>
+    ) : MicroTask<Pair<FirstT, SecondT>> {
+        private var firstResult: FirstT? = null
+        private var secondResult: SecondT? = null
 
-        private val threads: Iterator<MicroTask<Unit>> = microThreads.iterator()
-        private var currentMicroThread = EMPTY_MICRO_THREAD
+        override fun resume() {
+            if (firstResult == null) {
+                first.resume()
+                if (!first.alive()) {
+                    firstResult = first.getResult()
+                }
+            }
+            if (secondResult == null) {
+                second.resume()
+                if (!second.alive()) {
+                    secondResult = second.getResult()
+                }
+            }
+        }
+
+        override fun alive(): Boolean = first.alive() || second.alive()
+
+        override fun getResult(): Pair<FirstT, SecondT> {
+            return Pair(firstResult!!, secondResult!!)
+        }
+    }
+
+    private class MultiMicroTask internal constructor(microTasks: Iterable<MicroTask<Unit>>) : MicroTask<Unit> {
+
+        private val tasks: Iterator<MicroTask<Unit>> = microTasks.iterator()
+        private var currentMicroTask = EMPTY_MICRO_TASK
 
         init {
-            goToNextAliveMicroThread()
+            goToNextAliveMicroTask()
         }
 
         override fun resume() {
-            currentMicroThread.resume()
-            goToNextAliveMicroThread()
+            currentMicroTask.resume()
+            goToNextAliveMicroTask()
         }
 
-        override fun alive(): Boolean = currentMicroThread.alive()
+        override fun alive(): Boolean = currentMicroTask.alive()
 
         override fun getResult() {}
 
-        private fun goToNextAliveMicroThread() {
-            while (!currentMicroThread.alive()) {
-                if (threads.hasNext()) {
-                    currentMicroThread = threads.next()
+        private fun goToNextAliveMicroTask() {
+            while (!currentMicroTask.alive()) {
+                if (tasks.hasNext()) {
+                    currentMicroTask = tasks.next()
                 } else {
                     return
                 }
