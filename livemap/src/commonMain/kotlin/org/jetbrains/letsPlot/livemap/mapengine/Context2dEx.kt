@@ -6,9 +6,7 @@
 package org.jetbrains.letsPlot.livemap.mapengine
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.ClientPoint
@@ -30,4 +28,12 @@ fun <T> Context2d.drawMultiPolygon(geometry: MultiPolygon<T>, afterPolygon: (Con
         }
     }
     afterPolygon(this)
+}
+
+fun <T> Context2d.drawMultiLineString(geometry: MultiLineString<T>, afterLineString: (Context2d) -> Unit) {
+    for (line in geometry) {
+        line[0].let(::moveTo)
+        line.drop(1).forEach(::lineTo)
+    }
+    afterLineString(this)
 }
