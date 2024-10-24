@@ -358,18 +358,28 @@ internal class SquareFrameOfReference(
             transform: Transform,
             formatter: (Any) -> String
         ) {
+            // Safe formatter
+            fun format(v: Any?, formatter: (Any) -> String): String {
+                return if (v == null) "---"
+                else try {
+                    formatter(v)
+                } catch (_: RuntimeException) {
+                    "---"
+                }
+            }
+
             if (dataRange.contains(transformedBreaks.first())) {
                 val newFirstBreak = transformedBreaks[0] - (transformedBreaks[1] - transformedBreaks[0])
                 transformedBreaks.add(0, newFirstBreak)
                 val domainV = transform.applyInverse(newFirstBreak)
-                labels.add(0, domainV?.let { formatter(domainV) } ?: "---")
+                labels.add(0, format(domainV, formatter))
             }
             if (dataRange.contains(transformedBreaks.last())) {
                 val newLastBreak =
                     transformedBreaks.last() + (transformedBreaks.last() - transformedBreaks[transformedBreaks.size - 2])
                 transformedBreaks.add(newLastBreak)
                 val domainV = transform.applyInverse(newLastBreak)
-                labels.add(domainV?.let { formatter(domainV) } ?: "---")
+                labels.add(format(domainV, formatter))
             }
         }
     }
