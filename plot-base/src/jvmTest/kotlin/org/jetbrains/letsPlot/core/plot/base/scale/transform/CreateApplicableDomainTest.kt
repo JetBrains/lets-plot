@@ -127,7 +127,7 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG10,
                     0.0,
-                    DoubleSpan(LogTransform.calcLowerLimDomain(10.0), 0.5)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
@@ -162,7 +162,7 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG2,
                     0.0,
-                    DoubleSpan(LogTransform.calcLowerLimDomain(2.0), 0.5)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG2,

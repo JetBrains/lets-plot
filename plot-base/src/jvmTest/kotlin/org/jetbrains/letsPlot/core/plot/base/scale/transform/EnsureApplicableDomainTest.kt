@@ -140,27 +140,27 @@ internal class EnsureApplicableDomainTest(
                 arrayOf(
                     transform,
                     DoubleSpan(-5.0, -5.0),
-                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     transform,
                     DoubleSpan(-5.0, 0.0),
-                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     transform,
                     DoubleSpan(-5.0, 5.0),
-                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 5.0)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 5.0)
                 ),
                 arrayOf(
                     transform,
                     DoubleSpan(0.0, 5.0),
-                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 5.0)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 5.0)
                 ),
                 arrayOf(
                     transform,
                     DoubleSpan(0.0, 0.0),
-                    DoubleSpan(LogTransform.calcLowerLimDomain(base), 0.5)
+                    DoubleSpan(LogTransform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     transform,
