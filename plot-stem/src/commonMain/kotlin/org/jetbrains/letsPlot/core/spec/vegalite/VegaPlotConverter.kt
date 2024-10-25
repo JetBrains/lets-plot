@@ -27,29 +27,22 @@ internal class VegaPlotConverter private constructor(
     private val vegaPlotSpec = TraceableMap(vegaPlotSpecMap, accessLogger)
 
     companion object {
-        fun convert(vegaPlotSpec: MutableMap<String, Any?>): Pair<MutableMap<String, Any>, String> {
+        fun convert(vegaPlotSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
             val vegaPlotConverter = VegaPlotConverter(vegaPlotSpec)
-
-            val letsPlotSpec = vegaPlotConverter.convert()
-            val summary = vegaPlotConverter.summary()
-
-            return letsPlotSpec to summary
+            return vegaPlotConverter.convert()
         }
 
-        private const val REPORT_LETS_PLOT_CONVERTER_SUMMARY = "reportLetsPlotConverterSummary"
+        private const val HIDE_LETS_PLOT_CONVERTER_SUMMARY = "hideLetsPlotConverterSummary"
     }
 
     private val plotOptions = PlotOptions()
 
-    private fun summary(): String {
-        if (REPORT_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) return ""
+    private fun summary(): List<String> {
+        if (HIDE_LETS_PLOT_CONVERTER_SUMMARY in vegaPlotSpec) return emptyList()
 
         return accessLogger
-            .findUnusedProperties(vegaPlotSpec - REPORT_LETS_PLOT_CONVERTER_SUMMARY - VegaOption.SCHEMA - VegaOption.DESCRIPTION)
-            .joinToString(separator = "\n") { path -> path.joinToString(prefix = "\t", separator = ".") }
-            .takeIf(String::isNotBlank)
-            ?.let { "Unused properties: \n$it" }
-            ?: ""
+            .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION)
+            .map{ path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
     }
 
     private fun convert(): MutableMap<String, Any> {
@@ -78,6 +71,11 @@ internal class VegaPlotConverter private constructor(
                 }
             }
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
+        }
+
+        val summary = summary()
+        if (summary.isNotEmpty()) {
+            plotOptions.computationMessages = summary
         }
 
         return plotOptions.toJson()

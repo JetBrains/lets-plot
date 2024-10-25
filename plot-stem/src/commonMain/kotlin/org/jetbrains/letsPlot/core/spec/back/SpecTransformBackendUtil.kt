@@ -47,12 +47,7 @@ object SpecTransformBackendUtil {
                 @Suppress("UNCHECKED_CAST")
                 val vegaSpec = plotSpecRaw as MutableMap<String, Any?>
 
-                val (letsPlotSpec, summary) = VegaConfig.transform(vegaSpec)
-                if (summary.isNotEmpty()) {
-                    LOG.info { summary }
-                    println(summary)
-                }
-                letsPlotSpec
+                VegaConfig.transform(vegaSpec)
             } else {
                 plotSpecRaw
             }

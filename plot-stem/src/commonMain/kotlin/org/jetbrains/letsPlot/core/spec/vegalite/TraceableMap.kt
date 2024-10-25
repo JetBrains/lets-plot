@@ -88,15 +88,21 @@ class TraceableMap private constructor(
     ) {
         constructor() : this(emptyList(), mutableSetOf())
 
+        private var buildingReport = false
+
         fun nested(basePath: List<Any>) = AccessLogger(this.basePath + basePath, accessLog)
 
         fun log(property: List<Any>) {
+            if (buildingReport) return
+
             val fullPath = basePath + property
             accessLog += fullPath
         }
 
         fun findUnusedProperties(vegaPlotSpecMap: Map<String, Any?>): List<List<Any>> {
+            buildingReport = true
             val all = (vegaPlotSpecMap - "data").getPaths()
+            buildingReport = false
             return all.filter { it !in accessLog }
         }
     }
