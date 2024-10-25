@@ -55,6 +55,7 @@ internal class VegaPlotConverter private constructor(
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
 
+        accessLogger.findUnused(vegaPlotSpecMap)
         return plotOptions.toJson()
     }
 
@@ -69,8 +70,8 @@ internal class VegaPlotConverter private constructor(
             layerSpecMap.getMap(VegaOption.ENCODING)!!.write(path, value)
         }
 
-        val encoding = Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!, accessLogger.nested(listOf(VegaOption.ENCODING)))
-        val layerSpec = Properties(layerSpecMap, accessLogger)
+        val encoding: Map<*, *> = Properties(layerSpecMap.getMap(VegaOption.ENCODING)!!, accessLogger.nested(listOf(VegaOption.ENCODING)))
+        val layerSpec: Map<*, *> = Properties(layerSpecMap, accessLogger)
 
         fun appendLayer(
             geom: GeomKind? = null,

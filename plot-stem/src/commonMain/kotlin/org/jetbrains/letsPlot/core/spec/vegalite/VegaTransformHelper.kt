@@ -6,8 +6,11 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.spec.getMaps
+import org.jetbrains.letsPlot.core.spec.getString
 import org.jetbrains.letsPlot.core.spec.plotson.*
 import org.jetbrains.letsPlot.core.spec.plotson.SummaryStatOptions.AggFunction
+import org.jetbrains.letsPlot.core.spec.read
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Aggregate
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel
@@ -21,12 +24,12 @@ class TransformResult internal constructor(
 
 object VegaTransformHelper {
     // Adjusts Vega "stat" configs (aggregate, bin, ...), replacing them with the LP stat vars
-    fun applyTransform(encodings: Properties, layerSpec: Properties): TransformResult? {
+    fun applyTransform(encodings: Map<*, *>, layerSpec: Map<*, *>): TransformResult? {
         val encodingAdj = mutableListOf<Pair<List<String>, Any>>()
 
         run { // x.bin -> binStat
-            val xBinDefinition = encodings.getAny(Channel.X, Encoding.BIN)
-            val yBinDefinition = encodings.getAny(Channel.Y, Encoding.BIN)
+            val xBinDefinition = encodings.read(Channel.X, Encoding.BIN)
+            val yBinDefinition = encodings.read(Channel.Y, Encoding.BIN)
 
             val statInputChannel = when {
                 xBinDefinition != null -> Channel.X
@@ -35,7 +38,8 @@ object VegaTransformHelper {
             }
 
             encodings.entries.forEach { (channel, encoding) ->
-                encoding as Properties
+                channel as String
+                encoding as Map<*, *>
                 if (channel == statInputChannel) {
                     encodingAdj.add(listOf(channel, Encoding.TYPE) to Encoding.Types.QUANTITATIVE)
                 }
@@ -94,11 +98,13 @@ object VegaTransformHelper {
             val statInputChannel = encodings
                 .entries
                 .filter { (channel, _) -> channel == Channel.X || channel == Channel.Y }
-                .singleOrNull { (_, encoding) -> (encoding as Properties)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
+                .singleOrNull { (_, encoding) -> (encoding as Map<*, *>)[Encoding.FIELD] == Transform.Density.VAR_VALUE }
                 ?.key
 
             encodings.entries.forEach { (channel, encoding) ->
-                require(encoding is Properties)
+                channel as String
+                require(encoding is Map<*, *>)
+
                 when (encoding[Encoding.FIELD]) {
                     Transform.Density.VAR_DENSITY -> encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.DENSITY.name)
                     Transform.Density.VAR_VALUE -> encodingAdj.add(listOf(channel, Encoding.FIELD) to origVar)
