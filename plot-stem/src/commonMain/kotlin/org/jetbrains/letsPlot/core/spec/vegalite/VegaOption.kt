@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.core.spec.vegalite
 
 internal object VegaOption {
+    const val SCHEMA = "\$schema"
+    const val DESCRIPTION = "description"
     const val DATA = "data"
     const val LAYER = "layer"
     const val MARK = "mark"

@@ -16,7 +16,7 @@ object VegaConfig {
         return true
     }
 
-    fun transform(map: MutableMap<String, Any?>): MutableMap<String, Any> {
+    fun transform(map: MutableMap<String, Any?>): Pair<MutableMap<String, Any>, String> {
         return VegaPlotConverter.convert(map)
     }
 

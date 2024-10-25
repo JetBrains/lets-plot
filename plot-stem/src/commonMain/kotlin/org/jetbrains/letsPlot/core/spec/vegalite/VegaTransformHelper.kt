@@ -24,7 +24,7 @@ class TransformResult internal constructor(
 
 object VegaTransformHelper {
     // Adjusts Vega "stat" configs (aggregate, bin, ...), replacing them with the LP stat vars
-    fun applyTransform(encodings: Map<*, *>, layerSpec: Map<*, *>): TransformResult? {
+    fun applyTransform(layerSpec: Map<*, *>, encodings: Map<*, *>): TransformResult? {
         val encodingAdj = mutableListOf<Pair<List<String>, Any>>()
 
         run { // x.bin -> binStat

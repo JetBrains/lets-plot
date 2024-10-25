@@ -45,7 +45,14 @@ object SpecTransformBackendUtil {
                 // (i.e., expects that all null values were dropped before the spec is passed to the backend).
                 // So, Lets-Plot is actually incompatible with Vega-Lite in this aspect.
                 @Suppress("UNCHECKED_CAST")
-                VegaConfig.transform(plotSpecRaw as MutableMap<String, Any?>)
+                val vegaSpec = plotSpecRaw as MutableMap<String, Any?>
+
+                val (letsPlotSpec, summary) = VegaConfig.transform(vegaSpec)
+                if (summary.isNotEmpty()) {
+                    LOG.info { summary }
+                    println(summary)
+                }
+                letsPlotSpec
             } else {
                 plotSpecRaw
             }

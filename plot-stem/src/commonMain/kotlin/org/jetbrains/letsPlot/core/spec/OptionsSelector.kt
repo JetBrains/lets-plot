@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec
 
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 
 fun Map<*, *>.getElement(path: List<Any>): Any? {
@@ -209,4 +210,43 @@ fun Map<*, *>.provideMap(vararg query: String): MutableMap<String, Any> {
 
 fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
     return provideMaps(query.dropLast(1), query.last()).asMutable()
+}
+
+fun Map<*, *>.getPaths(): List<List<Any>> {
+    val out = mutableListOf<List<Any>>()
+    flattenPaths(this, basePath = emptyList(), out)
+    return out
+}
+
+private fun flattenPaths(item: Any, basePath: List<Any>, out: MutableList<List<Any>>) {
+    fun containsMap(list: List<*>): Boolean {
+        list.forEach {
+            when (it) {
+                is Map<*, *> -> return true
+                is List<*> -> if (containsMap(it)) return true
+            }
+        }
+        return false
+    }
+
+    when (item) {
+        is Map<*, *> -> {
+            item.filterNotNullValues()
+                .forEach { (key, value) ->
+                    flattenPaths(value, basePath + key as Any, out)
+                }
+        }
+        is List<*> -> {
+            if (containsMap(item)) {
+                item.filterNotNull()
+                    .forEachIndexed { i, el ->
+                        flattenPaths(el, basePath + i, out)
+                    }
+            } else {
+                out.add(basePath) // list of non-map elements, likely a leaf (implicit object like a min/max pair)
+            }
+        }
+
+        else -> out.add(basePath) // leaf element
+    }
 }
