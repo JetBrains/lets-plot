@@ -242,6 +242,16 @@ class ScaleBreaks private constructor(
                 }
             }
 
+            // Safe formatter
+            @Suppress("NAME_SHADOWING")
+            val formatter = { v: Any ->
+                try {
+                    formatter(v)
+                } catch (_: RuntimeException) {
+                    "---"
+                }
+            }
+
             val labels = alternativeLabels ?: domainValues.map(formatter)
             val (
                 filteredDomainValues,

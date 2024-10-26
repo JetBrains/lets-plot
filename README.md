@@ -54,30 +54,45 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.4.0
+## What is new in 4.5.0
 
-- #### Waterfall Plot
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/waterfall.png" alt="f-24e/images/waterfall.png" width="460" height="220">
+- #### Panning and Zooming
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/ggtb.png" alt="f-24g/images/ggtb.png" width="300" height="134">
   
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/waterfall_plot.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interact_pan_zoom.ipynb).
 
-- #### **`geom_band()`**:
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/geom_band.png" alt="f-24e/images/geom_band.png.png" width="615" height="220">
+- #### Clickable Links
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/lp_verse.png" alt="f-24g/images/lp_verse.png" width="400" height="270">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/geom_band.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/interactive_links.ipynb).
 
-- #### Custom Legends 
-  - `manual_key` parameter in plot layer
-  - `layer_key()` function
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24e/images/custom_legend.png" alt="f-24e/images/custom_legend.png.png" width="294" height="147">
+- #### LaTeX Support: Subscript, Superscript, Greek Letters and Special Characters 
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/latex.png" alt="f-24g/images/latex.png" width="300" height="227">
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/manual_legend.ipynb).
-   
-- #### Customizing Legends Appearance
-  The `override_aes` parameter in the `guide_legend()` function.
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/latex_support.ipynb).
+
+> [!CAUTION]  
+> Subscripts and superscripts are not supported in PDF and PNG exports.
+
+- #### Compact Scientific Notation Formatting
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/compact_exp.png" alt="f-24g/images/compact_exp.png" width="400" height="174">
      
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24e/legend_override_aes.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/superscript_exponent.ipynb).
+
+> [!CAUTION]  
+> `pow` and `pow_full` options are not supported in PDF and PNG exports.     
+
+- #### QQ-Plot: Marginal Distributions
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/gg_marins.png" alt="f-24g/images/gg_marins.png" width="400" height="249">
+
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/qq_plot_marginal.ipynb).
+
+- #### More Theme Settings
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/theme_legend_scheme.png" alt="f-24g/images/theme_legend_scheme.png" width="400" height="320">
+
+  See examples: [legend margins](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_margins.ipynb),
+  [legend key](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_legend_key.ipynb),
+  [facet strip](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-24g/theme_facet_strip_xy.ipynb).
 
 
 - #### And More

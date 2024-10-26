@@ -44,6 +44,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str
         Specify the axis that the layer's stat and geom should run along.
         The default value (None) automatically determines the orientation based on the aesthetic mapping.
@@ -82,6 +83,11 @@ def stat_summary(mapping=None, *, data=None, geom=None,
     - ..y.. : result of calculating of `fun`.
     - ..ymin.. : result of calculating of `fun_min`.
     - ..ymax.. : result of calculating of `fun_max`.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -190,6 +196,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -237,6 +244,11 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
     - ..y.. : result of calculating of `fun`.
     - ..ymin.. : result of calculating of `fun_min`.
     - ..ymax.. : result of calculating of `fun_max`.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -344,6 +356,7 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
@@ -374,6 +387,11 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
     - y : y-axis coordinates.
 
     In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip` or `axis_tooltip_x` parameter of the `theme()`.
 
     Examples
     --------
@@ -479,6 +497,7 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+        Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -508,6 +527,11 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
     - y : y-axis coordinates.
 
     In addition, you can use any aesthetics, available for the geometry defined by the `geom` parameter.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------

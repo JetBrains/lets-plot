@@ -67,12 +67,12 @@ internal class ListTransformTest(
                 arrayOf(
                     Transforms.LOG10, false,
                     input,
-                    trimInfinity(input.map { it?.let { log10(it) } }, 10.0)
+                    trimInfinity(input.map { it?.let { log10(it) } }) { log10(it) }
                 ),
                 arrayOf(
                     Transforms.LOG2, false,
                     input,
-                    trimInfinity(input.map { it?.let { log2(it) } }, 2.0)
+                    trimInfinity(input.map { it?.let { log2(it) } }) { log2(it) }
                 ),
                 arrayOf(
                     Transforms.SYMLOG, false,
@@ -83,13 +83,15 @@ internal class ListTransformTest(
 
         }
 
-        private fun trimInfinity(l: List<Double?>, base: Double): List<Double?> {
+        private fun trimInfinity(l: List<Double?>, transformFun: (Double) -> Double): List<Double?> {
             return l.map {
                 it?.let {
                     if (it.isNaN()) {
                         Double.NaN
                     } else {
-                        max(LogTransform.calcLowerLimTransformed(base), it)
+                        val lowerLim = LogTransform.calcLowerLimTransformed { v -> transformFun(v) }
+                        val upperLim = LogTransform.calcUpperLimTransformed { v -> transformFun(v) }
+                        min(max(lowerLim, it), upperLim)
                     }
                 }
             }

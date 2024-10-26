@@ -318,6 +318,7 @@ object GeomInteractionUtil {
                 }
             }
 
+            GeomKind.Q_Q, GeomKind.Q_Q_LINE -> listOf(Aes.SAMPLE)
             GeomKind.TEXT, GeomKind.LABEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed

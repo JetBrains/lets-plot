@@ -93,7 +93,7 @@ def scale_cmapmpl(aesthetic, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -176,7 +176,7 @@ def scale_fill_cmapmpl(cmap, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -255,7 +255,7 @@ def scale_color_cmapmpl(cmap, *,
         - 'Num {}' -> 'Num 12.456789'
         - 'TTL: {.2f}$' -> 'TTL: 12.45$'
 
-        For more info see https://lets-plot.org/python/pages/formats.html.
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------

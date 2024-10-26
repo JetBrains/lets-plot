@@ -68,6 +68,11 @@ class corr_plot:
     """
     This class is intended to build correlation matrix plot.
 
+    Notes
+    -----
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
+
     Examples
     --------
     .. jupyter-execute::
@@ -205,7 +210,7 @@ class corr_plot:
             If False - the text size is constant. Default - contextual.
         color : str
             Set text color.
-            For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+            For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
             Default - contextual.
 
         Returns

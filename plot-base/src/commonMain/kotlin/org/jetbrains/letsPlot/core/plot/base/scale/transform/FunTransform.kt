@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 abstract class FunTransform(
-    private val transformFun: (Double) -> Double,
-    private val inverseFun: (Double) -> Double
+    protected val transformFun: (Double) -> Double,
+    protected val inverseFun: (Double) -> Double
 ) : ContinuousTransform {
     override fun apply(v: Double?): Double? {
         return if (v != null) {

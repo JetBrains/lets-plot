@@ -17,6 +17,7 @@ def ggtb() -> FeatureSpec:
     in and out, regardless of the selected tool.
 
     The toolbar includes:
+
     - Pan: Drag to move the plot.
     - Rubber-band zoom: Drag to define a rectangular area to zoom into.
     - Center-point zoom: Drag up or down to zoom in or out from a center point.
@@ -26,6 +27,7 @@ def ggtb() -> FeatureSpec:
     regardless of whether a tool is selected or not.
 
     Limitations:
+
     - The toolbar does not work with interactive maps.
     - The toolbar is not compatible with GGBunch.
     - The toolbar cannot be used with plots using a polar coordinate system.
@@ -39,15 +41,16 @@ def ggtb() -> FeatureSpec:
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 7
+        :emphasize-lines: 8
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         x = np.linspace(-2 * np.pi, 2 * np.pi, 100)
         y = np.sin(x)
-        (ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + geom_point()
-         + ggtb())
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_point() + \\
+            ggtb()
 
     """
     return FeatureSpec(kind='ggtoolbar', name=None)

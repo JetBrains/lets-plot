@@ -178,7 +178,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Applicable simultaneously for 'tile' geom and 'histogram' marginal.
     color : str
         Color of the geometry.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     size : float
         Size of the geometry.
     alpha : float
@@ -213,6 +213,11 @@ def residual_plot(data=None, x=None, y=None, *,
     -----
     When using 'lm' and 'loess' methods,
     this function requires the `statsmodels` and `scipy` libraries to be installed.
+
+    ----
+
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------

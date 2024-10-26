@@ -109,9 +109,12 @@ def theme(*,
 
         - the first element is the format - 'e', 'pow', 'pow_full';
         - the second element is minimum exponent value from which to use scientific notation (default is -7);
-        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see https://lets-plot.org/python/pages/formats.html).
+        - the third element is maximum exponent value from which to use scientific notation (default is taken from `precision` of the current formatting, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__).
 
-        Note that superscript is not fully support by CairoSVG library and export to PNG/PDF may produce unexpected results.
+        Minimum and maximum exponent values are only taken into account when "g" format is used,
+        see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+
+        Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         All line elements.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -470,7 +473,7 @@ def element_rect(
         - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
         - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
 
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -521,7 +524,7 @@ def element_line(
         - A string of an even number (up to eight) of hexadecimal digits, specifying the lengths in consecutive positions.
         - A list defines the pattern of dashes and gaps, either with an offset: [offset, [dash, gap, ...]], or without an offset: [dash, gap, ...].
 
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#line-types.
+        For more info see `Line Types <https://lets-plot.org/python/pages/aesthetics.html#line-types>`__.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

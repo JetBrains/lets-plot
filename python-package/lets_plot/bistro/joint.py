@@ -64,7 +64,7 @@ def joint_plot(data, x, y, *,
         Applicable simultaneously for 'tile' geom and 'histogram' marginal.
     color : str
         Color of the geometry.
-        For more info see https://lets-plot.org/python/pages/aesthetics.html#color-and-fill.
+        For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     size : float
         Size of the geometry.
     alpha : float
@@ -77,7 +77,7 @@ def joint_plot(data, x, y, *,
         True - show the line of linear regression.
     se : bool, default=True
         Display confidence interval around regression line.
-    marginal : str, default='dens:r'
+    marginal : str
         Description of marginal layers packed to string value.
         Different marginals are separated by the ',' char.
         Parameters of a marginal are separated by the ':' char.
@@ -96,6 +96,11 @@ def joint_plot(data, x, y, *,
     -------
     `PlotSpec`
         Plot object specification.
+
+    Notes
+    -----
+    To hide axis tooltips, set 'blank' or the result of `element_blank()`
+    to the `axis_tooltip`, `axis_tooltip_x` or `axis_tooltip_y` parameter of the `theme()`.
 
     Examples
     --------
