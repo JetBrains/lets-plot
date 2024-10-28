@@ -5,11 +5,9 @@
 
 package org.jetbrains.letsPlot.livemap.chart.polygon
 
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.contains
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.within
 import org.jetbrains.letsPlot.livemap.Client
-import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.IndexComponent
 import org.jetbrains.letsPlot.livemap.chart.Locator
@@ -58,44 +56,6 @@ object PolygonLocator : Locator {
         }
 
         val cursorMapCoord = renderHelper.posToWorld(coord)
-        return isCoordinateInPolygon(cursorMapCoord, target.get<WorldGeometryComponent>().geometry.multiPolygon)
-
+        return cursorMapCoord.within(target.get<WorldGeometryComponent>().geometry.multiPolygon)
     }
-
-    private fun isCoordinateInPolygon(coord: Vec<World>, multiPolygon: MultiPolygon<World>): Boolean {
-        for (polygon in multiPolygon) {
-            if (polygon.bbox?.contains(coord) == false) {
-                continue
-            }
-            var count = 0
-            for (ring in polygon) {
-                if (ringContainsCoordinate(ring, coord)) {
-                    ++count
-                }
-            }
-            if (count % 2 == 1) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun <TypeT> ringContainsCoordinate(ring: List<Vec<TypeT>>, coord: Vec<TypeT>): Boolean {
-        var intersectionCount = 0
-        for (i in 1 until ring.size) {
-            val start = i - 1
-            if (ring[start].y >= coord.y && ring[i].y >= coord.y ||
-                ring[start].y < coord.y && ring[i].y < coord.y
-            ) {
-                continue
-            }
-            val x: Double = ring[start].x + (coord.y - ring[start].y) *
-                    (ring[i].x - ring[start].x) / (ring[i].y - ring[start].y)
-            if (x <= coord.x) {
-                intersectionCount++
-            }
-        }
-        return intersectionCount % 2 != 0
-    }
-
 }

@@ -6,6 +6,11 @@
 package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.xOnLine
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.interval.IntSpan
 import kotlin.math.abs
 
@@ -134,4 +139,41 @@ fun <T> calculateArea(ring: List<T>, x: T.() -> Double, y: T.() -> Double): Doub
     }
 
     return abs(area / 2)
+}
+
+fun <T> Vec<T>.within(multiPolygon: MultiPolygon<T>): Boolean {
+    var crossings = 0
+    for (polygon in multiPolygon) {
+        if (within(polygon)) {
+            crossings++
+        }
+    }
+    return crossings % 2 != 0
+}
+
+fun <T> Vec<T>.within(polygon: Polygon<T>): Boolean {
+    var crossings = 0
+    for (ring in polygon) {
+        if (within(ring)) {
+            crossings++
+        }
+    }
+    return crossings % 2 != 0
+}
+
+fun <T> Vec<T>.within(ring: Ring<T>): Boolean {
+    var crossings = 0
+    for (i in ring.indices) {
+        val j = (i + 1) % ring.size
+        val p1 = ring[i]
+        val p2 = ring[j]
+
+        val intersectionX = xOnLine(p1.x, p1.y, p2.x, p2.y, y) ?: continue
+
+        if (((p1.y >= y) != (p2.y >= y)) && (x <= intersectionX)) {
+            crossings++
+        }
+
+    }
+    return crossings % 2 != 0
 }
