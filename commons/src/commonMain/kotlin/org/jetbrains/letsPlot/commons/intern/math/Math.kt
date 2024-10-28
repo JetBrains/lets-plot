@@ -104,24 +104,38 @@ fun distance2ToSegment(x: Double, y: Double, l1x: Double, l1y: Double, l2x: Doub
 }
 
 // Pair of line parameters: m and b
-fun lineParams(p1x: Double, p1y: Double, p2x: Double, p2y: Double): Pair<Double, Double> {
-    // the Equation for the Line
-    // y = m * x + b
-    // Where
-    // m = (y2 - y1) / (x2 - x1)
-    // and b computed by substitution p1 or p2 to the equation of the line
 
+/**
+ * the Equation for the Line
+ * y = m * x + b
+ * Where
+ * m = (y2 - y1) / (x2 - x1)
+ * and b computed by substitution p1 or p2 to the equation of the line
+ * Return Infinite if the line is vertical
+ * */
+fun lineParams(p1x: Double, p1y: Double, p2x: Double, p2y: Double): Pair<Double, Double> {
     val m = (p2y - p1y) / (p2x - p1x)
     val b = p2y - m * (p2x)
     return m to b
 }
 
-fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Double {
+fun yOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, x: Double): Double? {
+    if (p2x == p1x) {
+        return null
+    }
     val (m, b) = lineParams(p1x, p1y, p2x, p2y)
     return m * x + b
 }
 
-fun xOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, y: Double): Double {
+fun xOnLine(p1x: Double, p1y: Double, p2x: Double, p2y: Double, y: Double): Double? {
+    if (p1x == p2x && p1y == p2y) {
+        return null
+    }
+
+    if (p1x == p2x) {
+        return p1x
+    }
+
     val (m, b) = lineParams(p1x, p1y, p2x, p2y)
     return (y - b) / m
 }
@@ -163,14 +177,6 @@ fun distance2ToSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Dou
 
 fun isOnSegment(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): Boolean {
     return isOnSegment(p.x, p.y, l1.x, l1.y, l2.x, l2.y)
-}
-
-fun yOnLine(x: Double, p1: DoubleVector, p2: DoubleVector): DoubleVector {
-    return DoubleVector(x, yOnLine(p1.x, p1.y, p2.x, p2.y, x))
-}
-
-fun xOnLine(y: Double, p1: DoubleVector, p2: DoubleVector): DoubleVector {
-    return DoubleVector(xOnLine(p1.x, p1.y, p2.x, p2.y, y), y)
 }
 
 fun projection(p: DoubleVector, l1: DoubleVector, l2: DoubleVector): DoubleVector {

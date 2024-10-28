@@ -40,11 +40,11 @@ fun <TypeT> wrapPath(path: List<Vec<TypeT>>, domain: Rect<TypeT>): List<List<Vec
             val y: Double
 
             if (p1.x < p2.x) {
-                y = yOnLine(p1.x, p1.y, p2.x - domain.width, p2.y, x = domain.left)
+                y = yOnLine(p1.x, p1.y, p2.x - domain.width, p2.y, x = domain.left)?: continue
                 xa = domain.left
                 xb = domain.right
             } else {
-                y = yOnLine(p1.x, p1.y, p2.x + domain.width, p2.y, x = domain.right)
+                y = yOnLine(p1.x, p1.y, p2.x + domain.width, p2.y, x = domain.right)?: continue
                 xa = domain.right
                 xb = domain.left
             }
