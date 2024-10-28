@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Spec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -21,6 +22,14 @@ class NumberFormatExtremesTest {
 
         assertEquals("100Y", f.apply(NumberFormat.TYPE_S_MAX))
         assertEquals("-100Y", f.apply(-NumberFormat.TYPE_S_MAX))
+    }
+
+    @Test
+    fun integerPartOverflow() {
+        val f = NumberFormat(Spec(precision = 1, type = "s", expType = NumberFormat.ExponentNotationType.E))
+        val v = "-10000000000000000000".toDouble() // Value is too big to be represented as a Long
+        println(v)
+        assertEquals("-10E", f.apply(v))
     }
 
     @Test
