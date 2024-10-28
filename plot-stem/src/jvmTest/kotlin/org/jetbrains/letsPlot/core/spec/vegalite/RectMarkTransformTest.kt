@@ -105,7 +105,6 @@ class RectMarkTransformTest {
 
         assertThat(plotSpec.getMaps(Plot.LAYERS)!![0].typed<String, Any?>()).containsOnly(
             entry(Layer.GEOM, fromGeomKind(GeomKind.RASTER)),
-            entry(Meta.DATA_META, empty()),
             entry(
                 PlotBase.DATA, mapOf(
                     "Origin" to listOf("USA", "Europe", "Japan", "USA", "USA", "Japan", "Japan", "Europe", "Europe"),

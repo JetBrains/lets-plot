@@ -21,34 +21,80 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Encoding.Channel.Y2
 import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 
 internal class VegaPlotConverter private constructor(
-    private val vegaPlotSpec: MutableMap<String, Any>
+    private val vegaPlotSpecMap: MutableMap<String, Any?>
 ) {
+    private val accessLogger = TraceableMapWrapper.AccessLogger()
+    private val vegaPlotSpec = TraceableMapWrapper(vegaPlotSpecMap, accessLogger)
+
     companion object {
-        fun convert(vegaPlotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-            return VegaPlotConverter(vegaPlotSpec).convert()
+        fun convert(vegaPlotSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
+            val vegaPlotConverter = VegaPlotConverter(vegaPlotSpec)
+            return vegaPlotConverter.convert()
         }
+
+        private const val HIDE_LETS_PLOT_CONVERTER_SUMMARY = "hideLetsPlotConverterSummary"
     }
 
-    private val plotData = Util.transformData(vegaPlotSpec.getMap(VegaOption.DATA) ?: emptyMap())
-    private val plotEncoding = (vegaPlotSpec.getMap(VegaOption.ENCODING) ?: emptyMap()).asMapOfMaps()
     private val plotOptions = PlotOptions()
 
     private fun convert(): MutableMap<String, Any> {
-        when (VegaConfig.getPlotKind(vegaPlotSpec)) {
-            VegaPlotKind.SINGLE_LAYER -> processLayerSpec(vegaPlotSpec)
-            VegaPlotKind.MULTI_LAYER -> vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEach(::processLayerSpec)
+        when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
+            VegaPlotKind.SINGLE_LAYER -> {
+                val encodingSpecMap = vegaPlotSpecMap.getMap(VegaOption.ENCODING) ?: emptyMap<Any, Any>()
+                processLayerSpec(vegaPlotSpecMap, encodingSpecMap, accessLogger)
+            }
+
+            VegaPlotKind.MULTI_LAYER -> {
+                vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEachIndexed { i, it ->
+                    val combinedEncoding = mutableMapOf<String, Any>()
+
+                    vegaPlotSpec.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
+                        combinedEncoding.write(channel) { encoding }
+
+                        // Encoding spec was moved from the plot to the layer, where it’s used.
+                        // Visit all plot encoding options to prevent them from appearing as unused in the summary
+                        (encoding as Map<*, *>).getPaths()
+                    }
+
+                    it.getMap(VegaOption.ENCODING)?.entries?.forEach { (channel, encoding) ->
+                        combinedEncoding.write(channel) { encoding }
+                    }
+
+                    processLayerSpec(it, combinedEncoding, accessLogger.nested(listOf(VegaOption.LAYER, i)))
+                }
+            }
+
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
+        }
+
+        if (HIDE_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) {
+            val summary = accessLogger
+                .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
+                .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
+
+            plotOptions.computationMessages = summary
         }
 
         return plotOptions.toJson()
     }
 
-    private fun processLayerSpec(layerSpec: Map<*, *>) {
-        val (markType, markVegaSpec) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val rawEncoding = (plotEncoding + (layerSpec.getMap(VegaOption.ENCODING) ?: emptyMap())).asMapOfMaps()
+    private fun processLayerSpec(
+        layerSpecMap: Map<*, *>,
+        combinedEncodingSpecMap: Map<*, *>,
+        accessLogger: TraceableMapWrapper.AccessLogger
+    ) {
+        val layerSpec: Map<*, *> = TraceableMapWrapper(layerSpecMap, accessLogger)
+        val encoding = TraceableMapWrapper(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
 
-        val transformResult = VegaTransformHelper.applyTransform(rawEncoding, layerSpec)
-        val encoding = transformResult?.adjustedEncoding ?: rawEncoding
+        val (markType, markVegaSpecMap) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
+        val markVegaSpec = TraceableMapWrapper(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))
+        val transformResult = VegaTransformHelper.applyTransform(layerSpec, encoding)
+
+        // Updating map that already tracked by accessLogger. It's ok as it adds only LP specific props,
+        // and usage report is built based on the original map.
+        transformResult?.encodingAdjustment?.forEach { (path, value) ->
+            combinedEncodingSpecMap.write(path, value)
+        }
 
         fun appendLayer(
             geom: GeomKind? = null,
@@ -59,9 +105,14 @@ internal class VegaPlotConverter private constructor(
                 .apply {
                     this.geom = geom
                     data = when {
-                        VegaOption.DATA !in layerSpec -> plotData
+                        VegaOption.DATA !in layerSpec -> Util.transformData(
+                            vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
+                        )
+
                         layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpec.getMap(VegaOption.DATA)!!) // data is specified
+                        layerSpec[VegaOption.DATA] != null -> Util.transformData(
+                            layerSpecMap.getMap(VegaOption.DATA)!!.typed()
+                        ) // data is specified
                         else -> error("Unsupported data specification")
                     }
 
@@ -220,7 +271,7 @@ internal class VegaPlotConverter private constructor(
                 prop[CrossbarLayer.FATTEN] = 0.0
             }
 
-            else -> error("Unsupported markType type: $markType")
+            else -> println("Unsupported markType type: $markType")
         }
     }
 }

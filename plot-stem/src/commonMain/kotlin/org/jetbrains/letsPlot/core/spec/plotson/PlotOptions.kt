@@ -23,6 +23,7 @@ class PlotOptions : Options(
     var coord: CoordOptions? by map(Plot.COORD)
     var themeOptions: ThemeOptions? by map(Plot.THEME)
     var size: Size? by map(Plot.SIZE)
+    var computationMessages: List<String>? by map(Plot.COMPUTATION_MESSAGES)
 
     class Size : Options() {
         var width: Int? by map(Plot.WIDTH)
