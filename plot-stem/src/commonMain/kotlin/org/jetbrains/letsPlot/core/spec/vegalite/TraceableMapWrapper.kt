@@ -7,15 +7,16 @@ package org.jetbrains.letsPlot.core.spec.vegalite
 
 import org.jetbrains.letsPlot.core.spec.getPaths
 
-class TraceableMap private constructor(
+class TraceableMapWrapper private constructor(
     private val baseMap: Map<*, *>,
     private val basePath: List<Any>,
     private val accessLogger: AccessLogger
 ) : Map<String, Any?> {
-    constructor(vegaSpec: Map<*, *>, accessLogger: AccessLogger) : this(vegaSpec, emptyList(), accessLogger)
+    constructor(baseMap: Map<*, *>, accessLogger: AccessLogger) : this(baseMap, emptyList(), accessLogger)
 
     private val thisMap: Map<String, Any?> = run {
-        // Do not use OptionsSelector to get to the element - this will return AuditMap as it will use AuditMap::get(key)
+        // Avoid using OptionsSelector to access the element, as it will return a TraceableMapWrapper
+        // instead of underneath map due to Map::get(key) -> TraceableMapWrapper::get(key) delegation.
         basePath.fold<Any, Any?>(baseMap) { acc, cur ->
             require(acc != null) {
                 "Null or missing item: ${basePath.joinToString(separator = ".")}"
@@ -76,8 +77,8 @@ class TraceableMap private constructor(
         }
 
     override fun containsValue(value: Any?): Boolean {
-        if (value is TraceableMap) {
-            error("baseMap should not contain TraceableMap - it contain only original data")
+        if (value is TraceableMapWrapper) {
+            error("baseMap should not contain TraceableMapWrapper - it contain only original data")
         }
         return thisMap.containsValue(value)
     }
@@ -107,7 +108,7 @@ class TraceableMap private constructor(
         }
     }
 
-    private fun subProperties(path: List<Any>): TraceableMap {
-        return TraceableMap(baseMap, basePath + path, accessLogger)
+    private fun subProperties(path: List<Any>): TraceableMapWrapper {
+        return TraceableMapWrapper(baseMap, basePath + path, accessLogger)
     }
 }

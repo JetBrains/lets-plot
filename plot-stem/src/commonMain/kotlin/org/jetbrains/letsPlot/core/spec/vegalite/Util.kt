@@ -130,7 +130,7 @@ internal object Util {
 
         encodingVegaSpec.entries.forEach { (channel, encoding) ->
             channel as String
-            require(encoding is Map<*, *>)
+            encoding as Map<*, *>
 
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
@@ -221,9 +221,9 @@ internal object Util {
 
     fun transformCoordinateSystem(encoding: Map<*, *>, plotOptions: PlotOptions) {
         fun domain(channel: String): Pair<Double?, Double?> {
-            val domainMin = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MIN)
-            val domainMax = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getNumber(Scale.DOMAIN_MAX)
-            val domain = encoding.getMap(channel)?.getMap(Encoding.SCALE)?.getList(Scale.DOMAIN)
+            val domainMin = encoding.getNumber(channel, Encoding.SCALE, Scale.DOMAIN_MIN)
+            val domainMax = encoding.getNumber(channel, Encoding.SCALE, Scale.DOMAIN_MAX)
+            val domain = encoding.getList(channel, Encoding.SCALE, Scale.DOMAIN)
 
             return Pair(
                 (domainMin ?: (domain?.getOrNull(0) as? Number))?.toDouble(),

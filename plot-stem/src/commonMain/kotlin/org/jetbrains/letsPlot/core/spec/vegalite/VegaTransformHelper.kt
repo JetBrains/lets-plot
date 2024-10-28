@@ -93,7 +93,6 @@ object VegaTransformHelper {
                 ?: return@run
 
             val origVar = densityTransform.getString(Transform.Density.DENSITY) ?: return@run
-            val groupingVar = densityTransform.getString(Transform.Density.GROUP_BY)
 
             val statInputChannel = encodings
                 .entries
@@ -103,7 +102,7 @@ object VegaTransformHelper {
 
             encodings.entries.forEach { (channel, encoding) ->
                 channel as String
-                require(encoding is Map<*, *>)
+                encoding as Map<*, *>
 
                 when (encoding[Encoding.FIELD]) {
                     Transform.Density.VAR_DENSITY -> encodingAdj.add(listOf(channel, Encoding.FIELD) to Stats.DENSITY.name)

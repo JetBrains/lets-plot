@@ -23,8 +23,8 @@ import org.jetbrains.letsPlot.core.spec.vegalite.VegaOption.Mark
 internal class VegaPlotConverter private constructor(
     private val vegaPlotSpecMap: MutableMap<String, Any?>
 ) {
-    private val accessLogger = TraceableMap.AccessLogger()
-    private val vegaPlotSpec = TraceableMap(vegaPlotSpecMap, accessLogger)
+    private val accessLogger = TraceableMapWrapper.AccessLogger()
+    private val vegaPlotSpec = TraceableMapWrapper(vegaPlotSpecMap, accessLogger)
 
     companion object {
         fun convert(vegaPlotSpec: MutableMap<String, Any?>): MutableMap<String, Any> {
@@ -37,20 +37,13 @@ internal class VegaPlotConverter private constructor(
 
     private val plotOptions = PlotOptions()
 
-    private fun summary(): List<String> {
-        if (HIDE_LETS_PLOT_CONVERTER_SUMMARY in vegaPlotSpec) return emptyList()
-
-        return accessLogger
-            .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION)
-            .map{ path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
-    }
-
     private fun convert(): MutableMap<String, Any> {
         when (VegaConfig.getPlotKind(vegaPlotSpecMap)) {
             VegaPlotKind.SINGLE_LAYER -> {
                 val encodingSpecMap = vegaPlotSpecMap.getMap(VegaOption.ENCODING) ?: emptyMap<Any, Any>()
                 processLayerSpec(vegaPlotSpecMap, encodingSpecMap, accessLogger)
             }
+
             VegaPlotKind.MULTI_LAYER -> {
                 vegaPlotSpec.getMaps(VegaOption.LAYER)!!.forEachIndexed { i, it ->
                     val combinedEncoding = mutableMapOf<String, Any>()
@@ -59,7 +52,7 @@ internal class VegaPlotConverter private constructor(
                         combinedEncoding.write(channel) { encoding }
 
                         // Encoding spec was moved from the plot to the layer, where it’s used.
-                        // Visit all plot encoding options to prevent them from appearing as unused in the audit
+                        // Visit all plot encoding options to prevent them from appearing as unused in the summary
                         (encoding as Map<*, *>).getPaths()
                     }
 
@@ -70,11 +63,15 @@ internal class VegaPlotConverter private constructor(
                     processLayerSpec(it, combinedEncoding, accessLogger.nested(listOf(VegaOption.LAYER, i)))
                 }
             }
+
             VegaPlotKind.FACETED -> error("Not implemented - faceted plot")
         }
 
-        val summary = summary()
-        if (summary.isNotEmpty()) {
+        if (HIDE_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) {
+            val summary = accessLogger
+                .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION)
+                .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
+
             plotOptions.computationMessages = summary
         }
 
@@ -84,13 +81,13 @@ internal class VegaPlotConverter private constructor(
     private fun processLayerSpec(
         layerSpecMap: Map<*, *>,
         combinedEncodingSpecMap: Map<*, *>,
-        accessLogger: TraceableMap.AccessLogger
+        accessLogger: TraceableMapWrapper.AccessLogger
     ) {
-        val layerSpec: Map<*, *> = TraceableMap(layerSpecMap, accessLogger)
-        val encoding = TraceableMap(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
+        val layerSpec: Map<*, *> = TraceableMapWrapper(layerSpecMap, accessLogger)
+        val encoding = TraceableMapWrapper(combinedEncodingSpecMap, accessLogger.nested(listOf(VegaOption.ENCODING)))
 
         val (markType, markVegaSpecMap) = Util.readMark(layerSpec[VegaOption.MARK] ?: error("Mark is not specified"))
-        val markVegaSpec = TraceableMap(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))
+        val markVegaSpec = TraceableMapWrapper(markVegaSpecMap, accessLogger.nested(listOf(VegaOption.MARK)))
         val transformResult = VegaTransformHelper.applyTransform(layerSpec, encoding)
 
         // Updating map that already tracked by accessLogger. It's ok as it adds only LP specific props,
@@ -108,9 +105,14 @@ internal class VegaPlotConverter private constructor(
                 .apply {
                     this.geom = geom
                     data = when {
-                        VegaOption.DATA !in layerSpec -> Util.transformData(vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap())
+                        VegaOption.DATA !in layerSpec -> Util.transformData(
+                            vegaPlotSpecMap.getMap(VegaOption.DATA) ?: emptyMap()
+                        )
+
                         layerSpec[VegaOption.DATA] == null -> emptyMap() // explicit null - no data, even from the parent plot
-                        layerSpec[VegaOption.DATA] != null -> Util.transformData(layerSpecMap.getMap(VegaOption.DATA)!!.typed()) // data is specified
+                        layerSpec[VegaOption.DATA] != null -> Util.transformData(
+                            layerSpecMap.getMap(VegaOption.DATA)!!.typed()
+                        ) // data is specified
                         else -> error("Unsupported data specification")
                     }
 
