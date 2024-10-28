@@ -57,21 +57,22 @@ class TraceableMapWrapper private constructor(
                     }
                 }
                 if (isLeaf) {
-                    accessLogger.log(basePath + listOf(key))
+                    accessLogger.logRead(basePath + listOf(key))
                 }
                 out
             }
 
-            else -> v.also { accessLogger.log(basePath + listOf(key)) } // log only leaf properties, not intermediate collections
+            else -> v.also { accessLogger.logRead(basePath + listOf(key)) } // log only leaf properties, not intermediate collections
         }
     }
 
     override val entries: Set<Map.Entry<String, Any?>>
         get() {
             return thisMap.keys.map { key ->
+                val value = get(key)
                 object : Map.Entry<String, Any?> {
                     override val key: String get() = key
-                    override val value: Any? get() = get(key)
+                    override val value: Any? get() = value
                 }
             }.toSet()
         }
@@ -93,7 +94,7 @@ class TraceableMapWrapper private constructor(
 
         fun nested(basePath: List<Any>) = AccessLogger(this.basePath + basePath, accessLog)
 
-        fun log(property: List<Any>) {
+        fun logRead(property: List<Any>) {
             if (buildingReport) return
 
             val fullPath = basePath + property
@@ -102,7 +103,7 @@ class TraceableMapWrapper private constructor(
 
         fun findUnusedProperties(vegaPlotSpecMap: Map<String, Any?>): List<List<Any>> {
             buildingReport = true
-            val all = (vegaPlotSpecMap - "data").getPaths()
+            val all = (vegaPlotSpecMap).getPaths()
             buildingReport = false
             return all.filter { it !in accessLog }
         }

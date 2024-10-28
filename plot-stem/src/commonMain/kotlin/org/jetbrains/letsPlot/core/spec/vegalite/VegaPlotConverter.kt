@@ -69,7 +69,7 @@ internal class VegaPlotConverter private constructor(
 
         if (HIDE_LETS_PLOT_CONVERTER_SUMMARY !in vegaPlotSpec) {
             val summary = accessLogger
-                .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION)
+                .findUnusedProperties(vegaPlotSpec - VegaOption.SCHEMA - VegaOption.DESCRIPTION - VegaOption.DATA)
                 .map { path -> path.joinToString(prefix = "Unknown parameter: ", separator = ".") }
 
             plotOptions.computationMessages = summary
