@@ -8,15 +8,21 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.math.absoluteValue
 import kotlin.math.pow
 
+// TODO: should not be data class - it may break invariants
 internal data class NumberInfo(
     val number: Double,
     val negative: Boolean,
     val fractionalPart: Long,
     val integerString: String,
+
+    // bad property - initially not null only for very big numbers like 1.0E55.
+    // For normal numbers (e.g., 1.234E-5, 1.234E+5) it will be null.
+    // This is needed for of toExponential() and buildExponentString() functions.
+    // Should be consistent and always present.
     val exponent: Int? = null,
 ) {
     val isIntegerZero: Boolean = integerString == "0"
-    val integerPart: Long = integerString.toLong()
+    val integerPart: Double = integerString.toDouble()
     val integerLength = integerString.length
 
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
@@ -27,7 +33,7 @@ internal data class NumberInfo(
         /**
          * max fraction length we can format (as any other format library does)
          */
-        private const val MAX_DECIMALS = 18
+        internal const val MAX_DECIMALS = 18
         internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
 
         internal fun createNumberInfo(num: Number): NumberInfo {
@@ -100,7 +106,7 @@ internal data class NumberInfo(
                 // "1" + "[234]567" -> 1234
                 integerString = actualIntStr,
                 // "234[567]" -> 567_000_000_000_000_000
-                fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }
+                fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) },
             )
         }
 
