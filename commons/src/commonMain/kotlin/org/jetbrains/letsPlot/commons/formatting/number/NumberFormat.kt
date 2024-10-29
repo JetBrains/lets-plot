@@ -242,6 +242,40 @@ class NumberFormat(spec: Spec) {
         return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
     }
 
+//    private fun roundToPrecisionStr(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
+//        val exp = numberInfo.exponent ?: 0
+//        val totalPrecision = precision + exp
+//
+//        var fractionalPart: Long
+//        var integerPart: String
+//
+//        if (totalPrecision < 0) {
+//            fractionalPart = 0L
+//            val intShift = totalPrecision.absoluteValue
+//            integerPart = if (numberInfo.integerLength <= intShift) {
+//                "0"
+//            } else {
+//                numberInfo.integerString.take(numberInfo.integerString.length - intShift) + "0".repeat(intShift)
+//            }
+//        } else {
+//            val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
+//            fractionalPart = if (precisionExp == 0L) {
+//                numberInfo.fractionalPart
+//            } else {
+//                (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
+//            }
+//            integerPart = numberInfo.integerPart
+//            if (fractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
+//                fractionalPart = 0
+//                ++integerPart
+//            }
+//        }
+//
+//        val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
+//
+//        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerString = integerPart.toString())
+//    }
+
     private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
         val exp = numberInfo.exponent ?: 0
         val totalPrecision = precision + exp
@@ -273,7 +307,8 @@ class NumberFormat(spec: Spec) {
 
         val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
 
-        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerString = integerPart.toString())
+        //return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerString = integerPart.toString())
+        return createNumberInfo(num)
     }
 
     private fun trimFraction(output: Output): Output {

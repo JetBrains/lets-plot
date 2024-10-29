@@ -27,7 +27,7 @@ class NumberFormatExtremesTest {
     @Test
     fun integerPartOverflow() {
         val f = NumberFormat(Spec(precision = 1, type = "s", expType = NumberFormat.ExponentNotationType.E))
-        val v = "-10000000000000000000".toDouble() // Value is too big to be represented as a Long
+        val v = -10000000000000000000.0 // Value is too big to be represented as a Long
         println(v)
         assertEquals("-10E", f.apply(v))
     }
