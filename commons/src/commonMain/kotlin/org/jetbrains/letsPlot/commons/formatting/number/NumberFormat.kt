@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.NumberInfo.Companion.createNumberInfo
+import org.jetbrains.letsPlot.commons.formatting.number.NumberInfo.Companion.createNumberInfo
 import kotlin.math.*
 
 
@@ -131,10 +131,10 @@ class NumberFormat(spec: Spec) {
     private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
         val num = numberInfo.number
         if (num < TYPE_E_MIN) {
-            return NumberInfo(0.0)
+            return NumberInfo.ZERO
         }
 
-        var e = if (numberInfo.integerPart == 0L) {
+        var e = if (numberInfo.isIntegerZero) {
             -(numberInfo.fractionLeadingZeros + 1)
         } else {
             numberInfo.integerLength - 1 +
@@ -157,7 +157,7 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        if (numberInfo.integerPart == 0L) {
+        if (numberInfo.isIntegerZero) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
             } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
@@ -186,12 +186,12 @@ class NumberFormat(spec: Spec) {
         }
 
         if (newNumberInfo.fractionalPart == 0L) {
-            return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision), expType = spec.expType)
+            return FormattedNumber(newNumberInfo.integerString, "0".repeat(completePrecision), expType = spec.expType)
         }
 
         val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
 
-        return FormattedNumber(newNumberInfo.integerPart.toString(), fractionString)
+        return FormattedNumber(newNumberInfo.integerString, fractionString)
     }
 
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
@@ -205,7 +205,7 @@ class NumberFormat(spec: Spec) {
             return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
         }
 
-        val integerString = expNumberInfo.integerPart.toString()
+        val integerString = expNumberInfo.integerString
         val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
         return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
     }
@@ -246,16 +246,16 @@ class NumberFormat(spec: Spec) {
         val exp = numberInfo.exponent ?: 0
         val totalPrecision = precision + exp
 
-        var fractionalPart: Long
-        var integerPart: Long
+        var fractionalPart: Long // TODO: likely wont overflow, but better to use Double
+        var integerPart: Double
 
         if (totalPrecision < 0) {
             fractionalPart = 0L
             val intShift = totalPrecision.absoluteValue
             integerPart = if (numberInfo.integerLength <= intShift) {
-                0
+                0.0
             } else {
-                numberInfo.integerPart / 10.0.pow(intShift).toLong() * 10.0.pow(intShift).toLong()
+                numberInfo.integerPart / 10.0.pow(intShift) * 10.0.pow(intShift)
             }
         } else {
             val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
@@ -273,7 +273,7 @@ class NumberFormat(spec: Spec) {
 
         val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
 
-        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerPart = integerPart)
+        return createNumberInfo(num)
     }
 
     private fun trimFraction(output: Output): Output {
@@ -364,115 +364,6 @@ class NumberFormat(spec: Spec) {
         companion object {
             @Suppress("RegExpRedundantEscape") // breaks tests
             private val POWER_REGEX = """^${MULT_SIGN}\\\(10\^\{(?<degree>-?\d+)\}\\\)$""".toRegex()
-        }
-    }
-
-    internal data class NumberInfo(
-        val number: Double = 0.0,
-        val negative: Boolean = false,
-        val integerPart: Long = 0,
-        val fractionalPart: Long = 0,
-        val exponent: Int? = null
-    ) {
-        constructor(
-            number: Number,
-            integerPart: Long = 0,
-            fractionalPart: Long = 0,
-            exponent: Int? = null
-        ) : this(number.toDouble().absoluteValue, number.toDouble() < 0.0, integerPart, fractionalPart, exponent)
-
-        val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
-        val integerLength = length(integerPart)
-        val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
-
-        companion object {
-            /**
-             * max fraction length we can format (as any other format library does)
-             */
-            private const val MAX_DECIMALS = 18
-            internal val MAX_DECIMAL_VALUE = 10.0.pow(MAX_DECIMALS).toLong()
-
-            internal fun createNumberInfo(num: Number): NumberInfo {
-                // frac: "123", exp: 8, double: 0.00000123
-                //   -> long: 000_001_230_000_000_000 (extended to max decimal digits)
-                val encodeFraction = { frac: String, exp: Int ->
-                    var fraction = frac
-                    // cutting the fraction if it longer than max decimal digits
-                    if (exp > MAX_DECIMALS) {
-                        fraction = frac.substring(0 until (frac.length - (exp - MAX_DECIMALS)))
-                    }
-                    fraction.toLong() * 10.0.pow((MAX_DECIMALS - exp).coerceAtLeast(0)).toLong()
-                }
-
-                val (intStr, fracStr, exponentString) =
-                    "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
-                        .toRegex()
-                        .find(num.toDouble().absoluteValue.toString().lowercase())
-                        ?.destructured
-                        ?: error("Wrong number: $num")
-
-                val exponent: Int = exponentString.toIntOrNull() ?: 0
-
-                // number = 1.23456E+55
-                if (exponent.absoluteValue >= MAX_DECIMALS) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" -> 1
-                        integerPart = intStr.toLong(),
-                        // fraction part ignored intentionally
-                        fractionalPart = 0,
-                        // 55
-                        exponent = exponent
-                    )
-                }
-
-                check(exponent < MAX_DECIMALS)
-                // number = 1.23E-4. double: 0.000123
-                if (exponent < 0) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" + "23" -> 000_123_000_000_000_000L
-                        fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length)
-                    )
-                }
-
-                check(exponent in 0..MAX_DECIMALS)
-                // number = 1.234E+5, double: 123400.0
-                if (exponent >= fracStr.length) {
-                    return NumberInfo(
-                        number = num,
-                        // "1" + "234" + "00" -> 123400
-                        integerPart = (intStr + fracStr + "0".repeat(exponent - fracStr.length)).toLong()
-                    )
-                }
-
-                check(exponent >= 0 && exponent < fracStr.length)
-                // number = 1.234567E+3, double: 1234.567
-                return NumberInfo(
-                    number = num,
-                    // "1" + "[234]567" -> 1234
-                    integerPart = (intStr + fracStr.substring(0 until exponent)).toLong(),
-                    // "234[567]" -> 567_000_000_000_000_000
-                    fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }
-                )
-            }
-
-            private fun length(v: Long): Int {
-                // log10 doesn't work for values 10^17 + 1, returning 17.0 instead of 17.00001
-
-                if (v == 0L) {
-                    return 1
-                }
-
-                var len = 0
-                var rem = v
-                while (rem > 0) {
-                    len++
-                    rem /= 10
-                }
-
-                return len
-            }
         }
     }
 
