@@ -11,17 +11,19 @@ import kotlin.math.pow
 internal data class NumberInfo(
     val number: Double,
     val negative: Boolean,
-    val integerPart: Long,
     val fractionalPart: Long,
     val integerString: String,
     val exponent: Int? = null,
 ) {
+    val isIntegerZero: Boolean = integerString == "0"
+    val integerPart: Long = integerString.toLong()
+    val integerLength = integerString.length
+
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
-    val integerLength = length(integerPart).also { check(it == integerString.length) { "$it != ${integerString.length}" } }
     val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
 
     companion object {
-        val ZERO = NumberInfo(0.0, false, 0, 0, integerString = "0")
+        val ZERO = NumberInfo(0.0, false, 0, integerString = "0")
         /**
          * max fraction length we can format (as any other format library does)
          */
@@ -56,12 +58,11 @@ internal data class NumberInfo(
                     number = value.absoluteValue,
                     negative = value < 0,
                     // "1" -> 1
-                    integerPart = intStr.toLong(),
+                    integerString = intStr,
                     // fraction part ignored intentionally
                     fractionalPart = 0,
                     // 55
                     exponent = exponent,
-                    integerString = intStr
                 )
             }
 
@@ -71,10 +72,9 @@ internal data class NumberInfo(
                 return NumberInfo(
                     number = value.absoluteValue,
                     negative = value < 0,
-                    integerPart = 0,
+                    integerString = "0",
                     // "1" + "23" -> 000_123_000_000_000_000L
                     fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length),
-                    integerString = "0"
                 )
             }
 
@@ -87,7 +87,6 @@ internal data class NumberInfo(
                     number = value.absoluteValue,
                     negative = value < 0,
                     integerString = actualIntStr,
-                    integerPart = actualIntStr.toLong(),
                     fractionalPart = 0,
                 )
             }
@@ -99,7 +98,6 @@ internal data class NumberInfo(
                 number = value.absoluteValue,
                 negative = value < 0,
                 // "1" + "[234]567" -> 1234
-                integerPart = actualIntStr.toLong(),
                 integerString = actualIntStr,
                 // "234[567]" -> 567_000_000_000_000_000
                 fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) }

@@ -134,7 +134,7 @@ class NumberFormat(spec: Spec) {
             return NumberInfo.ZERO
         }
 
-        var e = if (numberInfo.integerPart == 0L) {
+        var e = if (numberInfo.isIntegerZero) {
             -(numberInfo.fractionLeadingZeros + 1)
         } else {
             numberInfo.integerLength - 1 +
@@ -157,7 +157,7 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        if (numberInfo.integerPart == 0L) {
+        if (numberInfo.isIntegerZero) {
             if (numberInfo.fractionalPart == 0L) {
                 return toFixedFormat(numberInfo, precision - 1)
             } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
@@ -186,12 +186,12 @@ class NumberFormat(spec: Spec) {
         }
 
         if (newNumberInfo.fractionalPart == 0L) {
-            return FormattedNumber(newNumberInfo.integerPart.toString(), "0".repeat(completePrecision), expType = spec.expType)
+            return FormattedNumber(newNumberInfo.integerString, "0".repeat(completePrecision), expType = spec.expType)
         }
 
         val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
 
-        return FormattedNumber(newNumberInfo.integerPart.toString(), fractionString)
+        return FormattedNumber(newNumberInfo.integerString, fractionString)
     }
 
     private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
@@ -205,7 +205,7 @@ class NumberFormat(spec: Spec) {
             return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
         }
 
-        val integerString = expNumberInfo.integerPart.toString()
+        val integerString = expNumberInfo.integerString
         val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
         return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
     }
@@ -273,7 +273,7 @@ class NumberFormat(spec: Spec) {
 
         val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
 
-        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerPart = integerPart, integerString = integerPart.toString())
+        return numberInfo.copy(number = num, fractionalPart = fractionalPart, integerString = integerPart.toString())
     }
 
     private fun trimFraction(output: Output): Output {
