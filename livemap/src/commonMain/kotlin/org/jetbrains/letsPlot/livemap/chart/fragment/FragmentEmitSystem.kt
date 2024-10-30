@@ -7,10 +7,9 @@ package org.jetbrains.letsPlot.livemap.chart.fragment
 
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.reinterpret
-import org.jetbrains.letsPlot.livemap.World
+import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.within
 import org.jetbrains.letsPlot.livemap.chart.fragment.Utils.RegionsIndex
 import org.jetbrains.letsPlot.livemap.chart.fragment.Utils.entityName
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
@@ -18,6 +17,7 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
+import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroThreadComponent
 import org.jetbrains.letsPlot.livemap.core.multitasking.map
 import org.jetbrains.letsPlot.livemap.geometry.MicroTasks
@@ -114,25 +114,64 @@ class FragmentEmitSystem(
         require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
+        val clipPath = fragmentKey.quadKey.computeRect().toMultiPolygon()
 
-        val projector = MicroTasks
-            .resample(boundaries, mapProjection::apply)
-            .map { worldMultiPolygon: MultiPolygon<World> ->
-                val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
-                runLaterBySystem(fragmentEntity) { theEntity ->
-                    theEntity
-                        .addComponents {
-                            +WorldDimensionComponent(bbox.dimension)
-                            +WorldOriginComponent(bbox.origin)
-                            + WorldGeometryComponent().apply { geometry = Geometry.of(worldMultiPolygon) }
-                            + FragmentComponent(fragmentKey)
-                            + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
-                        }
-                }
+        val projector = MicroTaskUtil.pair(
+            MicroTasks.resample(clipPath, mapProjection::apply),
+            MicroTasks.resample(boundaries, mapProjection::apply)
+        ).map { (worldClipPath, worldMultiPolygon) ->
+            Triple(worldMultiPolygon, worldClipPath, worldMultiPolygon.clipBorder(worldClipPath))
+        }.map { (worldMultiPolygon, worldClipPath, worldMultiLineString) ->
+            val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
+
+            runLaterBySystem(fragmentEntity) { theEntity ->
+                theEntity
+                    .addComponents {
+                        + WorldDimensionComponent(bbox.dimension)
+                        + WorldOriginComponent(bbox.origin)
+                        + WorldGeometryComponent().apply { geometry = Geometry.of(worldMultiPolygon) }
+                        + FragmentComponent(fragmentKey, worldClipPath, worldMultiLineString)
+                        + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
+                    }
             }
+        }
 
         fragmentEntity.add(MicroThreadComponent(projector, myProjectionQuant))
         getSingleton<StreamingFragmentsComponent>()[fragmentKey] = fragmentEntity
         return fragmentEntity
+    }
+
+    fun <T> MultiPolygon<T>.clipBorder(clipPath: MultiPolygon<T>): MultiLineString<T> {
+        val result = mutableListOf<LineString<T>>()
+        for (polygon in this) {
+            for (ring in polygon) {
+                var line = mutableListOf<Vec<T>>()
+                var prevVisible = false
+                var prev = ring[0]
+
+                ring.forEach {
+                    if (it.within(clipPath)) {
+                        if (!prevVisible) {
+                            line.add(prev)
+                        }
+                        line.add(it)
+                        prevVisible = true
+                    } else {
+                        if (prevVisible) {
+                            line.add(it)
+                            result.add(LineString(line))
+                            line = mutableListOf()
+                        }
+                        prev = it
+                        prevVisible = false
+                    }
+                }
+                if (line.isNotEmpty()) {
+                    result.add(LineString(line))
+                }
+            }
+        }
+
+        return MultiLineString(result)
     }
 }

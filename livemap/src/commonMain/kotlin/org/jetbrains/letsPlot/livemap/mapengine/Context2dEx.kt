@@ -33,7 +33,7 @@ fun <T> Context2d.drawMultiPolygon(geometry: MultiPolygon<T>, afterPolygon: (Con
 fun <T> Context2d.drawMultiLineString(geometry: MultiLineString<T>, afterLineString: (Context2d) -> Unit) {
     for (line in geometry) {
         line[0].let(::moveTo)
-        line.drop(1).forEach(::lineTo)
+        line.asSequence().drop(1).forEach(::lineTo)
     }
     afterLineString(this)
 }

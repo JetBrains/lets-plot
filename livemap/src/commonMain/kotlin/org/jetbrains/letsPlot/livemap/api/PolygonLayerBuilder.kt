@@ -133,6 +133,7 @@ class PolygonEntityBuilder(
                 }
                 + ChartElementComponent().apply {
                     sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PolygonEntityBuilder.alphaScalingEnabled
                     fillColor = this@PolygonEntityBuilder.fillColor
                     strokeColor = this@PolygonEntityBuilder.strokeColor
                     strokeWidth = this@PolygonEntityBuilder.strokeWidth

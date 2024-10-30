@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.livemap.chart.fragment
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.containers.LruCache
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -131,7 +131,11 @@ class DownloadingFragmentsComponent : EcsComponent {
     }
 }
 
-class FragmentComponent(val fragmentKey: FragmentKey) : EcsComponent
+class FragmentComponent(
+    val fragmentKey: FragmentKey,
+    val clipPath: MultiPolygon<World>,
+    val boundary: MultiLineString<World>
+) : EcsComponent
 
 class RegionBBoxComponent(val bbox: GeoRectangle) : EcsComponent
 
