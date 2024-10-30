@@ -134,9 +134,14 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     }
 
     override fun clip() {
+        val currentTransform = graphics.transform
+        graphics.transform = AffineTransform()
+
         clipStack.add(currentPath)
         state.numClipPath = clipStack.size
         graphics.clip = currentPath
+
+        graphics.transform = currentTransform
     }
 
     override fun stroke() {
@@ -233,7 +238,10 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
                     clipStack.subList(state.numClipPath, clipStack.size).clear()
                 }
 
+                // Reset transform before clip
+                graphics.transform = AffineTransform()
                 graphics.clip = clipStack.lastOrNull()
+
                 graphics.transform = state.transform
                 graphics.stroke = state.stroke
                 graphics.font = state.font
