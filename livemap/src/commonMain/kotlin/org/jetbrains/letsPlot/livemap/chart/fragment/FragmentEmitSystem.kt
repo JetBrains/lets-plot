@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.within
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isOnBorder
 import org.jetbrains.letsPlot.livemap.chart.fragment.Utils.RegionsIndex
 import org.jetbrains.letsPlot.livemap.chart.fragment.Utils.entityName
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
@@ -17,9 +17,7 @@ import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
-import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
-import org.jetbrains.letsPlot.livemap.core.multitasking.MicroThreadComponent
-import org.jetbrains.letsPlot.livemap.core.multitasking.map
+import org.jetbrains.letsPlot.livemap.core.multitasking.*
 import org.jetbrains.letsPlot.livemap.geometry.MicroTasks
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
@@ -114,14 +112,24 @@ class FragmentEmitSystem(
         require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
-        val clipPath = fragmentKey.quadKey.computeRect().toMultiPolygon()
+        val clipRect = fragmentKey.quadKey.computeRect()
+        val clipPath = clipRect.toMultiPolygon()
+        val inflatedClipRect = clipRect.inflate(Vec(clipRect.dimension.x * 0.125, clipRect.dimension.y * 0.125))
 
-        val projector = MicroTaskUtil.pair(
-            MicroTasks.resample(clipPath, mapProjection::apply),
-            MicroTasks.resample(boundaries, mapProjection::apply)
-        ).map { (worldClipPath, worldMultiPolygon) ->
-            Triple(worldMultiPolygon, worldClipPath, worldMultiPolygon.clipBorder(worldClipPath))
-        }.map { (worldMultiPolygon, worldClipPath, worldMultiLineString) ->
+        val projector = FilterBorderMicroTask(boundaries, inflatedClipRect).flatMap { border ->
+            MicroTaskUtil.pair(
+                if (border.isEmpty()) {
+                    MicroTaskUtil.constant(MultiLineString(emptyList()))
+                } else {
+                    MicroTasks.resample(border, mapProjection::apply)
+                },
+                MicroTaskUtil.pair(
+                    MicroTasks.resample(clipPath, mapProjection::apply),
+                    MicroTasks.resample(boundaries, mapProjection::apply)
+                )
+            )
+        }.map { (worldMultiLineString, pair) ->
+            val (worldClipPath, worldMultiPolygon) = pair
             val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
 
             runLaterBySystem(fragmentEntity) { theEntity ->
@@ -141,37 +149,86 @@ class FragmentEmitSystem(
         return fragmentEntity
     }
 
-    fun <T> MultiPolygon<T>.clipBorder(clipPath: MultiPolygon<T>): MultiLineString<T> {
-        val result = mutableListOf<LineString<T>>()
-        for (polygon in this) {
-            for (ring in polygon) {
-                var line = mutableListOf<Vec<T>>()
-                var prevVisible = false
-                var prev = ring[0]
+    private class FilterBorderMicroTask<T>(
+        multiPolygon: MultiPolygon<T>,
+        private val clipRect: Rect<T>
+    ) : MicroTask<MultiLineString<T>> {
+        private lateinit var polygonIterator: Iterator<Polygon<T>>
+        private lateinit var ringIterator: Iterator<Ring<T>>
+        private lateinit var pointIterator: Iterator<Vec<T>>
 
-                ring.forEach {
-                    if (it.within(clipPath)) {
-                        if (!prevVisible) {
-                            line.add(prev)
-                        }
-                        line.add(it)
-                        prevVisible = true
-                    } else {
-                        if (prevVisible) {
-                            line.add(it)
-                            result.add(LineString(line))
-                            line = mutableListOf()
-                        }
-                        prev = it
-                        prevVisible = false
-                    }
-                }
-                if (line.isNotEmpty()) {
-                    result.add(LineString(line))
-                }
+        private var newLineString: MutableList<Vec<T>> = ArrayList()
+        private val newMultiLineString: MutableList<LineString<T>> = ArrayList()
+
+        private var prevVisible = false
+        private var prev: Vec<T>? = null
+
+        private var hasNext = true
+        private lateinit var result: MultiLineString<T>
+
+        init {
+            try {
+                polygonIterator = multiPolygon.iterator()
+                ringIterator = polygonIterator.next().iterator()
+                pointIterator = ringIterator.next().iterator()
+            } catch (e: RuntimeException) {
+                println(e)
             }
         }
 
-        return MultiLineString(result)
+        override fun resume() {
+            if (!pointIterator.hasNext()) {
+                if (newLineString.isNotEmpty()) {
+                    newMultiLineString.add(LineString(newLineString))
+                }
+                newLineString = mutableListOf()
+                prev = null
+                prevVisible = false
+
+                if (!ringIterator.hasNext()) {
+                    if (!polygonIterator.hasNext()) {
+                        hasNext = false
+                        result = MultiLineString(newMultiLineString)
+                        return
+                    } else {
+                        ringIterator = polygonIterator.next().iterator()
+                        pointIterator = ringIterator.next().iterator()
+                        newLineString = ArrayList()
+                    }
+                } else {
+                    pointIterator = ringIterator.next().iterator()
+                    newLineString = ArrayList()
+                }
+            }
+            val currentPoint = pointIterator.next()
+
+            if (currentPoint.isOnBorder(clipRect)) {
+                if (prevVisible) {
+                    newLineString.add(currentPoint)
+
+                    if (newLineString.isNotEmpty()) {
+                        newMultiLineString.add(LineString(newLineString))
+                    }
+                    newLineString = mutableListOf()
+                }
+
+                prev = currentPoint
+                prevVisible = false
+            } else {
+                if (!prevVisible && prev != null) {
+                    newLineString.add(prev!!)
+                }
+                newLineString.add(currentPoint)
+                prevVisible = true
+            }
+        }
+
+        override fun alive(): Boolean {
+            return hasNext
+        }
+
+        override fun getResult(): MultiLineString<T> {
+            return result
+        }
     }
 }

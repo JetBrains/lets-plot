@@ -5,9 +5,11 @@
 
 package org.jetbrains.letsPlot.livemap.chart.fragment
 
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.LineCap
 import org.jetbrains.letsPlot.core.canvas.LineJoin
+import org.jetbrains.letsPlot.livemap.World
 import org.jetbrains.letsPlot.livemap.chart.ChartElementComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.geometry.WorldGeometryComponent
@@ -29,11 +31,14 @@ class RegionRenderer : Renderer {
 
         val chartElement = entity.get<ChartElementComponent>()
 
+        var regionBorder = MultiLineString<World>(emptyList())
+
         for (fragment in fragments) {
             val fragmentComponent = fragment.get<FragmentComponent>()
             val clipPath = fragmentComponent.clipPath
-            val boundary = fragmentComponent.boundary
             val geometry = fragment.tryGet<WorldGeometryComponent>()?.geometry ?: error("")
+
+            regionBorder = MultiLineString(regionBorder.plus(fragmentComponent.boundary))
 
             ctx.save()
             ctx.scale(renderHelper.zoomFactor)
@@ -44,8 +49,6 @@ class RegionRenderer : Renderer {
             ctx.restore()
             ctx.save()
             ctx.clip()
-
-            ctx.save()
             ctx.scale(renderHelper.zoomFactor)
 
             ctx.beginPath()
@@ -54,19 +57,24 @@ class RegionRenderer : Renderer {
 
             ctx.setFillStyle(chartElement.scaledFillColor())
             ctx.fill()
-
-            ctx.beginPath()
-            ctx.drawMultiLineString(boundary) { nop() }
-
-            ctx.restore()
-
-            ctx.setStrokeStyle(chartElement.scaledStrokeColor())
-            ctx.setLineWidth(chartElement.scaledStrokeWidth())
-            ctx.setLineCap(LineCap.ROUND)
-            ctx.setLineJoin(LineJoin.ROUND)
-            ctx.stroke()
             ctx.restore()
         }
+
+        ctx.save()
+        ctx.scale(renderHelper.zoomFactor)
+
+        ctx.beginPath()
+        ctx.drawMultiLineString(regionBorder) { nop() }
+
+        ctx.restore()
+        ctx.save()
+
+        ctx.setStrokeStyle(chartElement.scaledStrokeColor())
+        ctx.setLineWidth(chartElement.scaledStrokeWidth())
+        ctx.setLineCap(LineCap.ROUND)
+        ctx.setLineJoin(LineJoin.ROUND)
+        ctx.stroke()
+        ctx.restore()
     }
 
     private fun nop() {}
