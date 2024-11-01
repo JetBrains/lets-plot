@@ -80,6 +80,10 @@ object MicroTaskUtil {
         return PairMicroTask(first, second)
     }
 
+    fun <T> constant(result: T): MicroTask<T> {
+        return ConstantMicroTask(result)
+    }
+
     private class CompositeMicroTask internal constructor(tasks: Iterable<() -> Unit>) : MicroTask<Unit> {
 
         private val iterator = tasks.iterator()
@@ -91,6 +95,14 @@ object MicroTaskUtil {
         override fun alive(): Boolean = iterator.hasNext()
 
         override fun getResult() {}
+    }
+
+    private class ConstantMicroTask<T>(private val result: T) : MicroTask<T> {
+        override fun resume() {}
+
+        override fun alive(): Boolean = false
+
+        override fun getResult(): T = result
     }
 
     private class PairMicroTask<FirstT, SecondT> internal constructor(
