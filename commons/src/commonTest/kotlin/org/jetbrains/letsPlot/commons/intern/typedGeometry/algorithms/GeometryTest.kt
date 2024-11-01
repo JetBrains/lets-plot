@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.spatial.World
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import kotlin.test.Test
@@ -37,6 +37,8 @@ class GeometryTest {
     ))
 
     private val polygon = Polygon(listOf(outerRing, innerRing))
+
+    private val rect = Rect<DoubleVector>(Vec(2.0, 2.0), Vec(3.0, 3.0))
 
     // Ring
 
@@ -126,5 +128,46 @@ class GeometryTest {
     fun testVecOutOfPolygon() {
         val vec = Vec<DoubleVector>(-3.0, 2.0)
         assertFalse { vec.within(polygon) }
+    }
+
+    @Test
+    fun testVeinRectVertices() {
+        assertTrue { Vec<DoubleVector>(2.0, 2.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(5.0, 2.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(5.0, 5.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(2.0, 5.0).isOnBorder(rect) }
+    }
+
+    @Test
+    fun testVecOnEdges() {
+        assertTrue { Vec<DoubleVector>(3.0, 2.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(5.0, 4.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(4.0, 5.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(2.0, 3.0).isOnBorder(rect) }
+    }
+
+    @Test
+    fun testVecIsNotOnRect() {
+        assertFalse { Vec<DoubleVector>(3.0, 1.9).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(5.1, 4.0).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(4.0, 5.1).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(1.9, 3.0).isOnBorder(rect) }
+    }
+
+    @Test
+    fun testVecIsNotOnRect2() {
+        assertFalse { Vec<DoubleVector>(1.0, 2).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(5.0, 1.0).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(5.1, 5.0).isOnBorder(rect) }
+        assertFalse { Vec<DoubleVector>(2.0, 1.0).isOnBorder(rect) }
+    }
+
+    @Test
+    fun testVecIsOnRect() {
+        // default epsilon = 1e-5
+        assertTrue { Vec<DoubleVector>(3.0, 1.999999).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(5.000001, 4.0).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(4.0, 5.000001).isOnBorder(rect) }
+        assertTrue { Vec<DoubleVector>(1.999999, 3.0).isOnBorder(rect) }
     }
 }

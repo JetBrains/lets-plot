@@ -7,10 +7,7 @@ package org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.xOnLine
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.interval.IntSpan
 import kotlin.math.abs
 
@@ -176,4 +173,11 @@ fun <T> Vec<T>.within(ring: Ring<T>): Boolean {
 
     }
     return crossings % 2 != 0
+}
+
+fun <T> Vec<T>.isOnBorder(clipRect: Rect<T>, epsilon: Double = 1e-5): Boolean {
+    return (abs(x - clipRect.origin.x) < epsilon || abs(x - (clipRect.origin.x + clipRect.dimension.x)) < epsilon) &&
+            (y >= clipRect.origin.y - epsilon && y <= clipRect.origin.y + clipRect.dimension.y + epsilon) ||
+            (abs(y - clipRect.origin.y) < epsilon || abs(y - (clipRect.origin.y + clipRect.dimension.y)) < epsilon) &&
+            (x >= clipRect.origin.x - epsilon && x <= clipRect.origin.x + clipRect.dimension.x + epsilon)
 }
