@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.livemap.geometry
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.GeometryType.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.util.VecUtil
@@ -43,6 +44,13 @@ object MicroTasks {
         transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, resample(transform))
+    }
+
+    fun <InT, OutT> resample(
+        geometry: MultiLineString<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>?
+    ): MicroTask<MultiLineString<OutT>> {
+        return MultiLineStringTransform(geometry, resample(transform))
     }
 
     private fun <InT, OutT> transform(
