@@ -37,7 +37,7 @@ internal class NumericBreakFormatter(
         }
 
 
-        var type = "f"
+        var type = "g"
         var comma = false
 
         val domain10Power = log10(abs(value))
@@ -47,7 +47,6 @@ internal class NumericBreakFormatter(
         var scientificNotation = false
         if (domain10Power < 0 && step10Power < -4) {
             scientificNotation = true
-            type = "e"
             precision = domain10Power - step10Power
         } else if (domain10Power > 7 && step10Power > 2) {
             scientificNotation = true
@@ -61,13 +60,10 @@ internal class NumericBreakFormatter(
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
-        if (scientificNotation) {
-            // generate 'engineering notation', in which the exponent is a multiple of three
-            type = if (domain10Power > 0 && allowMetricPrefix && expFormat.notationType == ExponentNotationType.E) "s" else "e"
-        } else {
+        if (!scientificNotation) {
             comma = true
         }
-        val trim = type == "e" && expFormat.notationType != ExponentNotationType.E
+        val trim = type == "g" && expFormat.notationType != ExponentNotationType.E
         val expType = if (trim) expFormat.notationType else ExponentNotationType.E
 
         formatter = NumberFormat(NumberFormat.Spec(
