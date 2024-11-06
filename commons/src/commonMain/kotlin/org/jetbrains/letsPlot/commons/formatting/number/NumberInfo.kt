@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 
 import kotlin.math.absoluteValue
 import kotlin.math.pow
+import kotlin.math.roundToLong
 
 // TODO: should not be data class - it may break invariants
 internal data class NumberInfo(
@@ -27,6 +28,40 @@ internal data class NumberInfo(
 
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
     val fractionString = "0".repeat(fractionLeadingZeros) + fractionalPart.toString().trimEnd('0')
+
+    fun roundToPrecision(precision: Int = 0): NumberInfo {
+        val exp = exponent ?: 0
+        val totalPrecision = precision + exp
+
+        var newFractionalPart: Long // TODO: likely wont overflow, but better to use Double
+        var newIntegerPart: Double
+
+        if (totalPrecision < 0) {
+            newFractionalPart = 0L
+            val intShift = totalPrecision.absoluteValue
+            newIntegerPart = if (integerLength <= intShift) {
+                0.0
+            } else {
+                integerPart / 10.0.pow(intShift) * 10.0.pow(intShift)
+            }
+        } else {
+            val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
+            newFractionalPart = if (precisionExp == 0L) {
+                fractionalPart
+            } else {
+                (fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
+            }
+            newIntegerPart = integerPart
+            if (newFractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
+                newFractionalPart = 0
+                ++newIntegerPart
+            }
+        }
+
+        val num = newIntegerPart + newFractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
+
+        return createNumberInfo(num)
+    }
 
     companion object {
         val ZERO = NumberInfo(0.0, false, 0, integerString = "0")

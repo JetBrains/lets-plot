@@ -48,4 +48,12 @@ class NumberFormatExtremesTest {
         assertEquals("0.00", f.apply(Double.MIN_VALUE))
         assertEquals("0.00", f.apply(-Double.MIN_VALUE))
     }
+
+    @Test
+    fun typeG_1e18() {
+        val g = format("g")
+        assertEquals("1e+17", g.apply(1.0e17))
+        //assertEquals("1e+18", g.apply(1.0e18))
+        //assertEquals("1e+55", g.apply(1.0e55))
+    }
 }

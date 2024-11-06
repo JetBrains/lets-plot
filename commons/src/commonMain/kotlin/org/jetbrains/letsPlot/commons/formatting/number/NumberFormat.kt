@@ -145,7 +145,7 @@ class NumberFormat(spec: Spec) {
         var newInfo = createNumberInfo(n)
 
         if (precision > -1) {
-            newInfo = roundToPrecision(newInfo, precision)
+            newInfo = newInfo.roundToPrecision(precision)
         }
 
         if (newInfo.integerLength > 1) {
@@ -177,7 +177,7 @@ class NumberFormat(spec: Spec) {
             return FormattedNumber(numberInfo.number.roundToLong().toString())
         }
 
-        val newNumberInfo = roundToPrecision(numberInfo, precision)
+        val newNumberInfo = numberInfo.roundToPrecision(precision)
 
         val completePrecision = if (numberInfo.integerLength < newNumberInfo.integerLength) {
             precision - 1
@@ -242,39 +242,6 @@ class NumberFormat(spec: Spec) {
         return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
     }
 
-    private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-        val exp = numberInfo.exponent ?: 0
-        val totalPrecision = precision + exp
-
-        var fractionalPart: Long // TODO: likely wont overflow, but better to use Double
-        var integerPart: Double
-
-        if (totalPrecision < 0) {
-            fractionalPart = 0L
-            val intShift = totalPrecision.absoluteValue
-            integerPart = if (numberInfo.integerLength <= intShift) {
-                0.0
-            } else {
-                numberInfo.integerPart / 10.0.pow(intShift) * 10.0.pow(intShift)
-            }
-        } else {
-            val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
-            fractionalPart = if (precisionExp == 0L) {
-                numberInfo.fractionalPart
-            } else {
-                (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
-            }
-            integerPart = numberInfo.integerPart
-            if (fractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
-                fractionalPart = 0
-                ++integerPart
-            }
-        }
-
-        val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
-
-        return createNumberInfo(num)
-    }
 
     private fun trimFraction(output: Output): Output {
         if (!spec.trim || output.body.fractionalPart.isEmpty()) {
