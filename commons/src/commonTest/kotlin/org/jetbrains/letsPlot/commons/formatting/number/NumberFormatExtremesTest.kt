@@ -15,8 +15,8 @@ class NumberFormatExtremesTest {
     @Test
     fun typeS() {
         val f = format(".3s")
-        assertEquals("0.00y", f.apply(Double.MIN_VALUE))
         assertEquals("100000000000000Y", f.apply(1E38))
+        assertEquals("0.00y", f.apply(Double.MIN_VALUE))
         assertEquals("0.00y", f.apply(-Double.MIN_VALUE))
         assertEquals("-100000000000000Y", f.apply(-1E38))
 
@@ -53,7 +53,13 @@ class NumberFormatExtremesTest {
     fun typeG_1e18() {
         val g = format("g")
         assertEquals("1e+17", g.apply(1.0e17))
-        //assertEquals("1e+18", g.apply(1.0e18))
-        //assertEquals("1e+55", g.apply(1.0e55))
+        assertEquals("1e+18", g.apply(1.0e18))
+        assertEquals("1e+55", g.apply(1.0e55))
+    }
+
+    @Test
+    fun typeG_MAX_DOUBLE() {
+        val g = format("g")
+        assertEquals("1.79769e+307", g.apply(Double.MAX_VALUE / 10.0))
     }
 }

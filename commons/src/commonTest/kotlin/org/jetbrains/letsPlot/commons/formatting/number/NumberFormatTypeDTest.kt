@@ -37,10 +37,10 @@ class NumberFormatTypeDTest {
         assertEquals("0,000,000,000", format("013,d").apply(0))
         assertEquals("0,000,000,000,000,000", format("021,d").apply(0))
         assertEquals("-0,042,000,000", format("013,d").apply(-42000000))
-        assertEquals("0,000,001e+21", format("012,d").apply(1e21))
-        assertEquals("0,000,001e+21", format("013,d").apply(1e21))
-        assertEquals("00,000,001e+21", format("014,d").apply(1e21))
-        assertEquals("000,000,001e+21", format("015,d").apply(1e21))
+        assertEquals("1,000,000,000,000,000,000,000", format("012,d").apply(1e21))
+        assertEquals("1,000,000,000,000,000,000,000", format("013,d").apply(1e21))
+        assertEquals("1,000,000,000,000,000,000,000", format("014,d").apply(1e21))
+        assertEquals("1,000,000,000,000,000,000,000", format("015,d").apply(1e21))
     }
 
     @Test
@@ -86,7 +86,7 @@ class NumberFormatTypeDTest {
         assertEquals("+$     0", format("=+$8,d").apply(0))
         assertEquals("+$          0", format("=+$13,d").apply(0))
         assertEquals("+$                  0", format("=+$21,d").apply(0))
-        assertEquals("+$              1e+21", format("=+$21,d").apply(1e21))
+        assertEquals("+\$1,000,000,000,000,000,000,000", format("=+$21,d").apply(1e21))
     }
 
     @Test
@@ -99,7 +99,7 @@ class NumberFormatTypeDTest {
         assertEquals("       0", format(" 8,d").apply(0))
         assertEquals("            0", format(" 13,d").apply(0))
         assertEquals("                    0", format(" 21,d").apply(0))
-        assertEquals("                1e+21", format(" 21,d").apply(1e21))
+        assertEquals(" 1,000,000,000,000,000,000,000", format(" 21,d").apply(1e21))
     }
 
     @Test

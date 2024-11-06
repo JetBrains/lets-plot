@@ -113,7 +113,7 @@ class NumberFormat(spec: Spec) {
     private fun computeBody(res: Output, numberInfo: NumberInfo): Output {
         val formattedNumber = when (spec.type) {
             "%" -> toFixedFormat(createNumberInfo(numberInfo.number * 100), spec.precision)
-            "c" -> FormattedNumber(numberInfo.number.toString())
+            "c" -> FormattedNumber(numberInfo.integerString)
             "d" -> toSimpleFormat(numberInfo, 0)
             "e" -> toSimpleFormat(toExponential(numberInfo, spec.precision), spec.precision)
             "f" -> toFixedFormat(numberInfo, spec.precision)
@@ -158,7 +158,7 @@ class NumberFormat(spec: Spec) {
 
     private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
         if (numberInfo.isIntegerZero) {
-            if (numberInfo.fractionalPart == 0L) {
+            if (numberInfo.fractionalPart == 0.0) {
                 return toFixedFormat(numberInfo, precision - 1)
             } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
                 return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
@@ -174,7 +174,7 @@ class NumberFormat(spec: Spec) {
 
     private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
         if (precision <= 0) {
-            return FormattedNumber(numberInfo.number.roundToLong().toString())
+            return FormattedNumber(numberInfo.integerString)
         }
 
         val newNumberInfo = numberInfo.roundToPrecision(precision)
@@ -185,7 +185,7 @@ class NumberFormat(spec: Spec) {
             precision
         }
 
-        if (newNumberInfo.fractionalPart == 0L) {
+        if (newNumberInfo.fractionalPart == 0.0) {
             return FormattedNumber(newNumberInfo.integerString, "0".repeat(completePrecision), expType = spec.expType)
         }
 
@@ -206,7 +206,7 @@ class NumberFormat(spec: Spec) {
         }
 
         val integerString = expNumberInfo.integerString
-        val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
+        val fractionString = if (expNumberInfo.fractionalPart == 0.0) "" else expNumberInfo.fractionString
         return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
     }
 
