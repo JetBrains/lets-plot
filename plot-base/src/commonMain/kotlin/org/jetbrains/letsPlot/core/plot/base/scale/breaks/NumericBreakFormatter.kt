@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFor
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10
+import kotlin.math.max
 
 internal class NumericBreakFormatter(
     value: Double,
@@ -56,6 +57,8 @@ internal class NumericBreakFormatter(
         if (precision < 0) {
             precision = 0.0
             type = "d"
+        } else {
+            precision = max(6.0, precision) // 6.0 - DEF_PRECISION
         }
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
@@ -63,7 +66,7 @@ internal class NumericBreakFormatter(
         if (!scientificNotation) {
             comma = true
         }
-        val trim = type == "g" && expFormat.notationType != ExponentNotationType.E
+        val trim = type == "g" || expFormat.notationType != ExponentNotationType.E
         val expType = if (trim) expFormat.notationType else ExponentNotationType.E
 
         formatter = NumberFormat(NumberFormat.Spec(
