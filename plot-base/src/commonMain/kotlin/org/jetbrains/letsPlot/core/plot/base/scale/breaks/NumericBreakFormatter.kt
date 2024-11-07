@@ -8,10 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.log10
-import kotlin.math.max
+import kotlin.math.*
 
 internal class NumericBreakFormatter(
     value: Double,
@@ -58,7 +55,9 @@ internal class NumericBreakFormatter(
             precision = 0.0
             type = "d"
         } else {
-            precision = max(6.0, precision) // 6.0 - DEF_PRECISION
+            if (domain10Power > 0) {
+                precision += ceil(domain10Power)
+            }
         }
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
