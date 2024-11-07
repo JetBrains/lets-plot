@@ -17,7 +17,7 @@ class DevParams(private val devParams: Map<*, *>) {
         val DEBUG_GRID = BoolParam("debug_grid", false)
         val TILE_CACHE_LIMIT = IntParam("tile_cache_limit", 36)
         val FRAGMENT_ACTIVE_DOWNLOADS_LIMIT = IntParam("fragment_active_downaloads_limit", 30)
-        val FRAGMENT_CACHE_LIMIT = IntParam("fragment_cache_limit", 500)
+        val FRAGMENT_CACHE_LIMIT = IntParam("fragment_cache_limit", 100)
         val COMPUTATION_PROJECTION_QUANT = IntParam("computation_projection_quant", 1000)
         val COMPUTATION_FRAME_TIME = IntParam("computation_frame_time", 28)
         val UPDATE_PAUSE_MS = IntParam("update_pause_ms", 0)
