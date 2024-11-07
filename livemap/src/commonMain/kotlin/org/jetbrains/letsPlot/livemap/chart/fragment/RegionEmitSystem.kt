@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
+import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridStateComponent
 
 class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
 
@@ -43,10 +44,11 @@ class RegionEmitSystem(componentManager: EcsComponentManager) : AbstractSystem<L
         val region = myRegionIndex.find(regionId)
 
         val fragmentsCache = getSingleton<CachedFragmentsComponent>()
-
+        val visibleQuads = getSingleton<ViewportGridStateComponent>().visibleQuads
         region.get<RegionFragmentsComponent>().run {
             fragments = myPendingFragments[regionId]!!
                 .readyFragments()
+                .filter { it.quadKey in visibleQuads }
                 .mapNotNull(fragmentsCache::get)
         }
 
