@@ -13,8 +13,8 @@ class NumberFormatTypeETest {
     @Test
     fun canOutputExponentNotation() {
         val f = NumberFormat("e")
-        assertEquals("0.000000", f.apply(0))
         assertEquals("4.200000e+1", f.apply(42))
+        assertEquals("0.000000", f.apply(0))
         assertEquals("4.200000e+7", f.apply(42000000))
         assertEquals("4.200000e+8", f.apply(420000000))
         assertEquals("-4.000000e+0", f.apply(-4))

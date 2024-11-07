@@ -5,83 +5,49 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.floor
+import kotlin.math.log10
+import kotlin.math.pow
 
 // TODO: should not be data class - it may break invariants
 internal data class NumberInfo(
-    val number: Double,
+    val decimal: Decimal,
     val negative: Boolean,
     val fractionalPart: Double,
-    val integerString: String,
-
-    // bad property - initially not null only for very big numbers like 1.0E55.
-    // For normal numbers (e.g., 1.234E-5, 1.234E+5) it will be null.
-    // This is needed for of toExponential() and buildExponentString() functions.
-    // Should be consistent and always present.
-    val exponent: Int? = null,
-    val precision:  Int? = null,
 ) {
+    val number: Double = decimal.toDouble()
+    val integerString: String = decimal.intPartRepr
     val isIntegerZero: Boolean = integerString == "0"
+    val isFractionZero: Boolean = decimal.isFractionalPartZero
     val integerPart: Double = integerString.toDouble()
     val integerLength = integerString.length
 
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
     val fractionString: String
         get() {
-            val fracPartStr = fractionalPart.toString()
-
-            val frapPartCleanStr = fracPartStr.filter { it != '.' }
-            val expIndex = frapPartCleanStr.indexOfFirst { it == 'E' }
-            val fracPartFinalStr = if (expIndex != -1) {
-                frapPartCleanStr.substring(0 until expIndex)
-            } else {
-                frapPartCleanStr
-            }.trimEnd('0')
-
-            return "0".repeat(fractionLeadingZeros) + fracPartFinalStr
+            return decimal.fracPartRepr
         }
 
-    fun addExp(exp: Int): NumberInfo {
-        val newExp = exponent?.plus(exp) ?: exp
-        return copy(exponent = newExp)
+    // precision > 0 -> round fraction
+    // precision = 0 -> round to integer
+    // precision < 0 -> round to 10^precision
+    fun roundToPrecision(precision: Int = 0): NumberInfo {
+        val rounded = decimal.round(precision)
+        return NumberInfo(
+            decimal = rounded,
+            negative = negative,
+            fractionalPart = fractionalPart
+        )
     }
 
-    fun roundToPrecision(precision: Int = 0): NumberInfo {
-        val exp = exponent ?: 0
-        val totalPrecision = precision + exp
-
-        var newFractionalPart: Double // TODO: likely wont overflow, but better to use Double
-        var newIntegerPart: Double
-
-        if (totalPrecision < 0) {
-            newFractionalPart = 0.0
-            val intShift = totalPrecision.absoluteValue
-            newIntegerPart = if (integerLength <= intShift) {
-                0.0
-            } else {
-                integerPart / 10.0.pow(intShift) * 10.0.pow(intShift)
-            }
-        } else {
-            val precisionExp = MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
-            newFractionalPart = if (precisionExp == 0.0) {
-                fractionalPart
-            } else {
-                ((fractionalPart / precisionExp).roundToLong() * precisionExp).toDouble()
-            }
-            newIntegerPart = integerPart
-            if (newFractionalPart == MAX_DECIMAL_VALUE) {
-                newFractionalPart = 0.0
-                ++newIntegerPart
-            }
-        }
-
-        val num = newIntegerPart + newFractionalPart.toDouble() / MAX_DECIMAL_VALUE
-
-        return createNumberInfo(num)
+    fun shiftDecimalPoint(i: Int): NumberInfo {
+        //return createNumberInfo(number * 10.0.pow(i))
+        return NumberInfo(decimal.shiftDecimalPoint(i), negative, fractionalPart * 10.0.pow(i))
     }
 
     companion object {
-        val ZERO = NumberInfo(0.0, false, 0.0, integerString = "0")
+        val ZERO = NumberInfo(Decimal.fromNumber(0.0), false, 0.0)
         /**
          * max fraction length we can format (as any other format library does)
          */
@@ -113,14 +79,14 @@ internal data class NumberInfo(
             // number = 1.23456E+55
             if (exponent.absoluteValue >= MAX_DECIMALS) {
                 return NumberInfo(
-                    number = value.absoluteValue,
+                    decimal = Decimal.fromNumber(value.absoluteValue),
                     negative = value < 0,
                     // "1" -> 1
-                    integerString = intStr,
+                    //integerString = intStr,
                     // fraction part ignored intentionally
                     fractionalPart = 0.0,
                     // 55
-                    exponent = exponent,
+                    //exponent = exponent,
                 )
             }
 
@@ -128,9 +94,9 @@ internal data class NumberInfo(
             // number = 1.23E-4. double: 0.000123
             if (exponent < 0) {
                 return NumberInfo(
-                    number = value.absoluteValue,
+                    decimal = Decimal.fromNumber(value.absoluteValue),
                     negative = value < 0,
-                    integerString = "0",
+                    //integerString = "0",
                     // "1" + "23" -> 000_123_000_000_000_000L
                     fractionalPart = encodeFraction(intStr + fracStr, exponent.absoluteValue + fracStr.length),
                 )
@@ -142,9 +108,9 @@ internal data class NumberInfo(
                 // "1" + "234" + "00" -> 123400
                 val actualIntStr = intStr + fracStr + "0".repeat(exponent - fracStr.length)
                 return NumberInfo(
-                    number = value.absoluteValue,
+                    decimal = Decimal.fromNumber(value.absoluteValue),
                     negative = value < 0,
-                    integerString = actualIntStr,
+                    //integerString = actualIntStr,
                     fractionalPart = 0.0,
                 )
             }
@@ -153,10 +119,10 @@ internal data class NumberInfo(
             // number = 1.234567E+3, double: 1234.567
             val actualIntStr = intStr + fracStr.substring(0 until exponent)
             return NumberInfo(
-                number = value.absoluteValue,
+                decimal = Decimal.fromNumber(value.absoluteValue),
                 negative = value < 0,
                 // "1" + "[234]567" -> 1234
-                integerString = actualIntStr,
+                //integerString = actualIntStr,
                 // "234[567]" -> 567_000_000_000_000_000
                 fractionalPart = fracStr.substring(exponent).run { encodeFraction(this, this.length) },
             )

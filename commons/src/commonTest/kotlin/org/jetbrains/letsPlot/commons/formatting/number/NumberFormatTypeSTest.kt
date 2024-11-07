@@ -29,11 +29,11 @@ class NumberFormatTypeSTest {
     @Test
     fun withPrecision() {
         val f1 = NumberFormat(".3s")
+        assertEquals("100", f1.apply(100))
+        assertEquals("1.00k", f1.apply(999.5))
         assertEquals("0.00", f1.apply(0))
         assertEquals("1.00", f1.apply(1))
         assertEquals("10.0", f1.apply(10))
-        assertEquals("100", f1.apply(100))
-        assertEquals("1.00k", f1.apply(999.5))
         assertEquals("1.00M", f1.apply(999500))
         assertEquals("1.00k", f1.apply(1000))
         assertEquals("1.50k", f1.apply(1500.5))

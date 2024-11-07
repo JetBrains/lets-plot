@@ -21,8 +21,9 @@ class NumberFormatTypeFTest {
 
     @Test
     fun canOutputFixedPointNotation() {
-        assertEquals("0.000270", NumberFormat("f").apply(2.6985974025974023E-4))
+        assertEquals("1.000", NumberFormat(".3f").apply(0.999500))
         assertEquals("0.5", NumberFormat(".1f").apply(0.49))
+        assertEquals("0.000270", NumberFormat("f").apply(2.6985974025974023E-4))
         assertEquals("0.45", NumberFormat(".2f").apply(0.449))
         assertEquals("0.445", NumberFormat(".3f").apply(0.4449))
         assertEquals("0.44445", NumberFormat(".5f").apply(0.444449))
@@ -44,9 +45,9 @@ class NumberFormatTypeFTest {
 
     @Test
     fun canGroupThousandsSpaceFillAndRoundToSignificantDigits() {
+        assertEquals("12,345,678.445", NumberFormat("10,.3f").apply(12345678.4449))
         assertEquals(" 123,456.5", NumberFormat("10,.1f").apply(123456.49))
         assertEquals("1,234,567.45", NumberFormat("10,.2f").apply(1234567.449))
-        assertEquals("12,345,678.445", NumberFormat("10,.3f").apply(12345678.4449))
         assertEquals("123,456,789.44445", NumberFormat("10,.5f").apply(123456789.444449))
         assertEquals(" 123,456.0", NumberFormat("10,.1f").apply(123456))
         assertEquals("1,234,567.00", NumberFormat("10,.2f").apply(1234567))
