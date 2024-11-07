@@ -78,4 +78,16 @@ object Cities {
         ),
         position = GeoRectangle(0.0 ,0.0, 0.0, 0.0)
     )
+
+    val POLAND = GeoObject(
+        id = "49715",
+        centroid = Vec(19.156819, 51.919052),
+        bbox = GeoRectangle(
+            startLongitude = 14.1228845,
+            endLongitude = 24.1457833,
+            minLatitude = 49.0020462,
+            maxLatitude = 54.8361815
+        ),
+        position = GeoRectangle(0.0 ,0.0, 0.0, 0.0)
+    )
 }
