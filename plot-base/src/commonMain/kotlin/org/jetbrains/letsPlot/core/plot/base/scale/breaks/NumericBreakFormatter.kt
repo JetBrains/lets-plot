@@ -36,18 +36,14 @@ internal class NumericBreakFormatter(
 
 
         var type = "g"
-        var comma = false
 
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
 
         var precision = -step10Power
-        var scientificNotation = false
         if (domain10Power < 0 && step10Power < -4) {
-            scientificNotation = true
             precision = domain10Power - step10Power
         } else if (domain10Power > 7 && step10Power > 2) {
-            scientificNotation = true
             precision = domain10Power - step10Power
         }
 
@@ -62,14 +58,11 @@ internal class NumericBreakFormatter(
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
-        if (!scientificNotation) {
-            comma = true
-        }
         val trim = type == "g" || expFormat.notationType != ExponentNotationType.E
         val expType = if (trim) expFormat.notationType else ExponentNotationType.E
 
         formatter = NumberFormat(NumberFormat.Spec(
-            comma = comma,
+            comma = true, // or make it false each time when "g" switch to e-notation
             precision = precision.toInt(),
             trim = trim,
             type = type,
