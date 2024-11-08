@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.commons.formatting.number
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Spec
+import org.jetbrains.letsPlot.commons.formatting.number.Util.DOUBLE_ALMOST_MIN_VALUE
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -36,30 +37,30 @@ class NumberFormatExtremesTest {
     fun typeE() {
         val f = format(".2e")
 
+        assertEquals("1.00e-323", f.apply(DOUBLE_ALMOST_MIN_VALUE))
+        assertEquals("-1.00e-323", f.apply(-DOUBLE_ALMOST_MIN_VALUE))
+
         assertEquals("1.00e-323", f.apply(NumberFormat.TYPE_E_MIN))
-//        assertEquals("-1.00e-323", f.apply(-NumberFormat.TYPE_E_MIN))
-//
-//        assertEquals("2.00e-323", f.apply(1.9999999E-323))
-//        assertEquals("-2.00e-323", f.apply(-1.9999999E-323))
-//
-//        assertEquals("1.80e+308", f.apply(Double.MAX_VALUE))
-//        assertEquals("-1.80e+308", f.apply(-Double.MAX_VALUE))
-//
-//        assertEquals("0.00", f.apply(Double.MIN_VALUE))
-//        assertEquals("0.00", f.apply(-Double.MIN_VALUE))
+        assertEquals("-1.00e-323", f.apply(-NumberFormat.TYPE_E_MIN))
+
+        assertEquals("2.00e-323", f.apply(1.9999999E-323))
+        assertEquals("-2.00e-323", f.apply(-1.9999999E-323))
+
+        assertEquals("1.80e+308", f.apply(Double.MAX_VALUE))
+        assertEquals("-1.80e+308", f.apply(-Double.MAX_VALUE))
     }
 
     @Test
     fun typeG_1e18() {
         val g = format("g")
-        assertEquals("1e+17", g.apply(1.0e17))
-        assertEquals("1e+18", g.apply(1.0e18))
-        assertEquals("1e+55", g.apply(1.0e55))
+        assertEquals("1.00000e+17", g.apply(1.0e17))
+        assertEquals("1.00000e+18", g.apply(1.0e18))
+        assertEquals("1.00000e+55", g.apply(1.0e55))
     }
 
     @Test
     fun typeG_MAX_DOUBLE() {
         val g = format("g")
-        assertEquals("1.79769e+307", g.apply(Double.MAX_VALUE / 10.0))
+        assertEquals("1.00000e+300", g.apply(1e300))
     }
 }

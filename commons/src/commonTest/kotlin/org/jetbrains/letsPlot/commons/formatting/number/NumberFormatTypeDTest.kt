@@ -25,6 +25,11 @@ class NumberFormatTypeDTest {
     }
 
     @Test
+    fun format49_9() {
+        assertEquals("50", format("d").apply(49.9))
+    }
+
+    @Test
     fun groupThousands() {
         assertEquals("0", format("01,d").apply(0))
         assertEquals("0", format("01,d").apply(0))

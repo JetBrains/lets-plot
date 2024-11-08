@@ -23,6 +23,8 @@ internal data class NumberInfo(
     val integerPart: Double = integerString.toDouble()
     val integerLength = integerString.length
 
+    val isZero: Boolean = decimal.isIntegerPartZero && decimal.isFractionalPartZero
+
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
     val fractionString: String
         get() {
@@ -50,6 +52,10 @@ internal data class NumberInfo(
     fun shiftDecimalPoint(i: Int): NumberInfo {
         //return createNumberInfo(number * 10.0.pow(i))
         return NumberInfo(decimal.shiftDecimalPoint(i), negative, fractionalPart * 10.0.pow(i))
+    }
+
+    fun normalize(): NumberInfo {
+        return shiftDecimalPoint(-decimal.toFloating().e)
     }
 
     companion object {
