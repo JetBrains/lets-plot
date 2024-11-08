@@ -148,7 +148,7 @@ class NumberFormat(spec: Spec) {
 
     private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
         if (precision <= 0) {
-            return FormattedNumber(numberInfo.decimal.fRound(0).intPartRepr)
+            return FormattedNumber(numberInfo.decimal.fRound(0).wholePart)
         }
 
         val newNumberInfo = numberInfo.fRound(precision)
@@ -180,7 +180,7 @@ class NumberFormat(spec: Spec) {
                 return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
             }
 
-            val fractionString = if (normalized.decimal.isFractionalPartZero) "" else normalized.fractionString
+            val fractionString = if (normalized.decimal.isDecimalPartZero) "" else normalized.fractionString
             return FormattedNumber(normalized.integerString, fractionString, exponentString, spec.expType)
         } else {
 
@@ -193,7 +193,7 @@ class NumberFormat(spec: Spec) {
             }
 
             val integerString = expNumberInfo.integerPart.toString()
-            val fractionString = if (expNumberInfo.decimal.isFractionalPartZero) "" else expNumberInfo.fractionString
+            val fractionString = if (expNumberInfo.decimal.isDecimalPartZero) "" else expNumberInfo.fractionString
             return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
         }
     }
@@ -223,7 +223,7 @@ class NumberFormat(spec: Spec) {
 
         val (finalNumber, finalSiPrefix) = if (
             // !! is safe - int part of the si normalized number can't be bigger than 1000
-            roundedNumber.decimal.intVal!! == 1000L // 999.999 -> 1000 rounding happened
+            roundedNumber.decimal.wholeValue!! == 1000L // 999.999 -> 1000 rounding happened
             && hasNextSiPrefix(siPrefix)
         ) {
             // 1000.0k -> 1.0M

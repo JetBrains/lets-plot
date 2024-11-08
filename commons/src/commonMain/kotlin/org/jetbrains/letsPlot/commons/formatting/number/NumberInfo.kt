@@ -17,18 +17,18 @@ internal data class NumberInfo(
     val fractionalPart: Double,
 ) {
     val number: Double = decimal.toDouble()
-    val integerString: String = decimal.intPartRepr
+    val integerString: String = decimal.wholePart
     val isIntegerZero: Boolean = integerString == "0"
-    val isFractionZero: Boolean = decimal.isFractionalPartZero
+    val isFractionZero: Boolean = decimal.isDecimalPartZero
     val integerPart: Double = integerString.toDouble()
     val integerLength = integerString.length
 
-    val isZero: Boolean = decimal.isIntegerPartZero && decimal.isFractionalPartZero
+    val isZero: Boolean = decimal.isWholePartZero && decimal.isDecimalPartZero
 
     val fractionLeadingZeros = MAX_DECIMALS - length(fractionalPart)
     val fractionString: String
         get() {
-            return decimal.fracPartRepr
+            return decimal.decimalPart
         }
 
     fun fRound(precision: Int = 0): NumberInfo {

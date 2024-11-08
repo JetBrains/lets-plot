@@ -9,76 +9,58 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 internal class Decimal internal constructor(
-    intPartRepr: String,
-    fracPartRepr: String,
-    signRepr: String
+    wholePart: String,
+    decimalPart: String,
+    sign: String
 ) {
-    val intPartRepr: String // never empty. "0" for zero, Inf, NaN, never contains leading zeros
-    val fracPartRepr: String // never empty. "0" for zero, undefined for Inf, NaN, never contains trailing zeros
-    val signRepr: String // empty for positive, "-" for negative
-
-    val isFractionalPartZero: Boolean
-        get() = fracPartRepr.all { it == '0' }
-
-    val isIntegerPartZero: Boolean get() = intPartRepr.all { it == '0' }
+    val wholePart: String // never empty. "0" for zero, never contains leading zeros
+    val decimalPart: String // never empty. "0" for zero, never contains trailing zeros
+    val sign: String // empty for positive, "-" for negative
 
     init {
-        require(intPartRepr == "Infinity" || intPartRepr == "NaN" || intPartRepr.all { it.isDigit() }) {
-            "Invalid intPartRepr: $intPartRepr"
+        require(wholePart.all { it.isDigit() }) {
+            "Invalid wholePart: $wholePart"
         }
 
-        require(fracPartRepr.all { it.isDigit() }) {
-            "Invalid fracPartRepr: $fracPartRepr"
+        require(decimalPart.all { it.isDigit() }) {
+            "Invalid decimalPart: $decimalPart"
         }
 
-        require(signRepr == "" || signRepr == "-") {
+        require(sign == "" || sign == "-") {
             "Sign should be empty or '-'"
         }
 
-        this.intPartRepr = intPartRepr.trimStart('0').takeIf { it.isNotEmpty() } ?: "0"
-        this.fracPartRepr = fracPartRepr.trimEnd('0').takeIf { it.isNotEmpty() } ?: "0"
-        this.signRepr = signRepr
+        this.wholePart = wholePart.trimStart('0').takeIf { it.isNotEmpty() } ?: "0"
+        this.decimalPart = decimalPart.trimEnd('0').takeIf { it.isNotEmpty() } ?: "0"
+        this.sign = sign
     }
 
-    // Returns the integer part as a Long or null if the number is larger than Long.MAX_VALUE.
-    val intVal: Long?
-        get() {
-            return intPartRepr.toLongOrNull()
-        }
+    val isWholePartZero = this.wholePart == "0"
+    val isDecimalPartZero = this.decimalPart == "0"
+    val isZero = isWholePartZero && isDecimalPartZero
+
+    // Returns the whole part as a Long or null if the number is larger than Long.MAX_VALUE.
+    val wholeValue: Long? by lazy { wholePart.toLongOrNull() }
 
     fun toDouble(): Double {
-        if (intPartRepr == "Infinity") {
-            return Double.POSITIVE_INFINITY
-        }
-        if (intPartRepr == "-Infinity") {
-            return Double.NEGATIVE_INFINITY
-        }
-        if (intPartRepr == "NaN") {
-            return Double.NaN
-        }
-
-        return "$signRepr$intPartRepr.$fracPartRepr".toDouble()
+        return "$sign$wholePart.$decimalPart".toDouble()
     }
 
     fun toFloating(): Floating {
-        if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
-            error("Can't convert $intPartRepr to Floating")
-        }
-
-        if (intPartRepr == "0") {
-            val significandDigitPos = fracPartRepr.indexOfFirst { it != '0' }
+        if (wholePart == "0") {
+            val significandDigitPos = decimalPart.indexOfFirst { it != '0' }
             if (significandDigitPos == -1) {
                 return Floating(0, "0", 0)
             }
 
-            val i = fracPartRepr[significandDigitPos].digitToInt()
+            val i = decimalPart[significandDigitPos].digitToInt()
             val e = -(significandDigitPos + 1)
-            val fracPart = fracPartRepr.drop(significandDigitPos + 1)
+            val fracPart = decimalPart.drop(significandDigitPos + 1)
             return Floating(i, fracPart, e)
         } else {
-            val i = intPartRepr[0].digitToInt()
-            val e = intPartRepr.length - 1
-            val fracPart = intPartRepr.drop(1) + fracPartRepr.toInt()
+            val i = wholePart[0].digitToInt()
+            val e = wholePart.length - 1
+            val fracPart = wholePart.drop(1) + decimalPart.toInt()
             return Floating(i, fracPart, e)
         }
     }
@@ -89,62 +71,50 @@ internal class Decimal internal constructor(
             return this
         }
 
-        if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
-            return this
-        }
-
         if (shift > 0) {
-            if (fracPartRepr.length <= shift) {
-                val zeros = "0".repeat(shift - fracPartRepr.length)
-                return Decimal(intPartRepr + fracPartRepr + zeros, "0", signRepr)
+            if (decimalPart.length <= shift) {
+                val zeros = "0".repeat(shift - decimalPart.length)
+                return Decimal(wholePart + decimalPart + zeros, "0", sign)
             } else {
-                val newIntPart = intPartRepr + fracPartRepr.take(shift)
-                val newFracPart = fracPartRepr.drop(shift)
-                return Decimal(newIntPart, newFracPart, signRepr)
+                val newIntPart = wholePart + decimalPart.take(shift)
+                val newFracPart = decimalPart.drop(shift)
+                return Decimal(newIntPart, newFracPart, sign)
             }
         } else {
-            if (shift.absoluteValue >= intPartRepr.length) {
-                val zeros = "0".repeat(shift.absoluteValue - intPartRepr.length)
-                return Decimal("0", zeros + intPartRepr + fracPartRepr, signRepr)
+            if (shift.absoluteValue >= wholePart.length) {
+                val zeros = "0".repeat(shift.absoluteValue - wholePart.length)
+                return Decimal("0", zeros + wholePart + decimalPart, sign)
             } else {
-                val newIntPart = intPartRepr.take(intPartRepr.length - shift.absoluteValue)
-                val newFracPart = intPartRepr.takeLast(shift.absoluteValue) + fracPartRepr
-                return Decimal(newIntPart, newFracPart, signRepr)
+                val newIntPart = wholePart.take(wholePart.length - shift.absoluteValue)
+                val newFracPart = wholePart.takeLast(shift.absoluteValue) + decimalPart
+                return Decimal(newIntPart, newFracPart, sign)
             }
         }
     }
 
     fun iRound(precision: Int): Decimal {
-        if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
-            return this
-        }
-
-        val number = intPartRepr + fracPartRepr
+        val number = wholePart + decimalPart
         val (roundedNumber, _) = iRound(number, precision)
 
-        val decimalPoint = intPartRepr.length + if (roundedNumber.length > number.length) 1 else 0
+        val decimalPoint = wholePart.length + if (roundedNumber.length > number.length) 1 else 0
         val roundedIntPart = roundedNumber.take(decimalPoint)
         val roundedFracPart = roundedNumber.drop(decimalPoint)
 
-        return Decimal(roundedIntPart, roundedFracPart, signRepr)
+        return Decimal(roundedIntPart, roundedFracPart, sign)
     }
 
     fun fRound(precision: Int): Decimal {
-        if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
+        if (decimalPart.length <= precision) {
             return this
         }
 
-        if (fracPartRepr.length <= precision) {
-            return this
-        }
-
-        val (roundedFracPart, carry) = round(fracPartRepr, precision)
-        val roundedIntPart = if (carry) add(intPartRepr, "1").first else intPartRepr
-        return Decimal(roundedIntPart, roundedFracPart, signRepr)
+        val (roundedFracPart, carry) = round(decimalPart, precision)
+        val roundedIntPart = if (carry) add(wholePart, "1").first else wholePart
+        return Decimal(roundedIntPart, roundedFracPart, sign)
     }
 
 
-    override fun toString(): String = "$signRepr$intPartRepr.$fracPartRepr"
+    override fun toString(): String = "$sign$wholePart.$decimalPart"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -152,17 +122,17 @@ internal class Decimal internal constructor(
 
         other as Decimal
 
-        if (intPartRepr != other.intPartRepr) return false
-        if (fracPartRepr != other.fracPartRepr) return false
-        if (signRepr != other.signRepr) return false
+        if (wholePart != other.wholePart) return false
+        if (decimalPart != other.decimalPart) return false
+        if (sign != other.sign) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = intPartRepr.hashCode()
-        result = 31 * result + fracPartRepr.hashCode()
-        result = 31 * result + signRepr.hashCode()
+        var result = wholePart.hashCode()
+        result = 31 * result + decimalPart.hashCode()
+        result = 31 * result + sign.hashCode()
         return result
     }
 
@@ -238,7 +208,7 @@ internal class Decimal internal constructor(
             }
         }
 
-        private fun roundCarry(number: String): Boolean {
+        private fun carryOnRound(number: String): Boolean {
             when (number.length) {
                 0 -> return false
                 1 -> return number.single() >= '5'
@@ -251,14 +221,14 @@ internal class Decimal internal constructor(
         }
 
         private fun round(number: String, precision: Int): Pair<String, Boolean> {
-            val roundingPart = number.takeLast(number.length - precision)
-            val valuePart = number.take(precision)
+            val trailingPart = number.takeLast(number.length - precision)
+            val significantPart = number.take(precision)
 
-            val carryToRestPart = roundCarry(roundingPart)
+            val carry = carryOnRound(trailingPart)
 
             val (fRoundedRestPart, carryFromFracToInt) = when {
-                valuePart.isEmpty() -> "" to carryToRestPart // round to integer - no fractional part
-                else -> add(valuePart, if (carryToRestPart) "1" else "0")
+                significantPart.isEmpty() -> "" to carry // round to integer - no fractional part
+                else -> add(significantPart, if (carry) "1" else "0")
             }
 
             val resultFracPart = if (carryFromFracToInt) fRoundedRestPart.drop(1) else fRoundedRestPart

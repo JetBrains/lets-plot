@@ -28,9 +28,6 @@ class DecimalTest {
     @Test
     fun specialValues() {
         assertEquals(Decimal("0", "0", ""), Decimal.fromNumber(-0.0))
-        assertEquals(Decimal("NaN", "", ""), Decimal.fromNumber(Double.NaN))
-        assertEquals(Decimal("Infinity", "", ""), Decimal.fromNumber(Double.POSITIVE_INFINITY))
-        assertEquals(Decimal("Infinity", "", "-"), Decimal.fromNumber(Double.NEGATIVE_INFINITY))
     }
 
     @Test
