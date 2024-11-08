@@ -148,7 +148,7 @@ class NumberFormat(spec: Spec) {
 
     private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
         if (precision <= 0) {
-            return FormattedNumber(numberInfo.integerString)
+            return FormattedNumber(numberInfo.decimal.fRound(0).intPartRepr)
         }
 
         val newNumberInfo = numberInfo.fRound(precision)
