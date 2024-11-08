@@ -29,11 +29,17 @@ internal data class NumberInfo(
             return decimal.fracPartRepr
         }
 
-    // precision > 0 -> round fraction
-    // precision = 0 -> round to integer
-    // precision < 0 -> round to 10^precision
-    fun roundToPrecision(precision: Int = 0): NumberInfo {
+    fun fRound(precision: Int = 0): NumberInfo {
         val rounded = decimal.fRound(precision)
+        return NumberInfo(
+            decimal = rounded,
+            negative = negative,
+            fractionalPart = fractionalPart
+        )
+    }
+
+    fun iRound(precision: Int = 0): NumberInfo {
+        val rounded = decimal.iRound(precision)
         return NumberInfo(
             decimal = rounded,
             negative = negative,

@@ -9,12 +9,12 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 internal class Decimal internal constructor(
-    intPartRepr: String, // never empty. "0" for zero, Inf, NaN
-    fracPartRepr: String, // never empty. "0" for zero, undefined for Inf, NaN
-    signRepr: String // empty for positive, "-" for negative
+    intPartRepr: String,
+    fracPartRepr: String,
+    signRepr: String
 ) {
-    val intPartRepr: String // never empty. "0" for zero, Inf, NaN
-    val fracPartRepr: String // never empty. "0" for zero, undefined for Inf, NaN
+    val intPartRepr: String // never empty. "0" for zero, Inf, NaN, never contains leading zeros
+    val fracPartRepr: String // never empty. "0" for zero, undefined for Inf, NaN, never contains trailing zeros
     val signRepr: String // empty for positive, "-" for negative
 
     val isFractionalPartZero: Boolean
@@ -38,6 +38,26 @@ internal class Decimal internal constructor(
         this.intPartRepr = intPartRepr.trimStart('0').takeIf { it.isNotEmpty() } ?: "0"
         this.fracPartRepr = fracPartRepr.trimEnd('0').takeIf { it.isNotEmpty() } ?: "0"
         this.signRepr = signRepr
+    }
+
+    // Returns the integer part as a Long or null if the number is larger than Long.MAX_VALUE.
+    val intVal: Long?
+        get() {
+            return intPartRepr.toLongOrNull()
+        }
+
+    fun toDouble(): Double {
+        if (intPartRepr == "Infinity") {
+            return Double.POSITIVE_INFINITY
+        }
+        if (intPartRepr == "-Infinity") {
+            return Double.NEGATIVE_INFINITY
+        }
+        if (intPartRepr == "NaN") {
+            return Double.NaN
+        }
+
+        return "$signRepr$intPartRepr.$fracPartRepr".toDouble()
     }
 
     fun toFloating(): Floating {
@@ -147,22 +167,6 @@ internal class Decimal internal constructor(
     }
 
 
-
-    fun toDouble(): Double {
-        if (intPartRepr == "Infinity") {
-            return Double.POSITIVE_INFINITY
-        }
-        if (intPartRepr == "-Infinity") {
-            return Double.NEGATIVE_INFINITY
-        }
-        if (intPartRepr == "NaN") {
-            return Double.NaN
-        }
-
-        return "$signRepr$intPartRepr.$fracPartRepr".toDouble()
-    }
-
-
     companion object {
         fun fromNumber(value: Number): Decimal {
             val dbl = value.toDouble()
@@ -246,16 +250,6 @@ internal class Decimal internal constructor(
             }
         }
 
-        private fun iRoundCarry(number: String): Pair<String, Boolean> {
-            return when (number.length) {
-                0 -> "0" to false
-                else -> when (number.first() >= '5') {
-                    true -> "1" + "0".repeat(number.length) to true
-                    false -> "0".repeat(number.length) to true
-                }
-            }
-        }
-
         private fun round(number: String, precision: Int): Pair<String, Boolean> {
             val roundingPart = number.takeLast(number.length - precision)
             val valuePart = number.take(precision)
@@ -273,16 +267,30 @@ internal class Decimal internal constructor(
         }
 
         private fun iRound(number: String, precision: Int): Pair<String, Boolean> {
-            val roundingRange = number.length - precision
-            val valuePart = number.take(precision) + "0".repeat(roundingRange)
+            // special cases like:
+            // round(16.5, 0) => 20.0
+            // Without this line, it would be 0.0
+            @Suppress("NAME_SHADOWING")
+            val precision = if (precision == 0) 1 else precision
 
-            val (rounded, carryFlag) = iRoundCarry(number.takeLast(roundingRange))
+            if (number.length <= precision) {
+                return number to false
+            }
 
-            return when (carryFlag) {
-                true -> add(valuePart, rounded).first to true
-                false -> valuePart to false
+            return when (val roundingPartLength = number.length - precision) {
+                0 -> number to false
+                else -> when (number[precision] >= '5') {
+                    true -> {
+                        val valuePart = number.take(precision) + "0".repeat(roundingPartLength) // zeroing the rounding part
+                        val carryValue = "1" + "0".repeat(roundingPartLength) // carry to the value part
+                        add(valuePart, carryValue).first to true
+                    }
+                    false -> {
+                        val valuePart = number.take(precision) + "0".repeat(roundingPartLength)
+                        valuePart to false
+                    }
+                }
             }
         }
-
     }
 }

@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.commons.formatting.number
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberInfo.Companion.createNumberInfo
 import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.roundToLong
 import kotlin.math.sign
 
@@ -118,7 +117,7 @@ class NumberFormat(spec: Spec) {
             "%" -> toFixedFormat(createNumberInfo(numberInfo.number * 100), spec.precision)
             "c" -> FormattedNumber(numberInfo.integerString)
             "d" -> toSimpleFormat(numberInfo, e = false, precision = 0)
-            "e" -> toSimpleFormat(numberInfo, e=true, spec.precision)
+            "e" -> toSimpleFormat(numberInfo, e = true, spec.precision)
             "f" -> toFixedFormat(numberInfo, spec.precision)
             "g" -> toPrecisionFormat(numberInfo, spec.precision)
             "b" -> FormattedNumber(numberInfo.number.roundToLong().toString(2))
@@ -136,12 +135,12 @@ class NumberFormat(spec: Spec) {
             if (numberInfo.isIntegerZero) {
                 return toFixedFormat(numberInfo, precision - 1)
             } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
-                return toSimpleFormat(numberInfo, e=true, precision - 1)
+                return toSimpleFormat(numberInfo, e = true, precision - 1)
             }
             return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
         } else {
             if (numberInfo.integerLength > spec.maxExp) {
-                return toSimpleFormat(numberInfo, e=true, precision - 1)
+                return toSimpleFormat(numberInfo, e = true, precision - 1)
             }
             return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
         }
@@ -152,7 +151,7 @@ class NumberFormat(spec: Spec) {
             return FormattedNumber(numberInfo.integerString)
         }
 
-        val newNumberInfo = numberInfo.roundToPrecision(precision)
+        val newNumberInfo = numberInfo.fRound(precision)
 
         val completePrecision = if (numberInfo.integerLength < newNumberInfo.integerLength) {
             precision - 1
@@ -173,7 +172,8 @@ class NumberFormat(spec: Spec) {
         if (e) {
             val exponentString = buildExponentString(numberInfo)
 
-            val expNumberInfo = numberInfo//createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE)
+            val expNumberInfo =
+                numberInfo//createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE)
 
             if (precision > -1) {
                 val formattedNumber = toFixedFormat(expNumberInfo, precision)
@@ -219,30 +219,28 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
-        val normalized = numberInfo.shiftDecimalPoint(-(numberInfo.integerLength - 1))
-        return if (precision == -1) {
-            normalized
-        } else {
-            normalized.roundToPrecision(precision)
-        }
-    }
-
     private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val expNumberInfo = numberInfo.roundToPrecision(-precision)//toExponential(numberInfo, precision - 1)
+        val siPrefix = eToSiPrefix(numberInfo.decimal.toFloating().e)
 
-        val exponent = numberInfo.decimal.intPartRepr.length - 1
-        val suffixExp = floor(exponent / 3.0).coerceAtLeast(-8.0).coerceAtMost(8.0).toInt() * 3
-        val suffixIndex = 8 + suffixExp / 3
-        val exponentString = SI_SUFFIXES[suffixIndex]
+        // 23_456.789 -> 23.456_789k
+        // 0.000_123_456 -> 123.456u
+        val siNormalizedNumber = numberInfo.shiftDecimalPoint(-siPrefix.baseExp)
+        val roundedNumber = siNormalizedNumber.iRound(precision)
+        val (finalNumber, finalSiPrefix) = if (
+            // !! is safe - int part of the si normalized number can't be bigger than 1000
+            roundedNumber.decimal.intVal!! == 1000L // 999.999 -> 1000 rounding happened
+            && hasNextSiPrefix(siPrefix)
+        ) {
+            // 1000.0k -> 1.0M
+            roundedNumber.shiftDecimalPoint(-3) to getNextSiPrefix(siPrefix)
+        } else {
+            roundedNumber to siPrefix
+        }
 
-        //val newNumberInfo = createNumberInfo(numberInfo.number * 10.0.pow(-suffixExp))
-        val newNumberInfo = numberInfo.shiftDecimalPoint(-suffixExp)
-
-        val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
-        return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
+        val restPrecision = precision - finalNumber.integerLength //
+        val formattedNumber = toFixedFormat(finalNumber, restPrecision)
+        return formattedNumber.copy(exponentialPart = finalSiPrefix.symbol)
     }
-
 
     private fun trimFraction(output: Output): Output {
         if (!spec.trim || output.body.fractionalPart.isEmpty()) {
@@ -327,7 +325,8 @@ class NumberFormat(spec: Spec) {
         }
 
         // Number of the form 1·10^n should be transformed to 10^n if expType is POW
-        private fun omitUnit(): Boolean = expType == ExponentNotationType.POW && integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.isNotEmpty()
+        private fun omitUnit(): Boolean =
+            expType == ExponentNotationType.POW && integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.isNotEmpty()
 
         companion object {
             @Suppress("RegExpRedundantEscape") // breaks tests
@@ -365,7 +364,8 @@ class NumberFormat(spec: Spec) {
                 precision = precision,
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
-                expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) } ?: DEF_EXPONENT_NOTATION_TYPE,
+                expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) }
+                    ?: DEF_EXPONENT_NOTATION_TYPE,
                 minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
                 maxExp = matchResult.groups["maxexp"]?.value?.toInt() ?: precision,
             )
@@ -373,7 +373,33 @@ class NumberFormat(spec: Spec) {
             return normalizeSpec(formatSpec)
         }
 
-        const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        enum class SiPrefix(
+            val symbol: String,
+            val expRange: IntRange,
+        ) {
+            YOTTA("Y", 24 until 27),
+            ZETTA("Z", 21 until 24),
+            EXA("E", 18 until 21),
+            PETA("P", 15 until 18),
+            TERA("T", 12 until 15),
+            GIGA("G", 9 until 12),
+            MEGA("M", 6 until 9),
+            KILO("k", 3 until 6),
+            NONE("", 0 until 3),
+            MILLI("m", -3 until 0),
+            MICRO("µ", -6 until -3),
+            NANO("n", -9 until -6),
+            PICO("p", -12 until -9),
+            FEMTO("f", -15 until -12),
+            ATTO("a", -18 until -15),
+            ZEPTO("z", -21 until -18),
+            YOCTO("y", -24 until -21);
+
+            val baseExp = expRange.first
+        }
+
+        const val DEF_MIN_EXP =
+            -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
 
         internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
@@ -384,14 +410,35 @@ class NumberFormat(spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
-        private val SI_SUFFIXES =
-            arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val EXPONENT_TYPES_REGEX = "[${ExponentNotationType.entries.joinToString("") { it.symbol }}]"
         private val NUMBER_REGEX =
             """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private const val DEF_PRECISION = 6
         private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E
+
+        internal fun eToSiPrefix(e: Int): SiPrefix {
+            val prefix = SiPrefix.entries.firstOrNull() { e in it.expRange }
+            if (prefix != null) return prefix
+
+            return if (e < 0) {
+                SiPrefix.entries.minBy { it.expRange.first }
+            } else {
+                SiPrefix.entries.maxBy { it.expRange.last }
+            }
+        }
+
+        internal fun hasNextSiPrefix(prefix: SiPrefix): Boolean {
+            return prefix.ordinal > 0
+        }
+
+        internal fun getNextSiPrefix(prefix: SiPrefix): SiPrefix {
+            return if (prefix.ordinal > 0) {
+                SiPrefix.entries[prefix.ordinal - 1]
+            } else {
+                prefix
+            }
+        }
 
         internal fun normalizeSpec(spec: Spec): Spec {
             var precision = spec.precision

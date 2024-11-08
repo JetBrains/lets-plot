@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.formatting.number
 
 class Floating(i: Int, fraction: String, e: Int) {
-    val i: Int // 0..9
+    val i: Int // 1..9 or 0 for 0.0
     val fraction: String // never empty
     val e: Int
 

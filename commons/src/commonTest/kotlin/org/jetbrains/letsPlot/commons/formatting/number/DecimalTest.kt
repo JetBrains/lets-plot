@@ -237,4 +237,24 @@ class DecimalTest {
             assertEquals(Decimal("959", "51946", ""), it.iRound(8))
         }
     }
+
+    @Test
+    fun iround0() {
+        assertEquals(Decimal("20", "0", ""), Decimal.fromNumber(16.5).iRound(0))
+        assertEquals(Decimal("900", "0", ""), Decimal.fromNumber(929.51946).iRound(0))
+        assertEquals(Decimal("1000", "0", ""), Decimal.fromNumber(959.51946).iRound(0))
+        assertEquals(Decimal("100", "0", ""), Decimal.fromNumber(123.456789).iRound(0))
+
+    }
+
+    @Test
+    fun specialCases() {
+        assertEquals(Decimal("0", "0", ""), Decimal.fromNumber(0.0).iRound(0))
+        assertEquals(Decimal("0", "0", ""), Decimal.fromNumber(0.0).iRound(1))
+        assertEquals(Decimal("0", "0", ""), Decimal.fromNumber(0.0).iRound(2))
+        assertEquals(Decimal("0", "0", ""), Decimal.fromNumber(0.0).iRound(3))
+        assertEquals(Decimal("0", "1", ""), Decimal.fromNumber(0.1).iRound(3))
+        assertEquals(Decimal("0", "9", ""), Decimal.fromNumber(0.9).iRound(3))
+
+    }
 }
