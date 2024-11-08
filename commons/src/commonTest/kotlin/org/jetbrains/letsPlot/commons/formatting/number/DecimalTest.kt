@@ -103,84 +103,84 @@ class DecimalTest {
 
     @Test
     fun round_1_0_With_2() {
-        Decimal.fromNumber(1.0).round(2).let {
+        Decimal.fromNumber(1.0).fRound(2).let {
             assertEquals(Decimal("1", "0", ""), it)
         }
     }
 
     @Test
     fun round_1_12_With_2() {
-        Decimal.fromNumber(1.12).round(2).let {
+        Decimal.fromNumber(1.12).fRound(2).let {
             assertEquals(Decimal("1", "12", ""), it)
         }
     }
 
     @Test
     fun round_1_124_With_2() {
-        Decimal.fromNumber(1.124).round(2).let {
+        Decimal.fromNumber(1.124).fRound(2).let {
             assertEquals(Decimal("1", "12", ""), it)
         }
     }
 
     @Test
     fun round_1_125_With_2() {
-        Decimal.fromNumber(1.125).round(2).let {
+        Decimal.fromNumber(1.125).fRound(2).let {
             assertEquals(Decimal("1", "13", ""), it)
         }
     }
 
     @Test
     fun round_1_1251_With_2() {
-        Decimal.fromNumber(1.1251).round(2).let {
+        Decimal.fromNumber(1.1251).fRound(2).let {
             assertEquals(Decimal("1", "13", ""), it)
         }
     }
 
     @Test
     fun round_123456_51_With_0() {
-        Decimal.fromNumber(123456.51).round(0).let {
+        Decimal.fromNumber(123456.51).fRound(0).let {
             assertEquals(Decimal("123457", "0", ""), it)
         }
     }
 
     @Test
     fun round_9_51_With_0() {
-        Decimal.fromNumber(9.51).round(0).let {
+        Decimal.fromNumber(9.51).fRound(0).let {
             assertEquals(Decimal("10", "0", ""), it)
         }
     }
 
     @Test
     fun round_0_51_With_0() {
-        Decimal.fromNumber(0.51).round(0).let {
+        Decimal.fromNumber(0.51).fRound(0).let {
             assertEquals(Decimal("1", "0", ""), it)
         }
     }
 
     @Test
     fun round_123456_5_With_0() {
-        Decimal.fromNumber(123456.5).round(0).let {
+        Decimal.fromNumber(123456.5).fRound(0).let {
             assertEquals(Decimal("123457", "0", ""), it)
         }
     }
 
     @Test
     fun round_0_49_With_1() {
-        Decimal.fromNumber(0.49).round(1).let {
+        Decimal.fromNumber(0.49).fRound(1).let {
             assertEquals(Decimal("0", "5", ""), it)
         }
     }
 
     @Test
     fun round_1_98_With_1() {
-        Decimal.fromNumber(1.98).round(1).let {
+        Decimal.fromNumber(1.98).fRound(1).let {
             assertEquals(Decimal("2", "0", ""), it)
         }
     }
 
     @Test
     fun round_999_98_With_1() {
-        Decimal.fromNumber(999.98).round(1).let {
+        Decimal.fromNumber(999.98).fRound(1).let {
             assertEquals(Decimal("1000", "0", ""), it)
         }
     }
@@ -208,16 +208,33 @@ class DecimalTest {
     }
 
     @Test
-    fun round_123_456_With_minus_2() {
-        Decimal.fromNumber(123.456).round(-2).let {
-            assertEquals(Decimal("100", "0", ""), it)
+    fun iRound_123_456789_With_1() {
+        Decimal.fromNumber(123.456789).let {
+            assertEquals(Decimal("100", "0", ""), it.iRound(0))
+            assertEquals(Decimal("100", "0", ""), it.iRound(1))
+            assertEquals(Decimal("120", "0", ""), it.iRound(2))
+            assertEquals(Decimal("123", "0", ""), it.iRound(3))
+            assertEquals(Decimal("123", "5", ""), it.iRound(4))
+            assertEquals(Decimal("123", "46", ""), it.iRound(5))
+            assertEquals(Decimal("123", "457", ""), it.iRound(6))
+            assertEquals(Decimal("123", "4568", ""), it.iRound(7))
+            assertEquals(Decimal("123", "45679", ""), it.iRound(8))
+            assertEquals(Decimal("123", "456789", ""), it.iRound(9))
         }
     }
 
     @Test
-    fun round_199_9_With_minus_2() {
-        Decimal.fromNumber(199.9).round(-2).let {
-            assertEquals(Decimal("200", "0", ""), it)
+    fun iRound_959_51946() {
+        Decimal.fromNumber(959.51946).let {
+            assertEquals(Decimal("1000", "0", ""), it.iRound(0))
+            assertEquals(Decimal("1000", "0", ""), it.iRound(1))
+            assertEquals(Decimal("960", "0", ""), it.iRound(2))
+            assertEquals(Decimal("960", "0", ""), it.iRound(3))
+            assertEquals(Decimal("959", "5", ""), it.iRound(4))
+            assertEquals(Decimal("959", "52", ""), it.iRound(5))
+            assertEquals(Decimal("959", "519", ""), it.iRound(6))
+            assertEquals(Decimal("959", "5195", ""), it.iRound(7))
+            assertEquals(Decimal("959", "51946", ""), it.iRound(8))
         }
     }
 }

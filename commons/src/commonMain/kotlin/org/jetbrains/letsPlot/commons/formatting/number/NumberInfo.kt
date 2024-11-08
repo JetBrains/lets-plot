@@ -33,7 +33,7 @@ internal data class NumberInfo(
     // precision = 0 -> round to integer
     // precision < 0 -> round to 10^precision
     fun roundToPrecision(precision: Int = 0): NumberInfo {
-        val rounded = decimal.round(precision)
+        val rounded = decimal.fRound(precision)
         return NumberInfo(
             decimal = rounded,
             negative = negative,

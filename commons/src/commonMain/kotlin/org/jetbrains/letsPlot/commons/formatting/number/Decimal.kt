@@ -94,28 +94,33 @@ internal class Decimal internal constructor(
         }
     }
 
-    fun round(precision: Int): Decimal {
+    fun iRound(precision: Int): Decimal {
         if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
             return this
         }
 
-        if (precision >= 0) {
-            if (fracPartRepr.length <= precision) {
-                return this
-            }
+        val number = intPartRepr + fracPartRepr
+        val (roundedNumber, _) = iRound(number, precision)
 
-            val (roundedFracPart, carry) = round(fracPartRepr, precision)
-            val roundedIntPart = if (carry) add(intPartRepr, "1").first else intPartRepr
-            return Decimal(roundedIntPart, roundedFracPart, signRepr)
-        } else {
-            val whole = intPartRepr + fracPartRepr
-            val (roundedWhole, carry) = round(whole, precision.absoluteValue + fracPartRepr.length)
+        val decimalPoint = intPartRepr.length + if (roundedNumber.length > number.length) 1 else 0
+        val roundedIntPart = roundedNumber.take(decimalPoint)
+        val roundedFracPart = roundedNumber.drop(decimalPoint)
 
-            val toTake = intPartRepr.length - precision.absoluteValue + if (carry) 1 else 0
-            val roundedIntPart = roundedWhole.take(toTake) + "0".repeat(precision.absoluteValue)
+        return Decimal(roundedIntPart, roundedFracPart, signRepr)
+    }
 
-            return Decimal(roundedIntPart, "0", signRepr)
+    fun fRound(precision: Int): Decimal {
+        if (intPartRepr == "Infinity" || intPartRepr == "NaN") {
+            return this
         }
+
+        if (fracPartRepr.length <= precision) {
+            return this
+        }
+
+        val (roundedFracPart, carry) = round(fracPartRepr, precision)
+        val roundedIntPart = if (carry) add(intPartRepr, "1").first else intPartRepr
+        return Decimal(roundedIntPart, roundedFracPart, signRepr)
     }
 
 
@@ -241,20 +246,42 @@ internal class Decimal internal constructor(
             }
         }
 
-        private fun round(number: String, precision: Int): Pair<String, Boolean> {
-            val fDropPart = number.takeLast(number.length - precision)
-            val fRestPart = number.take(precision)
+        private fun iRoundCarry(number: String): Pair<String, Boolean> {
+            return when (number.length) {
+                0 -> "0" to false
+                else -> when (number.first() >= '5') {
+                    true -> "1" + "0".repeat(number.length) to true
+                    false -> "0".repeat(number.length) to true
+                }
+            }
+        }
 
-            val carryToRestPart = roundCarry(fDropPart)
+        private fun round(number: String, precision: Int): Pair<String, Boolean> {
+            val roundingPart = number.takeLast(number.length - precision)
+            val valuePart = number.take(precision)
+
+            val carryToRestPart = roundCarry(roundingPart)
 
             val (fRoundedRestPart, carryFromFracToInt) = when {
-                fRestPart.isEmpty() -> "" to carryToRestPart // round to integer - no fractional part
-                else -> add(fRestPart, if (carryToRestPart) "1" else "0")
+                valuePart.isEmpty() -> "" to carryToRestPart // round to integer - no fractional part
+                else -> add(valuePart, if (carryToRestPart) "1" else "0")
             }
 
             val resultFracPart = if (carryFromFracToInt) fRoundedRestPart.drop(1) else fRoundedRestPart
 
             return resultFracPart to carryFromFracToInt
+        }
+
+        private fun iRound(number: String, precision: Int): Pair<String, Boolean> {
+            val roundingRange = number.length - precision
+            val valuePart = number.take(precision) + "0".repeat(roundingRange)
+
+            val (rounded, carryFlag) = iRoundCarry(number.takeLast(roundingRange))
+
+            return when (carryFlag) {
+                true -> add(valuePart, rounded).first to true
+                false -> valuePart to false
+            }
         }
 
     }

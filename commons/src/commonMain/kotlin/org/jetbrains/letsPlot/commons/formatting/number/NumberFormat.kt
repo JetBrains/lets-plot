@@ -229,9 +229,9 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val expNumberInfo = toExponential(numberInfo, precision - 1)
+        val expNumberInfo = numberInfo.roundToPrecision(-precision)//toExponential(numberInfo, precision - 1)
 
-        val exponent = numberInfo.decimal.intPartRepr.length
+        val exponent = numberInfo.decimal.intPartRepr.length - 1
         val suffixExp = floor(exponent / 3.0).coerceAtLeast(-8.0).coerceAtMost(8.0).toInt() * 3
         val suffixIndex = 8 + suffixExp / 3
         val exponentString = SI_SUFFIXES[suffixIndex]
