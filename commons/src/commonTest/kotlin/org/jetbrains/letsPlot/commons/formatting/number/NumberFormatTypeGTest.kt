@@ -10,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeGTest {
+    private fun format(v: Number, spec: String): String = NumberFormat(spec).apply(v)
     private fun format(spec: String): NumberFormat = NumberFormat(spec)
 
     @Test
@@ -255,4 +256,12 @@ class NumberFormatTypeGTest {
         assertEquals("2·\\(10^{1}\\)", format(ExponentNotationType.POW_FULL, 0 to 0).apply(20))
     }
 
+
+    @Test
+    fun minExpPrecision() {
+        assertEquals("6e-10", format(0.6e-9, ".0g{-10,}"))
+        assertEquals("0.000000001", format(0.6e-9, ".0g{-11,}"))
+        assertEquals("0.0000000006", format(0.6e-9, ".1g{-11,}"))
+        assertEquals("0.00000000060", format(0.6e-9, ".2g{-11,}"))
+    }
 }

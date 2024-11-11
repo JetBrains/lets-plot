@@ -16,6 +16,7 @@ internal class Decimal internal constructor(
     val wholePart: String // never empty. "0" for zero, never contains leading zeros
     val decimalPart: String // never empty. "0" for zero, never contains trailing zeros
     val sign: String // empty for positive, "-" for negative
+    val isNegative = sign == "-"
 
     init {
         require(wholePart.all { it.isDigit() }) {

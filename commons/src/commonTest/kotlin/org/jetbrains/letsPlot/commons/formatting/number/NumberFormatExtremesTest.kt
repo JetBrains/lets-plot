@@ -40,8 +40,6 @@ class NumberFormatExtremesTest {
         assertEquals("1.00e-323", f.apply(DOUBLE_ALMOST_MIN_VALUE))
         assertEquals("-1.00e-323", f.apply(-DOUBLE_ALMOST_MIN_VALUE))
 
-        assertEquals("1.00e-323", f.apply(NumberFormat.TYPE_E_MIN))
-        assertEquals("-1.00e-323", f.apply(-NumberFormat.TYPE_E_MIN))
 
         assertEquals("2.00e-323", f.apply(1.9999999E-323))
         assertEquals("-2.00e-323", f.apply(-1.9999999E-323))
