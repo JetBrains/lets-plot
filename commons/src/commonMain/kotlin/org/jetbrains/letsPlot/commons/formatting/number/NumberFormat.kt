@@ -116,7 +116,7 @@ class NumberFormat(spec: Spec) {
         val formattedNumber = when (spec.type) {
             "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
             "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5 -> "1.500000"
-            "d" -> formatDecimalNotation(number).copy(expType = spec.expType) // rounded to integer, e.g. 1.5 -> "2"
+            "d" -> formatDecimalNotation(number, precision = 0).copy(expType = spec.expType) // rounded to integer, e.g. 1.5 -> "2"
             "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
             "g" -> generalFormat(number, spec.precision) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
             "s" -> siPrefixFormat(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
@@ -130,7 +130,16 @@ class NumberFormat(spec: Spec) {
         return res.copy(body = formattedNumber)
     }
 
-    private fun generalFormat(number: Decimal, precision: Int = -1): FormattedNumber {
+    private fun generalFormat(number: Decimal, precision: Int): FormattedNumber {
+        if (number.isZero) {
+            return formatDecimalNotation(Decimal.ZERO, precision - 1)
+        }
+
+        val digitsCount = number.wholePart.length + number.decimalPart.length
+        if (digitsCount <= precision) {
+            return formatDecimalNotation(number, precision - 1)
+        }
+
         if (number.isWholePartZero) {
             if (number.isDecimalPartZero) {
                 return formatDecimalNotation(number, precision - 1)
@@ -146,7 +155,7 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    private fun formatDecimalNotation(number: Decimal, precision: Int = 0): FormattedNumber {
+    private fun formatDecimalNotation(number: Decimal, precision: Int): FormattedNumber {
         if (precision <= 0) {
             return FormattedNumber(number.fRound(0).wholePart)
         }

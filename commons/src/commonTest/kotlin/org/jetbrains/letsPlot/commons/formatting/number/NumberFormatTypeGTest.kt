@@ -259,9 +259,64 @@ class NumberFormatTypeGTest {
 
     @Test
     fun minExpPrecision() {
-        assertEquals("6e-10", format(0.6e-9, ".0g{-10,}"))
-        assertEquals("0.000000001", format(0.6e-9, ".0g{-11,}"))
-        assertEquals("0.0000000006", format(0.6e-9, ".1g{-11,}"))
-        assertEquals("0.00000000060", format(0.6e-9, ".2g{-11,}"))
+        assertEquals("6e-10", format(6e-10, ".0g{-10,}"))
+        assertEquals("0.000000001", format(6e-10, ".0g{-11,}"))
+        assertEquals("0.0000000006", format(6e-10, ".1g{-11,}"))
+        assertEquals("0.00000000060", format(6e-10, ".2g{-11,}"))
+
+        // Doesn't work with non-zero integer part
+        assertEquals("1.000000006e+0", format(1.000000006, ".0g"))
+        assertEquals("1.000000006e+0", format(1.000000006, ".0g{-10,}")) // "1e-9" ?
+        assertEquals("1.000000006e+0", format(1.000000006, ".0g{-11,}")) // "1e-10" ?
+    }
+
+    @Test
+    fun decimalWithWholePartWithDifferentPrecision() {
+        val number = 1.0006
+        assertEquals("1.00060", format(number, "g"))
+        assertEquals("1", format(number, ".0g"))
+        assertEquals("1", format(number, ".1g"))
+        assertEquals("1.0", format(number, ".2g"))
+        assertEquals("1.00", format(number, ".3g"))
+        assertEquals("1.001", format(number, ".4g"))
+        assertEquals("1.0006", format(number, ".5g"))
+        assertEquals("1.00060", format(number, ".6g"))
+    }
+
+    @Test
+    fun decimalWithTwoDigitsWholePartWithDifferentPrecision() {
+        val number = 20.0006
+        assertEquals("21.0006", format(number, "g"))
+        assertEquals("2e+1", format(number, ".0g"))
+        assertEquals("2e+1", format(number, ".1g"))
+        assertEquals("21", format(number, ".2g"))
+        assertEquals("21.0", format(number, ".3g"))
+        assertEquals("21.00", format(number, ".4g"))
+        assertEquals("21.001", format(number, ".5g"))
+        assertEquals("21.0006", format(number, ".6g"))
+    }
+
+    @Test
+    fun decimalWithoutWholePartWithDifferentPrecision() {
+        val number = 0.0006
+        assertEquals("0.00060", format(number, "g"))
+        assertEquals("0", format(number, ".0g"))
+        assertEquals("0", format(number, ".1g"))
+        assertEquals("0.0", format(number, ".2g"))
+        assertEquals("0.00", format(number, ".3g"))
+        assertEquals("0.001", format(number, ".4g"))
+        assertEquals("0.0006", format(number, ".5g"))
+        assertEquals("0.00060", format(number, ".6g"))
+    }
+
+    @Test
+    fun zeroWithPrecision() {
+        assertEquals("0.00000", format(0.0, "g"))
+        assertEquals("0", format(0.0, ".0g"))
+        assertEquals("0", format(0.0, ".1g"))
+        assertEquals("0.0", format(0.0, ".2g"))
+        assertEquals("0.00", format(0.0, ".3g"))
+        assertEquals("0.000", format(0.0, ".4g"))
+        assertEquals("0.0000", format(0.0, ".5g"))
     }
 }

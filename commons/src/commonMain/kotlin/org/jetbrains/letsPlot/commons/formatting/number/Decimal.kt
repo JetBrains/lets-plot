@@ -139,6 +139,8 @@ internal class Decimal internal constructor(
 
 
     companion object {
+        val ZERO: Decimal = Decimal("0", "0", "")
+
         fun fromNumber(value: Number): Decimal {
             val dbl = value.toDouble()
 
