@@ -47,6 +47,8 @@ internal class Decimal internal constructor(
         return "$sign$wholePart.$decimalPart".toDouble()
     }
 
+    val asFloating: Floating by lazy { toFloating() }
+
     fun toFloating(): Floating {
         if (wholePart == "0") {
             val significandDigitPos = decimalPart.indexOfFirst { it != '0' }

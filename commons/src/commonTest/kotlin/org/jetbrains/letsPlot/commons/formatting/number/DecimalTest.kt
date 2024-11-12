@@ -88,14 +88,14 @@ class DecimalTest {
     @Test
     fun toFloating0_1() {
         Decimal.fromNumber(0.1).toFloating().let {
-            assertEquals(Floating(i = 1, fraction = "0", e = -1), it)
+            assertEquals(Floating(i = 1, fraction = "0", exp = -1), it)
         }
     }
 
     @Test
     fun toFloating234_567() {
         Decimal.fromNumber(234.567).toFloating().let {
-            assertEquals(Floating(i = 2, fraction = "34567", e = 2), it)
+            assertEquals(Floating(i = 2, fraction = "34567", exp = 2), it)
         }
     }
 

@@ -131,23 +131,26 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun generalFormat(number: Decimal, precision: Int): FormattedNumber {
-        if (number.isZero) {
-            return formatDecimalNotation(Decimal.ZERO, precision - 1)
+        // Can't be zero - rounding in decimal notation will give incorrect results
+        val (significantDigitsCount, maxExp) = when {
+            precision == 0 && spec.maxExp == 0 -> 1 to 1
+            else -> precision to spec.maxExp
         }
 
-        if (number.isWholePartZero) {
-            if (number.toFloating().e <= spec.minExp) { // too small - use exponential notation
-                return formatExponentNotation(number, precision - 1)
-            } else {
-                return formatDecimalNotation(number, precision - number.toFloating().e - 1)
-            }
-        } else {
-            if (number.wholePart.length > spec.maxExp) {
-                return formatExponentNotation(number, precision - 1)
-            } else {
-                return formatDecimalNotation(number, precision - number.wholePart.length)
-            }
+        if (number.isZero) {
+            return formatDecimalNotation(Decimal.ZERO, significantDigitsCount - 1)
         }
+
+        if (number.isWholePartZero && number.toFloating().exp > spec.minExp) {
+            // -1 for the zero in the whole part
+            return formatDecimalNotation(number, significantDigitsCount - 1 - number.asFloating.exp)
+        }
+
+        if (!number.isWholePartZero && number.wholePart.length <= maxExp) {
+            return formatDecimalNotation(number, significantDigitsCount - number.wholePart.length)
+        }
+
+        return formatExponentNotation(number, (significantDigitsCount - 1).coerceAtLeast(0))
     }
 
     private fun formatDecimalNotation(number: Decimal, precision: Int): FormattedNumber {
@@ -155,21 +158,21 @@ class NumberFormat(spec: Spec) {
             return FormattedNumber(number.fRound(0).wholePart)
         }
 
-        val newNumberInfo = number.fRound(precision)
+        val rounded = number.fRound(precision)
 
-        val completePrecision = if (number.wholePart.length < newNumberInfo.wholePart.length) {
+        val completePrecision = if (number.wholePart.length < rounded.wholePart.length) {
             precision - 1
         } else {
             precision
         }
 
-        if (newNumberInfo.isDecimalPartZero) {
-            return FormattedNumber(newNumberInfo.wholePart, "0".repeat(completePrecision), expType = spec.expType)
+        if (rounded.isDecimalPartZero) {
+            return FormattedNumber(rounded.wholePart, "0".repeat(completePrecision), expType = spec.expType)
         }
 
-        val fractionString = newNumberInfo.decimalPart.padEnd(completePrecision, '0')
+        val fractionString = rounded.decimalPart.padEnd(completePrecision, '0')
 
-        return FormattedNumber(newNumberInfo.wholePart, fractionString)
+        return FormattedNumber(rounded.wholePart, fractionString)
     }
 
     private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
@@ -188,22 +191,21 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun buildExponentString(number: Decimal): String {
-        val exponent = number.toFloating().e
 
         return if (spec.expType != ExponentNotationType.E) {
             when {
-                exponent == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
-                exponent == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
-                else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
+                number.asFloating.exp == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
+                number.asFloating.exp == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
+                else -> MULT_SIGN + "\\(10^{${number.asFloating.exp}}\\)"
             }
         } else {
-            val expSign = if (exponent.sign >= 0) "+" else ""
-            "e$expSign${exponent}"
+            val expSign = if (number.asFloating.exp.sign >= 0) "+" else ""
+            "e$expSign${number.asFloating.exp}"
         }
     }
 
     private fun siPrefixFormat(number: Decimal, precision: Int = -1): FormattedNumber {
-        val siPrefix = eToSiPrefix(number.toFloating().e)
+        val siPrefix = eToSiPrefix(number.toFloating().exp)
 
         // 23_456.789 -> 23.456_789k
         // 0.000_123_456 -> 123.456u
@@ -331,11 +333,9 @@ class NumberFormat(spec: Spec) {
     }
 
     companion object {
-        internal val Decimal.fractionLeadingZeros get() = decimalPart.indexOfFirst { it != '0' }
-        
         // 123.456 -> 1.23456E+2
         internal fun normalize(decimal: Decimal): Decimal {
-            return decimal.shiftDecimalPoint(-decimal.toFloating().e)
+            return decimal.shiftDecimalPoint(-decimal.toFloating().exp)
         }
 
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)

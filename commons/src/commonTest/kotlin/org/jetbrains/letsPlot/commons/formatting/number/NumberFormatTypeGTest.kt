@@ -260,14 +260,13 @@ class NumberFormatTypeGTest {
     @Test
     fun minExpPrecision() {
         assertEquals("6e-10", format(6e-10, ".0g{-10,}"))
-        assertEquals("0.000000001", format(6e-10, ".0g{-11,}"))
+        assertEquals("0.0000000006", format(6e-10, ".0g{-11,}"))
         assertEquals("0.0000000006", format(6e-10, ".1g{-11,}"))
         assertEquals("0.00000000060", format(6e-10, ".2g{-11,}"))
 
-        // Doesn't work with non-zero integer part
-        assertEquals("1.000000006e+0", format(1.000000006, ".0g"))
-        assertEquals("1.000000006e+0", format(1.000000006, ".0g{-10,}")) // "1e-9" ?
-        assertEquals("1.000000006e+0", format(1.000000006, ".0g{-11,}")) // "1e-10" ?
+        assertEquals("1", format(1.000000006, ".0g"))
+        assertEquals("1", format(1.000000006, ".0g{-10,}")) // "1e-9" ?
+        assertEquals("1", format(1.000000006, ".0g{-11,}")) // "1e-10" ?
     }
 
     @Test
@@ -334,15 +333,15 @@ class NumberFormatTypeGTest {
 
     @Test
     fun decimalWithoutWholePartWithDifferentPrecision() {
-        val number = 0.0006
-        assertEquals("0.00060", format(number, "g"))
-        assertEquals("0", format(number, ".0g"))
-        assertEquals("0", format(number, ".1g"))
-        assertEquals("0.0", format(number, ".2g"))
-        assertEquals("0.00", format(number, ".3g"))
-        assertEquals("0.001", format(number, ".4g"))
-        assertEquals("0.0006", format(number, ".5g"))
-        assertEquals("0.00060", format(number, ".6g"))
+        val number = 0.000006
+        assertEquals("0.00000600000", format(number, "g"))
+        assertEquals("0.000006", format(number, ".0g"))
+        assertEquals("0.000006", format(number, ".1g"))
+        assertEquals("0.0000060", format(number, ".2g"))
+        assertEquals("0.00000600", format(number, ".3g"))
+        assertEquals("0.000006000", format(number, ".4g"))
+        assertEquals("0.0000060000", format(number, ".5g"))
+        assertEquals("0.00000600000", format(number, ".6g"))
     }
 
     @Test
