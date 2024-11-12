@@ -68,9 +68,13 @@ internal class NumericBreakFormatter(
             type = type,
             expType = expType,
             minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
-            maxExp = expFormat.max ?: precision.toInt()
+            maxExp = expFormat.max ?: DEF_MAX_EXP,
         ))
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)
+
+    companion object {
+        const val DEF_MAX_EXP = 6
+    }
 }
