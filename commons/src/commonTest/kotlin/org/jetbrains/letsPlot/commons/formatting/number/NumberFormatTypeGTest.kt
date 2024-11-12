@@ -71,12 +71,12 @@ class NumberFormatTypeGTest {
             assertEquals("42.0000000000", format(it))
         }
 
-        42000000.let {
+        42_000_000.let {
             assertEquals("42,000,000", formatTruncated(it))
             assertEquals("42,000,000.0000", format(it))
         }
 
-        420000000.let {
+        420_000_000.let {
             assertEquals("420,000,000", formatTruncated(it))
             assertEquals("420,000,000.000", format(it))
         }
@@ -91,12 +91,12 @@ class NumberFormatTypeGTest {
             assertEquals("-42.0000000000", format(it))
         }
 
-        (-4200000).let {
+        (-4_200_000).let {
             assertEquals("-4,200,000", formatTruncated(it))
             assertEquals("-4,200,000.00000", format(it))
         }
 
-        (-42000000).let {
+        (-42_000_000).let {
             assertEquals("-42,000,000", formatTruncated(it))
             assertEquals("-42,000,000.0000", format(it))
         }
@@ -285,7 +285,7 @@ class NumberFormatTypeGTest {
 
     @Test
     fun decimalWithTwoDigitsWholePartWithDifferentPrecision() {
-        val number = 20.0006
+        val number = 21.0006
         assertEquals("21.0006", format(number, "g"))
         assertEquals("2e+1", format(number, ".0g"))
         assertEquals("2e+1", format(number, ".1g"))
@@ -294,6 +294,42 @@ class NumberFormatTypeGTest {
         assertEquals("21.00", format(number, ".4g"))
         assertEquals("21.001", format(number, ".5g"))
         assertEquals("21.0006", format(number, ".6g"))
+    }
+
+    @Test
+    fun p0() {
+        val format = format(".0g")::apply
+        assertEquals("0", format(0.0))
+        assertEquals("5e-13", format(0.000_000_000_000_5))
+        assertEquals("6e-13", format(0.000_000_000_000_55))
+        assertEquals("6e-13", format(0.000_000_000_000_555))
+        assertEquals("0.005", format(0.005))
+        assertEquals("0.05", format(0.05))
+        assertEquals("5", format(5.0))
+        assertEquals("5e+1", format(50.0))
+        assertEquals("6e+1", format(55.0))
+        assertEquals("5e+2", format(500.0))
+        assertEquals("5e+2", format(505.0))
+        assertEquals("6e+2", format(550.0))
+        assertEquals("6e+2", format(555.0))
+    }
+
+    @Test
+    fun p1() {
+        val format = format(".1g")::apply
+        assertEquals("0", format(0.0))
+        assertEquals("5e-13", format(0.000_000_000_000_5))
+        assertEquals("6e-13", format(0.000_000_000_000_55))
+        assertEquals("6e-13", format(0.000_000_000_000_555))
+        assertEquals("0.005", format(0.005))
+        assertEquals("0.05", format(0.05))
+        assertEquals("5", format(5.0))
+        assertEquals("5e+1", format(50.0))
+        assertEquals("6e+1", format(55.0))
+        assertEquals("5e+2", format(500.0))
+        assertEquals("5e+2", format(505.0))
+        assertEquals("6e+2", format(550.0))
+        assertEquals("6e+2", format(555.0))
     }
 
     @Test

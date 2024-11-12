@@ -135,23 +135,18 @@ class NumberFormat(spec: Spec) {
             return formatDecimalNotation(Decimal.ZERO, precision - 1)
         }
 
-        val digitsCount = number.wholePart.length + number.decimalPart.length
-        if (digitsCount <= precision) {
-            return formatDecimalNotation(number, precision - 1)
-        }
-
         if (number.isWholePartZero) {
-            if (number.isDecimalPartZero) {
-                return formatDecimalNotation(number, precision - 1)
-            } else if (number.fractionLeadingZeros >= -spec.minExp - 1) {
+            if (number.toFloating().e <= spec.minExp) { // too small - use exponential notation
                 return formatExponentNotation(number, precision - 1)
+            } else {
+                return formatDecimalNotation(number, precision - number.toFloating().e - 1)
             }
-            return formatDecimalNotation(number, precision + number.fractionLeadingZeros)
         } else {
             if (number.wholePart.length > spec.maxExp) {
                 return formatExponentNotation(number, precision - 1)
+            } else {
+                return formatDecimalNotation(number, precision - number.wholePart.length)
             }
-            return formatDecimalNotation(number, precision - number.wholePart.length)
         }
     }
 
