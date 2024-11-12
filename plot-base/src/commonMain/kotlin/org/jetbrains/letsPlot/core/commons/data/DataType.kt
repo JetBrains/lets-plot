@@ -12,7 +12,7 @@ enum class DataType(
 ){
     UNKNOWN(StringFormat.forOneArg("{}")::format),
     INTEGER(StringFormat.forOneArg("d")::format),
-    FLOATING(StringFormat.forOneArg("g")::format),
+    FLOATING(StringFormat.forOneArg("~g")::format),
     STRING(StringFormat.forOneArg("{}")::format),
     INSTANT(StringFormat.forOneArg("%Y-%m-%dT%H:%M:%S")::format),
     BOOLEAN(StringFormat.forOneArg("{}")::format),
