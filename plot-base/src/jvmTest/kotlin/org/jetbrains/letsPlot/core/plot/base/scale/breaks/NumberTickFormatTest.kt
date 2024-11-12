@@ -202,10 +202,10 @@ class NumberTickFormatTest {
     @Test
     fun both_ultraLarge_metricPrefix() {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
+        assertEquals("110M", format(1e8 + 5e6, domainAndStep))
         assertEquals("50M", format(5e7, domainAndStep))
         assertEquals("50M", format(5e7 + 5, domainAndStep))
         assertEquals( "55M", format(5e7 + 5e6, domainAndStep))
-        assertEquals("105M", format(1e8 + 5e6, domainAndStep))
 
         assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
         assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))

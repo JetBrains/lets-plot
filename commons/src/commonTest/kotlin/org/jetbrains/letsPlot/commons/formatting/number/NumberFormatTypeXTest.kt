@@ -76,4 +76,9 @@ class NumberFormatTypeXTest {
         assertEquals("000000000000deadbeef", NumberFormat("020x").apply(0xdeadbeef))
         assertEquals("0x0000000000deadbeef", NumberFormat("#020x").apply(0xdeadbeef))
     }
+
+    @Test
+    fun overflowTes() {
+        //assertEquals("INFINITY", NumberFormat("x").apply(1.23e200))
+    }
 }

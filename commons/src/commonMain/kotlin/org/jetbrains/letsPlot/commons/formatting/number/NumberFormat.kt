@@ -5,8 +5,10 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberInfo.Companion.createNumberInfo
-import kotlin.math.*
+import kotlin.math.absoluteValue
+import kotlin.math.ceil
+import kotlin.math.roundToLong
+import kotlin.math.sign
 
 
 class NumberFormat(spec: Spec) {
@@ -36,13 +38,13 @@ class NumberFormat(spec: Spec) {
             return nonNumberString
         }
 
-        val numberInfo = createNumberInfo(num)
+        val number = Decimal.fromNumber(num)
         var output = Output()
 
-        output = computeBody(output, numberInfo)
+        output = computeBody(output, number)
         output = trimFraction(output)
 
-        output = computeSign(output, numberInfo)
+        output = computeSign(output, number)
         output = computePrefix(output)
         output = computeSuffix(output)
 
@@ -85,7 +87,6 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun applyGroup(output: Output): Output {
-
         val zeroPadding = output.padding.takeIf { spec.zero } ?: ""
 
         val body = output.body
@@ -110,170 +111,130 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeBody(res: Output, numberInfo: NumberInfo): Output {
+    private fun computeBody(res: Output, number: Decimal): Output {
         val formattedNumber = when (spec.type) {
-            "%" -> toFixedFormat(createNumberInfo(numberInfo.number * 100), spec.precision)
-            "c" -> FormattedNumber(numberInfo.number.toString())
-            "d" -> toSimpleFormat(numberInfo, 0)
-            "e" -> toSimpleFormat(toExponential(numberInfo, spec.precision), spec.precision)
-            "f" -> toFixedFormat(numberInfo, spec.precision)
-            "g" -> toPrecisionFormat(numberInfo, spec.precision)
-            "b" -> FormattedNumber(numberInfo.number.roundToLong().toString(2))
-            "o" -> FormattedNumber(numberInfo.number.roundToLong().toString(8))
-            "X" -> FormattedNumber(numberInfo.number.roundToLong().toString(16).uppercase())
-            "x" -> FormattedNumber(numberInfo.number.roundToLong().toString(16))
-            "s" -> toSiFormat(numberInfo, spec.precision)
+            "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
+            "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5 -> "1.500000"
+            "d" -> formatDecimalNotation(
+                number,
+                precision = 0
+            ).copy(expType = spec.expType) // rounded to integer, e.g. 1.5 -> "2"
+            "%" -> formatDecimalNotation(
+                number.shiftDecimalPoint(2),
+                spec.precision
+            ) // percentage, e.g. 0.015 -> "1.500000%"
+            "g" -> generalFormat(
+                number,
+                spec.precision
+            ) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
+            "s" -> siPrefixFormat(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
+            "c" -> FormattedNumber(number.wholePart)
+            "b" -> FormattedNumber(number.toDouble().absoluteValue.roundToLong().toString(2))
+            "o" -> FormattedNumber(number.toDouble().absoluteValue.roundToLong().toString(8))
+            "X" -> FormattedNumber(number.toDouble().absoluteValue.roundToLong().toString(16).uppercase())
+            "x" -> FormattedNumber(number.toDouble().absoluteValue.roundToLong().toString(16))
             else -> throw IllegalArgumentException("Wrong type: ${spec.type}")
         }
         return res.copy(body = formattedNumber)
     }
 
-    private fun toExponential(numberInfo: NumberInfo, precision: Int = -1): NumberInfo {
-        val num = numberInfo.number
-        if (num < TYPE_E_MIN) {
-            return NumberInfo.ZERO
+    private fun generalFormat(number: Decimal, precision: Int): FormattedNumber {
+        // Can't be both zero - rounding in decimal notation will give incorrect results
+        // Yet it's ok to have precision > 0 and spec.maxExp == 0 to trigger exponential notation for all numbers,
+        // including integers (e.g. 1 -> 1e+0 to trigger power notation)
+        val (significantDigitsCount, maxExp) = when {
+            precision == 0 && spec.maxExp == 0 -> 1 to 1
+            else -> precision to spec.maxExp
         }
 
-        var e = if (numberInfo.isIntegerZero) {
-            -(numberInfo.fractionLeadingZeros + 1)
-        } else {
-            numberInfo.integerLength - 1 +
-                    (numberInfo.exponent ?: 0)
-        }
-        val n = num / 10.0.pow(e)
-
-        var newInfo = createNumberInfo(n)
-
-        if (precision > -1) {
-            newInfo = roundToPrecision(newInfo, precision)
+        if (number.isZero) {
+            return formatDecimalNotation(Decimal.ZERO, significantDigitsCount - 1)
         }
 
-        if (newInfo.integerLength > 1) {
-            e += 1
-            newInfo = createNumberInfo(n / 10)
+        if (number.isWholePartZero && number.toFloating().exp > spec.minExp) {
+            // -1 for the zero in the whole part
+            return formatDecimalNotation(number, significantDigitsCount - 1 - number.asFloating.exp)
         }
 
-        return newInfo.copy(exponent = e)
+        if (!number.isWholePartZero && number.wholePart.length <= maxExp) {
+            return formatDecimalNotation(number, significantDigitsCount - number.wholePart.length)
+        }
+
+        return formatExponentNotation(number, (significantDigitsCount - 1).coerceAtLeast(0))
     }
 
-    private fun toPrecisionFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        if (numberInfo.isIntegerZero) {
-            if (numberInfo.fractionalPart == 0L) {
-                return toFixedFormat(numberInfo, precision - 1)
-            } else if (numberInfo.fractionLeadingZeros >= -spec.minExp - 1) {
-                return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
-            }
-            return toFixedFormat(numberInfo, precision + numberInfo.fractionLeadingZeros)
-        } else {
-            if (numberInfo.integerLength > spec.maxExp) {
-                return toSimpleFormat(toExponential(numberInfo, precision - 1), precision - 1)
-            }
-            return toFixedFormat(numberInfo, precision - numberInfo.integerLength)
-        }
-    }
-
-    private fun toFixedFormat(numberInfo: NumberInfo, precision: Int = 0): FormattedNumber {
+    private fun formatDecimalNotation(number: Decimal, precision: Int): FormattedNumber {
         if (precision <= 0) {
-            return FormattedNumber(numberInfo.number.roundToLong().toString())
+            return FormattedNumber(number.fRound(0).wholePart)
         }
 
-        val newNumberInfo = roundToPrecision(numberInfo, precision)
+        val rounded = number.fRound(precision)
 
-        val completePrecision = if (numberInfo.integerLength < newNumberInfo.integerLength) {
+        val completePrecision = if (number.wholePart.length < rounded.wholePart.length) {
             precision - 1
         } else {
             precision
         }
 
-        if (newNumberInfo.fractionalPart == 0L) {
-            return FormattedNumber(newNumberInfo.integerString, "0".repeat(completePrecision), expType = spec.expType)
+        if (rounded.isDecimalPartZero) {
+            return FormattedNumber(rounded.wholePart, "0".repeat(completePrecision), expType = spec.expType)
         }
 
-        val fractionString = newNumberInfo.fractionString.padEnd(completePrecision, '0')
+        val fractionString = rounded.decimalPart.padEnd(completePrecision, '0')
 
-        return FormattedNumber(newNumberInfo.integerString, fractionString)
+        return FormattedNumber(rounded.wholePart, fractionString)
     }
 
-    private fun toSimpleFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val exponentString = buildExponentString(numberInfo.exponent)
+    private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
+        // TODO: move zero check to the NumericBreakFormatter
+        val exponentString = if (!number.isZero) buildExponentString(number) else ""
 
-        val expNumberInfo =
-            createNumberInfo(numberInfo.integerPart + numberInfo.fractionalPart / NumberInfo.MAX_DECIMAL_VALUE.toDouble())
+        val normalized = normalize(number)
 
         if (precision > -1) {
-            val formattedNumber = toFixedFormat(expNumberInfo, precision)
+            val formattedNumber = formatDecimalNotation(normalized, precision)
             return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
         }
 
-        val integerString = expNumberInfo.integerString
-        val fractionString = if (expNumberInfo.fractionalPart == 0L) "" else expNumberInfo.fractionString
-        return FormattedNumber(integerString, fractionString, exponentString, spec.expType)
+        val fractionString = if (normalized.isDecimalPartZero) "" else normalized.decimalPart
+        return FormattedNumber(normalized.wholePart, fractionString, exponentString, spec.expType)
     }
 
-    private fun buildExponentString(exponent: Int?): String {
-        if (exponent == null) {
-            return ""
-        }
+    private fun buildExponentString(number: Decimal): String {
         return if (spec.expType != ExponentNotationType.E) {
             when {
-                exponent == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
-                exponent == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
-                else -> MULT_SIGN + "\\(10^{${exponent}}\\)"
+                number.asFloating.exp == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
+                number.asFloating.exp == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
+                else -> MULT_SIGN + "\\(10^{${number.asFloating.exp}}\\)"
             }
         } else {
-            val expSign = if (exponent.sign >= 0) "+" else ""
-            "e$expSign${exponent}"
+            val expSign = if (number.asFloating.exp.sign >= 0) "+" else ""
+            "e$expSign${number.asFloating.exp}"
         }
     }
 
-    private fun toSiFormat(numberInfo: NumberInfo, precision: Int = -1): FormattedNumber {
-        val expNumberInfo = if (numberInfo.exponent == null) {
-            toExponential(numberInfo, precision - 1)
+    private fun siPrefixFormat(number: Decimal, precision: Int = -1): FormattedNumber {
+        val siPrefix = siPrefixFromExp(number.toFloating().exp)
+
+        // 23_456.789 -> 23.456_789k
+        // 0.000_123_456 -> 123.456u
+        val siNormalizedNumber = number.shiftDecimalPoint(-siPrefix.baseExp)
+        val roundedNumber = siNormalizedNumber.iRound(precision)
+
+        val (finalNumber, finalSiPrefix) = if (
+        // !! is safe - int part of the si normalized number can't be bigger than 1000
+            roundedNumber.wholeValue!! == 1000L // 999.999 -> 1000 rounding happened
+            && hasNextSiPrefix(siPrefix)
+        ) {
+            // 1000.0k -> 1.0M
+            roundedNumber.shiftDecimalPoint(-3) to getNextSiPrefix(siPrefix)
         } else {
-            numberInfo
-        }
-        val exponent = expNumberInfo.exponent ?: 0
-        val suffixExp = floor(exponent / 3.0).coerceAtLeast(-8.0).coerceAtMost(8.0).toInt() * 3
-        val newNumberInfo = createNumberInfo(numberInfo.number * 10.0.pow(-suffixExp))
-
-        val suffixIndex = 8 + suffixExp / 3
-        val exponentString = SI_SUFFIXES[suffixIndex]
-        val formattedNumber = toFixedFormat(newNumberInfo, precision - newNumberInfo.integerLength)
-        return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
-    }
-
-    private fun roundToPrecision(numberInfo: NumberInfo, precision: Int = 0): NumberInfo {
-        val exp = numberInfo.exponent ?: 0
-        val totalPrecision = precision + exp
-
-        var fractionalPart: Long // TODO: likely wont overflow, but better to use Double
-        var integerPart: Double
-
-        if (totalPrecision < 0) {
-            fractionalPart = 0L
-            val intShift = totalPrecision.absoluteValue
-            integerPart = if (numberInfo.integerLength <= intShift) {
-                0.0
-            } else {
-                numberInfo.integerPart / 10.0.pow(intShift) * 10.0.pow(intShift)
-            }
-        } else {
-            val precisionExp = NumberInfo.MAX_DECIMAL_VALUE / 10.0.pow(totalPrecision).toLong()
-            fractionalPart = if (precisionExp == 0L) {
-                numberInfo.fractionalPart
-            } else {
-                (numberInfo.fractionalPart.toDouble() / precisionExp).roundToLong() * precisionExp
-            }
-            integerPart = numberInfo.integerPart
-            if (fractionalPart == NumberInfo.MAX_DECIMAL_VALUE) {
-                fractionalPart = 0
-                ++integerPart
-            }
+            roundedNumber to siPrefix
         }
 
-        val num = integerPart + fractionalPart.toDouble() / NumberInfo.MAX_DECIMAL_VALUE
-
-        return createNumberInfo(num)
+        val restPrecision = precision - finalNumber.wholePart.length
+        val formattedNumber = formatDecimalNotation(finalNumber, restPrecision)
+        return formattedNumber.copy(exponentialPart = finalSiPrefix.symbol)
     }
 
     private fun trimFraction(output: Output): Output {
@@ -289,10 +250,10 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeSign(output: Output, numberInfo: NumberInfo): Output {
+    private fun computeSign(output: Output, number: Decimal): Output {
         val isBodyZero = output.body.run { (integerPart.asSequence() + fractionalPart.asSequence()).all { it == '0' } }
 
-        val isNegative = numberInfo.negative && !isBodyZero
+        val isNegative = number.isNegative && !isBodyZero
         val signStr = if (isNegative) {
             "-"
         } else {
@@ -359,7 +320,8 @@ class NumberFormat(spec: Spec) {
         }
 
         // Number of the form 1·10^n should be transformed to 10^n if expType is POW
-        private fun omitUnit(): Boolean = expType == ExponentNotationType.POW && integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.isNotEmpty()
+        private fun omitUnit(): Boolean =
+            expType == ExponentNotationType.POW && integerPart == "1" && fractionalPart.isEmpty() && exponentialPart.isNotEmpty()
 
         companion object {
             @Suppress("RegExpRedundantEscape") // breaks tests
@@ -380,6 +342,11 @@ class NumberFormat(spec: Spec) {
     }
 
     companion object {
+        // 123.456 -> 1.23456E+2
+        internal fun normalize(decimal: Decimal): Decimal {
+            return decimal.shiftDecimalPoint(-decimal.toFloating().exp)
+        }
+
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 
         fun parseSpec(spec: String): Spec {
@@ -397,7 +364,8 @@ class NumberFormat(spec: Spec) {
                 precision = precision,
                 trim = matchResult.groups["trim"] != null,
                 type = matchResult.groups["type"]?.value ?: "",
-                expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) } ?: DEF_EXPONENT_NOTATION_TYPE,
+                expType = matchResult.groups["exptype"]?.value?.let { ExponentNotationType.bySymbol(it) }
+                    ?: DEF_EXPONENT_NOTATION_TYPE,
                 minExp = matchResult.groups["minexp"]?.value?.toInt() ?: DEF_MIN_EXP,
                 maxExp = matchResult.groups["maxexp"]?.value?.toInt() ?: precision,
             )
@@ -405,9 +373,9 @@ class NumberFormat(spec: Spec) {
             return normalizeSpec(formatSpec)
         }
 
-        const val DEF_MIN_EXP = -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        const val DEF_MIN_EXP =
+            -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
 
-        internal const val TYPE_E_MIN = 1E-323 // Will likely crash on smaller numbers.
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
 
         private const val CURRENCY = "$"
@@ -416,14 +384,35 @@ class NumberFormat(spec: Spec) {
         private const val FRACTION_DELIMITER = "."
         private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
-        private val SI_SUFFIXES =
-            arrayOf("y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y")
         private val EXPONENT_TYPES_REGEX = "[${ExponentNotationType.entries.joinToString("") { it.symbol }}]"
         private val NUMBER_REGEX =
             """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private const val DEF_PRECISION = 6
         private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E
+
+        internal fun siPrefixFromExp(exp: Int): SiPrefix {
+            val prefix = SiPrefix.entries.firstOrNull { exp in it.expRange }
+            if (prefix != null) return prefix
+
+            return if (exp < 0) {
+                SiPrefix.entries.minBy { it.expRange.first }
+            } else {
+                SiPrefix.entries.maxBy { it.expRange.last }
+            }
+        }
+
+        internal fun hasNextSiPrefix(prefix: SiPrefix): Boolean {
+            return prefix.ordinal > 0
+        }
+
+        internal fun getNextSiPrefix(prefix: SiPrefix): SiPrefix {
+            return if (prefix.ordinal > 0) {
+                SiPrefix.entries[prefix.ordinal - 1]
+            } else {
+                prefix
+            }
+        }
 
         internal fun normalizeSpec(spec: Spec): Spec {
             var precision = spec.precision
@@ -434,9 +423,6 @@ class NumberFormat(spec: Spec) {
                     precision = 12
                 }
                 type = "g"
-            }
-
-            if (type == "g") {
                 trim = true
             }
 
@@ -460,4 +446,5 @@ class NumberFormat(spec: Spec) {
             .joinToString(COMMA) // 432,1
             .reversed() // 1,234
     }
+
 }
