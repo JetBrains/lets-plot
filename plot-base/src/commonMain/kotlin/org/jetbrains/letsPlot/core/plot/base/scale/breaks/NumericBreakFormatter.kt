@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
+import org.jetbrains.letsPlot.commons.formatting.number.Decimal
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
@@ -16,6 +17,7 @@ internal class NumericBreakFormatter(
     allowMetricPrefix: Boolean,
     expFormat: ExponentFormat
 ) {
+    private val r: Int
     private var formatter: NumberFormat
 
     init {
@@ -57,6 +59,7 @@ internal class NumericBreakFormatter(
         }
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
+        r = max(-step10Power, precision).toInt() + 6
 
         val trim = type == "g" || expFormat.notationType != ExponentNotationType.E
         val expType = if (trim) expFormat.notationType else ExponentNotationType.E
@@ -72,7 +75,16 @@ internal class NumericBreakFormatter(
         ))
     }
 
-    fun apply(value: Any): String = formatter.apply(value as Number)
+    fun apply(value: Any): String {
+        val number = when (value) {
+            is Double -> {
+                val number = Decimal.fromNumber(value)
+                number.iRound(r + 3).toDouble()
+            }
+            else -> value as Number
+        }
+        return formatter.apply(number)
+    }
 
     companion object {
         const val DEF_MAX_EXP = 6
