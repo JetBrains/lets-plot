@@ -67,15 +67,15 @@ internal class NumericBreakFormatter(
         } else {
             comma = true
         }
-        val trim = type == "e" && expFormat.notationType != ExponentNotationType.E
-        val expType = if (trim) expFormat.notationType else ExponentNotationType.E
+        // Use trim to replace 2.00·10^5 -> 2·10^5
+        val trim = type == "e" && expFormat.notationType in setOf(ExponentNotationType.POW, ExponentNotationType.POW_FULL)
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
             precision = precision.toInt(),
             trim = trim,
             type = type,
-            expType = expType
+            expType = expFormat.notationType
         ))
     }
 
