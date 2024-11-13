@@ -75,9 +75,7 @@ internal class NumericBreakFormatter(
             precision = precision.toInt(),
             trim = trim,
             type = type,
-            expType = expType,
-            minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
-            maxExp = expFormat.max ?: precision.toInt()
+            expType = expType
         ))
     }
 
