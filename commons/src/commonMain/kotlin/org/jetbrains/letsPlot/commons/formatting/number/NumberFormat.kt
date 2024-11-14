@@ -130,7 +130,7 @@ class NumberFormat(spec: Spec) {
             "d" -> formatDecimalNotation(
                 number,
                 precision = 0
-            ).copy(expType = spec.expType) // rounded to integer, e.g. 1.5 -> "2"
+            ) // rounded to integer, e.g. 1.5 -> "2"
             "%" -> formatDecimalNotation(
                 number.shiftDecimalPoint(2),
                 spec.precision
@@ -189,7 +189,7 @@ class NumberFormat(spec: Spec) {
         }
 
         if (rounded.isDecimalPartZero) {
-            return FormattedNumber(rounded.wholePart, "0".repeat(completePrecision), expType = spec.expType)
+            return FormattedNumber(rounded.wholePart, "0".repeat(completePrecision))
         }
 
         val fractionString = rounded.decimalPart.padEnd(completePrecision, '0')

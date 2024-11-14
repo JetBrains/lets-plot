@@ -61,15 +61,15 @@ internal class NumericBreakFormatter(
         precision = ceil(precision - 0.001)
         r = max(-step10Power, precision).toInt() + 6
 
-        val trim = type == "g" || expFormat.notationType != ExponentNotationType.E
-        val expType = if (trim) expFormat.notationType else ExponentNotationType.E
+        // Use trim to replace 2.00·10^5 -> 2·10^5
+        val trim = type == "g" && expFormat.notationType in setOf(ExponentNotationType.POW, ExponentNotationType.POW_FULL)
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = true, // or make it false each time when "g" switch to e-notation
             precision = precision.toInt(),
             trim = trim,
             type = type,
-            expType = expType,
+            expType = expFormat.notationType,
             minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
             maxExp = expFormat.max ?: DEF_MAX_EXP,
         ))
