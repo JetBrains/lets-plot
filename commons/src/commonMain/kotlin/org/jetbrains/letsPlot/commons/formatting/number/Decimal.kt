@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-class Decimal internal constructor(
+internal class Decimal internal constructor(
     wholePart: String,
     decimalPart: String,
     sign: String

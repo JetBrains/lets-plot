@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
-import org.jetbrains.letsPlot.commons.formatting.number.Decimal
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
 import kotlin.math.*
@@ -16,7 +15,6 @@ internal class NumericBreakFormatter(
     allowMetricPrefix: Boolean,
     expFormat: ExponentFormat
 ) {
-    private val r: Int
     private var formatter: NumberFormat
 
     init {
@@ -59,8 +57,6 @@ internal class NumericBreakFormatter(
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
-        r = max(-step10Power, precision).toInt() + 9
-
         // Use comma only for large enough numbers.
         val comma = 4 <= domain10Power
         // Use trim to replace 2.00·10^5 -> 2·10^5
@@ -77,16 +73,7 @@ internal class NumericBreakFormatter(
         ))
     }
 
-    fun apply(value: Any): String {
-        val number = when (value) {
-            is Double -> {
-                val number = Decimal.fromNumber(value)
-                number.iRound(r).toDouble()
-            }
-            else -> value as Number
-        }
-        return formatter.apply(number)
-    }
+    fun apply(value: Any): String = formatter.apply(value as Number)
 
     companion object {
         const val DEF_MAX_EXP = 6
