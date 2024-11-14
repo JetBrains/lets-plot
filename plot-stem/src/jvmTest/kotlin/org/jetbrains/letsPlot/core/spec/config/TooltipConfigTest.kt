@@ -160,7 +160,7 @@ class TooltipConfigTest {
         val defaultGeomLayer = buildPointLayer(data, mappingWithColor, tooltips = null)
         assertTooltipStrings(
             listOf(
-                "year: 1,998"
+                "year: 1998"
             ),
             getGeneralTooltipStrings(defaultGeomLayer)
         )

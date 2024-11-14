@@ -59,13 +59,16 @@ internal class NumericBreakFormatter(
         }
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
+
         r = max(-step10Power, precision).toInt() + 6
 
+        // Use comma only for large enough numbers.
+        val comma = 4 <= domain10Power
         // Use trim to replace 2.00·10^5 -> 2·10^5
         val trim = type == "g"
 
         formatter = NumberFormat(NumberFormat.Spec(
-            comma = true, // or make it false each time when "g" switch to e-notation
+            comma = comma,
             precision = precision.toInt(),
             trim = trim,
             type = type,
