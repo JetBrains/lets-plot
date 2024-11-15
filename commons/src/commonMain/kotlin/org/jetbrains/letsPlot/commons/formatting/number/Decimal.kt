@@ -63,7 +63,7 @@ internal class Decimal internal constructor(
         } else {
             val i = wholePart[0].digitToInt()
             val e = wholePart.length - 1
-            val fracPart = wholePart.drop(1) + decimalPart.toInt()
+            val fracPart = wholePart.drop(1) + decimalPart
             return Floating(i, fracPart, e)
         }
     }
