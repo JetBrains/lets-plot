@@ -90,7 +90,12 @@ internal class LinearBreaksHelper(
                 // don't allow ticks to go beyond the range
                 tick = min(tick, end)
 
-                breaks.add(tick)
+                if (SeriesUtil.isLooksLikeZero(tick, step)) {
+                    breaks.add(0.0)
+                } else {
+                    breaks.add(tick)
+                }
+
                 tick += step
             }
 
