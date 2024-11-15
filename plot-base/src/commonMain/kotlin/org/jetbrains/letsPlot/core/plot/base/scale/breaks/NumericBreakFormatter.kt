@@ -65,13 +65,11 @@ internal class NumericBreakFormatter(
 
         // use comma only for large enough numbers.
         val comma = 4 <= domain10Power
-        // use trim to replace 2.00 -> 2
-        val trim = type == "g"
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
             precision = precision.toInt(),
-            trim = trim,
+            trim = true,
             type = type,
             expType = expFormat.notationType,
             minExp = minExp,
