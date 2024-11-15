@@ -12,7 +12,6 @@ import kotlin.math.*
 internal class NumericBreakFormatter(
     value: Double,
     step: Double,
-    allowMetricPrefix: Boolean,
     expFormat: ExponentFormat
 ) {
     private var formatter: NumberFormat
@@ -45,8 +44,10 @@ internal class NumericBreakFormatter(
             domain10Power < 0 && step10Power <= minExp -> domain10Power - step10Power + 1 // one extra digit before the dot in scientific notation
             // large range with large step, so the remaining fraction digits are not significant
             domain10Power >= maxExp && step10Power > 2 -> domain10Power - step10Power + 1
-            step10Power > 0 -> ceil(domain10Power)
-            else -> ceil(domain10Power) - step10Power
+            // integer values
+            step10Power > 0 -> ceil(domain10Power) // could contain fraction digits because of scientific notation
+            // always has fraction digits
+            else -> ceil(domain10Power) - step10Power // size of fraction part (-step10Power) + size of integer part
         }
         // type is integer only for steps larger than 1, when there is no breaks using scientific notation
         val type = if (step10Power > max(0, minExp) && domain10Power < maxExp) {

@@ -12,12 +12,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumericBreakFormatterTest {
-    @Suppress("PrivatePropertyName")
-    private val TYPE_S_MAX = 1e26 // see NumberFormat.TYPE_S_MAX
-
     @Test
     fun formatZero() {
-        val formatter = NumericBreakFormatter(0.0, 0.0, true, expFormat = ExponentFormat(ExponentNotationType.E))
+        val formatter = NumericBreakFormatter(0.0, 0.0, expFormat = ExponentFormat(ExponentNotationType.E))
         assertEquals("0", formatter.apply(0))
     }
 
@@ -45,7 +42,7 @@ class NumericBreakFormatterTest {
         val values = List(n) { i -> min(min + i * step, Double.MAX_VALUE) }
         val formatterStep = (max - min) / 100
         val formatters = values.map {
-            NumericBreakFormatter(it, formatterStep, false, expFormat = ExponentFormat(ExponentNotationType.E))
+            NumericBreakFormatter(it, formatterStep, expFormat = ExponentFormat(ExponentNotationType.E))
         }
         return values.mapIndexed { i, v -> formatters[i].apply(v) }
     }

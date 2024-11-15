@@ -285,7 +285,6 @@ class NumberTickFormatTest {
             val formatter = NumericBreakFormatter(
                 domain,
                 step,
-                allowMetricPrefix = true,
                 expFormat = expFormat
             )
             return formatter.apply(number)
@@ -295,7 +294,6 @@ class NumberTickFormatTest {
             val formatter = NumericBreakFormatter(
                 domainAndStep[0],
                 domainAndStep[1],
-                allowMetricPrefix = false,
                 expFormat = expFormat
             )
             return formatter.apply(number)
