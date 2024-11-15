@@ -255,4 +255,25 @@ class DecimalTest {
         assertEquals(Decimal("0", "9", ""), Decimal.fromNumber(0.9).iRound(3))
 
     }
+
+    @Test
+    fun toFloating_1234_56789() {
+        Decimal("1234", "56789", "").toFloating().let {
+            assertEquals(Floating(1, "23456789", 3), it)
+        }
+    }
+
+    @Test
+    fun toFloating_WithLongFraction() {
+        Decimal("1234", "123456789123456789123456789123456789123456789", "").toFloating().let {
+            assertEquals(Floating(1, "234123456789123456789123456789123456789123456789", 3), it)
+        }
+    }
+
+    @Test
+    fun toFloating_WithLongWholePart() {
+        Decimal("123456789123456789123456789123456789123456789", "1234", "").toFloating().let {
+            assertEquals(Floating(1, "234567891234567891234567891234567891234567891234", 44), it)
+        }
+    }
 }
