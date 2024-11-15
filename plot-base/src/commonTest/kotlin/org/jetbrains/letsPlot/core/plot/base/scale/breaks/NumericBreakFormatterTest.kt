@@ -21,67 +21,34 @@ class NumericBreakFormatterTest {
         assertEquals("0", formatter.apply(0))
     }
 
+    // TODO
+    /*
     @Test
-    fun formatExtremesTypeS() {
-        // TODO: Undo
-        /*
-        assertEquals(
-            listOf("-100Y", "-75Y", "-50Y", "-25Y", "0"),
-            formatRange(
-                min = -TYPE_S_MAX,
-                max = 0.0,
-                metricPrefix = true
-            )
-        )
-
-        assertEquals(
-            listOf("0", "25Y", "50Y", "75Y", "100Y"),
-            formatRange(
-                min = 0.0,
-                max = TYPE_S_MAX,
-                metricPrefix = true
-            )
-        )
-
-        assertEquals(
-            listOf("-100Y", "-50Y", "0", "50Y", "100Y"),
-            formatRange(
-                min = -TYPE_S_MAX,
-                max = TYPE_S_MAX,
-                metricPrefix = true
-            )
-        )
-        */
-    }
-
-    @Test
-    fun formatExtremesTypeE() {
-        // TODO: Undo
-        /*
+    fun formatExtremesTypeG() {
         assertEquals(
             listOf("-1.80e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
-            formatRange(min = -Double.MAX_VALUE, max = 0.0, metricPrefix = false)
+            formatRange(min = -Double.MAX_VALUE, max = 0.0)
         )
 
         assertEquals(
             listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.80e+308"),
-            formatRange(min = 0.0, max = Double.MAX_VALUE, metricPrefix = false)
+            formatRange(min = 0.0, max = Double.MAX_VALUE)
         )
 
         assertEquals(
             listOf("-8.99e+307", "-4.49e+307", "0", "4.49e+307", "8.99e+307"),
-            formatRange(min = -Double.MAX_VALUE / 2, max = Double.MAX_VALUE / 2, metricPrefix = false)
+            formatRange(min = -Double.MAX_VALUE / 2, max = Double.MAX_VALUE / 2)
         )
-        */
     }
+    */
 
-    private fun formatRange(min: Double, max: Double, metricPrefix: Boolean): List<String> {
+    private fun formatRange(min: Double, max: Double): List<String> {
         val n = 5
         val step = (max - min) / (n - 1)
         val values = List(n) { i -> min(min + i * step, Double.MAX_VALUE) }
         val formatterStep = (max - min) / 100
         val formatters = values.map {
-            NumericBreakFormatter(it, formatterStep, metricPrefix, expFormat = ExponentFormat(ExponentNotationType.E))
+            NumericBreakFormatter(it, formatterStep, false, expFormat = ExponentFormat(ExponentNotationType.E))
         }
         return values.mapIndexed { i, v -> formatters[i].apply(v) }
     }

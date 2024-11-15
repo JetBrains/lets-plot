@@ -221,7 +221,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("v: 10.0")
+            expectedLines = listOf("v: 10")
         )
     }
 }

@@ -334,14 +334,13 @@ class TooltipConfigTest {
 
         val generalExpectedLine = listOf(
             "y max: 11.5",
-            "upper: 8.7",
-            "middle: 6.9",
+            "upper: 8.65",
+            "middle: 6.85",
             "lower: 6.1",
             "y min: 4.2"
         )
         val generalLines = getGeneralTooltipStrings(geomLayer)
-        // TODO: Update expected values
-        // assertTooltipStrings(generalExpectedLine, generalLines)
+        assertTooltipStrings(generalExpectedLine, generalLines)
     }
 
     @Test
