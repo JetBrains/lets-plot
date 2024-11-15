@@ -37,10 +37,9 @@ class NumberFormat(spec: Spec) {
             val widthStr = width.takeIf { width != DEF_WIDTH }?.toString() ?: ""
             val trimStr = "~".takeIf { trim } ?: ""
             val expTypeStr = expType.symbol
-            val minExpOrNull = minExp.takeIf { minExp != DEF_MIN_EXP }?.toString()
-            val maxExpOrNull = maxExp.takeIf { maxExp != precision }?.toString()
-            val limitsStr = if (minExpOrNull != null && maxExpOrNull != null) "{$minExpOrNull,$maxExpOrNull}" else ""
-            return "$fill$align$sign$symbol$zeroStr$widthStr$commaStr.$precision$trimStr$type&$expTypeStr$limitsStr"
+            val minExpStr = minExp.takeIf { minExp != DEF_MIN_EXP }?.toString() ?: ""
+            val maxExpStr = maxExp.takeIf { maxExp != precision }?.toString() ?: ""
+            return "$fill$align$sign$symbol$zeroStr$widthStr$commaStr.$precision$trimStr$type&$expTypeStr{$minExpStr,$maxExpStr}"
         }
     }
 
