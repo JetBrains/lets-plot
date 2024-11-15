@@ -39,8 +39,9 @@ internal class NumericBreakFormatter(
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
 
+        val minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP
         var precision = -step10Power
-        if (domain10Power < 0 && step10Power < -4) {
+        if (domain10Power < 0 && step10Power <= minExp) {
             precision = domain10Power - step10Power + 1
         } else if (domain10Power > 7 && step10Power > 2) {
             precision = domain10Power - step10Power
@@ -68,7 +69,7 @@ internal class NumericBreakFormatter(
             trim = trim,
             type = type,
             expType = expFormat.notationType,
-            minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP,
+            minExp = minExp,
             maxExp = expFormat.max ?: DEF_MAX_EXP,
         ))
     }
