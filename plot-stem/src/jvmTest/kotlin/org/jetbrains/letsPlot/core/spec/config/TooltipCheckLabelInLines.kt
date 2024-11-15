@@ -34,7 +34,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.00")
+            expectedLines = listOf("10")
         )
     }
 
@@ -75,7 +75,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00", "n: 20.00")
+            expectedLines = listOf("y: 10", "n: 20")
         )
     }
 
@@ -123,7 +123,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00")
+            expectedLines = listOf("y: 10")
         )
     }
 
@@ -144,7 +144,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.00")
+            expectedLines = listOf("y: 10")
         )
     }
 
@@ -165,7 +165,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.00")
+            expectedLines = listOf("10")
         )
     }
 
@@ -191,7 +191,7 @@ class TooltipCheckLabelInLines {
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("10.0")
+            expectedLines = listOf("10")
         )
     }
 

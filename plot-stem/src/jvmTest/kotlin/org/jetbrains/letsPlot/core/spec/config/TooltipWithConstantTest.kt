@@ -124,7 +124,7 @@ class TooltipWithConstantTest {
         val layer = getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf( "size: 1.00", "xintercept: 0.25")
+            expectedLines = listOf( "size: 1", "xintercept: 0.25")
         )
     }
 
@@ -177,7 +177,7 @@ class TooltipWithConstantTest {
         val layer = getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("xintercept: 0.25",  "size: 1.00")
+            expectedLines = listOf("xintercept: 0.25",  "size: 1")
         )
     }
 

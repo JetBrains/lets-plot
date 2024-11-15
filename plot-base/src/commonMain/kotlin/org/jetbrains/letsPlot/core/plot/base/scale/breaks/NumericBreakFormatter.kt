@@ -6,16 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.log10
+import kotlin.math.*
 
 internal class NumericBreakFormatter(
     value: Double,
     step: Double,
-    allowMetricPrefix: Boolean,
     expFormat: ExponentFormat
 ) {
     private var formatter: NumberFormat
@@ -37,47 +33,46 @@ internal class NumericBreakFormatter(
         }
 
 
-        var type = "f"
-        var comma = false
+        val minExp = expFormat.min ?: DEF_MIN_EXP
+        val maxExp = expFormat.max ?: DEF_MAX_EXP
 
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
 
-        var precision = -step10Power
-        var scientificNotation = false
-        if (domain10Power < 0 && step10Power < -4) {
-            scientificNotation = true
-            type = "e"
-            precision = domain10Power - step10Power
-        } else if (domain10Power > 7 && step10Power > 2) {
-            scientificNotation = true
-            precision = domain10Power - step10Power
+        val precision = when {
+            // values is between 0 and 1, formatted with scientific notation
+            domain10Power < 0 && step10Power <= minExp -> domain10Power - step10Power + 1 // one extra digit before the dot in scientific notation
+            // large range with large step, so the remaining fraction digits are not significant
+            domain10Power >= maxExp && step10Power > 2 -> domain10Power - step10Power + 1
+            // integer values
+            step10Power > 0 -> ceil(domain10Power) // could contain fraction digits because of scientific notation
+            // always has fraction digits
+            else -> ceil(domain10Power) - step10Power // size of fraction part (-step10Power) + size of integer part
         }
-
-        if (precision < 0) {
-            precision = 0.0
-            type = "d"
-        }
-        // round-up precision unless it's very close to smaller int.
-        precision = ceil(precision - 0.001)
-
-        if (scientificNotation) {
-            // generate 'engineering notation', in which the exponent is a multiple of three
-            type = if (domain10Power > 0 && allowMetricPrefix && expFormat.notationType == ExponentNotationType.E) "s" else "e"
+        // type is integer only for steps larger than 1, when there is no breaks using scientific notation
+        val type = if (step10Power > max(0, minExp) && domain10Power < maxExp) {
+            "d"
         } else {
-            comma = true
+            "g"
         }
-        // Use trim to replace 2.00·10^5 -> 2·10^5
-        val trim = type == "e" && expFormat.notationType in setOf(ExponentNotationType.POW, ExponentNotationType.POW_FULL)
+        // use comma only for large enough numbers
+        val comma = 4 <= domain10Power
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
-            precision = precision.toInt(),
-            trim = trim,
+            precision = ceil(precision - 0.001).toInt(), // round-up precision unless it's very close to smaller int
+            trim = true,
             type = type,
-            expType = expFormat.notationType
+            expType = expFormat.notationType,
+            minExp = minExp,
+            maxExp = maxExp,
         ))
     }
 
     fun apply(value: Any): String = formatter.apply(value as Number)
+
+    companion object {
+        const val DEF_MIN_EXP = -5
+        const val DEF_MAX_EXP = 7
+    }
 }

@@ -118,7 +118,6 @@ internal class LinearBreaksHelper(
             val formatter = NumericBreakFormatter(
                 referenceValue,
                 step,
-                allowMetricPrefix = true,
                 expFormat = expFormat
             )
             return formatter::apply
