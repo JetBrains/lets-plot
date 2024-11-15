@@ -40,27 +40,32 @@ internal class NumericBreakFormatter(
         val step10Power = log10(step)
 
         val minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP
+        val maxExp = expFormat.max ?: DEF_MAX_EXP
         var precision = -step10Power
-        if (domain10Power < 0 && step10Power <= minExp) {
-            precision = domain10Power - step10Power + 1
-        } else if (domain10Power > 7 && step10Power > 2) {
+        if (domain10Power < 0 && step10Power <= minExp) { // values is between 0 and 1; formatted with scientific notation
+            val fractionPrecision = domain10Power - step10Power
+            precision = fractionPrecision + 1 // one extra digit before the dot in scientific notation
+        } else if (domain10Power > 7 && step10Power > 2) { // large range with large step, so the remaining digits are not significant
             precision = domain10Power - step10Power
+            if (domain10Power >= maxExp) {
+                precision += 1 // one extra digit before the dot in scientific notation
+            }
         }
 
         if (precision < 0) {
             precision = 0.0
             type = "d"
         } else {
-            if (domain10Power > 0) {
+            if (domain10Power > 0 && (domain10Power <= 7 || step10Power <= 2)) { // not to large values, so digits before the dot are significant
                 precision += ceil(domain10Power)
             }
         }
         // round-up precision unless it's very close to smaller int.
         precision = ceil(precision - 0.001)
 
-        // Use comma only for large enough numbers.
+        // use comma only for large enough numbers.
         val comma = 4 <= domain10Power
-        // Use trim to replace 2.00·10^5 -> 2·10^5
+        // use trim to replace 2.00 -> 2
         val trim = type == "g"
 
         formatter = NumberFormat(NumberFormat.Spec(
@@ -70,7 +75,7 @@ internal class NumericBreakFormatter(
             type = type,
             expType = expFormat.notationType,
             minExp = minExp,
-            maxExp = expFormat.max ?: DEF_MAX_EXP,
+            maxExp = maxExp,
         ))
     }
 

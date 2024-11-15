@@ -21,17 +21,15 @@ class NumericBreakFormatterTest {
         assertEquals("0", formatter.apply(0))
     }
 
-    // TODO
-    /*
     @Test
     fun formatExtremesTypeG() {
         assertEquals(
-            listOf("-1.80e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
+            listOf("-1.8e+308", "-1.35e+308", "-8.99e+307", "-4.49e+307", "0"),
             formatRange(min = -Double.MAX_VALUE, max = 0.0)
         )
 
         assertEquals(
-            listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.80e+308"),
+            listOf("0", "4.49e+307", "8.99e+307", "1.35e+308", "1.8e+308"),
             formatRange(min = 0.0, max = Double.MAX_VALUE)
         )
 
@@ -40,7 +38,6 @@ class NumericBreakFormatterTest {
             formatRange(min = -Double.MAX_VALUE / 2, max = Double.MAX_VALUE / 2)
         )
     }
-    */
 
     private fun formatRange(min: Double, max: Double): List<String> {
         val n = 5

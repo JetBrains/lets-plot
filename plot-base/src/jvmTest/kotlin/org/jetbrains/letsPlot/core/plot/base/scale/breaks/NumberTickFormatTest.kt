@@ -204,16 +204,16 @@ class NumberTickFormatTest {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
         assertEquals("1.05e+8", format(1e8 + 5e6, domainAndStep))
         assertEquals("5e+7", format(5e7, domainAndStep))
-        // TODO: assertEquals("5e+7", format(5e7 + 5, domainAndStep))
+        assertEquals("5e+7", format(5e7 + 5, domainAndStep))
         assertEquals( "5.5e+7", format(5e7 + 5e6, domainAndStep))
 
         assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
-        // TODO: assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
         assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
         assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
 
         assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
-        // TODO: assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
         assertEquals( "5.5·\\(10^{7}\\)", format(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
         assertEquals("1.05·\\(10^{8}\\)", format(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
     }
@@ -223,17 +223,17 @@ class NumberTickFormatTest {
         val domainAndStep = doubleArrayOf(1e8, 5e6)
 
         assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
-        // TODO: assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
         assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
         assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
 
         assertEquals("5·\\(10^{7}\\)", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
-        // TODO: assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5·\\(10^{7}\\)", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
         assertEquals("5.5·\\(10^{7}\\)", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
         assertEquals("1.05·\\(10^{8}\\)", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
 
-        // TODO: assertEquals("5.00e+7", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.E)))
-        // TODO: assertEquals("5.00e+7", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("5e+7", formatScientific(5e7, domainAndStep, ExponentFormat(ExponentNotationType.E)))
+        assertEquals("5e+7", formatScientific(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.E)))
         assertEquals("5.5e+7", formatScientific(5e7 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
         assertEquals("1.05e+8", formatScientific(1e8 + 5e6, domainAndStep, ExponentFormat(ExponentNotationType.E)))
     }
