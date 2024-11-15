@@ -3,6 +3,7 @@
 ### Added
 
 ### Changed
+- The `g` format type no longer uses truncation by default. To enable it, use `~` (e.g., `~g`).
   
 ### Fixed
 
