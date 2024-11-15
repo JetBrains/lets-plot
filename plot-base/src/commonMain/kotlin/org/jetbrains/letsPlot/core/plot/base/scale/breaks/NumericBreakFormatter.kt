@@ -34,41 +34,32 @@ internal class NumericBreakFormatter(
         }
 
 
-        var type = "g"
+        val minExp = expFormat.min ?: DEF_MIN_EXP
+        val maxExp = expFormat.max ?: DEF_MAX_EXP
 
         val domain10Power = log10(abs(value))
         val step10Power = log10(step)
 
-        val minExp = expFormat.min ?: NumberFormat.DEF_MIN_EXP
-        val maxExp = expFormat.max ?: DEF_MAX_EXP
-        var precision = -step10Power
-        if (domain10Power < 0 && step10Power <= minExp) { // values is between 0 and 1; formatted with scientific notation
-            val fractionPrecision = domain10Power - step10Power
-            precision = fractionPrecision + 1 // one extra digit before the dot in scientific notation
-        } else if (domain10Power > 7 && step10Power > 2) { // large range with large step, so the remaining digits are not significant
-            precision = domain10Power - step10Power
-            if (domain10Power >= maxExp) {
-                precision += 1 // one extra digit before the dot in scientific notation
-            }
+        val precision = when {
+            // values is between 0 and 1, formatted with scientific notation
+            domain10Power < 0 && step10Power <= minExp -> domain10Power - step10Power + 1 // one extra digit before the dot in scientific notation
+            // large range with large step, so the remaining fraction digits are not significant
+            domain10Power >= maxExp && step10Power > 2 -> domain10Power - step10Power + 1
+            step10Power > 0 -> ceil(domain10Power)
+            else -> ceil(domain10Power) - step10Power
         }
-
-        if (precision < 0) {
-            precision = 0.0
-            type = "d"
+        // type is integer only for steps larger than 1, when there is no breaks using scientific notation
+        val type = if (step10Power > max(0, minExp) && domain10Power < maxExp) {
+            "d"
         } else {
-            if (domain10Power > 0 && (domain10Power <= 7 || step10Power <= 2)) { // not to large values, so digits before the dot are significant
-                precision += ceil(domain10Power)
-            }
+            "g"
         }
-        // round-up precision unless it's very close to smaller int.
-        precision = ceil(precision - 0.001)
-
-        // use comma only for large enough numbers.
+        // use comma only for large enough numbers
         val comma = 4 <= domain10Power
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
-            precision = precision.toInt(),
+            precision = ceil(precision - 0.001).toInt(), // round-up precision unless it's very close to smaller int
             trim = true,
             type = type,
             expType = expFormat.notationType,
@@ -80,6 +71,7 @@ internal class NumericBreakFormatter(
     fun apply(value: Any): String = formatter.apply(value as Number)
 
     companion object {
-        const val DEF_MAX_EXP = 6
+        const val DEF_MIN_EXP = -5
+        const val DEF_MAX_EXP = 7
     }
 }

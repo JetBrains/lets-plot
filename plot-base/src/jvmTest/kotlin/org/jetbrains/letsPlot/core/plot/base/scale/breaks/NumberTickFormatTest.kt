@@ -187,16 +187,29 @@ class NumberTickFormatTest {
     }
 
     @Test
+    fun domain_larger() {
+        val domainAndStep = doubleArrayOf(1e7, 5.0)
+        assertEquals("5,000,000", format(5e6, domainAndStep))
+        assertEquals("5,000,005", format(5e6 + 5, domainAndStep))
+
+        assertEquals("5,000,000", format(5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5,000,005", format(5e6 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+
+        assertEquals("5,000,000", format(5e6, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5,000,005", format(5e6 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+    }
+
+    @Test
     fun domain_ultraLarge() {
         val domainAndStep = doubleArrayOf(1e8, 5.0)
-        assertEquals("50,000,000", format(5e7, domainAndStep))
-        assertEquals("50,000,005", format(5e7 + 5, domainAndStep))
+        assertEquals("5e+7", format(5e7, domainAndStep))
+        assertEquals("5.0000005e+7", format(5e7 + 5, domainAndStep))
 
-        assertEquals("50,000,000", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
-        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
+        assertEquals("5.0000005·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW)))
 
-        assertEquals("50,000,000", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
-        assertEquals("50,000,005", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5·\\(10^{7}\\)", format(5e7, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
+        assertEquals("5.0000005·\\(10^{7}\\)", format(5e7 + 5, domainAndStep, ExponentFormat(ExponentNotationType.POW_FULL)))
     }
 
     @Test
