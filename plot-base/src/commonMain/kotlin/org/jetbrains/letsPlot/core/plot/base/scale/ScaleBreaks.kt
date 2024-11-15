@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Spec
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.Transform
@@ -128,7 +130,10 @@ class ScaleBreaks private constructor(
 
 
     companion object {
-        val IDENTITY_FORMATTER: (Any) -> String = { v -> v.toString() }
+        fun genericFormatter(v: Any): String = when (v) {
+            is Number -> NumberFormat(Spec(type = "g", trim = true)).apply(v)
+            else -> v.toString()
+        }
 
         private val DUMMY_FORMATTER: (Any) -> String =
             { v -> throw IllegalStateException("An attempt to format $v using 'dummy formatter'.") }
@@ -280,7 +285,7 @@ class ScaleBreaks private constructor(
             formatter: ((Any) -> String)? = null
         ): ScaleBreaks {
             @Suppress("NAME_SHADOWING")
-            val formatter = formatter ?: ScaleBreaks.IDENTITY_FORMATTER
+            val formatter = formatter ?: ::genericFormatter
             return ScaleBreaks(
                 domainValues = domainValues,
                 transformedValues = domainValues,
