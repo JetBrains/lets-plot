@@ -41,7 +41,7 @@ internal class NumericBreakFormatter(
 
         var precision = -step10Power
         if (domain10Power < 0 && step10Power < -4) {
-            precision = domain10Power - step10Power
+            precision = domain10Power - step10Power + 1
         } else if (domain10Power > 7 && step10Power > 2) {
             precision = domain10Power - step10Power
         }
