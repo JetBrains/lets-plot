@@ -10,17 +10,9 @@ import kotlin.test.assertEquals
 
 class NumberFormatTypeETest {
     @Test
-    fun hackForNumericBreaksFormatter() {
-        val f = NumberFormat("e")
-        assertEquals("0.000000", f.apply(0))
-
-        // should be
-        //assertEquals("0.000000e+0", f.apply(0))
-    }
-
-    @Test
     fun canOutputExponentNotation() {
         val f = NumberFormat("e")
+        assertEquals("0.000000e+0", format("e", 0))
         assertEquals("4.200000e+1", f.apply(42))
         assertEquals("4.200000e+7", f.apply(42000000))
         assertEquals("4.200000e+8", f.apply(420000000))
@@ -66,4 +58,15 @@ class NumberFormatTypeETest {
     fun rounding() {
         assertEquals("1.234568e+0", NumberFormat("e").apply(1.23456789))
     }
+
+    @Test
+    fun round_9_9999999eMINUS9_precision_6() {
+        assertEquals("1.000000e-8", NumberFormat(".6e").apply(9.9999999e-9))
+    }
+
+    @Test
+    fun round_9_9eMINUS9_precision_0() {
+        assertEquals("1e-8", NumberFormat(".0e").apply(9.9e-9))
+    }
+
 }

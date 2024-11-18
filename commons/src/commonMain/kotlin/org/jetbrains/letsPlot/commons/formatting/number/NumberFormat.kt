@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType.entries
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.roundToLong
@@ -126,18 +127,9 @@ class NumberFormat(spec: Spec) {
         val formattedNumber = when (spec.type) {
             "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
             "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5 -> "1.500000"
-            "d" -> formatDecimalNotation(
-                number,
-                precision = 0
-            ) // rounded to integer, e.g. 1.5 -> "2"
-            "%" -> formatDecimalNotation(
-                number.shiftDecimalPoint(2),
-                spec.precision
-            ) // percentage, e.g. 0.015 -> "1.500000%"
-            "g" -> generalFormat(
-                number,
-                spec.precision
-            ) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
+            "d" -> formatDecimalNotation(number, precision = 0) // rounded to integer, e.g. 1.5 -> "2"
+            "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
+            "g" -> generalFormat(number, spec.precision) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
             "s" -> siPrefixFormat(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
             "c" -> FormattedNumber(number.wholePart)
             "b" -> FormattedNumber(number.toDouble().absoluteValue.roundToLong().toString(2))
@@ -197,30 +189,48 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
-        // TODO: move zero check to the NumericBreakFormatter
-        val exponentString = if (!number.isZero) buildExponentString(number) else ""
-
         val normalized = normalize(number)
 
         if (precision > -1) {
-            val formattedNumber = formatDecimalNotation(normalized, precision)
-            return formattedNumber.copy(exponentialPart = exponentString, expType = spec.expType)
-        }
+            var exp = number.toFloating().exp
+            var rounded = normalized.fRound(precision)
 
-        val fractionString = if (normalized.isDecimalPartZero) "" else normalized.decimalPart
-        return FormattedNumber(normalized.wholePart, fractionString, exponentString, spec.expType)
-    }
+            if (rounded.wholeValue == 10L) { // 9.999 -> 10.0 -> 1.0e+1
+                rounded = rounded.shiftDecimalPoint(-1)
+                exp++
+            }
 
-    private fun buildExponentString(number: Decimal): String {
-        return if (spec.expType != ExponentNotationType.E) {
-            when {
-                number.asFloating.exp == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
-                number.asFloating.exp == 1 && spec.minExp < 1 && spec.maxExp > 1 -> MULT_SIGN + "10"
-                else -> MULT_SIGN + "\\(10^{${number.asFloating.exp}}\\)"
+            return if (rounded.isDecimalPartZero) {
+                FormattedNumber(
+                    integerPart = rounded.wholePart,
+                    fractionalPart = "0".repeat(precision),
+                    exponentialPart = buildExponentString(exp),
+                    expType = spec.expType
+                )
+            } else {
+                FormattedNumber(
+                    integerPart = rounded.wholePart,
+                    fractionalPart = rounded.decimalPart.padEnd(precision, '0'),
+                    exponentialPart = buildExponentString(exp),
+                    expType = spec.expType
+                )
             }
         } else {
-            val expSign = if (number.asFloating.exp.sign >= 0) "+" else ""
-            "e$expSign${number.asFloating.exp}"
+            return FormattedNumber(
+                integerPart = normalized.wholePart,
+                fractionalPart = if (normalized.isDecimalPartZero) "" else normalized.decimalPart,
+                exponentialPart = if (number.isZero) "" else buildExponentString(number.asFloating.exp),
+                expType = spec.expType
+            )
+        }
+    }
+
+    private fun buildExponentString(exp: Int): String = when (spec.expType) {
+        ExponentNotationType.E -> "e${if (exp.sign >= 0) "+" else ""}$exp"
+        ExponentNotationType.POW, ExponentNotationType.POW_FULL -> when {
+            exp == 0 && spec.minExp < 0 && spec.maxExp > 0 -> ""
+            exp == 1 && spec.minExp < 1 && spec.maxExp > 1 -> "${MULT_SIGN}10"
+            else -> "$MULT_SIGN\\(10^{$exp}\\)"
         }
     }
 

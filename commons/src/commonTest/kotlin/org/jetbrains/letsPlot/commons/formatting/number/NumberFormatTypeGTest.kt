@@ -10,9 +10,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class NumberFormatTypeGTest {
-    private fun format(v: Number, spec: String): String = NumberFormat(spec).apply(v)
-    private fun format(spec: String): NumberFormat = NumberFormat(spec)
-
     @Test
     fun gToE() {
         // Not yet enough digits to use exponential notation
@@ -353,5 +350,10 @@ class NumberFormatTypeGTest {
         assertEquals("0.00", format(0.0, ".3g"))
         assertEquals("0.000", format(0.0, ".4g"))
         assertEquals("0.0000", format(0.0, ".5g"))
+    }
+
+    @Test
+    fun round_9_9999999eMINUS9() {
+        assertEquals("1e-8", format(9.9999999e-9, "~g"))
     }
 }

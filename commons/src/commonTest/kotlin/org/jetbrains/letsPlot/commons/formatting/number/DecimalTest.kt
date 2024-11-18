@@ -276,4 +276,12 @@ class DecimalTest {
             assertEquals(Floating(1, "234567891234567891234567891234567891234567891234", 44), it)
         }
     }
+
+    @Test
+    fun asd() {
+        val v = Decimal.fromNumber(9.999999999999999e-9)
+        println(v)
+        println(v.toFloating())
+        println(v.fRound(6))
+    }
 }
