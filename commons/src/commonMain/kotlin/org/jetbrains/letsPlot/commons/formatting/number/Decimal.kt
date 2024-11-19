@@ -196,5 +196,17 @@ internal class Decimal internal constructor(
                 }
             }
         }
+
+        fun fromFloating(floating: Floating): Decimal {
+            if (floating == Floating.ZERO) {
+                return ZERO
+            }
+
+            return Decimal(
+                wholePart = floating.wholePart,
+                decimalPart = floating.decimalPart,
+                sign = floating.sign
+            )
+        }
     }
 }

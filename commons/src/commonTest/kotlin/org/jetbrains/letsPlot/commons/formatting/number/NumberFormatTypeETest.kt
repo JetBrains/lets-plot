@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Spec
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -23,6 +24,16 @@ class NumberFormatTypeETest {
 
         assertEquals("4e+1", NumberFormat(".0e").apply(42))
         assertEquals("4.200e+1", NumberFormat(".3e").apply(42))
+    }
+
+    @Test
+    fun noPrecision() {
+        assertEquals("0", NumberFormat(Spec(type="e", precision = -1)).apply(0.0))
+        assertEquals("1e-1", NumberFormat(Spec(type="e", precision = -1)).apply(0.1))
+        assertEquals("1e+0", NumberFormat(Spec(type="e", precision = -1)).apply(1.0))
+        assertEquals("1e+1", NumberFormat(Spec(type="e", precision = -1)).apply(10.0))
+        assertEquals("1e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.0))
+        assertEquals("1.00123e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.123))
     }
 
     @Test
@@ -69,4 +80,11 @@ class NumberFormatTypeETest {
         assertEquals("1e-8", NumberFormat(".0e").apply(9.9e-9))
     }
 
+    @Test
+    fun zero() {
+        assertEquals("0.000000e+0", NumberFormat("e").apply(0.0))
+        assertEquals("0e+0", NumberFormat(".0e").apply(0.0))
+        assertEquals("0.0e+0", NumberFormat(".1e").apply(0.0))
+        assertEquals("0", NumberFormat(Spec(type="e", precision = -1)).apply(0.0))
+    }
 }

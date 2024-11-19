@@ -43,6 +43,9 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
             else -> error("Unexpected state: $exp")
         }
 
+    val asDecimal: Decimal
+        get() = Decimal.fromFloating(this)
+
     fun round(precision: Int): Floating {
         if (precision < 0) {
             error("Precision should be non-negative, but was $precision")
