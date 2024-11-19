@@ -41,13 +41,13 @@ with open(os.path.join(this_dir, python_package, '_version.py')) as f:
 with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+static_link_libraries_list = ['lets_plot_python_extension']
+
 if this_system == 'Darwin':
-    stdcpp_lib = 'c++'
-    # fix for "ImportError: dlopen(...) Symbol not found: _NSGenericException" on macOS
-    extra_link = ['-framework', 'Foundation', '-lz']
+    extra_link = []
 
 elif this_system == 'Windows':
-    stdcpp_lib = 'stdc++'
+    static_link_libraries_list += ['stdc++']
     # fix python package build with Kotlin v1.7.20 (and later) on Windows.
     extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
@@ -55,7 +55,7 @@ elif this_system == 'Windows':
     distutils.cygwinccompiler.get_msvcr = lambda: []
 
 elif this_system == 'Linux':
-    stdcpp_lib = 'stdc++'
+    static_link_libraries_list += ['stdc++']
     extra_link = ['-lz']
 
 else:
@@ -111,7 +111,7 @@ setup(name='lets-plot',
       ext_modules=[
           Extension('lets_plot_kotlin_bridge',
                     include_dirs=[binaries_build_path],
-                    libraries=['lets_plot_python_extension', stdcpp_lib],
+                    libraries=static_link_libraries_list,
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
                     sources=[kotlin_bridge_src],
