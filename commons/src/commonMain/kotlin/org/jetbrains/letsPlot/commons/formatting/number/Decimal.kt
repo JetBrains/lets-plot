@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.Arithmetic.add
+import org.jetbrains.letsPlot.commons.formatting.number.Arithmetic.round
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -53,18 +55,18 @@ internal class Decimal internal constructor(
         if (wholePart == "0") {
             val significandDigitPos = decimalPart.indexOfFirst { it != '0' }
             if (significandDigitPos == -1) {
-                return Floating(0, "0", 0)
+                return Floating(0, "0", 0, sign)
             }
 
             val i = decimalPart[significandDigitPos].digitToInt()
             val e = -(significandDigitPos + 1)
             val fracPart = decimalPart.drop(significandDigitPos + 1)
-            return Floating(i, fracPart, e)
+            return Floating(i, fracPart, e, sign)
         } else {
             val i = wholePart[0].digitToInt()
             val e = wholePart.length - 1
             val fracPart = wholePart.drop(1) + decimalPart
-            return Floating(i, fracPart, e)
+            return Floating(i, fracPart, e, sign)
         }
     }
 
@@ -185,60 +187,6 @@ internal class Decimal internal constructor(
             }
 
             return Decimal(intPart, fracPart, sign)
-        }
-
-        // Add two numbers represented as strings.
-        // Returns a pair of the result and a carry flag (true if the result has an additional digit).
-        private fun add(a: String, b: String): Pair<String, Boolean> {
-            val maxLength = maxOf(a.length, b.length)
-            val range = (0 until maxLength).reversed()
-
-            val deltaA = a.length - maxLength
-            val deltaB = b.length - maxLength
-
-            var carry = 0
-            val result = CharArray(maxLength)
-            for (i in range) {
-                val va = a.getOrNull(i + deltaA)?.digitToInt() ?: 0
-                val vb = b.getOrNull(i + deltaB)?.digitToInt() ?: 0
-                val sum = va + vb + carry
-                result[i] = '0' + (sum % 10)
-                carry = sum / 10
-            }
-
-            return if (carry == 0) {
-                result.concatToString() to false
-            } else {
-                ("1" + result.concatToString()) to true
-            }
-        }
-
-        private fun carryOnRound(number: String): Boolean {
-            when (number.length) {
-                0 -> return false
-                1 -> return number.single() >= '5'
-                else -> {
-                    if (number.first() >= '5') return true
-                    if (number.first() == '5' && number.asSequence().drop(1).any { it > '0' }) return true
-                    return false
-                }
-            }
-        }
-
-        private fun round(number: String, precision: Int): Pair<String, Boolean> {
-            val trailingPart = number.takeLast(number.length - precision)
-            val significantPart = number.take(precision)
-
-            val carry = carryOnRound(trailingPart)
-
-            val (fRoundedRestPart, carryFromFracToInt) = when {
-                significantPart.isEmpty() -> "" to carry // round to integer - no fractional part
-                else -> add(significantPart, if (carry) "1" else "0")
-            }
-
-            val resultFracPart = if (carryFromFracToInt) fRoundedRestPart.drop(1) else fRoundedRestPart
-
-            return resultFracPart to carryFromFracToInt
         }
 
         private fun iRound(number: String, precision: Int): Pair<String, Boolean> {
