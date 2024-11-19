@@ -154,7 +154,7 @@ class NumberFormat(spec: Spec) {
             return formatDecimalNotation(Decimal.ZERO, significantDigitsCount - 1)
         }
 
-        if (number.isWholePartZero && number.toFloating().exp > spec.minExp) {
+        if (number.isWholePartZero && number.asFloating.exp > spec.minExp) {
             // -1 for the zero in the whole part
             return formatDecimalNotation(number, significantDigitsCount - 1 - number.asFloating.exp)
         }
@@ -189,10 +189,10 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
-        val normalized = normalize(number)
+        val normalized = number.shiftDecimalPoint(-number.asFloating.exp)
 
         if (precision > -1) {
-            var exp = number.toFloating().exp
+            var exp = number.asFloating.exp
             var rounded = normalized.fRound(precision)
 
             if (rounded.wholeValue == 10L) { // 9.999 -> 10.0 -> 1.0e+1
@@ -235,7 +235,7 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun siPrefixFormat(number: Decimal, precision: Int = -1): FormattedNumber {
-        val siPrefix = siPrefixFromExp(number.toFloating().exp)
+        val siPrefix = siPrefixFromExp(number.asFloating.exp)
 
         // 23_456.789 -> 23.456_789k
         // 0.000_123_456 -> 123.456u
@@ -363,10 +363,6 @@ class NumberFormat(spec: Spec) {
     }
 
     companion object {
-        // 123.456 -> 1.23456E+2
-        internal fun normalize(decimal: Decimal): Decimal {
-            return decimal.shiftDecimalPoint(-decimal.toFloating().exp)
-        }
 
         fun isValidPattern(spec: String) = NUMBER_REGEX.matches(spec)
 

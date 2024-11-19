@@ -49,26 +49,7 @@ internal class Decimal internal constructor(
         return "$sign$wholePart.$decimalPart".toDouble()
     }
 
-    val asFloating: Floating by lazy { toFloating() }
-
-    fun toFloating(): Floating {
-        if (wholePart == "0") {
-            val significandDigitPos = decimalPart.indexOfFirst { it != '0' }
-            if (significandDigitPos == -1) {
-                return Floating(0, "0", 0, sign)
-            }
-
-            val i = decimalPart[significandDigitPos].digitToInt()
-            val e = -(significandDigitPos + 1)
-            val fracPart = decimalPart.drop(significandDigitPos + 1)
-            return Floating(i, fracPart, e, sign)
-        } else {
-            val i = wholePart[0].digitToInt()
-            val e = wholePart.length - 1
-            val fracPart = wholePart.drop(1) + decimalPart
-            return Floating(i, fracPart, e, sign)
-        }
-    }
+    val asFloating: Floating by lazy { Floating.fromDecimal(this) }
 
     // Shift decimal point to the left (shift < 0) or to the right (shift > 0).
     fun shiftDecimalPoint(shift: Int): Decimal {
