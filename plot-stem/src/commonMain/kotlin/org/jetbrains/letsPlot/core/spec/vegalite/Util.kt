@@ -75,8 +75,8 @@ internal object Util {
     ): Mapping {
         val groupingVar = encoding.getString(Channel.DETAIL, Encoding.FIELD)
         return encoding.entries.map { (channel, encoding) ->
-                channel as String
-                encoding as Map<*, *>
+                channel as? String ?: return@map emptyList()
+                encoding as? Map<*, *> ?: return@map emptyList()
                 val field = encoding.getString(Encoding.FIELD) ?: return@map emptyList()
                 val aesthetics = channelToAes(channel, customChannelMapping)
                 aesthetics.map { aes -> aes to field}
@@ -129,8 +129,8 @@ internal object Util {
         val dataMeta = DataMetaOptions()
 
         encodingVegaSpec.entries.forEach { (channel, encoding) ->
-            channel as String
-            encoding as Map<*, *>
+            channel as? String ?: return@forEach
+            encoding as? Map<*, *> ?: return@forEach
 
             if (channel == Channel.X2 || channel == Channel.Y2) {
                 // secondary channels in vega-lite don't affect axis type
