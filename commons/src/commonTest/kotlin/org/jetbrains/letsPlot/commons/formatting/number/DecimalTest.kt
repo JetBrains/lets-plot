@@ -80,22 +80,22 @@ class DecimalTest {
 
     @Test
     fun toFloating1_0() {
-        Decimal.fromNumber(1.0).asFloating.let {
-            assertEquals(Floating.fromScientific(1, "0", 0), it)
+        Decimal.fromNumber(1.0).asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(1, "0", 0), it)
         }
     }
 
     @Test
     fun toFloating0_1() {
-        Decimal.fromNumber(0.1).asFloating.let {
-            assertEquals(Floating.fromScientific(1, "0", -1), it)
+        Decimal.fromNumber(0.1).asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(1, "0", -1), it)
         }
     }
 
     @Test
     fun toFloating234_567() {
-        Decimal.fromNumber(234.567).asFloating.let {
-            assertEquals(Floating.fromScientific(i = 2, fraction = "34567", exp = 2), it)
+        Decimal.fromNumber(234.567).asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(i = 2, fraction = "34567", exp = 2), it)
         }
     }
 
@@ -258,22 +258,22 @@ class DecimalTest {
 
     @Test
     fun toFloating_1234_56789() {
-        Decimal("1234", "56789", "").asFloating.let {
-            assertEquals(Floating.fromScientific(1, "23456789", 3), it)
+        Decimal("1234", "56789", "").asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(1, "23456789", 3), it)
         }
     }
 
     @Test
     fun toFloating_WithLongFraction() {
-        Decimal("1234", "123456789123456789123456789123456789123456789", "").asFloating.let {
-            assertEquals(Floating.fromScientific(1, "234123456789123456789123456789123456789123456789", 3), it)
+        Decimal("1234", "123456789123456789123456789123456789123456789", "").asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(1, "234123456789123456789123456789123456789123456789", 3), it)
         }
     }
 
     @Test
     fun toFloating_WithLongWholePart() {
-        Decimal("123456789123456789123456789123456789123456789", "1234", "").asFloating.let {
-            assertEquals(Floating.fromScientific(1, "234567891234567891234567891234567891234567891234", 44), it)
+        Decimal("123456789123456789123456789123456789123456789", "1234", "").asNormalizedFloat.let {
+            assertEquals(NormalizedFloat.fromScientific(1, "234567891234567891234567891234567891234567891234", 44), it)
         }
     }
 
@@ -281,7 +281,7 @@ class DecimalTest {
     fun asd() {
         val v = Decimal.fromNumber(9.999999999999999e-9)
         println(v)
-        println(v.asFloating)
+        println(v.asNormalizedFloat)
         println(v.fRound(6))
     }
 }

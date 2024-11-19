@@ -154,9 +154,9 @@ class NumberFormat(spec: Spec) {
             return formatDecimalNotation(Decimal.ZERO, significantDigitsCount - 1)
         }
 
-        if (number.isWholePartZero && number.asFloating.exp > spec.minExp) {
+        if (number.isWholePartZero && number.asNormalizedFloat.exp > spec.minExp) {
             // -1 for the zero in the whole part
-            return formatDecimalNotation(number, significantDigitsCount - 1 - number.asFloating.exp)
+            return formatDecimalNotation(number, significantDigitsCount - 1 - number.asNormalizedFloat.exp)
         }
 
         if (!number.isWholePartZero && number.wholePart.length <= maxExp) {
@@ -190,9 +190,9 @@ class NumberFormat(spec: Spec) {
 
     private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
         if (precision > -1) {
-            val rounded = number.asFloating.round(precision)
+            val rounded = number.asNormalizedFloat.round(precision)
             return FormattedNumber(
-                integerPart = rounded.i.toString(),
+                integerPart = rounded.significand.toString(),
                 fractionalPart = rounded.fraction.take(precision).padEnd(precision, '0'),
                 exponentialPart = buildExponentString(rounded.exp),
                 expType = spec.expType
@@ -202,9 +202,9 @@ class NumberFormat(spec: Spec) {
                 return FormattedNumber("0", "", "")
             }
 
-            val floating = number.asFloating
+            val floating = number.asNormalizedFloat
             return FormattedNumber(
-                integerPart = floating.i.toString(),
+                integerPart = floating.significand.toString(),
                 fractionalPart = floating.fraction.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
                 exponentialPart = buildExponentString(floating.exp),
                 expType = spec.expType
@@ -222,7 +222,7 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun siPrefixFormat(number: Decimal, precision: Int = -1): FormattedNumber {
-        val siPrefix = siPrefixFromExp(number.asFloating.exp)
+        val siPrefix = siPrefixFromExp(number.asNormalizedFloat.exp)
 
         // 23_456.789 -> 23.456_789k
         // 0.000_123_456 -> 123.456u

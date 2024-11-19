@@ -8,25 +8,25 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-internal class Floating private constructor(// 1..9 or 0 for 0.0
-    val i: Int,
-    fraction: String,
+internal class NormalizedFloat private constructor(
+    val significand: Int, // 1..9 or 0 for 0.0
+    fraction: String, // "0" for zero, never contains trailing zeros
     exp: Int,
     val sign: String = ""
 ) {
     val fraction: String = fraction.trimEnd('0').takeIf { it.isNotEmpty() } ?: "0" // never empty
-    val exp: Int = exp.takeIf { i != 0 || this.fraction != "0" } ?: 0
+    val exp: Int = exp.takeIf { significand != 0 || this.fraction != "0" } ?: 0
 
     init {
-        if (this.i == 0) require(this.fraction == "0") { "i should be in 0..9, but was ${this.i}" }
-        if (this.i != 0) require(this.i in 1..9) { "i should be in 0..9, but was ${this.i}" }
+        if (this.significand == 0) require(this.fraction == "0") { "i should be in 0..9, but was ${this.significand}" }
+        if (this.significand != 0) require(this.significand in 1..9) { "i should be in 0..9, but was ${this.significand}" }
         require(this.fraction == "0" || this.fraction.last() != '0') { "fraction should not end with '0'" }
     }
 
     val decimalPart: String
         get() = when {
             exp == 0 -> fraction
-            exp < 0 -> "0".repeat(-exp - 1) + i.digitToChar() + (fraction.takeIf { it != "0" } ?: "")
+            exp < 0 -> "0".repeat(-exp - 1) + significand.digitToChar() + (fraction.takeIf { it != "0" } ?: "")
             exp > 0 -> when {
                 fraction == "0" -> "0"
                 else -> fraction.drop(exp).takeIf(String::isNotEmpty) ?: "0"
@@ -37,16 +37,16 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
 
     val wholePart: String
         get() = when {
-            exp == 0 -> i.toString()
+            exp == 0 -> significand.toString()
             exp < 0 -> "0"
-            exp > 0 -> i.digitToChar() + fraction.take(exp) + "0".repeat((exp - fraction.length).coerceAtLeast(0))
+            exp > 0 -> significand.digitToChar() + fraction.take(exp) + "0".repeat((exp - fraction.length).coerceAtLeast(0))
             else -> error("Unexpected state: $exp")
         }
 
     val asDecimal: Decimal
         get() = Decimal.fromFloating(this)
 
-    fun round(precision: Int): Floating {
+    fun round(precision: Int): NormalizedFloat {
         if (precision < 0) {
             error("Precision should be non-negative, but was $precision")
         }
@@ -57,13 +57,13 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
 
         val (roundedFraction, carry) = Arithmetic.round(fraction, precision)
         return if (carry) {
-            if (i == 9) {
-                Floating(1, "0$roundedFraction", exp + 1, sign)
+            if (significand == 9) {
+                NormalizedFloat(1, "0$roundedFraction", exp + 1, sign)
             } else {
-                Floating(i + 1, roundedFraction, exp, sign)
+                NormalizedFloat(significand + 1, roundedFraction, exp, sign)
             }
         } else {
-            Floating(i, roundedFraction, exp, sign)
+            NormalizedFloat(significand, roundedFraction, exp, sign)
         }
     }
 
@@ -71,9 +71,9 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as Floating
+        other as NormalizedFloat
 
-        if (i != other.i) return false
+        if (significand != other.significand) return false
         if (fraction != other.fraction) return false
         if (exp != other.exp) return false
 
@@ -81,18 +81,18 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
     }
 
     override fun hashCode(): Int {
-        var result = i
+        var result = significand
         result = 31 * result + fraction.hashCode()
         result = 31 * result + exp
         return result
     }
 
     override fun toString(): String {
-        return "Floating(i=$i, fraction='$fraction', e=$exp)"
+        return "Floating(i=$significand, fraction='$fraction', e=$exp)"
     }
 
     companion object {
-        fun fromNumber(number: Number): Floating? {
+        fun fromNumber(number: Number): NormalizedFloat? {
             val dbl = number.toDouble()
 
             if (dbl == 0.0) return ZERO
@@ -101,7 +101,7 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
 
             val sign = if (dbl.sign < 0) "-" else ""
 
-            val (intStr, fracStr, exponentString) =
+            val (significandStr, fractionStr, exponentString) =
                 "^(\\d+)\\.?(\\d+)?e?([+-]?\\d+)?\$"
                     .toRegex()
                     .find(dbl.absoluteValue.toString().lowercase())
@@ -109,25 +109,25 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
                     ?: error("Wrong number: $number")
 
             return if (exponentString.isNotEmpty()) { // scientific notation
-                require(intStr.length == 1)
-                Floating(intStr.toInt(), fracStr, exponentString.toInt(), sign)
+                require(significandStr.length == 1)
+                NormalizedFloat(significandStr.toInt(), fractionStr, exponentString.toInt(), sign)
             } else { // decimal number
                 when {
                     dbl.absoluteValue < 1.0 -> {
-                        val significantDigitPos = fracStr.indexOfFirst { it != '0' }
-                        val wholePart = fracStr[significantDigitPos]
-                        val decimalPart = fracStr.drop(significantDigitPos + 1)
+                        val significantDigitPos = fractionStr.indexOfFirst { it != '0' }
+                        val significand = fractionStr[significantDigitPos]
+                        val fraction = fractionStr.drop(significantDigitPos + 1)
                         val exp = -significantDigitPos - 1
 
-                        Floating(wholePart.digitToInt(), decimalPart, exp, sign)
+                        NormalizedFloat(significand.digitToInt(), fraction, exp, sign)
                     }
 
                     dbl.absoluteValue >= 1.0 -> {
-                        val (wholePart, decimalPartStart) = intStr.take(1).toInt() to intStr.drop(1)
-                        val decimalPart = decimalPartStart + fracStr
-                        val exp = decimalPartStart.length
+                        val (significand, fractionPartStart) = significandStr.take(1).toInt() to significandStr.drop(1)
+                        val fraction = fractionPartStart + fractionStr
+                        val exp = fractionPartStart.length
 
-                        Floating(wholePart, decimalPart, exp, sign)
+                        NormalizedFloat(significand, fraction, exp, sign)
                     }
 
                     else -> error("Unexpected number: $number")
@@ -135,7 +135,7 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
             }
         }
 
-        internal fun fromDecimal(number: Decimal): Floating {
+        internal fun fromDecimal(number: Decimal): NormalizedFloat {
             if (number.wholePart == "0") {
                 val significandDigitPos = number.decimalPart.indexOfFirst { it != '0' }
                 if (significandDigitPos == -1) {
@@ -145,20 +145,20 @@ internal class Floating private constructor(// 1..9 or 0 for 0.0
                 val i = number.decimalPart[significandDigitPos].digitToInt()
                 val e = -(significandDigitPos + 1)
                 val fracPart = number.decimalPart.drop(significandDigitPos + 1)
-                return Floating(i, fracPart, e, number.sign)
+                return NormalizedFloat(i, fracPart, e, number.sign)
             } else {
                 val i = number.wholePart[0].digitToInt()
                 val e = number.wholePart.length - 1
                 val fracPart = number.wholePart.drop(1) + number.decimalPart
-                return Floating(i, fracPart, e, number.sign)
+                return NormalizedFloat(i, fracPart, e, number.sign)
             }
         }
 
-        internal fun fromScientific(i: Int, fraction: String, exp: Int, sign: String = ""): Floating {
-            return Floating(i, fraction, exp, sign)
+        internal fun fromScientific(i: Int, fraction: String, exp: Int, sign: String = ""): NormalizedFloat {
+            return NormalizedFloat(i, fraction, exp, sign)
         }
 
-        val ZERO = Floating(0, "0", 0, "")
+        val ZERO = NormalizedFloat(0, "0", 0, "")
     }
 
 }
