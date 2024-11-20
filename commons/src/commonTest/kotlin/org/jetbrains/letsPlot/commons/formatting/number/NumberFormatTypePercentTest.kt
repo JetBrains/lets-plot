@@ -19,6 +19,7 @@ class NumberFormatTypePercentTest {
         assertEquals("-4%", f.apply(-0.042))
         assertEquals("-42%", f.apply(-0.42))
         assertEquals("-420%", f.apply(-4.2))
+
     }
 
     @Test
@@ -38,5 +39,14 @@ class NumberFormatTypePercentTest {
         assertEquals("         42%         ", NumberFormat("^21.0%").apply(.42))
         assertEquals("       42,200%       ", NumberFormat("^21,.0%").apply(422))
         assertEquals("      -42,200%       ", NumberFormat("^21,.0%").apply(-422))
+    }
+
+    @Test
+    fun carryToWholePart() {
+        assertEquals("900.00%", NumberFormat(".2%").apply(8.99999))
+        assertEquals("99999999.990%", NumberFormat(".3%").apply(999999.9999))
+        assertEquals("999.90%", NumberFormat(".2%").apply(9.999))
+        assertEquals("999.9%", NumberFormat(".1%").apply(9.999))
+        assertEquals("100000000.000%", NumberFormat(".3%").apply(999999.999999))
     }
 }

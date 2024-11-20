@@ -126,8 +126,8 @@ class NumberFormat(spec: Spec) {
     private fun computeBody(res: Output, number: Decimal): Output {
         val formattedNumber = when (spec.type) {
             "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
-            "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5 -> "1.500000"
-            "d" -> formatDecimalNotation(number, precision = 0) // rounded to integer, e.g. 1.5 -> "2"
+            "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
+            "d" -> FormattedNumber(number.fRound(0).wholePart) // rounded to integer, e.g. 1.5 -> "2"
             "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
             "g" -> generalFormat(number, spec.precision) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
             "s" -> siPrefixFormat(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
@@ -166,31 +166,27 @@ class NumberFormat(spec: Spec) {
         return formatExponentNotation(number, (significantDigitsCount - 1).coerceAtLeast(0))
     }
 
+    // (9.925, 0) -> "10"
+    // (123.925, 0) -> "124"
+    // (1.925, 6) -> "1.925000"
+    // (1.925, 2) -> "1.93"
+    // (12345678, 2) -> "12345678.00"
     private fun formatDecimalNotation(number: Decimal, precision: Int): FormattedNumber {
         if (precision <= 0) {
             return FormattedNumber(number.fRound(0).wholePart)
         }
 
-        val rounded = number.fRound(precision)
+        val floating = number.asNormalizedFloat
+        val fRounded = floating.toDecimalPrecision(precision)
 
-        val completePrecision = if (number.wholePart.length < rounded.wholePart.length) {
-            precision - 1
-        } else {
-            precision
-        }
+        val (w, d) = fRounded.toDecimalStr(precision)
 
-        if (rounded.isDecimalPartZero) {
-            return FormattedNumber(rounded.wholePart, "0".repeat(completePrecision))
-        }
-
-        val fractionString = rounded.decimalPart.padEnd(completePrecision, '0')
-
-        return FormattedNumber(rounded.wholePart, fractionString)
+        return FormattedNumber(w, d)
     }
 
-    private fun formatExponentNotation(number: Decimal, precision: Int = -1): FormattedNumber {
+    private fun formatExponentNotation(number: Decimal, precision: Int): FormattedNumber {
         if (precision > -1) {
-            val rounded = number.asNormalizedFloat.round(precision)
+            val rounded = number.asNormalizedFloat.toPrecision(precision)
             return FormattedNumber(
                 integerPart = rounded.significand.toString(),
                 fractionalPart = rounded.fraction.take(precision).padEnd(precision, '0'),
@@ -198,6 +194,10 @@ class NumberFormat(spec: Spec) {
                 expType = spec.expType
             )
         } else {
+            // Format without ".0" fractional part when number with one significant digit (e.g., 1.0, 0.1, 0.0004)
+            // 0.0 -> "0"
+            // 1.0 -> "1e+0"
+            // 0.1 -> "1e-1"
             if (number.isZero) {
                 return FormattedNumber("0", "", "")
             }

@@ -39,32 +39,55 @@ internal class NormalizedFloat private constructor(
         get() = when {
             exp == 0 -> significand.toString()
             exp < 0 -> "0"
-            exp > 0 -> significand.digitToChar() + fraction.take(exp) + "0".repeat((exp - fraction.length).coerceAtLeast(0))
+            exp > 0 -> significand.digitToChar() + fraction.take(exp) + "0".repeat(
+                (exp - fraction.length).coerceAtLeast(
+                    0
+                )
+            )
+
             else -> error("Unexpected state: $exp")
         }
 
-    val asDecimal: Decimal
-        get() = Decimal.fromFloating(this)
-
-    fun round(precision: Int): NormalizedFloat {
-        if (precision < 0) {
-            error("Precision should be non-negative, but was $precision")
+    // if decimalPartLength < 0 -> keep all decimal places (e.g. (1.2399) -> "1" to "2399")
+    // if decimalPartLength > decimalPart.length -> pad with '0' (e.g., (1.23, 4) -> "1" to "2300")
+    // if decimalPartLength < decimalPart.length -> truncate (e.g., (1.2399, 2) -> "1" to "23")
+    fun toDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
+        return when {
+            decimalPartLength < 0 -> wholePart to decimalPart
+            else -> wholePart to decimalPart.take(decimalPartLength).padEnd(decimalPartLength, '0')
         }
+    }
+
+    // (1.925e-5, -7) -> 1.93e-5
+    fun toDecimalPrecision(precision: Int): NormalizedFloat {
+        return toPrecision(maxOf(0, precision + exp))
+    }
+
+    // precision: the length of the fraction part to keep
+    // precision == 0 -> round to the significant digit, make the fraction part empty
+    // precision < 0 => exception
+    // (1.925e-5, 2) -> 1.93e-5
+    fun toPrecision(precision: Int): NormalizedFloat {
+        require(precision >= 0) { "Precision should be non-negative, but was $precision" }
 
         if (precision > fraction.length) {
             return this
         }
 
-        val (roundedFraction, carry) = Arithmetic.round(fraction, precision)
-        return if (carry) {
-            if (significand == 9) {
-                NormalizedFloat(1, "0$roundedFraction", exp + 1, sign)
+        val fracPrecision = maxOf(precision, 0)
+        val (roundedFraction, carry) = Arithmetic.round(fraction, fracPrecision)
+
+
+        return    if (carry) {
+                if (significand == 9) {
+                    NormalizedFloat(1, "0$roundedFraction", exp + 1, sign)
+                } else {
+                    NormalizedFloat(significand + 1, roundedFraction, exp, sign)
+                }
             } else {
-                NormalizedFloat(significand + 1, roundedFraction, exp, sign)
+                NormalizedFloat(significand, roundedFraction, exp, sign)
             }
-        } else {
-            NormalizedFloat(significand, roundedFraction, exp, sign)
-        }
+
     }
 
     override fun equals(other: Any?): Boolean {
@@ -160,5 +183,4 @@ internal class NormalizedFloat private constructor(
 
         val ZERO = NormalizedFloat(0, "0", 0, "")
     }
-
 }

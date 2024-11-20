@@ -66,4 +66,48 @@ class NumberFormatTypeFTest {
         assertEquals("0.000000", NumberFormat("f").apply(-0))
         assertEquals("0.000000", NumberFormat("f").apply(-1e-12))
     }
+
+    @Test
+    fun carryToWholePart() {
+        assertEquals("9.00", NumberFormat(".2f").apply(8.999))
+        assertEquals("10.00", NumberFormat(".2f").apply(9.999))
+        assertEquals("10.0", NumberFormat(".1f").apply(9.999))
+        assertEquals("1000000.000", NumberFormat(".3f").apply(999999.9999))
+    }
+
+    @Test
+    fun verySmallNumberWithCarry() {
+        val number = 9.995e-17
+
+        assertEquals("0.00000000000000009995", format(".20f", number))
+        assertEquals("0.0000000000000001000", format(".19f", number))
+        assertEquals("0.000000000000000100", format(".18f", number))
+        assertEquals("0.00000000000000010", format(".17f", number))
+        assertEquals("0.0000000000000001", format(".16f", number))
+        assertEquals("0.000000000000000", format(".15f", number))
+        assertEquals("0.000000", format("f", number))
+    }
+
+    @Test
+    fun verySmallNumberWithoutCarry() {
+        val number = 1.234e-5
+
+        assertEquals("0.0000", format(".4f", number))
+        assertEquals("0.00001234", format(".8f", number))
+        assertEquals("0.0000123", format(".7f", number))
+        assertEquals("0.000012", format(".6f", number))
+        assertEquals("0.00001", format(".5f", number))
+        assertEquals("0.000", format(".3f", number))
+        assertEquals("0.000012", format("f", number))
+    }
+
+    @Test
+    fun veryBigNumber() {
+        val number = 9.995e17
+
+        assertEquals("999500000000000000.000000", format("f", number))
+        assertEquals("999500000000000000.00000000000000000000", format(".20f", number))
+        assertEquals("999500000000000000", format(".0f", number))
+    }
+
 }

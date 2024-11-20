@@ -29,10 +29,12 @@ class NumberFormatTypeETest {
     @Test
     fun noPrecision() {
         assertEquals("0", NumberFormat(Spec(type="e", precision = -1)).apply(0.0))
+        assertEquals("1e+0", NumberFormat(Spec(type="e", precision = -1)).apply(1.0))
         assertEquals("1e-1", NumberFormat(Spec(type="e", precision = -1)).apply(0.1))
         assertEquals("1e+0", NumberFormat(Spec(type="e", precision = -1)).apply(1.0))
         assertEquals("1e+1", NumberFormat(Spec(type="e", precision = -1)).apply(10.0))
         assertEquals("1e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.0))
+        assertEquals("5e+2", NumberFormat(Spec(type="e", precision = -1)).apply(500.0))
         assertEquals("1.00123e+2", NumberFormat(Spec(type="e", precision = -1)).apply(100.123))
     }
 
