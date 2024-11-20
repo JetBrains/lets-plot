@@ -59,7 +59,7 @@ class LayerConfigUtilTest {
         doCheck(
             GeomName.TEXT,
             withPos("identity") + mapOf("nudge_x" to 0.2),
-            mapOf("name" to "nudge", "x" to 0.2)
+            mapOf("name" to "composition", "first" to mapOf("name" to "identity"), "second" to mapOf("name" to "nudge", "x" to 0.2))
         )
         doCheck(
             GeomName.TEXT,
