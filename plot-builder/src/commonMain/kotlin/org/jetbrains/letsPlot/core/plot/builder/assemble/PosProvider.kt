@@ -135,5 +135,17 @@ abstract class PosProvider {
                 }
             }
         }
+
+        fun composition(firstProvider: PosProvider, secondProvider: PosProvider): PosProvider {
+            return object : PosProvider() {
+                override fun createPos(ctx: PosProviderContext): PositionAdjustment {
+                    return PositionAdjustments.composition(firstProvider.createPos(ctx), secondProvider.createPos(ctx))
+                }
+
+                override fun handlesGroups(): Boolean {
+                    return firstProvider.handlesGroups() && secondProvider.handlesGroups()
+                }
+            }
+        }
     }
 }

@@ -70,6 +70,10 @@ object PositionAdjustments {
         return JitterDodgePos(aesthetics, groupCount, width, jitterWidth, jitterHeight, seed)
     }
 
+    fun composition(firstPos: PositionAdjustment, secondPos: PositionAdjustment): PositionAdjustment {
+        return CompositionPos(firstPos, secondPos)
+    }
+
     enum class Meta(private val handlesGroups: Boolean) {
         IDENTITY(false),
         DODGE(true),

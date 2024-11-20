@@ -40,7 +40,7 @@ internal object LayerConfigUtil {
                 }
             }
 
-            hasOwnPositionOptions -> preferredPosOptions
+            hasOwnPositionOptions -> mapOf(Option.Meta.NAME to "composition", "first" to specifiedPosOptions, "second" to preferredPosOptions)
             else -> specifiedPosOptions
         }
     }
