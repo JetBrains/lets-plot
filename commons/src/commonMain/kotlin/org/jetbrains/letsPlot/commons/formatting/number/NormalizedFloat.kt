@@ -48,7 +48,7 @@ internal class NormalizedFloat private constructor(
             else -> error("Unexpected state: $exp")
         }
 
-    // if decimalPartLength < 0 -> keep all decimal places (e.g. (1.2399) -> "1" to "2399")
+    // if decimalPartLength < 0 -> keep all decimal places (e.g. (1.2399, -1) -> "1" to "2399")
     // if decimalPartLength > decimalPart.length -> pad with '0' (e.g., (1.23, 4) -> "1" to "2300")
     // if decimalPartLength < decimalPart.length -> truncate (e.g., (1.2399, 2) -> "1" to "23")
     fun toDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
