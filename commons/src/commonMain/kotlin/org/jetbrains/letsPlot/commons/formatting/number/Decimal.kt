@@ -49,7 +49,7 @@ internal class Decimal internal constructor(
         return "$sign$wholePart.$decimalPart".toDouble()
     }
 
-    val asNormalizedFloat: NormalizedFloat by lazy { NormalizedFloat.fromDecimal(this) }
+    val asFloat: NormalizedFloat by lazy { NormalizedFloat.fromDecimal(this) }
 
     // Shift decimal point to the left (shift < 0) or to the right (shift > 0).
     fun shiftDecimalPoint(shift: Int): Decimal {

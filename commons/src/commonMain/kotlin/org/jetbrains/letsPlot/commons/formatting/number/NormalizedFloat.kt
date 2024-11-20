@@ -77,16 +77,15 @@ internal class NormalizedFloat private constructor(
         val fracPrecision = maxOf(precision, 0)
         val (roundedFraction, carry) = Arithmetic.round(fraction, fracPrecision)
 
-
-        return    if (carry) {
-                if (significand == 9) {
-                    NormalizedFloat(1, "0$roundedFraction", exp + 1, sign)
-                } else {
-                    NormalizedFloat(significand + 1, roundedFraction, exp, sign)
-                }
+        return if (carry) {
+            if (significand == 9) {
+                NormalizedFloat(1, "0$roundedFraction", exp + 1, sign)
             } else {
-                NormalizedFloat(significand, roundedFraction, exp, sign)
+                NormalizedFloat(significand + 1, roundedFraction, exp, sign)
             }
+        } else {
+            NormalizedFloat(significand, roundedFraction, exp, sign)
+        }
 
     }
 

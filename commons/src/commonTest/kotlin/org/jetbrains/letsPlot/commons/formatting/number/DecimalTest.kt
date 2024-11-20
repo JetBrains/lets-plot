@@ -80,21 +80,21 @@ class DecimalTest {
 
     @Test
     fun toFloating1_0() {
-        Decimal.fromNumber(1.0).asNormalizedFloat.let {
+        Decimal.fromNumber(1.0).asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(1, "0", 0), it)
         }
     }
 
     @Test
     fun toFloating0_1() {
-        Decimal.fromNumber(0.1).asNormalizedFloat.let {
+        Decimal.fromNumber(0.1).asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(1, "0", -1), it)
         }
     }
 
     @Test
     fun toFloating234_567() {
-        Decimal.fromNumber(234.567).asNormalizedFloat.let {
+        Decimal.fromNumber(234.567).asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(i = 2, fraction = "34567", exp = 2), it)
         }
     }
@@ -258,21 +258,21 @@ class DecimalTest {
 
     @Test
     fun toFloating_1234_56789() {
-        Decimal("1234", "56789", "").asNormalizedFloat.let {
+        Decimal("1234", "56789", "").asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(1, "23456789", 3), it)
         }
     }
 
     @Test
     fun toFloating_WithLongFraction() {
-        Decimal("1234", "123456789123456789123456789123456789123456789", "").asNormalizedFloat.let {
+        Decimal("1234", "123456789123456789123456789123456789123456789", "").asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(1, "234123456789123456789123456789123456789123456789", 3), it)
         }
     }
 
     @Test
     fun toFloating_WithLongWholePart() {
-        Decimal("123456789123456789123456789123456789123456789", "1234", "").asNormalizedFloat.let {
+        Decimal("123456789123456789123456789123456789123456789", "1234", "").asFloat.let {
             assertEquals(NormalizedFloat.fromScientific(1, "234567891234567891234567891234567891234567891234", 44), it)
         }
     }
@@ -281,7 +281,7 @@ class DecimalTest {
     fun asd() {
         val v = Decimal.fromNumber(9.999999999999999e-9)
         println(v)
-        println(v.asNormalizedFloat)
+        println(v.asFloat)
         println(v.fRound(6))
     }
 }
