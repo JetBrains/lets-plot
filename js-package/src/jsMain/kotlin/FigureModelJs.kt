@@ -9,11 +9,11 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
 import org.w3c.dom.HTMLElement
-import sizing.SizingPolicy
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
@@ -43,6 +43,8 @@ class FigureModelJs internal constructor(
 
     fun updateView(specOverrideJs: dynamic = null) {
 
+        // ToDo: support sizing options
+
         val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
             dynamicObjectToMap(specOverrideJs)
         } else {
@@ -63,10 +65,9 @@ class FigureModelJs internal constructor(
 
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
             plotSpec,
-            monolithicParameters.width,
-            monolithicParameters.height,
-            monolithicParameters.parentElement,
+            monolithicParameters.wrapperElement,
             monolithicParameters.sizingPolicy,
+            monolithicParameters.datalorePreferredWidth,
             monolithicParameters.messageHandler,
         )
 
@@ -105,9 +106,8 @@ class FigureModelJs internal constructor(
 }
 
 internal class MonolithicParameters(
-    val width: Double,
-    val height: Double,
-    val parentElement: HTMLElement,
+    val wrapperElement: HTMLElement,
     val sizingPolicy: SizingPolicy,
+    val datalorePreferredWidth: Double?,
     val messageHandler: MessageHandler,
 )
