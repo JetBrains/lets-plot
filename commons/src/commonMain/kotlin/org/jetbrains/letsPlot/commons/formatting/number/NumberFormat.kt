@@ -142,28 +142,19 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun generalFormat(number: Decimal, precision: Int): FormattedNumber {
-        // Can't be both zero - rounding in decimal notation will give incorrect results
-        // Yet it's ok to have precision > 0 and spec.maxExp == 0 to trigger exponential notation for all numbers,
-        // including integers (e.g. 1 -> 1e+0 to trigger power notation)
-        val (significantDigitsCount, maxExp) = when {
-            precision == 0 && spec.maxExp == 0 -> 1 to 1
-            else -> precision to spec.maxExp
-        }
+        // precision = 0 and maxExp = 0 forces all numbers to be formatted in exponential notation.
+        // Override maxExp to format single digit numbers as decimals  (5 -> "5" instead of "5e+0").
+        val maxExp = spec.maxExp.takeUnless { precision == 0 && it == 0 } ?: 1
 
-        if (number.isZero) {
-            return formatDecimalNotation(Decimal.ZERO, significantDigitsCount - 1)
-        }
+        val significantDigitsCount = maxOf(0, precision - 1) // exclude significant digit
+        val rounded = number.asFloat.toPrecision(significantDigitsCount)
 
-        if (number.isWholePartZero && number.asFloat.exp > spec.minExp) {
-            // -1 for the zero in the whole part
-            return formatDecimalNotation(number, significantDigitsCount - 1 - number.asFloat.exp)
+        return if (rounded.exp > spec.minExp && rounded.exp < maxExp) {
+            val (w, d) = rounded.toDecimalStr(significantDigitsCount - rounded.exp)
+            FormattedNumber(integerPart = w, fractionalPart = d)
+        } else {
+            formatExponentNotation(Decimal.fromFloating(rounded), significantDigitsCount)
         }
-
-        if (!number.isWholePartZero && number.wholePart.length <= maxExp) {
-            return formatDecimalNotation(number, significantDigitsCount - number.wholePart.length)
-        }
-
-        return formatExponentNotation(number, (significantDigitsCount - 1).coerceAtLeast(0))
     }
 
     // (9.925, 0) -> "10"

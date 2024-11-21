@@ -48,9 +48,10 @@ internal class NormalizedFloat private constructor(
             else -> error("Unexpected state: $exp")
         }
 
-    // if decimalPartLength < 0 -> keep all decimal places (e.g. (1.2399, -1) -> "1" to "2399")
-    // if decimalPartLength > decimalPart.length -> pad with '0' (e.g., (1.23, 4) -> "1" to "2300")
-    // if decimalPartLength < decimalPart.length -> truncate (e.g., (1.2399, 2) -> "1" to "23")
+    // (123.99, -1) -> "123" to "99"
+    // (12.3, 4) -> "12" to "3000"
+    // (12.399, 2) -> "12" to "39"
+    // (1.0, -1) -> ("1", "0")
     fun toDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
         return when {
             decimalPartLength < 0 -> wholePart to decimalPart
@@ -74,8 +75,7 @@ internal class NormalizedFloat private constructor(
             return this
         }
 
-        val fracPrecision = maxOf(precision, 0)
-        val (roundedFraction, carry) = Arithmetic.round(fraction, fracPrecision)
+        val (roundedFraction, carry) = Arithmetic.round(fraction, precision)
 
         return if (carry) {
             if (significand == 9) {
@@ -86,7 +86,6 @@ internal class NormalizedFloat private constructor(
         } else {
             NormalizedFloat(significand, roundedFraction, exp, sign)
         }
-
     }
 
     override fun equals(other: Any?): Boolean {
