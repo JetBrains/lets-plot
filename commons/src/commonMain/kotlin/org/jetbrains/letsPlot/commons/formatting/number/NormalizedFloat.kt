@@ -23,6 +23,8 @@ internal class NormalizedFloat private constructor(
         require(this.fraction == "0" || this.fraction.last() != '0') { "fraction should not end with '0'" }
     }
 
+    // Decimal part of a decimal number:
+    // (1.2345678e3) -> 1234.5678 -> "5678"
     val decimalPart: String
         get() = when {
             exp == 0 -> fraction
@@ -35,6 +37,8 @@ internal class NormalizedFloat private constructor(
             else -> error("Unexpected state: $exp")
         }
 
+    // Whole part of a decimal number:
+    // (1.2345678e3) -> 1234.5678 -> "1234"
     val wholePart: String
         get() = when {
             exp == 0 -> significand.toString()
@@ -69,15 +73,15 @@ internal class NormalizedFloat private constructor(
         }
     }
 
-    // (1.925e-5, -7) -> 1.93e-5
+    // Interprets the number as a decimal number:
+    // (1.2345678e3, 2) => (1234.5678, 2) => 1234.57 => 1.23457e3
+    // (1.2345678e3, 0) => (1234.5678, 0) => 1235.0 => 1.235e3
     fun toDecimalPrecision(precision: Int): NormalizedFloat {
         return toPrecision(maxOf(0, precision + exp))
     }
 
     // precision: the length of the fraction part to keep
-    // precision == 0 -> round to the significant digit, make the fraction part empty
-    // precision < 0 => exception
-    // (1.925e-5, 2) -> 1.93e-5
+    // (1.2345678e3, 5) -> 1.23457E3
     fun toPrecision(precision: Int): NormalizedFloat {
         require(precision >= 0) { "Precision should be non-negative, but was $precision" }
 
@@ -96,6 +100,10 @@ internal class NormalizedFloat private constructor(
         } else {
             NormalizedFloat(significand, roundedFraction, exp, sign)
         }
+    }
+
+    fun addExponent(i: Int): NormalizedFloat {
+        return NormalizedFloat(significand, fraction, exp + i, sign)
     }
 
     override fun equals(other: Any?): Boolean {
