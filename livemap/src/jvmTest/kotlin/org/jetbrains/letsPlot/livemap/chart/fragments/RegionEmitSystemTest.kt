@@ -15,11 +15,15 @@ import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
 import org.jetbrains.letsPlot.livemap.core.multitasking.SchedulerSystem
 import org.jetbrains.letsPlot.livemap.geocoding.RegionIdComponent
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraInputSystem
+import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridStateComponent
+import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridUpdateSystem
+import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportPositionUpdateSystem
 import org.junit.Test
 
 class RegionEmitSystemTest : RegionsTestBase() {
     private lateinit var fragmentFoo1: FragmentSpec
     private lateinit var fragmentFoo2: FragmentSpec
+    private lateinit var fragmentFoo00: FragmentSpec
     private lateinit var fragmentFoo11: FragmentSpec
     private lateinit var fragmentFoo12: FragmentSpec
     private lateinit var emptyFragmentFoo3: FragmentSpec
@@ -27,6 +31,8 @@ class RegionEmitSystemTest : RegionsTestBase() {
         super.setUp()
         addSystem(CameraInputSystem(componentManager))
         addSystem(RegionEmitSystem(componentManager))
+        addSystem(ViewportGridUpdateSystem(componentManager))
+        addSystem(ViewportPositionUpdateSystem(componentManager))
         createEntity("FragmentsChange", ChangedFragmentsComponent())
         createEntity("FragmentsResponse", EmittedFragmentsComponent())
         createEntity("EmptyFragments", EmptyFragmentsComponent())
@@ -34,6 +40,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
         val parentLayerEntity: EcsEntity = createEntity("layer")
         fragmentFoo1 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_1)
         fragmentFoo2 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_2)
+        fragmentFoo00 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_00)
         fragmentFoo11 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_11)
         fragmentFoo12 = fragmentSpecWithGeometry(FOO_REGION_ID, QUAD_12)
         emptyFragmentFoo3 = emptyFragmentSpec(FOO_REGION_ID, QUAD_3)
@@ -48,7 +55,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
     }
 
     override val systemsOrder
-        get() = listOf(CameraInputSystem::class, RegionEmitSystem::class, SchedulerSystem::class)
+        get() = listOf(CameraInputSystem::class, ViewportPositionUpdateSystem::class, ViewportGridUpdateSystem::class, RegionEmitSystem::class, SchedulerSystem::class)
 
     override fun afterUpdateCleanup(): List<MockSpec> {
         return listOf(
@@ -97,7 +104,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
             Mocks.cameraUpdate(this).zoom(2),
             Mocks.changedFragments(this)
                 .obsolete(fragmentFoo1, fragmentFoo2)
-                .requested(fragmentFoo11, fragmentFoo12)
+                .requested(fragmentFoo11, fragmentFoo00)
         )
         update(
             Mocks.cachedFragments(this).add(fragmentFoo2),
@@ -107,12 +114,12 @@ class RegionEmitSystemTest : RegionsTestBase() {
         // Fragments from previous zoom should not be used - we are waiting for new fragments
         assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments()
         update(
-            Mocks.cachedFragments(this).add(fragmentFoo11, fragmentFoo12),
-            Mocks.emittedFragments(this).add(fragmentFoo11, fragmentFoo12)
+            Mocks.cachedFragments(this).add(fragmentFoo11, fragmentFoo00),
+            Mocks.emittedFragments(this).add(fragmentFoo11, fragmentFoo00)
         )
 
         // Fragments from current zoom should be attached
-        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo12)
+        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo00)
     }
 
     @Test
@@ -128,15 +135,15 @@ class RegionEmitSystemTest : RegionsTestBase() {
             Mocks.cameraUpdate(this).zoom(2),
             Mocks.changedFragments(this)
                 .obsolete(fragmentFoo1, fragmentFoo2)
-                .requested(fragmentFoo11, fragmentFoo12)
+                .requested(fragmentFoo11, fragmentFoo00)
         )
         update(
-            Mocks.cachedFragments(this).add(fragmentFoo11, fragmentFoo12),
-            Mocks.emittedFragments(this).add(fragmentFoo11, fragmentFoo12)
+            Mocks.cachedFragments(this).add(fragmentFoo11, fragmentFoo00),
+            Mocks.emittedFragments(this).add(fragmentFoo11, fragmentFoo00)
         )
 
         // New zoom fragments are ready and attached
-        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo12)
+        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo00)
 
         // Late receive from previous zoom
         update(
@@ -145,7 +152,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
         )
 
         // Should still use new zoom fragments
-        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo12)
+        assertThatRegion(FOO_REGION_ENTITY_NAME).rendersFragments(fragmentFoo11, fragmentFoo00)
     }
 
     private fun assertThatRegion(name: String): RegionAssert {
@@ -157,6 +164,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
         private val QUAD_1: QuadKey<LonLat> = Utils.quad("1")
         private val QUAD_2: QuadKey<LonLat> = Utils.quad("2")
         private val QUAD_3: QuadKey<LonLat> = Utils.quad("3")
+        private val QUAD_00: QuadKey<LonLat> = Utils.quad("00")
         private val QUAD_11: QuadKey<LonLat> = Utils.quad("11")
         private val QUAD_12: QuadKey<LonLat> = Utils.quad("12")
         private const val FOO_REGION_ENTITY_NAME = "FOO_Region"
