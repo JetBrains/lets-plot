@@ -6,6 +6,8 @@
 package org.jetbrains.letsPlot.livemap.chart.fragment
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.core.canvas.LineCap
 import org.jetbrains.letsPlot.core.canvas.LineJoin
@@ -32,33 +34,28 @@ class RegionRenderer : Renderer {
         val chartElement = entity.get<ChartElementComponent>()
 
         var regionBorder = MultiLineString<World>(emptyList())
+        val fragmentsFaces: ArrayList<Polygon<World>> = ArrayList()
 
         for (fragment in fragments) {
             val fragmentComponent = fragment.get<FragmentComponent>()
-            val clipPath = fragmentComponent.clipPath
             val geometry = fragment.tryGet<WorldGeometryComponent>()?.geometry ?: error("")
 
             regionBorder = MultiLineString(regionBorder.plus(fragmentComponent.boundary))
-
-            ctx.save()
-            ctx.scale(renderHelper.zoomFactor)
-
-            ctx.beginPath()
-            ctx.drawMultiPolygon(clipPath) { nop() }
-            ctx.closePath()
-            ctx.restore()
-            ctx.save()
-            ctx.clip()
-            ctx.scale(renderHelper.zoomFactor)
-
-            ctx.beginPath()
-            ctx.drawMultiPolygon(geometry.multiPolygon) { nop() }
-            ctx.closePath()
-
-            ctx.setFillStyle(chartElement.scaledFillColor())
-            ctx.fill()
-            ctx.restore()
+            fragmentsFaces.addAll(geometry.multiPolygon)
         }
+
+        val regionFace = MultiPolygon(fragmentsFaces)
+
+        ctx.save()
+        ctx.scale(renderHelper.zoomFactor)
+
+        ctx.beginPath()
+        ctx.drawMultiPolygon(regionFace) { nop() }
+        ctx.closePath()
+
+        ctx.setFillStyle(chartElement.scaledFillColor())
+        ctx.fill()
+        ctx.restore()
 
         ctx.save()
         ctx.scale(renderHelper.zoomFactor)

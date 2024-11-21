@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.livemap.config.DevParams
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.DEBUG_GRID
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.MICRO_TASK_EXECUTOR
 import org.jetbrains.letsPlot.livemap.config.DevParams.Companion.PERF_STATS
+import org.jetbrains.letsPlot.livemap.core.Projections
 
 class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
@@ -24,6 +25,8 @@ class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         MICRO_TASK_EXECUTOR.key to DevParams.MicroTaskExecutor.UI_THREAD.name
                         )
                 )
+
+            projection = Projections.conicEqualArea()
 
             geocodingService = Services.devGeocodingService()
             layers {
@@ -42,7 +45,7 @@ class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         )
                     }
                     polygon {
-                        fillColor = Color.GREEN
+                        fillColor = Color.DARK_MAGENTA
                         strokeColor = Color.BLACK
                         strokeWidth = 1.0
                         sizeScalingRange = -2..Int.MAX_VALUE
