@@ -186,13 +186,15 @@ class NumberFormat(spec: Spec) {
                 expType = spec.expType
             )
         } else {
+            if (number.isZero) {
+                // Zero should be formatted as "0" instead of "0e+0"
+                return FormattedNumber("0", "", "")
+            }
+
             // Format without ".0" fractional part when number with one significant digit (e.g., 1.0, 0.1, 0.0004)
             // 0.0 -> "0"
             // 1.0 -> "1e+0"
             // 0.1 -> "1e-1"
-            if (number.isZero) {
-                return FormattedNumber("0", "", "")
-            }
 
             val floating = number.asFloat
             val (s, f) = floating.formatExpStr(precision)
