@@ -52,10 +52,20 @@ internal class NormalizedFloat private constructor(
     // (12.3, 4) -> "12" to "3000"
     // (12.399, 2) -> "12" to "39"
     // (1.0, -1) -> ("1", "0")
-    fun toDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
+    fun formatDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
         return when {
             decimalPartLength < 0 -> wholePart to decimalPart
             else -> wholePart to decimalPart.take(decimalPartLength).padEnd(decimalPartLength, '0')
+        }
+    }
+
+    // (1.2399e2, -1) -> "1", to "2399"
+    // (1.23e1, 4) -> "1", to "2300"
+    // (1.2399e1, 2) -> "1", to "23"
+    fun formatExpStr(expPartLength: Int = -1): Pair<String, String> {
+        return when {
+            expPartLength < 0 -> significand.toString() to fraction
+            else -> significand.toString() to fraction.take(expPartLength).padEnd(expPartLength, '0')
         }
     }
 

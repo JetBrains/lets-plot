@@ -81,12 +81,12 @@ class FloatingTest {
     }
 
     @Test
-    fun roundZero() {
+    fun toPrecisionZero() {
         assertEquals(ZERO, ZERO.toPrecision(0))
     }
 
     @Test
-    fun round_precision_0() {
+    fun toPrecision_precision_0() {
         assertEquals(fromScientific(2, "0", 0), fromScientific(2, "0", 0).toPrecision(0))
         assertEquals(fromScientific(9, "0", -1), fromScientific(9, "0", -1).toPrecision(0))
         assertEquals(fromScientific(1, "0", 0), fromScientific(1, "2", 0).toPrecision(0))
@@ -95,20 +95,20 @@ class FloatingTest {
     }
 
     @Test
-    fun round_precision_1_e0() {
+    fun toPrecision_precision_1_e0() {
         assertEquals(fromScientific(2, "0", -1), fromScientific(2, "0", -1).toPrecision(1))
         assertEquals(fromScientific(2, "3", -1), fromScientific(2, "3", -1).toPrecision(1))
         assertEquals(fromScientific(2, "5", -1), fromScientific(2, "5", -1).toPrecision(1))
     }
 
     @Test
-    fun round_9_9() {
+    fun toPrecision_9_9() {
         val f = fromScientific(9, "9", 0)
         assertEquals(fromScientific(1, "0", 1), f.toPrecision(0))
     }
 
     @Test
-    fun round_123_4_with_precision_2() {
+    fun toPrecision_123_4_with_precision_2() {
         // precision value is higher than the number of digits in the fractional part - no rounding
         val f = fromScientific(1, "234", 2)
         assertEquals(fromScientific(1, "23", 2), f.toPrecision(2))
@@ -116,7 +116,7 @@ class FloatingTest {
 
 
     @Test
-    fun round() {
+    fun toPrecision() {
         val f = fromScientific(1, "234", 0)
         assertEquals(fromScientific(1, "23", 0), f.toPrecision(2))
     }
@@ -141,12 +141,12 @@ class FloatingTest {
     }
 
     @Test
-    fun roundVerySmallNumberWithCarryInSignificant() {
+    fun toPrecisionVerySmallNumberWithCarryInSignificant() {
         assertEquals(fromNumber(1e-38), fromNumber(9.9e-39)!!.toPrecision(0))
     }
 
     @Test
-    fun roundVerySmallNumberWithoutCarry() {
+    fun toPrecisionVerySmallNumberWithoutCarry() {
         assertEquals(fromNumber(1.234e-17), fromNumber(1.234e-17)!!.toPrecision(3))
         assertEquals(fromNumber(1.23e-17), fromNumber(1.234e-17)!!.toPrecision(2))
         assertEquals(fromNumber(1.2e-17), fromNumber(1.234e-17)!!.toPrecision(1))
@@ -154,19 +154,34 @@ class FloatingTest {
     }
 
     @Test
-    fun toDecimalStr() {
-        assertEquals("0" to "0", ZERO.toDecimalStr())
-        assertEquals("1" to "0", fromNumber(1.0)!!.toDecimalStr())
-        assertEquals("0" to "1", fromNumber(0.1)!!.toDecimalStr())
-        assertEquals("0" to "01", fromNumber(0.01)!!.toDecimalStr())
+    fun formatDecimalStr() {
+        assertEquals("0" to "0", ZERO.formatDecimalStr())
+        assertEquals("1" to "0", fromNumber(1.0)!!.formatDecimalStr())
+        assertEquals("0" to "1", fromNumber(0.1)!!.formatDecimalStr())
+        assertEquals("0" to "01", fromNumber(0.01)!!.formatDecimalStr())
     }
 
     @Test
-    fun toDecimalStrWithLength() {
+    fun formatDecimalStrWithLength() {
         val number = fromNumber(123.456)!!
 
-        assertEquals("123" to "456", number.toDecimalStr()) // default
-        assertEquals("123" to "456000", number.toDecimalStr(6)) // padding
-        assertEquals("123" to "45", number.toDecimalStr(2)) // truncation
+        assertEquals("123" to "456", number.formatDecimalStr()) // default
+        assertEquals("123" to "456000", number.formatDecimalStr(6)) // padding
+        assertEquals("123" to "45", number.formatDecimalStr(2)) // truncation
+    }
+
+    @Test
+    fun formatExpStr() {
+        assertEquals("0" to "0", ZERO.formatExpStr())
+        assertEquals("1" to "0", fromNumber(1.0)!!.formatExpStr())
+        assertEquals("1" to "0", fromNumber(0.1)!!.formatExpStr())
+        assertEquals("1" to "0", fromNumber(0.01)!!.formatExpStr())
+
+        // (1.2399e2, -1) -> "1", to "2399"
+        assertEquals("1" to "2399", fromNumber(1.2399e2)!!.formatExpStr(-1))
+        // (1.23e1, 4) -> "1", to "2300"
+        assertEquals("1" to "2300", fromNumber(1.23e1)!!.formatExpStr(4))
+        // (1.2399e1, 2) -> "1", to "23"
+        assertEquals("1" to "23", fromNumber(1.2399e1)!!.formatExpStr(2))
     }
 }

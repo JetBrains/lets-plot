@@ -146,11 +146,11 @@ class NumberFormat(spec: Spec) {
         // Override maxExp to format single digit numbers as decimals  (5 -> "5" instead of "5e+0").
         val maxExp = spec.maxExp.takeUnless { precision == 0 && it == 0 } ?: 1
 
-        val significantDigitsCount = maxOf(0, precision - 1) // exclude significant digit
+        val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
         val rounded = number.asFloat.toPrecision(significantDigitsCount)
 
         return if (rounded.exp > spec.minExp && rounded.exp < maxExp) {
-            val (w, d) = rounded.toDecimalStr(significantDigitsCount - rounded.exp)
+            val (w, d) = rounded.formatDecimalStr(significantDigitsCount - rounded.exp)
             FormattedNumber(integerPart = w, fractionalPart = d)
         } else {
             formatExponentNotation(Decimal.fromFloating(rounded), significantDigitsCount)
@@ -170,7 +170,7 @@ class NumberFormat(spec: Spec) {
         val floating = number.asFloat
         val fRounded = floating.toDecimalPrecision(precision)
 
-        val (w, d) = fRounded.toDecimalStr(precision)
+        val (w, d) = fRounded.formatDecimalStr(precision)
 
         return FormattedNumber(w, d)
     }
@@ -178,9 +178,10 @@ class NumberFormat(spec: Spec) {
     private fun formatExponentNotation(number: Decimal, precision: Int): FormattedNumber {
         if (precision > -1) {
             val rounded = number.asFloat.toPrecision(precision)
+            val (s, f) = rounded.formatExpStr(precision)
             return FormattedNumber(
-                integerPart = rounded.significand.toString(),
-                fractionalPart = rounded.fraction.take(precision).padEnd(precision, '0'),
+                integerPart = s,
+                fractionalPart = f,
                 exponentialPart = buildExponentString(rounded.exp),
                 expType = spec.expType
             )
@@ -194,9 +195,10 @@ class NumberFormat(spec: Spec) {
             }
 
             val floating = number.asFloat
+            val (s, f) = floating.formatExpStr(precision)
             return FormattedNumber(
-                integerPart = floating.significand.toString(),
-                fractionalPart = floating.fraction.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
+                integerPart = s,
+                fractionalPart = f.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
                 exponentialPart = buildExponentString(floating.exp),
                 expType = spec.expType
             )
