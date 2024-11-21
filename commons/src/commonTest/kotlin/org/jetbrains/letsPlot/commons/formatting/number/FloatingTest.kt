@@ -141,6 +141,19 @@ class FloatingTest {
     }
 
     @Test
+    fun toDecimalPrecision() {
+        val number = fromNumber(1.2345678e3)!!
+        assertEquals(fromNumber(1235.0e0), number.toDecimalPrecision(0))
+        assertEquals(fromNumber(1234.57e0), number.toDecimalPrecision(2))
+        assertEquals(fromNumber(1234.5678e0), number.toDecimalPrecision(5))
+    }
+
+    @Test
+    fun toDecimalPrecisionWithPrecisionHigherThanExponent() {
+        assertEquals(fromNumber(1e-10), fromNumber(1.23e-10)!!.toDecimalPrecision(3))
+    }
+
+    @Test
     fun toPrecisionVerySmallNumberWithCarryInSignificant() {
         assertEquals(fromNumber(1e-38), fromNumber(9.9e-39)!!.toPrecision(0))
     }

@@ -129,10 +129,10 @@ class NumberFormat(spec: Spec) {
             "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
             "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
             "d" -> FormattedNumber(number.toDecimalPrecision(0).wholePart) // rounded to integer, e.g. 1.5 -> "2"
-            "%" -> formatDecimalNotation(number.addExponent(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
+            "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
             "g" -> generalFormat(number, spec.precision) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
-            "s" -> siPrefixFormat(decimal, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
-            "c" -> FormattedNumber(decimal.wholePart)
+            "s" -> siPrefixFormat(decimal, number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
+            "c" -> FormattedNumber(number.wholePart)
             "b" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(2))
             "o" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(8))
             "X" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(16).uppercase())
@@ -215,13 +215,21 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    private fun siPrefixFormat(number: Decimal, precision: Int = -1): FormattedNumber {
-        val siPrefix = siPrefixFromExp(number.asFloat.exp)
+    private fun siPrefixFormat(decimal: Decimal, number: NormalizedFloat, precision: Int = -1): FormattedNumber {
+        val siPrefix = siPrefixFromExp(number.exp)
 
         // 23_456.789 -> 23.456_789k
         // 0.000_123_456 -> 123.456u
-        val siNormalizedNumber = number.shiftDecimalPoint(-siPrefix.baseExp)
+        val siNormalizedNumber = decimal.shiftDecimalPoint(-siPrefix.baseExp)
+        val siNormalizedFloat = number.shiftDecimalPoint(-siPrefix.baseExp)
+
         val roundedNumber = siNormalizedNumber.iRound(precision)
+        val roundedFloat = siNormalizedFloat.toDecimalPrecision(precision - 1)
+        val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
+        val rounded = number.toPrecision(significantDigitsCount)
+        //require(NormalizedFloat.fromDecimal(roundedNumber) == rounded) {
+        //    "Rounding error: $roundedNumber != $rounded"
+        //}
 
         val (finalNumber, finalSiPrefix) = if (
         // !! is safe - int part of the si normalized number can't be bigger than 1000

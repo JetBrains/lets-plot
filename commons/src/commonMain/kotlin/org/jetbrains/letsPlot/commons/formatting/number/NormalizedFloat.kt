@@ -76,6 +76,8 @@ internal class NormalizedFloat private constructor(
     // Interprets the number as a decimal number:
     // (1.2345678e3, 2) => (1234.5678, 2) => 1234.57 => 1.23457e3
     // (1.2345678e3, 0) => (1234.5678, 0) => 1235.0 => 1.235e3
+    // If precision is greater than the number of digits in the fraction part, the number is rounded to the nearest integer.
+    // (1.23e-10, 3) -> (0.000000000123, 3) -> 0.0000000001 -> 1e-10
     fun toDecimalPrecision(precision: Int): NormalizedFloat {
         return toPrecision(maxOf(0, precision + exp))
     }
@@ -102,8 +104,12 @@ internal class NormalizedFloat private constructor(
         }
     }
 
-    fun addExponent(i: Int): NormalizedFloat {
-        return NormalizedFloat(significand, fraction, exp + i, sign)
+    // Positive delta means shift decimal point to the right
+    // (1.2345678e3, 2) -> 1234.5678 -> 123456.78 -> 1.2345678e5
+    // Negative delta means shift decimal point to the left:
+    // (1.2345678e3, -2) -> 1234.5678 -> 12.345678 -> 1.2345678e1
+    fun shiftDecimalPoint(delta: Int): NormalizedFloat {
+        return NormalizedFloat(significand, fraction, exp + delta, sign)
     }
 
     override fun equals(other: Any?): Boolean {
