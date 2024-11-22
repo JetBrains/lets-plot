@@ -44,9 +44,12 @@ class FigureModelJs internal constructor(
     fun updateView(specOverrideJs: dynamic = null, optionsJs: dynamic = null) {
 
         // view options update (just 'sizing' at the moment).
-        val options: Map<String, Any>? = optionsJs?.let {
+        val options: Map<String, Any>? = if (optionsJs != null) {
             dynamicObjectToMap(optionsJs)
+        } else {
+            null
         }
+
         val sizingOptionsUpdate = options?.get(SizingOption.KEY)
         if (sizingOptionsUpdate is Map<*, *>) {
             sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
@@ -71,6 +74,7 @@ class FigureModelJs internal constructor(
 
         val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, currSpecOverrideList)
 
+//        LOG.info { "New sizing policy: $sizingPolicy" }
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
             plotSpec,
             monolithicParameters.wrapperElement,
