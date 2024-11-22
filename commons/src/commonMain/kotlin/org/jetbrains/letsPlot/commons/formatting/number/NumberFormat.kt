@@ -5,6 +5,10 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
+import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatDecimalNotation
+import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatExponentNotation
+import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatGeneralNotation
+import org.jetbrains.letsPlot.commons.formatting.number.FormatNotationUtil.formatSiNotation
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType.entries
 import kotlin.math.ceil
 
@@ -122,11 +126,11 @@ class NumberFormat(spec: Spec) {
 
     private fun computeBody(res: Output, number: NormalizedFloat): Output {
         val formattedNumber = when (spec.type) {
-            "e" -> FormatUtil.formatExponentNotation(number, spec.precision, spec.minExp, spec.maxExp, spec.expType) // scientific notation, e.g. 12345 -> "1.234500e+4"
-            "f" -> FormatUtil.formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
-            "g" -> FormatUtil.formatGeneralNotation(number, spec.precision, spec.minExp, spec.maxExp, spec.expType) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
-            "s" -> FormatUtil.formatSiNotation(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
-            "%" -> FormatUtil.formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
+            "e" -> formatExponentNotation(number, spec.precision, spec.minExp, spec.maxExp, spec.expType) // scientific notation, e.g. 12345 -> "1.234500e+4"
+            "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
+            "g" -> formatGeneralNotation(number, spec.precision, spec.minExp, spec.maxExp, spec.expType) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
+            "s" -> formatSiNotation(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
+            "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
             "d" -> FormattedNumber(number.toDecimalPrecision(0).wholePart) // rounded to integer, e.g. 1.5 -> "2"
             "c" -> FormattedNumber(number.wholePart)
             "b" -> FormattedNumber(number.wholePart.toLong().toString(2))

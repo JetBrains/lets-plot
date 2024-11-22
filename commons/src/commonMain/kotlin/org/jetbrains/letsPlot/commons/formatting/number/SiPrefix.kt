@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-enum class SiPrefix(
+internal enum class SiPrefix(
     val symbol: String,
     val expRange: IntRange,
 ) {

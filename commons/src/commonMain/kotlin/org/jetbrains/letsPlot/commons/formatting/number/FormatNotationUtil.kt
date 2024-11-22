@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Companion.s
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import kotlin.math.sign
 
-internal object FormatUtil {
+internal object FormatNotationUtil {
 
     internal fun formatExponentNotation(
         number: NormalizedFloat,
