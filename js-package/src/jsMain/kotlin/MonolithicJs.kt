@@ -206,10 +206,10 @@ internal fun buildPlotFromProcessedSpecsIntern(
             plotSpec,
             MonolithicParameters(
                 wrapperElement,
-                sizingPolicy,
                 datalorePreferredWidth,
                 messageHandler.toMute(),
             ),
+            sizingPolicy,
             result.toolEventDispatcher,
             result.figureRegistration
         )

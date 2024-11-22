@@ -20,7 +20,7 @@ object FigureModelHelper {
         } else {
             val targetId = newSpecOverride[TARGET_ID]
 
-            @Suppress("UNUSED_VARIABLE")
+            @Suppress("NAME_SHADOWING")
             val specOverrideList = ArrayList(specOverrideList)
             val index = specOverrideList.indexOfFirst { it[TARGET_ID] == targetId }
             if (index < 0) {

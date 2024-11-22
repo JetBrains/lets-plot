@@ -108,6 +108,16 @@ class SizingPolicy(
         )
     }
 
+    fun withUpdate(
+        options: Map<*, *>,
+    ): SizingPolicy {
+        val widthMode = sizingMode(options, WIDTH_MODE) ?: this.widthMode
+        val heightMode = sizingMode(options, HEIGHT_MODE) ?: this.heightMode
+        val width = (options[WIDTH] as? Number)?.toDouble() ?: this.width
+        val height = (options[HEIGHT] as? Number)?.toDouble() ?: this.height
+        return SizingPolicy(widthMode, heightMode, width, height)
+    }
+
     override fun toString(): String {
         return "SizingPolicy(widthMode=$widthMode, heightMode=$heightMode, width=$width, height=$height)"
     }

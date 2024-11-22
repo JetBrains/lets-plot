@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
 import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
+import org.jetbrains.letsPlot.core.util.sizing.SizingOption
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
@@ -21,12 +22,11 @@ import org.w3c.dom.HTMLElement
 class FigureModelJs internal constructor(
     private val processedPlotSpec: Map<String, Any>,
     private val monolithicParameters: MonolithicParameters,
+    private var sizingPolicy: SizingPolicy,
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
     private var toolEventCallback: ((dynamic) -> Unit)? = null
-
-    //    private var currSpecOverride: Map<String, Any>? = null
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
     fun onToolEvent(callback: (dynamic) -> Unit) {
@@ -41,10 +41,18 @@ class FigureModelJs internal constructor(
         )
     }
 
-    fun updateView(specOverrideJs: dynamic = null) {
+    fun updateView(specOverrideJs: dynamic = null, optionsJs: dynamic = null) {
 
-        // ToDo: support sizing options
+        // view options update (just 'sizing' at the moment).
+        val options: Map<String, Any>? = optionsJs?.let {
+            dynamicObjectToMap(optionsJs)
+        }
+        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
+        if (sizingOptionsUpdate is Map<*, *>) {
+            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
+        }
 
+        // plot specs update.
         val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
             dynamicObjectToMap(specOverrideJs)
         } else {
@@ -66,7 +74,7 @@ class FigureModelJs internal constructor(
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
             plotSpec,
             monolithicParameters.wrapperElement,
-            monolithicParameters.sizingPolicy,
+            sizingPolicy,
             monolithicParameters.datalorePreferredWidth,
             monolithicParameters.messageHandler,
         )
@@ -107,7 +115,6 @@ class FigureModelJs internal constructor(
 
 internal class MonolithicParameters(
     val wrapperElement: HTMLElement,
-    val sizingPolicy: SizingPolicy,
     val datalorePreferredWidth: Double?,
     val messageHandler: MessageHandler,
 )
