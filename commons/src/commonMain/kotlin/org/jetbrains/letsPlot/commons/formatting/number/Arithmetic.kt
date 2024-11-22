@@ -34,7 +34,6 @@ internal object Arithmetic {
         }
     }
 
-
     fun round(number: String, precision: Int): Pair<String, Boolean> {
         val trailingPart = number.takeLast(number.length - precision)
         val significantPart = number.take(precision)
@@ -51,7 +50,6 @@ internal object Arithmetic {
             false -> roundedSignificantPart to false
         }
     }
-
 
     private fun carryOnRound(number: String): Boolean {
         when (number.length) {
