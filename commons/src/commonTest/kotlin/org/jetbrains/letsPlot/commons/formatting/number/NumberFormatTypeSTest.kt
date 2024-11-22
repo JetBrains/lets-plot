@@ -27,11 +27,22 @@ class NumberFormatTypeSTest {
     }
 
     @Test
+    fun asd() {
+        assertEquals("1.9990M", format(1_999_000.123_456, ".5s"))
+        assertEquals("19.999M", format(19_999_000.123_456, ".5s"))
+        assertEquals("200.00M", format(199_999_000.123_456, ".5s"))
+        assertEquals("1.0000G", format(999_999_000.123_456, ".5s"))
+    }
+
+    @Test
     fun withPrecision() {
         val f1 = NumberFormat(".3s")
+        assertEquals("1.99M", f1.apply(1992000.5))
+        assertEquals("1.99k", f1.apply(1992.5))
+        assertEquals("2.00k", f1.apply(1999.5))
         assertEquals("1.00k", f1.apply(999.5))
-        assertEquals("10.0", f1.apply(10))
         assertEquals("1.00µ", f1.apply(.000001))
+        assertEquals("10.0", f1.apply(10))
         assertEquals("0.00", f1.apply(0))
         assertEquals("100", f1.apply(100))
         assertEquals("1.00", f1.apply(1))
