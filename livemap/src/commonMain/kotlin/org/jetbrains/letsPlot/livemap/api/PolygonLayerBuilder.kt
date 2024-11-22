@@ -128,6 +128,9 @@ class PolygonEntityBuilder(
         return myFactory
             .createFeature("map_ent_geo_object_polygon_" + geoObject.id)
             .addComponents {
+                if (layerIndex != null && index != null) {
+                    +IndexComponent(layerIndex!!, index!!)
+                }
                 + RenderableComponent().apply {
                     renderer = RegionRenderer()
                 }
@@ -143,6 +146,7 @@ class PolygonEntityBuilder(
                 + RegionBBoxComponent(geoObject.bbox)
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
+                + LocatorComponent(PolygonLocator)
             }
     }
 }

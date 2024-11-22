@@ -216,7 +216,8 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA
+                Aes.ALPHA,
+                Aes.MAP_ID
             )
 
             GeomKind.AB_LINE -> listOf(
