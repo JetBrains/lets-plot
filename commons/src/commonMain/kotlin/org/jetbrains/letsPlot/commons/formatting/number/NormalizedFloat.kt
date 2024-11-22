@@ -29,14 +29,14 @@ internal class NormalizedFloat private constructor(
     // (1.2345678e3) -> 1234.5678 -> "5678"
     val decimalPart: String
         get() = when {
-            this@NormalizedFloat.exponent == 0 -> fraction
-            this@NormalizedFloat.exponent < 0 -> "0".repeat(-this@NormalizedFloat.exponent - 1) + significand.digitToChar() + (fraction.takeIf { it != "0" } ?: "")
-            this@NormalizedFloat.exponent > 0 -> when (fraction) {
+            exponent == 0 -> fraction
+            exponent < 0 -> "0".repeat(-exponent - 1) + significand.digitToChar() + (fraction.takeIf { it != "0" } ?: "")
+            exponent > 0 -> when (fraction) {
                 "0" -> "0"
-                else -> fraction.drop(this@NormalizedFloat.exponent).takeIf(String::isNotEmpty) ?: "0"
+                else -> fraction.drop(exponent).takeIf(String::isNotEmpty) ?: "0"
             }
 
-            else -> error("Unexpected state: ${this@NormalizedFloat.exponent}")
+            else -> error("Unexpected state: $exponent")
         }
 
     val wholePartLength = exponent
@@ -44,16 +44,9 @@ internal class NormalizedFloat private constructor(
     // Whole part of a decimal number:
     // (1.2345678e3) -> 1234.5678 -> "1234"
     val wholePart: String
-        get() = when {
-            this@NormalizedFloat.exponent == 0 -> significand.toString()
-            this@NormalizedFloat.exponent < 0 -> "0"
-            this@NormalizedFloat.exponent > 0 -> significand.digitToChar() + fraction.take(this@NormalizedFloat.exponent) + "0".repeat(
-                (this@NormalizedFloat.exponent - fraction.length).coerceAtLeast(
-                    0
-                )
-            )
-
-            else -> error("Unexpected state: ${this@NormalizedFloat.exponent}")
+        get() {
+            if (exponent < 0) return "0"
+            return (significand.toString() + fraction.take(exponent)).padEnd(exponent + 1, '0')
         }
 
     // Returns the whole part and the decimal part with the specified length.
@@ -92,7 +85,7 @@ internal class NormalizedFloat private constructor(
     // If precision is greater than the number of digits in the fraction part, the number is rounded to the nearest integer.
     // (1.23e-10, 3) -> (0.000000000123, 3) -> 0.0000000001 -> 1e-10
     fun toDecimalPrecision(precision: Int): NormalizedFloat {
-        return toPrecision(maxOf(0, precision + this@NormalizedFloat.exponent))
+        return toPrecision(maxOf(0, precision + exponent))
     }
 
     // Adjust precision of the number by rounding it to the specified number of significant digits.
@@ -110,12 +103,12 @@ internal class NormalizedFloat private constructor(
 
         return if (carry) {
             if (significand == 9) {
-                NormalizedFloat(1, "0$roundedFraction", this@NormalizedFloat.exponent + 1, sign)
+                NormalizedFloat(1, "0$roundedFraction", exponent + 1, sign)
             } else {
-                NormalizedFloat(significand + 1, roundedFraction, this@NormalizedFloat.exponent, sign)
+                NormalizedFloat(significand + 1, roundedFraction, exponent, sign)
             }
         } else {
-            NormalizedFloat(significand, roundedFraction, this@NormalizedFloat.exponent, sign)
+            NormalizedFloat(significand, roundedFraction, exponent, sign)
         }
     }
 
@@ -124,12 +117,12 @@ internal class NormalizedFloat private constructor(
     // Negative delta means shift decimal point to the left:
     // (1.2345678e3, -2) -> 1234.5678 -> 12.345678 -> 1.2345678e1
     fun shiftDecimalPoint(delta: Int): NormalizedFloat {
-        return NormalizedFloat(significand, fraction, this@NormalizedFloat.exponent + delta, sign)
+        return NormalizedFloat(significand, fraction, exponent + delta, sign)
     }
 
 
     override fun toString(): String {
-        return "Floating(i=$significand, fraction='$fraction', e=${this@NormalizedFloat.exponent})"
+        return "Floating(i=$significand, fraction='$fraction', e=${exponent})"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -139,7 +132,7 @@ internal class NormalizedFloat private constructor(
         other as NormalizedFloat
 
         if (significand != other.significand) return false
-        if (this@NormalizedFloat.exponent != other.exponent) return false
+        if (exponent != other.exponent) return false
         if (sign != other.sign) return false
         if (fraction != other.fraction) return false
 
@@ -148,7 +141,7 @@ internal class NormalizedFloat private constructor(
 
     override fun hashCode(): Int {
         var result = significand
-        result = 31 * result + this@NormalizedFloat.exponent
+        result = 31 * result + exponent
         result = 31 * result + sign.hashCode()
         result = 31 * result + fraction.hashCode()
         return result

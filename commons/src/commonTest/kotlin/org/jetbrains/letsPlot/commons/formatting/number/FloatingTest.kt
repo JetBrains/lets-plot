@@ -56,13 +56,13 @@ class FloatingTest {
 
     @Test
     fun wholePart() {
+        assertEquals("100", fromScientific(1, "0", 2).wholePart)
         assertEquals("0", ZERO.wholePart)
         assertEquals("1", fromScientific(1, "0", 0).wholePart)
         assertEquals("0", fromScientific(1, "0", -1).wholePart)
         assertEquals("0", fromScientific(1, "0", -2).wholePart)
         assertEquals("0", fromScientific(1, "0", -3).wholePart)
         assertEquals("10", fromScientific(1, "0", 1).wholePart)
-        assertEquals("100", fromScientific(1, "0", 2).wholePart)
         assertEquals("1000", fromScientific(1, "0", 3).wholePart)
 
         assertEquals("123400000000", fromNumber(1.234e11)!!.wholePart)
