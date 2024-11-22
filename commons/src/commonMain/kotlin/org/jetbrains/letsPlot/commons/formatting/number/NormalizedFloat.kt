@@ -31,13 +31,15 @@ internal class NormalizedFloat private constructor(
         get() = when {
             exp == 0 -> fraction
             exp < 0 -> "0".repeat(-exp - 1) + significand.digitToChar() + (fraction.takeIf { it != "0" } ?: "")
-            exp > 0 -> when {
-                fraction == "0" -> "0"
+            exp > 0 -> when (fraction) {
+                "0" -> "0"
                 else -> fraction.drop(exp).takeIf(String::isNotEmpty) ?: "0"
             }
 
             else -> error("Unexpected state: $exp")
         }
+
+    val wholePartLength = exp
 
     // Whole part of a decimal number:
     // (1.2345678e3) -> 1234.5678 -> "1234"
@@ -54,29 +56,37 @@ internal class NormalizedFloat private constructor(
             else -> error("Unexpected state: $exp")
         }
 
+    // Returns the whole part and the decimal part with the specified length.
     // (123.99, -1) -> "123" to "99"
     // (123.99, 0) -> "123" to ""
     // (12.3, 4) -> "12" to "3000"
     // (12.399, 2) -> "12" to "39"
     // (1.0, -1) -> ("1", "0")
     fun formatDecimalStr(decimalPartLength: Int = -1): Pair<String, String> {
-        return when {
-            decimalPartLength < 0 -> wholePart to decimalPart
-            else -> wholePart to decimalPart.take(decimalPartLength).padEnd(decimalPartLength, '0')
+        return if (decimalPartLength < 0) {
+            wholePart to decimalPart
+        } else {
+            wholePart to decimalPart.take(decimalPartLength).padEnd(decimalPartLength, '0')
         }
     }
 
-    // (1.2399e2, -1) -> "1", to "2399"
-    // (1.23e1, 4) -> "1", to "2300"
-    // (1.2399e1, 2) -> "1", to "23"
-    fun formatExpStr(expPartLength: Int = -1): Pair<String, String> {
-        return when {
-            expPartLength < 0 -> significand.toString() to fraction
-            else -> significand.toString() to fraction.take(expPartLength).padEnd(expPartLength, '0')
+    // Returns the significand (one digit) and the fraction part with the specified length.
+    // Negative length returns fraction part as is:
+    //  (1.2399e2, -1) -> "1", to "2399"
+    // Length greater than the fraction part length pads the fraction part with zeros:
+    //  (1.23e1, 4) -> "1", to "2300"
+    // Length less than the fraction part length truncates the fraction part:
+    //  (1.2399e1, 2) -> "1", to "23"
+    fun formatExpStr(fractionLength: Int = -1): Pair<String, String> {
+        return if (fractionLength < 0) {
+            significand.toString() to fraction
+        } else {
+            significand.toString() to fraction.take(fractionLength).padEnd(fractionLength, '0')
         }
     }
 
-    // Interprets the number as a decimal number:
+
+    // Adjust precision of the number by rounding it to the specified number of decimal places.
     // (1.2345678e3, 2) => (1234.5678, 2) => 1234.57 => 1.23457e3
     // (1.2345678e3, 0) => (1234.5678, 0) => 1235.0 => 1.235e3
     // If precision is greater than the number of digits in the fraction part, the number is rounded to the nearest integer.
@@ -85,8 +95,10 @@ internal class NormalizedFloat private constructor(
         return toPrecision(maxOf(0, precision + exp))
     }
 
-    // precision: the length of the fraction part to keep
+    // Adjust precision of the number by rounding it to the specified number of significant digits.
     // (1.2345678e3, 5) -> 1.23457E3
+    // (1.2345678e3, 2) -> 1.2E3
+    // (9.9e0, 0) -> 1E1
     fun toPrecision(precision: Int): NormalizedFloat {
         require(precision >= 0) { "Precision should be non-negative, but was $precision" }
 
@@ -115,6 +127,11 @@ internal class NormalizedFloat private constructor(
         return NormalizedFloat(significand, fraction, exp + delta, sign)
     }
 
+
+    override fun toString(): String {
+        return "Floating(i=$significand, fraction='$fraction', e=$exp)"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false
@@ -122,21 +139,19 @@ internal class NormalizedFloat private constructor(
         other as NormalizedFloat
 
         if (significand != other.significand) return false
-        if (fraction != other.fraction) return false
         if (exp != other.exp) return false
+        if (sign != other.sign) return false
+        if (fraction != other.fraction) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = significand
-        result = 31 * result + fraction.hashCode()
         result = 31 * result + exp
+        result = 31 * result + sign.hashCode()
+        result = 31 * result + fraction.hashCode()
         return result
-    }
-
-    override fun toString(): String {
-        return "Floating(i=$significand, fraction='$fraction', e=$exp)"
     }
 
     companion object {
@@ -180,25 +195,6 @@ internal class NormalizedFloat private constructor(
 
                     else -> error("Unexpected number: $number")
                 }
-            }
-        }
-
-        internal fun fromDecimal(number: Decimal): NormalizedFloat {
-            if (number.wholePart == "0") {
-                val significandDigitPos = number.decimalPart.indexOfFirst { it != '0' }
-                if (significandDigitPos == -1) {
-                    return ZERO
-                }
-
-                val i = number.decimalPart[significandDigitPos].digitToInt()
-                val e = -(significandDigitPos + 1)
-                val fracPart = number.decimalPart.drop(significandDigitPos + 1)
-                return NormalizedFloat(i, fracPart, e, number.sign)
-            } else {
-                val i = number.wholePart[0].digitToInt()
-                val e = number.wholePart.length - 1
-                val fracPart = number.wholePart.drop(1) + number.decimalPart
-                return NormalizedFloat(i, fracPart, e, number.sign)
             }
         }
 
