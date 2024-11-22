@@ -17,6 +17,8 @@ internal class NormalizedFloat private constructor(
     val fraction: String = fraction.trimEnd('0').takeIf { it.isNotEmpty() } ?: "0" // never empty
     val exp: Int = exp.takeIf { significand != 0 || this.fraction != "0" } ?: 0
 
+    val isNegative = sign == "-"
+
     init {
         if (this.significand == 0) require(this.fraction == "0") { "i should be in 0..9, but was ${this.significand}" }
         if (this.significand != 0) require(this.significand in 1..9) { "i should be in 0..9, but was ${this.significand}" }
@@ -53,6 +55,7 @@ internal class NormalizedFloat private constructor(
         }
 
     // (123.99, -1) -> "123" to "99"
+    // (123.99, 0) -> "123" to ""
     // (12.3, 4) -> "12" to "3000"
     // (12.399, 2) -> "12" to "39"
     // (1.0, -1) -> ("1", "0")

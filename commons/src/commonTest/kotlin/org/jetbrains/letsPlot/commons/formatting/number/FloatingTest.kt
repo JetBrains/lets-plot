@@ -181,6 +181,9 @@ class FloatingTest {
         assertEquals("123" to "456", number.formatDecimalStr()) // default
         assertEquals("123" to "456000", number.formatDecimalStr(6)) // padding
         assertEquals("123" to "45", number.formatDecimalStr(2)) // truncation
+
+        assertEquals("123" to "", number.formatDecimalStr(0)) // no decimal part
+        assertEquals("123" to "456", number.formatDecimalStr(-1)) // full decimal part
     }
 
     @Test

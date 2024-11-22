@@ -5,9 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import kotlin.math.absoluteValue
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType.entries
 import kotlin.math.ceil
-import kotlin.math.roundToLong
 import kotlin.math.sign
 
 
@@ -49,11 +48,10 @@ class NumberFormat(spec: Spec) {
             return nonNumberString
         }
 
-        val float = NormalizedFloat.fromNumber(num)!!
-        val number = Decimal.fromNumber(num)
+        val number = NormalizedFloat.fromNumber(num)!!
         var output = Output()
 
-        output = computeBody(output, number, float)
+        output = computeBody(output, number)
         output = trimFraction(output)
 
         output = computeSign(output, number)
@@ -123,19 +121,19 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeBody(res: Output, decimal: Decimal, number: NormalizedFloat): Output {
+    private fun computeBody(res: Output, number: NormalizedFloat): Output {
         val formattedNumber = when (spec.type) {
             "e" -> formatExponentNotation(number, spec.precision) // scientific notation, e.g. 12345 -> "1.234500e+4"
             "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
             "d" -> FormattedNumber(number.toDecimalPrecision(0).wholePart) // rounded to integer, e.g. 1.5 -> "2"
             "%" -> formatDecimalNotation(number.shiftDecimalPoint(2), spec.precision) // percentage, e.g. 0.015 -> "1.500000%"
             "g" -> generalFormat(number, spec.precision) // general format, e.g. 1e3 -> "1000.00, 1e10 -> "1.00000e+10", 1e-3 -> "0.00100000", 1e-10 -> "1.00000e-10"
-            "s" -> siPrefixFormat(decimal, number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
+            "s" -> siPrefixFormat(number, spec.precision) // SI-prefix notation, e.g. 1e3 -> "1.00000k"
             "c" -> FormattedNumber(number.wholePart)
-            "b" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(2))
-            "o" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(8))
-            "X" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(16).uppercase())
-            "x" -> FormattedNumber(decimal.toDouble().absoluteValue.roundToLong().toString(16))
+            "b" -> FormattedNumber(number.wholePart.toLong().toString(2))
+            "o" -> FormattedNumber(number.wholePart.toLong().toString(8))
+            "X" -> FormattedNumber(number.wholePart.toLong().toString(16).uppercase())
+            "x" -> FormattedNumber(number.wholePart.toLong().toString(16))
             else -> throw IllegalArgumentException("Wrong type: ${spec.type}")
         }
         return res.copy(body = formattedNumber)
@@ -150,8 +148,8 @@ class NumberFormat(spec: Spec) {
         val rounded = number.toPrecision(significantDigitsCount)
 
         return if (rounded.exp > spec.minExp && rounded.exp < maxExp) {
-            val (w, d) = rounded.formatDecimalStr(significantDigitsCount - rounded.exp)
-            FormattedNumber(integerPart = w, fractionalPart = d)
+            val (integerPart, fractionalPart) = rounded.formatDecimalStr(significantDigitsCount - rounded.exp)
+            FormattedNumber(integerPart, fractionalPart)
         } else {
             formatExponentNotation(rounded, significantDigitsCount)
         }
@@ -162,16 +160,11 @@ class NumberFormat(spec: Spec) {
     // (1.925, 6) -> "1.925000"
     // (1.925, 2) -> "1.93"
     // (12345678, 2) -> "12345678.00"
+    // (0.00001234, 2) -> "0"
     private fun formatDecimalNotation(number: NormalizedFloat, precision: Int): FormattedNumber {
-        if (precision <= 0) {
-            return FormattedNumber(number.toDecimalPrecision(0).wholePart)
-        }
-
-        val fRounded = number.toDecimalPrecision(precision)
-
-        val (w, d) = fRounded.formatDecimalStr(precision)
-
-        return FormattedNumber(w, d)
+        val (integerPart, d) = number.toDecimalPrecision(precision).formatDecimalStr(precision)
+        val fractionalPart = if (precision <= 0) "" else d
+        return FormattedNumber(integerPart, fractionalPart)
     }
 
     private fun formatExponentNotation(number: NormalizedFloat, precision: Int): FormattedNumber {
@@ -195,10 +188,10 @@ class NumberFormat(spec: Spec) {
             // 1.0 -> "1e+0"
             // 0.1 -> "1e-1"
 
-            val (s, f) = number.formatExpStr(precision)
+            val (significand, fraction) = number.formatExpStr(precision)
             return FormattedNumber(
-                integerPart = s,
-                fractionalPart = f.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
+                integerPart = significand,
+                fractionalPart = fraction.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
                 exponentialPart = buildExponentString(number.exp),
                 expType = spec.expType
             )
@@ -214,38 +207,18 @@ class NumberFormat(spec: Spec) {
         }
     }
 
-    private fun siPrefixFormat(decimal: Decimal, number: NormalizedFloat, precision: Int = -1): FormattedNumber {
+    private fun siPrefixFormat(number: NormalizedFloat, precision: Int = -1): FormattedNumber {
         val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
         val rounded = number.toPrecision(significantDigitsCount)
-        val newSiPrefix = siPrefixFromExp(rounded.exp)
-        val siNormalizedFloat = number.shiftDecimalPoint(-newSiPrefix.baseExp)
-        val (w, d) = rounded.shiftDecimalPoint(-newSiPrefix.baseExp).formatDecimalStr(significantDigitsCount - rounded.exp)
-
-        val siPrefix = siPrefixFromExp(number.exp)
-
-        // 23_456.789 -> 23.456_789k
-        // 0.000_123_456 -> 123.456u
-        val siNormalizedNumber = decimal.shiftDecimalPoint(-siPrefix.baseExp)
-
-        val roundedNumber = siNormalizedNumber.iRound(precision)
-        val (finalNumber, finalSiPrefix) = if (
-        // !! is safe - int part of the si normalized number can't be bigger than 1000
-            roundedNumber.wholeValue!! == 1000L // 999.999 -> 1000 rounding happened
-            && hasNextSiPrefix(siPrefix)
-        ) {
-            // 1000.0k -> 1.0M
-            roundedNumber.shiftDecimalPoint(-3) to getNextSiPrefix(siPrefix)
+        val siPrefix = siPrefixFromExp(rounded.exp)
+        val siNormalizedFloat = rounded.shiftDecimalPoint(-siPrefix.baseExp)
+        val r = if (siNormalizedFloat.exp >= 0) {
+            formatDecimalNotation(siNormalizedFloat, significantDigitsCount - siNormalizedFloat.exp)
         } else {
-            roundedNumber to siPrefix
+            formatDecimalNotation(siNormalizedFloat, significantDigitsCount)
         }
 
-        val restPrecision = precision - finalNumber.wholePart.length
-        val formattedNumber = formatDecimalNotation(NormalizedFloat.fromDecimal(finalNumber), restPrecision)
-
-        //check(w == formattedNumber.integerPart) { "Internal error: $w != ${formattedNumber.integerPart}" }
-        //check(d == formattedNumber.fractionalPart) { "Internal error: $d != ${formattedNumber.fractionalPart}" }
-
-        return formattedNumber.copy(exponentialPart = finalSiPrefix.symbol)
+        return r.copy(exponentialPart = siPrefix.symbol)
     }
 
     private fun trimFraction(output: Output): Output {
@@ -261,7 +234,7 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeSign(output: Output, number: Decimal): Output {
+    private fun computeSign(output: Output, number: NormalizedFloat): Output {
         val isBodyZero = output.body.run { (integerPart.asSequence() + fractionalPart.asSequence()).all { it == '0' } }
 
         val isNegative = number.isNegative && !isBodyZero
@@ -380,8 +353,9 @@ class NumberFormat(spec: Spec) {
             return normalizeSpec(formatSpec)
         }
 
-        const val DEF_MIN_EXP =
-            -7 // Number that triggers exponential notation (too small value to be formatted as a simple number). Same as in JS (see toPrecision) and D3.format.
+        // Number that triggers exponential notation (too small value to be formatted as a simple number).
+        // Same as in JS (see toPrecision) and D3.format.
+        const val DEF_MIN_EXP = -7
 
         internal const val TYPE_S_MAX = 1E26  // The largest supported SI-prefix is Y - yotta (1.E24).
 
@@ -392,8 +366,7 @@ class NumberFormat(spec: Spec) {
         private const val MULT_SIGN = "·"
         private const val GROUP_SIZE = 3
         private val EXPONENT_TYPES_REGEX = "[${ExponentNotationType.entries.joinToString("") { it.symbol }}]"
-        private val NUMBER_REGEX =
-            """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
+        private val NUMBER_REGEX = """^(?:(?<fill>[^{}])?(?<align>[<>=^]))?(?<sign>[+ -])?(?<symbol>[#$])?(?<zero>0)?(?<width>\d+)?(?<comma>,)?(?:\.(?<precision>\d+))?(?<trim>~)?(?<type>[%bcdefgosXx])?(?:&(?<exptype>$EXPONENT_TYPES_REGEX))?(?:\{(?<minexp>-?\d+)?,(?<maxexp>-?\d+)?\})?$""".toRegex()
         private const val DEF_WIDTH = -1
         private const val DEF_PRECISION = 6
         private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E
@@ -406,18 +379,6 @@ class NumberFormat(spec: Spec) {
                 SiPrefix.entries.minBy { it.expRange.first }
             } else {
                 SiPrefix.entries.maxBy { it.expRange.last }
-            }
-        }
-
-        internal fun hasNextSiPrefix(prefix: SiPrefix): Boolean {
-            return prefix.ordinal > 0
-        }
-
-        internal fun getNextSiPrefix(prefix: SiPrefix): SiPrefix {
-            return if (prefix.ordinal > 0) {
-                SiPrefix.entries[prefix.ordinal - 1]
-            } else {
-                prefix
             }
         }
 
