@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType.entries
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.roundToLong
@@ -216,21 +215,19 @@ class NumberFormat(spec: Spec) {
     }
 
     private fun siPrefixFormat(decimal: Decimal, number: NormalizedFloat, precision: Int = -1): FormattedNumber {
+        val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
+        val rounded = number.toPrecision(significantDigitsCount)
+        val newSiPrefix = siPrefixFromExp(rounded.exp)
+        val siNormalizedFloat = number.shiftDecimalPoint(-newSiPrefix.baseExp)
+        val (w, d) = rounded.shiftDecimalPoint(-newSiPrefix.baseExp).formatDecimalStr(significantDigitsCount - rounded.exp)
+
         val siPrefix = siPrefixFromExp(number.exp)
 
         // 23_456.789 -> 23.456_789k
         // 0.000_123_456 -> 123.456u
         val siNormalizedNumber = decimal.shiftDecimalPoint(-siPrefix.baseExp)
-        val siNormalizedFloat = number.shiftDecimalPoint(-siPrefix.baseExp)
 
         val roundedNumber = siNormalizedNumber.iRound(precision)
-        val roundedFloat = siNormalizedFloat.toDecimalPrecision(precision - 1)
-        val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
-        val rounded = number.toPrecision(significantDigitsCount)
-        //require(NormalizedFloat.fromDecimal(roundedNumber) == rounded) {
-        //    "Rounding error: $roundedNumber != $rounded"
-        //}
-
         val (finalNumber, finalSiPrefix) = if (
         // !! is safe - int part of the si normalized number can't be bigger than 1000
             roundedNumber.wholeValue!! == 1000L // 999.999 -> 1000 rounding happened
@@ -244,6 +241,10 @@ class NumberFormat(spec: Spec) {
 
         val restPrecision = precision - finalNumber.wholePart.length
         val formattedNumber = formatDecimalNotation(NormalizedFloat.fromDecimal(finalNumber), restPrecision)
+
+        //check(w == formattedNumber.integerPart) { "Internal error: $w != ${formattedNumber.integerPart}" }
+        //check(d == formattedNumber.fractionalPart) { "Internal error: $d != ${formattedNumber.fractionalPart}" }
+
         return formattedNumber.copy(exponentialPart = finalSiPrefix.symbol)
     }
 
