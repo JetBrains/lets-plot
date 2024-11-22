@@ -6,7 +6,6 @@
 package demo.plot.batik.plotConfig
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.awt.plot.PlotSvgExport
 import org.jetbrains.letsPlot.batik.plot.component.DefaultPlotPanelBatik
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.core.spec.getString
@@ -15,8 +14,6 @@ import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import java.awt.Point
 import java.awt.Rectangle
-import java.awt.Toolkit.getDefaultToolkit
-import java.awt.datatransfer.StringSelection
 import java.awt.event.ComponentEvent
 import java.awt.event.ComponentListener
 import java.io.BufferedReader
@@ -51,7 +48,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val specEditorPane = JScrollPane()
     private val plotPanel = JPanel()
     private val evaluateButton = JButton("Evaluate")
-    private val exportSvgButton = JButton("Export to SVG")
     private val plotSpecTextArea = JTextArea().apply {
         wrapStyleWord = true
         lineWrap = true
@@ -68,9 +64,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             add(plotPanel)
             add(specEditorPane.apply {
                 viewport.add(plotSpecTextArea)
-            })
-            add(exportSvgButton.apply {
-                addActionListener { exportSvg() }
             })
             add(evaluateButton.apply {
                 addActionListener { evaluate() }
@@ -90,17 +83,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private fun doLayout(size: Dimension) {
         val systemMenuHeight = 40
         val evalButtonHeight = 30
-        val exportSvgButtonHeight = 30
 
         val specEditorPos = Point(10, 10)
-        val specEditorSize = Dimension(400, size.height - systemMenuHeight - evalButtonHeight - exportSvgButtonHeight - specEditorPos.y)
+        val specEditorSize = Dimension(400, size.height - systemMenuHeight - evalButtonHeight - specEditorPos.y)
         specEditorPane.bounds = Rectangle(specEditorPos, specEditorSize)
 
-        val exportSvgPos = Point(10, specEditorPos.y + specEditorSize.height)
-        val exportSvgSize = Dimension(specEditorSize.width, exportSvgButtonHeight)
-        exportSvgButton.bounds = Rectangle(exportSvgPos, exportSvgSize)
-
-        val evaluatePos = Point(10, exportSvgPos.y + exportSvgSize.height)
+        val evaluatePos = Point(10, specEditorPos.y + specEditorSize.height)
         val evaluateSize = Dimension(specEditorSize.width, evalButtonHeight)
         evaluateButton.bounds = Rectangle(evaluatePos, evaluateSize)
 
@@ -112,22 +100,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         preferredSize = size
     }
 
-    fun exportSvg() {
-        val spec = parsePlotSpec(plotSpecTextArea.text)
-            .let(::fetchVegaLiteData)
-
-        val svg = PlotSvgExport.buildSvgImageFromRawSpecs(spec)
-
-        getDefaultToolkit().systemClipboard.setContents(StringSelection(svg), null)
-    }
-
     fun evaluate() {
         val spec = parsePlotSpec(plotSpecTextArea.text)
             .let(::fetchVegaLiteData)
 
         plotPanel.components.forEach(plotPanel::remove)
-        plotPanel.add(
-            DefaultPlotPanelBatik(
+        plotPanel.add(DefaultPlotPanelBatik(
             processedSpec = MonolithicCommon.processRawSpecs(spec, frontendOnly = false),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
