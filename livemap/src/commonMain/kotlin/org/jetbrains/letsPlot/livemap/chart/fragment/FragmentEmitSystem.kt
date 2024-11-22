@@ -113,7 +113,6 @@ class FragmentEmitSystem(
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
         val clipRect = fragmentKey.quadKey.computeRect()
-        val clipPath = clipRect.toMultiPolygon()
         val inflatedClipRect = clipRect.inflate(Vec(clipRect.dimension.x * 0.125, clipRect.dimension.y * 0.125))
 
         val projector = FilterBorderMicroTask(boundaries, inflatedClipRect).flatMap { border ->
@@ -123,13 +122,9 @@ class FragmentEmitSystem(
                 } else {
                     MicroTasks.resample(border, mapProjection::apply)
                 },
-                MicroTaskUtil.pair(
-                    MicroTasks.resample(clipPath, mapProjection::apply),
-                    MicroTasks.resample(boundaries, mapProjection::apply)
-                )
+                MicroTasks.resample(boundaries, mapProjection::apply)
             )
-        }.map { (worldMultiLineString, pair) ->
-            val (worldClipPath, worldMultiPolygon) = pair
+        }.map { (worldMultiLineString, worldMultiPolygon) ->
             val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
 
             runLaterBySystem(fragmentEntity) { theEntity ->
@@ -138,7 +133,7 @@ class FragmentEmitSystem(
                         + WorldDimensionComponent(bbox.dimension)
                         + WorldOriginComponent(bbox.origin)
                         + WorldGeometryComponent().apply { geometry = Geometry.of(worldMultiPolygon) }
-                        + FragmentComponent(fragmentKey, worldClipPath, worldMultiLineString)
+                        + FragmentComponent(fragmentKey, worldMultiLineString)
                         + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
                     }
             }

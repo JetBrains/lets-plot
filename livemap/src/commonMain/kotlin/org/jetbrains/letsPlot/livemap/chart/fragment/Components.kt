@@ -133,7 +133,6 @@ class DownloadingFragmentsComponent : EcsComponent {
 
 class FragmentComponent(
     val fragmentKey: FragmentKey,
-    val clipPath: MultiPolygon<World>,
     val boundary: MultiLineString<World>
 ) : EcsComponent
 
