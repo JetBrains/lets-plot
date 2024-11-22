@@ -15,16 +15,3 @@ interface PositionAdjustment {
 
     fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector
 }
-
-class CompositePos(
-    private val pos1: PositionAdjustment,
-    private val pos2: PositionAdjustment
-) : PositionAdjustment {
-    override fun handlesGroups(): Boolean {
-        return pos1.handlesGroups() || pos2.handlesGroups()
-    }
-
-    override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        return pos2.translate(pos1.translate(v, p, ctx), p, ctx)
-    }
-}
