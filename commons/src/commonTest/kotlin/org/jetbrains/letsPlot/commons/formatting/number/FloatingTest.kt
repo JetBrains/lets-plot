@@ -188,16 +188,16 @@ class FloatingTest {
 
     @Test
     fun formatExpStr() {
-        assertEquals("0" to "0", ZERO.formatExpStr())
-        assertEquals("1" to "0", fromNumber(1.0)!!.formatExpStr())
-        assertEquals("1" to "0", fromNumber(0.1)!!.formatExpStr())
-        assertEquals("1" to "0", fromNumber(0.01)!!.formatExpStr())
+        assertEquals("0" to "0", ZERO.formatScientificStr())
+        assertEquals("1" to "0", fromNumber(1.0)!!.formatScientificStr())
+        assertEquals("1" to "0", fromNumber(0.1)!!.formatScientificStr())
+        assertEquals("1" to "0", fromNumber(0.01)!!.formatScientificStr())
 
         // (1.2399e2, -1) -> "1", to "2399"
-        assertEquals("1" to "2399", fromNumber(1.2399e2)!!.formatExpStr(-1))
+        assertEquals("1" to "2399", fromNumber(1.2399e2)!!.formatScientificStr(-1))
         // (1.23e1, 4) -> "1", to "2300"
-        assertEquals("1" to "2300", fromNumber(1.23e1)!!.formatExpStr(4))
+        assertEquals("1" to "2300", fromNumber(1.23e1)!!.formatScientificStr(4))
         // (1.2399e1, 2) -> "1", to "23"
-        assertEquals("1" to "23", fromNumber(1.2399e1)!!.formatExpStr(2))
+        assertEquals("1" to "23", fromNumber(1.2399e1)!!.formatScientificStr(2))
     }
 }

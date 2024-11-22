@@ -254,14 +254,14 @@ class NumberFormat(spec: Spec) {
         private const val DEF_PRECISION = 6
         private val DEF_EXPONENT_NOTATION_TYPE = ExponentNotationType.E
 
-        internal fun siPrefixFromExp(exp: Int): SiPrefix {
-            val prefix = SiPrefix.entries.firstOrNull { exp in it.expRange }
+        internal fun siPrefixFromExponent(e: Int): SiPrefix {
+            val prefix = SiPrefix.entries.firstOrNull { e in it.exponentRange }
             if (prefix != null) return prefix
 
-            return if (exp < 0) {
-                SiPrefix.entries.minBy { it.expRange.first }
+            return if (e < 0) {
+                SiPrefix.entries.minBy { it.exponentRange.first }
             } else {
-                SiPrefix.entries.maxBy { it.expRange.last }
+                SiPrefix.entries.maxBy { it.exponentRange.last }
             }
         }
 

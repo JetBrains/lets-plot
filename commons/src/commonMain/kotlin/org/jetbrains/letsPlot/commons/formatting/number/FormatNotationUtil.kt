@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.formatting.number
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Companion.MULT_SIGN
-import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Companion.siPrefixFromExp
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.Companion.siPrefixFromExponent
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat.ExponentNotationType
 import kotlin.math.sign
 
@@ -31,11 +31,11 @@ internal object FormatNotationUtil {
 
         if (precision > -1) {
             val rounded = number.toPrecision(precision)
-            val (significand, fraction) = rounded.formatExpStr(precision)
+            val (significand, fraction) = rounded.formatScientificStr(precision)
             return FormattedNumber(
                 integerPart = significand,
                 fractionalPart = fraction,
-                exponentialPart = buildExponentString(rounded.exp),
+                exponentialPart = buildExponentString(rounded.exponent),
                 expType = expType
             )
         } else {
@@ -49,11 +49,11 @@ internal object FormatNotationUtil {
             // 1.0 -> "1e+0"
             // 0.1 -> "1e-1"
 
-            val (significand, fraction) = number.formatExpStr(precision)
+            val (significand, fraction) = number.formatScientificStr(precision)
             return FormattedNumber(
                 integerPart = significand,
                 fractionalPart = fraction.takeIf { it != "0" } ?: "", // 1.0e0 -> 1e0
-                exponentialPart = buildExponentString(number.exp),
+                exponentialPart = buildExponentString(number.exponent),
                 expType = expType
             )
         }
@@ -62,9 +62,9 @@ internal object FormatNotationUtil {
     internal fun formatSiNotation(number: NormalizedFloat, precision: Int): FormattedNumber {
         val significantDigitsPrecision = maxOf(0, precision - 1) // round all, except the first digit
         val rounded = number.toPrecision(significantDigitsPrecision)
-        val siPrefix = siPrefixFromExp(rounded.exp)
-        val siScaledNumber = rounded.shiftDecimalPoint(-siPrefix.baseExp) // 1.0 <= wholeValue < 1000.0
-        val decimalPartPrecision = if (siScaledNumber.exp >= 0) {
+        val siPrefix = siPrefixFromExponent(rounded.exponent)
+        val siScaledNumber = rounded.shiftDecimalPoint(-siPrefix.baseExponent) // 1.0 <= wholeValue < 1000.0
+        val decimalPartPrecision = if (siScaledNumber.exponent >= 0) {
             // Precision in si format is the number of significant digits including the whole part.
             // Decimal part precision is the number of digits after the whole part.
             significantDigitsPrecision - siScaledNumber.wholePartLength
@@ -102,9 +102,9 @@ internal object FormatNotationUtil {
         val significantDigitsCount = maxOf(0, precision - 1) // exclude significand
         val rounded = number.toPrecision(significantDigitsCount)
 
-        return if (rounded.exp > minExp && rounded.exp < maxExp) {
+        return if (rounded.exponent > minExp && rounded.exponent < maxExp) {
             // precision is
-            val (integerPart, fractionalPart) = rounded.formatDecimalStr(significantDigitsCount - rounded.exp)
+            val (integerPart, fractionalPart) = rounded.formatDecimalStr(significantDigitsCount - rounded.exponent)
             FormattedNumber(integerPart, fractionalPart)
         } else {
             formatExponentNotation(rounded, significantDigitsCount, minExp, maxExp, expType)

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 
 internal enum class SiPrefix(
     val symbol: String,
-    val expRange: IntRange,
+    val exponentRange: IntRange,
 ) {
     YOTTA("Y", 24 until 27),
     ZETTA("Z", 21 until 24),
@@ -27,5 +27,5 @@ internal enum class SiPrefix(
     ZEPTO("z", -21 until -18),
     YOCTO("y", -24 until -21);
 
-    val baseExp = expRange.first
+    val baseExponent = exponentRange.first
 }
