@@ -37,10 +37,15 @@ object SpecOverrideUtil {
 
     private fun findBySpecId(specId: String?, specOverrideList: List<Map<String, Any>>): Map<String, Any>? {
         if (specId == null) return null
-        return specOverrideList.firstOrNull {
+        val forSpecId = specOverrideList.firstOrNull {
             val targetId = it[FigureModelOptions.TARGET_ID]
-            targetId == null || targetId == specId
+            targetId == specId
         }
+        val forAll = specOverrideList.firstOrNull {
+            !it.containsKey(FigureModelOptions.TARGET_ID)
+        }
+
+        return forAll?.plus(forSpecId ?: emptyMap()) ?: forSpecId
     }
 
     private fun applySpecOverrideToSinglePlot(
