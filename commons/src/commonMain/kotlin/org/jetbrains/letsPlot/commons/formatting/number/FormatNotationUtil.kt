@@ -13,7 +13,7 @@ import kotlin.math.sign
 internal object FormatNotationUtil {
 
     internal fun formatExponentNotation(
-        number: NormalizedFloat,
+        number: BigFloat,
         precision: Int,
         minExp: Int,
         maxExp: Int,
@@ -39,7 +39,7 @@ internal object FormatNotationUtil {
                 expType = expType
             )
         } else {
-            if (number == NormalizedFloat.ZERO) {
+            if (number == BigFloat.ZERO) {
                 // Zero should be formatted as "0" instead of "0e+0"
                 return FormattedNumber("0", "", "")
             }
@@ -59,7 +59,7 @@ internal object FormatNotationUtil {
         }
     }
 
-    internal fun formatSiNotation(number: NormalizedFloat, precision: Int): FormattedNumber {
+    internal fun formatSiNotation(number: BigFloat, precision: Int): FormattedNumber {
         val significantDigitsPrecision = maxOf(0, precision - 1) // round all, except the first digit
         val rounded = number.toPrecision(significantDigitsPrecision)
         val siPrefix = siPrefixFromExponent(rounded.exponent)
@@ -82,14 +82,14 @@ internal object FormatNotationUtil {
     // (1.925, 2) -> "1.93"
     // (12345678, 2) -> "12345678.00"
     // (0.00001234, 2) -> "0"
-    internal fun formatDecimalNotation(number: NormalizedFloat, precision: Int): FormattedNumber {
+    internal fun formatDecimalNotation(number: BigFloat, precision: Int): FormattedNumber {
         val (integerPart, d) = number.toDecimalPrecision(precision).formatDecimalStr(precision)
         val fractionalPart = if (precision <= 0) "" else d
         return FormattedNumber(integerPart, fractionalPart)
     }
 
     internal fun formatGeneralNotation(
-        number: NormalizedFloat,
+        number: BigFloat,
         precision: Int,
         minExp: Int,
         maxExp: Int,

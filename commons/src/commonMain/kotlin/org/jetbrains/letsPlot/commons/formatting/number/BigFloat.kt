@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons.formatting.number
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-internal class NormalizedFloat private constructor(
+internal class BigFloat private constructor(
     val significand: Int, // 1..9 or 0 for 0.0
     fraction: String, // "0" for zero, never contains trailing zeros
     exponent: Int,
@@ -84,7 +84,7 @@ internal class NormalizedFloat private constructor(
     // (1.2345678e3, 0) => (1234.5678, 0) => 1235.0 => 1.235e3
     // If precision is greater than the number of digits in the fraction part, the number is rounded to the nearest integer.
     // (1.23e-10, 3) -> (0.000000000123, 3) -> 0.0000000001 -> 1e-10
-    fun toDecimalPrecision(precision: Int): NormalizedFloat {
+    fun toDecimalPrecision(precision: Int): BigFloat {
         return toPrecision(maxOf(0, precision + exponent))
     }
 
@@ -92,7 +92,7 @@ internal class NormalizedFloat private constructor(
     // (1.2345678e3, 5) -> 1.23457E3
     // (1.2345678e3, 2) -> 1.2E3
     // (9.9e0, 0) -> 1E1
-    fun toPrecision(precision: Int): NormalizedFloat {
+    fun toPrecision(precision: Int): BigFloat {
         require(precision >= 0) { "Precision should be non-negative, but was $precision" }
 
         if (precision > fraction.length) {
@@ -103,12 +103,12 @@ internal class NormalizedFloat private constructor(
 
         return if (carry) {
             if (significand == 9) {
-                NormalizedFloat(1, "0$roundedFraction", exponent + 1, sign)
+                BigFloat(1, "0$roundedFraction", exponent + 1, sign)
             } else {
-                NormalizedFloat(significand + 1, roundedFraction, exponent, sign)
+                BigFloat(significand + 1, roundedFraction, exponent, sign)
             }
         } else {
-            NormalizedFloat(significand, roundedFraction, exponent, sign)
+            BigFloat(significand, roundedFraction, exponent, sign)
         }
     }
 
@@ -116,8 +116,8 @@ internal class NormalizedFloat private constructor(
     // (1.2345678e3, 2) -> 1234.5678 -> 123456.78 -> 1.2345678e5
     // Negative delta means shift decimal point to the left:
     // (1.2345678e3, -2) -> 1234.5678 -> 12.345678 -> 1.2345678e1
-    fun shiftDecimalPoint(delta: Int): NormalizedFloat {
-        return NormalizedFloat(significand, fraction, exponent + delta, sign)
+    fun shiftDecimalPoint(delta: Int): BigFloat {
+        return BigFloat(significand, fraction, exponent + delta, sign)
     }
 
 
@@ -129,7 +129,7 @@ internal class NormalizedFloat private constructor(
         if (this === other) return true
         if (other == null || this::class != other::class) return false
 
-        other as NormalizedFloat
+        other as BigFloat
 
         if (significand != other.significand) return false
         if (exponent != other.exponent) return false
@@ -148,7 +148,7 @@ internal class NormalizedFloat private constructor(
     }
 
     companion object {
-        fun fromNumber(number: Number): NormalizedFloat? {
+        fun fromNumber(number: Number): BigFloat? {
             val dbl = number.toDouble()
 
             if (dbl == 0.0) return ZERO
@@ -166,7 +166,7 @@ internal class NormalizedFloat private constructor(
 
             return if (exponentString.isNotEmpty()) { // scientific notation
                 require(significandStr.length == 1)
-                NormalizedFloat(significandStr.toInt(), fractionStr, exponentString.toInt(), sign)
+                BigFloat(significandStr.toInt(), fractionStr, exponentString.toInt(), sign)
             } else { // decimal number
                 when {
                     dbl.absoluteValue < 1.0 -> {
@@ -175,7 +175,7 @@ internal class NormalizedFloat private constructor(
                         val fraction = fractionStr.drop(significantDigitPos + 1)
                         val exponent = -significantDigitPos - 1
 
-                        NormalizedFloat(significand.digitToInt(), fraction, exponent, sign)
+                        BigFloat(significand.digitToInt(), fraction, exponent, sign)
                     }
 
                     dbl.absoluteValue >= 1.0 -> {
@@ -183,7 +183,7 @@ internal class NormalizedFloat private constructor(
                         val fraction = fractionPartStart + fractionStr
                         val exponent = fractionPartStart.length
 
-                        NormalizedFloat(significand, fraction, exponent, sign)
+                        BigFloat(significand, fraction, exponent, sign)
                     }
 
                     else -> error("Unexpected number: $number")
@@ -191,10 +191,10 @@ internal class NormalizedFloat private constructor(
             }
         }
 
-        internal fun fromScientific(i: Int, fraction: String, exponent: Int, sign: String = ""): NormalizedFloat {
-            return NormalizedFloat(i, fraction, exponent, sign)
+        internal fun fromScientific(i: Int, fraction: String, exponent: Int, sign: String = ""): BigFloat {
+            return BigFloat(i, fraction, exponent, sign)
         }
 
-        val ZERO = NormalizedFloat(0, "0", 0, "")
+        val ZERO = BigFloat(0, "0", 0, "")
     }
 }

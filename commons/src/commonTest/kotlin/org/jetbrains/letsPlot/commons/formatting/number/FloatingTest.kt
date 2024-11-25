@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.commons.formatting.number
 
-import org.jetbrains.letsPlot.commons.formatting.number.NormalizedFloat.Companion.ZERO
-import org.jetbrains.letsPlot.commons.formatting.number.NormalizedFloat.Companion.fromNumber
-import org.jetbrains.letsPlot.commons.formatting.number.NormalizedFloat.Companion.fromScientific
+import org.jetbrains.letsPlot.commons.formatting.number.BigFloat.Companion.ZERO
+import org.jetbrains.letsPlot.commons.formatting.number.BigFloat.Companion.fromNumber
+import org.jetbrains.letsPlot.commons.formatting.number.BigFloat.Companion.fromScientific
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

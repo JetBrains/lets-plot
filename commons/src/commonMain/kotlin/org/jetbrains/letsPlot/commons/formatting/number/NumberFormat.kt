@@ -51,7 +51,7 @@ class NumberFormat(spec: Spec) {
             return nonNumberString
         }
 
-        val number = NormalizedFloat.fromNumber(num)!!
+        val number = BigFloat.fromNumber(num)!!
         var output = Output()
 
         output = computeBody(output, number)
@@ -124,7 +124,7 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeBody(res: Output, number: NormalizedFloat): Output {
+    private fun computeBody(res: Output, number: BigFloat): Output {
         val formattedNumber = when (spec.type) {
             "e" -> formatExponentNotation(number, spec.precision, spec.minExp, spec.maxExp, spec.expType) // scientific notation, e.g. 12345 -> "1.234500e+4"
             "f" -> formatDecimalNotation(number, spec.precision) // fixed-point notation, e.g. 1.5(6) -> "1.500000", 1.5(0) -> "2"
@@ -155,7 +155,7 @@ class NumberFormat(spec: Spec) {
         )
     }
 
-    private fun computeSign(output: Output, number: NormalizedFloat): Output {
+    private fun computeSign(output: Output, number: BigFloat): Output {
         val isBodyZero = output.body.run { (integerPart.asSequence() + fractionalPart.asSequence()).all { it == '0' } }
 
         val isNegative = number.isNegative && !isBodyZero
