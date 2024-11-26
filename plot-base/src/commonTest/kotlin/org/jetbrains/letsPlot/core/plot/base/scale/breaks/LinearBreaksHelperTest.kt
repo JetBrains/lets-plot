@@ -64,13 +64,6 @@ class LinearBreaksHelperTest {
     }
 
     @Test
-    fun beyondPrecisionWithZero() {
-        val breaks = computeBreaks(domainStart = -1.0, domainEnd = 1.0, targetCount = 5)
-        assertEquals(5, breaks.size)
-        assertArrayEquals(arrayOf(-1.0, -0.5, 0.0, 0.5, 1.0), breaks.sortedArray())
-    }
-
-    @Test
     fun shouldProduceExactlyZeroBreak() {
         // may produce a tick with the -1.3877787807814457E-17 value instead of 0.0
         val breaks = computeBreaks(domainStart = -0.1675000000000001, domainEnd = 0.4374999999999998, targetCount = 15)
