@@ -204,6 +204,10 @@ class FeatureEntityFactory(
         }
     }
 
+    fun setPanningPolicy(policy: PanningPolicy) {
+        myCanvasLayerComponent.canvasLayer.panningPolicy = policy
+    }
+
     fun createFeature(name: String): EcsEntity {
         return mapEntity(myComponentManager, myParentLayerComponent, name)
             .also { myLayerEntitiesComponent.add(it.id) }

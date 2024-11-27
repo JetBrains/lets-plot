@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.livemap.chart.polygon.PolygonRenderer
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
 import org.jetbrains.letsPlot.livemap.core.layers.LayerKind
+import org.jetbrains.letsPlot.livemap.core.layers.PanningPolicy
 import org.jetbrains.letsPlot.livemap.geocoding.NeedCalculateLocationComponent
 import org.jetbrains.letsPlot.livemap.geocoding.NeedLocationComponent
 import org.jetbrains.letsPlot.livemap.geocoding.RegionIdComponent
@@ -124,6 +125,8 @@ class PolygonEntityBuilder(
 
     private fun createFragmentFeature(): EcsEntity {
         val geoObject = this@PolygonEntityBuilder.geoObject!!
+
+        myFactory.setPanningPolicy(PanningPolicy.COPY)
 
         return myFactory
             .createFeature("map_ent_geo_object_polygon_" + geoObject.id)
