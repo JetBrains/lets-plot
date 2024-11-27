@@ -60,6 +60,29 @@ fun <T> createMultiPolygon(points: List<Vec<T>>): MultiPolygon<T> {
     return MultiPolygon(polygons)
 }
 
+fun <T> createMultiLineString(points: List<Vec<T>>): MultiLineString<T> {
+    if (points.isEmpty()) {
+        return MultiLineString(emptyList())
+    }
+
+    val lines = ArrayList<LineString<T>>()
+    var line = ArrayList<Vec<T>>()
+
+    for (point in points) {
+        if (line.isNotEmpty() && point == line.first()) {
+            lines.add(LineString(line))
+            line = ArrayList()
+        }
+        line.add(point)
+    }
+
+    if (line.isNotEmpty()) {
+        lines.add(LineString(line))
+    }
+
+    return MultiLineString(lines)
+}
+
 fun <TypeT> Iterable<Vec<TypeT>>.boundingBox(): Rect<TypeT>? {
     return DoubleRectangles.calculateBoundingBox(this, Vec<*>::x, Vec<*>::y, Rect.Companion::LTRB)
 }
