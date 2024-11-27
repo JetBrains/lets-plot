@@ -31,16 +31,17 @@ open class FragmentProvider internal constructor (
     private val geocodingService: GeocodingService
 ) {
 
-    open fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>> {
+//    open fun getFragments(mapObjectIds: List<String>, quads: Collection<QuadKey<LonLat>>): Async<Map<String, List<Fragment>>> {
+    open fun getFragments(quadsByRegionId: HashMap<String, MutableSet<QuadKey<LonLat>>>): Async<Map<String, List<Fragment>>> {
         if (/*Random.nextBoolean()*/false) {
             return Asyncs.failure(RuntimeException("Test error response"))
         } else {
             val objectsWithMissingFragments = HashMap<String, List<QuadKey<LonLat>>>()
 
             var isMissing = false
-            for (mapObjectId in mapObjectIds) {
+            for (mapObjectId in quadsByRegionId.keys) {
                 val missingFragments = ArrayList<QuadKey<LonLat>>()
-                for (quadKey in quads) {
+                for (quadKey in quadsByRegionId[mapObjectId]!!) {
                     if (!fragmentCache.contains(mapObjectId, quadKey)) {
                         missingFragments.add(quadKey)
                         isMissing = true
@@ -52,11 +53,11 @@ open class FragmentProvider internal constructor (
             }
 
             if (!isMissing) {
-                return Asyncs.constant(getCachedGeometries(mapObjectIds, quads))
+                return Asyncs.constant(getCachedGeometries(quadsByRegionId))
             }
 
             val request = GeoRequestBuilder.ExplicitRequestBuilder()
-                .setIds(mapObjectIds)
+                .setIds(quadsByRegionId.keys.toList())
                 .addFeature(GeoRequest.FeatureOption.FRAGMENTS)
                 .setFragments(objectsWithMissingFragments)
                 .build()
@@ -64,8 +65,8 @@ open class FragmentProvider internal constructor (
             return geocodingService
                 .execute(request)
                 .map { features ->
-                    quads.forEach { quadKey ->
-                        mapObjectIds.forEach { mapObjectId ->
+                    quadsByRegionId.keys.forEach { mapObjectId ->
+                        quadsByRegionId[mapObjectId]!!.forEach { quadKey ->
                             if (!fragmentCache.contains(mapObjectId, quadKey)) {
                                 fragmentCache.putEmpty(mapObjectId, quadKey)
                             }
@@ -77,20 +78,19 @@ open class FragmentProvider internal constructor (
                             fragmentCache.put(geocodedFeature.id, it.key, it)
                         }
                     }
-                    getCachedGeometries(mapObjectIds, quads)
+                    getCachedGeometries(quadsByRegionId)
                 }
         }
     }
 
     private fun getCachedGeometries(
-        mapObjectIds: List<String>,
-        quads: Collection<QuadKey<LonLat>>
+        request: HashMap<String, MutableSet<QuadKey<LonLat>>>
     ): Map<String, List<Fragment>> {
         val result = HashMap<String, List<Fragment>>()
 
-        mapObjectIds.forEach { mapObjectId ->
+        request.keys.forEach { mapObjectId ->
             val fragments = ArrayList<Fragment>()
-            quads.forEach { quadKey ->
+            request[mapObjectId]!!.forEach { quadKey ->
                 fragmentCache[mapObjectId, quadKey]?.let(fragments::add)
             }
             result[mapObjectId] = fragments

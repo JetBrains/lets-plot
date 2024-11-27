@@ -44,18 +44,16 @@ class FragmentDownloadingSystem(
         )
 
         run {
-            // download fragments if there are any empty downloading slots
-            if (downloadingFragments.downloading.size < myMaxActiveDownloads) {
-                val zoomQueue = downloadingFragments.getZoomQueue(context.camera.zoom.toInt())
-                val availableDownloadsCount = myMaxActiveDownloads - downloadingFragments.downloading.size
-                val toDownload = zoomQueue.take(availableDownloadsCount)
-                if (toDownload.isNotEmpty()) {
-                    streamingFragments.addAll(toDownload)
-                    downloadingFragments.reduceQueue(toDownload)
-                    downloadingFragments.extendDownloading(toDownload)
+            // download fragments
+            val zoomQueue = downloadingFragments.getZoomQueue(context.camera.zoom.toInt())
+            val availableDownloadsCount = myMaxActiveDownloads - downloadingFragments.downloading.size
+            val toDownload = zoomQueue.take(availableDownloadsCount)
+            if (toDownload.isNotEmpty()) {
+                streamingFragments.addAll(toDownload)
+                downloadingFragments.reduceQueue(toDownload)
+                downloadingFragments.extendDownloading(toDownload)
 
-                    downloadGeometries(toDownload)
-                }
+                downloadGeometries(toDownload)
             }
         }
 
@@ -109,34 +107,35 @@ class FragmentDownloadingSystem(
             fetchingFragments.add(newFragment)
         }
 
-        regionRequest.forEach { (requestRegionId, requestQuads) ->
-            val async = myFragmentGeometryProvider.getFragments(listOf(requestRegionId), requestQuads)
-            async.onFailure {
-                requestQuads.forEach { quadKey ->
-                    fetchingFragments.remove(FragmentKey(requestRegionId, quadKey))
+        val async = myFragmentGeometryProvider.getFragments(regionRequest)
+
+        async.onFailure {
+            regionRequest.keys.forEach { regionId ->
+                regionRequest[regionId]?.forEach { quadKey ->
+                    fetchingFragments.remove(FragmentKey(regionId, quadKey))
                 }
             }
-            async.onSuccess { receivedFragments ->
-                receivedFragments.forEach { (regionId, fragments) ->
-                    val registeredFragments = ArrayList(fragments)
+        }
+        async.onSuccess { receivedFragments ->
+            receivedFragments.forEach { (regionId, fragments) ->
+                val registeredFragments = ArrayList(fragments)
 
-                    // Emulate response for empty quads - this is needed to finish waiting for a fragment data
-                    val receivedQuads = fragments.map(Fragment::key).toSet()
+                // Emulate response for empty quads - this is needed to finish waiting for a fragment data
+                val receivedQuads = fragments.map(Fragment::key).toSet()
 
-                    requestQuads.subtract(receivedQuads) // not received means empty
-                        .forEach { emptyQuad ->
-                            registeredFragments.add(
-                                Fragment(emptyQuad, emptyList())
-                            )
-                        }
-
-                    myLock.execute {
-                        myRegionFragments
-                            .getOrPut(regionId, ::ArrayList)
-                            .addAll(registeredFragments)
-
-                        return@execute
+                regionRequest[regionId]!!.subtract(receivedQuads) // not received means empty
+                    .forEach { emptyQuad ->
+                        registeredFragments.add(
+                            Fragment(emptyQuad, emptyList())
+                        )
                     }
+
+                myLock.execute {
+                    myRegionFragments
+                        .getOrPut(regionId, ::ArrayList)
+                        .addAll(registeredFragments)
+
+                    return@execute
                 }
             }
         }

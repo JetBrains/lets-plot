@@ -27,8 +27,8 @@ class FragmentDownloadingServiceTest : org.jetbrains.letsPlot.livemap.LiveMapTes
     private lateinit var myFragmentProvider: FragmentProvider
     private lateinit var fragmentFoo0: FragmentSpec
     private fun assertRequestsCount(count: Int, vararg specs: FragmentSpec) {
-        val (first, second) = getFragmentRequestParams(listOf(*specs))
-        Mockito.verify(myFragmentProvider, Mockito.times(count)).getFragments(first, second)
+        val request = getFragmentRequestParams(listOf(*specs))
+        Mockito.verify(myFragmentProvider, Mockito.times(count)).getFragments(request)
     }
 
     @Before
@@ -73,17 +73,25 @@ class FragmentDownloadingServiceTest : org.jetbrains.letsPlot.livemap.LiveMapTes
             }
             responses[q.regionId()]!!.add(Fragment(q.quad(), listOf(q.geometries())))
         }
-        val async: SimpleAsync<Map<String, List<Fragment>>> = SimpleAsync<Map<String, List<Fragment>>>()
-        val (first, second) = getFragmentRequestParams(queries)
-        Mockito.`when`(myFragmentProvider.getFragments(first, second)).thenReturn(async)
+        val async: SimpleAsync<Map<String, List<Fragment>>> = SimpleAsync()
+        val request = getFragmentRequestParams(queries)
+        Mockito.`when`(myFragmentProvider.getFragments(request)).thenReturn(async)
         return Mocks.FragmentsResponseAsync(async, responses)
     }
 
-    private fun getFragmentRequestParams(queries: List<FragmentSpec>): Pair<List<String>, Set<QuadKey<LonLat>>> {
+    private fun getFragmentRequestParams(queries: List<FragmentSpec>): HashMap<String, MutableSet<QuadKey<LonLat>>> {
+
         val ids = queries.stream().map(FragmentSpec::regionId).distinct().collect(Collectors.toList())
         val quads = queries.stream().map(FragmentSpec::quad)
             .distinct().collect(Collectors.toSet())
-        return Pair(ids, quads)
+
+        val regionRequest = HashMap<String, MutableSet<QuadKey<LonLat>>>()
+
+        for (id in ids) {
+            regionRequest[id] = HashSet(quads)
+        }
+
+        return regionRequest
     }
 
     companion object {
