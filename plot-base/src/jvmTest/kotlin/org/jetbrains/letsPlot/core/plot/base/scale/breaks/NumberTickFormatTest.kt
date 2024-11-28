@@ -173,15 +173,15 @@ class NumberTickFormatTest {
     fun domain_large() {
         val domainAndStep = doubleArrayOf(10000.0, 5.0)
         assertEquals(
-            "5,000",
+            "5000",
             format(5000, domainAndStep)
         )
         assertEquals(
-            "5,000",
+            "5000",
             format(5000.1, domainAndStep)
         )
         assertEquals(
-            "5,001",
+            "5001",
             format(5001.1, domainAndStep)
         )
     }

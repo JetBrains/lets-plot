@@ -7,7 +7,10 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.ExponentFormat
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.log10
+import kotlin.math.max
 
 internal class NumericBreakFormatter(
     value: Double,
@@ -55,8 +58,7 @@ internal class NumericBreakFormatter(
         } else {
             "g"
         }
-        // use comma only for large enough numbers
-        val comma = 4 <= domain10Power
+        val comma = type == "g"
 
         formatter = NumberFormat(NumberFormat.Spec(
             comma = comma,
