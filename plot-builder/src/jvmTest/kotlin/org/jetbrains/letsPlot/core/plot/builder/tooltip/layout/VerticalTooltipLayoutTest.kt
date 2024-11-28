@@ -67,7 +67,8 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
             expect()
-                .stemCoord(expectedAroundPointStem(VERTICAL_TIP_KEY))
+                .stemCoord(DoubleVector(79.0, 26.0))
+                .tooltipCoord(DoubleVector(50.0, 15.5))
         )
     }
 
@@ -152,6 +153,47 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
     @Test
     fun issue837() {
+        /*
+        {
+          "data": {
+            "x": [ "a" ],
+            "y0": [ -2.6197451040897444 ],
+            "y33": [ -0.46572975357025687 ],
+            "y50": [ -0.1269562917797126 ],
+            "y66": [ 0.3142473325952739 ],
+            "y100": [ 1.8522781845089378 ]
+          },
+          "mapping": { "x": "x" },
+          "data_meta": {
+            "series_annotations": [
+              { "type": "str", "column": "x" },
+              { "type": "float", "column": "y0" },
+              { "type": "float", "column": "y33" },
+              { "type": "float", "column": "y50" },
+              { "type": "float", "column": "y66" },
+              { "type": "float", "column": "y100" }
+            ]
+          },
+          "coord": { "name": "flip", "flip": true },
+          "ggsize": { "width": 700.0, "height": 90.0 },
+          "kind": "plot",
+          "layers": [
+            {
+              "geom": "boxplot",
+              "stat": "identity",
+              "mapping": {
+                "ymin": "y0",
+                "lower": "y33",
+                "middle": "y50",
+                "upper": "y66",
+                "ymax": "y100"
+              },
+              "height": 0.2
+            }
+          ]
+        }
+        */
+
         val tooltipBuilder = MeasuredTooltipBuilderFactory()
             .defaultObjectRadius(22.727272727272727)
             .defaultTipSize(DoubleVector(40.78125, 28.0))
@@ -164,7 +206,7 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
 
         assertAllTooltips(
             expect()
-                .tooltipY(expectedAroundPointY("rotated", TOP))
+                .tooltipY(45.0)
         )
     }
 

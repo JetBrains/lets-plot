@@ -15,8 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Too
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.*
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
 import kotlin.math.max
 import kotlin.math.min
@@ -396,16 +395,21 @@ class LayoutManager(
                     stemY = targetBottomPoint
                 }
 
-                targetTopPoint in myVerticalTooltipSpace &&
-                        myVerticalAlignmentResolver.resolve(
-                            topTooltipRange,
-                            bottomTooltipRange,
-                            preferredAlignment,
-                            cursorVerticalRange
-                        ) === TOP -> {
-                    tooltipY = topTooltipRange.lowerEnd
-                    stemY = targetTopPoint
-                }
+                targetTopPoint in myVerticalTooltipSpace ->
+                    when (myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, preferredAlignment, cursorVerticalRange)) {
+                        TOP -> {
+                            tooltipY = topTooltipRange.lowerEnd
+                            stemY = targetTopPoint
+                        }
+                        BOTTOM -> {
+                            tooltipY = bottomTooltipRange.lowerEnd
+                            stemY = targetBottomPoint
+                        }
+                        FIT -> {
+                            tooltipY = centerInsideRange(targetCoordY, tooltipHeight, myVerticalSpace)
+                            stemY = targetCoordY
+                        }
+                    }
 
                 else -> {
                     tooltipY = bottomTooltipRange.lowerEnd
@@ -606,7 +610,8 @@ class LayoutManager(
 
     internal enum class VerticalAlignment {
         TOP,
-        BOTTOM
+        BOTTOM,
+        FIT
     }
 
     enum class HorizontalAlignment {
