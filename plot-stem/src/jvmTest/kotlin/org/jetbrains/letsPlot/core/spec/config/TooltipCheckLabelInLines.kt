@@ -235,4 +235,42 @@ class TooltipCheckLabelInLines {
             expectedLines = listOf("b: 10")
         )
     }
+
+    @Test
+    fun `issue 1186 - dataframe variable should be formatted using the DataType from series_annotations`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "l": [ 3.0 ],
+                |    "b": [ 4.0 ]
+                |  },
+                |  "mapping": { "color": "l" },
+                |  "data_meta": {
+                |    "series_annotations": [
+                |      { "type": "int", "column": "l" },
+                |      { "type": "int", "column": "b" }
+                |    ]
+                |  },
+                |  "ggsize": { "width": 300.0, "height": 200.0 },
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "point",
+                |      "tooltips": {
+                |        "lines": [
+                |          "l is @l",
+                |          "b is @b"
+                |        ]
+                |      }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+        assertGeneralTooltip(
+            layer,
+            expectedLines = listOf("l is 3", "b is 4")
+        )
+    }
 }

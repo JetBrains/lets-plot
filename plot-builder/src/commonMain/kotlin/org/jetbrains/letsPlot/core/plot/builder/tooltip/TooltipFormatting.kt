@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
@@ -30,13 +31,11 @@ internal object TooltipFormatting {
         }
     }
 
-    fun createFormatter(variable: DataFrame.Variable, expFormat: StringFormat.ExponentFormat): (Any) -> String {
+    fun createFormatter(variable: DataFrame.Variable, formatters: Map<Any, (Any) -> String>, expFormat: StringFormat.ExponentFormat): (Any) -> String {
         return when (variable) {
-            Stats.PROP,
-            Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, expFormat = expFormat)::format
-            Stats.PROPPCT,
-            Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, expFormat = expFormat)::format
-            else -> { value -> value.toString() }
+            Stats.PROP, Stats.SUMPROP -> StringFormat.forOneArg(".2f", formatFor = variable.name, expFormat = expFormat)::format
+            Stats.PROPPCT, Stats.SUMPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name, expFormat = expFormat)::format
+            else -> formatters[variable.name] ?: DataType.UNKNOWN.formatter
         }
     }
 }

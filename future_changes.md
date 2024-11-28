@@ -14,3 +14,4 @@
 - Extra trim in formatted number when type='g' [[#1241](https://github.com/JetBrains/lets-plot/issues/1241)].
 - Axis breaks are badly formatted if explicitly set [[#1245](https://github.com/JetBrains/lets-plot/issues/1245)].
 - Badly formatted zero break for the "~g" format [[#1246](https://github.com/JetBrains/lets-plot/issues/1246)].
+- Display integer values without fractional part in tooltips [[#1186](https://github.com/JetBrains/lets-plot/issues/1186)].

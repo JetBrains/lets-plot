@@ -15,10 +15,9 @@ internal class PointDataAccess(
     private val data: DataFrame,
     private val bindings: Map<Aes<*>, VarBinding>,
     private val scaleMap: Map<Aes<*>, Scale>,
-    override val isYOrientation: Boolean
+    override val isYOrientation: Boolean,
+    override val defaultFormatters: Map<Any, (Any) -> String>
 ) : MappedDataAccess {
-
-    private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
 
     override fun isMapped(aes: Aes<*>) = bindings.containsKey(aes)
 

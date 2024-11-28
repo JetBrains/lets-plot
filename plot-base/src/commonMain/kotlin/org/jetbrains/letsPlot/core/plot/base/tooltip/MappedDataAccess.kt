@@ -17,4 +17,6 @@ interface MappedDataAccess {
 //    fun getMappedDataValue(aes: Aes<*>, index: Int, ctx: PlotContext): String
 
     fun getMappedDataLabel(aes: Aes<*>): String
+
+    val defaultFormatters: Map<Any, (Any) -> String>
 }
