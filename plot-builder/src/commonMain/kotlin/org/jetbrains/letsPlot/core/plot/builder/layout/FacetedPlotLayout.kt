@@ -211,12 +211,18 @@ internal class FacetedPlotLayout(
             val layoutInfo = layoutInfos[index]
             val geomInnerBoundsOffset = layoutInfo.geomInnerBounds.origin
                 .subtract(layoutInfo.geomOuterBounds.origin)
+            val geomContentBoundsOffset = layoutInfo.geomContentBounds.origin
+                .subtract(layoutInfo.geomOuterBounds.origin)
 
             val tileBounds = tileBoundsList[index]
             val geomOuterBounds = geomOuterBoundsList[index]
             val geomInnerBounds = DoubleRectangle(
                 geomOuterBounds.origin.add(geomInnerBoundsOffset),
                 layoutInfo.geomInnerBounds.dimension
+            )
+            val geomContentBounds = DoubleRectangle(
+                geomOuterBounds.origin.add(geomContentBoundsOffset),
+                layoutInfo.geomContentBounds.dimension
             )
 
             val xLabels = when (facetsTheme.horizontalFacetStrip().showStrip()) {
@@ -241,7 +247,7 @@ internal class FacetedPlotLayout(
                 geomWithAxisBounds = tileBounds.add(originDelta),
                 geomOuterBounds = geomOuterBounds.add(originDelta),
                 geomInnerBounds = geomInnerBounds.add(originDelta),
-                geomContentBounds = geomInnerBounds.add(originDelta),
+                geomContentBounds = geomContentBounds.add(originDelta),
                 layoutInfo.axisInfos,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
