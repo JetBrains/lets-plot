@@ -22,6 +22,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myLabels: List<String>? = null
     private var myLabelLengthLimit: Int? = null
     private var myLabelFormat: String? = null
+    private var myDataTypeFormatter: ((Any) -> String)? = null
     private var myExpFormat: ExponentFormat = DEF_EXPONENT_FORMAT
     private var myMultiplicativeExpand: Double? = null
     private var myAdditiveExpand: Double? = null
@@ -68,6 +69,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     fun labelFormat(format: String?): ScaleProviderBuilder<T> {
         myLabelFormat = format
+        return this
+    }
+
+    fun dataTypeFormatter(formatter: (Any) -> String): ScaleProviderBuilder<T> {
+        myDataTypeFormatter = formatter
         return this
     }
 
@@ -146,6 +152,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myLabels: List<String>? = b.myLabels?.let { ArrayList(it) }
         private val myLabelLengthLimit: Int? = b.myLabelLengthLimit
         private val myLabelFormat: String? = b.myLabelFormat
+        private val myDataTypeFormatter: ((Any) -> String)? = b.myDataTypeFormatter
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
@@ -230,6 +237,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             val with = scale.with()
                 .exponentFormat(PlotAssembler.extractExponentFormat(myExpFormat))
 
+            if (myDataTypeFormatter != null) {
+                with.dataTypeFormatter(myDataTypeFormatter)
+            }
             if (breaks != null) {
                 with.breaks(breaks)
             }

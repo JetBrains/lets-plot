@@ -49,6 +49,8 @@ interface Scale {
 
         fun labelFormatter(v: (Any) -> String): Builder
 
+        fun dataTypeFormatter(v: (Any) -> String): Builder
+
         fun exponentFormat(v: ExponentFormat): Builder
 
         fun multiplicativeExpand(v: Double): Builder

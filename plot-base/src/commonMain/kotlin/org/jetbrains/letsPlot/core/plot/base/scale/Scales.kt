@@ -5,23 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.scale
 
+import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 
 object Scales {
 
-    fun continuousDomain(
-        name: String,
-        continuousRange: Boolean
-    ): Scale {
+    fun continuousDomain(name: String, continuousRange: Boolean): Scale {
         return ContinuousScale(name, continuousRange)
     }
 
-    fun discreteDomain(
-        name: String,
-        discreteTransform: DiscreteTransform,
-    ): Scale {
+    fun discreteDomain(name: String, discreteTransform: DiscreteTransform): Scale {
         return DiscreteScale(name, discreteTransform)
     }
 
@@ -29,37 +24,22 @@ object Scales {
      * Functions to be used in demos and tests only.
      */
     object DemoAndTest {
-        fun discreteDomain(
-            name: String,
-            domainValues: List<Any>,
-            domainLimits: List<Any> = emptyList(),
-        ): Scale {
-            return DiscreteScale(
-                name,
-                DiscreteTransform(domainValues, domainLimits),
-            )
+        fun discreteDomain(name: String, domainValues: List<Any>, domainLimits: List<Any> = emptyList()): Scale {
+            return DiscreteScale(name, DiscreteTransform(domainValues, domainLimits))
+                .with().dataTypeFormatter(DataType.UNKNOWN.formatter).build()
         }
 
-        fun pureDiscrete(
-            name: String,
-            domainValues: List<Any>,
-        ): Scale {
+        fun pureDiscrete(name: String, domainValues: List<Any>): Scale {
             val transform = DiscreteTransform(domainValues, emptyList())
             return DiscreteScale(name, transform)
         }
 
         fun continuousDomain(name: String, aes: Aes<*>): Scale {
-            return ContinuousScale(
-                name,
-                aes.isNumeric
-            )
+            return ContinuousScale(name, aes.isNumeric).with().dataTypeFormatter(DataType.UNKNOWN.formatter).build()
         }
 
         fun continuousDomainNumericRange(name: String): Scale {
-            return ContinuousScale(
-                name,
-                true
-            )
+            return ContinuousScale(name, true)
         }
     }
 }

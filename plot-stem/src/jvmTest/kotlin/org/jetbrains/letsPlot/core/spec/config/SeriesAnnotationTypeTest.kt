@@ -60,7 +60,7 @@ class SeriesAnnotationTypeTest {
             useCssPixelatedImageRendering = false
         ).let { svg ->
             assertThat(svg).contains("<tspan>54321</tspan>")
-            assertThat(svg).contains("<tspan>12345.1</tspan>")
+            assertThat(svg).contains("<tspan>12,345.1</tspan>")
             assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")
         }
     }
@@ -106,9 +106,8 @@ class SeriesAnnotationTypeTest {
             useCssPixelatedImageRendering = false
         ).let { svg ->
             assertThat(svg).contains("<tspan>54321</tspan>")
-            assertThat(svg).contains("<tspan>12345.1</tspan>")
+            assertThat(svg).contains("<tspan>12,345.1</tspan>")
             assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")
         }
     }
-
 }
