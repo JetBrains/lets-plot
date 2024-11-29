@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
@@ -22,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpecFactory
 import kotlin.test.assertEquals
 
@@ -65,24 +67,50 @@ object TooltipTestUtil {
 
     }
 
-    private fun createTooltipSpecs(contextualMapping: ContextualMapping, ctx: PlotContext): List<TooltipSpec> {
+    private fun createGeneralTooltipSpecs(
+        contextualMapping: ContextualMapping,
+        ctx: PlotContext,
+        hitIndex: Int = 0
+    ): List<TooltipSpec> {
+        return createTooltipSpecs(hitIndex, TipLayoutHint.cursorTooltip(coord = DoubleVector.ZERO), ctx, contextualMapping)
+    }
+
+    private fun createXAxisTooltipSpecs(
+        contextualMapping: ContextualMapping,
+        ctx: PlotContext,
+        hitIndex: Int
+    ): List<TooltipSpec> {
+        return createTooltipSpecs(hitIndex, TipLayoutHint.xAxisTooltip(coord = DoubleVector.ZERO), ctx, contextualMapping)
+    }
+
+    private fun createTooltipSpecs(
+        hitIndex: Int,
+        tipLayoutHint: TipLayoutHint,
+        ctx: PlotContext,
+        contextualMapping: ContextualMapping,
+        aesTipLayoutHints: Map<Aes<*>, TipLayoutHint> = emptyMap()
+    ): List<TooltipSpec> {
         val factory =
             TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
         return factory.create(
             GeomTarget(
-                hitIndex = 0,
-                tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO),
-                aesTipLayoutHints = emptyMap()
+                hitIndex = hitIndex,
+                tipLayoutHint = tipLayoutHint,
+                aesTipLayoutHints = aesTipLayoutHints
             ),
             ctx
         )
     }
 
-    private fun assertGeneralTooltip(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
-        val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isSide)
-        assertEquals(expectedLines.isEmpty(), actualGeneralTooltips.isEmpty())
-        if (actualGeneralTooltips.isNotEmpty()) {
-            val actualLines = actualGeneralTooltips.single().lines.map(TooltipSpec.Line::toString)
+    internal fun assertXAxisTooltip(layer: GeomLayer, expectedLines: List<String>, hitIndex: Int = 0) {
+        val ctx = TestingPlotContext.create(layer)
+        val tooltipSpecs = createXAxisTooltipSpecs(layer.createContextualMapping(), ctx, hitIndex)
+        val actualXAxisTooltip = tooltipSpecs.filter { it.layoutHint.kind == TipLayoutHint.Kind.X_AXIS_TOOLTIP }
+
+        assertEquals(expectedLines.isEmpty(), actualXAxisTooltip.isEmpty())
+
+        if (actualXAxisTooltip.isNotEmpty()) {
+            val actualLines = actualXAxisTooltip.single().lines.map(Line::toString)
             assertEquals(expectedLines.size, actualLines.size)
             expectedLines.zip(actualLines).forEach { (expected, actual) -> assertEquals(expected, actual) }
         }
@@ -90,10 +118,15 @@ object TooltipTestUtil {
 
     internal fun assertGeneralTooltip(layer: GeomLayer, expectedLines: List<String>) {
         val ctx = TestingPlotContext.create(layer)
-        val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping(), ctx)
-        assertGeneralTooltip(
-            tooltipSpecs,
-            expectedLines
-        )
+        val tooltipSpecs = createGeneralTooltipSpecs(layer.createContextualMapping(), ctx)
+        val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isSide)
+
+        assertEquals(expectedLines.isEmpty(), actualGeneralTooltips.isEmpty())
+
+        if (actualGeneralTooltips.isNotEmpty()) {
+            val actualLines = actualGeneralTooltips.single().lines.map(Line::toString)
+            assertEquals(expectedLines.size, actualLines.size)
+            expectedLines.zip(actualLines).forEach { (expected, actual) -> assertEquals(expected, actual) }
+        }
     }
 }

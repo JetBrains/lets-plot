@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
 import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
+import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertXAxisTooltip
 import kotlin.test.Test
 
 
@@ -272,5 +273,41 @@ class TooltipCheckLabelInLines {
             layer,
             expectedLines = listOf("l is 3", "b is 4")
         )
+    }
+
+    @Test
+    fun `issue 1134`() {
+        val spec = """
+                |{
+                |  "data": {
+                |    "x": [ -10.0, 0.255, 0.265, 0.285, 0.295, 10.0 ]
+                |  },
+                |  "data_meta": {
+                |    "series_annotations": [
+                |      { "type": "unknown(mixed types)", "column": "x" }
+                |    ]
+                |  },
+                |  "coord": {
+                |    "name": "cartesian",
+                |    "xlim": [ 0.25, 0.3 ],
+                |    "flip": false
+                |  },
+                |  "kind": "plot",
+                |  "layers": [
+                |    {
+                |      "geom": "point",
+                |      "mapping": { "x": "x" }
+                |    }
+                |  ]
+                |}            
+        """.trimMargin()
+
+        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
+        assertXAxisTooltip(
+            layer,
+            expectedLines = listOf("0.26"),
+            hitIndex = 1
+        )
+
     }
 }
