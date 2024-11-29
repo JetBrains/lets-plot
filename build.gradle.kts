@@ -74,7 +74,7 @@ fun readPropertiesFromParameters() {
         properties["architecture"] = project.property("architecture")
     }
     for (property in properties) {
-        extra[property.key as String] = property.value
+        project.extra[property.key as String] = property.value
     }
 }
 
@@ -127,7 +127,7 @@ fun readPropertiesFromFile() {
         }
     }
     for (property in properties) {
-        extra[property.key as String] = property.value
+        project.extra[property.key as String] = property.value
     }
 }
 

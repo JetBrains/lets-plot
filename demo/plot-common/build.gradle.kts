@@ -13,7 +13,7 @@ kotlin {
         browser()
     }
 
-    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+    val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 
     sourceSets {
         commonMain {
@@ -34,7 +34,7 @@ kotlin {
                 implementation(kotlin("stdlib-jdk8"))
 
                 compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
-//                implementation ("org.slf4j:slf4j-simple:${extra["slf4j_version"]}")  // Enable logging to console
+//                implementation ("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
             }
         }
         jsMain {

@@ -25,9 +25,9 @@ kotlin {
         binaries.executable()
     }
 
-    val batikVersion = extra["batik_version"] as String
-    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-    val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
+    val batikVersion = project.extra["batik_version"] as String
+    val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+    val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
     applyDefaultHierarchyTemplate()

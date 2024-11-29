@@ -10,7 +10,7 @@ plugins {
 kotlin {
     jvm()
 
-    val batikVersion = extra["batik_version"] as String
+    val batikVersion = project.extra["batik_version"] as String
 
     sourceSets {
         commonMain {

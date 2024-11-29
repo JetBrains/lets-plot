@@ -16,7 +16,7 @@ kotlin {
 val artifactBaseName = "lets-plot-gis"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val ktorVersion = extra["ktor_version"] as String
+val ktorVersion = project.extra["ktor_version"] as String
 val mavenLocalPath = rootProject.extra["localMavenRepository"]
 
 val jvmJarGis by tasks.named<Jar>("jvmJar") {

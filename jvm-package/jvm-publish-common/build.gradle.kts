@@ -16,7 +16,7 @@ kotlin {
 val artifactBaseName = "lets-plot-common"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
-val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
 val mavenLocalPath = rootProject.extra["localMavenRepository"]
 
 val jvmJarCommon by tasks.named<Jar>("jvmJar") {

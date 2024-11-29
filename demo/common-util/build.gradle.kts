@@ -13,7 +13,7 @@ kotlin {
         browser()
     }
 
-    val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
+    val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
 
     sourceSets {
         commonMain {

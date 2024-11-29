@@ -34,12 +34,12 @@ kotlin {
         binaries.executable()
     }
 
-    val batikVersion = extra["batik_version"] as String
-    val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-    val kotlinxHtmlVersion = extra["kotlinx_html_version"] as String
-    val ktorVersion = extra["ktor_version"] as String
-    val jfxPlatform = extra["jfxPlatformResolved"] as String
-    val jfxVersion = extra["jfx_version"] as String
+    val batikVersion = project.extra["batik_version"] as String
+    val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+    val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
+    val ktorVersion = project.extra["ktor_version"] as String
+    val jfxPlatform = project.extra["jfxPlatformResolved"] as String
+    val jfxVersion = project.extra["jfx_version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
     applyDefaultHierarchyTemplate()
@@ -73,7 +73,7 @@ kotlin {
                 implementation("org.openjfx:javafx-controls:${jfxVersion}:${jfxPlatform}")
                 implementation("org.openjfx:javafx-graphics:${jfxVersion}:${jfxPlatform}")
                 implementation("org.openjfx:javafx-swing:${jfxVersion}:${jfxPlatform}")
-                implementation("org.slf4j:slf4j-simple:${extra["slf4j_version"]}")  // Enable logging to console
+                implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
             }
         }
         named("jvmJfxMain") {
