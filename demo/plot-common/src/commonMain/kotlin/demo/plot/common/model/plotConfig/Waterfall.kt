@@ -167,7 +167,7 @@ class Waterfall {
               'kind': 'plot',
               'data': {
                 'cat': ['A', 'B', 'C', 'D', 'E'],
-                'val': [100000.0, 200000.0, -400000.0, 500000.0, -200000.0]
+                'val': [100000, 200000, -400000, 500000, -200000]
               },
               'data_meta': {
                 'series_annotations': [
@@ -182,7 +182,13 @@ class Waterfall {
                 'name': 'waterfall',
                 'x': 'cat',
                 'y': 'val'
-              }
+              },
+              'scales': [
+                {
+                  'aesthetic': 'y',
+                  'breaks': [-100000.0, 150000.0, 400000.0]
+                }
+              ]
             }
         """.trimIndent()
 

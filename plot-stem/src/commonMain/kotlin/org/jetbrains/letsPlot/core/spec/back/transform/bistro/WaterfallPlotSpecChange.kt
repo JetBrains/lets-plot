@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE_ON_TOP
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL_FORMAT
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_SIZE
@@ -41,6 +40,20 @@ class WaterfallPlotSpecChange : SpecChange {
         // Set layers
         spec[Option.Plot.LAYERS] = waterfallPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in waterfall plot")
 
+        // Merge data_meta
+        waterfallPlotSpec.getMap(Option.Meta.DATA_META)?.let { waterfallDataMeta ->
+            val plotDataMeta = spec.getMap(Option.Meta.DATA_META) ?: emptyMap()
+            if (plotDataMeta.isNotEmpty()) {
+                val waterfallSeriesAnnotation = waterfallDataMeta.getList(Option.Meta.SeriesAnnotation.TAG) ?: emptyList<Any>()
+                val plotSeriesAnnotation = plotDataMeta.getList(Option.Meta.SeriesAnnotation.TAG) ?: emptyList<Any>()
+                spec[Option.Meta.DATA_META] = plotDataMeta.toMutableMap().apply {
+                    this[Option.Meta.SeriesAnnotation.TAG] = (waterfallSeriesAnnotation + plotSeriesAnnotation).toMutableList()
+                }
+            } else {
+                spec[Option.Meta.DATA_META] = waterfallDataMeta.toMutableMap()
+            }
+        }
+
         // Merge scales
         val waterfallScales = waterfallPlotSpec.getList(Option.Plot.SCALES) ?: error("Missing scales in waterfall plot")
         val plotScales = spec.getList(Option.Plot.SCALES) ?: emptyList<Any>()
@@ -58,6 +71,7 @@ class WaterfallPlotSpecChange : SpecChange {
         val bistroSpec = plotSpec.getMap(Option.Plot.BISTRO) ?: error("'bistro' not found in PlotSpec")
         val waterfallPlotOptionsBuilder = WaterfallPlotOptionsBuilder(
             data = plotSpec.getMap(Option.PlotBase.DATA) ?: emptyMap<Any, Any>(),
+            dataMeta = plotSpec.getMap(Option.Meta.DATA_META) ?: emptyMap<Any, Any>(),
             x = bistroSpec.getString(Waterfall.X),
             y = bistroSpec.getString(Waterfall.Y),
             measure = bistroSpec.getString(Waterfall.MEASURE),
@@ -91,7 +105,7 @@ class WaterfallPlotSpecChange : SpecChange {
             hLineOnTop = bistroSpec.getBool(Waterfall.H_LINE_ON_TOP) ?: DEF_H_LINE_ON_TOP,
             connectorOptions = readElementLineOptions(bistroSpec, Waterfall.CONNECTOR, DEF_CONNECTOR),
             labelOptions = readElementTextOptions(bistroSpec, Waterfall.LABEL, DEF_LABEL),
-            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT) ?: DEF_LABEL_FORMAT
+            labelFormat = bistroSpec.getString(Waterfall.LABEL_FORMAT)
         )
         val waterfallPlotOptions = waterfallPlotOptionsBuilder.build()
         return waterfallPlotOptions.toJson()

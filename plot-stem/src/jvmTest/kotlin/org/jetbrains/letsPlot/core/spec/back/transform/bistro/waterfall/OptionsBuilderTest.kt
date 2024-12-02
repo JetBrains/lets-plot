@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Waterfal
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_CONNECTOR
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_H_LINE
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL
-import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_LABEL_FORMAT
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_RELATIVE_TOOLTIPS
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.DEF_WIDTH
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.WaterfallPlotOptionsBuilder.Companion.OTHER_NAME
@@ -813,6 +812,7 @@ class OptionsBuilderTest {
     ): PlotOptions {
         return WaterfallPlotOptionsBuilder(
             data = data,
+            dataMeta = null,
             x = x,
             y = y,
             measure = measure,
@@ -836,7 +836,7 @@ class OptionsBuilderTest {
             hLineOnTop = false,
             connectorOptions = connectorOptions,
             labelOptions = labelOptions,
-            labelFormat = DEF_LABEL_FORMAT
+            labelFormat = null
         ).build()
     }
 

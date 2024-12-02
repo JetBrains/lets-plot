@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.DataUtil.standardiseData
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.groupBy
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.util.replace
@@ -18,9 +19,11 @@ import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.W
 import org.jetbrains.letsPlot.core.spec.back.transform.bistro.waterfall.Option.Waterfall.Var.DEF_MEASURE
 import org.jetbrains.letsPlot.core.spec.conversion.LineTypeOptionConverter
 import org.jetbrains.letsPlot.core.spec.plotson.*
+import kotlin.collections.first
 
 class WaterfallPlotOptionsBuilder(
     data: Map<*, *>,
+    private val dataMeta: Map<*, *>?,
     private val x: String?,
     private val y: String?,
     private val measure: String?,
@@ -44,7 +47,7 @@ class WaterfallPlotOptionsBuilder(
     private val hLineOnTop: Boolean,
     private val connectorOptions: ElementLineOptions,
     private val labelOptions: ElementTextOptions,
-    private val labelFormat: String
+    private val labelFormat: String?
 ) {
     private val data = standardiseData(data)
 
@@ -53,6 +56,7 @@ class WaterfallPlotOptionsBuilder(
         val flowTypeData = getFlowTypeDataForLegend(statDf)
         val (absoluteStatDf, relativeStatDf) = splitStatDfToAbsoluteAndRelative(statDf)
         return plot {
+            dataMeta = dataMetaOptions()
             layerOptions =
                 listOfNotNull(
                     if (hLineOnTop) null else hLineOptions(),
@@ -62,7 +66,6 @@ class WaterfallPlotOptionsBuilder(
                     labelOptions(statDf),
                     if (hLineOnTop) hLineOptions() else null
                 )
-
             scaleOptions = listOf(
                 scale {
                     aes = Aes.X
@@ -181,6 +184,30 @@ class WaterfallPlotOptionsBuilder(
             FlowType.ABSOLUTE.takeUnless { measures.contains(Measure.ABSOLUTE.value) }
         )
         return FlowType.list(totalTitle, skipFlowTypes).values.toList()
+    }
+
+    private fun dataMetaOptions(): DataMetaOptions? {
+        val seriesAnnotation = dataMeta?.get(Option.Meta.SeriesAnnotation.TAG) as? List<Map<Any, Any>> ?: return null
+        val yMeta = seriesAnnotation.firstOrNull { it[Option.Meta.SeriesAnnotation.COLUMN] == y } ?: return null
+        val yTypeStr = yMeta[Option.Meta.SeriesAnnotation.TYPE] ?: return null
+        val yType = SeriesAnnotationOptions.Types.entries.firstOrNull { it.value == yTypeStr } ?: return null
+        val variables = listOf(
+            Waterfall.Var.Stat.YMIN,
+            Waterfall.Var.Stat.YMIDDLE,
+            Waterfall.Var.Stat.YMAX,
+            Waterfall.Var.Stat.INITIAL,
+            Waterfall.Var.Stat.VALUE,
+            Waterfall.Var.Stat.DIFFERENCE,
+            Waterfall.Var.Stat.LABEL,
+        )
+        return dataMeta {
+            variables.forEach { variable ->
+                appendSeriesAnnotation {
+                    type = yType
+                    column = variable.name
+                }
+            }
+        }
     }
 
     private fun boxOptions(statDf: DataFrame, tooltipsOptions: TooltipsOptions): LayerOptions {
@@ -357,7 +384,6 @@ class WaterfallPlotOptionsBuilder(
         private const val DIFFERENCE_TOOLTIP_NAME = "Difference"
         private const val CUMULATIVE_SUM_TOOLTIP_NAME = "Cumulative sum"
         private const val VALUE_TOOLTIP_NAME = "Value"
-        private const val TOOLTIPS_VALUE_FORMAT = ".2~f"
 
         const val DEF_COLOR = "black"
         const val DEF_SIZE = 0.0
@@ -370,12 +396,6 @@ class WaterfallPlotOptionsBuilder(
             lines = listOf(
                 "@${Waterfall.Var.Stat.DIFFERENCE}",
             )
-            formats = listOf(
-                TooltipsOptions.format {
-                    field = Waterfall.Var.Stat.DIFFERENCE.name
-                    format = TOOLTIPS_VALUE_FORMAT
-                }
-            )
         }
         val DETAILED_RELATIVE_TOOLTIPS = tooltips {
             title = "@${Waterfall.Var.Stat.XLAB}"
@@ -385,27 +405,11 @@ class WaterfallPlotOptionsBuilder(
                 "$DIFFERENCE_TOOLTIP_NAME|@${Waterfall.Var.Stat.DIFFERENCE}",
                 "$CUMULATIVE_SUM_TOOLTIP_NAME|@${Waterfall.Var.Stat.VALUE}",
             )
-            formats = listOf(
-                Waterfall.Var.Stat.INITIAL,
-                Waterfall.Var.Stat.DIFFERENCE,
-                Waterfall.Var.Stat.VALUE,
-            ).map { f ->
-                TooltipsOptions.format {
-                    field = f.name
-                    format = TOOLTIPS_VALUE_FORMAT
-                }
-            }
         }
         val DEF_ABSOLUTE_TOOLTIPS = tooltips {
             disableSplitting = true
             lines = listOf(
                 "@${Waterfall.Var.Stat.VALUE}",
-            )
-            formats = listOf(
-                TooltipsOptions.format {
-                    field = Waterfall.Var.Stat.VALUE.name
-                    format = TOOLTIPS_VALUE_FORMAT
-                }
             )
         }
         val DETAILED_ABSOLUTE_TOOLTIPS = tooltips {
@@ -413,12 +417,6 @@ class WaterfallPlotOptionsBuilder(
             disableSplitting = true
             lines = listOf(
                 "$VALUE_TOOLTIP_NAME|@${Waterfall.Var.Stat.VALUE}",
-            )
-            formats = listOf(
-                TooltipsOptions.format {
-                    field = Waterfall.Var.Stat.VALUE.name
-                    format = TOOLTIPS_VALUE_FORMAT
-                }
             )
         }
         val DEF_H_LINE = ElementLineOptions(
@@ -430,6 +428,5 @@ class WaterfallPlotOptionsBuilder(
         val DEF_LABEL = ElementTextOptions(
             color = "white"
         )
-        const val DEF_LABEL_FORMAT = ".2~f"
     }
 }
