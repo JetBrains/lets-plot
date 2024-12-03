@@ -18,40 +18,20 @@ internal object LayerConfigUtil {
 
     fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
-        val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
-        val specifiedPosOptions: Map<String, Any> = when (val v = layerOptions[POS]) {
-            null -> preferredPosOptions[Option.Meta.NAME]?.let { mapOf(Option.Meta.NAME to it) } ?: emptyMap()
-            is Map<*, *> ->
-                @Suppress("UNCHECKED_CAST")
-                v as Map<String, Any>
-
-            else ->
-                mapOf(Option.Meta.NAME to v.toString())
+        val specifiedPosOptions: Map<String, Any>? = layerOptions[POS]?.let { v ->
+            when (v) {
+                is Map<*, *> ->
+                    @Suppress("UNCHECKED_CAST")
+                    v as Map<String, Any>
+                else ->
+                    mapOf(Option.Meta.NAME to v.toString())
+            }
         }
 
-        // Geom's parameters have priority over function parameters
         return when {
-            specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> {
-                // Merge
-                (preferredPosOptions.keys + specifiedPosOptions.keys).associateWith { option ->
-                    when {
-                        !specifiedPosOptions.containsKey(option) -> preferredPosOptions.getValue(option)
-                        !preferredPosOptions.containsKey(option) -> specifiedPosOptions.getValue(option)
-                        !hasOwnPositionOptions -> specifiedPosOptions.getValue(option)
-                        else -> {
-                            val preferredValue = preferredPosOptions.getValue(option)
-                            val specifiedValue = specifiedPosOptions.getValue(option)
-                            if (preferredValue is Number && specifiedValue is Number) {
-                                preferredValue.toDouble() + specifiedValue.toDouble()
-                            } else {
-                                preferredValue
-                            }
-                        }
-                    }
-                }
-            }
-
-            hasOwnPositionOptions -> mapOf(Option.Meta.NAME to "composition", "first" to specifiedPosOptions, "second" to preferredPosOptions)
+            specifiedPosOptions == null -> preferredPosOptions
+            geomProto.hasOwnPositionAdjustmentOptions(layerOptions) -> mapOf(Option.Meta.NAME to "composition", "first" to specifiedPosOptions, "second" to preferredPosOptions)
+            specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> preferredPosOptions + specifiedPosOptions
             else -> specifiedPosOptions
         }
     }
