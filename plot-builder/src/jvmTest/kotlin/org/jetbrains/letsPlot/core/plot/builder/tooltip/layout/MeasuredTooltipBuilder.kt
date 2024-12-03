@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec
@@ -67,7 +65,7 @@ internal class MeasuredTooltipBuilder private constructor(
                 isSide = true,
                 anchor = myAnchor
             ),
-            mySize!!, TooltipBox(Style.default()), strokeWidth = 0.0
+            mySize!!, strokeWidth = 0.0
         )
     }
 
@@ -79,7 +77,6 @@ internal class MeasuredTooltipBuilder private constructor(
             Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord)
             Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, fillColor = myFillColor)
             Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord, fillColor = myFillColor)
-            else -> throw IllegalStateException("Unknown layout hint")
         }
     }
 

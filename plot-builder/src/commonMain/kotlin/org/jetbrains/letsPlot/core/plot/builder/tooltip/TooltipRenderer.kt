@@ -61,6 +61,7 @@ internal class TooltipRenderer(
     private val regs = CompositeRegistration()
     private val myLayoutManager: LayoutManager
     private val myTooltipLayer: SvgGElement
+    private val measuringTooltipBox: TooltipBox
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: RetainableComponents<TooltipBox>
     private val crosshairStorage: RetainableComponents<CrosshairComponent>
@@ -70,8 +71,13 @@ internal class TooltipRenderer(
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
         myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+        measuringTooltipBox = TooltipBox(styleSheet).apply {
+            rootGroup.visibility().set(Visibility.HIDDEN)
+        }
 
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
+        myTooltipLayer.children().add(measuringTooltipBox.rootGroup)
+
         crosshairStorage = RetainableComponents(
             itemFactory = ::CrosshairComponent,
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
@@ -101,6 +107,15 @@ internal class TooltipRenderer(
         regs.dispose()
     }
 
+    private fun measureTooltip(tooltipSpec: TooltipSpec): MeasuredTooltip {
+        applySpec(measuringTooltipBox, tooltipSpec)
+        return MeasuredTooltip(
+            tooltipSpec = tooltipSpec,
+            strokeWidth = getStrokeWidth(tooltipSpec),
+            size = measuringTooltipBox.contentRect.dimension
+        )
+    }
+
     private fun showTooltips(cursor: DoubleVector) {
         val tileInfo = findTileInfo(cursor)
         if (tileInfo == null) {
@@ -108,96 +123,34 @@ internal class TooltipRenderer(
             return
         }
 
-        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin, plotContext)
-        val geomBounds = tileInfo.geomBounds
-        val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
+        val lookupResults = tileInfo.findTargets(cursor)
 
-        tooltipSpecs
+        val tooltips = lookupResults
+            .flatMap { tooltipSpecFromLookupResult(it, tileInfo.axisOrigin) }
             .filter { it.lines.isNotEmpty() }
-            .zip(tooltipComponents)
-            .map { (spec, tooltipBox) ->
 
-                val fillColor = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
-                    spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
-                    else -> tooltipsTheme.tooltipFill()
-                }
+        val measuredTooltips = tooltips.map(::measureTooltip)
 
-                val borderColor = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
-                    spec.isSide -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
-                    else -> tooltipsTheme.tooltipColor()
-                }
+        val positionedTooltips = myLayoutManager.arrange(
+            measuredTooltips,
+            cursor,
+            tileInfo.geomBounds,
+            tileInfo.hAxisTooltipPosition,
+            tileInfo.vAxisTooltipPosition
+        )
 
-                // Text color is set by element class name,
-                // but for side tooltips the color is not constant - it depends on the fill color
-                val textColor = when {
-                    spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isSide -> borderColor
-                    else -> null
-                }
+        showCrosshair(positionedTooltips, tileInfo.geomBounds)
 
-                val strokeWidth = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
-                    spec.isSide -> 1.0
-                    else -> tooltipsTheme.tooltipStrokeWidth()
-                }
-
-                val lineType = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipLineType()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipLineType()
-                    spec.isSide -> NamedLineType.SOLID
-                    else -> tooltipsTheme.tooltipLineType()
-                }
-
-                val borderRadius = when (spec.layoutHint.kind) {
-                    X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
-                    else -> BORDER_RADIUS
-                }
-
-                tooltipBox
-                    // not all tooltips will get position - overlapped axis toooltips likely won't.
-                    // Hide and later show only ones with position
-                    .apply { rootGroup.visibility().set(Visibility.HIDDEN) }
-                    .update(
-                        fillColor = fillColor,
-                        textColor = textColor,
-                        borderColor = borderColor,
-                        strokeWidth = strokeWidth,
-                        lineType = lineType,
-                        lines = spec.lines,
-                        title = spec.title,
-                        textClassName = spec.style,
-                        rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
-                        tooltipMinWidth = spec.minWidth,
-                        borderRadius = borderRadius,
-                        markerColors = spec.markerColors.distinct(),
-                        pointMarkerStrokeColor = plotBackground
-                    )
-                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
-            }
-            .run {
-                myLayoutManager.arrange(
-                    tooltips = this,
-                    cursorCoord = cursor,
-                    geomBounds,
-                    tileInfo.hAxisTooltipPosition,
-                    tileInfo.vAxisTooltipPosition
+        tooltipStorage.provide(positionedTooltips.size)
+            .zip(positionedTooltips)
+            .forEach { (tooltipComponent, info) ->
+                applySpec(tooltipComponent, info.tooltipSpec)
+                tooltipComponent.setPosition(
+                    info.tooltipCoord,
+                    info.stemCoord,
+                    info.orientation,
+                    info.tooltipSpec.layoutHint.kind == ROTATED_TOOLTIP
                 )
-            }
-            .also { tooltips -> showCrosshair(tooltips, geomBounds) }
-            .forEach { arranged ->
-                arranged.tooltipBox.apply {
-                    rootGroup.visibility().set(Visibility.VISIBLE) // show only tooltips that got their position
-                    setPosition(
-                        arranged.tooltipCoord,
-                        arranged.stemCoord,
-                        arranged.orientation,
-                        arranged.tooltipSpec.layoutHint.kind == ROTATED_TOOLTIP
-                    )
-                }
             }
     }
 
@@ -323,21 +276,6 @@ internal class TooltipRenderer(
         return null
     }
 
-    private fun createTooltipSpecs(
-        lookupResults: List<GeomTargetLocator.LookupResult>,
-        axisOrigin: DoubleVector,
-        ctx: PlotContext
-    ): List<TooltipSpec> {
-        val tooltipSpecs = ArrayList<TooltipSpec>()
-
-        lookupResults.forEach { result ->
-            val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin, flippedAxis, xAxisTheme, yAxisTheme)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, ctx)) }
-        }
-
-        return tooltipSpecs
-    }
-
     private class TileInfo(
         val geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
@@ -411,4 +349,79 @@ internal class TooltipRenderer(
                 X_AXIS_TOOLTIP -> Orientation.VERTICAL
                 ROTATED_TOOLTIP -> Orientation.VERTICAL
             }
+
+    private fun applySpec(tooltipBox: TooltipBox, spec: TooltipSpec) {
+        val fillColor = when {
+            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
+            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
+            spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
+            else -> tooltipsTheme.tooltipFill()
+        }
+
+        val borderColor = when {
+            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
+            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
+            spec.isSide -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
+            else -> tooltipsTheme.tooltipColor()
+        }
+
+        // Text color is set by element class name,
+        // but for side tooltips the color is not constant - it depends on the fill color
+        val textColor = when {
+            spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isSide -> borderColor
+            else -> null
+        }
+
+        val strokeWidth = getStrokeWidth(spec)
+
+        val lineType = when {
+            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipLineType()
+            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipLineType()
+            spec.isSide -> NamedLineType.SOLID
+            else -> tooltipsTheme.tooltipLineType()
+        }
+
+        val borderRadius = when (spec.layoutHint.kind) {
+            X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
+            else -> BORDER_RADIUS
+        }
+
+        tooltipBox
+            .update(
+                fillColor = fillColor,
+                textColor = textColor,
+                borderColor = borderColor,
+                strokeWidth = strokeWidth,
+                lineType = lineType,
+                lines = spec.lines,
+                title = spec.title,
+                textClassName = spec.style,
+                rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
+                tooltipMinWidth = spec.minWidth,
+                borderRadius = borderRadius,
+                markerColors = spec.markerColors.distinct(),
+                pointMarkerStrokeColor = plotBackground
+            )
+    }
+
+    private fun getStrokeWidth(spec: TooltipSpec): Double = when {
+        spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
+        spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+        spec.isSide -> 1.0
+        else -> tooltipsTheme.tooltipStrokeWidth()
+    }
+
+    private fun tooltipSpecFromLookupResult(
+        lookupResult: GeomTargetLocator.LookupResult,
+        axisOrigin: DoubleVector,
+    ): List<TooltipSpec> {
+        return TooltipSpecFactory(
+            lookupResult.contextualMapping,
+            axisOrigin,
+            flippedAxis,
+            xAxisTheme,
+            yAxisTheme,
+            plotContext
+        ).let { lookupResult.targets.flatMap(it::create) }
+    }
 }
