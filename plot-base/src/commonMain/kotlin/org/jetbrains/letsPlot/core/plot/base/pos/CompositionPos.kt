@@ -15,7 +15,7 @@ internal class CompositionPos(
     val secondPos: PositionAdjustment
 ) : PositionAdjustment {
     override fun handlesGroups(): Boolean {
-        return firstPos.handlesGroups() && secondPos.handlesGroups()
+        return firstPos.handlesGroups() || secondPos.handlesGroups()
     }
 
     override fun translate(

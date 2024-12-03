@@ -143,7 +143,7 @@ abstract class PosProvider {
                 }
 
                 override fun handlesGroups(): Boolean {
-                    return firstProvider.handlesGroups() && secondProvider.handlesGroups()
+                    return firstProvider.handlesGroups() || secondProvider.handlesGroups()
                 }
             }
         }
